@@ -1,0 +1,3 @@
+[submodule "tests/qt_eventdispatcher_tests"]
+	path = tests/qt_eventdispatcher_tests
+	url = git://github.com/sjinks/qt_eventdispatcher_tests.git

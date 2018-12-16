@@ -1,0 +1,19 @@
+language: cpp
+
+compiler:
+  - gcc
+  - clang
+
+branches:
+  only:
+    - master
+
+before_install:
+  - git submodule update --init --recursive
+
+install:
+  - sudo apt-get update -qq
+  - sudo apt-get install -qq libqt4-dev libqt4-private-dev libev4 libev-dev
+
+script:
+  - ./build.sh

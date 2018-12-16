@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/pj_var.png</file>
+        <file>images/data_supadd.png</file>
+        <file>images/data_add.png</file>
+        <file>images/data_colcopy.png</file>
+        <file>images/data_delete.png</file>
+        <file>images/data_export.png</file>
+        <file>images/data_inadd.png</file>
+        <file>images/data_inport.png</file>
+        <file>images/data_rowcopy.png</file>
+    </qresource>
+</RCC>
