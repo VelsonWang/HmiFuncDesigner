@@ -36,6 +36,7 @@ public:
 
     QMap<QString, QString> getPropertys();
     QList<XMLObject* > getCurrentChildren(const QString& name);
+    XMLObject* getChild(const QString& name);
     void getChildrenByParentTagName(QStringList &tagNames, QList<XMLObject* > &children);
 
     void showXMLObject();

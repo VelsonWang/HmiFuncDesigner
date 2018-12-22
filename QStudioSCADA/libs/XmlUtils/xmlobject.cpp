@@ -200,6 +200,16 @@ QList<XMLObject* > XMLObject::getCurrentChildren(const QString& name) {
     return children;
 }
 
+XMLObject* XMLObject::getChild(const QString& name)
+{
+    foreach(XMLObject* xml, m_children)
+    {
+        if(xml->getTagName() == name)
+            return xml;
+    }
+    return NULL;
+}
+
 //
 // 在当前节点下根据父子节点名称查找子节点
 //

@@ -52,50 +52,50 @@ void InsertFunctionDialog::treeWidgetInit()
         return;
     }
 
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.get_children();
+    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
     foreach(XMLObject* funcGroup, childrenFuncSupport)
     {
         //qDebug() << funcGroup->get_title() << "  "  << funcGroup->get_property("name");
         QTreeWidgetItem *pItem = new QTreeWidgetItem(ui->treeWidgetFunc);
-        QString funcGroupName = funcGroup->get_property("funcName");
+        QString funcGroupName = funcGroup->getProperty("funcName");
         pItem->setText(0, funcGroupName);
 
         // add child
-        QList<XMLObject*> childrenGroup = funcGroup->get_children();
+        QList<XMLObject*> childrenGroup = funcGroup->getChildren();
         if(childrenGroup.size() < 1)
             continue;
         foreach(XMLObject* func, childrenGroup)
         {
             QTreeWidgetItem *pChildItem = new QTreeWidgetItem();
-            QString funcName = func->get_property("name");
+            QString funcName = func->getProperty("name");
             pChildItem->setText(0, funcName);
             pItem->addChild(pChildItem);
 
-            QList<XMLObject*> funcDesc = func->get_children();
+            QList<XMLObject*> funcDesc = func->getChildren();
             if(funcDesc.size() < 1)
                 continue;
             QString strDesc = "";
-            QString strFuncOrgName = func->get_child("name")->get_text();
+            QString strFuncOrgName = func->getChild("name")->getText();
             strDesc += strFuncOrgName;
             strDesc += QString("\n");
-            QString strFuncDesc = func->get_child("desc")->get_text();
+            QString strFuncDesc = func->getChild("desc")->getText();
             strDesc += strFuncDesc;
             strDesc += QString("\n");
-            XMLObject* argsXMLObject = func->get_child("args");
-            QString strFuncArgs = argsXMLObject->get_property("name");
+            XMLObject* argsXMLObject = func->getChild("args");
+            QString strFuncArgs = argsXMLObject->getProperty("name");
             strDesc += strFuncArgs;
             strDesc += QString("\n");
 
-            foreach(XMLObject* arg, argsXMLObject->get_children())
+            foreach(XMLObject* arg, argsXMLObject->getChildren())
             {
-                QString strArg = arg->get_text();
+                QString strArg = arg->getText();
                 strDesc += QString("\t");
                 strDesc += strArg;
                 strDesc += QString("\n");
             }
 
-            QString strFuncDemo = func->get_child("demo")->get_text();
+            QString strFuncDemo = func->getChild("demo")->getText();
             strDesc += strFuncDemo;
             strDesc += QString("\n");
 

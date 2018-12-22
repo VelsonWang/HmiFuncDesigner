@@ -1,4 +1,6 @@
 docs
+lib
+build-*
 QStudioSCADABin
 RuntimeBin
 delobj.bat
