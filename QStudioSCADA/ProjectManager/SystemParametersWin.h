@@ -13,12 +13,14 @@ class SystemParametersWin : public ChildBase
 {
     Q_OBJECT
 public:
-    explicit SystemParametersWin(QWidget *parent = 0, QString itemName = "", QString projName = "");
+    explicit SystemParametersWin(QWidget *parent = 0,
+                                 const QString &itemName = "",
+                                 const QString &projName = "");
     ~SystemParametersWin();
 
 public:
-    QString userFriendlyCurrentFile(); // 提取文件名
-    QString currentFile();
+    QString userFriendlyCurrentFile() const; // 提取文件名
+    QString currentFile() const;
 
 
 public:

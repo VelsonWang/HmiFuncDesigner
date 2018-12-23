@@ -13,21 +13,16 @@
 
 #include <QDebug>
 
-SystemParametersWin::SystemParametersWin(QWidget *parent, QString itemName, QString projName) :
+SystemParametersWin::SystemParametersWin(QWidget *parent,
+                                         const QString &itemName,
+                                         const QString &projName) :
     ChildBase(parent, itemName, projName),
     ui(new Ui::SystemParametersWin)
 {
     ui->setupUi(this);
     this->setWindowTitle(itemName);
-    setAttribute(Qt::WA_DeleteOnClose);    //  子窗口关闭时销毁这个类对象
+    setAttribute(Qt::WA_DeleteOnClose);
     isUntitled = true;    // not saved
-
-    /*
-    static int sequenceNumber = 1;
-    isUntitled = true;
-    curFile = tr("未命名文档%1.txt").arg(sequenceNumber++);
-    setWindowTitle(curFile + "[*]" + tr(" -多文档编辑器"));
-    */
 
     ui->listViewProject->setViewMode(QListView::IconMode);
     ui->listViewProject->setIconSize(QSize(32, 32));
@@ -78,12 +73,12 @@ SystemParametersWin::~SystemParametersWin()
 
 
 
-QString SystemParametersWin::userFriendlyCurrentFile() // 提取文件名
+QString SystemParametersWin::userFriendlyCurrentFile() const // 提取文件名
 {
     return QFileInfo(curFile).fileName();  // 从文件路径中提取文件名
 }
 
-QString SystemParametersWin::currentFile()
+QString SystemParametersWin::currentFile() const
 {
     return curFile;
 }
@@ -99,6 +94,7 @@ void SystemParametersWin::setCurrentFile(const QString &fileName)
 void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &index)
 {
     QStandardItem *item = pListViewProjectModel->itemFromIndex(index);
+    qDebug() << m_strProjectName << item->text();
     if(m_strProjectName == "")
         return;
     QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));

@@ -7,6 +7,7 @@
 #include <QMap>
 #include "SystemParametersWin.h"
 #include "ChildBase.h"
+#include "childform.h"
 #include "DBVarGroup.h"
 
 namespace Ui {
@@ -22,8 +23,8 @@ public:
     ~MainWindow();
 
 private slots:   
-    void setActiveSubWindow(ChildBase *window);
-    ChildBase* getActiveSubWindow();
+    void setActiveSubWindow(ChildForm *window);
+    ChildForm* getActiveSubWindow();
     void on_actionNewPoject_triggered();
     void on_actionWorkSpace_triggered(bool checked);
     void on_treeViewProject_clicked(const QModelIndex &index);
@@ -55,9 +56,7 @@ private slots:
     void on_actionDeviceDelete_triggered();
     void on_actionHelp_triggered();
     void on_actionAbout_triggered();
-
     void on_actionBigIcon_triggered();
-
     void on_actionSmallIcon_triggered();
 
 private:
@@ -90,9 +89,9 @@ private:
 
 
 private:
-    ChildBase* activeMdiChild();
+    ChildForm* activeMdiChild();
     void CreateItemWindows();
-    ChildBase* findMdiChild(const QString &windowTitle);
+    ChildForm* findMdiChild(const QString &windowTitle);
     QMdiSubWindow* findMdiSubWindow(const QString &windowTitle);
     void readSettings();  // 读取窗口设置
     void writeSettings(); // 写入窗口设置

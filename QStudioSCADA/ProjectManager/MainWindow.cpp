@@ -150,17 +150,17 @@ void MainWindow::setUpProjectTreeView()
 }
 
 
-ChildBase* MainWindow::activeMdiChild() //活动窗口
+ChildForm* MainWindow::activeMdiChild() //活动窗口
 {
     // 如果有活动窗口，则将其内的中心部件转换为MdiChild类型
     if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow())
     {
-        return qobject_cast<ChildBase *>(activeSubWindow->widget());
+        return qobject_cast<ChildForm *>(activeSubWindow->widget());
     }
     return NULL; // 没有活动窗口，直接返回0
 }
 
-void MainWindow::setActiveSubWindow(ChildBase *window)
+void MainWindow::setActiveSubWindow(ChildForm *window)
 {
     if(!window)
         return;
@@ -170,16 +170,16 @@ void MainWindow::setActiveSubWindow(ChildBase *window)
     ui->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
 }
 
-ChildBase* MainWindow::getActiveSubWindow()
+ChildForm* MainWindow::getActiveSubWindow()
 {
-    return qobject_cast<ChildBase*>(ui->mdiArea->activeSubWindow()->widget());
+    return qobject_cast<ChildForm*>(ui->mdiArea->activeSubWindow()->widget());
 }
 
-ChildBase* MainWindow::findMdiChild(const QString &windowTitle)
+ChildForm* MainWindow::findMdiChild(const QString &windowTitle)
 {
     foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
     {
-        ChildBase * pChildWin = qobject_cast<ChildBase *>(window->widget());
+        ChildForm *pChildWin = qobject_cast<ChildForm *>(window->widget());
         if(pChildWin->windowTitle() == windowTitle)
             return pChildWin;
     }
@@ -240,6 +240,7 @@ void MainWindow::VariableGroupAdd()
 */
 void MainWindow::VariableGroupRename()
 {
+#if 0
     QModelIndex index = ui->treeViewProject->currentIndex();
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
     QString titleOld = QString("%1%2%3").arg("设备变量").arg("-").arg(text);
@@ -273,6 +274,7 @@ void MainWindow::VariableGroupRename()
             }
         }
     }
+#endif
 }
 
 /*
@@ -280,6 +282,7 @@ void MainWindow::VariableGroupRename()
 */
 void MainWindow::VariableDeleteGroup()
 {
+#if 0
     QModelIndex ModelIndex = ui->treeViewProject->selectionModel()->currentIndex();
     QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
 
@@ -305,6 +308,7 @@ void MainWindow::VariableDeleteGroup()
     }
     m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
     UpdateDeviceVariableTableGroup();
+#endif
 }
 
 /*
@@ -312,6 +316,7 @@ void MainWindow::VariableDeleteGroup()
 */
 void MainWindow::VariableGroupCopy()
 {
+#if 0
     QModelIndex ModelIndex = ui->treeViewProject->selectionModel()->currentIndex();
     QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
 
@@ -342,6 +347,7 @@ void MainWindow::VariableGroupCopy()
             break;
         }
     }
+#endif
 }
 
 /*
@@ -349,6 +355,7 @@ void MainWindow::VariableGroupCopy()
 */
 void MainWindow::VariableModifyGroupID()
 {
+#if 0
     QModelIndex index = ui->treeViewProject->currentIndex();
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
     foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
@@ -366,6 +373,7 @@ void MainWindow::VariableModifyGroupID()
             }
         }
     }
+#endif
 }
 
 /*
@@ -565,6 +573,32 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
     QString winTittle = item->text();
 
+    // 工具条使能
+    enableToolBar(winTittle);
+
+    ChildForm* window = findMdiChild(winTittle);
+    if(window != NULL)
+    {
+        setActiveSubWindow(window);
+        return;
+    }
+
+    ChildForm* pChildForm = new ChildForm(this, m_strProjectName);
+    pChildForm->setWindowTitle(winTittle);
+    ui->mdiArea->addSubWindow(pChildForm);
+    setActiveSubWindow(pChildForm);
+
+    ////////////////////////////////////
+
+    if(item->text() == "系统参数") {
+        pChildForm->switchPage(PAGE_SYSTEM_PARAMETER);
+    }
+
+
+
+
+
+#if 0
     if(item->text() == "中间变量" || item->text() == "系统变量")
     {
         winTittle = item->text();
@@ -655,7 +689,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         ui->mdiArea->addSubWindow(pScriptManageWin);
         setActiveSubWindow(pScriptManageWin);
     }
-
+#endif
 }
 
 
@@ -741,11 +775,13 @@ void MainWindow::UpdateDeviceVariableTableGroup()
  */
 void MainWindow::on_actionSaveProject_triggered()
 {
+#if 0
     foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
     {
         ChildBase * pChildWin = qobject_cast<ChildBase *>(window->widget());
         pChildWin->save();
     }
+#endif
 }
 
 /*
@@ -753,6 +789,7 @@ void MainWindow::on_actionSaveProject_triggered()
 */
 void MainWindow::on_actionCloseProject_triggered()
 {
+#if 0
     if(pProjectItem->text() == "未创建工程")
         return;
     foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
@@ -762,6 +799,7 @@ void MainWindow::on_actionCloseProject_triggered()
         window->close();
     }
     UpdateProjectName(NULL);
+#endif
 }
 
 /*
@@ -799,6 +837,7 @@ void MainWindow::on_actionRun_triggered()
  */
 void MainWindow::on_actionUpLoad_triggered()
 {
+#if 0
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/UploadProjects/tmp";
     QDir dir(tmpDir);
@@ -852,6 +891,7 @@ void MainWindow::on_actionUpLoad_triggered()
         delete tarProc;
     }
     delete pDlg;
+#endif
 }
 
 /*
@@ -867,6 +907,7 @@ void MainWindow::on_actionUDisk_triggered()
  */
 void MainWindow::on_actionDownload_triggered()
 {
+#if 0
     if(m_strProjectName == NULL)
         return;
 
@@ -934,7 +975,7 @@ void MainWindow::on_actionDownload_triggered()
 
     }
     delete pDlg;
-
+#endif
 }
 
 
@@ -943,6 +984,7 @@ void MainWindow::on_actionDownload_triggered()
  */
 void MainWindow::on_actionAddTag_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -950,6 +992,7 @@ void MainWindow::on_actionAddTag_triggered()
         VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
         pVariableManagerWin->VariableAdd();
     }
+#endif
 }
 
 /*
@@ -957,6 +1000,7 @@ void MainWindow::on_actionAddTag_triggered()
  */
 void MainWindow::on_actionAppendTag_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -964,6 +1008,7 @@ void MainWindow::on_actionAppendTag_triggered()
         VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
         pVariableManagerWin->VariableAppend();
     }
+#endif
 }
 
 /*
@@ -971,6 +1016,7 @@ void MainWindow::on_actionAppendTag_triggered()
  */
 void MainWindow::on_actionRowCopyTag_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -978,6 +1024,7 @@ void MainWindow::on_actionRowCopyTag_triggered()
         VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
         pVariableManagerWin->VariableRowCopy();
     }
+#endif
 }
 
 /*
@@ -985,6 +1032,7 @@ void MainWindow::on_actionRowCopyTag_triggered()
  */
 void MainWindow::on_actionColumnCopyTag_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -992,6 +1040,7 @@ void MainWindow::on_actionColumnCopyTag_triggered()
         VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
         pVariableManagerWin->VariableColCopy();
     }
+#endif
 }
 
 /*
@@ -999,6 +1048,7 @@ void MainWindow::on_actionColumnCopyTag_triggered()
  */
 void MainWindow::on_actionModifyTag_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -1006,6 +1056,7 @@ void MainWindow::on_actionModifyTag_triggered()
         VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
         pVariableManagerWin->VariableModify();
     }
+#endif
 }
 
 /*
@@ -1013,6 +1064,7 @@ void MainWindow::on_actionModifyTag_triggered()
  */
 void MainWindow::on_actionDeleteTag_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -1020,6 +1072,7 @@ void MainWindow::on_actionDeleteTag_triggered()
         VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
         pVariableManagerWin->VariableDelete();
     }
+#endif
 }
 
 /*
@@ -1027,6 +1080,7 @@ void MainWindow::on_actionDeleteTag_triggered()
  */
 void MainWindow::on_actionExportTag_triggered()
 {
+#if 0
     QString dirUploadProjects = QCoreApplication::applicationDirPath();
     QString strSaveCsvPath = QFileDialog::getExistingDirectory(this, tr("选择导出csv路径"),
                                                        dirUploadProjects,
@@ -1042,6 +1096,7 @@ void MainWindow::on_actionExportTag_triggered()
         VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
         pVariableManagerWin->exportToCsv(strSaveCsvPath, this->m_CurItem);
     }
+#endif
 }
 
 /*
@@ -1049,6 +1104,7 @@ void MainWindow::on_actionExportTag_triggered()
  */
 void MainWindow::on_actionImportTag_triggered()
 {
+#if 0
     QString path = QCoreApplication::applicationDirPath();
     QString strSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),
                                                     path,
@@ -1104,7 +1160,7 @@ void MainWindow::on_actionImportTag_triggered()
         pVariableManagerWin->importFromCsv(strSaveCsvFile);
     }
 
-
+#endif
 }
 
 /*
@@ -1112,6 +1168,7 @@ void MainWindow::on_actionImportTag_triggered()
  */
 void MainWindow::on_actionDeviceNew_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -1119,6 +1176,7 @@ void MainWindow::on_actionDeviceNew_triggered()
         CommunicationDeviceWin * pCommunicationDeviceWin = qobject_cast<CommunicationDeviceWin *>(window);
         pCommunicationDeviceWin->NewDevice();
     }
+#endif
 }
 
 /*
@@ -1126,6 +1184,7 @@ void MainWindow::on_actionDeviceNew_triggered()
  */
 void MainWindow::on_actionDeviceModify_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -1133,6 +1192,7 @@ void MainWindow::on_actionDeviceModify_triggered()
         CommunicationDeviceWin * pCommunicationDeviceWin = qobject_cast<CommunicationDeviceWin *>(window);
         pCommunicationDeviceWin->ModifyDevice();
     }
+#endif
 }
 
 /*
@@ -1140,6 +1200,7 @@ void MainWindow::on_actionDeviceModify_triggered()
  */
 void MainWindow::on_actionDeviceDelete_triggered()
 {
+#if 0
     ChildBase* window = findMdiChild(this->m_CurItem);
 
     if(window != NULL)
@@ -1147,6 +1208,7 @@ void MainWindow::on_actionDeviceDelete_triggered()
         CommunicationDeviceWin * pCommunicationDeviceWin = qobject_cast<CommunicationDeviceWin *>(window);
         pCommunicationDeviceWin->DeleteDevice();
     }
+#endif
 }
 
 /*
@@ -1316,6 +1378,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
 */
 void MainWindow::on_actionBigIcon_triggered()
 {
+#if 0
     ui->actionBigIcon->setChecked(true);
     ui->actionSmallIcon->setChecked(false);
     ChildBase* pWin = findMdiChild(this->m_CurItem);
@@ -1323,6 +1386,7 @@ void MainWindow::on_actionBigIcon_triggered()
     {
         pWin->ShowLargeIcon();
     }
+#endif
 }
 
 /*
@@ -1330,6 +1394,7 @@ void MainWindow::on_actionBigIcon_triggered()
 */
 void MainWindow::on_actionSmallIcon_triggered()
 {
+#if 0
     ui->actionBigIcon->setChecked(false);
     ui->actionSmallIcon->setChecked(true);
     ChildBase* pWin = findMdiChild(this->m_CurItem);
@@ -1337,4 +1402,5 @@ void MainWindow::on_actionSmallIcon_triggered()
     {
         pWin->ShowSmallIcon();
     }
+#endif
 }

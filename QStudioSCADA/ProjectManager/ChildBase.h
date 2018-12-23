@@ -7,16 +7,18 @@ class ChildBase : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ChildBase(QWidget *parent = 0, QString itemName = "", QString projName = "");
+    explicit ChildBase(QWidget *parent = 0,
+                       const QString &itemName = "",
+                       const QString &projName = "");
     virtual ~ChildBase();
-    QString GetItemProjectName();
-    void SetItemProjectName(QString s);
-    QString GetItemName();
-    void SetItemName(QString s);
+    QString getProjectName() const;
+    void setProjectName(const QString &s);
+    QString getItemName() const;
+    void setItemName(const QString &s);
     // 设置文件修改标志
-    void SetModifiedFlag(bool b);
+    void setModifiedFlag(bool b);
     // 获取文件修改标志
-    bool GetModifiedFlag();
+    bool getModifiedFlag();
 
     // 打开文件
     virtual void open() = 0;

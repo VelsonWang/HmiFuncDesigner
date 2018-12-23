@@ -6,15 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>591</width>
-    <height>456</height>
+    <width>816</width>
+    <height>426</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="images.qrc">
+   <iconset resource="../DrawApplication/DrawApplication/images.qrc">
     <normaloff>:/images/appicon.png</normaloff>:/images/appicon.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -45,7 +45,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="images.qrc"/>
+  <include location="../DrawApplication/DrawApplication/images.qrc"/>
  </resources>
  <connections/>
 </ui>

@@ -1,7 +1,9 @@
 #include "ChildBase.h"
 
 
-ChildBase::ChildBase(QWidget *parent, QString itemName, QString projName) :
+ChildBase::ChildBase(QWidget *parent,
+                     const QString &itemName,
+                     const QString &projName) :
     QWidget(parent),
     m_strItemName(itemName),
     m_strProjectName(projName)
@@ -14,35 +16,32 @@ ChildBase::~ChildBase()
 
 }
 
-QString ChildBase::GetItemProjectName()
+QString ChildBase::getProjectName() const
 {
     return m_strProjectName;
 }
 
-void ChildBase::SetItemProjectName(QString s)
+void ChildBase::setProjectName(const QString &s)
 {
     m_strProjectName = s;
 }
 
-QString ChildBase::GetItemName()
+QString ChildBase::getItemName() const
 {
     return m_strItemName;
 }
 
-
-
-void ChildBase::SetItemName(QString s)
+void ChildBase::setItemName(const QString &s)
 {
     m_strItemName = s;
 }
 
-
-void ChildBase::SetModifiedFlag(bool b)
+void ChildBase::setModifiedFlag(bool b)
 {
     this->m_bModifiedFlag = b;
 }
 
-bool ChildBase::GetModifiedFlag()
+bool ChildBase::getModifiedFlag()
 {
     return this->m_bModifiedFlag;
 }
