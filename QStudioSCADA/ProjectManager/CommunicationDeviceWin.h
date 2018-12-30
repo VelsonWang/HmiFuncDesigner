@@ -15,10 +15,14 @@ class CommunicationDeviceWin : public ChildBase
     Q_OBJECT
 
 public:
-    explicit CommunicationDeviceWin(QWidget *parent = 0, QString itemName = "", QString projName = "");
+    explicit CommunicationDeviceWin(QWidget *parent = 0,
+                                    const QString &itemName = "",
+                                    const QString &projName = "");
     ~CommunicationDeviceWin();
 
 public:
+    void ListViewUpdate(const QString &it);
+
     // 打开文件
     void open();
     // 保存文件
@@ -30,7 +34,7 @@ public:
 
 private:
     void ListViewUISetting();
-    void ListViewUpdate(QString it);
+
     void ListViewCommunicationDeviceUpdate();
     void ListViewCOMDeviceUpdate();
     void ListViewNetDeviceUpdate();

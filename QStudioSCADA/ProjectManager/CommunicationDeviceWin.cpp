@@ -11,7 +11,9 @@
 
 #include <QDebug>
 
-CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent, QString itemName, QString projName) :
+CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
+                                               const QString &itemName,
+                                               const QString &projName) :
     ChildBase(parent, itemName, projName),
     ui(new Ui::CommunicationDeviceWin)
 {
@@ -44,8 +46,8 @@ void CommunicationDeviceWin::ListViewUISetting()
     ui->listViewCommunicationDevice->setMovement(QListView::Static);
 }
 
-void CommunicationDeviceWin::ListViewUpdate(QString it)
-{
+void CommunicationDeviceWin::ListViewUpdate(const QString &it)
+{qDebug()<< __FUNCTION__ << __LINE__ << it;
     if(it == "通讯设备")
     {
         ListViewCommunicationDeviceUpdate();

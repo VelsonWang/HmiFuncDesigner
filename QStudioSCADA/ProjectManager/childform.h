@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "SystemParametersWin.h"
+#include "CommunicationDeviceWin.h"
 
 
 namespace Ui {
@@ -12,6 +13,8 @@ class ChildForm;
 
 enum PAGE_FLOWTYPE{
     PAGE_SYSTEM_PARAMETER,
+    PAGE_COMMUNICATE_DEVICE,
+
 };
 Q_DECLARE_METATYPE(PAGE_FLOWTYPE)
 
@@ -33,24 +36,26 @@ public:
     // 获取文件修改标志
     bool getModifiedFlag();
 
-/*
     // 打开文件
-    virtual void open() = 0;
+    virtual void open();
     // 保存文件
-    virtual void save() = 0;
+    virtual void save();
     // 显示大图标
-    virtual void ShowLargeIcon() = 0;
+    virtual void ShowLargeIcon();
     // 显示小图标
-    virtual void ShowSmallIcon() = 0;
-*/
+    virtual void ShowSmallIcon();
+
 private:
 
+public slots:
+    void treeItemClicked(const QString &itemText);
 
 private:
     PAGE_FLOWTYPE m_currPageFlow; // 当前页面
     bool m_bModifiedFlag;
     QString m_strProjectName;
-    SystemParametersWin *m_sysParamWinPtr; //系统参数设置
+    SystemParametersWin *m_sysParamWinPtr; // 系统参数设置
+    CommunicationDeviceWin * m_communicationDeviceWinPtr; // 通讯设备
 
 private:
     Ui::ChildForm *ui;

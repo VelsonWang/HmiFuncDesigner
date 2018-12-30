@@ -22,6 +22,9 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+signals:
+    void treeItemClicked(const QString &itemText);
+
 private slots:   
     void setActiveSubWindow(ChildForm *window);
     ChildForm* getActiveSubWindow();

@@ -28,6 +28,7 @@
 #include <QProcess>
 #include <QStringList>
 #include <QTime>
+#include <QMdiSubWindow>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -37,12 +38,9 @@ MainWindow::MainWindow(QWidget *parent) :
     m_CurTreeViewItem(""),
     m_CurItem("")
 {
-    ui->setupUi(this);
-
-    // 工具条使能
-    enableToolBar("");
-    // 右键菜单生效
-    setContextMenuPolicy(Qt::DefaultContextMenu);
+    ui->setupUi(this);   
+    enableToolBar(""); // 工具条使能
+    setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
     readSettings(); // 初始窗口时读取窗口设置信息
     initWindow(); // 初始化窗口
     setUpProjectTreeView();
@@ -437,12 +435,9 @@ void MainWindow::closeEvent(QCloseEvent *event) // 关闭事件
         ConfigUtils::SetCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
     ui->mdiArea->closeAllSubWindows(); // 先执行多文档区域的关闭操作
     writeSettings(); // 在关闭前写入窗口设置
-    if (ui->mdiArea->currentSubWindow())
-    {
+    if (ui->mdiArea->currentSubWindow()) {
         event->ignore(); // 如果还有窗口没有关闭，则忽略该事件
-    }
-    else
-    {
+    } else {
         event->accept();
     }
 }
@@ -492,15 +487,13 @@ void MainWindow::initWindow() // 初始化窗口
 
 void MainWindow::on_actionNewPoject_triggered()
 {
-    if(pProjectItem->text() != "未创建工程")
-    {
+    if(pProjectItem->text() != "未创建工程") {
         QMessageBox::information(this, "系统提示", "工程文件已建立，请手动关闭当前工程文件后重新建立！");
         return;
     }
 
     NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
-    if(pNewProjectDlg->exec() == QDialog::Accepted)
-    {
+    if(pNewProjectDlg->exec() == QDialog::Accepted) {
         UpdateProjectName(pNewProjectDlg->GetProjectName());
         updateRecentProjectList(pNewProjectDlg->GetProjectName());
         m_pIoDBVarGroups = new DBVarGroups(m_strProjectName);
@@ -513,8 +506,7 @@ void MainWindow::on_actionNewPoject_triggered()
 void MainWindow::doOpenProject(QString proj)
 {
     QFile fileProj(proj);
-    if(!fileProj.exists())
-    {
+    if(!fileProj.exists()) {
         QMessageBox::information(this, "系统提示", "工程：" + proj + "不存在！");
         return;
     }
@@ -537,8 +529,7 @@ void MainWindow::on_actionOpenProject_triggered()
     QString fileName = QFileDialog::getOpenFileName(this, tr("选择工程文件"),
                                                     path,
                                                     tr("project file (*.proj)"));
-    if(fileName != NULL)
-    {   
+    if(fileName != NULL) {
         doOpenProject(fileName);
     }
 }
@@ -576,24 +567,26 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     // 工具条使能
     enableToolBar(winTittle);
 
-    ChildForm* window = findMdiChild(winTittle);
-    if(window != NULL)
-    {
-        setActiveSubWindow(window);
-        return;
+    ChildForm *findForm = findMdiChild(m_strProjectName);
+    if(findForm == NULL) {
+        findForm = new ChildForm(this, m_strProjectName);
+        findForm->setWindowTitle(m_strProjectName);
+        ui->mdiArea->addSubWindow(findForm);
+        connect(this, SIGNAL(treeItemClicked(const QString &)),
+                findForm, SLOT(treeItemClicked(const QString &)));
     }
-
-    ChildForm* pChildForm = new ChildForm(this, m_strProjectName);
-    pChildForm->setWindowTitle(winTittle);
-    ui->mdiArea->addSubWindow(pChildForm);
-    setActiveSubWindow(pChildForm);
 
     ////////////////////////////////////
 
     if(item->text() == "系统参数") {
-        pChildForm->switchPage(PAGE_SYSTEM_PARAMETER);
+        findForm->switchPage(PAGE_SYSTEM_PARAMETER);
+    } else if(item->text() == "通讯设备" || item->text() == "串口设备" || item->text() == "网络设备") {
+        findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
     }
 
+    setActiveSubWindow(findForm);
+
+    emit treeItemClicked(item->text());
 
 
 
@@ -644,12 +637,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     ////////////////////////////////////
 
-    if(item->text() == "系统参数")
-    {
-        SystemParametersWin* pSystemParametersWin = new SystemParametersWin(this, "系统参数", m_strProjectName);
-        ui->mdiArea->addSubWindow(pSystemParametersWin);
-        setActiveSubWindow(pSystemParametersWin);
-    }
+
     else if(item->text() == "通讯设备" || item->text() == "串口设备" || item->text() == "网络设备")
     {
         CommunicationDeviceWin * pCommunicationDeviceWin = new CommunicationDeviceWin(this, item->text(), m_strProjectName);
@@ -727,15 +715,12 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
 void MainWindow::UpdateProjectName(QString name)
 {
-    if(name != NULL)
-    {
+    if(name != NULL) {
         m_strProjectName = name;
         m_strProjectPath = name.left(name.lastIndexOf("/"));
-        QString strName = name.mid(name.lastIndexOf("/") + 1,name.indexOf(".") - name.lastIndexOf("/") - 1);
+        QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
         pProjectItem->setText(strName);
-    }
-    else
-    {
+    } else {
         m_strProjectName = "";
         m_strProjectPath = "";
         qDeleteAll(m_pIoDBVarGroups->m_VarBlockGroupList);
@@ -775,13 +760,11 @@ void MainWindow::UpdateDeviceVariableTableGroup()
  */
 void MainWindow::on_actionSaveProject_triggered()
 {
-#if 0
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
-    {
-        ChildBase * pChildWin = qobject_cast<ChildBase *>(window->widget());
-        pChildWin->save();
+    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
+        ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
+        if(findForm != NULL)
+            findForm->save();
     }
-#endif
 }
 
 /*
@@ -789,17 +772,15 @@ void MainWindow::on_actionSaveProject_triggered()
 */
 void MainWindow::on_actionCloseProject_triggered()
 {
-#if 0
     if(pProjectItem->text() == "未创建工程")
         return;
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
-    {
-        ChildBase * pChildWin = qobject_cast<ChildBase *>(window->widget());
-        pChildWin->save();
+    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
+        ChildForm * findForm = qobject_cast<ChildForm *>(window->widget());
+        if(findForm != NULL)
+            findForm->save();
         window->close();
     }
     UpdateProjectName(NULL);
-#endif
 }
 
 /*
@@ -837,23 +818,19 @@ void MainWindow::on_actionRun_triggered()
  */
 void MainWindow::on_actionUpLoad_triggered()
 {
-#if 0
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/UploadProjects/tmp";
     QDir dir(tmpDir);
-    if(!dir.exists())
-    {
+    if(!dir.exists()) {
         dir.mkpath(tmpDir);
     }
 
     ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, m_strProjectName);
-    if(pDlg->exec() == QDialog::Accepted)
-    {
+    if(pDlg->exec() == QDialog::Accepted) {
         QString desDir = pDlg->getProjectPath();
         QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
         QFile programFile(program);
-        if(!programFile.exists())
-        {
+        if(!programFile.exists()) {
             QMessageBox::information(this, "系统提示", "命令：" + program + "不存在！");
             return;
         }
@@ -863,10 +840,8 @@ void MainWindow::on_actionUpLoad_triggered()
         QStringList arguments;
         arguments << "-xvf" << "../UploadProjects/RunProject.tar" << "-C" << "../UploadProjects/tmp";
         tarProc->start(program, arguments);
-        if(tarProc->waitForStarted())
-        {
-            if(tarProc->waitForFinished())
-            {
+        if(tarProc->waitForStarted()) {
+            if(tarProc->waitForFinished()) {
                 //qDebug()<< "process finished.";
                 QString strSrc = QCoreApplication::applicationDirPath() + "/UploadProjects/tmp/RunProject";
 
@@ -877,21 +852,17 @@ void MainWindow::on_actionUpLoad_triggered()
 
                 QString tarProj = QCoreApplication::applicationDirPath() + "/UploadProjects/RunProject.tar";
                 QFile tarProjFile(tarProj);
-                if(tarProjFile.exists())
-                {
+                if(tarProjFile.exists()) {
                     tarProjFile.remove();
                 }
             }
-        }
-        else
-        {
+        } else {
             QMessageBox::information(this, "系统提示", "解压缩工程失败！");
         }
 
         delete tarProc;
     }
     delete pDlg;
-#endif
 }
 
 /*
@@ -907,15 +878,13 @@ void MainWindow::on_actionUDisk_triggered()
  */
 void MainWindow::on_actionDownload_triggered()
 {
-#if 0
     if(m_strProjectName == NULL)
         return;
 
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/tmp";
     QDir dir(tmpDir);
-    if(!dir.exists())
-    {
+    if(!dir.exists()) {
         dir.mkpath(tmpDir);
     }
 
@@ -926,8 +895,7 @@ void MainWindow::on_actionDownload_triggered()
     // 打包工程到tmp目录
     QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
     QFile programFile(program);
-    if(!programFile.exists())
-    {
+    if(!programFile.exists()) {
         QMessageBox::information(this, "系统提示", "命令：" + program + "不存在！");
         return;
     }
@@ -938,31 +906,24 @@ void MainWindow::on_actionDownload_triggered()
     QStringList arguments;
     arguments << "-cvf" << "../tmp/RunProject.tar" << "-C"<< "../tmp" << "RunProject";
     tarProc->start(program, arguments);
-    if(tarProc->waitForStarted())
-    {
+    if(tarProc->waitForStarted()) {
         //qDebug()<< "process start.";
-        if(tarProc->waitForFinished())
-        {
+        if(tarProc->waitForFinished()) {
             //qDebug()<< "process finished.";
             // 压缩完成准备传输文件
         }
-        if(tarProc->exitStatus() == QProcess::NormalExit)
-        {
+        if(tarProc->exitStatus() == QProcess::NormalExit) {
             //qDebug()<< "process exitStatus is QProcess::NormalExit.";
-        }
-        else // QProcess::CrashExit
-        {
+        } else { // QProcess::CrashExit
+
             //qDebug()<< "process exitStatus is QProcess::CrashExit.";
         }
-    }
-    else
-    {
+    } else {
         QMessageBox::information(this, "系统提示", "压缩工程失败！");
     }
 
     QDir dirRunProj(desDir);
-    if(dirRunProj.exists())
-    {
+    if(dirRunProj.exists()) {
         Helper::DeleteDir(desDir);
     }
 
@@ -970,12 +931,10 @@ void MainWindow::on_actionDownload_triggered()
 
     ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, m_strProjectName);
     pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
-    if(pDlg->exec() == QDialog::Accepted)
-    {
+    if(pDlg->exec() == QDialog::Accepted) {
 
     }
     delete pDlg;
-#endif
 }
 
 
@@ -1226,8 +1185,7 @@ void MainWindow::on_actionHelp_triggered()
 void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog *pDlg = new AboutDialog(this);
-    if(pDlg->exec() == QDialog::Accepted)
-    {
+    if(pDlg->exec() == QDialog::Accepted) {
 
     }
     delete pDlg;
@@ -1240,13 +1198,11 @@ void MainWindow::loadRecentProjectList()
 {
     QString iniRecentProjectFileName = ConfigUtils::AppDir() + "/RecentProjectList.ini";
     QFile fileCfg(iniRecentProjectFileName);
-    if(fileCfg.exists())
-    {
+    if(fileCfg.exists()) {
         QStringList slist;
         ConfigUtils::GetCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
-        for (int i=0; i<slist.count(); i++)
-        {
+        for (int i=0; i<slist.count(); i++) {
             QAction *pAct = new QAction(slist.at(i), this);
             pAct->setStatusTip(tr(""));
             connect(pAct, &QAction::triggered, this, [=]{
@@ -1260,16 +1216,14 @@ void MainWindow::loadRecentProjectList()
 
     QList<QAction *> listActRemove;
     QList<QAction *> listAct = ui->menuProject->actions();
-    for (int i = 0; i<listAct.size(); ++i)
-    {
+    for (int i = 0; i<listAct.size(); ++i) {
         QAction *pAct = listAct.at(i);
         if(pAct->isSeparator())
             listActRemove.append(pAct);
         if(pAct->text() == tr("最近文件列表"))
             listActRemove.append(pAct);
     }
-    for (int j = 0; j<listActRemove.size(); ++j)
-    {
+    for (int j = 0; j<listActRemove.size(); ++j) {
         ui->menuProject->removeAction(listActRemove.at(j));
     }
 }
@@ -1285,15 +1239,12 @@ void MainWindow::updateRecentProjectList(QString newProj)
 
     QString iniRecentProjectFileName = ConfigUtils::AppDir() + "/RecentProjectList.ini";
     QFile fileCfg(iniRecentProjectFileName);
-    if(fileCfg.exists())
-    {
+    if(fileCfg.exists()) {
         QStringList slist;
         ConfigUtils::GetCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
-        for (int i=0; i<slist.count(); i++)
-        {
-            if(newProj == slist.at(i))
-            {
+        for (int i=0; i<slist.count(); i++) {
+            if(newProj == slist.at(i)) {
                 return;
             }
         }
@@ -1306,29 +1257,24 @@ void MainWindow::updateRecentProjectList(QString newProj)
 
         QList<QAction *> listActRemove;
         QList<QAction *> listAct = ui->menuProject->actions();
-        for (int i = 0; i < listAct.size(); ++i)
-        {
+        for (int i = 0; i < listAct.size(); ++i) {
             QAction *pAct = listAct.at(i);
-            if(pAct->isSeparator() && bStart == false && bEnd == false)
-            {
+            if(pAct->isSeparator() && bStart == false && bEnd == false) {
                 bStart = true;
                 continue;
             }
-            if(pAct->isSeparator() && bStart && bEnd == false)
-            {
+            if(pAct->isSeparator() && bStart && bEnd == false) {
                 bEnd = true;
                 bStart = false;
                 break;
             }
-            if(bStart && bEnd == false)
-            {
+            if(bStart && bEnd == false) {
                 listActRemove.append(pAct);
             }
             if(pAct->text() == tr("最近文件列表"))
                 listActRemove.append(pAct);
         }
-        for (int j = 0; j<listActRemove.size(); ++j)
-        {
+        for (int j = 0; j<listActRemove.size(); ++j) {
             ui->menuProject->removeAction(listActRemove.at(j));
         }
 
@@ -1338,16 +1284,13 @@ void MainWindow::updateRecentProjectList(QString newProj)
         QAction *pActPos;
         listAct.clear();
         listAct = ui->menuProject->actions();
-        for (int i = 0; i < listAct.size(); ++i)
-        {
+        for (int i = 0; i < listAct.size(); ++i) {
             QAction *pAct = listAct.at(i);
-            if(pAct->isSeparator() && bStart == false && bEnd == false)
-            {
+            if(pAct->isSeparator() && bStart == false && bEnd == false) {
                 bStart = true;
                 continue;
             }
-            if(pAct->isSeparator() && bStart && bEnd == false)
-            {
+            if(pAct->isSeparator() && bStart && bEnd == false) {
                 bEnd = true;
                 pActPos = pAct;
                 bStart = false;
@@ -1355,8 +1298,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
             }
         }
 
-        for (int i=0; i<slist.count(); i++)
-        {
+        for (int i=0; i<slist.count(); i++) {
             QAction *pAct = new QAction(slist.at(i), this);
             pAct->setStatusTip(tr(""));
             connect(pAct, &QAction::triggered, this, [=]{
@@ -1364,9 +1306,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
                     });
             ui->menuProject->insertAction(pActPos, pAct);
         }
-    }
-    else
-    {
+    } else {
         QStringList slist;
         ConfigUtils::WriteCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
     }
@@ -1378,15 +1318,12 @@ void MainWindow::updateRecentProjectList(QString newProj)
 */
 void MainWindow::on_actionBigIcon_triggered()
 {
-#if 0
     ui->actionBigIcon->setChecked(true);
     ui->actionSmallIcon->setChecked(false);
-    ChildBase* pWin = findMdiChild(this->m_CurItem);
-    if(pWin != NULL)
-    {
-        pWin->ShowLargeIcon();
+    ChildForm *findForm = findMdiChild(this->m_CurItem);
+    if(findForm != NULL) {
+        findForm->ShowLargeIcon();
     }
-#endif
 }
 
 /*
@@ -1394,13 +1331,10 @@ void MainWindow::on_actionBigIcon_triggered()
 */
 void MainWindow::on_actionSmallIcon_triggered()
 {
-#if 0
     ui->actionBigIcon->setChecked(false);
     ui->actionSmallIcon->setChecked(true);
-    ChildBase* pWin = findMdiChild(this->m_CurItem);
-    if(pWin != NULL)
-    {
-        pWin->ShowSmallIcon();
+    ChildForm *findForm = findMdiChild(this->m_CurItem);
+    if(findForm != NULL) {
+        findForm->ShowSmallIcon();
     }
-#endif
 }

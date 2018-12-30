@@ -1,5 +1,6 @@
 #include "childform.h"
 #include "ui_childform.h"
+#include <QDebug>
 
 ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     QWidget(parent),
@@ -11,9 +12,13 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     setMinimumSize(600,400);
     qRegisterMetaType<PAGE_FLOWTYPE>("PAGE_FLOWTYPE");
 
-    //系统参数设置页面
+    // 系统参数设置页面
     m_sysParamWinPtr = new SystemParametersWin(this);
     ui->stackedWidget->addWidget(m_sysParamWinPtr);
+
+    // 通讯设备页面
+    m_communicationDeviceWinPtr = new CommunicationDeviceWin(this);
+    ui->stackedWidget->addWidget(m_communicationDeviceWinPtr);
 }
 
 ChildForm::~ChildForm()
@@ -21,6 +26,11 @@ ChildForm::~ChildForm()
     if(m_sysParamWinPtr != nullptr) {
         delete m_sysParamWinPtr;
         m_sysParamWinPtr = nullptr;
+    }
+
+    if(m_communicationDeviceWinPtr != nullptr) {
+        delete m_communicationDeviceWinPtr;
+        m_communicationDeviceWinPtr = nullptr;
     }
 
     delete ui;
@@ -70,11 +80,78 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
 {
     m_currPageFlow = page;
 
-    // 系统参数设置页面
-    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) {
+    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
         m_sysParamWinPtr->setProjectName(m_strProjectName);
         ui->stackedWidget->setCurrentWidget(m_sysParamWinPtr);
+    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
+        m_communicationDeviceWinPtr->setProjectName(m_strProjectName);
+        ui->stackedWidget->setCurrentWidget(m_communicationDeviceWinPtr);
     }
+
 }
 
+
+/*
+ * 打开文件
+ */
+void ChildForm::open()
+{
+    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
+        m_sysParamWinPtr->open();
+    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
+        m_communicationDeviceWinPtr->open();
+    }
+
+
+}
+
+/*
+ * 保存文件
+ */
+void ChildForm::save()
+{
+    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
+        m_sysParamWinPtr->save();
+    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
+        m_communicationDeviceWinPtr->save();
+    }
+
+
+}
+
+/*
+* 显示大图标
+*/
+void ChildForm::ShowLargeIcon()
+{
+    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
+        m_sysParamWinPtr->ShowLargeIcon();
+    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
+        m_communicationDeviceWinPtr->ShowLargeIcon();
+    }
+
+}
+
+/*
+* 显示小图标
+*/
+void ChildForm::ShowSmallIcon()
+{
+    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
+        m_sysParamWinPtr->ShowSmallIcon();
+    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
+        m_communicationDeviceWinPtr->ShowSmallIcon();
+    }
+
+}
+
+void ChildForm::treeItemClicked(const QString &itemText)
+{
+    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
+        m_sysParamWinPtr->setItemName(itemText);
+    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
+        m_communicationDeviceWinPtr->setItemName(itemText);
+        m_communicationDeviceWinPtr->ListViewUpdate(itemText);
+    }
+}
 
