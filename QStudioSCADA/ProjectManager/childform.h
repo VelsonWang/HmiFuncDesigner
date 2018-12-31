@@ -5,7 +5,7 @@
 
 #include "SystemParametersWin.h"
 #include "CommunicationDeviceWin.h"
-
+#include "VariableManagerWin.h"
 
 namespace Ui {
 class ChildForm;
@@ -14,6 +14,7 @@ class ChildForm;
 enum PAGE_FLOWTYPE{
     PAGE_SYSTEM_PARAMETER,
     PAGE_COMMUNICATE_DEVICE,
+    PAGE_VARIABLE_MANAGER,
 
 };
 Q_DECLARE_METATYPE(PAGE_FLOWTYPE)
@@ -55,7 +56,8 @@ private:
     bool m_bModifiedFlag;
     QString m_strProjectName;
     SystemParametersWin *m_sysParamWinPtr; // 系统参数设置
-    CommunicationDeviceWin * m_communicationDeviceWinPtr; // 通讯设备
+    CommunicationDeviceWin *m_communicationDeviceWinPtr; // 通讯设备
+    VariableManagerWin *m_variableManagerWinPtr; // 变量管理
 
 private:
     Ui::ChildForm *ui;

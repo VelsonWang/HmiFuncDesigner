@@ -151,8 +151,7 @@ void MainWindow::setUpProjectTreeView()
 ChildForm* MainWindow::activeMdiChild() //活动窗口
 {
     // 如果有活动窗口，则将其内的中心部件转换为MdiChild类型
-    if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow())
-    {
+    if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow()) {
         return qobject_cast<ChildForm *>(activeSubWindow->widget());
     }
     return NULL; // 没有活动窗口，直接返回0
@@ -175,8 +174,7 @@ ChildForm* MainWindow::getActiveSubWindow()
 
 ChildForm* MainWindow::findMdiChild(const QString &windowTitle)
 {
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
-    {
+    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
         ChildForm *pChildWin = qobject_cast<ChildForm *>(window->widget());
         if(pChildWin->windowTitle() == windowTitle)
             return pChildWin;
@@ -187,8 +185,7 @@ ChildForm* MainWindow::findMdiChild(const QString &windowTitle)
 
 QMdiSubWindow* MainWindow::findMdiSubWindow(const QString &windowTitle)
 {
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
-    {
+    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
         ChildBase * pChildWin = qobject_cast<ChildBase *>(window->widget());
         if(pChildWin->windowTitle() == windowTitle)
             return window;
@@ -201,8 +198,7 @@ QMdiSubWindow* MainWindow::findMdiSubWindow(const QString &windowTitle)
 */
 void MainWindow::CreateDefaultIOTagGroup()
 {
-    if(pDevVariable->rowCount() == 0)
-    {
+    if(pDevVariable->rowCount() == 0) {
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
         pGroup->m_name = QString(tr("IO设备[缺省]"));
@@ -221,8 +217,7 @@ void MainWindow::VariableGroupAdd()
     NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
     pDlg->SetDialogName("新建数据组");
     pDlg->SetLabelName("数据组名：");
-    if(pDlg->exec() == QDialog::Accepted)
-    {
+    if(pDlg->exec() == QDialog::Accepted) {
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
         pGroup->m_name = pDlg->GetGroupName();
@@ -564,6 +559,19 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
     QString winTittle = item->text();
 
+    if(item->text() == "中间变量" || item->text() == "系统变量") {
+        winTittle = item->text();
+    } else {
+        // 设备变量
+        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
+        {
+            if(item->text() == var->m_name)
+            {
+                winTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(item->text());
+            }
+        }
+    }
+
     // 工具条使能
     enableToolBar(winTittle);
 
@@ -578,58 +586,12 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     ////////////////////////////////////
 
-    if(item->text() == "系统参数") {
-        findForm->switchPage(PAGE_SYSTEM_PARAMETER);
-    } else if(item->text() == "通讯设备" || item->text() == "串口设备" || item->text() == "网络设备") {
-        findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
-    }
-
-    setActiveSubWindow(findForm);
-
-    emit treeItemClicked(item->text());
-
-
-
-
-#if 0
-    if(item->text() == "中间变量" || item->text() == "系统变量")
-    {
-        winTittle = item->text();
-    }
-    else
-    {
-        // 设备变量
-        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-        {
-            if(item->text() == var->m_name)
-            {
-                winTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(item->text());
-            }
-        }
-    }
-
-    // 工具条使能
-    enableToolBar(winTittle);
-
-    ChildBase* window = findMdiChild(winTittle);
-    if(window != NULL)
-    {
-        setActiveSubWindow(window);
-        return;
-    }
-
-    ////////////////////////////////////
-
     bool VarFound = false;
-    if(item->text() == "中间变量" || item->text() == "系统变量")
-    {
+    if(item->text() == "中间变量" || item->text() == "系统变量") {
         VarFound = true;
-    }
-    else
-    {
+    } else {
         // 设备变量
-        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-        {
+        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
             if(item->text() == var->m_name)
                 VarFound = true;
         }
@@ -637,28 +599,18 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     ////////////////////////////////////
 
-
-    else if(item->text() == "通讯设备" || item->text() == "串口设备" || item->text() == "网络设备")
-    {
-        CommunicationDeviceWin * pCommunicationDeviceWin = new CommunicationDeviceWin(this, item->text(), m_strProjectName);
-        ui->mdiArea->addSubWindow(pCommunicationDeviceWin);
-        setActiveSubWindow(pCommunicationDeviceWin);
-    }
-    else if(VarFound) // 设备变量
-    {
-        QString strItem;
-        if(item->text() == "中间变量" || item->text() == "系统变量")
-        {
-            strItem = item->text();
+    if(item->text() == "系统参数") {
+        findForm->switchPage(PAGE_SYSTEM_PARAMETER);
+    } else if(item->text() == "通讯设备" || item->text() == "串口设备" || item->text() == "网络设备") {
+        findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
+    } else if(VarFound) { // 设备变量
+        if(item->text() == "中间变量" || item->text() == "系统变量") {
+            winTittle = item->text();
+        } else {
+            winTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(item->text());
         }
-        else
-        {
-            strItem = QString("%1%2%3").arg("设备变量").arg("-").arg(item->text());
-        }
-        VariableManagerWin * pVariableManagerWin = new VariableManagerWin(this, strItem, m_strProjectName);
-        ui->mdiArea->addSubWindow(pVariableManagerWin);
-        setActiveSubWindow(pVariableManagerWin);
-    }
+        findForm->switchPage(PAGE_VARIABLE_MANAGER);
+    } /*
     else if(item->text() == "画面")
     {
         DrawPageWin *pDrawPageWin = new DrawPageWin(this, "画面", m_strProjectName);
@@ -676,8 +628,12 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         ScriptManageWin *pScriptManageWin = new ScriptManageWin(this, "脚本编辑器", m_strProjectName);
         ui->mdiArea->addSubWindow(pScriptManageWin);
         setActiveSubWindow(pScriptManageWin);
-    }
-#endif
+    } */
+
+    setActiveSubWindow(findForm);
+
+    emit treeItemClicked(winTittle);
+
 }
 
 

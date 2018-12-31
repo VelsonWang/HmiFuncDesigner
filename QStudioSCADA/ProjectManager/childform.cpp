@@ -19,6 +19,12 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     // 通讯设备页面
     m_communicationDeviceWinPtr = new CommunicationDeviceWin(this);
     ui->stackedWidget->addWidget(m_communicationDeviceWinPtr);
+
+    // 变量管理
+    m_variableManagerWinPtr = new VariableManagerWin(this);
+    ui->stackedWidget->addWidget(m_variableManagerWinPtr);
+
+
 }
 
 ChildForm::~ChildForm()
@@ -31,6 +37,11 @@ ChildForm::~ChildForm()
     if(m_communicationDeviceWinPtr != nullptr) {
         delete m_communicationDeviceWinPtr;
         m_communicationDeviceWinPtr = nullptr;
+    }
+
+    if(m_variableManagerWinPtr != nullptr) {
+        delete m_variableManagerWinPtr;
+        m_variableManagerWinPtr = nullptr;
     }
 
     delete ui;
@@ -86,7 +97,11 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->setProjectName(m_strProjectName);
         ui->stackedWidget->setCurrentWidget(m_communicationDeviceWinPtr);
+    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        m_variableManagerWinPtr->setProjectName(m_strProjectName);
+        ui->stackedWidget->setCurrentWidget(m_variableManagerWinPtr);
     }
+
 
 }
 
@@ -100,6 +115,8 @@ void ChildForm::open()
         m_sysParamWinPtr->open();
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->open();
+    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        m_variableManagerWinPtr->open();
     }
 
 
@@ -114,6 +131,8 @@ void ChildForm::save()
         m_sysParamWinPtr->save();
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->save();
+    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        m_variableManagerWinPtr->save();
     }
 
 
@@ -128,6 +147,8 @@ void ChildForm::ShowLargeIcon()
         m_sysParamWinPtr->ShowLargeIcon();
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->ShowLargeIcon();
+    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        m_variableManagerWinPtr->ShowLargeIcon();
     }
 
 }
@@ -141,6 +162,8 @@ void ChildForm::ShowSmallIcon()
         m_sysParamWinPtr->ShowSmallIcon();
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->ShowSmallIcon();
+    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        m_variableManagerWinPtr->ShowSmallIcon();
     }
 
 }
@@ -152,6 +175,9 @@ void ChildForm::treeItemClicked(const QString &itemText)
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->setItemName(itemText);
         m_communicationDeviceWinPtr->ListViewUpdate(itemText);
+    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        m_variableManagerWinPtr->setItemName(itemText);
+        m_variableManagerWinPtr->init(itemText);
     }
 }
 

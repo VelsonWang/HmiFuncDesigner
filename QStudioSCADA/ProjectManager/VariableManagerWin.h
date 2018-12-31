@@ -355,10 +355,16 @@ class VariableManagerWin : public ChildBase
     Q_OBJECT
 
 public:
-    explicit VariableManagerWin(QWidget *parent = 0, QString itemName = "", QString projName = "");
+    explicit VariableManagerWin(QWidget *parent = 0,
+                                const QString &itemName = "",
+                                const QString &projName = "");
     ~VariableManagerWin();
+
+    void init(const QString &itemName = "");
     //获取工程所有变量的名称
-    static void GetAllProjectVariableName(const QString &proj_path, QStringList &varList, QString type="ALL");
+    static void GetAllProjectVariableName(const QString &proj_path,
+                                          QStringList &varList,
+                                          const QString &type = "ALL");
 
 
 public:
@@ -372,15 +378,15 @@ public:
     void ShowSmallIcon();
 
 public:
-    bool loadFromFile(SaveFormat saveFormat, QString it);
-    bool saveToFile(SaveFormat saveFormat, QString it);
-    void exportToCsv(QString path, QString group);
-    void importFromCsv(QString path);
-    void SetTitle(QString t);
+    bool loadFromFile(SaveFormat saveFormat, const QString &it);
+    bool saveToFile(SaveFormat saveFormat, const QString &it);
+    void exportToCsv(const QString &path, const QString &group);
+    void importFromCsv(const QString &path);
+    void SetTitle(const QString &t);
 
 private:
-    void load(const QJsonObject &json, QString it);
-    void save(QJsonObject &json, QString it);
+    void load(const QJsonObject &json, const QString &it);
+    void save(QJsonObject &json, const QString &it);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);

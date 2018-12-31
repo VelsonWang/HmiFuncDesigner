@@ -47,7 +47,7 @@ void CommunicationDeviceWin::ListViewUISetting()
 }
 
 void CommunicationDeviceWin::ListViewUpdate(const QString &it)
-{qDebug()<< __FUNCTION__ << __LINE__ << it;
+{
     if(it == "通讯设备")
     {
         ListViewCommunicationDeviceUpdate();

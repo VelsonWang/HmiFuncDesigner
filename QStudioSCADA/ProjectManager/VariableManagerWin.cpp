@@ -63,8 +63,8 @@ QVariant TagSystemTableModel::data(const QModelIndex &index, int role) const
         QStyleOptionComboBox option;
         switch (index.column())
         {
-            case TagID: option.currentText = item.m_TagID;break;
-            case Name: option.currentText = item.m_sName;break;
+            case TagID: option.currentText = item.m_TagID; break;
+            case Name: option.currentText = item.m_sName; break;
             case Description: option.currentText = item.m_sDescription; break;
             case Unit: option.currentText = item.m_sUnit; break;
             case ProjectConverter: option.currentText = item.m_sProjectConverter; break;
@@ -891,7 +891,9 @@ void VariableTableView::mousePressEvent(QMouseEvent *event)
 ///////////////////////////////////////////////////////////////////
 
 
-VariableManagerWin::VariableManagerWin(QWidget *parent, QString itemName, QString projName) :
+VariableManagerWin::VariableManagerWin(QWidget *parent,
+                                       const QString &itemName,
+                                       const QString &projName) :
     ChildBase(parent, itemName, projName),
     ui(new Ui::VariableManagerWin)
 {
@@ -902,71 +904,16 @@ VariableManagerWin::VariableManagerWin(QWidget *parent, QString itemName, QStrin
     m_variableTableView = new VariableTableView(this);
     m_variableTableView->setObjectName(QStringLiteral("variableTableView"));
     ui->verticalLayout->addWidget(m_variableTableView);
-    connect(m_variableTableView, SIGNAL(doubleClicked(QModelIndex)), this, SLOT(tableViewVariableDoubleClicked(QModelIndex)));
+    connect(m_variableTableView, SIGNAL(doubleClicked(QModelIndex)),
+            this, SLOT(tableViewVariableDoubleClicked(QModelIndex)));
 
-    SetTitle(itemName);
     // 右键菜单生效
     setContextMenuPolicy(Qt::DefaultContextMenu);
 
-    pTagTmpTableModel = 0;
-    pTagSystemTableModel = 0;
-    pTagIOTableModel = 0;
+    pTagIOTableModel = new TagIOTableModel(this);
+    pTagTmpTableModel = new TagTmpTableModel(this);
+    pTagSystemTableModel = new TagSystemTableModel(this);
 
-    if(m_strItemName == "设备变量")
-    {
-        pTagIOTableModel = new TagIOTableModel(this);
-    }
-    else if(m_strItemName == "中间变量")
-    {
-        pTagTmpTableModel = new TagTmpTableModel(this);
-    }
-    else if(m_strItemName == "系统变量")
-    {
-        pTagSystemTableModel = new TagSystemTableModel(this);
-    }
-
-    loadFromFile(DATA_SAVE_FORMAT, m_strItemName);
-
-    if(m_strItemName == "设备变量")
-    {
-        m_variableTableView->setModel(pTagIOTableModel);
-        m_variableTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-        QStringList stringListDataType;
-        stringListDataType << tr("模拟量") << tr("数字量");
-        ComboBoxDelegate *pDdataTypeDelegate = new ComboBoxDelegate(stringListDataType, this);
-        m_variableTableView->setItemDelegateForColumn(1, pDdataTypeDelegate);
-    }
-    else if(m_strItemName == "中间变量")
-    {
-        m_variableTableView->setModel(pTagTmpTableModel);
-        m_variableTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-
-        QStringList stringListDataType;
-        stringListDataType << tr("模拟量") << tr("数字量");
-        ComboBoxDelegate *pDdataTypeDelegate = new ComboBoxDelegate(stringListDataType, this);
-        m_variableTableView->setItemDelegateForColumn(1, pDdataTypeDelegate);
-
-        QStringList stringListActionScope;
-        stringListActionScope << tr("全局");// << tr("数字量");  后期加入作用画面名称
-        ComboBoxDelegate *pActionScopeDelegate = new ComboBoxDelegate(stringListActionScope, this);
-        m_variableTableView->setItemDelegateForColumn(5, pActionScopeDelegate);
-    }
-    else if(m_strItemName == "系统变量")
-    {
-        m_variableTableView->setModel(pTagSystemTableModel);
-        m_variableTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
-    }
-
-    // 单元格显示不换行
-    m_variableTableView->setWordWrap(false);
-    //QHeaderView *pVHeaderView = m_variableTableView->verticalHeader();
-    //pVHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
-    //QHeaderView *pHHeaderView = m_variableTableView->horizontalHeader();
-    //pHHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
-
-    m_variableTableView->horizontalHeader()->setStretchLastSection(true);
-    m_variableTableView->horizontalHeader()->setHighlightSections(false);  // 当表格只有一行的时候，则表头会出现塌陷问题
 }
 
 VariableManagerWin::~VariableManagerWin()
@@ -990,9 +937,48 @@ VariableManagerWin::~VariableManagerWin()
     }
 }
 
-void VariableManagerWin::SetTitle(QString t)
+void VariableManagerWin::init(const QString &itemName)
 {
-    this->setWindowTitle(t);
+    SetTitle(itemName);
+    loadFromFile(DATA_SAVE_FORMAT, m_strItemName);
+
+    if(m_strItemName == "设备变量") {
+        m_variableTableView->setModel(pTagIOTableModel);
+        QStringList stringListDataType;
+        stringListDataType << tr("模拟量")
+                           << tr("数字量");
+        ComboBoxDelegate *pDdataTypeDelegate = new ComboBoxDelegate(stringListDataType, this);
+        m_variableTableView->setItemDelegateForColumn(1, pDdataTypeDelegate);
+    } else if(m_strItemName == "中间变量") {
+        m_variableTableView->setModel(pTagTmpTableModel);
+        QStringList stringListDataType;
+        stringListDataType << tr("模拟量")
+                           << tr("数字量");
+        ComboBoxDelegate *pDdataTypeDelegate = new ComboBoxDelegate(stringListDataType, this);
+        m_variableTableView->setItemDelegateForColumn(1, pDdataTypeDelegate);
+
+        QStringList stringListActionScope;
+        stringListActionScope << tr("全局");// << tr("数字量");  后期加入作用画面名称
+        ComboBoxDelegate *pActionScopeDelegate = new ComboBoxDelegate(stringListActionScope, this);
+        m_variableTableView->setItemDelegateForColumn(5, pActionScopeDelegate);
+    } else if(m_strItemName == "系统变量") {
+        m_variableTableView->setModel(pTagSystemTableModel);
+    }
+    m_variableTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+
+    // 单元格显示不换行
+    m_variableTableView->setWordWrap(false);
+    //QHeaderView *pVHeaderView = m_variableTableView->verticalHeader();
+    //pVHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
+    //QHeaderView *pHHeaderView = m_variableTableView->horizontalHeader();
+    //pHHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
+
+    m_variableTableView->horizontalHeader()->setStretchLastSection(true);
+    m_variableTableView->horizontalHeader()->setHighlightSections(false);  // 当表格只有一行的时候，则表头会出现塌陷问题
+}
+
+void VariableManagerWin::SetTitle(const QString &t)
+{
     if(t == "中间变量" || t == "系统变量")
     {
         m_strItemName = t;        
@@ -1006,7 +992,7 @@ void VariableManagerWin::SetTitle(QString t)
 }
 
 
-bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, QString it)
+bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, const QString &it)
 {
     QString file = "";
 
@@ -1055,7 +1041,7 @@ bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, QString it)
 }
 
 
-bool VariableManagerWin::saveToFile(SaveFormat saveFormat, QString it)
+bool VariableManagerWin::saveToFile(SaveFormat saveFormat, const QString &it)
 {
     QString file = "";
     if(it == "设备变量")
@@ -1095,7 +1081,7 @@ bool VariableManagerWin::saveToFile(SaveFormat saveFormat, QString it)
 }
 
 
-void VariableManagerWin::load(const QJsonObject &json, QString it)
+void VariableManagerWin::load(const QJsonObject &json, const QString &it)
 {
     if(it == "设备变量")
     {
@@ -1111,7 +1097,7 @@ void VariableManagerWin::load(const QJsonObject &json, QString it)
     }
 }
 
-void VariableManagerWin::save(QJsonObject &json, QString it)
+void VariableManagerWin::save(QJsonObject &json, const QString &it)
 {
     if(it == "设备变量")
     {
@@ -1130,7 +1116,7 @@ void VariableManagerWin::save(QJsonObject &json, QString it)
 /*
 * 导出变量表
 */
-void VariableManagerWin::exportToCsv(QString path, QString group)
+void VariableManagerWin::exportToCsv(const QString &path, const QString &group)
 {
     //qDebug()<< m_strItemName << " path: " << path;
     if(m_strItemName == "设备变量")
@@ -1146,7 +1132,7 @@ void VariableManagerWin::exportToCsv(QString path, QString group)
 /*
 * 导入变量表
 */
-void VariableManagerWin::importFromCsv(QString path)
+void VariableManagerWin::importFromCsv(const QString &path)
 {
     if(path.contains("设备变量"))
     {
@@ -1724,7 +1710,9 @@ void VariableManagerWin::ShowSmallIcon()
 * 获取工程所有变量的名称
 * type: IO, TMP, SYS, ALL
 */
-void VariableManagerWin::GetAllProjectVariableName(const QString &proj_path, QStringList &varList, QString type)
+void VariableManagerWin::GetAllProjectVariableName(const QString &proj_path,
+                                                   QStringList &varList,
+                                                   const QString &type)
 {
     varList.clear();
 
