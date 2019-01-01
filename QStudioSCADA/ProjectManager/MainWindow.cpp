@@ -35,8 +35,8 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     m_strProjectPath(""),
-    m_CurTreeViewItem(""),
-    m_CurItem("")
+    m_CurItem(""),
+    m_CurTreeViewItem("")
 {
     ui->setupUi(this);   
     enableToolBar(""); // 工具条使能
@@ -163,7 +163,7 @@ void MainWindow::setActiveSubWindow(ChildForm *window)
         return;
     window->showMaximized();
     m_CurItem = window->windowTitle();
-    ui->mdiArea->setActiveSubWindow(0);//Activates the subwindow window. If window is 0, any current active window is deactivated.
+    ui->mdiArea->setActiveSubWindow(0); // Activates the subwindow window. If window is 0, any current active window is deactivated.
     ui->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
 }
 
@@ -233,27 +233,21 @@ void MainWindow::VariableGroupAdd()
 */
 void MainWindow::VariableGroupRename()
 {
-#if 0
     QModelIndex index = ui->treeViewProject->currentIndex();
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
     QString titleOld = QString("%1%2%3").arg("设备变量").arg("-").arg(text);
-    ChildBase* window = findMdiChild(titleOld);
+    ChildForm* window = findMdiChild(titleOld);
 
-    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-    {
-        if(text == var->m_name)
-        {
+    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        if(text == var->m_name) {
             NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
             pDlg->SetDialogName("新建数据组");
             pDlg->SetLabelName("数据组名：");
             pDlg->SetGroupName(text);
-            if(pDlg->exec() == QDialog::Accepted)
-            {
-                if(window != NULL)
-                {
-                    VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
+            if(pDlg->exec() == QDialog::Accepted) {
+                if(window != NULL) {
                     QString titleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
-                    pVariableManagerWin->SetTitle(titleNew);
+                    window->SetTitle(titleNew);
                 }
                 else
                     qDebug()<<"window == NULL";
@@ -267,7 +261,6 @@ void MainWindow::VariableGroupRename()
             }
         }
     }
-#endif
 }
 
 /*
@@ -275,14 +268,11 @@ void MainWindow::VariableGroupRename()
 */
 void MainWindow::VariableDeleteGroup()
 {
-#if 0
     QModelIndex ModelIndex = ui->treeViewProject->selectionModel()->currentIndex();
     QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
 
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-    {
-        if(qTiem->text() == var->m_name)
-        {
+    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        if(qTiem->text() == var->m_name) {
             QMdiSubWindow* pWindow = findMdiSubWindow("设备变量-"+var->m_name);
             if(pWindow != NULL)
             {
@@ -301,7 +291,6 @@ void MainWindow::VariableDeleteGroup()
     }
     m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
     UpdateDeviceVariableTableGroup();
-#endif
 }
 
 /*
@@ -309,24 +298,19 @@ void MainWindow::VariableDeleteGroup()
 */
 void MainWindow::VariableGroupCopy()
 {
-#if 0
     QModelIndex ModelIndex = ui->treeViewProject->selectionModel()->currentIndex();
     QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
 
     // check the same name first
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-    {
-        if(var->m_name == QString("复制_%1").arg(qTiem->text()))
-        {
+    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        if(var->m_name == QString("复制_%1").arg(qTiem->text())) {
             QMessageBox::information(this, "系统提示", "同名文件存在，请先修改名称！");
             return;
         }
     }
 
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-    {
-        if(qTiem->text() == var->m_name)
-        {
+    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        if(qTiem->text() == var->m_name) {
             DBVarGroup *newVar = new DBVarGroup();
             newVar->m_type = var->m_type;
             newVar->m_name = QString("复制_%1").arg(var->m_name);
@@ -340,7 +324,6 @@ void MainWindow::VariableGroupCopy()
             break;
         }
     }
-#endif
 }
 
 /*
@@ -348,25 +331,20 @@ void MainWindow::VariableGroupCopy()
 */
 void MainWindow::VariableModifyGroupID()
 {
-#if 0
     QModelIndex index = ui->treeViewProject->currentIndex();
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-    {
-        if(text == var->m_name)
-        {
+    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        if(text == var->m_name) {
             NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
             pDlg->SetDialogName("设置设备ID");
             pDlg->SetLabelName("设备ID：");
-            if(pDlg->exec() == QDialog::Accepted)
-            {
+            if(pDlg->exec() == QDialog::Accepted) {
                 //id = pDlg->GetGroupName();
                 //m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
                 UpdateDeviceVariableTableGroup();
             }
         }
     }
-#endif
 }
 
 /*
@@ -482,8 +460,8 @@ void MainWindow::initWindow() // 初始化窗口
 
 void MainWindow::on_actionNewPoject_triggered()
 {
-    if(pProjectItem->text() != "未创建工程") {
-        QMessageBox::information(this, "系统提示", "工程文件已建立，请手动关闭当前工程文件后重新建立！");
+    if(pProjectItem->text() != tr("未创建工程")) {
+        QMessageBox::information(this, tr("系统提示"), tr("工程文件已建立，请手动关闭当前工程文件后重新建立！"));
         return;
     }
 
@@ -502,7 +480,7 @@ void MainWindow::doOpenProject(QString proj)
 {
     QFile fileProj(proj);
     if(!fileProj.exists()) {
-        QMessageBox::information(this, "系统提示", "工程：" + proj + "不存在！");
+        QMessageBox::information(this, tr("系统提示"), tr("工程：") + proj + tr("不存在！"));
         return;
     }
 
@@ -542,10 +520,10 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
 */
 void MainWindow::enableToolBar(QString text)
 {
-    bool bTagIOOrTmp = (text == "中间变量")|(text.startsWith("设备变量"));
+    bool bTagIOOrTmp = (text == tr("中间变量")) | (text.startsWith(tr("设备变量")));
     ui->TagOperateToolBar->setEnabled(bTagIOOrTmp);
 
-    bool bdevice = (text == "串口设备")|(text == "网络设备")|(text == "总线设备")|(text == "OPC设备");
+    bool bdevice = (text == tr("串口设备")) | (text == tr("网络设备")) | (text == tr("总线设备")) | (text == tr("OPC设备"));
     ui->DeviceOperateToolBar->setEnabled(bdevice);
 
 }
@@ -558,6 +536,25 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
     QString winTittle = item->text();
+
+    ////////////////////////////////////////////////////////////////////////
+
+    ChildForm *findForm = findMdiChild(m_strProjectName);
+    if(findForm == NULL) {
+        findForm = new ChildForm(this, m_strProjectName);
+        findForm->setWindowTitle(m_strProjectName);
+        ui->mdiArea->addSubWindow(findForm);
+        connect(this, SIGNAL(treeItemClicked(const QString &)),
+                findForm, SLOT(treeItemClicked(const QString &)));
+    }
+
+    ////////////////////////////////////////////////////////////////////////
+
+    if(item->text() == tr("变量管理") || item->text() == tr("设备变量")) {
+        if(findForm)
+            findForm->hide();
+        return;
+    }
 
     if(item->text() == "中间变量" || item->text() == "系统变量") {
         winTittle = item->text();
@@ -575,16 +572,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     // 工具条使能
     enableToolBar(winTittle);
 
-    ChildForm *findForm = findMdiChild(m_strProjectName);
-    if(findForm == NULL) {
-        findForm = new ChildForm(this, m_strProjectName);
-        findForm->setWindowTitle(m_strProjectName);
-        ui->mdiArea->addSubWindow(findForm);
-        connect(this, SIGNAL(treeItemClicked(const QString &)),
-                findForm, SLOT(treeItemClicked(const QString &)));
-    }
-
-    ////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
 
     bool VarFound = false;
     if(item->text() == "中间变量" || item->text() == "系统变量") {
@@ -597,19 +585,22 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         }
     }
 
-    ////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
 
     if(item->text() == "系统参数") {
         findForm->switchPage(PAGE_SYSTEM_PARAMETER);
     } else if(item->text() == "通讯设备" || item->text() == "串口设备" || item->text() == "网络设备") {
         findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
-    } else if(VarFound) { // 设备变量
+    } else if(VarFound) { // 变量
         if(item->text() == "中间变量" || item->text() == "系统变量") {
             winTittle = item->text();
         } else {
             winTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(item->text());
         }
         findForm->switchPage(PAGE_VARIABLE_MANAGER);
+        if(item->text() == "设备变量")
+            findForm->switchPage(PAGE_NONE);
+
     } /*
     else if(item->text() == "画面")
     {
@@ -630,9 +621,11 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         setActiveSubWindow(pScriptManageWin);
     } */
 
-    setActiveSubWindow(findForm);
 
+    setActiveSubWindow(findForm);
     emit treeItemClicked(winTittle);
+
+
 
 }
 

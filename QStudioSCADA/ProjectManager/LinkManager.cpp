@@ -5,7 +5,7 @@
 #include <QDebug>
 
 LinkManager::LinkManager(QString ProjectPath) :
-m_ProjectPath(ProjectPath)
+    m_ProjectPath(ProjectPath)
 {
 
 }
@@ -60,7 +60,7 @@ bool LinkManager::loadFromFile(SaveFormat saveFormat)
     QString file = m_ProjectPath + "/LinkList.odb";
     QFile loadFile(file);
     if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open load file.");
+        qWarning() << QString("Couldn't open load file: %1.").arg(file);
         return false;
     }
     QByteArray saveData = loadFile.readAll();
@@ -75,7 +75,7 @@ bool LinkManager::saveToFile(SaveFormat saveFormat)
     QString file = m_ProjectPath + "/LinkList.odb";
     QFile saveFile(file);
     if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
+        qWarning() << QString("Couldn't open save file: %1.").arg(file);
         return false;
     }
     QJsonObject obj;

@@ -5,8 +5,8 @@
 ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     QWidget(parent),
     ui(new Ui::ChildForm),
-    m_strProjectName(projName),
-    m_bModifiedFlag(false)
+    m_bModifiedFlag(false),
+    m_strProjectName(projName)
 {
     ui->setupUi(this);
     setMinimumSize(600,400);
@@ -83,6 +83,14 @@ bool ChildForm::getModifiedFlag()
     return this->m_bModifiedFlag;
 }
 
+void ChildForm::SetTitle(const QString &title)
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        m_variableManagerWinPtr->SetTitle(title);
+    }
+    this->setWindowTitle(title);
+}
+
 /**
  * @brief MainWindow::switchPage 切换页面
  * @param page
@@ -91,7 +99,9 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
 {
     m_currPageFlow = page;
 
-    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
+    if(m_currPageFlow == PAGE_NONE) {
+        ui->stackedWidget->setCurrentWidget(NULL);
+    } else if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
         m_sysParamWinPtr->setProjectName(m_strProjectName);
         ui->stackedWidget->setCurrentWidget(m_sysParamWinPtr);
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面

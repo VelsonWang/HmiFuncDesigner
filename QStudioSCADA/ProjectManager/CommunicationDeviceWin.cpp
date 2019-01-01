@@ -20,10 +20,8 @@ CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
     ui->setupUi(this);
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
-    m_pLinkManager = new LinkManager(projName.left(m_strProjectName.lastIndexOf("/")));
-    // 右键菜单生效
-    setContextMenuPolicy(Qt::DefaultContextMenu);
-    ListViewUpdate(itemName);
+    m_pLinkManager = nullptr;
+    setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
 }
 
 CommunicationDeviceWin::~CommunicationDeviceWin()
@@ -48,23 +46,26 @@ void CommunicationDeviceWin::ListViewUISetting()
 
 void CommunicationDeviceWin::ListViewUpdate(const QString &it)
 {
-    if(it == "通讯设备")
+    if(m_pLinkManager == nullptr)
+        m_pLinkManager = new LinkManager(m_strProjectName.left(m_strProjectName.lastIndexOf("/")));
+
+    if(it == tr("通讯设备"))
     {
         ListViewCommunicationDeviceUpdate();
     }
-    else if(it == "串口设备")
+    else if(it == tr("串口设备"))
     {
         ListViewCOMDeviceUpdate();
     }
-    else if(it == "网络设备")
+    else if(it == tr("网络设备"))
     {
         ListViewNetDeviceUpdate();
     }
-    else if(it == "总线设备")
+    else if(it == tr("总线设备"))
     {
         ListViewBusDeviceUpdate();
     }
-    else if(it == "OPC设备")
+    else if(it == tr("OPC设备"))
     {
         ListViewOpcDeviceUpdate();
     }
@@ -209,7 +210,7 @@ void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const 
     if(m_strProjectName == "")
         return;
     QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
-    if(item->text() == "新建串口设备")
+    if(item->text() == tr("新建串口设备"))
     {
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this, strProjectPath);
         QStringList list;
@@ -225,7 +226,7 @@ void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const 
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);            
         }
     }
-    else if(item->text() == "新建网络设备")
+    else if(item->text() == tr("新建网络设备"))
     {
         NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this, strProjectPath);
         QStringList list;
@@ -241,11 +242,11 @@ void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const 
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);
         }
     }
-    else if(item->text() == "新建总线设备")
+    else if(item->text() == tr("新建总线设备"))
     {
 
     }
-    else if(item->text() == "新建OPC设备")
+    else if(item->text() == tr("新建OPC设备"))
     {
 
     }
@@ -342,9 +343,9 @@ void CommunicationDeviceWin::NewDevice()
     QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
     QList<QStandardItem *> itemList;
 
-    if(m_strItemName == "串口设备")
+    if(m_strItemName == tr("串口设备"))
     {
-        itemList = pListViewCommDevModel->findItems("新建串口设备");
+        itemList = pListViewCommDevModel->findItems(tr("新建串口设备"));
         if(itemList.size() == 0)
             return;
         //QStandardItem *item = itemList.at(0);
@@ -362,9 +363,9 @@ void CommunicationDeviceWin::NewDevice()
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);
         }
     }
-    else if(m_strItemName == "网络设备")
+    else if(m_strItemName == tr("网络设备"))
     {
-        itemList = pListViewCommDevModel->findItems("新建网络设备");
+        itemList = pListViewCommDevModel->findItems(tr("新建网络设备"));
         if(itemList.size() == 0)
             return;
         NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this, strProjectPath);
@@ -381,13 +382,13 @@ void CommunicationDeviceWin::NewDevice()
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);
         }
     }
-    else if(m_strItemName == "总线设备")
+    else if(m_strItemName == tr("总线设备"))
     {
-        itemList = pListViewCommDevModel->findItems("新建总线设备");
+        itemList = pListViewCommDevModel->findItems(tr("新建总线设备"));
     }
-    else if(m_strItemName == "OPC设备")
+    else if(m_strItemName == tr("OPC设备"))
     {
-        itemList = pListViewCommDevModel->findItems("新建OPC设备");
+        itemList = pListViewCommDevModel->findItems(tr("新建OPC设备"));
     }
 
     ListViewUpdate(m_strItemName);

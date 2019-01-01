@@ -12,6 +12,7 @@ class ChildForm;
 }
 
 enum PAGE_FLOWTYPE{
+    PAGE_NONE = 0,
     PAGE_SYSTEM_PARAMETER,
     PAGE_COMMUNICATE_DEVICE,
     PAGE_VARIABLE_MANAGER,
@@ -26,6 +27,8 @@ class ChildForm : public QWidget
 public:
     explicit ChildForm(QWidget *parent = 0, const QString &projName = "");
     ~ChildForm();
+
+    void SetTitle(const QString &title);
 
     // 页面切换
     void switchPage(PAGE_FLOWTYPE page);
@@ -52,6 +55,7 @@ public slots:
     void treeItemClicked(const QString &itemText);
 
 private:
+    Ui::ChildForm *ui;
     PAGE_FLOWTYPE m_currPageFlow; // 当前页面
     bool m_bModifiedFlag;
     QString m_strProjectName;
@@ -60,7 +64,7 @@ private:
     VariableManagerWin *m_variableManagerWinPtr; // 变量管理
 
 private:
-    Ui::ChildForm *ui;
+
 };
 
 #endif // CHILDFORM_H
