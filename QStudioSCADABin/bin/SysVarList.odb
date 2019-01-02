@@ -1,42 +1,50 @@
 {
     "SysVarArray": [
         {
-            "iID": 7,
+            "iID": 1,
             "sComments": "",
-            "sDescription": "1",
+            "sDescription": "年",
             "sName": "sys1",
             "sProjectConverter": "",
             "sUnit": ""
         },
         {
-            "iID": 8,
+            "iID": 2,
             "sComments": "",
-            "sDescription": "",
+            "sDescription": "月",
             "sName": "sys2",
             "sProjectConverter": "",
             "sUnit": ""
         },
         {
-            "iID": 9,
+            "iID": 3,
             "sComments": "",
-            "sDescription": "",
+            "sDescription": "日",
             "sName": "sys3",
             "sProjectConverter": "",
             "sUnit": ""
         },
         {
-            "iID": 10,
+            "iID": 4,
             "sComments": "",
-            "sDescription": "",
+            "sDescription": "时",
             "sName": "sys4",
             "sProjectConverter": "",
             "sUnit": ""
         },
         {
-            "iID": 11,
+            "iID": 5,
             "sComments": "",
-            "sDescription": "",
+            "sDescription": "分",
             "sName": "sys5",
+            "sProjectConverter": "",
+            "sUnit": ""
+        },
+        {
+            "iID": 6,
+            "sComments": "",
+            "sDescription": "秒",
+            "sName": "sys6",
             "sProjectConverter": "",
             "sUnit": ""
         }

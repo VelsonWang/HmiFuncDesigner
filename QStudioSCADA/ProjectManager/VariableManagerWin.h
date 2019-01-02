@@ -1,4 +1,4 @@
-#ifndef VARIABLEMANAGERWIN_H
+﻿#ifndef VARIABLEMANAGERWIN_H
 #define VARIABLEMANAGERWIN_H
 
 #include "ChildBase.h"
@@ -410,7 +410,7 @@ private:
     TagTmpTableModel* pTagTmpTableModel;
     TagSystemTableModel *pTagSystemTableModel;
     TagIOTableModel *pTagIOTableModel;
-
+    QString m_strCurTagType;
 };
 
 #endif // VARIABLEMANAGERWIN_H

@@ -1,4 +1,4 @@
-#include "DrawPageWin.h"
+﻿#include "DrawPageWin.h"
 #include "ui_DrawPageWin.h"
 #include "configutils.h"
 #include "DrawListUtils.h"
@@ -13,7 +13,9 @@
 #include <QDebug>
 
 
-DrawPageWin::DrawPageWin(QWidget *parent, QString itemName, QString projName) :
+DrawPageWin::DrawPageWin(QWidget *parent,
+                         const QString &itemName,
+                         const QString &projName) :
     ChildBase(parent, itemName, projName),
     ui(new Ui::DrawPageWin)
 {
@@ -21,22 +23,28 @@ DrawPageWin::DrawPageWin(QWidget *parent, QString itemName, QString projName) :
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
     m_ProjPath = projName.left(projName.lastIndexOf("/"));
-    // 右键菜单生效
     setContextMenuPolicy(Qt::DefaultContextMenu);
     pListDrawPageModel = new QStandardItemModel();
     ui->listViewDrawPage->setModel(pListDrawPageModel);
-    this->open();
-    ListViewUpdate();
 }
 
 
 DrawPageWin::~DrawPageWin()
 {
     delete ui;
-    delete pListDrawPageModel;
-    pListDrawPageModel = NULL;
+    if(pListDrawPageModel != nullptr) {
+        delete pListDrawPageModel;
+        pListDrawPageModel = nullptr;
+    }
 }
 
+void DrawPageWin::init()
+{
+    if(!m_strProjectName.isEmpty())
+        m_ProjPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    open();
+    ListViewUpdate();
+}
 
 /*
 *  打开文件

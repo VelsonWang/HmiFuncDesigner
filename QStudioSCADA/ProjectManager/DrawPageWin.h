@@ -1,4 +1,4 @@
-#ifndef DRAWPAGEWIN_H
+﻿#ifndef DRAWPAGEWIN_H
 #define DRAWPAGEWIN_H
 
 #include "ChildBase.h"
@@ -17,8 +17,11 @@ class DrawPageWin : public ChildBase
     Q_OBJECT
 
 public:
-    explicit DrawPageWin(QWidget *parent = 0, QString itemName = "", QString projName = "");
+    explicit DrawPageWin(QWidget *parent = 0,
+                         const QString &itemName = "",
+                         const QString &projName = "");
     ~DrawPageWin();
+    void init();
 
 public:
     // 打开文件
@@ -38,7 +41,7 @@ private:
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
-    void closeEvent(QCloseEvent *event);  // 关闭事件
+    void closeEvent(QCloseEvent *event);
 
 
 private slots:

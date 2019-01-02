@@ -1,4 +1,4 @@
-#include "CommunicationDeviceWin.h"
+﻿#include "CommunicationDeviceWin.h"
 #include "ui_CommunicationDeviceWin.h"
 #include "NewComDeviceDialog.h"
 #include "NewNetDeviceDialog.h"
@@ -18,6 +18,7 @@ CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
     ui(new Ui::CommunicationDeviceWin)
 {
     ui->setupUi(this);
+    pListViewCommDevModel = nullptr;
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
     m_pLinkManager = nullptr;
@@ -27,8 +28,10 @@ CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
 CommunicationDeviceWin::~CommunicationDeviceWin()
 {
     delete ui;
-    delete pListViewCommDevModel;
-    pListViewCommDevModel = NULL;
+    if(pListViewCommDevModel != nullptr) {
+        delete pListViewCommDevModel;
+        pListViewCommDevModel = nullptr;
+    }
 }
 
 void CommunicationDeviceWin::ListViewUISetting()

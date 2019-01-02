@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "NewProjectDialog.h"
 #include "CommunicationDeviceWin.h"
@@ -556,7 +556,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         return;
     }
 
-    if(item->text() == "中间变量" || item->text() == "系统变量") {
+    if(item->text() == tr("中间变量") || item->text() == tr("系统变量")) {
         winTittle = item->text();
     } else {
         // 设备变量
@@ -564,7 +564,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         {
             if(item->text() == var->m_name)
             {
-                winTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(item->text());
+                winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(item->text());
             }
         }
     }
@@ -575,7 +575,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
     ////////////////////////////////////////////////////////////////////////
 
     bool VarFound = false;
-    if(item->text() == "中间变量" || item->text() == "系统变量") {
+    if(item->text() == tr("中间变量") || item->text() == tr("系统变量")) {
         VarFound = true;
     } else {
         // 设备变量
@@ -587,27 +587,24 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     ////////////////////////////////////////////////////////////////////////
 
-    if(item->text() == "系统参数") {
+    if(item->text() == tr("系统参数")) {
         findForm->switchPage(PAGE_SYSTEM_PARAMETER);
-    } else if(item->text() == "通讯设备" || item->text() == "串口设备" || item->text() == "网络设备") {
+    } else if(item->text() == tr("通讯设备") || item->text() == tr("串口设备") || item->text() == tr("网络设备")) {
         findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
     } else if(VarFound) { // 变量
-        if(item->text() == "中间变量" || item->text() == "系统变量") {
+        if(item->text() == tr("中间变量") || item->text() == tr("系统变量")) {
             winTittle = item->text();
         } else {
-            winTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(item->text());
+            winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(item->text());
         }
         findForm->switchPage(PAGE_VARIABLE_MANAGER);
-        if(item->text() == "设备变量")
+        if(item->text() == tr("设备变量"))
             findForm->switchPage(PAGE_NONE);
 
-    } /*
-    else if(item->text() == "画面")
-    {
-        DrawPageWin *pDrawPageWin = new DrawPageWin(this, "画面", m_strProjectName);
-        ui->mdiArea->addSubWindow(pDrawPageWin);
-        setActiveSubWindow(pDrawPageWin);
+    } else if(item->text() == tr("画面")) {
+        findForm->switchPage(PAGE_DRAW_PAGE);
     }
+    /*
     else if(item->text() == "实时数据库")
     {
         RealTimeDatabaseWin *pRealTimeDatabaseWin = new RealTimeDatabaseWin(this, "实时数据库", m_strProjectName);
@@ -892,15 +889,10 @@ void MainWindow::on_actionDownload_triggered()
  */
 void MainWindow::on_actionAddTag_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-        pVariableManagerWin->VariableAdd();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->addVariableTag();
     }
-#endif
 }
 
 /*
@@ -908,15 +900,10 @@ void MainWindow::on_actionAddTag_triggered()
  */
 void MainWindow::on_actionAppendTag_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-        pVariableManagerWin->VariableAppend();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->appendVariableTag();
     }
-#endif
 }
 
 /*
@@ -924,15 +911,10 @@ void MainWindow::on_actionAppendTag_triggered()
  */
 void MainWindow::on_actionRowCopyTag_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-        pVariableManagerWin->VariableRowCopy();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->rowCopyVariableTag();
     }
-#endif
 }
 
 /*
@@ -940,15 +922,10 @@ void MainWindow::on_actionRowCopyTag_triggered()
  */
 void MainWindow::on_actionColumnCopyTag_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-        pVariableManagerWin->VariableColCopy();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->columnCopyVariableTag();
     }
-#endif
 }
 
 /*
@@ -956,15 +933,10 @@ void MainWindow::on_actionColumnCopyTag_triggered()
  */
 void MainWindow::on_actionModifyTag_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-        pVariableManagerWin->VariableModify();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->modifyVariableTag();
     }
-#endif
 }
 
 /*
@@ -972,15 +944,10 @@ void MainWindow::on_actionModifyTag_triggered()
  */
 void MainWindow::on_actionDeleteTag_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-        pVariableManagerWin->VariableDelete();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->deleteVariableTag();
     }
-#endif
 }
 
 /*
@@ -997,12 +964,9 @@ void MainWindow::on_actionExportTag_triggered()
     if(strSaveCsvPath == "")
         return;
 
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-        pVariableManagerWin->exportToCsv(strSaveCsvPath, this->m_CurItem);
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->variableTagExportToCsv(strSaveCsvPath, this->m_CurItem);
     }
 #endif
 }
@@ -1025,26 +989,18 @@ void MainWindow::on_actionImportTag_triggered()
     QString strGroupName = strCsvName.right(strCsvName.length() - strCsvName.lastIndexOf("-") - 1);
 
     bool found = false;
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-    {
-        if(strGroupName == var->m_name)
-        {
+    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        if(strGroupName == var->m_name) {
             found = true;
             break;
         }
     }
-    if(found)
-    {
-        ChildBase* window = findMdiChild(this->m_CurItem);
-
-        if(window != NULL)
-        {
-            VariableManagerWin * pVariableManagerWin = qobject_cast<VariableManagerWin *>(window);
-            pVariableManagerWin->importFromCsv(strSaveCsvFile);
+    if(found) {
+        ChildForm* window = findMdiChild(this->m_CurItem);
+        if(window != NULL) {
+            window->variableTagImportFromCsv(strSaveCsvFile);
         }
-    }
-    else
-    {
+    } else {
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
         pGroup->m_name = strGroupName;
@@ -1055,9 +1011,8 @@ void MainWindow::on_actionImportTag_triggered()
         // 工具条使能
         enableToolBar(strCsvName);
 
-        ChildBase* window = findMdiChild(strCsvName);
-        if(window != NULL)
-        {
+        ChildForm* window = findMdiChild(strCsvName);
+        if(window != NULL) {
             setActiveSubWindow(window);
             return;
         }
@@ -1067,7 +1022,6 @@ void MainWindow::on_actionImportTag_triggered()
         setActiveSubWindow(pVariableManagerWin);
         pVariableManagerWin->importFromCsv(strSaveCsvFile);
     }
-
 #endif
 }
 

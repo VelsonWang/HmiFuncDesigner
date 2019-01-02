@@ -1,4 +1,4 @@
-
+﻿
 #include "VariableManagerWin.h"
 #include "ui_VariableManagerWin.h"
 #include "CommunicationDeviceWin.h"
@@ -880,7 +880,9 @@ void VariableTableView::mousePressEvent(QMouseEvent *event)
         QModelIndex idx = indexAt(event->pos());
         if (!idx.isValid())
         {
-            selectionModel()->clearSelection();
+            QItemSelectionModel *pModel = selectionModel();
+            if(pModel != nullptr)
+                pModel->clearSelection();
         }
     }
     QTableView::mousePressEvent(event);
@@ -895,7 +897,8 @@ VariableManagerWin::VariableManagerWin(QWidget *parent,
                                        const QString &itemName,
                                        const QString &projName) :
     ChildBase(parent, itemName, projName),
-    ui(new Ui::VariableManagerWin)
+    ui(new Ui::VariableManagerWin),
+    m_strCurTagType("")
 {
     ui->setupUi(this);
 
@@ -907,7 +910,6 @@ VariableManagerWin::VariableManagerWin(QWidget *parent,
     connect(m_variableTableView, SIGNAL(doubleClicked(QModelIndex)),
             this, SLOT(tableViewVariableDoubleClicked(QModelIndex)));
 
-    // 右键菜单生效
     setContextMenuPolicy(Qt::DefaultContextMenu);
 
     pTagIOTableModel = new TagIOTableModel(this);
@@ -938,18 +940,25 @@ VariableManagerWin::~VariableManagerWin()
 }
 
 void VariableManagerWin::init(const QString &itemName)
-{
-    SetTitle(itemName);
-    loadFromFile(DATA_SAVE_FORMAT, m_strItemName);
+{   
+    if(m_strCurTagType != itemName) {
+        if(!m_strCurTagType.isEmpty()) {
+            SetTitle(m_strCurTagType);
+            save();
+        }
+        SetTitle(itemName);
+        loadFromFile(DATA_SAVE_FORMAT, m_strItemName);
+        m_strCurTagType = itemName;
+    }
 
-    if(m_strItemName == "设备变量") {
+    if(m_strItemName == tr("设备变量")) {
         m_variableTableView->setModel(pTagIOTableModel);
         QStringList stringListDataType;
         stringListDataType << tr("模拟量")
                            << tr("数字量");
         ComboBoxDelegate *pDdataTypeDelegate = new ComboBoxDelegate(stringListDataType, this);
         m_variableTableView->setItemDelegateForColumn(1, pDdataTypeDelegate);
-    } else if(m_strItemName == "中间变量") {
+    } else if(m_strItemName == tr("中间变量")) {
         m_variableTableView->setModel(pTagTmpTableModel);
         QStringList stringListDataType;
         stringListDataType << tr("模拟量")
@@ -961,7 +970,7 @@ void VariableManagerWin::init(const QString &itemName)
         stringListActionScope << tr("全局");// << tr("数字量");  后期加入作用画面名称
         ComboBoxDelegate *pActionScopeDelegate = new ComboBoxDelegate(stringListActionScope, this);
         m_variableTableView->setItemDelegateForColumn(5, pActionScopeDelegate);
-    } else if(m_strItemName == "系统变量") {
+    } else if(m_strItemName == tr("系统变量")) {
         m_variableTableView->setModel(pTagSystemTableModel);
     }
     m_variableTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
@@ -979,16 +988,15 @@ void VariableManagerWin::init(const QString &itemName)
 
 void VariableManagerWin::SetTitle(const QString &t)
 {
-    if(t == "中间变量" || t == "系统变量")
+    if(t == tr("中间变量") || t == tr("系统变量"))
     {
         m_strItemName = t;        
     }
     else
     {
-        m_strItemName = t.left(t.indexOf("-"));
-        m_IOVariableListWhat = t.right(t.length() - t.indexOf("-") - 1);
+        m_strItemName = tr("设备变量");
+        m_IOVariableListWhat = t;
     }
-    //qDebug()<< t << "  " << m_strItemName << "  " << m_IOVariableListWhat ;
 }
 
 
@@ -996,15 +1004,15 @@ bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, const QString &it)
 {
     QString file = "";
 
-    if(it == "设备变量")
+    if(it == tr("设备变量"))
     {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
     }
-    else if(it == "中间变量")
+    else if(it == tr("中间变量"))
     {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/TmpVarList.odb";
     }
-    else if(it == "系统变量")
+    else if(it == tr("系统变量"))
     {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/SysVarList.odb";
         QString srcfile = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
@@ -1019,15 +1027,15 @@ bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, const QString &it)
     QFile loadFile(file);
     if (!loadFile.open(QIODevice::ReadOnly))
     {
-        if(it.left(it.indexOf("-")) == "设备变量")
+        if(it.left(it.indexOf("-")) == tr("设备变量"))
         {
             qWarning("Couldn't open load file: DevVarList.odb.");
         }
-        else if(it == "中间变量")
+        else if(it == tr("中间变量"))
         {
             qWarning("Couldn't open load file: TmpVarList.odb.");
         }
-        else if(it == "系统变量")
+        else if(it == tr("系统变量"))
         {
             qWarning("Couldn't open load file: SysVarList.odb.");
         }
@@ -1044,29 +1052,29 @@ bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, const QString &it)
 bool VariableManagerWin::saveToFile(SaveFormat saveFormat, const QString &it)
 {
     QString file = "";
-    if(it == "设备变量")
+    if(it == tr("设备变量"))
     {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
     }
-    else if(it == "中间变量")
+    else if(it == tr("中间变量"))
     {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/TmpVarList.odb";
     }
-    else if(it == "系统变量")
+    else if(it == tr("系统变量"))
     {
         return true;
     }
     QFile saveFile(file);
     if (!saveFile.open(QIODevice::WriteOnly)) {
-        if(it.left(it.indexOf("-")) == "设备变量")
+        if(it.left(it.indexOf("-")) == tr("设备变量"))
         {
             qWarning("Couldn't open save file: DevVarList.odb.");
         }
-        else if(it == "中间变量")
+        else if(it == tr("中间变量"))
         {
             qWarning("Couldn't open save file: TmpVarList.odb.");
         }
-        else if(it == "系统变量")
+        else if(it == tr("系统变量"))
         {
             // do nothing here!
         }
@@ -1651,11 +1659,11 @@ void VariableManagerWin::VariableDelete()
     {
         rowMapIterator.previous();
         rowToDel = rowMapIterator.key();
-        if(m_strItemName == "设备变量")
+        if(m_strItemName == tr("设备变量"))
         {
             pTagIOTableModel->removeRow(rowToDel);
         }
-        else if(m_strItemName == "中间变量")
+        else if(m_strItemName == tr("中间变量"))
         {
             pTagTmpTableModel->removeRow(rowToDel);
         }
@@ -1668,7 +1676,7 @@ void VariableManagerWin::VariableDelete()
  */
 void VariableManagerWin::closeEvent(QCloseEvent *event)
 {
-    saveToFile(DATA_SAVE_FORMAT, m_strItemName);
+    save();
     event->accept();
 }
 

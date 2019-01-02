@@ -1,4 +1,4 @@
-#include "childform.h"
+﻿#include "childform.h"
 #include "ui_childform.h"
 #include <QDebug>
 
@@ -14,16 +14,23 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
 
     // 系统参数设置页面
     m_sysParamWinPtr = new SystemParametersWin(this);
+    m_sysParamWinPtr->setProjectName(m_strProjectName);
     ui->stackedWidget->addWidget(m_sysParamWinPtr);
 
     // 通讯设备页面
     m_communicationDeviceWinPtr = new CommunicationDeviceWin(this);
+    m_communicationDeviceWinPtr->setProjectName(m_strProjectName);
     ui->stackedWidget->addWidget(m_communicationDeviceWinPtr);
 
     // 变量管理
     m_variableManagerWinPtr = new VariableManagerWin(this);
+    m_variableManagerWinPtr->setProjectName(m_strProjectName);
     ui->stackedWidget->addWidget(m_variableManagerWinPtr);
 
+    // 画面管理
+    m_drawPageWinPtr = new DrawPageWin(this);
+    m_drawPageWinPtr->setProjectName(m_strProjectName);
+    ui->stackedWidget->addWidget(m_drawPageWinPtr);
 
 }
 
@@ -42,6 +49,11 @@ ChildForm::~ChildForm()
     if(m_variableManagerWinPtr != nullptr) {
         delete m_variableManagerWinPtr;
         m_variableManagerWinPtr = nullptr;
+    }
+
+    if(m_drawPageWinPtr != nullptr) {
+        delete m_drawPageWinPtr;
+        m_drawPageWinPtr = nullptr;
     }
 
     delete ui;
@@ -92,6 +104,93 @@ void ChildForm::SetTitle(const QString &title)
 }
 
 /**
+ * @brief ChildForm::addVariableTag 增加变量标签
+ */
+void ChildForm::addVariableTag()
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->VariableAdd();
+    }
+}
+
+/**
+ * @brief ChildForm::appendVariableTag 追加变量标签
+ */
+void ChildForm::appendVariableTag()
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->VariableAppend();
+    }
+}
+
+
+/**
+ * @brief ChildForm::rowCopyVariableTag 行拷贝变量标签
+ */
+void ChildForm::rowCopyVariableTag()
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->VariableRowCopy();
+    }
+}
+
+
+/**
+ * @brief ChildForm::columnCopyVariableTag 列拷贝变量标签
+ */
+void ChildForm::columnCopyVariableTag()
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->VariableColCopy();
+    }
+}
+
+
+/**
+ * @brief ChildForm::modifyVariableTag 修改变量标签
+ */
+void ChildForm::modifyVariableTag()
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->VariableModify();
+    }
+}
+
+/**
+ * @brief ChildForm::deleteVariableTag 删除变量标签
+ */
+void ChildForm::deleteVariableTag()
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->VariableDelete();
+    }
+}
+
+/**
+ * @brief ChildForm::variableTagExportToCsv 变量标签导出csv
+ * @param path 导出路径
+ * @param item 标量标签类型
+ */
+void ChildForm::variableTagExportToCsv(const QString &path,  const QString &item)
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->exportToCsv(path, item);
+    }
+}
+
+
+/**
+ * @brief ChildForm::variableTagImportFromCsv 从csv导入变量标签
+ * @param file csv文件
+ */
+void ChildForm::variableTagImportFromCsv(const QString &file)
+{
+    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
+        m_variableManagerWinPtr->importFromCsv(file);
+    }
+}
+
+/**
  * @brief MainWindow::switchPage 切换页面
  * @param page
  */
@@ -102,17 +201,14 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
     if(m_currPageFlow == PAGE_NONE) {
         ui->stackedWidget->setCurrentWidget(NULL);
     } else if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
-        m_sysParamWinPtr->setProjectName(m_strProjectName);
         ui->stackedWidget->setCurrentWidget(m_sysParamWinPtr);
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
-        m_communicationDeviceWinPtr->setProjectName(m_strProjectName);
         ui->stackedWidget->setCurrentWidget(m_communicationDeviceWinPtr);
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->setProjectName(m_strProjectName);
         ui->stackedWidget->setCurrentWidget(m_variableManagerWinPtr);
+    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
+        ui->stackedWidget->setCurrentWidget(m_drawPageWinPtr);
     }
-
-
 }
 
 
@@ -127,6 +223,8 @@ void ChildForm::open()
         m_communicationDeviceWinPtr->open();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_variableManagerWinPtr->open();
+    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
+        m_drawPageWinPtr->open();
     }
 
 
@@ -137,13 +235,10 @@ void ChildForm::open()
  */
 void ChildForm::save()
 {
-    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
-        m_sysParamWinPtr->save();
-    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
-        m_communicationDeviceWinPtr->save();
-    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->save();
-    }
+    m_sysParamWinPtr->save();
+    m_communicationDeviceWinPtr->save();
+    m_variableManagerWinPtr->save();
+    m_drawPageWinPtr->save();
 
 
 }
@@ -159,6 +254,8 @@ void ChildForm::ShowLargeIcon()
         m_communicationDeviceWinPtr->ShowLargeIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_variableManagerWinPtr->ShowLargeIcon();
+    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
+        m_drawPageWinPtr->ShowLargeIcon();
     }
 
 }
@@ -174,12 +271,15 @@ void ChildForm::ShowSmallIcon()
         m_communicationDeviceWinPtr->ShowSmallIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_variableManagerWinPtr->ShowSmallIcon();
+    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
+        m_drawPageWinPtr->ShowSmallIcon();
     }
 
 }
 
 void ChildForm::treeItemClicked(const QString &itemText)
 {
+    //qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << itemText;
     if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
         m_sysParamWinPtr->setItemName(itemText);
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
@@ -188,6 +288,9 @@ void ChildForm::treeItemClicked(const QString &itemText)
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_variableManagerWinPtr->setItemName(itemText);
         m_variableManagerWinPtr->init(itemText);
+    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
+        m_drawPageWinPtr->setItemName(itemText);
+        m_drawPageWinPtr->init();
     }
 }
 
