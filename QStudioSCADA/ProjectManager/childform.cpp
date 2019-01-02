@@ -37,6 +37,11 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     m_rtdbWinPtr->setProjectName(m_strProjectName);
     ui->stackedWidget->addWidget(m_rtdbWinPtr);
 
+    // 脚本编辑器
+    m_scriptManageWinPtr = new ScriptManageWin(this);
+    m_scriptManageWinPtr->setProjectName(m_strProjectName);
+    m_scriptManageWinPtr->open();
+    ui->stackedWidget->addWidget(m_scriptManageWinPtr);
 }
 
 ChildForm::~ChildForm()
@@ -64,6 +69,11 @@ ChildForm::~ChildForm()
     if(m_rtdbWinPtr != nullptr) {
         delete m_rtdbWinPtr;
         m_rtdbWinPtr = nullptr;
+    }
+
+    if(m_scriptManageWinPtr != nullptr) {
+        delete m_scriptManageWinPtr;
+        m_scriptManageWinPtr = nullptr;
     }
 
     delete ui;
@@ -220,9 +230,9 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
         ui->stackedWidget->setCurrentWidget(m_drawPageWinPtr);
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         ui->stackedWidget->setCurrentWidget(m_rtdbWinPtr);
+    } else if(m_currPageFlow == PAGE_SCRIPT_MANAGER) { // 脚本编辑器
+        ui->stackedWidget->setCurrentWidget(m_scriptManageWinPtr);
     }
-
-
 }
 
 
@@ -241,9 +251,9 @@ void ChildForm::open()
         m_drawPageWinPtr->open();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->open();
+    } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
+        m_scriptManageWinPtr->open();
     }
-
-
 }
 
 /*
@@ -256,8 +266,7 @@ void ChildForm::save()
     m_variableManagerWinPtr->save();
     m_drawPageWinPtr->save();
     m_rtdbWinPtr->save();
-
-
+    m_scriptManageWinPtr->save();
 }
 
 /*
@@ -275,8 +284,9 @@ void ChildForm::ShowLargeIcon()
         m_drawPageWinPtr->ShowLargeIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->ShowLargeIcon();
+    } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
+        m_scriptManageWinPtr->ShowLargeIcon();
     }
-
 }
 
 /*
@@ -294,8 +304,9 @@ void ChildForm::ShowSmallIcon()
         m_drawPageWinPtr->ShowSmallIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->ShowSmallIcon();
+    } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
+        m_scriptManageWinPtr->ShowSmallIcon();
     }
-
 }
 
 void ChildForm::treeItemClicked(const QString &itemText)
@@ -315,6 +326,8 @@ void ChildForm::treeItemClicked(const QString &itemText)
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->setItemName(itemText);
         m_rtdbWinPtr->init();
+    } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
+        m_scriptManageWinPtr->setItemName(itemText);
     }
 }
 

@@ -1693,7 +1693,8 @@ void VariableManagerWin::open()
  */
 void VariableManagerWin::save()
 {
-    saveToFile(DATA_SAVE_FORMAT, m_strItemName);
+    if(!m_strItemName.isEmpty())
+        saveToFile(DATA_SAVE_FORMAT, m_strItemName);
 }
 
 /*

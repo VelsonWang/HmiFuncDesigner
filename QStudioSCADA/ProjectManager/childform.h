@@ -8,6 +8,7 @@
 #include "VariableManagerWin.h"
 #include "DrawPageWin.h"
 #include "RealTimeDatabaseWin.h"
+#include "ScriptManageWin.h"
 
 namespace Ui {
 class ChildForm;
@@ -20,7 +21,7 @@ enum PAGE_FLOWTYPE{
     PAGE_VARIABLE_MANAGER,
     PAGE_DRAW_PAGE,
     PAGE_RTDB,
-
+    PAGE_SCRIPT_MANAGER,
 };
 Q_DECLARE_METATYPE(PAGE_FLOWTYPE)
 
@@ -87,8 +88,7 @@ private:
     VariableManagerWin *m_variableManagerWinPtr; // 变量管理
     DrawPageWin *m_drawPageWinPtr; // 画面管理
     RealTimeDatabaseWin *m_rtdbWinPtr; // 实时数据库
-
-private:
+    ScriptManageWin *m_scriptManageWinPtr; // 脚本编辑器
 
 };
 

@@ -1,4 +1,4 @@
-
+﻿
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QJsonArray>
@@ -161,9 +161,8 @@ ScriptManageWin::ScriptManageWin(QWidget *parent, QString itemName, QString proj
     m_pListWidget->setSpacing(20);
     m_pListWidget->setResizeMode(QListView::Adjust);
     m_pListWidget->setMovement(QListView::Static);
-    connect(m_pListWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(ListWidgetClicked(QListWidgetItem*)));
-
-    open();
+    connect(m_pListWidget,SIGNAL(itemDoubleClicked(QListWidgetItem*)),
+            this, SLOT(ListWidgetClicked(QListWidgetItem*)));
 
     ///////////////////////////////////////////////////////////
 
@@ -176,16 +175,14 @@ ScriptManageWin::ScriptManageWin(QWidget *parent, QString itemName, QString proj
 
 ScriptManageWin::~ScriptManageWin()
 {
-    if(m_pListWidget != NULL)
-    {
+    if(m_pListWidget != nullptr) {
         delete m_pListWidget;
-        m_pListWidget = NULL;
+        m_pListWidget = nullptr;
     }
 
-    if(m_pVLayout != NULL)
-    {
+    if(m_pVLayout != nullptr) {
         delete m_pVLayout;
-        m_pVLayout = NULL;
+        m_pVLayout = nullptr;
     }
 }
 
@@ -203,8 +200,7 @@ void ScriptManageWin::open()
     QListWidgetItem *pNewItem = new QListWidgetItem(QIcon(":/images/pm_script.png"), tr("新建脚本"));
     m_pListWidget->addItem(pNewItem);
 
-    for(int i=0; i<ScriptFileManage::m_listScriptInfo.count(); i++)
-    {
+    for(int i=0; i<ScriptFileManage::m_listScriptInfo.count(); i++) {
         ScriptObject *pObj = ScriptFileManage::m_listScriptInfo.at(i);
         QString scriptName = pObj->m_strName;
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pm_script.png"), scriptName);
@@ -246,12 +242,9 @@ void ScriptManageWin::ListWidgetClicked(QListWidgetItem *item)
     if(m_strProjectName == "")
         return;
 
-    if(item->text() == "新建脚本")
-    {
+    if(item->text() == "新建脚本") {
         NewScript();
-    }
-    else
-    {
+    } else {
         ModifyScript();
     }
 }
@@ -301,8 +294,7 @@ void ScriptManageWin::NewScript()
     ScriptConditionConfigForm  *pDlg = new ScriptConditionConfigForm(strProjectPath, this);
     pDlg->setWindowTitle(tr("脚本属性"));
     pDlg->SetName(pCurItem->text());
-    if(pDlg->exec() == QDialog::Accepted)
-    {
+    if(pDlg->exec() == QDialog::Accepted) {
         ScriptObject *pObj = new ScriptObject();
         pObj->m_strName = pDlg->GetName();
         pObj->m_bInUse = pDlg->isInUse();
@@ -342,15 +334,13 @@ void ScriptManageWin::ModifyScript()
     pDlg->SetDescription(pObj->m_strDescription);
     pDlg->SetRunMode(pObj->m_strRunMode);
     pDlg->SetRunModeArgs(pObj->m_strRunModeArgs);
-    if(pDlg->exec() == QDialog::Accepted)
-    {
+    if(pDlg->exec() == QDialog::Accepted) {
         pObj->m_strName = pDlg->GetName();
         pObj->m_bInUse = pDlg->isInUse();
         pObj->m_strDescription = pDlg->GetDescription();
         pObj->m_strRunMode = pDlg->GetRunMode();
         pObj->m_strRunModeArgs = pDlg->GetRunModeArgs();
-        if(pObj->m_strName != pCurItem->text())
-        {
+        if(pObj->m_strName != pCurItem->text()) {
             QString oldScriptFileName = strProjectPath + "/Scripts/" + pCurItem->text() + ".js";
             QString newScriptFileName = strProjectPath + "/Scripts/" + pObj->m_strName + ".js";
             pCurItem->setText(pObj->m_strName);
@@ -366,8 +356,7 @@ void ScriptManageWin::ModifyScript()
         ScriptEditorDlg *pScriptEditorDlg = new ScriptEditorDlg(strProjectPath, this);
         //qDebug() << "scriptFileName: " << scriptFileName;
         pScriptEditorDlg->load(scriptFileName);
-        if(pScriptEditorDlg->exec() == QDialog::Accepted)
-        {
+        if(pScriptEditorDlg->exec() == QDialog::Accepted) {
             pScriptEditorDlg->save(scriptFileName);
         }
         delete pScriptEditorDlg;

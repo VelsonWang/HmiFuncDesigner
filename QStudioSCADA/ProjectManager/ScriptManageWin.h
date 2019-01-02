@@ -1,4 +1,4 @@
-#ifndef SCRIPTMANAGEWIN_H
+﻿#ifndef SCRIPTMANAGEWIN_H
 #define SCRIPTMANAGEWIN_H
 
 #include "ChildBase.h"
@@ -47,6 +47,7 @@ class ScriptManageWin : public ChildBase
 public:
     explicit ScriptManageWin(QWidget *parent = 0, QString itemName = "", QString projName = "");
     ~ScriptManageWin();
+    void init();
 
 public:
     // 打开文件

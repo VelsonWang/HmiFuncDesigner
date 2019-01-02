@@ -40,10 +40,11 @@ DrawPageWin::~DrawPageWin()
 
 void DrawPageWin::init()
 {
-    if(!m_strProjectName.isEmpty())
+    if(!m_strProjectName.isEmpty()) {
         m_ProjPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
-    open();
-    ListViewUpdate();
+        open();
+        ListViewUpdate();
+    }
 }
 
 /*

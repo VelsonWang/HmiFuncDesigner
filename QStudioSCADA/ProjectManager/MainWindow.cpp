@@ -600,25 +600,16 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         findForm->switchPage(PAGE_VARIABLE_MANAGER);
         if(item->text() == tr("设备变量"))
             findForm->switchPage(PAGE_NONE);
-
     } else if(item->text() == tr("画面")) {
         findForm->switchPage(PAGE_DRAW_PAGE);
     } else if(item->text() == tr("实时数据库")) {
         findForm->switchPage(PAGE_RTDB);
-    }/*
-    else if(item->text() == "脚本编辑器")
-    {
-        ScriptManageWin *pScriptManageWin = new ScriptManageWin(this, "脚本编辑器", m_strProjectName);
-        ui->mdiArea->addSubWindow(pScriptManageWin);
-        setActiveSubWindow(pScriptManageWin);
-    } */
-
+    } else if(item->text() == tr("脚本编辑器")) {
+        findForm->switchPage(PAGE_SCRIPT_MANAGER);
+    }
 
     setActiveSubWindow(findForm);
     emit treeItemClicked(winTittle);
-
-
-
 }
 
 void MainWindow::UpdateProjectName(QString name)
