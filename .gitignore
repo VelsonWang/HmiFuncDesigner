@@ -40,3 +40,4 @@ delobj.bat
 *.user.*
 *.opensdf
 *.orig
+*.autosave
