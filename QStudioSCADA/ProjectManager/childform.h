@@ -7,6 +7,7 @@
 #include "CommunicationDeviceWin.h"
 #include "VariableManagerWin.h"
 #include "DrawPageWin.h"
+#include "RealTimeDatabaseWin.h"
 
 namespace Ui {
 class ChildForm;
@@ -18,6 +19,7 @@ enum PAGE_FLOWTYPE{
     PAGE_COMMUNICATE_DEVICE,
     PAGE_VARIABLE_MANAGER,
     PAGE_DRAW_PAGE,
+    PAGE_RTDB,
 
 };
 Q_DECLARE_METATYPE(PAGE_FLOWTYPE)
@@ -84,6 +86,7 @@ private:
     CommunicationDeviceWin *m_communicationDeviceWinPtr; // 通讯设备
     VariableManagerWin *m_variableManagerWinPtr; // 变量管理
     DrawPageWin *m_drawPageWinPtr; // 画面管理
+    RealTimeDatabaseWin *m_rtdbWinPtr; // 实时数据库
 
 private:
 

@@ -1,4 +1,4 @@
-#include "RealTimeDatabaseWin.h"
+﻿#include "RealTimeDatabaseWin.h"
 #include "ui_RealTimeDatabaseWin.h"
 #include "configutils.h"
 #include <QMenu>
@@ -7,11 +7,11 @@
 #include <QKeySequence>
 #include <QModelIndex>
 #include <QFile>
-#include <QProcess>
-
 #include <QDebug>
 
-RealTimeDatabaseWin::RealTimeDatabaseWin(QWidget *parent, QString itemName, QString projName) :
+RealTimeDatabaseWin::RealTimeDatabaseWin(QWidget *parent,
+                                         const QString &itemName,
+                                         const QString &projName) :
     ChildBase(parent, itemName, projName),
     ui(new Ui::RealTimeDatabaseWin)
 {
@@ -25,13 +25,16 @@ RealTimeDatabaseWin::RealTimeDatabaseWin(QWidget *parent, QString itemName, QStr
 RealTimeDatabaseWin::~RealTimeDatabaseWin()
 {
     delete ui;
-    if(pListViewModel != NULL)
-    {
+    if(pListViewModel != nullptr) {
         delete pListViewModel;
-        pListViewModel = NULL;
+        pListViewModel = nullptr;
     }
 }
 
+void RealTimeDatabaseWin::init()
+{
+    m_ProjPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+}
 
 void RealTimeDatabaseWin::ListViewInitUi()
 {
@@ -90,12 +93,14 @@ void RealTimeDatabaseWin::ShowSmallIcon()
 
 void RealTimeDatabaseWin::on_listView_clicked(const QModelIndex &index)
 {
-
+    Q_UNUSED(index)
 }
 
 
 void RealTimeDatabaseWin::on_listView_doubleClicked(const QModelIndex &index)
 {
+    Q_UNUSED(index)
+
     QModelIndex idx = ui->listView->selectionModel()->currentIndex();
     QStandardItem *item = pListViewModel->itemFromIndex(idx);
 
@@ -111,33 +116,14 @@ void RealTimeDatabaseWin::on_listView_doubleClicked(const QModelIndex &index)
 
 #endif
     QFile file(program);
-    if(file.exists())
-    {
-        QProcess *RtdbViewProc = new QProcess;
-        // 设置进程工作目录
-        RtdbViewProc->setWorkingDirectory(ConfigUtils::AppDir());
+    if(file.exists()) {
+        QProcess *rtdbViewProc = new QProcess();
+        rtdbViewProc->setWorkingDirectory(ConfigUtils::AppDir());
         QStringList arguments;
         arguments << m_ProjPath;
-        RtdbViewProc->start(program, arguments);
-        if(RtdbViewProc->waitForStarted())
-        {
-            /*
-            //qDebug()<< "process start.";
-            if(RtdbViewProc->waitForFinished())
-            {
-                //qDebug()<< "process finished.";
-                // 压缩完成准备传输文件
-            }
-            if(RtdbViewProc->exitStatus() == QProcess::NormalExit)
-            {
-                //qDebug()<< "process exitStatus is QProcess::NormalExit.";
-            }
-            else // QProcess::CrashExit
-            {
-                //qDebug()<< "process exitStatus is QProcess::CrashExit.";
-            }
-            */
+        rtdbViewProc->start(program, arguments);
+        if(rtdbViewProc->waitForStarted()) {
+
         }
-        //delete RtdbViewProc;
     }
 }

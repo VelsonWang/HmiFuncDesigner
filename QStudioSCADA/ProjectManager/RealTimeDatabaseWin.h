@@ -1,10 +1,12 @@
-#ifndef REALTIMEDATABASEWIN_H
+﻿#ifndef REALTIMEDATABASEWIN_H
 #define REALTIMEDATABASEWIN_H
 
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QContextMenuEvent>
+#include <QProcess>
+#include <QScopedPointer>
 #include "ChildBase.h"
 
 namespace Ui {
@@ -16,8 +18,11 @@ class RealTimeDatabaseWin : public ChildBase
     Q_OBJECT
 
 public:
-    explicit RealTimeDatabaseWin(QWidget *parent = 0, QString itemName = "", QString projName = "");
+    explicit RealTimeDatabaseWin(QWidget *parent = 0,
+                                 const QString &itemName = "",
+                                 const QString &projName = "");
     ~RealTimeDatabaseWin();
+    void init();
 
 public:
     // 打开文件

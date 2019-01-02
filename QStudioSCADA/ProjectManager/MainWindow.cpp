@@ -603,14 +603,9 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
     } else if(item->text() == tr("画面")) {
         findForm->switchPage(PAGE_DRAW_PAGE);
-    }
-    /*
-    else if(item->text() == "实时数据库")
-    {
-        RealTimeDatabaseWin *pRealTimeDatabaseWin = new RealTimeDatabaseWin(this, "实时数据库", m_strProjectName);
-        ui->mdiArea->addSubWindow(pRealTimeDatabaseWin);
-        setActiveSubWindow(pRealTimeDatabaseWin);
-    }
+    } else if(item->text() == tr("实时数据库")) {
+        findForm->switchPage(PAGE_RTDB);
+    }/*
     else if(item->text() == "脚本编辑器")
     {
         ScriptManageWin *pScriptManageWin = new ScriptManageWin(this, "脚本编辑器", m_strProjectName);
@@ -625,39 +620,6 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
 
 }
-
-
-/*   QWidget* pComDeviceWin = createMdiChild();
-    m_mapItemWindow.insert("串口设备", pComDeviceWin);
-    QWidget* pNetDeviceWin = createMdiChild();
-    m_mapItemWindow.insert("网络设备", pNetDeviceWin);
-    QWidget* pBusDeviceWin = createMdiChild();
-    m_mapItemWindow.insert("总线设备", pBusDeviceWin);
-    QWidget* pOPCDeviceWin = createMdiChild();
-    m_mapItemWindow.insert("OPC设备", pOPCDeviceWin);
-    QWidget* pDataBaseManagerWin = createMdiChild();
-    m_mapItemWindow.insert("数据库管理", pDataBaseManagerWin);
-    QWidget* pRealTimeDatabaseWin = createMdiChild();
-    m_mapItemWindow.insert("实时数据库", pRealTimeDatabaseWin);
-    QWidget* pHistoryDatabaseWin = createMdiChild();
-    m_mapItemWindow.insert("历史数据库", pHistoryDatabaseWin);
-    QWidget* pDrawPageWin = createMdiChild();
-    m_mapItemWindow.insert("画面", pDrawPageWin);
-    QWidget* pLogicProgramWin = createMdiChild();
-    m_mapItemWindow.insert("逻辑编程", pLogicProgramWin);
-    QWidget* pLadderEditorWin = createMdiChild();
-    m_mapItemWindow.insert("梯形图", pLadderEditorWin);
-    QWidget* pScriptEditorWin = createMdiChild();
-    m_mapItemWindow.insert("脚本编辑器", pScriptEditorWin);
-    QWidget* pSystemToolWin = createMdiChild();
-    m_mapItemWindow.insert("系统工具", pSystemToolWin);
-    QWidget* pDriveMonitorWin = createMdiChild();
-    m_mapItemWindow.insert("驱动监视", pDriveMonitorWin);
-    QWidget* pDatabaseInterfaceWin = createMdiChild();
-    m_mapItemWindow.insert("数据库接口", pDatabaseInterfaceWin);
-    QWidget* pBuilderXMLInterfaceWin = createMdiChild();
-    m_mapItemWindow.insert("建筑XML接口", pBuilderXMLInterfaceWin);
-*/
 
 void MainWindow::UpdateProjectName(QString name)
 {
