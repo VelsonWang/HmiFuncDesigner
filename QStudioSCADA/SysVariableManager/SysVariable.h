@@ -1,4 +1,4 @@
-#ifndef SYSVARIABLE_H
+﻿#ifndef SYSVARIABLE_H
 #define SYSVARIABLE_H
 
 #include "../Public/Public.h"
@@ -101,12 +101,11 @@ public:
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
-    void closeEvent(QCloseEvent *event);  // 关闭事件
+    void closeEvent(QCloseEvent *event);
 
 private slots:
-    void on_SysVariableManagerTableView_doubleClicked(const QModelIndex &index);
-    void VariableAdd();
-    void VariableDelete();
+    void variableAdd();
+    void variableDelete();
 
 private:
     Ui::SysVariable *ui;

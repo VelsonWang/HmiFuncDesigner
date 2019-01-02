@@ -26,6 +26,8 @@ RuntimeBin/*.dll
 
 delobj.bat
 
+*.user
+
 *.suo
 *.exe
 *.bin

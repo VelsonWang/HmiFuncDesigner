@@ -1,4 +1,4 @@
-#include "SysVariable.h"
+﻿#include "SysVariable.h"
 #include "ui_SysVariable.h"
 #include <QMenu>
 #include <QAction>
@@ -150,7 +150,7 @@ void TagSystemTableModel::load(const QString &filename, SaveFormat saveFormat)
 {
     QFile loadFile(filename);
     if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open load file.");
+        qWarning() << QString("Couldn't open load file: %1.").arg(filename);
         return;
     }
     m_tagSysItems.clear();
@@ -179,8 +179,8 @@ void TagSystemTableModel::save(const QString &filename, SaveFormat saveFormat)
 {
     QFile saveFile(filename);
     if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
-        return ;
+        qWarning() << QString("Couldn't open save file: %1.").arg(filename);
+        return;
     }
 
     QJsonObject obj;
@@ -206,9 +206,7 @@ void TagSystemTableModel::save(const QString &filename, SaveFormat saveFormat)
     saveFile.close();
 }
 
-
-
-
+///////////////////////////////////////////////////////////////////////////////
 
 
 SysVariable::SysVariable(QWidget *parent) :
@@ -217,7 +215,6 @@ SysVariable::SysVariable(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowIcon(QIcon(":/images/pj_var.png"));
-    // 右键菜单生效
     setContextMenuPolicy(Qt::DefaultContextMenu);
 
     pTableViewVarManagerModel = new TagSystemTableModel(this);
@@ -225,14 +222,22 @@ SysVariable::SysVariable(QWidget *parent) :
     pTableViewVarManagerModel->load(file, DATA_SAVE_FORMAT);
 
     ui->SysVariableManagerTableView->setModel(pTableViewVarManagerModel);
+    ui->SysVariableManagerTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    ui->SysVariableManagerTableView->horizontalHeader()->setStretchLastSection(true);
+    ui->SysVariableManagerTableView->horizontalHeader()->setHighlightSections(false);
+
+    if(pTableViewVarManagerModel->rowCount() > 0)
+        ui->SysVariableManagerTableView->selectRow(0);
 }
 
 SysVariable::~SysVariable()
 {
     delete ui;
+    if(pTableViewVarManagerModel != nullptr) {
+        delete pTableViewVarManagerModel;
+        pTableViewVarManagerModel = nullptr;
+    }
 }
-
-
 
 
 /*
@@ -240,16 +245,18 @@ SysVariable::~SysVariable()
 */
 void SysVariable::contextMenuEvent(QContextMenuEvent * event)
 {
+    Q_UNUSED(event)
+
     QMenu *pMenu = new QMenu(this);
 
     QAction *pAddAct = new QAction(QIcon(":/images/data_add.png"), tr("增加"), this);
     pAddAct->setStatusTip(tr("新增变量"));
-    connect(pAddAct, SIGNAL(triggered()), this, SLOT(VariableAdd()));
+    connect(pAddAct, SIGNAL(triggered()), this, SLOT(variableAdd()));
     pMenu->addAction(pAddAct);
 
     QAction *pDeleteAct = new QAction(QIcon(":/images/data_delete.png"), tr("删除"), this);
     pDeleteAct->setStatusTip(tr("删除"));
-    connect(pDeleteAct, SIGNAL(triggered()), this, SLOT(VariableDelete()));
+    connect(pDeleteAct, SIGNAL(triggered()), this, SLOT(variableDelete()));
     pMenu->addAction(pDeleteAct);
 
     pMenu->move(cursor().pos());
@@ -257,17 +264,10 @@ void SysVariable::contextMenuEvent(QContextMenuEvent * event)
 }
 
 
-
-void SysVariable::on_SysVariableManagerTableView_doubleClicked(const QModelIndex &index)
-{
-
-}
-
-
 /*
 * 插槽：增加变量
 */
-void SysVariable::VariableAdd()
+void SysVariable::variableAdd()
 {
     QModelIndex index;
 
@@ -276,40 +276,37 @@ void SysVariable::VariableAdd()
 
     pTableViewVarManagerModel->insertRows(pTableViewVarManagerModel->rowCount(), 1);
 
-    // 获取 m_TagID 的 modelIndex
     index = pTableViewVarManagerModel->index(pTableViewVarManagerModel->rowCount()-1, 0);
 
     int id;
-    if(pTableViewVarManagerModel->rowCount()>0)
+    if(pTableViewVarManagerModel->rowCount() > 0)
         id = val.toInt() + 1;
     else
         id = SYSVARIABLE_BASE + 1;
     pTableViewVarManagerModel->setData(index, id);
 
-    // 获取 m_sName 的 modelIndex
     index = pTableViewVarManagerModel->index(pTableViewVarManagerModel->rowCount()-1, 1);
     pTableViewVarManagerModel->setData(index, QString("sys%1").arg(pTableViewVarManagerModel->rowCount()));
-
 }
 
 
 /*
 * 插槽：删除变量
 */
-void SysVariable::VariableDelete()
+void SysVariable::variableDelete()
 {
     QModelIndex ModelIndex = ui->SysVariableManagerTableView->selectionModel()->currentIndex();
     pTableViewVarManagerModel->removeRow(ModelIndex.row(), ModelIndex.parent());
-    for(int i = 0; i < pTableViewVarManagerModel->rowCount(); i++)
-    {
+    for(int i = 0; i < pTableViewVarManagerModel->rowCount(); i++) {
         QModelIndex index = pTableViewVarManagerModel->index(i, 1);
         pTableViewVarManagerModel->setData(index, QString("sys%1").arg(i+1));
     }
 }
 
 
-void SysVariable::closeEvent(QCloseEvent *event) // 关闭事件
+void SysVariable::closeEvent(QCloseEvent *event)
 {
     QString file = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
     pTableViewVarManagerModel->save(file, DATA_SAVE_FORMAT);
+    QWidget::closeEvent(event);
 }
