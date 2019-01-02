@@ -58,7 +58,7 @@ public:
     // 删除变量标签
     void deleteVariableTag();
     // 变量标签导出csv
-    void variableTagExportToCsv(const QString &path,  const QString &item);
+    void variableTagExportToCsv(const QString &path);
     // 从csv导入变量标签
     void variableTagImportFromCsv(const QString &file);
 

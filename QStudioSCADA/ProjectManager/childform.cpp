@@ -189,12 +189,11 @@ void ChildForm::deleteVariableTag()
 /**
  * @brief ChildForm::variableTagExportToCsv 变量标签导出csv
  * @param path 导出路径
- * @param item 标量标签类型
  */
-void ChildForm::variableTagExportToCsv(const QString &path,  const QString &item)
+void ChildForm::variableTagExportToCsv(const QString &path)
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->exportToCsv(path, item);
+        m_variableManagerWinPtr->exportToCsv(path);
     }
 }
 

@@ -988,14 +988,12 @@ void VariableManagerWin::init(const QString &itemName)
 
 void VariableManagerWin::SetTitle(const QString &t)
 {
-    if(t == tr("中间变量") || t == tr("系统变量"))
-    {
+    if(t == tr("中间变量") || t == tr("系统变量")) {
         m_strItemName = t;        
-    }
-    else
-    {
+    } else {
         m_strItemName = tr("设备变量");
-        m_IOVariableListWhat = t;
+        QString str = t;
+        m_IOVariableListWhat = str.replace(QString(tr("设备变量-")), "");
     }
 }
 
@@ -1124,16 +1122,13 @@ void VariableManagerWin::save(QJsonObject &json, const QString &it)
 /*
 * 导出变量表
 */
-void VariableManagerWin::exportToCsv(const QString &path, const QString &group)
+void VariableManagerWin::exportToCsv(const QString &path)
 {
-    //qDebug()<< m_strItemName << " path: " << path;
-    if(m_strItemName == "设备变量")
-    {
-        pTagIOTableModel->exportToCsv(path, group);
-    }
-    else if(m_strItemName == "中间变量")
-    {
-        pTagTmpTableModel->exportToCsv(path, group);
+    qDebug()<< m_strItemName << " " << m_IOVariableListWhat << " path: " << path;
+    if(m_strItemName == tr("设备变量")) {
+        pTagIOTableModel->exportToCsv(path, QString("%1-%2").arg(m_strItemName).arg(m_IOVariableListWhat));
+    } else if(m_strItemName == tr("中间变量")) {
+        pTagTmpTableModel->exportToCsv(path, m_strItemName);
     }
 }
 

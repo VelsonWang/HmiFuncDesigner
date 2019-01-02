@@ -560,10 +560,8 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         winTittle = item->text();
     } else {
         // 设备变量
-        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
-        {
-            if(item->text() == var->m_name)
-            {
+        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+            if(item->text() == var->m_name) {
                 winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(item->text());
             }
         }
@@ -604,6 +602,9 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         findForm->switchPage(PAGE_DRAW_PAGE);
     } else if(item->text() == tr("实时数据库")) {
         findForm->switchPage(PAGE_RTDB);
+    } else if(item->text() == tr("历史数据库")) {
+        findForm->switchPage(PAGE_NONE);
+        findForm->hide();
     } else if(item->text() == tr("脚本编辑器")) {
         findForm->switchPage(PAGE_SCRIPT_MANAGER);
     }
@@ -908,7 +909,6 @@ void MainWindow::on_actionDeleteTag_triggered()
  */
 void MainWindow::on_actionExportTag_triggered()
 {
-#if 0
     QString dirUploadProjects = QCoreApplication::applicationDirPath();
     QString strSaveCsvPath = QFileDialog::getExistingDirectory(this, tr("选择导出csv路径"),
                                                        dirUploadProjects,
@@ -919,9 +919,8 @@ void MainWindow::on_actionExportTag_triggered()
 
     ChildForm* window = findMdiChild(this->m_CurItem);
     if(window != NULL) {
-        window->variableTagExportToCsv(strSaveCsvPath, this->m_CurItem);
+        window->variableTagExportToCsv(strSaveCsvPath);
     }
-#endif
 }
 
 /*

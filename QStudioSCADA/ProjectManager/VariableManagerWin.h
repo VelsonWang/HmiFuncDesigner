@@ -380,7 +380,7 @@ public:
 public:
     bool loadFromFile(SaveFormat saveFormat, const QString &it);
     bool saveToFile(SaveFormat saveFormat, const QString &it);
-    void exportToCsv(const QString &path, const QString &group);
+    void exportToCsv(const QString &path);
     void importFromCsv(const QString &path);
     void SetTitle(const QString &t);
 
