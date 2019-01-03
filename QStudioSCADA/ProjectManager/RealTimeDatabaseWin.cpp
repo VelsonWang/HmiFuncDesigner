@@ -1,6 +1,7 @@
 ﻿#include "RealTimeDatabaseWin.h"
 #include "ui_RealTimeDatabaseWin.h"
 #include "configutils.h"
+#include "Helper.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
@@ -109,16 +110,16 @@ void RealTimeDatabaseWin::on_listView_doubleClicked(const QModelIndex &index)
 
     QString program = "";
 #ifdef Q_OS_WIN
-    program = ConfigUtils::AppDir() + "/RtdbView.exe";
+    program = Helper::AppDir() + "/RtdbView.exe";
 #elif Q_OS_LINUX
-    program = ConfigUtils::AppDir() + "/RtdbView";
+    program = Helper::AppDir() + "/RtdbView";
 #else
 
 #endif
     QFile file(program);
     if(file.exists()) {
         QProcess *rtdbViewProc = new QProcess();
-        rtdbViewProc->setWorkingDirectory(ConfigUtils::AppDir());
+        rtdbViewProc->setWorkingDirectory(Helper::AppDir());
         QStringList arguments;
         arguments << m_ProjPath;
         rtdbViewProc->start(program, arguments);

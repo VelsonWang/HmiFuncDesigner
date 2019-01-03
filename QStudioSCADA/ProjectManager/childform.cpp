@@ -123,6 +123,24 @@ void ChildForm::SetTitle(const QString &title)
     this->setWindowTitle(title);
 }
 
+QString ChildForm::getItemName() const
+{
+    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
+        return m_sysParamWinPtr->getItemName();
+    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
+        return m_communicationDeviceWinPtr->getItemName();
+    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
+        return m_variableManagerWinPtr->getItemName();
+    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
+        return m_drawPageWinPtr->getItemName();
+    } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
+        return m_rtdbWinPtr->getItemName();
+    } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
+        return m_scriptManageWinPtr->getItemName();
+    }
+    return QString();
+}
+
 /**
  * @brief ChildForm::addVariableTag 增加变量标签
  */

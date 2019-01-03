@@ -121,6 +121,7 @@ osx {
 }
 
 INCLUDEPATH += \
+    $$IDE_SOURCE_TREE/libs/Utils \
     $$IDE_SOURCE_TREE/libs/ConfigUtils \
     $$IDE_SOURCE_TREE/libs/DrawListUtils \
     $$IDE_SOURCE_TREE/libs/Csv \

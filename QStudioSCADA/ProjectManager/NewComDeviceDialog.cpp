@@ -1,9 +1,10 @@
-#include "NewComDeviceDialog.h"
+﻿#include "NewComDeviceDialog.h"
 #include "ui_NewComDeviceDialog.h"
 #include "DeviceListDialog.h"
 #include "SelectProtocolDialog.h"
 #include "IDevicePlugin.h"
 #include "configutils.h"
+#include "Helper.h"
 #include <QDir>
 #include <QDialog>
 #include <QFileDialog>
@@ -112,7 +113,7 @@ void NewComDeviceDialog::on_btnProtocolSelect_clicked()
     if(pluginNmae.indexOf("_") >= 0)
         pluginNmae = pluginNmae.left(pluginNmae.indexOf("_"));
 
-    QDir pluginsDir(ConfigUtils::AppDir());
+    QDir pluginsDir(Helper::AppDir());
     pluginsDir.cdUp();
     pluginsDir.cd("deviceplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files))

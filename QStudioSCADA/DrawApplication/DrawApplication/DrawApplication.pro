@@ -20,10 +20,12 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowserd
+    LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowser
+    LIBS += -L$$IDE_LIBRARY_PATH -lHelper
 }
 
 

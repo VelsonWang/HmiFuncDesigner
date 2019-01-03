@@ -1,6 +1,7 @@
 ﻿#include "DrawPageWin.h"
 #include "ui_DrawPageWin.h"
 #include "configutils.h"
+#include "Helper.h"
 #include "DrawListUtils.h"
 
 #include <QMenu>
@@ -301,9 +302,9 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
 
     QString fileDrawApplication = "";
 #ifdef Q_OS_WIN
-    fileDrawApplication = ConfigUtils::AppDir() + "/DrawApplication.exe";
+    fileDrawApplication = Helper::AppDir() + "/DrawApplication.exe";
 #elif Q_OS_LINUX
-    fileDrawApplication = ConfigUtils::AppDir() + "/DrawApplication";
+    fileDrawApplication = Helper::AppDir() + "/DrawApplication";
 #else
 
 #endif

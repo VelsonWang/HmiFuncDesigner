@@ -1,4 +1,4 @@
-#include "ScriptEditorDlg.h"
+﻿#include "ScriptEditorDlg.h"
 #include "InsertFunctionDialog.h"
 #include "InsertTagDialog.h"
 #include "ui_ScriptEditorDlg.h"
@@ -498,7 +498,7 @@ void ScriptEditorDlg::on_btnToolSyntaxcheck_clicked()
 {
     QScriptEngine engine;
 
-    QString scriptFileName(ConfigUtils::AppDir() + "/Config/ScriptFunc.js");
+    QString scriptFileName(Helper::AppDir() + "/Config/ScriptFunc.js");
     QFile scriptFile(scriptFileName);
     scriptFile.open(QIODevice::ReadOnly);
     QTextStream stream(&scriptFile);

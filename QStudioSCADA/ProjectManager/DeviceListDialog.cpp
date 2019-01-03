@@ -1,6 +1,7 @@
-#include "DeviceListDialog.h"
+﻿#include "DeviceListDialog.h"
 #include "ui_DeviceListDialog.h"
 #include "configutils.h"
+#include "Helper.h"
 #include <QMessageBox>
 #include <QSettings>
 #include <QApplication>
@@ -34,7 +35,7 @@ void DeviceListDialog::TreeViewInit()
     QStandardItem *pDeviceListItem = new QStandardItem(tr("设备列表"));
     pDeviceListItem->setEditable(false);
 
-    QString iniFileName = ConfigUtils::AppDir() + "/Config/communication_device.ini";
+    QString iniFileName = Helper::AppDir() + "/Config/communication_device.ini";
     //qDebug()<< "path " << iniFileName;
     QFile fileCfg(iniFileName);
     if(!fileCfg.exists())
@@ -43,7 +44,7 @@ void DeviceListDialog::TreeViewInit()
     m_SupportDevList.clear();
     // device type
     QStringList sDevTypeList;
-    ConfigUtils::GetCfgList(iniFileName, "DeviceSupportList", "list", sDevTypeList);
+    ConfigUtils::getCfgList(iniFileName, "DeviceSupportList", "list", sDevTypeList);
     for (int i=0; i< sDevTypeList.count(); i++)
     {
         QString sDevTypeOne = sDevTypeList.at(i).trimmed();
@@ -56,7 +57,7 @@ void DeviceListDialog::TreeViewInit()
 
         // device series
         QStringList devSeriesList;
-        ConfigUtils::GetCfgList(iniFileName, key, "list", devSeriesList);
+        ConfigUtils::getCfgList(iniFileName, key, "list", devSeriesList);
         for (int i=0; i< devSeriesList.count(); i++)
         {
             QString sDevSeriesOne = devSeriesList.at(i).trimmed();
@@ -65,7 +66,7 @@ void DeviceListDialog::TreeViewInit()
 
             // device
             QStringList devList;
-            ConfigUtils::GetCfgList(iniFileName, sDevSeriesOne, "list", devList);
+            ConfigUtils::getCfgList(iniFileName, sDevSeriesOne, "list", devList);
             for (int i=0; i< devList.count(); i++)
             {
                 QString sDevOne = devList.at(i).trimmed();

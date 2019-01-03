@@ -1,7 +1,7 @@
-#include "TagFuncEditDialog.h"
+﻿#include "TagFuncEditDialog.h"
 #include "VariableManagerWin.h"
 #include "configutils.h"
-
+#include "Helper.h"
 #include <QFile>
 #include <QHeaderView>
 #include <QMessageBox>
@@ -479,7 +479,7 @@ void TagFuncEditDialog::TreeViewInit()
     m_pTreeViewFunc->setHeaderHidden(true);
     m_pTreeViewItemModel = new QStandardItemModel();
 
-    QString iniFileName = ConfigUtils::AppDir() + "/Config/RtdbFun.ini";
+    QString iniFileName = Helper::AppDir() + "/Config/RtdbFun.ini";
     QFile fileCfg(iniFileName);
     if(!fileCfg.exists())
     {
@@ -490,7 +490,7 @@ void TagFuncEditDialog::TreeViewInit()
     m_supportFuncList.clear();
     // device type
     QStringList sFuncTypeList;
-    ConfigUtils::GetCfgList(iniFileName, "FunSupportList", "list", sFuncTypeList);
+    ConfigUtils::getCfgList(iniFileName, "FunSupportList", "list", sFuncTypeList);
     for (int i=0; i<sFuncTypeList.count(); i++)
     {
         QString sFuncTypeOne = sFuncTypeList.at(i).trimmed();
@@ -503,9 +503,9 @@ void TagFuncEditDialog::TreeViewInit()
         itemFuncTypeOne->setEditable(false);
 
         QString strSecName = key;
-        int funcCount = ConfigUtils::GetCfgStr(iniFileName, strSecName, "Func-count", "0").toInt();
-        int descCount = ConfigUtils::GetCfgStr(iniFileName, strSecName, "Desc-count", "0").toInt();
-        int argsCount = ConfigUtils::GetCfgStr(iniFileName, strSecName, "Args-count", "0").toInt();
+        int funcCount = ConfigUtils::getCfgStr(iniFileName, strSecName, "Func-count", "0").toInt();
+        int descCount = ConfigUtils::getCfgStr(iniFileName, strSecName, "Desc-count", "0").toInt();
+        int argsCount = ConfigUtils::getCfgStr(iniFileName, strSecName, "Args-count", "0").toInt();
         if(funcCount != (descCount + descCount + argsCount) / 3 )
         {
             QMessageBox::critical(this, tr("提示"), tr("功能定义文件配置错误！"));
@@ -522,7 +522,7 @@ void TagFuncEditDialog::TreeViewInit()
         {
             TFuncObject *pFuncObj = m_supportFuncList.at(i);
             strIdent = QString("Func-%1").arg(i+1);
-            strName = ConfigUtils::GetCfgStr(iniFileName, strSecName, strIdent, "");
+            strName = ConfigUtils::getCfgStr(iniFileName, strSecName, strIdent, "");
             if(strName.indexOf("|") != -1)
                 strName.replace("|", ",");
             pFuncObj->name = strName;
@@ -531,14 +531,14 @@ void TagFuncEditDialog::TreeViewInit()
         {
             TFuncObject *pFuncObj = m_supportFuncList.at(i);
             strIdent = QString("Desc-%1").arg(i+1);
-            QString strDesc = ConfigUtils::GetCfgStr(iniFileName, strSecName, strIdent, "");
+            QString strDesc = ConfigUtils::getCfgStr(iniFileName, strSecName, strIdent, "");
             pFuncObj->desc = QString::fromLocal8Bit(strDesc.toLatin1());
         }
         for (int i=0; i<argsCount; i++)
         {
             TFuncObject *pFuncObj = m_supportFuncList.at(i);
             strIdent = QString("Args-%1").arg(i+1);
-            pFuncObj->args_type = ConfigUtils::GetCfgStr(iniFileName, strSecName, strIdent, "");
+            pFuncObj->args_type = ConfigUtils::getCfgStr(iniFileName, strSecName, strIdent, "");
         }
         for (int i=0; i<funcCount; i++)
         {

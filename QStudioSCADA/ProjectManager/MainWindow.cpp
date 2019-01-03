@@ -217,6 +217,7 @@ void MainWindow::VariableGroupAdd()
     NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
     pDlg->SetDialogName("新建数据组");
     pDlg->SetLabelName("数据组名：");
+    ChildForm* window = findMdiChild(this->m_CurItem);
     if(pDlg->exec() == QDialog::Accepted) {
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
@@ -224,7 +225,11 @@ void MainWindow::VariableGroupAdd()
         pGroup->m_iPageID = m_pIoDBVarGroups->m_VarBlockGroupList.count();
         m_pIoDBVarGroups->m_VarBlockGroupList.append(pGroup);
         m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
-        UpdateDeviceVariableTableGroup();
+        UpdateDeviceVariableTableGroup();       
+        if(window != NULL) {
+            QString titleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
+            window->SetTitle(titleNew);
+        }
     }
 }
 
@@ -235,8 +240,7 @@ void MainWindow::VariableGroupRename()
 {
     QModelIndex index = ui->treeViewProject->currentIndex();
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-    QString titleOld = QString("%1%2%3").arg("设备变量").arg("-").arg(text);
-    ChildForm* window = findMdiChild(titleOld);
+    ChildForm* window = findMdiChild(this->m_CurItem);
 
     foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
         if(text == var->m_name) {
@@ -273,16 +277,14 @@ void MainWindow::VariableDeleteGroup()
 
     foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
         if(qTiem->text() == var->m_name) {
-            QMdiSubWindow* pWindow = findMdiSubWindow("设备变量-"+var->m_name);
-            if(pWindow != NULL)
-            {
-                pWindow->close();
+            ChildForm *findForm = findMdiChild(m_strProjectName);
+            if(findForm != NULL) {
+                findForm->hide();
             }
             QString file = "";
             file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + var->m_name + ".odb";
             QFile delFile(file);
-            if(delFile.exists())
-            {
+            if(delFile.exists()) {
                 delFile.remove();
             }
             m_pIoDBVarGroups->m_VarBlockGroupList.removeOne(var);
@@ -400,45 +402,54 @@ void MainWindow::contextMenuEvent(QContextMenuEvent * /*event*/)
     pMenu->show();
 }
 
-void MainWindow::closeEvent(QCloseEvent *event) // 关闭事件
+/**
+ * @brief MainWindow::closeEvent  关闭事件
+ * @param event
+ */
+void MainWindow::closeEvent(QCloseEvent *event)
 {
-    //qDebug()<<"MainWindow::closeEvent()";
-    QString strFile = ConfigUtils::AppDir() + "/lastpath.ini";
+    QString strFile = Helper::AppDir() + "/lastpath.ini";
     if(pProjectItem->text() != tr("未创建工程"))
-        ConfigUtils::SetCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
-    ui->mdiArea->closeAllSubWindows(); // 先执行多文档区域的关闭操作
-    writeSettings(); // 在关闭前写入窗口设置
+        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
+    ui->mdiArea->closeAllSubWindows();
+    writeSettings();
     if (ui->mdiArea->currentSubWindow()) {
-        event->ignore(); // 如果还有窗口没有关闭，则忽略该事件
+        event->ignore();
     } else {
         event->accept();
     }
 }
 
-void MainWindow::writeSettings() // 写入窗口设置
+/**
+ * @brief MainWindow::writeSettings 写入窗口设置
+ */
+void MainWindow::writeSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     settings.setValue("geometry", saveGeometry());
 }
 
-void MainWindow::readSettings() // 读取窗口设置
+/**
+ * @brief MainWindow::readSettings 读取窗口设置
+ */
+void MainWindow::readSettings()
 {
     //qDebug()<<QCoreApplication::organizationName() << QCoreApplication::applicationName();
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     const QByteArray geometry = settings.value("geometry", QByteArray()).toByteArray();
-    if (geometry.isEmpty())
-    {
+    if (geometry.isEmpty()) {
         const QRect availableGeometry = QApplication::desktop()->availableGeometry(this);
         resize(availableGeometry.width() * 3 / 4, availableGeometry.height() * 3 / 4);
         move((availableGeometry.width() - width()) / 2, (availableGeometry.height() - height()) / 2);
-    }
-    else
-    {
+    } else {
         restoreGeometry(geometry);
     }
 }
 
-void MainWindow::initWindow() // 初始化窗口
+/**
+ * @brief MainWindow::initWindow 初始化窗口
+ */
+void MainWindow::initWindow()
 {
     setCentralWidget(ui->mdiArea);
 //    setWindowState(Qt::WindowMaximized);
@@ -485,8 +496,8 @@ void MainWindow::doOpenProject(QString proj)
     }
 
     UpdateProjectName(proj);
-    QString strFile = ConfigUtils::AppDir() + "/lastpath.ini";
-    ConfigUtils::SetCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
+    QString strFile = Helper::AppDir() + "/lastpath.ini";
+    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
     // 加载设备变量组信息
     m_pIoDBVarGroups = new DBVarGroups(m_strProjectName);
     m_pIoDBVarGroups->loadFromFile(DATA_SAVE_FORMAT);
@@ -498,7 +509,7 @@ void MainWindow::doOpenProject(QString proj)
 void MainWindow::on_actionOpenProject_triggered()
 {
     QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";    
-    QString path = ConfigUtils::GetCfgStr(strFile, "PathInfo", "Path", "C:/");    
+    QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
     QString fileName = QFileDialog::getOpenFileName(this, tr("选择工程文件"),
                                                     path,
                                                     tr("project file (*.proj)"));
@@ -928,7 +939,6 @@ void MainWindow::on_actionExportTag_triggered()
  */
 void MainWindow::on_actionImportTag_triggered()
 {
-#if 0
     QString path = QCoreApplication::applicationDirPath();
     QString strSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),
                                                     path,
@@ -947,34 +957,20 @@ void MainWindow::on_actionImportTag_triggered()
             break;
         }
     }
-    if(found) {
-        ChildForm* window = findMdiChild(this->m_CurItem);
-        if(window != NULL) {
-            window->variableTagImportFromCsv(strSaveCsvFile);
-        }
-    } else {
+    if(!found) {
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
         pGroup->m_name = strGroupName;
         m_pIoDBVarGroups->m_VarBlockGroupList.append(pGroup);
         m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
         UpdateDeviceVariableTableGroup();
-
-        // 工具条使能
         enableToolBar(strCsvName);
-
-        ChildForm* window = findMdiChild(strCsvName);
-        if(window != NULL) {
-            setActiveSubWindow(window);
-            return;
-        }
-
-        VariableManagerWin * pVariableManagerWin = new VariableManagerWin(this, strCsvName, m_strProjectName);
-        ui->mdiArea->addSubWindow(pVariableManagerWin);
-        setActiveSubWindow(pVariableManagerWin);
-        pVariableManagerWin->importFromCsv(strSaveCsvFile);
     }
-#endif
+
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->variableTagImportFromCsv(strSaveCsvFile);
+    }
 }
 
 /*
@@ -1051,11 +1047,11 @@ void MainWindow::on_actionAbout_triggered()
  */
 void MainWindow::loadRecentProjectList()
 {
-    QString iniRecentProjectFileName = ConfigUtils::AppDir() + "/RecentProjectList.ini";
+    QString iniRecentProjectFileName = Helper::AppDir() + "/RecentProjectList.ini";
     QFile fileCfg(iniRecentProjectFileName);
     if(fileCfg.exists()) {
         QStringList slist;
-        ConfigUtils::GetCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
+        ConfigUtils::getCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
         for (int i=0; i<slist.count(); i++) {
             QAction *pAct = new QAction(slist.at(i), this);
@@ -1092,11 +1088,11 @@ void MainWindow::updateRecentProjectList(QString newProj)
     bool bStart = false;
     bool bEnd = false;
 
-    QString iniRecentProjectFileName = ConfigUtils::AppDir() + "/RecentProjectList.ini";
+    QString iniRecentProjectFileName = Helper::AppDir() + "/RecentProjectList.ini";
     QFile fileCfg(iniRecentProjectFileName);
     if(fileCfg.exists()) {
         QStringList slist;
-        ConfigUtils::GetCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
+        ConfigUtils::getCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
         for (int i=0; i<slist.count(); i++) {
             if(newProj == slist.at(i)) {
@@ -1108,7 +1104,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
             slist.removeLast();
 
         slist.push_front(newProj);
-        ConfigUtils::WriteCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
+        ConfigUtils::writeCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
         QList<QAction *> listActRemove;
         QList<QAction *> listAct = ui->menuProject->actions();
@@ -1163,14 +1159,14 @@ void MainWindow::updateRecentProjectList(QString newProj)
         }
     } else {
         QStringList slist;
-        ConfigUtils::WriteCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
+        ConfigUtils::writeCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
     }
 }
 
 
-/*
-* 显示大图标
-*/
+/**
+ * @brief MainWindow::on_actionBigIcon_triggered 显示大图标
+ */
 void MainWindow::on_actionBigIcon_triggered()
 {
     ui->actionBigIcon->setChecked(true);
@@ -1181,9 +1177,10 @@ void MainWindow::on_actionBigIcon_triggered()
     }
 }
 
-/*
-* 显示小图标
-*/
+
+/**
+ * @brief MainWindow::on_actionSmallIcon_triggered 显示小图标
+ */
 void MainWindow::on_actionSmallIcon_triggered()
 {
     ui->actionBigIcon->setChecked(false);

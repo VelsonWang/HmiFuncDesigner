@@ -22,16 +22,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
-    #LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
-    #LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
-    #LIBS += -L$$IDE_LIBRARY_PATH -lCsvd
-    #message(LIBS $$LIBS)
+    LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
 }
 else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
-    #LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
-    #LIBS += -L$$IDE_LIBRARY_PATH -lHelper
-    #LIBS += -L$$IDE_LIBRARY_PATH -lCsv
+    LIBS += -L$$IDE_LIBRARY_PATH -lHelper
 }
 
 UI_DIR=../../build-QStudioSCADA/RtdbView/ui

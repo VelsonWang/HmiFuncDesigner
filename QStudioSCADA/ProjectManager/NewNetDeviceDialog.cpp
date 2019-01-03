@@ -1,4 +1,4 @@
-#include "NewNetDeviceDialog.h"
+﻿#include "NewNetDeviceDialog.h"
 #include "ui_NewNetDeviceDialog.h"
 #include "DeviceListDialog.h"
 #include "SelectProtocolDialog.h"
@@ -10,6 +10,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QSettings>
+#include "Helper.h"
 #include <QFile>
 #include <QJsonDocument>
 #include <QPluginLoader>
@@ -83,7 +84,7 @@ void NewNetDeviceDialog::on_btnProtocolSelect_clicked()
     if(pluginNmae.indexOf("_") >= 0)
         pluginNmae = pluginNmae.left(pluginNmae.indexOf("_"));
 
-    QDir pluginsDir(ConfigUtils::AppDir());
+    QDir pluginsDir(Helper::AppDir());
     pluginsDir.cdUp();
     pluginsDir.cd("deviceplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files))

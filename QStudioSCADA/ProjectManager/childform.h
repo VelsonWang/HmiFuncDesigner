@@ -34,6 +34,7 @@ public:
     ~ChildForm();
 
     void SetTitle(const QString &title);
+    QString getItemName() const;
 
     // 页面切换
     void switchPage(PAGE_FLOWTYPE page);

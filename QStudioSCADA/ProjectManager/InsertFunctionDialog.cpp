@@ -1,8 +1,8 @@
-#include "InsertFunctionDialog.h"
+﻿#include "InsertFunctionDialog.h"
 #include "ui_InsertFunctionDialog.h"
 #include "configutils.h"
 #include "xmlobject.h"
-
+#include "Helper.h"
 #include <QFile>
 #include <QList>
 #include <QStringList>
@@ -32,7 +32,7 @@ void InsertFunctionDialog::treeWidgetInit()
     ui->treeWidgetFunc->setHeaderHidden(true);
 
     // file encoding="UTF-8"
-    QString xmlFileName = ConfigUtils::AppDir() + "/Config/JScriptFun.xml";
+    QString xmlFileName = Helper::AppDir() + "/Config/JScriptFun.xml";
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists())
@@ -76,13 +76,13 @@ void InsertFunctionDialog::treeWidgetInit()
             if(funcDesc.size() < 1)
                 continue;
             QString strDesc = "";
-            QString strFuncOrgName = func->getChild("name")->getText();
+            QString strFuncOrgName = func->getCurrentChild("name")->getText();
             strDesc += strFuncOrgName;
             strDesc += QString("\n");
-            QString strFuncDesc = func->getChild("desc")->getText();
+            QString strFuncDesc = func->getCurrentChild("desc")->getText();
             strDesc += strFuncDesc;
             strDesc += QString("\n");
-            XMLObject* argsXMLObject = func->getChild("args");
+            XMLObject* argsXMLObject = func->getCurrentChild("args");
             QString strFuncArgs = argsXMLObject->getProperty("name");
             strDesc += strFuncArgs;
             strDesc += QString("\n");
@@ -95,7 +95,7 @@ void InsertFunctionDialog::treeWidgetInit()
                 strDesc += QString("\n");
             }
 
-            QString strFuncDemo = func->getChild("demo")->getText();
+            QString strFuncDemo = func->getCurrentChild("demo")->getText();
             strDesc += strFuncDemo;
             strDesc += QString("\n");
 

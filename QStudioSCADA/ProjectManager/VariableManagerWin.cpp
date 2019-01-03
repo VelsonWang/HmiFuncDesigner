@@ -947,8 +947,7 @@ void VariableManagerWin::init(const QString &itemName)
             save();
         }
         SetTitle(itemName);
-        loadFromFile(DATA_SAVE_FORMAT, m_strItemName);
-        m_strCurTagType = itemName;
+        loadFromFile(DATA_SAVE_FORMAT, m_strItemName);  
     }
 
     if(m_strItemName == tr("设备变量")) {
@@ -995,6 +994,7 @@ void VariableManagerWin::SetTitle(const QString &t)
         QString str = t;
         m_IOVariableListWhat = str.replace(QString(tr("设备变量-")), "");
     }
+    m_strCurTagType = t;
 }
 
 

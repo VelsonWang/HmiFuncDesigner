@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "configutils.h"
 #include "DrawListUtils.h"
 #include <QApplication>
@@ -10,15 +10,12 @@ int main(int argc, char *argv[])
 
     QString strProjPath = "";
     QString strDrawPageName = "";
-    if(argc == 3)
-    {
+    if(argc == 3) {
         strProjPath = argv[1];
         strDrawPageName = argv[2];
-    }
-    else
-    {
+    } else {
         QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
-        strProjPath = ConfigUtils::GetCfgStr(strFile, "PathInfo", "Path", "/");
+        strProjPath = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "/");
 
         int last = 0;
         QStringList DrawList;

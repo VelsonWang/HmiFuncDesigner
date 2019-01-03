@@ -4,6 +4,7 @@ include(../QStudioSCADA.pri)
 TEMPLATE  = subdirs
 
 SUBDIRS   = \
+    Utils \
     ConfigUtils \
     XmlUtils \
     Csv \

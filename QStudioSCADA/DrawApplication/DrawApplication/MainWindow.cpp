@@ -1,4 +1,4 @@
-
+﻿
 #include <QMdiSubWindow>
 #include <QSettings>
 #include <QStandardItem>
@@ -14,6 +14,7 @@
 #include "ui_MainWindow.h"
 #include "ToolButton.h"
 #include "configutils.h"
+#include "Helper.h"
 #include "DrawListUtils.h"
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
@@ -459,7 +460,7 @@ void MainWindow::LoadPlugin()
 {
     ReleasePlugin();
 
-    QDir pluginsDir(ConfigUtils::AppDir());
+    QDir pluginsDir(Helper::AppDir());
     pluginsDir.cdUp();
     pluginsDir.cd(QLatin1String("DrawApplicationPlugins"));
     foreach (QString fileName, pluginsDir.entryList(QDir::Files))

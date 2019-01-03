@@ -1,4 +1,4 @@
-#include "NewProjectDialog.h"
+﻿#include "NewProjectDialog.h"
 #include "ui_NewProjectDialog.h"
 #include "configutils.h"
 #include <QDir>
@@ -34,7 +34,7 @@ NewProjectDialog::NewProjectDialog(QWidget *parent) :
 
     QSettings settingsDev(iniDevFileName, QSettings::IniFormat);
     QStringList slistDev;
-    ConfigUtils::GetCfgList(iniDevFileName, "DeviceSupportIndex", "dev", slistDev);
+    ConfigUtils::getCfgList(iniDevFileName, "DeviceSupportIndex", "dev", slistDev);
 
     settingsDev.beginGroup("DeviceID");
     for (int i=0; i< slistDev.count(); i++)

@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "configutils.h"
 
 #include <QApplication>
@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     if(sProjectPath == "")
     {
         QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
-        sProjectPath = ConfigUtils::GetCfgStr(strFile, "PathInfo", "Path", "C:/");
+        sProjectPath = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
     }
 
     if(sProjectPath == "")

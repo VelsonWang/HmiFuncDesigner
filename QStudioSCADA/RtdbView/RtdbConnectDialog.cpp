@@ -1,6 +1,7 @@
-#include "RtdbConnectDialog.h"
+﻿#include "RtdbConnectDialog.h"
 #include "ui_RtdbConnectDialog.h"
 #include "configutils.h"
+#include "Helper.h"
 #include <QDebug>
 
 RtdbConnectDialog::RtdbConnectDialog(QWidget *parent) :
@@ -10,8 +11,8 @@ RtdbConnectDialog::RtdbConnectDialog(QWidget *parent) :
     ui->setupUi(this);
     setWindowTitle(tr("实时数据库连接"));
 
-    QString strFile = ConfigUtils::AppDir() + "/Config/Current.ini";
-    QString ip = ConfigUtils::GetCfgStr(strFile, "Rtdb", "IP", "127.0.0.1");
+    QString strFile = Helper::AppDir() + "/Config/Current.ini";
+    QString ip = ConfigUtils::getCfgStr(strFile, "Rtdb", "IP", "127.0.0.1");
     ui->editAddress->setText(ip);
 
     mOpt = -1;
@@ -56,8 +57,8 @@ void RtdbConnectDialog::closeEvent(QCloseEvent */*event*/)
 
 void RtdbConnectDialog::WriteConfig()
 {
-    QString strFile = ConfigUtils::AppDir() + "/Config/Current.ini";
-    ConfigUtils::SetCfgStr(strFile, "Rtdb", "IP", ui->editAddress->text());
+    QString strFile = Helper::AppDir() + "/Config/Current.ini";
+    ConfigUtils::setCfgStr(strFile, "Rtdb", "IP", ui->editAddress->text());
 }
 
 

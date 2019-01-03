@@ -1,6 +1,7 @@
-#include "VariableEditDialog.h"
+﻿#include "VariableEditDialog.h"
 #include "ui_VariableEditDialog.h"
 #include "configutils.h"
+#include "Helper.h"
 #include "IDevicePlugin.h"
 #include <QStringList>
 #include <QMessageBox>
@@ -568,7 +569,7 @@ void VariableEditDialog::on_cboDeviceName_currentTextChanged(const QString &arg1
     if(pluginNmae.indexOf("_") >= 0)
         pluginNmae = pluginNmae.left(pluginNmae.indexOf("_"));
 
-    QDir pluginsDir(ConfigUtils::AppDir());
+    QDir pluginsDir(Helper::AppDir());
     pluginsDir.cdUp();
     pluginsDir.cd("deviceplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files))

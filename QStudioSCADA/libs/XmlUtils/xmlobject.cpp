@@ -188,6 +188,19 @@ QMap<QString,QString> XMLObject::getPropertys() {
     return m_property;
 }
 
+
+//
+// 获取当前节点的名称为name的子节点
+//
+XMLObject* XMLObject::getCurrentChild(const QString& name) {
+    foreach(XMLObject* xml, m_children) {
+        if(xml->getTagName() == name)
+            return xml;
+    }
+    return nullptr;
+}
+
+
 //
 // 获取当前节点的所有名称为name的子节点
 //
@@ -198,16 +211,6 @@ QList<XMLObject* > XMLObject::getCurrentChildren(const QString& name) {
             children.append(xml);
     }
     return children;
-}
-
-XMLObject* XMLObject::getChild(const QString& name)
-{
-    foreach(XMLObject* xml, m_children)
-    {
-        if(xml->getTagName() == name)
-            return xml;
-    }
-    return NULL;
 }
 
 //
@@ -261,3 +264,95 @@ void XMLObject::showXMLObject() {
     }
     qDebug() << "\n";
 }
+
+#if 0
+
+#include <QCoreApplication>
+#include <QFile>
+#include "XMLObject.h"
+#include "FileHelper.h"
+#include <QDebug>
+
+void load(const QString &project_path)
+{
+    QString buffer = FileHelper::readString(project_path + "/pages.xml");
+    XMLObject xml;
+    if(!xml.load(buffer, 0))
+        return;
+
+    QList<XMLObject*> children = xml.getChildren();
+    foreach(XMLObject* obj, children)
+        obj->showXMLObject();
+
+    qDebug() << "\n\n\n=========get child name is person=========\n";
+    children.clear();
+    children = xml.getCurrentChildren("person");
+    foreach(XMLObject* obj, children)
+        obj->showXMLObject();
+
+    qDebug() << "\n\n\n=========getChildrenByParentTagName=========\n";
+    QStringList parents;
+    parents<< "persons";
+    parents<< "person";
+    parents<< "baby";
+    children.clear();
+    xml.getChildrenByParentTagName(parents, children);
+    foreach(XMLObject* obj, children){
+        obj->showXMLObject();
+        obj->setProperty("cb", "123");
+    }
+    FileHelper::writeString(project_path + "/pages.xml", xml.write());
+}
+
+void save(const QString &project_path)
+{
+    XMLObject persons;
+    persons.setTagName("persons");
+
+    XMLObject *person;
+    person = new XMLObject(&persons);
+    person->setTagName("person");
+    person->setText("hi, my name is jason.");
+    person->setProperty("name", "jason");
+    person->setProperty("age", "29");
+    person->setProperty("sex", "male");
+
+    person = new XMLObject(&persons);
+    person->setTagName("person");
+    person->setText("hi, my name is velson.");
+    person->setProperty("name", "velson");
+    person->setProperty("age", "28");
+    person->setProperty("sex", "male");
+
+    person = new XMLObject(&persons);
+    person->setTagName("person");
+    person->setText("hi, my name is lucy.");
+    person->setProperty("name", "lucy");
+    person->setProperty("age", "25");
+    person->setProperty("sex", "female");
+
+    XMLObject *baby = new XMLObject(person);
+    baby->setTagName("baby");
+    baby->setText("lucy==baby");
+    baby->setProperty("name", "baby");
+    baby->setProperty("age", "1");
+    baby->setProperty("sex", "female");
+
+    FileHelper::writeString(project_path + "/pages.xml", persons.write());
+
+}
+
+
+
+
+int main(int argc, char *argv[])
+{
+    QCoreApplication a(argc, argv);
+    save(QCoreApplication::applicationDirPath());
+    load(QCoreApplication::applicationDirPath());
+    return a.exec();
+}
+
+
+#endif
+
