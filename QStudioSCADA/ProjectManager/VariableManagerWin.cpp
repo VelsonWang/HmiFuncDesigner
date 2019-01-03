@@ -976,11 +976,6 @@ void VariableManagerWin::init(const QString &itemName)
 
     // 单元格显示不换行
     m_variableTableView->setWordWrap(false);
-    //QHeaderView *pVHeaderView = m_variableTableView->verticalHeader();
-    //pVHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
-    //QHeaderView *pHHeaderView = m_variableTableView->horizontalHeader();
-    //pHHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
-
     m_variableTableView->horizontalHeader()->setStretchLastSection(true);
     m_variableTableView->horizontalHeader()->setHighlightSections(false);  // 当表格只有一行的时候，则表头会出现塌陷问题
 }
@@ -1002,41 +997,23 @@ bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, const QString &it)
 {
     QString file = "";
 
-    if(it == tr("设备变量"))
-    {
+    if(it == tr("设备变量")) {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
-    }
-    else if(it == tr("中间变量"))
-    {
+    } else if(it == tr("中间变量")) {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/TmpVarList.odb";
-    }
-    else if(it == tr("系统变量"))
-    {
+    } else if(it == tr("系统变量")) {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/SysVarList.odb";
         QString srcfile = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
         QFile testFile(file);
-        if(testFile.exists())
-        {
+        if(testFile.exists()) {
             testFile.remove();
         }
         QFile::copy(srcfile ,file);
     }
 
     QFile loadFile(file);
-    if (!loadFile.open(QIODevice::ReadOnly))
-    {
-        if(it.left(it.indexOf("-")) == tr("设备变量"))
-        {
-            qWarning("Couldn't open load file: DevVarList.odb.");
-        }
-        else if(it == tr("中间变量"))
-        {
-            qWarning("Couldn't open load file: TmpVarList.odb.");
-        }
-        else if(it == tr("系统变量"))
-        {
-            qWarning("Couldn't open load file: SysVarList.odb.");
-        }
+    if (!loadFile.open(QIODevice::ReadOnly)) {
+        qWarning() << QString("Couldn't open load file: %1.").arg(file);
         return false;
     }
     QByteArray loadData = loadFile.readAll();
@@ -1050,32 +1027,16 @@ bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, const QString &it)
 bool VariableManagerWin::saveToFile(SaveFormat saveFormat, const QString &it)
 {
     QString file = "";
-    if(it == tr("设备变量"))
-    {
+    if(it == tr("设备变量")) {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
-    }
-    else if(it == tr("中间变量"))
-    {
+    } else if(it == tr("中间变量")) {
         file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/TmpVarList.odb";
-    }
-    else if(it == tr("系统变量"))
-    {
+    } else if(it == tr("系统变量")) {
         return true;
     }
     QFile saveFile(file);
     if (!saveFile.open(QIODevice::WriteOnly)) {
-        if(it.left(it.indexOf("-")) == tr("设备变量"))
-        {
-            qWarning("Couldn't open save file: DevVarList.odb.");
-        }
-        else if(it == tr("中间变量"))
-        {
-            qWarning("Couldn't open save file: TmpVarList.odb.");
-        }
-        else if(it == tr("系统变量"))
-        {
-            // do nothing here!
-        }
+        qWarning() << QString("Couldn't open save file: %1.").arg(file);
         return false;
     }
     QJsonObject obj;
@@ -1089,32 +1050,22 @@ bool VariableManagerWin::saveToFile(SaveFormat saveFormat, const QString &it)
 
 void VariableManagerWin::load(const QJsonObject &json, const QString &it)
 {
-    if(it == "设备变量")
-    {
+    if(it == "设备变量") {
         pTagIOTableModel->load(json);
-    }
-    else if(it == "中间变量")
-    {
+    } else if(it == "中间变量") {
         pTagTmpTableModel->load(json);
-    }
-    else if(it == "系统变量")
-    {
+    } else if(it == "系统变量") {
         pTagSystemTableModel->load(json);
     }
 }
 
 void VariableManagerWin::save(QJsonObject &json, const QString &it)
 {
-    if(it == "设备变量")
-    {
+    if(it == "设备变量") {
         pTagIOTableModel->save(json);
-    }
-    else if(it == "中间变量")
-    {
+    } else if(it == "中间变量") {
         pTagTmpTableModel->save(json);
-    }
-    else if(it == "系统变量")
-    {
+    } else if(it == "系统变量") {
         // do nothing here!
     }
 }
@@ -1643,23 +1594,18 @@ void VariableManagerWin::VariableDelete()
     QItemSelectionModel *pItemSelectionModel = m_variableTableView->selectionModel();
     QModelIndexList modelIndexList = pItemSelectionModel->selectedIndexes();
     QMap<int, int> rowMap;
-    foreach (QModelIndex index, modelIndexList)
-    {
+    foreach (QModelIndex index, modelIndexList) {
         rowMap.insert(index.row(), 0);
     }
     int rowToDel;
     QMapIterator<int, int> rowMapIterator(rowMap);
     rowMapIterator.toBack();
-    while (rowMapIterator.hasPrevious())
-    {
+    while (rowMapIterator.hasPrevious()) {
         rowMapIterator.previous();
         rowToDel = rowMapIterator.key();
-        if(m_strItemName == tr("设备变量"))
-        {
+        if(m_strItemName == tr("设备变量")) {
             pTagIOTableModel->removeRow(rowToDel);
-        }
-        else if(m_strItemName == tr("中间变量"))
-        {
+        } else if(m_strItemName == tr("中间变量")) {
             pTagTmpTableModel->removeRow(rowToDel);
         }
     }
