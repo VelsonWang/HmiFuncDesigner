@@ -64,6 +64,12 @@ public:
     void variableTagImportFromCsv(const QString &file);
 
 
+    // 新建设备
+    void newDevice();
+    // 修改设备
+    void modifyDevice();
+    // 删除设备
+    void deleteDevice();
 
     // 打开文件
     virtual void open();

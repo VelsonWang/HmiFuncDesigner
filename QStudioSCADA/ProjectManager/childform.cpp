@@ -228,6 +228,38 @@ void ChildForm::variableTagImportFromCsv(const QString &file)
 }
 
 /**
+ * @brief ChildForm::newDevice 新建设备
+ */
+void ChildForm::newDevice()
+{
+    if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) {
+        m_communicationDeviceWinPtr->NewDevice();
+    }
+}
+
+
+/**
+ * @brief ChildForm::modifyDevice 修改设备
+ */
+void ChildForm::modifyDevice()
+{
+    if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) {
+        m_communicationDeviceWinPtr->ModifyDevice();
+    }
+}
+
+
+/**
+ * @brief ChildForm::deleteDevice 删除设备
+ */
+void ChildForm::deleteDevice()
+{
+    if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) {
+        m_communicationDeviceWinPtr->DeleteDevice();
+    }
+}
+
+/**
  * @brief MainWindow::switchPage 切换页面
  * @param page
  */

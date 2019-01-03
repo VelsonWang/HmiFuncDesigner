@@ -922,18 +922,15 @@ VariableManagerWin::~VariableManagerWin()
 {
     delete m_variableTableView;
     delete ui;   
-    if(pTagSystemTableModel)
-    {
+    if(pTagSystemTableModel) {
         delete pTagSystemTableModel;
         pTagSystemTableModel = 0;
     }
-    if(pTagTmpTableModel)
-    {
+    if(pTagTmpTableModel) {
         delete pTagTmpTableModel;
         pTagTmpTableModel = 0;
     }
-    if(pTagIOTableModel)
-    {
+    if(pTagIOTableModel) {
         delete pTagIOTableModel;
         pTagIOTableModel = 0;
     }
@@ -946,8 +943,30 @@ void VariableManagerWin::init(const QString &itemName)
             SetTitle(m_strCurTagType);
             save();
         }
+
+        /////////////////////////////////////////////////////
+
+        if(m_strItemName == tr("设备变量")) {
+            if(pTagIOTableModel) {
+                delete pTagIOTableModel;
+                pTagIOTableModel = new TagIOTableModel(this);
+            }
+        } else if(m_strItemName == tr("中间变量")) {
+            if(pTagTmpTableModel) {
+                delete pTagTmpTableModel;
+                pTagTmpTableModel = new TagTmpTableModel(this);
+            }
+        } else if(m_strItemName == tr("系统变量")) {
+            if(pTagSystemTableModel) {
+                delete pTagSystemTableModel;
+                pTagSystemTableModel = new TagSystemTableModel(this);
+            }
+        }
+
+        ////////////////////////////////////////////////////
+
         SetTitle(itemName);
-        loadFromFile(DATA_SAVE_FORMAT, m_strItemName);  
+        loadFromFile(DATA_SAVE_FORMAT, m_strItemName);
     }
 
     if(m_strItemName == tr("设备变量")) {
@@ -1075,7 +1094,6 @@ void VariableManagerWin::save(QJsonObject &json, const QString &it)
 */
 void VariableManagerWin::exportToCsv(const QString &path)
 {
-    qDebug()<< m_strItemName << " " << m_IOVariableListWhat << " path: " << path;
     if(m_strItemName == tr("设备变量")) {
         pTagIOTableModel->exportToCsv(path, QString("%1-%2").arg(m_strItemName).arg(m_IOVariableListWhat));
     } else if(m_strItemName == tr("中间变量")) {
@@ -1088,12 +1106,9 @@ void VariableManagerWin::exportToCsv(const QString &path)
 */
 void VariableManagerWin::importFromCsv(const QString &path)
 {
-    if(path.contains("设备变量"))
-    {
+    if(path.contains(tr("设备变量"))) {
         pTagIOTableModel->importFromCsv(path);
-    }
-    else if(path.contains("中间变量"))
-    {
+    } else if(path.contains(tr("中间变量"))) {
         pTagTmpTableModel->importFromCsv(path);
     }
 }
@@ -1104,7 +1119,7 @@ void VariableManagerWin::importFromCsv(const QString &path)
 */
 void VariableManagerWin::contextMenuEvent(QContextMenuEvent * /*event*/)
 {
-    if(m_strItemName == "变量管理" || m_strItemName == "系统变量")
+    if(m_strItemName == tr("变量管理") || m_strItemName == tr("系统变量"))
         return;
 
     QMenu *pMenu = new QMenu(this);
@@ -1150,26 +1165,22 @@ void VariableManagerWin::contextMenuEvent(QContextMenuEvent * /*event*/)
 void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index)
 {
     QStringList sl;
-    QModelIndex idx;
-    QVariant val;
     int rowIndex = index.row();
     int columnIndex = index.column();
 
-    if(m_strItemName == "设备变量")
-    {
+    if(m_strItemName == tr("设备变量")) {
         TagIOItem item = pTagIOTableModel->GetRow(rowIndex);
         if(columnIndex == pTagIOTableModel->Column::IOConnect ||
            columnIndex == pTagIOTableModel->Column::Alarm ||
-           columnIndex == pTagIOTableModel->Column::ArchiveFile)
-        {
+           columnIndex == pTagIOTableModel->Column::ArchiveFile) {
             VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
             pDlg->setWindowTitle(tr("编辑设备变量"));
             sl << item.m_sDataType << item.m_sName << item.m_sDescription << item.m_sUnit;
 
             // 单元格数据有可能已经改变
-            if(item.m_sDataType == "模拟量")
+            if(item.m_sDataType == tr("模拟量"))
                 pDlg->SetVariableType(VariableEditDialog::AI);
-            else if(item.m_sDataType == "数字量")
+            else if(item.m_sDataType == tr("数字量"))
                 pDlg->SetVariableType(VariableEditDialog::DI);
             else
                 pDlg->SetVariableType(VariableEditDialog::NONE);
@@ -1190,8 +1201,7 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
             pDlg->SetAlarmString(item.m_sAlarm);
             pDlg->SetSaveDiskString(item.m_sArchiveFile);
 
-            if(pDlg->exec() == QDialog::Accepted)
-            { 
+            if(pDlg->exec() == QDialog::Accepted) {
                 QStringList sl = pDlg->GetBasicSetting();
                 item.m_sDataType = sl.at(0);
                 item.m_sName = sl.at(1);
@@ -1203,45 +1213,36 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
                 pTagIOTableModel->UpdateRow(rowIndex, item);
             }
             delete pDlg;
-        }
-        else if(columnIndex == pTagIOTableModel->Column::ProjectConverter)
-        {
+        } else if(columnIndex == pTagIOTableModel->Column::ProjectConverter) {
             TagFuncEditDialog *pDlg = new TagFuncEditDialog(m_strProjectName.left(m_strProjectName.lastIndexOf("/")), this);
             pDlg->SetData(item.m_sProjectConverter);
-            if(pDlg->exec() == QDialog::Accepted)
-            {
+            if(pDlg->exec() == QDialog::Accepted) {
                 item.m_sProjectConverter = pDlg->GetData();
                 pTagIOTableModel->UpdateRow(rowIndex, item);
             }
             delete pDlg;
-        }
-        else if(columnIndex == pTagIOTableModel->Column::Comments)
-        {
+        } else if(columnIndex == pTagIOTableModel->Column::Comments) {
             CommentsDialog *pDlg = new CommentsDialog(this);
             pDlg->SetCommentsText(item.m_sComments);
-            if(pDlg->exec() == QDialog::Accepted)
-            {
+            if(pDlg->exec() == QDialog::Accepted) {
                 item.m_sComments = pDlg->GetCommentsText();
                 pTagIOTableModel->UpdateRow(rowIndex, item);
             }
             delete pDlg;
         }
-    }
-    else if(m_strItemName == "中间变量")
-    {
+    } else if(m_strItemName == tr("中间变量")) {
         TagTmpItem item = pTagTmpTableModel->GetRow(rowIndex);
         if(columnIndex == pTagTmpTableModel->Column::DataAttribute ||
            columnIndex == pTagTmpTableModel->Column::Alarm ||
-           columnIndex == pTagTmpTableModel->Column::ArchiveFile)
-        {
+           columnIndex == pTagTmpTableModel->Column::ArchiveFile) {
             VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
             pDlg->setWindowTitle(tr("编辑中间变量"));
             sl << item.m_sDataType << item.m_sName << item.m_sDescription << item.m_sUnit;
 
             // 单元格数据有可能已经改变
-            if(item.m_sDataType == "模拟量")
+            if(item.m_sDataType == tr("模拟量"))
                 pDlg->SetVariableType(VariableEditDialog::AI);
-            else if(item.m_sDataType == "数字量")
+            else if(item.m_sDataType == tr("数字量"))
                 pDlg->SetVariableType(VariableEditDialog::DI);
             else
                 pDlg->SetVariableType(VariableEditDialog::NONE);
@@ -1262,8 +1263,7 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
             pDlg->SetAlarmString(item.m_sAlarm);
             pDlg->SetSaveDiskString(item.m_sArchiveFile);
 
-            if(pDlg->exec() == QDialog::Accepted)
-            {
+            if(pDlg->exec() == QDialog::Accepted) {
                 QStringList sl = pDlg->GetBasicSetting();
                 item.m_sDataType = sl.at(0);
                 item.m_sName = sl.at(1);
@@ -1275,24 +1275,18 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
                 pTagTmpTableModel->UpdateRow(rowIndex, item);
             }
             delete pDlg;
-        }
-        else if(columnIndex == pTagTmpTableModel->Column::ProjectConverter)
-        {
+        } else if(columnIndex == pTagTmpTableModel->Column::ProjectConverter) {
             TagFuncEditDialog *pDlg = new TagFuncEditDialog(m_strProjectName.left(m_strProjectName.lastIndexOf("/")), this);
             pDlg->SetData(item.m_sProjectConverter);
-            if(pDlg->exec() == QDialog::Accepted)
-            {
+            if(pDlg->exec() == QDialog::Accepted) {
                 item.m_sProjectConverter = pDlg->GetData();
                 pTagTmpTableModel->UpdateRow(rowIndex, item);
             }
             delete pDlg;
-        }
-        else if(columnIndex == pTagTmpTableModel->Column::Comments)
-        {
+        } else if(columnIndex == pTagTmpTableModel->Column::Comments) {
             CommentsDialog *pDlg = new CommentsDialog(this);
             pDlg->SetCommentsText(item.m_sComments);
-            if(pDlg->exec() == QDialog::Accepted)
-            {
+            if(pDlg->exec() == QDialog::Accepted) {
                 item.m_sComments = pDlg->GetCommentsText();
                 pTagTmpTableModel->UpdateRow(rowIndex, item);
             }
@@ -1306,31 +1300,23 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
 */
 void VariableManagerWin::VariableAdd()
 {
-    QModelIndex index;
-    QVariant val;
     bool ok = false;
     int i;
     int num;
 
-    if(m_strItemName == "设备变量")
-    {
+    if(m_strItemName == tr("设备变量")) {
         VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
         pDlg->RemoveTab(1); // 隐藏数据属性页
-        if(pDlg->exec() == QDialog::Accepted)
-        {
+        if(pDlg->exec() == QDialog::Accepted) {
             num = pDlg->GetBatchNum().toInt(&ok, 10);
             if(ok)
-                for(i=0; i<num; i++)
-                {
+                for(i=0; i<num; i++) {
                     TagIOItem prevItem;
                     TagIOItem newItem;
-                    if(pTagIOTableModel->rowCount()>0)
-                    {
+                    if(pTagIOTableModel->rowCount() > 0) {
                         prevItem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
                         newItem.m_TagID = prevItem.m_TagID + 1;
-                    }
-                    else
-                    {
+                    } else {
                         newItem.m_TagID = IOVARIABLE_BASE + 1;
                     }
                     newItem.m_sDataType = pDlg->GetDataType();
@@ -1348,26 +1334,19 @@ void VariableManagerWin::VariableAdd()
                 }
         }
         delete pDlg;
-    }
-    else if(m_strItemName == "中间变量")
-    {
+    } else if(m_strItemName == tr("中间变量")) {
         VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
         pDlg->RemoveTab(4); // 隐藏IO连接页
-        if(pDlg->exec() == QDialog::Accepted)
-        {
+        if(pDlg->exec() == QDialog::Accepted) {
             num = pDlg->GetBatchNum().toInt(&ok, 10);
             if(ok)
-                for(i=0; i<num; i++)
-                {
+                for(i=0; i<num; i++) {
                     TagTmpItem  prevItem;
                     TagTmpItem  newItem;
-                    if(pTagTmpTableModel->rowCount()>0)
-                    {
+                    if(pTagTmpTableModel->rowCount() > 0) {
                         prevItem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
                         newItem.m_TagID = prevItem.m_TagID + 1;
-                    }
-                    else
-                    {
+                    } else {
                         newItem.m_TagID = TMPVARIABLE_BASE + 1;
                     }
                     newItem.m_sDataType = pDlg->GetDataType();
@@ -1391,11 +1370,7 @@ void VariableManagerWin::VariableAdd()
 */
 void VariableManagerWin::VariableAppend()
 {
-    QModelIndex index;
-    QVariant val;
-
-    if(m_strItemName == "设备变量")
-    {
+    if(m_strItemName == tr("设备变量")) {
         if(pTagIOTableModel->rowCount() < 1)
             return;
 
@@ -1409,8 +1384,7 @@ void VariableManagerWin::VariableAppend()
         // 获取前一行的Name
         QString lastVarName = prevItem.m_sName;
         QString str = "var";
-        if(lastVarName.indexOf("var")>-1)
-        {
+        if(lastVarName.indexOf("var") > -1) {
             int len = lastVarName.size();
             QString subStr = lastVarName.right(len - 3);
             int idx = subStr.toInt();
@@ -1420,9 +1394,7 @@ void VariableManagerWin::VariableAppend()
         newItem.m_sDescription = tr("描述");
         newItem.m_sUnit = "mA";
         pTagIOTableModel->AppendRow(newItem);
-    }
-    else if(m_strItemName == "中间变量")
-    {
+    } else if(m_strItemName == "中间变量") {
         if(pTagTmpTableModel->rowCount() < 1)
             return;
 
@@ -1436,8 +1408,7 @@ void VariableManagerWin::VariableAppend()
         // 获取前一行的Name
         QString lastVarName = prevItem.m_sName;
         QString str = "var";
-        if(lastVarName.indexOf("var")>-1)
-        {
+        if(lastVarName.indexOf("var") > -1) {
             int len = lastVarName.size();
             QString subStr = lastVarName.right(len - 3);
             int idx = subStr.toInt();
@@ -1458,23 +1429,18 @@ void VariableManagerWin::VariableAppend()
 void VariableManagerWin::VariableRowCopy()
 {
     QModelIndex ModelIndex = m_variableTableView->selectionModel()->currentIndex();
-    QModelIndex index;
-    QVariant val;
     int row = ModelIndex.row();
     int column = ModelIndex.column();
 
     if(row < 0 || column < 0)
         return;
 
-    if(m_strItemName == "设备变量")
-    {
+    if(m_strItemName == tr("设备变量")) {
         TagIOItem curitem = pTagIOTableModel->GetRow(row);
         TagIOItem lastitem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
         curitem.m_TagID = lastitem.m_TagID + 1;
         pTagIOTableModel->AppendRow(curitem);
-    }
-    else if(m_strItemName == "中间变量")
-    {
+    } else if(m_strItemName == tr("中间变量")) {
         TagTmpItem curitem = pTagTmpTableModel->GetRow(row);
         TagTmpItem lastitem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
         curitem.m_TagID = lastitem.m_TagID + 1;
@@ -1488,12 +1454,9 @@ void VariableManagerWin::VariableRowCopy()
 */
 void VariableManagerWin::VariableColCopy()
 {
-    if(m_strItemName == "设备变量")
-    {
+    if(m_strItemName == tr("设备变量")) {
 
-    }
-    else if(m_strItemName == "中间变量")
-    {
+    } else if(m_strItemName == tr("中间变量")) {
 
     }
 }
@@ -1503,22 +1466,17 @@ void VariableManagerWin::VariableColCopy()
 */
 void VariableManagerWin::VariableModify()
 {
-    QModelIndex index;
-    QVariant val;
     QStringList sl;
-    QModelIndex idx;
-    QString sTmp;
     int rowIndex = m_variableTableView->currentIndex().row();
 
-    if(m_strItemName == "设备变量")
-    {
+    if(m_strItemName == tr("设备变量")) {
         VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
         pDlg->setWindowTitle(tr("编辑设备变量"));
         TagIOItem item = pTagIOTableModel->GetRow(rowIndex);
 
-        if(item.m_sDataType == "模拟量")
+        if(item.m_sDataType == tr("模拟量"))
             pDlg->SetVariableType(VariableEditDialog::AI);
-        else if(item.m_sDataType == "数字量")
+        else if(item.m_sDataType == tr("数字量"))
             pDlg->SetVariableType(VariableEditDialog::DI);
         else
             pDlg->SetVariableType(VariableEditDialog::NONE);
@@ -1533,8 +1491,7 @@ void VariableManagerWin::VariableModify()
         pDlg->SetAlarmString(item.m_sAlarm);
         pDlg->SetSaveDiskString(item.m_sArchiveFile);
 
-        if(pDlg->exec() == QDialog::Accepted)
-        { 
+        if(pDlg->exec() == QDialog::Accepted) {
             QStringList sl = pDlg->GetBasicSetting();
             item.m_sDataType = sl.at(0);
             item.m_sName = sl.at(1);
@@ -1546,17 +1503,15 @@ void VariableManagerWin::VariableModify()
             pTagIOTableModel->UpdateRow(rowIndex, item);
         }
         delete pDlg;
-    }
-    else if(m_strItemName == "中间变量")
-    {
+    } else if(m_strItemName == tr("中间变量")) {
         VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
         pDlg->setWindowTitle(tr("编辑中间变量"));
         TagTmpItem item = pTagTmpTableModel->GetRow(rowIndex);
 
         // 单元格数据有可能已经改变
-        if(item.m_sDataType == "模拟量")
+        if(item.m_sDataType == tr("模拟量"))
             pDlg->SetVariableType(VariableEditDialog::AI);
-        else if(item.m_sDataType == "数字量")
+        else if(item.m_sDataType == tr("数字量"))
             pDlg->SetVariableType(VariableEditDialog::DI);
         else
             pDlg->SetVariableType(VariableEditDialog::NONE);
@@ -1570,8 +1525,7 @@ void VariableManagerWin::VariableModify()
         pDlg->SetAlarmString(item.m_sAlarm);
         pDlg->SetSaveDiskString(item.m_sArchiveFile);
 
-        if(pDlg->exec() == QDialog::Accepted)
-        {      
+        if(pDlg->exec() == QDialog::Accepted) {
             QStringList sl = pDlg->GetBasicSetting();
             item.m_sDataType = sl.at(0);
             item.m_sName = sl.at(1);
@@ -1671,8 +1625,7 @@ void VariableManagerWin::GetAllProjectVariableName(const QString &proj_path,
     TagIOTableModel *pTagIOModel = new TagIOTableModel();
 
     //-------------设备变量------------------//
-    if(type == "ALL" || type == "IO")
-    {
+    if(type == "ALL" || type == "IO") {
         QFile loadFileVarList(proj_path + "/DBVarList.odb");
         if (!loadFileVarList.open(QIODevice::ReadOnly))
             return;
@@ -1681,26 +1634,22 @@ void VariableManagerWin::GetAllProjectVariableName(const QString &proj_path,
         loadFileVarList.close();
 
         QJsonObject jsonDBVarList = loadDoc.object();
-        if(jsonDBVarList != QJsonObject())
-        {
+        if(jsonDBVarList != QJsonObject()) {
             QJsonArray DevVarTabArray = jsonDBVarList["DevVarTabArray"].toArray();
-            for (int i = 0; i < DevVarTabArray.size(); ++i)
-            {
+            for (int i = 0; i < DevVarTabArray.size(); ++i) {
                 QJsonObject jsonObj = DevVarTabArray[i].toObject();
                 QString varGroupName = jsonObj["name"].toString();
                 QString fileDev = proj_path + "/DevVarList-" + varGroupName+ ".odb";
                 QFile loadFileDev(fileDev);
-                if (!loadFileDev.open(QIODevice::ReadOnly))
-                {
-                    qWarning("Couldn't open load file: DevVarList.odb.");
+                if (!loadFileDev.open(QIODevice::ReadOnly)) {
+                    qWarning() << QString("Couldn't open load file: %1.").arg(fileDev);
                     return ;
                 }
                 QByteArray loadDataDev = loadFileDev.readAll();
                 QJsonDocument loadDocDev(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(loadDataDev) : QJsonDocument::fromBinaryData(loadDataDev));
                 pTagIOModel->load(loadDocDev.object());
-                foreach(TagIOItem item, pTagIOModel->m_tagIOItems)
-                {
-                    varList << ("设备变量." + varGroupName + "." + item.m_sName);
+                foreach(TagIOItem item, pTagIOModel->m_tagIOItems) {
+                    varList << (tr("设备变量.") + varGroupName + "." + item.m_sName);
                 }
                 loadFileDev.close();
             }
@@ -1708,41 +1657,35 @@ void VariableManagerWin::GetAllProjectVariableName(const QString &proj_path,
     }
 
     //-------------中间变量------------------//
-    if(type == "ALL" || type == "TMP")
-    {
+    if(type == "ALL" || type == "TMP") {
         QString fileTmp = proj_path + "/TmpVarList.odb";
         QFile loadFileTmp(fileTmp);
-        if (!loadFileTmp.open(QIODevice::ReadOnly))
-        {
-            qWarning("Couldn't open load file: TmpVarList.odb.");
+        if (!loadFileTmp.open(QIODevice::ReadOnly)) {
+            qWarning() << QString("Couldn't open load file: %1.").arg(fileTmp);
             return;
         }
         QByteArray loadDataTmp = loadFileTmp.readAll();
         QJsonDocument loadDocTmp(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(loadDataTmp) : QJsonDocument::fromBinaryData(loadDataTmp));
         pTagTmpModel->load(loadDocTmp.object());
-        foreach(TagTmpItem item, pTagTmpModel->m_tagTmpItems)
-        {
-            varList << ("中间变量." + item.m_sName);
+        foreach(TagTmpItem item, pTagTmpModel->m_tagTmpItems) {
+            varList << (tr("中间变量.") + item.m_sName);
         }
         loadFileTmp.close();
     }
 
     //-------------系统变量------------------//
-    if(type == "ALL" || type == "SYS")
-    {
+    if(type == "ALL" || type == "SYS") {
         QString fileSys = proj_path + "/SysVarList.odb";
         QFile loadFileSys(fileSys);
-        if (!loadFileSys.open(QIODevice::ReadOnly))
-        {
-            qWarning("Couldn't open load file: SysVarList.odb.");
+        if (!loadFileSys.open(QIODevice::ReadOnly)) {
+            qWarning() << QString("Couldn't open load file: %1.").arg(fileSys);
             return;
         }
         QByteArray loadDataSys = loadFileSys.readAll();
         QJsonDocument loadDocSys(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(loadDataSys) : QJsonDocument::fromBinaryData(loadDataSys));
         pTagSystemModel->load(loadDocSys.object());
-        foreach(TagSysItem item, pTagSystemModel->m_tagSysItems)
-        {
-            varList << ("系统变量." + item.m_sName);
+        foreach(TagSysItem item, pTagSystemModel->m_tagSysItems) {
+            varList << (tr("系统变量.") + item.m_sName);
         }
         loadFileSys.close();
     }

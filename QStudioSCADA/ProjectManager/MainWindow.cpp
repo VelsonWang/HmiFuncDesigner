@@ -148,13 +148,12 @@ void MainWindow::setUpProjectTreeView()
 }
 
 
-ChildForm* MainWindow::activeMdiChild() //活动窗口
+ChildForm* MainWindow::activeMdiChild()
 {
-    // 如果有活动窗口，则将其内的中心部件转换为MdiChild类型
     if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow()) {
         return qobject_cast<ChildForm *>(activeSubWindow->widget());
     }
-    return NULL; // 没有活动窗口，直接返回0
+    return nullptr;
 }
 
 void MainWindow::setActiveSubWindow(ChildForm *window)
@@ -179,7 +178,7 @@ ChildForm* MainWindow::findMdiChild(const QString &windowTitle)
         if(pChildWin->windowTitle() == windowTitle)
             return pChildWin;
     }
-    return NULL;
+    return nullptr;
 }
 
 
@@ -190,7 +189,7 @@ QMdiSubWindow* MainWindow::findMdiSubWindow(const QString &windowTitle)
         if(pChildWin->windowTitle() == windowTitle)
             return window;
     }
-    return NULL;
+    return nullptr;
 }
 
 /*
@@ -969,24 +968,22 @@ void MainWindow::on_actionImportTag_triggered()
 
     ChildForm* window = findMdiChild(this->m_CurItem);
     if(window != NULL) {
+        QString titleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
+        window->SetTitle(titleNew);
         window->variableTagImportFromCsv(strSaveCsvFile);
-    }
+    } 
 }
 
-/*
- * 插槽：新建设备
+
+/**
+ * @brief MainWindow::on_actionDeviceNew_triggered 新建设备
  */
 void MainWindow::on_actionDeviceNew_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        CommunicationDeviceWin * pCommunicationDeviceWin = qobject_cast<CommunicationDeviceWin *>(window);
-        pCommunicationDeviceWin->NewDevice();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->newDevice();
     }
-#endif
 }
 
 /*
@@ -994,15 +991,10 @@ void MainWindow::on_actionDeviceNew_triggered()
  */
 void MainWindow::on_actionDeviceModify_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        CommunicationDeviceWin * pCommunicationDeviceWin = qobject_cast<CommunicationDeviceWin *>(window);
-        pCommunicationDeviceWin->ModifyDevice();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->modifyDevice();
     }
-#endif
 }
 
 /*
@@ -1010,15 +1002,10 @@ void MainWindow::on_actionDeviceModify_triggered()
  */
 void MainWindow::on_actionDeviceDelete_triggered()
 {
-#if 0
-    ChildBase* window = findMdiChild(this->m_CurItem);
-
-    if(window != NULL)
-    {
-        CommunicationDeviceWin * pCommunicationDeviceWin = qobject_cast<CommunicationDeviceWin *>(window);
-        pCommunicationDeviceWin->DeleteDevice();
+    ChildForm* window = findMdiChild(this->m_CurItem);
+    if(window != NULL) {
+        window->deleteDevice();
     }
-#endif
 }
 
 /*
