@@ -4,6 +4,7 @@
 #include "SCADARunTime.h"
 #include "public.h"
 #include "TimerTask.h"
+#include "httpserver.h"
 #include <QDebug>
 #include <QFile>
 #include <QDir>
@@ -74,6 +75,8 @@ int main(int argc, char *argv[])
     Log4Qt::Logger *a1 = Log4Qt::Logger::logger("Run_Logger");
     a1->info("start SCADARunTime!");
 
+    HttpServer server;
+    server.init(60000);
 
     SCADARunTime runTime(QCoreApplication::applicationDirPath() + "/RunProject");
     runTime.Load(DATA_SAVE_FORMAT);
