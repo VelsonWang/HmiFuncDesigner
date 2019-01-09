@@ -4,26 +4,27 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-QT       += network
-QT       += script
+QT += network
+QT += script
+QT += sql
 
 DESTDIR = $$_PRO_FILE_PWD_/../../RuntimeBin
 
 TARGET = QSCADARunTime
 TEMPLATE = app
 
-QT       -= gui
+QT -= gui
 
 # turn on console
 CONFIG(debug, debug|release) { #debug
-    CONFIG   += console
+    CONFIG += console
 }
 
-CONFIG   -= app_bundle
-CONFIG   += C++11
+CONFIG -= app_bundle
+CONFIG += C++11
 
 include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
@@ -61,7 +62,8 @@ SOURCES += \
     Tag/Function.cpp \
     Event/Event.cpp \
     Script/JavaScript.cpp \
-    Script/RunScript.cpp
+    Script/RunScript.cpp \
+    DB/DatabaseHelper.cpp
 
 
 HEADERS  += \
@@ -88,7 +90,8 @@ HEADERS  += \
     Event/Event.h \
     Tag/Function.h \
     Script/JavaScript.h \
-    Script/RunScript.h
+    Script/RunScript.h \
+    DB/DatabaseHelper.h
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp
