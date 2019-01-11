@@ -57,11 +57,11 @@ BEGIN\n\
         BLOCK \"080403A8\"\n\
         BEGIN\n\
             VALUE \"CompanyName\"      , \"SHENZHEN ZHILAI SCI AND TECH CO., LTD\\\\0\"\n\
-            VALUE \"FileDescription\"  , \"zhilaibox\\\\0\"\n\
-            VALUE \"ProductName\"      , \"zhilaibox\\\\0\"\n\
-            VALUE \"LegalTrademarks\"  , \"zhilaibox\\\\0\"\n\
-            VALUE \"InternalName\"     , \"zhilaibox.exe\\\\0\"\n\
-            VALUE \"OriginalFilename\" , \"zhilaibox.exe\\\\0\"\n\
+            VALUE \"FileDescription\"  , \"ProjectManager\\\\0\"\n\
+            VALUE \"ProductName\"      , \"ProjectManager\\\\0\"\n\
+            VALUE \"LegalTrademarks\"  , \"ProjectManager\\\\0\"\n\
+            VALUE \"InternalName\"     , \"ProjectManager.exe\\\\0\"\n\
+            VALUE \"OriginalFilename\" , \"ProjectManager.exe\\\\0\"\n\
             VALUE \"PrivateBuild\"     , GIT_HASH\n\
             VALUE \"FileVersion\"      , \"%d.%d.%d.%d\\\\0\"\n\
             VALUE \"ProductVersion\"   , GIT_HASH\n\
