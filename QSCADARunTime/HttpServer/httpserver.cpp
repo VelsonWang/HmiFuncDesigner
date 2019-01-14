@@ -1,6 +1,8 @@
 ﻿#include "httpserver.h"
+#include "RealTimeDB.h"
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QJsonParseError>
 #include <QDebug>
 
@@ -27,8 +29,7 @@ void HttpServer::init(int port)
     bool ret = server_->listen(port);
     if (!ret)
     {
-        qDebug() << "start local http server failed "
-                 << port;
+        qDebug() << "start local http server failed " << port;
     }
 }
 
@@ -37,15 +38,11 @@ void HttpServer::on_request_finished(QNetworkReply* rep)
 {
     QString url = rep->url().url();
     QByteArray body = rep->readAll();
-    qDebug() << "reply [ "
-             << url
-             << " ] : "
-             << QString(body);
+    qDebug() << "reply [ " << url << " ] : " << QString(body);
 
     if (rep->error() != QNetworkReply::NoError)
     {
-        qDebug() << "network error: "
-                 << rep->errorString();
+        qDebug() << "network error: " << rep->errorString();
         return;
     }
 
@@ -54,10 +51,7 @@ void HttpServer::on_request_finished(QNetworkReply* rep)
     QJsonDocument doc = QJsonDocument::fromJson(body, &err);
     if (err.error != QJsonParseError::NoError && doc.isObject())
     {
-        qDebug() << "parse reply body error: "
-                 << err.errorString()
-                 << " "
-                 << QString(body);
+        qDebug() << "parse reply body error: " << err.errorString() << " " << QString(body);
         return;
     }
 
@@ -71,8 +65,7 @@ void HttpServer::on_new_request(QHttpRequest * req, QHttpResponse * rep)
     response_ = rep;
 
     QString path = req->path();
-    qDebug() << "new request: "
-             << path;
+    qDebug() << "new request: " << path;
 
     // check request method
     if (req->method() != QHttpRequest::HTTP_POST)
@@ -81,8 +74,7 @@ void HttpServer::on_new_request(QHttpRequest * req, QHttpResponse * rep)
         rep->end();
         mutex_.unlock();
 
-        qDebug() << "error request method: "
-                 << req->methodString();
+        qDebug() << "error request method: " << req->methodString();
         return;
     }
 
@@ -102,7 +94,6 @@ void HttpServer::on_request_end()
     QString path = request_->path();
     // parse request body
     QJsonParseError err;
-    QJsonObject tmp;
     QJsonDocument doc = QJsonDocument::fromJson(request_body_, &err);
     if (err.error != QJsonParseError::NoError || !doc.isObject())
     {
@@ -110,33 +101,58 @@ void HttpServer::on_request_end()
         response_->end();
         mutex_.unlock();
 
-        qDebug() << "parse request body failed: "
-                 << err.errorString();
+        qDebug() << "parse request body failed: " << err.errorString();
         return;
     }
-    tmp = doc.object();
 
-    int32_t ret = 0;
-    QString msg = "";
+    QJsonObject retJsonObj;
 
-    if (path == "/user")
+    if (path == "/READ")
     {
-        QString user = tmp["User"].toString();
-        QString password = tmp["Password"].toString();
-        QString email = tmp["Email"].toString();
+        const QJsonObject jsonDocObj = doc.object();
+        int startID = jsonDocObj["StartID"].toInt();
+        int number = jsonDocObj["Number"].toInt();
+        //qDebug() << QString("StartID: %1 ").arg(startID) << QString(" Number: %1 ").arg(number);
 
-        msg += QString("User: %1 ").arg(user);
-        msg += QString("Password: %1 ").arg(password);
-        msg += QString("Email: %1 ").arg(email);
-        qDebug() << msg;
+        retJsonObj["StartID"] = startID;
+        retJsonObj["Number"] = number;
+        retJsonObj["Status"] = "OK";
+
+        QJsonArray tagArray;
+        int id = startID;
+        for(int i=0; i<number; i++)
+        {
+            QJsonObject jsonObj;
+            //qDebug() << id << RealTimeDB::GetDataString(id);
+            jsonObj[QString::number(id)] = RealTimeDB::GetDataString(id);
+            tagArray.append(jsonObj);
+            id++;
+        }
+        retJsonObj["TagArray"] = tagArray;
+    }
+    else if (path == "/WRITE")
+    {
+        const QJsonObject jsonDocObj = doc.object();
+        int startID = jsonDocObj["StartID"].toInt();
+        int number = jsonDocObj["Number"].toInt();
+        qDebug() << QString("StartID: %1 ").arg(startID) << QString(" Number: %1 ").arg(number);
+
+        int id = startID;
+        QJsonArray tagArray = jsonDocObj["TagArray"].toArray();
+        for (int i = 0; i < tagArray.size(); ++i) {
+            QJsonObject jsonObj = tagArray[i].toObject();
+            RealTimeDB::SetDataString(id, jsonObj[QString::number(id)].toString());
+            id++;
+        }
+        retJsonObj["StartID"] = startID;
+        retJsonObj["Number"] = number;
+        retJsonObj["Status"] = "OK";
     }
 
-    // response
-    QString rep_buf = QString("{'retCode':'%1', 'retDesc':'%2'}").arg(ret).arg(msg);
+    QJsonDocument retJsonDoc;
+    retJsonDoc.setObject(retJsonObj);
     response_->writeHead(QHttpResponse::STATUS_OK);
-    response_->end(rep_buf.toUtf8());
-    qDebug() << "response : "
-             << rep_buf;
+    response_->end(retJsonDoc.toJson(QJsonDocument::Compact));
 
     mutex_.unlock();
     return;

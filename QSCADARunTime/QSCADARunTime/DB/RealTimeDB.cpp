@@ -1,4 +1,4 @@
-
+﻿
 #include <QDateTime>
 #include <QDate>
 #include <QTime>
@@ -18,7 +18,6 @@ RealTimeDB::RealTimeDB(QObject *parent) :
 
 RealTimeDB::~RealTimeDB()
 {
-
     qDeleteAll(rtdb);
     rtdb.clear();
 

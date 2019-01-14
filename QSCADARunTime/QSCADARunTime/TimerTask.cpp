@@ -1,4 +1,4 @@
-#include "TimerTask.h"
+﻿#include "TimerTask.h"
 #include <QTime>
 #include "RealTimeDB.h"
 #include <QDebug>
@@ -42,32 +42,25 @@ void TimerTask::timerUpdate()
     qint32 id;
     // 系统变量--年
     id = make_id(TYPE_SYSTEM, 1, 0);
-    //qDebug()<<QString::number(date.year());
     RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)date.year()));
 
     // 系统变量--月
     id = make_id(TYPE_SYSTEM, 2, 0);
-    //qDebug()<<QString::number(date.month());
     RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)date.month()));
 
     // 系统变量--日
     id = make_id(TYPE_SYSTEM, 3, 0);
-    //qDebug()<<QString::number(date.day());
     RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)date.day()));
 
     // 系统变量--时
     id = make_id(TYPE_SYSTEM, 4, 0);
-    //qDebug()<<QString::number(time.hour());
     RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)time.hour()));
 
     // 系统变量--分
     id = make_id(TYPE_SYSTEM, 5, 0);
-    //qDebug()<<QString::number(time.minute());
     RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)time.minute()));
 
     // 系统变量--秒
     id = make_id(TYPE_SYSTEM, 6, 0);
-    //qDebug()<<QString::number(time.second());
     RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)time.second()));
-
 }

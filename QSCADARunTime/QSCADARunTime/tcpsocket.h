@@ -15,7 +15,6 @@ enum DataTransferType
     None = 0,
     DwonloadProject,
     UploadProject,
-    ReadWriteRtdb,
 };
 typedef enum DataTransferType TDataTransferType;
 
@@ -52,9 +51,6 @@ private:
     void saveToFile(QString filename, char* pBuf, int len);
     void unTarProject();
     void uploadProject();
-    void ReadWriteRtdbData();
-    void ReadParser(QString cmdline);
-    void WriteParser(QString cmdline);
 
 private:
     int iPackageCnt;

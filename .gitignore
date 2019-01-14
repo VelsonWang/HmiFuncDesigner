@@ -1,6 +1,12 @@
 docs
 lib
 build-*
+QStudioSCADABin/bin/bearer/
+QStudioSCADABin/bin/iconengines/
+QStudioSCADABin/bin/imageformats/
+QStudioSCADABin/bin/platforms/
+QStudioSCADABin/bin/styles/
+QStudioSCADABin/bin/translations/
 QStudioSCADABin/bin/UploadProjects/
 QStudioSCADABin/bin/tmp/
 QStudioSCADABin/bin/*.exe
@@ -21,6 +27,13 @@ RuntimeBin/log/
 RuntimeBin/Project/
 RuntimeBin/RunProject/
 RuntimeBin/Vendor/
+RuntimeBin/bearer/
+RuntimeBin/iconengines/
+RuntimeBin/imageformats/
+RuntimeBin/platforms/
+RuntimeBin/styles/
+RuntimeBin/translations/
+RuntimeBin/sqldrivers/
 RuntimeBin/*.exe
 RuntimeBin/*.dll
 

@@ -120,12 +120,6 @@ void TcpSocket::readData()
                 out << QString("completed");
                 write(outMsgBytes, outMsgBytes.length());
             }
-            else if(inMsg == "read write rtdb")
-            {
-                DataTransferType = ReadWriteRtdb;
-                out << QString("read write rtdb");
-                this->write(outMsgBytes, outMsgBytes.length());
-            }
         }
         break;
         case DwonloadProject:
@@ -169,11 +163,6 @@ void TcpSocket::readData()
 
         }
         break;
-        case ReadWriteRtdb:
-        {
-            ReadWriteRtdbData();
-        }
-        break;
     }
     if(inMsg == "completed")
     {
@@ -184,114 +173,6 @@ void TcpSocket::readData()
         write(outMsgBytes, outMsgBytes.length());
     }
 }
-
-/*
-* 读命令返回解析
-* command: read id,number;
-* ret: read number,id=value,...,id=value;
-*      read error,error_reason_string;
-*/
-void TcpSocket::ReadParser(QString cmdline)
-{
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    CommandLineParser parser(cmdline);
-    //qDebug()<<cmdline;
-    if(parser.mCmd == "read")
-    {
-        if(parser.mArgs.count() != 2)
-            return;
-        int id = QString(parser.mArgs.at(0)).toInt();
-        int num = QString(parser.mArgs.at(1)).toInt();
-        QString ret = "read ";
-        ret += parser.mArgs.at(1);
-        ret += ",";
-        for(int i=0; i<num; i++)
-        {
-            ret += QString("%1").arg(id);
-            ret += "=";
-            ret += RealTimeDB::GetDataString(id);
-            if(i<num-1)
-                ret += ",";
-            id++;
-        }
-        ret += ";";
-        //qDebug()<<ret;
-        out << ret;
-        this->write(outMsgBytes, outMsgBytes.length());
-    }
-}
-
-/*
-* 写命令返回解析
-* command: write number,id=value,...,id=value;
-* ret: write ok;
-*      write error,error_reason_string;
-*/
-void TcpSocket::WriteParser(QString cmdline)
-{
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    CommandLineParser parser(cmdline);
-    if(parser.mCmd == "write")
-    {
-        if(parser.mArgs.count() < 2)
-            return;
-        int num = QString(parser.mArgs.at(0)).toInt();
-        for(int i=0; i<num; i++)
-        {
-            QStringList list = parser.mArgs.at(1+i).split('=');
-            int id = QString(list.at(0)).toInt();
-            QString datVal = list.at(1);
-            //qDebug()<<id<<datVal;
-            RealTimeDB::SetDataString(id, datVal);
-        }
-        out << QString("write ok;");
-        this->write(outMsgBytes, outMsgBytes.length());
-    }
-}
-
-void TcpSocket::ReadWriteRtdbData()
-{
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QByteArray inMsgBytes;
-    inMsgBytes.clear();
-    QDataStream in(&inMsgBytes, QIODevice::ReadOnly);
-    in.setVersion(QDataStream::Qt_5_7);
-
-    QString inMsg = "";
-    QString outMsg = "";
-
-    while(bytesAvailable()>0)
-    {
-        QByteArray datagram;
-        datagram.resize(bytesAvailable());
-        read(datagram.data(),datagram.size());
-        inMsgBytes.append(datagram);
-    }
-    in >> inMsg;
-
-    if(inMsg == "completed")
-    {
-        DataTransferType = None;
-        qDebug()<< "receive completed msg";
-    }
-    if(inMsg.startsWith("read") && inMsg.endsWith(";"))
-        ReadParser(inMsg);
-    if(inMsg.startsWith("write") && inMsg.endsWith(";"))
-        WriteParser(inMsg);
-}
-
 
 void TcpSocket::uploadProject()
 {

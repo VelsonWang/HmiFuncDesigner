@@ -1,4 +1,4 @@
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "ui_MainWindow.h"
 #include "MdiChildWindow.h"
 #include "RtdbConnectDialog.h"
@@ -15,6 +15,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QMessageBox>
+#include <QEventLoop>
 #include <QDebug>
 
 #define PERIOD    (500)
@@ -24,16 +25,19 @@ MainWindow::MainWindow(QString projPath, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     mProjectPath(projPath),
-    bConnectStatus(false),
-    tcpSocket(NULL),
-    serverIP(NULL),
-    pTimer(NULL)
+    bConnectStatus_(false),
+    ip_("127.0.0.1"),
+    port_(60000),
+    url_(""),
+    timer_(nullptr)
 {
     ui->setupUi(this);
-
-    ReadSettings(); // 初始窗口时读取窗口设置信息
+    ReadSettings();
     Load(DATA_SAVE_FORMAT);
-    InitWindow(); // 初始化窗口
+    InitWindow();
+    m_networkAccessManager = new QNetworkAccessManager(this);
+    connect(m_networkAccessManager, SIGNAL(finished(QNetworkReply*)),
+            this, SLOT(finished(QNetworkReply*)));
 }
 
 MainWindow::~MainWindow()
@@ -53,46 +57,19 @@ MainWindow::~MainWindow()
     qDeleteAll(mSysTagList);
     mSysTagList.clear();
 
-    if(pTimer != NULL)
+    if(timer_ != nullptr)
     {
-        if(pTimer->isActive())
-            pTimer->stop();
-        delete pTimer;
-        pTimer = NULL;
-    }
-
-    if(tcpSocket != NULL)
-    {
-        QByteArray outMsgBytes;
-        outMsgBytes.clear();
-        QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-        out.setVersion(QDataStream::Qt_5_7);
-        // send complete message
-        out << QString("completed");
-        tcpSocket->write(outMsgBytes, outMsgBytes.length());
-
-        tcpSocket->disconnectFromHost();
-        tcpSocket->waitForDisconnected();
-        delete tcpSocket;
-        tcpSocket = NULL;
-    }
-
-    if(serverIP != NULL)
-    {
-        delete serverIP;
+        if(timer_->isActive()) timer_->stop();
+        delete timer_;
+        timer_ = nullptr;
     }
 }
 
 
-QStandardItem *MainWindow::CreateTreeItem(const QString name, bool bconnect)
+QStandardItem *MainWindow::CreateTreeItem(const QString name)
 {
     QStandardItem *pItem = new QStandardItem(name);
     pItem->setEditable(false);
-    if(bconnect)
-    {
-        // 连接单击响应插槽
-
-    }
     return pItem;
 }
 
@@ -104,7 +81,7 @@ void MainWindow::InitTreeViewUi()
 
     pTreeItemRoot = new QStandardItem(tr("实时数据库"));
     pTreeItemRoot->setEditable(false);
-    pTreeIoItem = CreateTreeItem(tr("IO变量"), false);
+    pTreeIoItem = CreateTreeItem(tr("IO变量"));
     pTreeItemRoot->appendRow(pTreeIoItem);
 
     QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
@@ -128,7 +105,7 @@ void MainWindow::InitTreeViewUi()
                 {
                     name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+itemList.count()%64);
                 }
-                pTreeIoItem->appendRow(CreateTreeItem(name, true));
+                pTreeIoItem->appendRow(CreateTreeItem(name));
                 mMapIoTagPageId[name] = mMapIoTagPageGroupId[sItemName];
                 mMapIoTagPageGroupId.clear();
             }
@@ -136,7 +113,7 @@ void MainWindow::InitTreeViewUi()
         ++iter;
     }
 
-    pTreeTmpItem = CreateTreeItem(tr("中间变量"), false);
+    pTreeTmpItem = CreateTreeItem(tr("中间变量"));
     pTreeItemRoot->appendRow(pTreeTmpItem);
 
     if(mTmpTagList.count() > 0)
@@ -155,11 +132,11 @@ void MainWindow::InitTreeViewUi()
             {
                 name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+mTmpTagList.count()%64);
             }
-            pTreeTmpItem->appendRow(CreateTreeItem(name, true));
+            pTreeTmpItem->appendRow(CreateTreeItem(name));
         }
     }
 
-    pTreeSysItem = CreateTreeItem(tr("系统变量"), false);
+    pTreeSysItem = CreateTreeItem(tr("系统变量"));
     pTreeItemRoot->appendRow(pTreeSysItem);
 
     if(mSysTagList.count() > 0)
@@ -178,7 +155,7 @@ void MainWindow::InitTreeViewUi()
             {
                 name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+mSysTagList.count()%64);
             }
-            pTreeSysItem->appendRow(CreateTreeItem(name, true));
+            pTreeSysItem->appendRow(CreateTreeItem(name));
         }
     }
 
@@ -191,21 +168,18 @@ void MainWindow::InitTreeViewUi()
 
 MdiChildWindow* MainWindow::ActiveMdiChild()
 {
-    // 如果有活动窗口，则将其内的中心部件转换为MdiChild类型
     if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow())
     {
         return qobject_cast<MdiChildWindow *>(activeSubWindow->widget());
     }
-    return NULL; // 没有活动窗口，直接返回0
+    return NULL;
 }
 
 
 void MainWindow::SetActiveSubWindow(MdiChildWindow *window)
 {
-    if(!window)
-        return;
+    if(!window) return;
     window->showMaximized();
-    //m_CurItem = window->windowTitle();
     ui->mdiArea->setActiveSubWindow(0);//Activates the subwindow window. If window is 0, any current active window is deactivated.
     ui->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
 }
@@ -220,7 +194,7 @@ MdiChildWindow* MainWindow::GetActiveSubWindow()
 
 MdiChildWindow* MainWindow::FindMdiChild(const QString &windowTitle)
 {
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
+    foreach(QMdiSubWindow* window, ui->mdiArea->subWindowList())
     {
         MdiChildWindow * pChildWin = qobject_cast<MdiChildWindow *>(window->widget());
         if(pChildWin->windowTitle() == windowTitle)
@@ -232,7 +206,7 @@ MdiChildWindow* MainWindow::FindMdiChild(const QString &windowTitle)
 
 QMdiSubWindow* MainWindow::FindMdiSubWindow(const QString &windowTitle)
 {
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
+    foreach(QMdiSubWindow* window, ui->mdiArea->subWindowList())
     {
         MdiChildWindow * pChildWin = qobject_cast<MdiChildWindow *>(window->widget());
         if(pChildWin->windowTitle() == windowTitle)
@@ -245,25 +219,23 @@ QMdiSubWindow* MainWindow::FindMdiSubWindow(const QString &windowTitle)
 
 void MainWindow::closeEvent(QCloseEvent *event) // 关闭事件
 {
-    QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
-    //ConfigUtils::SetCfgStr(strFile, "RtdbConnectIp", "IP", "");
-    ui->mdiArea->closeAllSubWindows(); // 先执行多文档区域的关闭操作
+    ui->mdiArea->closeAllSubWindows();
     if (ui->mdiArea->currentSubWindow()) {
-        event->ignore(); // 如果还有窗口没有关闭，则忽略该事件
+        event->ignore();
     } else {
-        WriteSettings(); // 在关闭前写入窗口设置
+        WriteSettings();
         event->accept();
     }
 }
 
-void MainWindow::WriteSettings() // 写入窗口设置
+void MainWindow::WriteSettings()
 {
     QSettings settings("Organization", "RtdbView");
-    settings.setValue("pos", pos());   // 写入位置信息
-    settings.setValue("size", size()); // 写入大小信息
+    settings.setValue("pos", pos());
+    settings.setValue("size", size());
 }
 
-void MainWindow::ReadSettings() // 读取窗口设置
+void MainWindow::ReadSettings()
 {
     QSettings settings("Organization", "RtdbView");
     QPoint pos = settings.value("pos", QPoint(200, 200)).toPoint();
@@ -272,23 +244,16 @@ void MainWindow::ReadSettings() // 读取窗口设置
     resize(size);
 }
 
-void MainWindow::InitWindow() // 初始化窗口
+void MainWindow::InitWindow()
 {
     setCentralWidget(ui->mdiArea);
-//    setWindowState(Qt::WindowMaximized);
     setWindowTitle(tr("实时数据库"));
 
-
-    // 当多文档区域的内容超出可视区域后，出现滚动条
     ui->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
     ui->statusBar->showMessage(tr("未连接..."));
-
-
-
     InitTreeViewUi();
-
 }
 
 
@@ -395,13 +360,10 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
         }
         else
         {
-            if(bConnectStatus)
+            if(bConnectStatus_ && timer_ != NULL)
             {
-                if(pTimer != NULL)
-                {
-                    if(pTimer->isActive())
-                        pTimer->stop();
-                }
+                if(timer_->isActive())
+                    timer_->stop();
             }
             window->close();
         }
@@ -437,14 +399,8 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
     ui->mdiArea->addSubWindow(pMdiChildWindow);
     SetActiveSubWindow(pMdiChildWindow);
 
-    if(bConnectStatus)
-    {
-        if(pTimer != NULL)
-        {
-            if(!pTimer->isActive())
-                pTimer->start(PERIOD);
-        }
-    }
+    if(bConnectStatus_ && timer_ != nullptr && !timer_->isActive())
+        timer_->start(PERIOD);
 }
 
 
@@ -499,118 +455,50 @@ void MainWindow::ShowFirstPage()
 void MainWindow::on_actionConnect_triggered()
 {
     QScopedPointer<RtdbConnectDialog> dlg(new RtdbConnectDialog(this));
-    if(bConnectStatus)
-    {
-        dlg->SetConnectStatus(tr("连接状态：已连接"));
-    }
-    else
-    {
-        dlg->SetConnectStatus(tr("连接状态：连接关闭"));
-    }
+
+    if(bConnectStatus_) dlg->SetConnectStatus(tr("连接状态：已连接"));
+    else dlg->SetConnectStatus(tr("连接状态：连接关闭"));
+
     if(dlg->exec() == QDialog::Accepted)
     {
-        if(bConnectStatus)
-            return;
-        tcpSocket = new QTcpSocket(this);
-        connect(tcpSocket,SIGNAL(connected()),this,SLOT(slotConnected()));
-        connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(slotDisconnected()));
-        connect(tcpSocket, SIGNAL(readyRead()),this, SLOT(dataReceived()));
+        if(bConnectStatus_) return;
 
-        port = 6000;
-        serverIP = new QHostAddress();
-        bConnectStatus = false;
+        port_ = 60000;
+        ip_ = dlg->GetIPAddress();
+        qDebug() << ip_ << port_;
+        bConnectStatus_ = true;
+        ui->statusBar->showMessage(tr("连接成功！"));
 
-        if(!serverIP->setAddress(dlg->GetIPAddress()))
-        {
-            //qDebug() << "server ip address error!";
-            QMessageBox::critical(this, tr("ip错误"), tr("ip设置错误！请重新设置！"));
-            if(tcpSocket != NULL)
-            {
-                delete tcpSocket;
-                tcpSocket = NULL;
-            }
-            return;
-        }
-        //qDebug() << *serverIP << port;
-        tcpSocket->connectToHost (*serverIP, port);
-        if (tcpSocket->waitForConnected(1000))
-        {
-            //qDebug("Connected!");
-            bConnectStatus = true;
-            ui->statusBar->showMessage(tr("连接成功！"));
-        }
-        else
-        {
-            QMessageBox::critical(this, tr("连接失败"), tr("连接至Runtime失败！"));
-            if(tcpSocket != NULL)
-            {
-                delete tcpSocket;
-                tcpSocket = NULL;
-            }
-            return;
-        }
+        timer_ = new QTimer();
+        timer_->start(PERIOD);
+        connect(timer_, SIGNAL(timeout()), this, SLOT(timeout()));
     }
     else
     {
         if(dlg->GetOption() == 0)
         {
-            if(tcpSocket != NULL)
-            {
-                QByteArray outMsgBytes;
-                outMsgBytes.clear();
-                QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-                out.setVersion(QDataStream::Qt_5_7);
-                // send complete message
-                out << QString("completed");
-                tcpSocket->write(outMsgBytes, outMsgBytes.length());
-
-                tcpSocket->disconnectFromHost();
-                tcpSocket->waitForDisconnected();
-                delete tcpSocket;
-                bConnectStatus = false;
-                ui->statusBar->showMessage(tr("未连接..."));
-                tcpSocket = NULL;
-            }
+            bConnectStatus_ = false;
+            ui->statusBar->showMessage(tr("未连接..."));
         }
     }
 }
 
-
-void MainWindow::slotConnected()
+void MainWindow::on_actionClose_triggered()
 {
-    QByteArray msgBytes;
-    QDataStream out(&msgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QString msg = QString("connect to server");
-    out << msg;
-
-    tcpSocket->write(msgBytes, msgBytes.length());
-
-    pTimer = new QTimer();
-    pTimer->start(PERIOD);
-    connect(pTimer,SIGNAL(timeout()), this, SLOT(timeout()));
-
-}
-
-
-void MainWindow::slotDisconnected()
-{
-    //qDebug() << "slotDisconnected...";
-
+    WriteSettings();
+    qApp->exit();
 }
 
 
 void MainWindow::timeout()
-{   
-    if(!bConnectStatus)
+{
+    if(!bConnectStatus_)
     {
-        if(pTimer != NULL)
+        if(timer_ != nullptr)
         {
-            if(pTimer->isActive())
-                pTimer->stop();
-            delete pTimer;
-            pTimer = NULL;
+            if(timer_->isActive()) timer_->stop();
+            delete timer_;
+            timer_ = nullptr;
         }
         return;
     }
@@ -619,9 +507,7 @@ void MainWindow::timeout()
     if(listSubWin.size() < 1)
         return;
     MdiChildWindow* pMdiChildWindow =  qobject_cast<MdiChildWindow *>(listSubWin.at(0)->widget()); ;
-
     QString windowTitle = pMdiChildWindow->windowTitle();
-    //qDebug()<< windowTitle << mMapIoTagPageId[windowTitle];
 
     QList<TagItem *> tagList = QList<TagItem *>();
     if(windowTitle.indexOf("IO设备") > -1)
@@ -636,21 +522,13 @@ void MainWindow::timeout()
             ++iter;
         }
     }
-    else if(windowTitle.indexOf("中间变量") > -1)
-    {
-        tagList = mTmpTagList;
-    }
-    else if(windowTitle.indexOf("系统变量") > -1)
-    {
-        tagList = mSysTagList;
-    }
-    else
-    {
-    }
+    else if(windowTitle.indexOf("中间变量") > -1) tagList = mTmpTagList;
+    else if(windowTitle.indexOf("系统变量") > -1) tagList = mSysTagList;
+    else ;
 
     int start = windowTitle.indexOf("(");
     int end = windowTitle.indexOf(")");
-    QString tmp =  windowTitle.mid(start + 1, end -start-1);
+    QString tmp =  windowTitle.mid(start+1, end-start-1);
     QStringList list = tmp.split('-');
     if(list.count() != 2)
         return;
@@ -660,251 +538,30 @@ void MainWindow::timeout()
     idEnd = tagList.at(idEnd-1)->mId;
     //qDebug()<< idStart << idEnd;
 
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QString outMsg = "";
-    outMsgBytes.clear();
-    QString cmdline = "read ";
     int id = idStart;
-    if(windowTitle.contains("IO设备"))
-    {
-        id += 0 + mMapIoTagPageId[windowTitle] * 1000;
-    }
-    else if(windowTitle.contains("中间变量"))
-    {
-        id += 1000000;
-    }
-    else if(windowTitle.contains("系统变量"))
-    {
-        id += 2000000;
-    }
-    else
-    {}
-    cmdline += QString("%1").arg(id);
-    cmdline += ",";
-    cmdline += QString("%1").arg(idEnd - idStart + 1);
-    cmdline += ";";
-    out << cmdline;
-    tcpSocket->write(outMsgBytes, outMsgBytes.length());
+    if(windowTitle.contains("IO设备")) id += 0 + mMapIoTagPageId[windowTitle] * 1000;
+    else if(windowTitle.contains("中间变量")) id += 1000000;
+    else if(windowTitle.contains("系统变量")) id += 2000000;
+    else ;
 
+    url_ = QString("http://%1:%2/%3").arg(ip_).arg(port_).arg("READ");
+    QUrl url(url_);
+    QJsonObject json;
+    json["StartID"] = id;
+    json["Number"] = idEnd-idStart+1;
+    QJsonDocument document;
+    document.setObject(json);
+    QByteArray datas = document.toJson(QJsonDocument::Compact);
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
+    m_networkAccessManager->post(request, datas);
+
+    QEventLoop eventLoop;
+    QObject::connect(m_networkAccessManager, &QNetworkAccessManager::finished,
+                     &eventLoop, &QEventLoop::quit);
+    eventLoop.exec();
 }
 
-/*
-
-command: read id,number;
-ret: read number,id=value,...,id=value;
-     read error,error_reason_string;
-
-command: write number,id=value,...,id=value;
-ret: write ok;
-     write error,error_reason_string;
-
-*/
-
-/*
-outMsgBytes.clear();
-outMsg = QString("write 2,1=%1,2=%2;").arg(val1++).arg(val2++);
-qDebug() << "timerEvent    "<< outMsg;
-out << outMsg;
-tcpSocket->write(outMsgBytes, outMsgBytes.length());
-*/
-void MainWindow::dataReceived()
-{
-    while(tcpSocket->bytesAvailable()>0)
-    {
-        QByteArray datagram;
-        datagram.resize(tcpSocket->bytesAvailable());
-        tcpSocket->read(datagram.data(),datagram.size());
-        //QString msg = datagram.data();
-        //qDebug() << msg.left(datagram.size());
-        QDataStream in(&datagram, QIODevice::ReadOnly);
-        in.setVersion(QDataStream::Qt_5_7);
-        QString msg = onDataTransfer(in);
-        //if(msg != "")
-        //    qDebug() << msg;
-    }
-}
-
-
-QString MainWindow::onDataTransfer(QDataStream& in)
-{
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QString inMsg = "";
-    QString outMsg = "";
-
-    in >> inMsg;
-    //qDebug() << "server return: " << inMsg;
-
-    if(inMsg == "connect to server")
-    {
-        outMsgBytes.clear();
-        outMsg = QString("read write rtdb");
-        out << outMsg;
-        tcpSocket->write(outMsgBytes, outMsgBytes.length());
-    }
-    if(inMsg == "read write rtdb")
-    {
-        //outMsgBytes.clear();
-        //outMsg = QString("read write rtdb");
-        //out << outMsg;
-        //tcpSocket->write(outMsgBytes, outMsgBytes.length());
-    }
-    else if(inMsg == "completed")
-    {
-        outMsgBytes.clear();
-        // send complete message
-        out << QString("completed");
-        tcpSocket->write(outMsgBytes, outMsgBytes.length());
-        this->bConnectStatus = false;
-        ui->statusBar->showMessage(tr("未连接..."));
-    }
-    else
-    {
-        if(inMsg.startsWith("read") && inMsg.endsWith(";"))
-            ReadParser(inMsg);
-        if(inMsg.startsWith("write") && inMsg.endsWith(";"))
-            WriteParser(inMsg);
-    }
-    return "";
-}
-
-/*
-* 读命令返回解析
-* command: read id,number;
-* ret: read number,id=value,...,id=value;
-*      read error,error_reason_string;
-*/
-void MainWindow::ReadParser(QString cmdline)
-{
-    //qDebug()<< "ReadParser" << cmdline;
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    CommandLineParser parser(cmdline);
-    if(parser.mCmd == "read")
-    {
-        if(parser.mArgs.count() < 2)
-            return;
-        int num = QString(parser.mArgs.at(0)).toInt();
-        for(int i=0; i<num; i++)
-        {
-            QStringList listArgs = parser.mArgs.at(1+i).split('=');
-            int id = QString(listArgs.at(0)).toInt();
-            QString datVal = listArgs.at(1);
-            //qDebug()<< "read " << id << datVal;
-
-            QList<QMdiSubWindow *> listSubWin = ui->mdiArea->subWindowList();
-            if(listSubWin.size() < 1)
-                return;
-            MdiChildWindow* pMdiChildWindow =  qobject_cast<MdiChildWindow *>(listSubWin.at(0)->widget()); ;
-
-            QString windowTitle = pMdiChildWindow->windowTitle();
-
-            QList<TagItem *> tagList = QList<TagItem *>();
-            if(windowTitle.indexOf("IO设备") > -1)
-            {
-                QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
-                while (iter != mMapIoTagList.end())
-                {
-                    if(windowTitle.indexOf(iter.key()) > -1)
-                    {
-                        tagList = iter.value();
-                    }
-                    ++iter;
-                }
-            }
-            else if(windowTitle.indexOf("中间变量") > -1)
-            {
-                tagList = mTmpTagList;
-            }
-            else if(windowTitle.indexOf("系统变量") > -1)
-            {
-                tagList = mSysTagList;
-            }
-            else
-            {
-            }
-
-            int start = windowTitle.indexOf("(");
-            int end = windowTitle.indexOf(")");
-            QString tmp =  windowTitle.mid(start + 1, end -start-1);
-            QStringList list = tmp.split('-');
-            if(list.count() != 2)
-                return;
-            int idStart = QString(list[0]).toInt();
-            int idEnd = QString(list[1]).toInt();
-            idStart = tagList.at(idStart-1)->mId;
-            idEnd = tagList.at(idEnd-1)->mId;
-            int num = idEnd - idStart + 1;
-            int pageid = 0;
-
-            if(windowTitle.contains("IO设备"))
-            {
-                pageid = mMapIoTagPageId[windowTitle];
-                idStart += 0 + pageid * 1000;
-            }
-            else if(windowTitle.contains("中间变量"))
-            {
-                idStart += 1000000;
-            }
-            else if(windowTitle.contains("系统变量"))
-            {
-                idStart += 2000000;
-            }
-            else
-            {}
-            idEnd = idStart + num;
-            if(id >= idStart && id <= idEnd)
-            {
-                if(windowTitle.contains("IO设备"))
-                {
-                    if(pageid > 0)
-                    {
-                        id = id / mMapIoTagPageId[windowTitle] / 1000;
-                    }
-                    pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
-                }
-                else if(windowTitle.contains("中间变量"))
-                {
-                    id -= 1000000;
-                    pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
-                }
-                else if(windowTitle.contains("系统变量"))
-                {
-                    id -= 2000000;
-                    pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
-                }
-            }
-        }
-    }
-}
-
-/*
-* 写命令返回解析
-* command: write number,id=value,...,id=value;
-* ret: write ok;
-*      write error,error_reason_string;
-*/
-void MainWindow::WriteParser(QString cmdline)
-{
-    //qDebug()<< "WriteParser" << cmdline;
-}
-
-
-void MainWindow::on_actionClose_triggered()
-{
-    WriteSettings();
-    qApp->exit();
-}
 
 /*
 * 插槽：写实时数据库
@@ -912,7 +569,7 @@ void MainWindow::on_actionClose_triggered()
 void MainWindow::writeRtdbTag(QString cmdline)
 {
     //qDebug()<<cmdline;
-    if(!bConnectStatus)
+    if(!bConnectStatus_)
     {
         QMessageBox::information(this, tr("提示"), tr("未连接实时数据库！"));
         return;
@@ -952,5 +609,112 @@ void MainWindow::writeRtdbTag(QString cmdline)
     out.setVersion(QDataStream::Qt_5_7);
     outMsgBytes.clear();
     out << writeCmdline;
-    tcpSocket->write(outMsgBytes, outMsgBytes.length());
+    //tcpSocket->write(outMsgBytes, outMsgBytes.length());
+}
+
+
+void MainWindow::finished(QNetworkReply *reply)
+{
+    QVariant statusCodeV = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
+    QVariant redirectionTargetUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
+
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QByteArray bytes = reply->readAll();
+        QJsonParseError err;
+        QJsonDocument doc = QJsonDocument::fromJson(bytes, &err);
+        if (err.error != QJsonParseError::NoError || !doc.isObject())
+        {qDebug() << reply->url().path().toUpper();
+            if(reply->url().path().toUpper() == "/READ")
+            {
+                qDebug() << "1--"<< reply->url().path().toUpper();
+                const QJsonObject jsonDocObj = doc.object();
+                int startID = jsonDocObj["StartID"].toInt();
+                int start_id = startID;
+                int id = 0;
+                QJsonArray tagArray = jsonDocObj["TagArray"].toArray();
+                for (int i = 0; i < tagArray.size(); ++i) {
+                    id = start_id;
+                    QJsonObject jsonObj = tagArray[i].toObject();
+                    QString datVal = jsonObj[QString::number(id)].toString();
+                    qDebug() << start_id << datVal;
+
+                    QList<QMdiSubWindow *> listSubWin = ui->mdiArea->subWindowList();
+                    if(listSubWin.size() < 1) return;
+                    MdiChildWindow* pMdiChildWindow =  qobject_cast<MdiChildWindow *>(listSubWin.at(0)->widget()); ;
+                    QString windowTitle = pMdiChildWindow->windowTitle();
+
+                    QList<TagItem *> tagList = QList<TagItem *>();
+                    if(windowTitle.indexOf("IO设备") > -1)
+                    {
+                        QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
+                        while (iter != mMapIoTagList.end())
+                        {
+                            if(windowTitle.indexOf(iter.key()) > -1)
+                            {
+                                tagList = iter.value();
+                            }
+                            ++iter;
+                        }
+                    }
+                    else if(windowTitle.indexOf("中间变量") > -1) tagList = mTmpTagList;
+                    else if(windowTitle.indexOf("系统变量") > -1) tagList = mSysTagList;
+                    else ;
+
+                    int start = windowTitle.indexOf("(");
+                    int end = windowTitle.indexOf(")");
+                    QString tmp =  windowTitle.mid(start+1, end-start-1);
+                    QStringList list = tmp.split('-');
+                    if(list.count() != 2) return;
+                    int idStart = QString(list[0]).toInt();
+                    int idEnd = QString(list[1]).toInt();
+                    idStart = tagList.at(idStart-1)->mId;
+                    idEnd = tagList.at(idEnd-1)->mId;
+                    int num = idEnd-idStart+1;
+                    int pageid = 0;
+
+                    if(windowTitle.contains("IO设备"))
+                    {
+                        pageid = mMapIoTagPageId[windowTitle];
+                        idStart += 0 + pageid * 1000;
+                    }
+                    else if(windowTitle.contains("中间变量")) idStart += 1000000;
+                    else if(windowTitle.contains("系统变量")) idStart += 2000000;
+                    else ;
+
+                    idEnd = idStart+num;
+                    if(id >= idStart && id <= idEnd)
+                    {
+                        if(windowTitle.contains("IO设备"))
+                        {
+                            if(pageid > 0) id = id / mMapIoTagPageId[windowTitle] / 1000;
+                            pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
+                        }
+                        else if(windowTitle.contains("中间变量"))
+                        {
+                            id -= 1000000;
+                            pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
+                        }
+                        else if(windowTitle.contains("系统变量"))
+                        {
+                            id -= 2000000;
+                            pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
+                        }
+                    }
+                    start_id++;
+                }
+            }
+            else if(reply->url().path().toUpper() == "/WRITE")
+            {
+
+            }
+            else ;
+        }
+    }
+    else
+    {
+        // handle errors here
+    }
+
+    reply->deleteLater();
 }

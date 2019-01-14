@@ -1,4 +1,4 @@
-#include "SCADARunTime.h"
+﻿#include "SCADARunTime.h"
 #include "public.h"
 #include "ModbusRTUDevice.h"
 #include "ModbusASCIIDevice.h"
