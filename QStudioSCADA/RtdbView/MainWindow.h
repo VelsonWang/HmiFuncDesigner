@@ -14,6 +14,7 @@
 #include <QTimer>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
+#include <QMutex>
 #include "MdiChildWindow.h"
 #include "Tag.h"
 
@@ -83,7 +84,7 @@ private:
 
     QNetworkAccessManager *m_networkAccessManager;
     QNetworkReply *m_reply;
-
+    QMutex mutex_;
 };
 
 #endif // MAINWINDOW_H

@@ -65,7 +65,7 @@ void HttpServer::on_new_request(QHttpRequest * req, QHttpResponse * rep)
     response_ = rep;
 
     QString path = req->path();
-    qDebug() << "new request: " << path;
+    //qDebug() << "new request: " << path;
 
     // check request method
     if (req->method() != QHttpRequest::HTTP_POST)
@@ -135,7 +135,6 @@ void HttpServer::on_request_end()
         const QJsonObject jsonDocObj = doc.object();
         int startID = jsonDocObj["StartID"].toInt();
         int number = jsonDocObj["Number"].toInt();
-        qDebug() << QString("StartID: %1 ").arg(startID) << QString(" Number: %1 ").arg(number);
 
         int id = startID;
         QJsonArray tagArray = jsonDocObj["TagArray"].toArray();

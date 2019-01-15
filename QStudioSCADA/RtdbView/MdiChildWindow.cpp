@@ -1,10 +1,11 @@
-#include "MdiChildWindow.h"
+﻿#include "MdiChildWindow.h"
 #include "GetRtdbWriteValueDialog.h"
 #include <QHeaderView>
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
 #include <QModelIndex>
+#include <QTime>
 #include <QDebug>
 
 
@@ -14,7 +15,7 @@ MdiChildWindow::MdiChildWindow(QList<TagItem *> tagList, QString tittle, QWidget
 {
     setWindowTitle(tittle);
     setWindowIcon(QIcon(":/images/pm_rtdb.png"));
-    setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
+    setContextMenuPolicy(Qt::DefaultContextMenu);
 
     pTagTableModel = new TagTableModel();
 
@@ -34,14 +35,14 @@ MdiChildWindow::MdiChildWindow(QList<TagItem *> tagList, QString tittle, QWidget
     pTableView->setModel(pTagTableModel);
     pTableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     pTableView->setWordWrap(false);
+    pTableView->horizontalHeader()->setStretchLastSection(true);
+    pTableView->horizontalHeader()->setHighlightSections(false);
 
     verticalLayout = new QVBoxLayout(this);
     verticalLayout->setSpacing(1);
     verticalLayout->setObjectName(QStringLiteral("verticalLayout"));
     verticalLayout->setContentsMargins(1, 1, 1, 1);
     verticalLayout->addWidget(pTableView);
-
-
 
 }
 
@@ -56,7 +57,6 @@ MdiChildWindow::~MdiChildWindow()
 
 void MdiChildWindow::SetTagLogicValueAndStatus(int id, QString logicValue, QString status)
 {
-    //qDebug()<< id<<logicValue<<status;
     pTagTableModel->UpdateLogicValueAndStatus(id, logicValue, status);
 }
 

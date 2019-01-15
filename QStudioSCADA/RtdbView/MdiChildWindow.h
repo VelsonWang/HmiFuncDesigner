@@ -1,4 +1,4 @@
-#ifndef MDICHILDWINDOW_H
+﻿#ifndef MDICHILDWINDOW_H
 #define MDICHILDWINDOW_H
 
 #include <QWidget>
