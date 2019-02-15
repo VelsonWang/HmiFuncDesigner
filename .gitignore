@@ -42,7 +42,6 @@ delobj.bat
 *.user
 
 *.suo
-*.exe
 *.bin
 *.obj
 *.pdb
