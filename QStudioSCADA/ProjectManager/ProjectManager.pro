@@ -136,7 +136,8 @@ HEADERS  += MainWindow.h \
     InsertFunctionDialog.h \
     InsertTagDialog.h \
     ScriptRunConditionEditorDlg.h \
-    childform.h
+    childform.h \
+    FileTansfer.h
 
 FORMS    += MainWindow.ui \
     NewProjectDialog.ui \

@@ -1,4 +1,4 @@
-
+﻿
 #include <QFile>
 #include <QFileInfo>
 #include <QJsonObject>
@@ -11,12 +11,15 @@
 #include <QDebug>
 
 
-
 ProjectDownloadDialog::ProjectDownloadDialog(QWidget *parent, QString projName) :
     QDialog(parent),
-    ui(new Ui::ProjectDownloadDialog)
+    ui(new Ui::ProjectDownloadDialog),
+    transferState_(CMD_NONE),
+    dataPackage_({0}),
+    fileSize_(0)
 {
     ui->setupUi(this);
+    fileBuf_.clear();
     this->configProjPath = projName;
     ui->progressBar->setValue(0);
     ui->labelAddress->setText(getRuntimeIp());
@@ -55,8 +58,6 @@ QString ProjectDownloadDialog::getRuntimeIp()
 {
     QString sIp = "127.0.0.1";
 
-    //qDebug() << this->configProjPath;
-
     QFile loadFile(this->configProjPath);
     if (!loadFile.open(QIODevice::ReadOnly)) {
         qWarning("Couldn't open load file.");
@@ -85,14 +86,27 @@ void ProjectDownloadDialog::setConfigProjPath(QString name)
 
 void ProjectDownloadDialog::on_btnOk_clicked()
 {  
-    QByteArray msgBytes;
-    QDataStream out(&msgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
+    if(projFileName == "") return;
+    fileBuf_.clear();
+    dataPackage_ = {0};
 
-    QString msg = QString("connect to server");
-    out << msg;
+    // send file length
+    QFile file(projFileName);
+    fileSize_ = file.size();
 
-    tcpSocket->write(msgBytes, msgBytes.length());
+    dataPackage_.total = (fileSize_%512)?(fileSize_/512+1):(fileSize_/512);
+    ui->progressBar->setRange(0, dataPackage_.total-1);
+
+    file.open(QIODevice::ReadOnly);
+    fileBuf_.resize(dataPackage_.total*512);
+    file.read(fileBuf_.data(), fileSize_);
+    file.close();
+
+    transferState_ = CMD_NONE;
+    TMgsHeader mgsHeader = {0};
+    mgsHeader.length = sizeof(mgsHeader);
+    mgsHeader.cmd = CMD_DOWNLOAD_PROJECT;
+    tcpSocket->write((char *)&mgsHeader, sizeof(mgsHeader));
 }
 
 void ProjectDownloadDialog::on_btnCancal_clicked()
@@ -103,16 +117,8 @@ void ProjectDownloadDialog::on_btnCancal_clicked()
 
 void ProjectDownloadDialog::slotConnected()
 {
-    int length = 0;
-
     QString msg = "slotConnected...";
-    length=tcpSocket->write(msg.toLatin1(),msg.length());
-    //tcpSocket->waitForBytesWritten(-1);
-    //tcpSocket->waitForReadyRead(-1);
-    if(length!=msg.length())
-    {
-        return ;
-    }
+
 }
 void ProjectDownloadDialog::slotDisconnected()
 {
@@ -122,108 +128,68 @@ void ProjectDownloadDialog::slotDisconnected()
 
 void ProjectDownloadDialog::dataReceived()
 {
-    while(tcpSocket->bytesAvailable()>0)
+    switch(transferState_)
     {
-        QByteArray datagram;
-        datagram.resize(tcpSocket->bytesAvailable());
-        tcpSocket->read(datagram.data(),datagram.size());
-        //QString msg = datagram.data();
-        //qDebug() << msg.left(datagram.size());
-        QDataStream in(&datagram, QIODevice::ReadOnly);
-        in.setVersion(QDataStream::Qt_5_7);
-        QString msg = onDataTransfer(in);
-        if(msg != "")
-            qDebug() << msg;
+        case CMD_NONE:
+        case CMD_DOWNLOAD_PROJECT_ACK:
+        {
+            if (tcpSocket->bytesAvailable() < sizeof(TMgsHeader)) return;
+            TMgsHeader mgsHeader = {0};
+            tcpSocket->read((char *)&mgsHeader, sizeof(mgsHeader));
+
+            if(mgsHeader.length != sizeof(mgsHeader)) return;
+            if(mgsHeader.cmd == CMD_DONE)
+                transferState_ = CMD_DOWNLOAD_PROJECT;
+            if(mgsHeader.cmd == CMD_NONE)
+                transferState_ = CMD_NONE;
+            transferFilePackage();
+        }
+        break;
+        default:
+        {
+            transferState_ = CMD_NONE;
+        }
+        break;
     }
 }
 
-
-QString ProjectDownloadDialog::onDataTransfer(QDataStream& in)
+void ProjectDownloadDialog::transferFilePackage()
 {
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
+    int waitSendLen = sizeof(TDataPackage)+sizeof(TMgsHeader);
+    TMgsHeader mgsHeader = {0};
+    mgsHeader.length = waitSendLen;
+    mgsHeader.cmd = CMD_DOWNLOAD_PROJECT;
 
-    QString inMsg = "";
-    QString outMsg = "";
+    TDataPackage dataPack = {0};
+    dataPack.total = dataPackage_.total;
+    dataPack.index = dataPackage_.index;
 
-    in >> inMsg;
-    //qDebug() << "server return: " << inMsg;
-
-    if(inMsg == "connect to server")
+    ui->progressBar->setValue(dataPack.index);
+    int blockSize = sizeof(dataPackage_.data)/sizeof(quint8);
+    for(int i=0; i<blockSize; i++)
     {
-        outMsg = QString("download project");
-        out << outMsg;
-        tcpSocket->write(outMsgBytes, outMsgBytes.length());
+        dataPack.data[i] = fileBuf_[dataPack.index*blockSize+i];
     }
-    if(inMsg == "download project")
+    if(dataPack.index == (dataPackage_.total-1))
     {
-        if(projFileName == "")
-            return "project file name empty.";
-
-        // send file name
-        QString strTarName = projFileName.right(projFileName.length() - projFileName.lastIndexOf("/") - 1);
-        out << strTarName;
-
-        // send file length
-        QFile file(projFileName);
-        quint32 filesize = file.size();
-        //qDebug() << "size: " << filesize;
-        out << (quint32)filesize;
-        tcpSocket->write(outMsgBytes, outMsgBytes.length());
-        outMsgBytes.clear();
-
-        int iPackageCnt = (filesize%1024)?(filesize/1024+1):(filesize/1024);
-        ui->progressBar->setRange(0, iPackageCnt-1);
-
-        // send file data
-        file.open(QIODevice::ReadOnly);
-        char *pFileBuf = new char[iPackageCnt*1024];
-        int rCnt = file.read(pFileBuf, filesize);
-        file.close();
-        if(rCnt != filesize)
+        if(blockSize*dataPackage_.total>fileSize_)
         {
-            //qDebug() << "read file error, read size: " << rCnt;
-            return "read file error.";
+            mgsHeader.length = sizeof(TDataPackage)+sizeof(TMgsHeader)-blockSize+(blockSize*dataPackage_.total-fileSize_);
         }
-        char *pBuf = new char[1024];
-        //qDebug() << "iPackageCnt: " << iPackageCnt;
-        for(int i=0; i<iPackageCnt;i++)
+        else
         {
-            ui->progressBar->setValue(i);
-            for(int j=0;j<1024;j++)
-            {
-                pBuf[j] = pFileBuf[i*1024+j];
-            }
-            if(i==(iPackageCnt-1))
-            {
-                if(1024*iPackageCnt>filesize)
-                {
-                    tcpSocket->write((const char*)pBuf, 1024*iPackageCnt-filesize);
-                }
-                else
-                {
-                    tcpSocket->write((const char*)pBuf, 1024);
-                }
-            }
-            else
-            {
-                tcpSocket->write((const char*)pBuf, 1024);
-            }
-            //qDebug() << i << "/" << iPackageCnt;
+            mgsHeader.length = waitSendLen;
         }
-        delete[] pBuf;
-        delete[] pFileBuf;
-    }
-    else if(inMsg == "completed")
-    {
-        outMsgBytes.clear();
-        // send complete message
-        out << QString("completed");
-        tcpSocket->write(outMsgBytes, outMsgBytes.length());
-
         this->accept();
     }
-    return "";
+    else
+    {
+        mgsHeader.length = waitSendLen;
+    }
+
+    tcpSocket->write((char *)&mgsHeader, sizeof(mgsHeader));
+    tcpSocket->write((char *)&dataPack, sizeof(dataPack));
+
+    dataPackage_.index++;
+
 }

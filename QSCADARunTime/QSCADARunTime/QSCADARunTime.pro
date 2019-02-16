@@ -51,7 +51,6 @@ SOURCES += \
     Vendor/IOTag.cpp \
     Vendor/Modbus/ModbusRTUDevice.cpp \
     Vendor/VendorPrivate.cpp \
-    CommandLineParser.cpp \
     TimerTask.cpp \
     PortThread.cpp \
     Vendor/Modbus/ModbusASCII.cpp \
@@ -78,7 +77,6 @@ HEADERS  += \
     Vendor/IOTag.h \
     Vendor/Modbus/ModbusRTUDevice.h \
     Vendor/VendorPrivate.h \
-    CommandLineParser.h \
     TimerTask.h \
     PortThread.h \
     Vendor/Modbus/ModbusASCII.h \
@@ -91,7 +89,8 @@ HEADERS  += \
     Tag/Function.h \
     Script/JavaScript.h \
     Script/RunScript.h \
-    DB/DatabaseHelper.h
+    DB/DatabaseHelper.h \
+    FileTansfer.h
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp

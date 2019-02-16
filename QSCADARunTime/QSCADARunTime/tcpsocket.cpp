@@ -1,6 +1,5 @@
 ﻿#include "tcpsocket.h"
-#include "CommandLineParser.h"
-#include "RealTimeDB.h"
+#include "FileTansfer.h"
 #include <QtConcurrent/QtConcurrent>
 #include <QHostAddress>
 #include <QApplication>
@@ -11,17 +10,12 @@
 #include <QDebug>
 
 
-TcpSocket::TcpSocket(SCADARunTime *pRunTime, qintptr socketDescriptor, QObject *parent) : //构造函数在主线程执行，lambda在子线程
+TcpSocket::TcpSocket(qintptr socketDescriptor, QObject *parent) :
     QTcpSocket(parent),
     socketID(socketDescriptor),
-    m_pRunTime(pRunTime)
+    transferState_(CMD_NONE)
 {
-    DataTransferType = None;
-    offset = 0;
-    pFileBuf = 0;
-    fileName = "";
-    fileSize = 0;
-    iPackageCnt = 0;
+    fileBuf_.clear();
 
     this->setSocketDescriptor(socketDescriptor);
     connect(this, &TcpSocket::readyRead, this, &TcpSocket::readData);
@@ -38,14 +32,8 @@ TcpSocket::TcpSocket(SCADARunTime *pRunTime, qintptr socketDescriptor, QObject *
 
 TcpSocket::~TcpSocket()
 {
-    if(pFileBuf != 0)
-    {
-        delete[] pFileBuf;
-        pFileBuf = 0;
-    }
+
 }
-
-
 
 void TcpSocket::sentData(const QByteArray &data, const int id)
 {
@@ -71,106 +59,76 @@ void TcpSocket::disConTcp(int i)
 
 void TcpSocket::readData()
 {
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QByteArray inMsgBytes;
-    inMsgBytes.clear();
-    QDataStream in(&inMsgBytes, QIODevice::ReadOnly);
-    in.setVersion(QDataStream::Qt_5_7);
-
-    QString inMsg = "";
-    QString outMsg = "";
-
-    //qDebug() << "DataTransferType: " << DataTransferType;
-
-    switch(DataTransferType)
+    switch(transferState_)
     {
-        case None:
+        case CMD_NONE:
         {
-            while(bytesAvailable()>0)
-            {
-                QByteArray datagram;
-                datagram.resize(bytesAvailable());
-                read(datagram.data(),datagram.size());
-                inMsgBytes.append(datagram);
-            }
-            in >> inMsg;
+            if (bytesAvailable() < sizeof(TMgsHeader)) return;
+            TMgsHeader mgsHeader = {0};
+            read((char *)&mgsHeader, sizeof(mgsHeader));
 
-            if(inMsg == "connect to server")
-            {
-                out << QString("connect to server");
-                this->write(outMsgBytes, outMsgBytes.length());
-            }
-            else if(inMsg == "download project")
-            {
-                DataTransferType = DwonloadProject;
-                out << QString("download project");
-                this->write(outMsgBytes, outMsgBytes.length());
-            }
-            else if(inMsg == "upload project")
-            {
-                DataTransferType = None;
-                uploadProject();
+            if(mgsHeader.length != sizeof(mgsHeader)) return;
 
-                outMsgBytes.clear();
-                // send complete message
-                out << QString("completed");
-                write(outMsgBytes, outMsgBytes.length());
+            transferState_ = mgsHeader.cmd;
+            switch(transferState_)
+            {
+            case CMD_DOWNLOAD_PROJECT:
+            {
+                mgsHeader.cmd = CMD_DOWNLOAD_PROJECT_ACK;
             }
+            break;
+            case CMD_UPLOAD_PROJECT:
+            {
+                mgsHeader.cmd = CMD_UPLOAD_PROJECT_ACK;
+            }
+            break;
+            default:
+            {
+                mgsHeader.cmd = CMD_DONE;
+            }
+            break;
+            }
+            write((char *)&mgsHeader, sizeof(mgsHeader));
         }
         break;
-        case DwonloadProject:
+        case CMD_DOWNLOAD_PROJECT:
         {
-            if (fileSize == 0)
-            {
-                QDataStream stream(this);
-                stream.setVersion(QDataStream::Qt_5_7);
+            int waitRecvLen = sizeof(TMgsHeader);
+            if (bytesAvailable() < waitRecvLen) return;
+            TMgsHeader mgsHeader = {0};
+            read((char *)&mgsHeader, sizeof(mgsHeader));
 
-                // file.size + "x.tar".length
-                if (bytesAvailable() < sizeof(quint32) + 5 )
-                    return;
-
-                stream >> fileName >> fileSize;
-                if(pFileBuf != 0)
-                {
-                    delete[] pFileBuf;
-                    pFileBuf = 0;
-                }
-                pFileBuf = new char[fileSize];
-                //qDebug() << "filename: " << fileName << "size: " << fileSize;
-            }
-            //qDebug() << "bytesAvailable: " << bytesAvailable();
-            if (fileSize > bytesAvailable())
+            if(mgsHeader.length < (sizeof(mgsHeader)+8) ||
+                    mgsHeader.cmd != CMD_DOWNLOAD_PROJECT)
                 return;
 
-            read(pFileBuf, fileSize);
-            saveToFile(fileName, pFileBuf, fileSize);
-            DataTransferType = None;
+            TDataPackage dataPackage = {0};
+            int readLen = mgsHeader.length - sizeof(mgsHeader);
+            read((char *)&dataPackage, readLen);
+            fileBuf_.append((char *)dataPackage.data, readLen-8);
 
-            // 解压工程
-            unTarProject();
+            TMgsHeader sendMgsHeader = {0};
+            sendMgsHeader.length = sizeof(sendMgsHeader);
 
-            outMsgBytes.clear();
-            out << QString("completed");
-            this->write(outMsgBytes, outMsgBytes.length());
+            if(dataPackage.total != dataPackage.index)
+            {
+                sendMgsHeader.cmd = CMD_DOWNLOAD_PROJECT_ACK;
+            }
+            else
+            {
+                saveToFile(fileBuf_);
+                sendMgsHeader.cmd = CMD_NONE;
+                transferState_ = CMD_NONE;
+                unTarProject(); // 解压工程
+            }
+            write((char *)&sendMgsHeader, sizeof(sendMgsHeader));
         }
         break;
-        case UploadProject:
+        case CMD_UPLOAD_PROJECT:
         {
 
         }
         break;
-    }
-    if(inMsg == "completed")
-    {
-        DataTransferType = None;
-        outMsgBytes.clear();
-        // send complete message
-        out << QString("completed");
-        write(outMsgBytes, outMsgBytes.length());
     }
 }
 
@@ -264,23 +222,21 @@ void TcpSocket::startNext()
 }
 
 
-void TcpSocket::saveToFile(QString filename, char* pBuf, int len)
+void TcpSocket::saveToFile(QByteArray fileBuf)
 {
     QString desDir = QCoreApplication::applicationDirPath() + "/Project";
     QDir dirProj(desDir);
-    if(!dirProj.exists())
-    {
-        dirProj.mkpath(desDir);
-    }
-    QFile file(desDir + "/" + filename);
+    if(!dirProj.exists()) dirProj.mkpath(desDir);
+    QFile file(desDir + "/RunProject.tar");
     file.open(QIODevice::WriteOnly);
-    file.write(pBuf, len);
+    file.write(fileBuf);
     file.close();
 }
 
-/*
-* 解压工程
-*/
+
+/** 解压工程
+ * @brief TcpSocket::unTarProject
+ */
 void TcpSocket::unTarProject()
 {
     // 创建tmp目录

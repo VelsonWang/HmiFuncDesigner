@@ -1,6 +1,7 @@
-#ifndef PROJECTDOWNLOADDIALOG_H
+﻿#ifndef PROJECTDOWNLOADDIALOG_H
 #define PROJECTDOWNLOADDIALOG_H
 
+#include "FileTansfer.h"
 #include <QDialog>
 #include <QTcpSocket>
 #include <QHostAddress>
@@ -21,8 +22,8 @@ public:
     void setConfigProjPath(QString name);
 
 private:
-    QString onDataTransfer(QDataStream& in);
     QString getRuntimeIp();
+    void transferFilePackage();
 
 private slots:
     void on_btnOk_clicked();
@@ -35,6 +36,10 @@ private:
     bool status;
     QString projFileName;
     QString configProjPath;
+    int transferState_;
+    TDataPackage dataPackage_;
+    QByteArray fileBuf_;
+    int fileSize_;
 
 private slots:
     void slotConnected();

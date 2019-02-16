@@ -8,22 +8,12 @@
 #include <QDataStream>
 #include <QTime>
 #include <QFile>
-#include "SCADARunTime.h"
-
-enum DataTransferType
-{
-    None = 0,
-    DwonloadProject,
-    UploadProject,
-};
-typedef enum DataTransferType TDataTransferType;
-
 
 class TcpSocket : public QTcpSocket
 {
     Q_OBJECT
 public:
-    explicit TcpSocket(SCADARunTime *pRunTime, qintptr socketDescriptor, QObject *parent = 0);
+    explicit TcpSocket(qintptr socketDescriptor, QObject *parent = 0);
     ~TcpSocket();
     QByteArray handleData(QByteArray data,const QString & ip, qint16 port);//用来处理数据的函数
 
@@ -48,18 +38,13 @@ private:
     ///////////////////////////////////
 
 private:
-    void saveToFile(QString filename, char* pBuf, int len);
+    void saveToFile(QByteArray fileBuf);
     void unTarProject();
     void uploadProject();
 
 private:
-    int iPackageCnt;
-    int offset;
-    char *pFileBuf;
-    QString fileName;
-    quint32 fileSize;
-    TDataTransferType DataTransferType;
-    SCADARunTime *m_pRunTime;
+    QByteArray fileBuf_;
+    int transferState_;
 };
 
 #endif // TCPSOCKET_H
