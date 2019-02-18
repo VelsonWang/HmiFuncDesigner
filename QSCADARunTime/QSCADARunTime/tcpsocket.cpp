@@ -25,8 +25,6 @@ TcpSocket::TcpSocket(qintptr socketDescriptor, QObject *parent) :
             emit sockDisConnect(socketID,this->peerAddress().toString(),this->peerPort(),QThread::currentThread());//发送断开连接的用户信息
             this->deleteLater();
         });
-    connect(&watcher,&QFutureWatcher<QByteArray>::finished,this,&TcpSocket::startNext);
-    connect(&watcher,&QFutureWatcher<QByteArray>::canceled,this,&TcpSocket::startNext);
     qDebug() << "new connect" ;
 }
 
@@ -35,13 +33,6 @@ TcpSocket::~TcpSocket()
 
 }
 
-void TcpSocket::sentData(const QByteArray &data, const int id)
-{
-    if(id == socketID)
-    {
-        write(data);
-    }
-}
 
 void TcpSocket::disConTcp(int i)
 {
@@ -110,7 +101,7 @@ void TcpSocket::readData()
             TMgsHeader sendMgsHeader = {0};
             sendMgsHeader.length = sizeof(sendMgsHeader);
 
-            if(dataPackage.total != dataPackage.index)
+            if(dataPackage.total != (dataPackage.index+1))
             {
                 sendMgsHeader.cmd = CMD_DOWNLOAD_PROJECT_ACK;
             }
@@ -119,7 +110,7 @@ void TcpSocket::readData()
                 saveToFile(fileBuf_);
                 sendMgsHeader.cmd = CMD_NONE;
                 transferState_ = CMD_NONE;
-                unTarProject(); // 解压工程
+                unTarProject();
             }
             write((char *)&sendMgsHeader, sizeof(sendMgsHeader));
         }
@@ -212,21 +203,14 @@ QByteArray TcpSocket::handleData(QByteArray data, const QString &ip, qint16 port
     return data;
 }
 
-void TcpSocket::startNext()
-{
-    this->write(watcher.future().result());
-    if (!datas.isEmpty())
-    {
-        watcher.setFuture(QtConcurrent::run(this,&TcpSocket::handleData,datas.dequeue(),this->peerAddress().toString(),this->peerPort()));
-    }
-}
-
-
 void TcpSocket::saveToFile(QByteArray fileBuf)
 {
     QString desDir = QCoreApplication::applicationDirPath() + "/Project";
     QDir dirProj(desDir);
-    if(!dirProj.exists()) dirProj.mkpath(desDir);
+    if(!dirProj.exists())
+    {
+        dirProj.mkpath(desDir);
+    }
     QFile file(desDir + "/RunProject.tar");
     file.open(QIODevice::WriteOnly);
     file.write(fileBuf);

@@ -78,10 +78,22 @@ int main(int argc, char *argv[])
     HttpServer server;
     server.init(60000);
 
-    SCADARunTime runTime(QCoreApplication::applicationDirPath() + "/RunProject");
+    QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
+    QDir dir(projPath);
+    if (!dir.exists())
+    {
+        dir.mkpath(projPath);
+    }
+    SCADARunTime runTime(projPath);
     runTime.Load(DATA_SAVE_FORMAT);
     runTime.Start();
 
+    QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
+    QDir projSaveDir(projSavePath);
+    if(!projSaveDir.exists())
+    {
+        projSaveDir.mkpath(projSavePath);
+    }
     TcpServer ser(&runTime);
     ser.listen(QHostAddress::Any, 6000);
 
