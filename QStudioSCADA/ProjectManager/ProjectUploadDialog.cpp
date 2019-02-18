@@ -170,7 +170,6 @@ void ProjectUploadDialog::dataReceived()
             tcpSocket->write((char *)&sendMgsHeader, sizeof(sendMgsHeader));
 
             emit sigUpdateProcessBar(0, dataPackage.total-1, dataPackage.index);
-            qDebug() << dataPackage.index << "/" << dataPackage.total;
         }
         break;
         default:
