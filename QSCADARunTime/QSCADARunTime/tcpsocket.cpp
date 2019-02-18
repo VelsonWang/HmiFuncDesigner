@@ -1,19 +1,20 @@
 ﻿#include "tcpsocket.h"
-#include "FileTansfer.h"
-#include <QtConcurrent/QtConcurrent>
 #include <QHostAddress>
 #include <QApplication>
 #include <QProcess>
 #include <QProcessEnvironment>
 #include <QFile>
 #include <QDir>
+#include <QThread>
 #include <QDebug>
 
 
 TcpSocket::TcpSocket(qintptr socketDescriptor, QObject *parent) :
     QTcpSocket(parent),
     socketID(socketDescriptor),
-    transferState_(CMD_NONE)
+    transferState_(CMD_NONE),
+    dataPackage_({0}),
+    fileSize_(0)
 {
     fileBuf_.clear();
 
@@ -65,12 +66,28 @@ void TcpSocket::readData()
             {
             case CMD_DOWNLOAD_PROJECT:
             {
+                fileBuf_.clear();
                 mgsHeader.cmd = CMD_DOWNLOAD_PROJECT_ACK;
             }
             break;
             case CMD_UPLOAD_PROJECT:
             {
-                mgsHeader.cmd = CMD_UPLOAD_PROJECT_ACK;
+                mgsHeader.cmd = CMD_UPLOAD_PROJECT;
+
+                fileBuf_.clear();
+                dataPackage_ = {0};
+
+                QString projFileName = QCoreApplication::applicationDirPath() + "/Project/RunProject.tar";
+                QFile file(projFileName);
+                fileSize_ = file.size();
+
+                dataPackage_.total = (fileSize_%512)?(fileSize_/512+1):(fileSize_/512);
+
+                file.open(QIODevice::ReadOnly);
+                fileBuf_.resize(dataPackage_.total*512);
+                file.read(fileBuf_.data(), fileSize_);
+                file.close();
+                transferState_ = CMD_UPLOAD_PROJECT_ACK;
             }
             break;
             default:
@@ -108,6 +125,7 @@ void TcpSocket::readData()
             else
             {
                 saveToFile(fileBuf_);
+                fileBuf_.clear();
                 sendMgsHeader.cmd = CMD_NONE;
                 transferState_ = CMD_NONE;
                 unTarProject();
@@ -115,92 +133,19 @@ void TcpSocket::readData()
             write((char *)&sendMgsHeader, sizeof(sendMgsHeader));
         }
         break;
-        case CMD_UPLOAD_PROJECT:
+        case CMD_UPLOAD_PROJECT_ACK:
         {
+            if (bytesAvailable() < sizeof(TMgsHeader)) return;
+            TMgsHeader mgsHeader = {0};
+            read((char *)&mgsHeader, sizeof(mgsHeader));
 
+            if(mgsHeader.length != sizeof(mgsHeader)) return;
+            if(mgsHeader.cmd == CMD_NONE)
+                transferState_ = CMD_NONE;
+            transferFilePackage();
         }
         break;
     }
-}
-
-void TcpSocket::uploadProject()
-{
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QString inMsg = "";
-    QString outMsg = "";
-
-    QString projFileName = QCoreApplication::applicationDirPath() + "/Project/RunProject.tar";
-
-    QFile file(projFileName);
-    if(!file.exists())
-        return;
-
-    // send file name
-    QString strTarName = projFileName.right(projFileName.length() - projFileName.lastIndexOf("/") - 1);
-    out << strTarName;
-
-    // send file length
-    quint32 filesize = file.size();
-    out << (quint32)filesize;
-    //qDebug()<<strTarName << " "<< filesize;
-    write(outMsgBytes, outMsgBytes.length());
-    outMsgBytes.clear();
-
-    int iPackageCnt = (filesize%1024)?(filesize/1024+1):(filesize/1024);
-
-    // send file data
-    file.open(QIODevice::ReadOnly);
-    char *pFileBuf = new char[iPackageCnt*1024];
-    int rCnt = file.read(pFileBuf, filesize);
-    file.close();
-
-    if(rCnt != filesize)
-        return;
-
-    char *pBuf = new char[1024];
-
-    for(int i=0; i<iPackageCnt;i++)
-    {
-        for(int j=0;j<1024;j++)
-        {
-            pBuf[j] = pFileBuf[i*1024+j];
-        }
-        if(i==(iPackageCnt-1))
-        {
-            if(1024*iPackageCnt>filesize)
-            {
-                write((const char*)pBuf, 1024*iPackageCnt-filesize);
-            }
-            else
-            {
-                write((const char*)pBuf, 1024);
-            }
-        }
-        else
-        {
-            write((const char*)pBuf, 1024);
-        }
-    }
-    delete[] pBuf;
-    delete[] pFileBuf;
-}
-
-
-QByteArray TcpSocket::handleData(QByteArray data, const QString &ip, qint16 port)
-{ 
-    QTime time;
-    time.start();
-
-    QElapsedTimer tm;
-    tm.start();
-    while(tm.elapsed() < 100)
-    {}
-    data = ip.toUtf8() + " " + QByteArray::number(port) + " " + data + " " + QTime::currentTime().toString().toUtf8();
-    return data;
 }
 
 void TcpSocket::saveToFile(QByteArray fileBuf)
@@ -226,6 +171,10 @@ void TcpSocket::unTarProject()
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/RunProject";
     QDir dir(tmpDir);
+    if(dir.exists())
+    {
+        dir.rmpath(tmpDir);
+    }
     if(!dir.exists())
     {
         dir.mkpath(tmpDir);
@@ -280,3 +229,45 @@ void TcpSocket::unTarProject()
     }
     delete tarProc;
 }
+
+void TcpSocket::transferFilePackage()
+{
+    int waitSendLen = sizeof(TDataPackage)+sizeof(TMgsHeader);
+    TMgsHeader mgsHeader = {0};
+    mgsHeader.length = waitSendLen;
+    mgsHeader.cmd = CMD_UPLOAD_PROJECT;
+
+    TDataPackage dataPack = {0};
+    dataPack.total = dataPackage_.total;
+    dataPack.index = dataPackage_.index;
+
+    int blockSize = sizeof(dataPackage_.data)/sizeof(quint8);
+    for(int i=0; i<blockSize; i++)
+    {
+        dataPack.data[i] = fileBuf_[dataPack.index*blockSize+i];
+    }
+    if(dataPack.index == (dataPackage_.total-1))
+    {
+        if(blockSize*dataPackage_.total>fileSize_)
+        {
+            mgsHeader.length = sizeof(TDataPackage)+sizeof(TMgsHeader)-blockSize+(blockSize*dataPackage_.total-fileSize_);
+        }
+        else
+        {
+            mgsHeader.length = waitSendLen;
+        }
+        transferState_ = CMD_NONE;
+        fileBuf_.clear();
+    }
+    else
+    {
+        mgsHeader.length = waitSendLen;
+    }
+
+    write((char *)&mgsHeader, sizeof(mgsHeader));
+    write((char *)&dataPack, sizeof(dataPack));
+
+    dataPackage_.index++; 
+}
+
+

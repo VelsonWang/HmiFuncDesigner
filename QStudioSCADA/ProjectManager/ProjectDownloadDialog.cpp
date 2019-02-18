@@ -111,6 +111,7 @@ void ProjectDownloadDialog::on_btnOk_clicked()
 
 void ProjectDownloadDialog::on_btnCancal_clicked()
 {
+    fileBuf_.clear();
     this->reject();
 }
 
@@ -181,6 +182,7 @@ void ProjectDownloadDialog::transferFilePackage()
             mgsHeader.length = waitSendLen;
         }
         this->accept();
+        fileBuf_.clear();
     }
     else
     {

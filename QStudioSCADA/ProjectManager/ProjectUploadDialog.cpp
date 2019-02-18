@@ -1,4 +1,4 @@
-
+﻿
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
@@ -19,22 +19,27 @@
 
 ProjectUploadDialog::ProjectUploadDialog(QWidget *parent, QString projName) :
     QDialog(parent),
-    ui(new Ui::ProjectUploadDialog)
+    ui(new Ui::ProjectUploadDialog),
+    transferState_(CMD_NONE),
+    dataPackage_({0}),
+    fileSize_(0)
 {
     ui->setupUi(this);
+    fileBuf_.clear();
     this->configProjPath = projName;
     ui->progressBar->setValue(0);
     ui->editAddress->setText(getRuntimeIp());
     ui->editPath->setText(QCoreApplication::applicationDirPath() + "/UploadProjects");
     tcpSocket = new QTcpSocket(this);
+
     connect(tcpSocket, SIGNAL(connected()), this, SLOT(slotConnected()));
     connect(tcpSocket, SIGNAL(disconnected()), this, SLOT(slotDisconnected()));
     connect(tcpSocket, SIGNAL(readyRead()), this, SLOT(dataReceived()));
+    connect(this, SIGNAL(sigUpdateProcessBar(int,int,int)), this, SLOT(sltUpdateProcessBar(int,int,int)));
 
     port = 6000;
     serverIP = new QHostAddress();
     status = false;
-    DataTransferType = None;
     fileName = "";
     fileSize = 0;
     pFileBuf = 0;
@@ -91,132 +96,106 @@ void ProjectUploadDialog::slotConnected()
 {
     qDebug()<< "slotConnected...";
 
-    QByteArray msgBytes;
-    QDataStream out(&msgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QString msg = QString("connect to server");
-    out << msg;
-    DataTransferType = MsgTransfer;
-
-    tcpSocket->write(msgBytes, msgBytes.length());
+    transferState_ = CMD_NONE;
+    TMgsHeader mgsHeader = {0};
+    mgsHeader.length = sizeof(mgsHeader);
+    mgsHeader.cmd = CMD_UPLOAD_PROJECT;
+    tcpSocket->write((char *)&mgsHeader, sizeof(mgsHeader));
 }
+
 void ProjectUploadDialog::slotDisconnected()
 {
     qDebug() << "slotDisconnected...";
-
 }
 
 void ProjectUploadDialog::dataReceived()
 {
-    QByteArray outMsgBytes;
-    outMsgBytes.clear();
-    QDataStream out(&outMsgBytes, QIODevice::WriteOnly);
-    out.setVersion(QDataStream::Qt_5_7);
-
-    QByteArray inMsgBytes;
-    inMsgBytes.clear();
-    QDataStream in(&inMsgBytes, QIODevice::ReadOnly);
-    in.setVersion(QDataStream::Qt_5_7);
-
-    QString inMsg = "";
-    QString outMsg = "";
-
-    switch(DataTransferType)
+    switch(transferState_)
     {
-        case MsgTransfer:
+        case CMD_NONE:
         {
-            while(tcpSocket->bytesAvailable()>0)
-            {
-                QByteArray datagram;
-                datagram.resize(tcpSocket->bytesAvailable());
-                tcpSocket->read(datagram.data(),datagram.size());
-                inMsgBytes.append(datagram);
-            }
-            in >> inMsg;
-            //qDebug() << inMsg;
-            if(inMsg == "connect to server")
-            {
-                DataTransferType = UploadProject;
-                out << QString("upload project");
-                tcpSocket->write(outMsgBytes, outMsgBytes.length());
-            }
-            else if(inMsg == "completed")
-            {
-                DataTransferType = MsgTransfer;
-                outMsgBytes.clear();
-                // send complete message
-                out << QString("completed");
-                tcpSocket->write(outMsgBytes, outMsgBytes.length());
+            if (tcpSocket->bytesAvailable() < sizeof(TMgsHeader)) return;
+            TMgsHeader mgsHeader = {0};
+            tcpSocket->read((char *)&mgsHeader, sizeof(mgsHeader));
 
-                this->accept();
+            if(mgsHeader.length != sizeof(mgsHeader)) return;
+
+            transferState_ = mgsHeader.cmd;
+            switch(transferState_)
+            {
+            case CMD_UPLOAD_PROJECT:
+            {
+                mgsHeader.cmd = CMD_UPLOAD_PROJECT_ACK;
             }
+            break;
+            default:
+            {
+                mgsHeader.cmd = CMD_DONE;
+            }
+            break;
+            }
+            tcpSocket->write((char *)&mgsHeader, sizeof(mgsHeader));
         }
         break;
-        case UploadProject:
+        case CMD_UPLOAD_PROJECT:
         {
-            if (fileSize == 0)
-            {
-                QDataStream stream(tcpSocket);
-                stream.setVersion(QDataStream::Qt_5_7);
+            int waitRecvLen = sizeof(TMgsHeader);
+            if (tcpSocket->bytesAvailable() < waitRecvLen) return;
+            TMgsHeader mgsHeader = {0};
+            tcpSocket->read((char *)&mgsHeader, sizeof(mgsHeader));
 
-                // file.size + "x.tar".length
-                if (tcpSocket->bytesAvailable() < sizeof(quint32) + 5 )
-                    return;
-
-                stream >> fileName >> fileSize;
-                //qDebug() << fileName << " " << fileSize;
-                // 设置进度条范围
-                ui->progressBar->setRange(0, fileSize);
-                if(pFileBuf != 0)
-                {
-                    delete[] pFileBuf;
-                    pFileBuf = 0;
-                }
-                pFileBuf = new char[fileSize];
-            }
-
-            //qDebug() << tcpSocket->bytesAvailable();
-            // 设置进度条值
-            ui->progressBar->setValue(tcpSocket->bytesAvailable());
-
-            if (fileSize > tcpSocket->bytesAvailable())
+            if(mgsHeader.length < (sizeof(mgsHeader)+8) ||
+                    mgsHeader.cmd != CMD_UPLOAD_PROJECT)
                 return;
 
-            tcpSocket->read(pFileBuf, fileSize);
-            saveToFile(fileName, pFileBuf, fileSize);
-            DataTransferType = MsgTransfer;
+            TDataPackage dataPackage = {0};
+            int readLen = mgsHeader.length - sizeof(mgsHeader);
+            tcpSocket->read((char *)&dataPackage, readLen);
+            fileBuf_.append((char *)dataPackage.data, readLen-8);
 
-            outMsgBytes.clear();
-            out << QString("completed");
-            tcpSocket->write(outMsgBytes, outMsgBytes.length());
+            TMgsHeader sendMgsHeader = {0};
+            sendMgsHeader.length = sizeof(sendMgsHeader);
+
+            if(dataPackage.total != (dataPackage.index+1))
+            {
+                sendMgsHeader.cmd = CMD_UPLOAD_PROJECT_ACK;
+            }
+            else
+            {
+                saveToFile(getProjectPath()+"/UpLoadProject.tar", fileBuf_);
+                sendMgsHeader.cmd = CMD_NONE;
+                transferState_ = CMD_NONE;
+                this->accept();
+            }
+            tcpSocket->write((char *)&sendMgsHeader, sizeof(sendMgsHeader));
+
+            emit sigUpdateProcessBar(0, dataPackage.total-1, dataPackage.index);
+            qDebug() << dataPackage.index << "/" << dataPackage.total;
+        }
+        break;
+        default:
+        {
         }
         break;
     }
-    return;
 }
 
 
 QString ProjectUploadDialog::getProjectPath()
 {
     QString desDir = QCoreApplication::applicationDirPath() + "/UploadProjects";
-    if(ui->editPath->text()!="")
+    if(ui->editPath->text() != "")
         return ui->editPath->text();
     return desDir;
 }
 
-void ProjectUploadDialog::saveToFile(QString filename, char* pBuf, int len)
+void ProjectUploadDialog::saveToFile(QString filename, QByteArray fileBuf)
 {
-    QString desDir = QCoreApplication::applicationDirPath() + "/UploadProjects";
-    QDir dirProj(desDir);
-    if(!dirProj.exists())
-    {
-        dirProj.mkpath(desDir);
-    }
-    QFile file(desDir + "/" + filename);
+    QFile file(filename);
     file.open(QIODevice::WriteOnly);
-    file.write(pBuf, len);
+    file.write(fileBuf);
     file.close();
+    fileBuf_.clear();
 }
 
 
@@ -257,7 +236,14 @@ void ProjectUploadDialog::on_btnOK_clicked()
     }
 }
 
+void ProjectUploadDialog::sltUpdateProcessBar(int min, int max, int value)
+{
+    ui->progressBar->setRange(min, max);
+    ui->progressBar->setValue(value);
+}
+
 void ProjectUploadDialog::on_btnCancel_clicked()
 {
+    fileBuf_.clear();
     this->reject();
 }
