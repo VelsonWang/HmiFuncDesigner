@@ -1,4 +1,4 @@
-#ifndef COMPORT_H
+﻿#ifndef COMPORT_H
 #define COMPORT_H
 
 #include <QObject>
@@ -23,14 +23,8 @@ public:
     bool close();
 
 private:
-    QextSerialPort *m_pSerialPort;
-    unsigned char* m_pReadBuf;
-    unsigned char* m_pWriteBuf;
-    int m_ReadIndex;
-    int m_WriteIndex;
-
-private:
-    int m_iWaitBytesNum;
+    QextSerialPort *serialPortPtr_;
+    QByteArray buf_;
 
 };
 

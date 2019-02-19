@@ -1,4 +1,4 @@
-#include "ModbusRTUDevice.h"
+﻿#include "ModbusRTUDevice.h"
 #include "ComPort.h"
 #include "RealTimeDB.h"
 #include <QFile>
