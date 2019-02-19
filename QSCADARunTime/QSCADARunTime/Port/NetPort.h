@@ -1,4 +1,4 @@
-#ifndef NetPort_H
+﻿#ifndef NetPort_H
 #define NetPort_H
 
 #include <QObject>
@@ -33,16 +33,12 @@ private slots:
     int SlotSockWrite(unsigned char *buf, int len);
 
 private:
-    int m_iPort;
-    QHostAddress *m_pServerIP;
-    QTcpSocket *m_pTcpSocket;
-    bool status;
-    unsigned char* m_pReadBuf;
-    unsigned char* m_pWriteBuf;
-    int m_ReadIndex;
-    int m_WriteIndex;
-    int m_iWaitBytesNum;
-    bool m_bConnected;
+    int port_;
+    QHostAddress *serverIPPtr_;
+    QTcpSocket *tcpSocketPtr_;
+    bool status_;
+    QByteArray buf_;
+    bool bConnected_;
 
 protected:
     void run();
@@ -64,7 +60,7 @@ public:
     bool close();
 
 private:    
-    NetPortThread m_NetPortThread;
+    NetPortThread netPortThread_;
 
 };
 

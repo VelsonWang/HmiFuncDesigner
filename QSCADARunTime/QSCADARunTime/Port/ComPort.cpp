@@ -119,7 +119,7 @@ int ComPort::read(unsigned char *buf, int len, int ms)
 
         if((time.elapsed() - start) > ms)
         {
-            len = buf_.size();
+            if(len > buf_.size()) len = buf_.size();
         }
     }
 
