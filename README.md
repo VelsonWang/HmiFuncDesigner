@@ -71,3 +71,6 @@
 **邮箱：VelsonWang@qq.com**
 
 **QQ:706409617**
+
+**QStudioSCADA软件技术交流群QQ：662943602**
+
