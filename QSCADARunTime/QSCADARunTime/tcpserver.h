@@ -12,7 +12,7 @@ class TcpServer : public QTcpServer
 {
     Q_OBJECT
 public:
-    explicit TcpServer(SCADARunTime *pRunTime, QObject *parent = 0, int numConnections = 10000);
+    explicit TcpServer(QObject *parent = 0, int numConnections = 10000);
     ~TcpServer();
 
     void setMaxPendingConnections(int numConnections);//重写设置最大连接数函数
@@ -33,7 +33,6 @@ protected:
 private:
     QHash<int,TcpSocket *> * tcpClient;//管理连接的map
     int maxConnections;
-    SCADARunTime *m_pRunTime;
 };
 
 #endif // TCPSERVER_H

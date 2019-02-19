@@ -1,9 +1,8 @@
 ﻿#include "tcpserver.h"
 #include "threadhandle.h"
 
-TcpServer::TcpServer(SCADARunTime *pRunTime, QObject *parent, int numConnections) :
-    QTcpServer(parent),
-    m_pRunTime(pRunTime)
+TcpServer::TcpServer(QObject *parent, int numConnections) :
+    QTcpServer(parent)
 {
      tcpClient = new  QHash<int,TcpSocket *>;
      setMaxPendingConnections(numConnections);

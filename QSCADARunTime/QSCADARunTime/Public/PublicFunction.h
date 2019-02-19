@@ -1,7 +1,9 @@
-#ifndef PUBLIC_FUNCTION_H
+﻿#ifndef PUBLIC_FUNCTION_H
 #define PUBLIC_FUNCTION_H
 
 #include <QString>
+#include <QTimer>
+#include <QEventLoop>
 #include <QDebug>
 
 inline void RecoverData(unsigned char* psrc, unsigned char* pdst, int len)
@@ -129,6 +131,30 @@ inline void ShowBufferHex(QString msg, unsigned char * pbuf, int len)
     }
     msg += strBuf;
     qDebug()<< msg;
+}
+
+inline QString hexToString(char *buf, int size)
+{
+    QString ret = "";
+    for(int i=0; i<size; i++){
+        ret = ret + QString("%1").arg(buf[i]&0xff, 2, 16, QChar('0')) + " ";
+    }
+    ret.chop(1);
+    return ret.toUpper();
+}
+
+inline void delayMs(unsigned int msec)
+{
+#if 0
+    QTime reachTime = QTime::currentTime().addMSecs(msec);
+    while(QTime::currentTime() < reachTime){
+        QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
+    }
+#else
+    QEventLoop eventloop;
+    QTimer::singleShot(msec, &eventloop, SLOT(quit()));
+    eventloop.exec();
+#endif
 }
 
 #endif // PUBLIC_FUNCTION_H
