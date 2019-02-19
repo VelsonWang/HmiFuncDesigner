@@ -57,7 +57,8 @@ SOURCES += \
     Event/Event.cpp \
     Script/JavaScript.cpp \
     Script/RunScript.cpp \
-    DB/DatabaseHelper.cpp
+    DB/DatabaseHelper.cpp \
+    SysRuntimeEvent.cpp
 
 
 HEADERS  += \
@@ -85,7 +86,9 @@ HEADERS  += \
     Script/JavaScript.h \
     Script/RunScript.h \
     DB/DatabaseHelper.h \
-    FileTansfer.h
+    FileTansfer.h \
+    SysRuntimeEvent.h \
+    Singleton.h
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp

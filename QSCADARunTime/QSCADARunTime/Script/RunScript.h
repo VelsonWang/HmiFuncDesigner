@@ -1,4 +1,4 @@
-#ifndef RUNSCRIPT_H
+﻿#ifndef RUNSCRIPT_H
 #define RUNSCRIPT_H
 
 #include "JavaScript.h"
@@ -65,6 +65,7 @@ public:
     bool loadScriptObjects();
     bool runOnStartScripts();
     bool runOnPeriodScripts();
+    void stopRunOnPeriodScripts();
     bool runOnConditionScripts(qint32 tagId);
 
 private:

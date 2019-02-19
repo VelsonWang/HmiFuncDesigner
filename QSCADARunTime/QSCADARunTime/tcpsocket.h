@@ -19,6 +19,7 @@ public:
 
 signals:
     void sockDisConnect(const int ,const QString &,const quint16, QThread *);//NOTE:断开连接的用户信息，此信号必须发出！线程管理类根据信号计数的
+    void reStartRuntime();
 
 public slots:
     void disConTcp(int i);

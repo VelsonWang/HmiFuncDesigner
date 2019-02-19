@@ -1,4 +1,4 @@
-
+﻿
 #include <QDebug>
 
 #include "TCPIPModbus.h"
@@ -7,7 +7,7 @@
 
 TCPIPModbus::TCPIPModbus()
 {
-    iFacePort = 0;
+    iFacePort = nullptr;
     m_pReadBuf = new unsigned char[512];
     m_pWriteBuf = new unsigned char[512];
     m_pDataBuf = new unsigned char[512];
@@ -26,12 +26,6 @@ void TCPIPModbus::SetPort(IPort *pPort)
 
 TCPIPModbus::~TCPIPModbus()
 {
-    if(iFacePort != 0)
-    {
-        iFacePort->close();
-        iFacePort = 0;
-        delete iFacePort;
-    }
     delete[] m_pReadBuf;
     delete[] m_pWriteBuf;
     delete[] m_pDataBuf;

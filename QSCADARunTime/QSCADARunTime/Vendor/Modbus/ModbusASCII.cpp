@@ -1,4 +1,4 @@
-
+﻿
 #include <QDebug>
 
 #include "ModbusASCII.h"
@@ -27,12 +27,6 @@ void ModbusASCII::SetPort(IPort *pPort)
 
 ModbusASCII::~ModbusASCII()
 {
-    if(iFacePort != 0)
-    {
-        iFacePort->close();
-        iFacePort = 0;
-        delete iFacePort;
-    }
     delete[] m_pReadBuf;
     delete[] m_pWriteBuf;
     delete[] m_pDataBuf;

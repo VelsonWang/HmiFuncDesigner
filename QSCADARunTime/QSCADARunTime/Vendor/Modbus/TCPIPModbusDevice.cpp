@@ -1,5 +1,4 @@
-#include "TCPIPModbusDevice.h"
-#include "NetPort.h"
+﻿#include "TCPIPModbusDevice.h"
 #include "RealTimeDB.h"
 #include "log4qt/logger.h"
 #include <QFile>
@@ -28,14 +27,14 @@ static void ClearWriteBuffer()
 
 
 TCPIPModbusDevice::TCPIPModbusDevice()
-    : iFacePort(0),
+    : iFacePort(nullptr),
       pNetDevicePrivate(0),
       miFailCnt(0)
 {
     mReadList.clear();
     mWriteQueue.clear();
-    NetPort *pNetPort = new NetPort();
-    iFacePort = pNetPort;
+    netPort_ = new NetPort();
+    iFacePort = netPort_;
     mTCPIPModbus.SetPort(iFacePort);
     mbIsRunning = false;
 }
@@ -53,10 +52,14 @@ TCPIPModbusDevice::~TCPIPModbusDevice()
         mWriteQueue.clear();
     }
 
-    if(iFacePort != 0 )
+    if(iFacePort != nullptr)
     {
-        delete iFacePort;
-        iFacePort = 0;
+        iFacePort->close();
+    }
+    if(netPort_ != nullptr)
+    {
+        delete netPort_;
+        netPort_ = nullptr;
     }
     if(pNetDevicePrivate != 0 )
     {

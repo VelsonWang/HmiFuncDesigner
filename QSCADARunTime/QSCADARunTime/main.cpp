@@ -19,7 +19,6 @@
 #include "log4qt/propertyconfigurator.h"
 #include "log4qt/basicconfigurator.h"
 
-
 #ifndef Q_OS_WIN
 #include "eventdispatcher_libev/eventdispatcher_libev.h"
 #endif
@@ -84,9 +83,11 @@ int main(int argc, char *argv[])
     {
         dir.mkpath(projPath);
     }
+
     SCADARunTime runTime(projPath);
     runTime.Load(DATA_SAVE_FORMAT);
     runTime.Start();
+    g_SCADARunTimePtr = &runTime;
 
     QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
     QDir projSaveDir(projSavePath);

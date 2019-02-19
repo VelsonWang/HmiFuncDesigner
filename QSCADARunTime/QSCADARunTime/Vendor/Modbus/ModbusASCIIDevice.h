@@ -1,4 +1,4 @@
-#ifndef ModbusASCIIDevice_H
+﻿#ifndef ModbusASCIIDevice_H
 #define ModbusASCIIDevice_H
 
 #include <QObject>
@@ -12,6 +12,7 @@
 #include "VendorPrivate.h"
 #include "IPort.h"
 #include "public.h"
+#include "ComPort.h"
 #include "ModbusASCII.h"
 
 class ModbusASCIIDevice : public IVendor
@@ -60,8 +61,8 @@ public:
     virtual QString GetPortName();
 
 private:
-
     IPort *iFacePort;
+    ComPort *comPort_;
     ComDevicePrivate *pComDevicePrivate;
     QQueue<IOTag *> mWriteQueue;
     QList<IOTag *> mReadList;

@@ -7,10 +7,13 @@
 #include "RealTimeDB.h"
 #include "Tag.h"
 #include "IOTag.h"
+#include "SysRuntimeEvent.h"
+#include "log4qt/logger.h"
 #include <QTextStream>
 #include <QTextCodec>
 #include <QDebug>
 
+SCADARunTime *g_SCADARunTimePtr = nullptr;
 QString SCADARunTime::m_sProjectPath = QString("");
 RunScript *SCADARunTime::m_pRunScript = nullptr;
 
@@ -223,7 +226,7 @@ bool SCADARunTime::Unload()
 
 
 void SCADARunTime::Start()
-{
+{ 
     foreach (QString name, m_listPortName)
     {
         PortThread *pPortThread = new PortThread(name);
@@ -253,6 +256,8 @@ void SCADARunTime::Start()
 
 void SCADARunTime::Stop()
 {
+    m_pRunScript->stopRunOnPeriodScripts();
+
     foreach (PortThread *pPortThread, m_listPortThread)
     {
         pPortThread->Stop();
@@ -284,10 +289,11 @@ QJsonObject SCADARunTime::LoadJsonObjectFromFile(SaveFormat saveFormat, QString 
     return loadDoc.object();
 }
 
-
-/*
-* 处理消息
-*/
+/**
+ * @brief SCADARunTime::doMessage
+ * @details 处理消息
+ * @param msg
+ */
 void SCADARunTime::doMessage(QString msg)
 {
     if(msg.indexOf(QString("VALUE_CHANGE")) != -1)
@@ -299,6 +305,43 @@ void SCADARunTime::doMessage(QString msg)
         m_pRunScript->runOnConditionScripts(tagId);
     }
 
-
 }
+
+
+bool SCADARunTime::event(QEvent *event)
+{
+    Log4Qt::Logger *log = Log4Qt::Logger::logger("SCADARunTime");
+
+    if(event->type() == EV_StartRuntime)
+    {
+        Load(DATA_SAVE_FORMAT);
+        Start();
+        log->debug("start runtime.");
+        qDebug() << "start runtime.";
+        return false;
+    }
+    else if(event->type() == EV_StopRuntime)
+    {
+        log->debug("stop runtime.");
+        qDebug() << "stop runtime.";
+        Stop();
+        Unload();
+        return false;
+    }
+    else if(event->type() == EV_RestartRuntime)
+    {
+        log->debug("restart runtime.");
+        qDebug() << "restart runtime.";
+        Stop();
+        Unload();
+        Load(DATA_SAVE_FORMAT);
+        Start();
+        return false;
+    }
+    return QObject::event(event);
+}
+
+
+
+
 

@@ -1,4 +1,4 @@
-
+﻿
 #include <QDebug>
 
 #include "ModbusRTU.h"
@@ -74,12 +74,6 @@ void ModbusRTU::SetPort(IPort *pPort)
 
 ModbusRTU::~ModbusRTU()
 {
-    if(iFacePort != 0)
-    {
-        iFacePort->close();
-        iFacePort = 0;
-        delete iFacePort;
-    }
     delete[] m_pReadBuf;
     delete[] m_pWriteBuf;
     delete[] m_pDataBuf;

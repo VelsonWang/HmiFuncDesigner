@@ -1,4 +1,4 @@
-#ifndef TCPIPModbusDEVICE_H
+﻿#ifndef TCPIPModbusDEVICE_H
 #define TCPIPModbusDEVICE_H
 
 #include <QObject>
@@ -12,6 +12,7 @@
 #include "VendorPrivate.h"
 #include "IPort.h"
 #include "public.h"
+#include "NetPort.h"
 #include "TCPIPModbus.h"
 
 class TCPIPModbusDevice : public IVendor
@@ -61,6 +62,7 @@ public:
 
 private:
     IPort *iFacePort;
+    NetPort* netPort_;
     NetDevicePrivate *pNetDevicePrivate;
     QQueue<IOTag *> mWriteQueue;
     QList<IOTag *> mReadList;

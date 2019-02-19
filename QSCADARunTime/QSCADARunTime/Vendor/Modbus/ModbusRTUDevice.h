@@ -1,4 +1,4 @@
-#ifndef MODBUSRTUDEVICE_H
+﻿#ifndef MODBUSRTUDEVICE_H
 #define MODBUSRTUDEVICE_H
 
 #include <QObject>
@@ -12,6 +12,7 @@
 #include "VendorPrivate.h"
 #include "IPort.h"
 #include "public.h"
+#include "ComPort.h"
 #include "ModbusRTU.h"
 
 class ModbusRTUDevice : public IVendor
@@ -62,6 +63,7 @@ public:
 
 private:
     IPort *iFacePort;
+    ComPort * comPort_;
     ComDevicePrivate *pComDevicePrivate;
     QQueue<IOTag *> mWriteQueue;
     QList<IOTag *> mReadList;

@@ -1,4 +1,4 @@
-#include "RunScript.h"
+﻿#include "RunScript.h"
 #include "JavaScript.h"
 #include "log4qt/logger.h"
 #include "../DB/RealTimeDB.h"
@@ -194,10 +194,16 @@ bool RunScript::runOnPeriodScripts()
     {
         //qDebug() << "run PeriodScripts.";
         m_bTimerPeriodRun = true;
-        QTimer *m_timerPeriod = new QTimer(this);
+        m_timerPeriod = new QTimer(this);
         connect(m_timerPeriod, SIGNAL(timeout()), this, SLOT(timeout()));
         m_timerPeriod->start(1);
     }
+}
+
+void RunScript::stopRunOnPeriodScripts()
+{
+    m_bTimerPeriodRun = false;
+    m_timerPeriod->stop();
 }
 
 void RunScript::timeout()

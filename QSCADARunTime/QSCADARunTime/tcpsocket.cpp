@@ -173,7 +173,7 @@ void TcpSocket::unTarProject()
     QDir dir(tmpDir);
     if(dir.exists())
     {
-        dir.rmpath(tmpDir);
+        dir.removeRecursively();
     }
     if(!dir.exists())
     {
@@ -228,6 +228,8 @@ void TcpSocket::unTarProject()
 
     }
     delete tarProc;
+
+    emit reStartRuntime();
 }
 
 void TcpSocket::transferFilePackage()

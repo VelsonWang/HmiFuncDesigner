@@ -25,6 +25,10 @@ signals:
 
 public slots:
     void clear(); //断开所有连接，线程计数器请0
+
+private slots:
+    void reStartRuntime();
+
 protected slots:
     void sockDisConnectSlot(int handle,const QString & ip, quint16 prot, QThread *th);//断开连接的用户信息
 

@@ -1,4 +1,4 @@
-#ifndef SCADARUNTIME_H
+﻿#ifndef SCADARUNTIME_H
 #define SCADARUNTIME_H
 
 #include <QObject>
@@ -34,6 +34,9 @@ signals:
 
 public slots:
 
+protected:
+    bool event(QEvent *e);
+
 private:
     static QString m_sProjectPath;
     QStringList m_listPortName;
@@ -41,5 +44,7 @@ private:
     QList<PortThread *> m_listPortThread;
     static RunScript *m_pRunScript;
 };
+
+extern SCADARunTime *g_SCADARunTimePtr;
 
 #endif // SCADARUNTIME_H

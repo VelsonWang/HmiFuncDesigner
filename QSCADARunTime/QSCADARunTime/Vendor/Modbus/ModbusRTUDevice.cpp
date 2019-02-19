@@ -1,5 +1,4 @@
 ﻿#include "ModbusRTUDevice.h"
-#include "ComPort.h"
 #include "RealTimeDB.h"
 #include <QFile>
 #include <QJsonDocument>
@@ -27,14 +26,14 @@ static void ClearWriteBuffer()
 
 
 ModbusRTUDevice::ModbusRTUDevice()
-    : iFacePort(0),
+    : iFacePort(nullptr),
       pComDevicePrivate(0),
       miFailCnt(0)
 {
     mReadList.clear();
     mWriteQueue.clear();
-    ComPort *pComPort = new ComPort();
-    iFacePort = pComPort;
+    comPort_ = new ComPort();
+    iFacePort = comPort_;
     mModbusRTU.SetPort(iFacePort);
     mbIsRunning = false;
 }
@@ -52,11 +51,16 @@ ModbusRTUDevice::~ModbusRTUDevice()
         mWriteQueue.clear();
     }
 
-    if(iFacePort !=0 )
+    if(iFacePort != nullptr)
     {
-        delete iFacePort;
-        iFacePort = 0;
+        iFacePort->close();
     }
+    if(comPort_ != nullptr)
+    {
+        delete comPort_;
+        comPort_ = nullptr;
+    }
+
     if(pComDevicePrivate !=0 )
     {
         delete pComDevicePrivate;
