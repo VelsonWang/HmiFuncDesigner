@@ -2,15 +2,10 @@
 #define ModbusASCIIDevice_H
 
 #include <QObject>
-#include <QQueue>
-#include <QList>
 #include <QThread>
-#include <QSemaphore>
-#include <QMutex>
 #include "IOTag.h"
 #include "IVendor.h"
 #include "VendorPrivate.h"
-#include "IPort.h"
 #include "public.h"
 #include "ComPort.h"
 #include "ModbusASCII.h"
@@ -60,16 +55,11 @@ public:
     // 获取端口名称
     virtual QString GetPortName();
 
-private:
-    IPort *iFacePort;
+private:    
     ComPort *comPort_;
-    ComDevicePrivate *pComDevicePrivate;
-    QQueue<IOTag *> mWriteQueue;
-    QList<IOTag *> mReadList;
-    bool mbIsRunning;
+    ComDevicePrivate *pComDevicePrivate;    
     ModbusASCII mModbusAscii;
-    qint32 miFailCnt; // 通信失败次数
-    QMutex m_WriteMutex;
+
 };
 
 #endif // ModbusASCIIDevice_H

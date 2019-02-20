@@ -112,9 +112,7 @@ osx {
     win32: \
         INSTALL_LIBEXEC_PATH = $$QTC_PREFIX/../QStudioSCADABin/bin
     else: \
-        INSTALL_LIBEXEC_PATH = $$QTC_PREFIX/libexec/qtcreator
-    INSTALL_DATA_PATH    = $$QTC_PREFIX/share/qtcreator
-    INSTALL_DOC_PATH     = $$QTC_PREFIX/share/doc/qtcreator
+        INSTALL_LIBEXEC_PATH = $$QTC_PREFIX/libexec/bin
     INSTALL_BIN_PATH     = $$QTC_PREFIX/exec/bin
 
     #message("QTC_PREFIX is: $$QTC_PREFIX")

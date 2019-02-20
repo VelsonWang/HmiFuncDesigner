@@ -62,15 +62,10 @@ public:
 
 
 private:
-    IPort *iFacePort;
     ComPort * comPort_;
     ComDevicePrivate *pComDevicePrivate;
-    QQueue<IOTag *> mWriteQueue;
-    QList<IOTag *> mReadList;
-    bool mbIsRunning;
     ModbusRTU mModbusRTU;
-    qint32 miFailCnt; // 通信失败次数
-    QMutex m_WriteMutex;
+
 };
 
 #endif // MODBUSRTUDEVICE_H

@@ -1,17 +1,47 @@
-#ifndef IVENDOR_H
+﻿#ifndef IVENDOR_H
 #define IVENDOR_H
 
 #include <QString>
 #include <QStringList>
 #include <QThread>
+#include <QSemaphore>
+#include <QMutex>
+#include <QQueue>
+#include <QList>
 #include "IOTag.h"
+#include "IPort.h"
 
 class IOTag;
 
 class IVendor
 {
 public:
-    virtual ~IVendor() {}
+    IVendor()
+    {
+        iFacePort = nullptr;
+        miFailCnt = 0;
+        mReadList.clear();
+        mWriteQueue.clear();
+        mbIsRunning = false;
+    }
+    virtual ~IVendor()
+    {
+        Stop();
+
+        qDeleteAll(mReadList);
+        mReadList.clear();
+
+        if(!mWriteQueue.isEmpty())
+        {
+            qDeleteAll(mWriteQueue);
+            mWriteQueue.clear();
+        }
+
+        if(iFacePort != nullptr)
+        {
+            iFacePort->close();
+        }
+    }
 
     // 获取设备名称
     virtual QString GetDeviceName() = 0;
@@ -38,7 +68,7 @@ public:
     // 启动
     virtual void Start() = 0;
     // 停止
-    virtual void Stop() = 0;
+    virtual void Stop(){ }
     // 循环处理
     virtual void DoLoop() = 0;
     // 是否重启运行
@@ -50,6 +80,29 @@ public:
     // 获取端口名称
     virtual QString GetPortName() = 0;
 
+public:
+    quint8 readBuf[512] = {0};
+    quint8 writeBuf[512] = {0};
+
+    void ClearReadBuffer()
+    {
+        for(int i=0; i<sizeof(readBuf)/sizeof(quint8); i++)
+            readBuf[i] = 0;
+    }
+
+    void ClearWriteBuffer()
+    {
+        for(int i=0; i<sizeof(writeBuf)/sizeof(quint8); i++)
+            writeBuf[i] = 0;
+    }
+
+public:
+    IPort *iFacePort;
+    QQueue<IOTag *> mWriteQueue;
+    QList<IOTag *> mReadList;
+    bool mbIsRunning;
+    qint32 miFailCnt; // 通信失败次数
+    QMutex m_WriteMutex;
 };
 
 

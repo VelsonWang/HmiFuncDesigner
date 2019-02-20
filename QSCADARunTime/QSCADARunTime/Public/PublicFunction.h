@@ -6,27 +6,6 @@
 #include <QEventLoop>
 #include <QDebug>
 
-inline void RecoverData(unsigned char* psrc, unsigned char* pdst, int len)
-{
-    unsigned char i;
-    for(i = 0; i < len; i ++)
-    {
-        pdst[len - i - 1] = psrc[i];
-    }
-}
-
-inline void RecoverSelfData(unsigned char* pdat, int len)
-{
-    unsigned char i, j, tmp;
-    for(i = 0; i < len/2; i ++)
-    {
-        j = len - i - 1;
-        tmp = pdat[i];
-        pdat[i] = pdat[j];
-        pdat[j] = tmp;
-    }
-}
-
 inline void BytesSetZero(unsigned char* pbuf, int len)
 {
     for(int i = 0; i < len; i ++)
@@ -156,5 +135,59 @@ inline void delayMs(unsigned int msec)
     eventloop.exec();
 #endif
 }
+
+
+/**
+ * @brief lowWord
+ * @details Return low word of a 32-bit integer.
+ * @param ww quint32 ww (0x00000000..0xFFFFFFFF)
+ * @return low word of input (0x0000..0xFFFF)
+ */
+inline quint16 lowWord(quint32 ww)
+{
+    return (quint16) ((ww) & 0xFFFF);
+}
+
+
+/**
+ * @brief highWord
+ * @details Return high word of a 32-bit integer.
+ * @param ww quint32 ww (0x00000000..0xFFFFFFFF)
+ * @return high word of input (0x0000..0xFFFF)
+ */
+inline quint16 highWord(quint32 ww)
+{
+    return (quint16) ((ww) >> 16);
+}
+
+
+/**
+ * @brief crc16
+ * @details Processor-independent CRC-16 calculation.
+
+    Polynomial: x^16 + x^15 + x^2 + 1 (0xA001)<br>
+    Initial value: 0xFFFF
+
+    This CRC is normally used in disk-drive controllers.
+ * @param crc quint16 crc (0x0000..0xFFFF)
+ * @param a quint8 a (0x00..0xFF)
+ * @return calculated CRC (0x0000..0xFFFF)
+ */
+inline quint16 crc16(quint16 crc, quint8 a)
+{
+    int i;
+
+    crc ^= a;
+    for (i = 0; i < 8; ++i)
+    {
+        if (crc & 1)
+            crc = (crc >> 1) ^ 0xA001;
+        else
+            crc = (crc >> 1);
+    }
+
+    return crc;
+}
+
 
 #endif // PUBLIC_FUNCTION_H

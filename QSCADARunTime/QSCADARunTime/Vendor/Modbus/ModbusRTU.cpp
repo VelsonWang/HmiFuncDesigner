@@ -1,7 +1,6 @@
 ﻿
-#include <QDebug>
-
 #include "ModbusRTU.h"
+#include "DataPack.h"
 #include "../../Public/PublicFunction.h"
 
 const unsigned char MapTbl1[] = {0x00, 0x01, 0x03, 0x07, 0x0F, 0x1F, 0x3F, 0x7F};
@@ -55,54 +54,13 @@ const unsigned char auchCRCLo[] =
 
 ModbusRTU::ModbusRTU()
 {
-    iFacePort = 0;
-    m_pReadBuf = new unsigned char[512];
-    m_pWriteBuf = new unsigned char[512];
-    m_pDataBuf = new unsigned char[512];
-    m_iCurReadAddress = 0;
-    m_str2BytesOrder = "21";
-    m_str3BytesOrder = "321";
-    m_str4BytesOrder = "2143";
-    m_strFloatBytesOrder = "2143";
-}
 
-
-void ModbusRTU::SetPort(IPort *pPort)
-{
-    iFacePort = pPort;
 }
 
 ModbusRTU::~ModbusRTU()
 {
-    delete[] m_pReadBuf;
-    delete[] m_pWriteBuf;
-    delete[] m_pDataBuf;
+
 }
-
-
-void ModbusRTU::set2BytesOrder(QString s)
-{
-    m_str2BytesOrder = s;
-}
-
-
-void ModbusRTU::set3BytesOrder(QString s)
-{
-    m_str3BytesOrder = s;
-}
-
-
-void ModbusRTU::set4BytesOrder(QString s)
-{
-    m_str4BytesOrder = s;
-}
-
-
-void ModbusRTU::setFloatBytesOrder(QString s)
-{
-    m_strFloatBytesOrder = s;
-}
-
 
 unsigned short ModbusRTU::CRC16(unsigned char *pbuf, int len)
 {
@@ -129,10 +87,9 @@ bool ModbusRTU::MessageCheck(unsigned char *inBuf, short bufLen)
 
     if(calCRC16 == revCRC16)
     {
-        //qDebug()<< "crc ok!";
         return true;
     }
-    //qDebug()<< "crc fail!";
+
     return false;
 }
 
@@ -166,8 +123,8 @@ ResultType ModbusRTU::ReadCoils(int addDev, int addCol, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num/8;
     if(num%8)databuflen++;
@@ -175,8 +132,8 @@ ResultType ModbusRTU::ReadCoils(int addDev, int addCol, int num,
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, iWaitLen, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -226,12 +183,12 @@ ResultType ModbusRTU::WriteCoil(int addDev, int addCol, int value)
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, len, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, len, 1000);
 
     if(resultlen == len && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -270,12 +227,12 @@ ResultType ModbusRTU::WriteMultipleCoils(int addDev, int addCol,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, 8, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, 8, 1000);
 
     if(resultlen == 8 && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -314,8 +271,8 @@ ResultType ModbusRTU::ReadDiscreteInputs(int addDev, int addinput, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num/8;
     if(num%8)databuflen++;
@@ -323,8 +280,8 @@ ResultType ModbusRTU::ReadDiscreteInputs(int addDev, int addinput, int num,
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, iWaitLen, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -369,16 +326,16 @@ ResultType ModbusRTU::ReadReadInputRegister(int addDev, int addReg, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num*2;
 
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, iWaitLen, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -423,16 +380,16 @@ ResultType ModbusRTU::ReadHoldingRegister(int addDev, int addReg, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num*2;
 
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, iWaitLen, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -466,12 +423,12 @@ ResultType ModbusRTU::WriteHoldingRegister(int addDev, int addReg, unsigned shor
     m_pWriteBuf[len++] = addReg >> 8;
     m_pWriteBuf[len++] = addReg;
 
-    if(m_str2BytesOrder == "21")
+    if(get2BytesOrder() == "21")
     {
         m_pWriteBuf[len++] = data >> 8;
         m_pWriteBuf[len++] = data;
     }
-    else if(m_str2BytesOrder == "12")
+    else if(get2BytesOrder() == "12")
     {
         m_pWriteBuf[len++] = data;
         m_pWriteBuf[len++] = data >> 8;
@@ -483,12 +440,12 @@ ResultType ModbusRTU::WriteHoldingRegister(int addDev, int addReg, unsigned shor
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, 8, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, 8, 1000);
 
     if(resultlen == 8 && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -531,12 +488,12 @@ ResultType ModbusRTU::WriteMultipleHoldingRegister(int addDev, int addReg,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(iFacePort != 0)
-        iFacePort->write(m_pWriteBuf, len, 1000);
+    if(GetPort() != nullptr)
+        GetPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(iFacePort != 0)
-        resultlen = iFacePort->read(m_pReadBuf, 8, 1000);
+    if(GetPort() != nullptr)
+        resultlen = GetPort()->read(m_pReadBuf, 8, 1000);
 
     if(resultlen == 8 && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -560,56 +517,56 @@ ResultType ModbusRTU::WriteIntToHoldingRegister(int addDev, int addReg,
 
     uInt.uInt = data;
 
-    if(m_str4BytesOrder == "4321")
+    if(get4BytesOrder() == "4321")
     {
         pbuf[0] = uInt.ubytes[3];
         pbuf[1] = uInt.ubytes[2];
         pbuf[2] = uInt.ubytes[1];
         pbuf[3] = uInt.ubytes[0];
     }
-    else if(m_str4BytesOrder == "4312")
+    else if(get4BytesOrder() == "4312")
     {
         pbuf[0] = uInt.ubytes[3];
         pbuf[1] = uInt.ubytes[2];
         pbuf[2] = uInt.ubytes[0];
         pbuf[3] = uInt.ubytes[1];
     }
-    else if(m_str4BytesOrder == "3421")
+    else if(get4BytesOrder() == "3421")
     {
         pbuf[0] = uInt.ubytes[2];
         pbuf[1] = uInt.ubytes[3];
         pbuf[2] = uInt.ubytes[1];
         pbuf[3] = uInt.ubytes[0];
     }
-    else if(m_str4BytesOrder == "3412")
+    else if(get4BytesOrder() == "3412")
     {
         pbuf[0] = uInt.ubytes[2];
         pbuf[1] = uInt.ubytes[3];
         pbuf[2] = uInt.ubytes[0];
         pbuf[3] = uInt.ubytes[1];
     }
-    else if(m_str4BytesOrder == "2143")
+    else if(get4BytesOrder() == "2143")
     {
         pbuf[0] = uInt.ubytes[1];
         pbuf[1] = uInt.ubytes[0];
         pbuf[2] = uInt.ubytes[3];
         pbuf[3] = uInt.ubytes[2];
     }
-    else if(m_str4BytesOrder == "2134")
+    else if(get4BytesOrder() == "2134")
     {
         pbuf[0] = uInt.ubytes[1];
         pbuf[1] = uInt.ubytes[0];
         pbuf[2] = uInt.ubytes[2];
         pbuf[3] = uInt.ubytes[3];
     }
-    else if(m_str4BytesOrder == "1243")
+    else if(get4BytesOrder() == "1243")
     {
         pbuf[0] = uInt.ubytes[0];
         pbuf[1] = uInt.ubytes[1];
         pbuf[2] = uInt.ubytes[3];
         pbuf[3] = uInt.ubytes[2];
     }
-    else if(m_str4BytesOrder == "1234")
+    else if(get4BytesOrder() == "1234")
     {
         pbuf[0] = uInt.ubytes[0];
         pbuf[1] = uInt.ubytes[1];
@@ -635,56 +592,56 @@ ResultType ModbusRTU::WriteUIntToHoldingRegister(int addDev, int addReg,
 
     uInt.uUInt = data;
 
-    if(m_str4BytesOrder == "4321")
+    if(get4BytesOrder() == "4321")
     {
         pbuf[0] = uInt.ubytes[3];
         pbuf[1] = uInt.ubytes[2];
         pbuf[2] = uInt.ubytes[1];
         pbuf[3] = uInt.ubytes[0];
     }
-    else if(m_str4BytesOrder == "4312")
+    else if(get4BytesOrder() == "4312")
     {
         pbuf[0] = uInt.ubytes[3];
         pbuf[1] = uInt.ubytes[2];
         pbuf[2] = uInt.ubytes[0];
         pbuf[3] = uInt.ubytes[1];
     }
-    else if(m_str4BytesOrder == "3421")
+    else if(get4BytesOrder() == "3421")
     {
         pbuf[0] = uInt.ubytes[2];
         pbuf[1] = uInt.ubytes[3];
         pbuf[2] = uInt.ubytes[1];
         pbuf[3] = uInt.ubytes[0];
     }
-    else if(m_str4BytesOrder == "3412")
+    else if(get4BytesOrder() == "3412")
     {
         pbuf[0] = uInt.ubytes[2];
         pbuf[1] = uInt.ubytes[3];
         pbuf[2] = uInt.ubytes[0];
         pbuf[3] = uInt.ubytes[1];
     }
-    else if(m_str4BytesOrder == "2143")
+    else if(get4BytesOrder() == "2143")
     {
         pbuf[0] = uInt.ubytes[1];
         pbuf[1] = uInt.ubytes[0];
         pbuf[2] = uInt.ubytes[3];
         pbuf[3] = uInt.ubytes[2];
     }
-    else if(m_str4BytesOrder == "2134")
+    else if(get4BytesOrder() == "2134")
     {
         pbuf[0] = uInt.ubytes[1];
         pbuf[1] = uInt.ubytes[0];
         pbuf[2] = uInt.ubytes[2];
         pbuf[3] = uInt.ubytes[3];
     }
-    else if(m_str4BytesOrder == "1243")
+    else if(get4BytesOrder() == "1243")
     {
         pbuf[0] = uInt.ubytes[0];
         pbuf[1] = uInt.ubytes[1];
         pbuf[2] = uInt.ubytes[3];
         pbuf[3] = uInt.ubytes[2];
     }
-    else if(m_str4BytesOrder == "1234")
+    else if(get4BytesOrder() == "1234")
     {
         pbuf[0] = uInt.ubytes[0];
         pbuf[1] = uInt.ubytes[1];
@@ -710,56 +667,56 @@ ResultType ModbusRTU::WriteFloatToHoldingRegister(int addDev, int addReg,
 
     uFloat.ufloat = data;
 
-    if(m_str4BytesOrder == "4321")
+    if(get4BytesOrder() == "4321")
     {
         pbuf[0] = uFloat.ubytes[3];
         pbuf[1] = uFloat.ubytes[2];
         pbuf[2] = uFloat.ubytes[1];
         pbuf[3] = uFloat.ubytes[0];
     }
-    else if(m_str4BytesOrder == "4312")
+    else if(get4BytesOrder() == "4312")
     {
         pbuf[0] = uFloat.ubytes[3];
         pbuf[1] = uFloat.ubytes[2];
         pbuf[2] = uFloat.ubytes[0];
         pbuf[3] = uFloat.ubytes[1];
     }
-    else if(m_str4BytesOrder == "3421")
+    else if(get4BytesOrder() == "3421")
     {
         pbuf[0] = uFloat.ubytes[2];
         pbuf[1] = uFloat.ubytes[3];
         pbuf[2] = uFloat.ubytes[1];
         pbuf[3] = uFloat.ubytes[0];
     }
-    else if(m_str4BytesOrder == "3412")
+    else if(get4BytesOrder() == "3412")
     {
         pbuf[0] = uFloat.ubytes[2];
         pbuf[1] = uFloat.ubytes[3];
         pbuf[2] = uFloat.ubytes[0];
         pbuf[3] = uFloat.ubytes[1];
     }
-    else if(m_str4BytesOrder == "2143")
+    else if(get4BytesOrder() == "2143")
     {
         pbuf[0] = uFloat.ubytes[1];
         pbuf[1] = uFloat.ubytes[0];
         pbuf[2] = uFloat.ubytes[3];
         pbuf[3] = uFloat.ubytes[2];
     }
-    else if(m_str4BytesOrder == "2134")
+    else if(get4BytesOrder() == "2134")
     {
         pbuf[0] = uFloat.ubytes[1];
         pbuf[1] = uFloat.ubytes[0];
         pbuf[2] = uFloat.ubytes[2];
         pbuf[3] = uFloat.ubytes[3];
     }
-    else if(m_str4BytesOrder == "1243")
+    else if(get4BytesOrder() == "1243")
     {
         pbuf[0] = uFloat.ubytes[0];
         pbuf[1] = uFloat.ubytes[1];
         pbuf[2] = uFloat.ubytes[3];
         pbuf[3] = uFloat.ubytes[2];
     }
-    else if(m_str4BytesOrder == "1234")
+    else if(get4BytesOrder() == "1234")
     {
         pbuf[0] = uFloat.ubytes[0];
         pbuf[1] = uFloat.ubytes[1];
@@ -770,283 +727,6 @@ ResultType ModbusRTU::WriteFloatToHoldingRegister(int addDev, int addReg,
     delete[] pbuf;
     return result;
 }
-
-
-
-/*
-* get single coil value
-*/
-unsigned char ModbusRTU::GetBoolValue()
-{
-    return m_pDataBuf[0]&0x01;
-}
-
-
-/*
-* get single coil value by read address
-*/
-unsigned char ModbusRTU::GetBoolValue(int add)
-{
-    int addoffset = add - m_iCurReadAddress;
-    int byteoffset = addoffset/8;
-    int bitoffset = addoffset%8;
-    unsigned char value = 0;
-
-    if(addoffset >= 0)
-    {
-        value = (m_pDataBuf[byteoffset]>>bitoffset)&0x01;
-    }
-    return value;
-}
-
-
-short ModbusRTU::GetShortValue()
-{
-    return GetShortValue(m_iCurReadAddress);
-}
-
-
-
-short ModbusRTU::GetShortValue(int add)
-{
-    int addoffset = add - m_iCurReadAddress;
-
-    if(m_str2BytesOrder == "21")
-    {
-        return (short)(m_pDataBuf[addoffset*2]<<8 | m_pDataBuf[addoffset*2+1]);
-    }
-    else if(m_str2BytesOrder == "12")
-    {
-        return (short)(m_pDataBuf[addoffset*2+1]<<8 | m_pDataBuf[addoffset*2]);
-    }
-    return 0;
-}
-
-
-
-unsigned short ModbusRTU::GetUnsignedShortValue()
-{
-    return GetUnsignedShortValue(m_iCurReadAddress);
-}
-
-
-
-unsigned short ModbusRTU::GetUnsignedShortValue(int add)
-{
-    int addoffset = add - m_iCurReadAddress;
-
-    if(m_str2BytesOrder == "21")
-    {
-        return (unsigned short)(m_pDataBuf[addoffset*2]<<8 | m_pDataBuf[addoffset*2+1]);
-    }
-    else if(m_str2BytesOrder == "12")
-    {
-        return (unsigned short)(m_pDataBuf[addoffset*2+1]<<8 | m_pDataBuf[addoffset*2]);
-    }
-    return 0;
-}
-
-
-
-int ModbusRTU::GetIntValue()
-{
-    return GetIntValue(m_iCurReadAddress);
-}
-
-
-
-int ModbusRTU::GetIntValue(int add)
-{
-    int o = add - m_iCurReadAddress;
-
-    if(m_str4BytesOrder == "4321")
-    {
-        return (int)(m_pDataBuf[o*2]<<24 | m_pDataBuf[o*2+1]<<16 |
-                m_pDataBuf[o*2+2]<<8 | m_pDataBuf[o*2+3]<<0);
-    }
-    else if(m_str4BytesOrder == "4312")
-    {
-        return (int)(m_pDataBuf[o*2]<<24 | m_pDataBuf[o*2+1]<<16 |
-                m_pDataBuf[o*2+2]<<0 | m_pDataBuf[o*2+3]<<8);
-    }
-    else if(m_str4BytesOrder == "3421")
-    {
-        return (int)(m_pDataBuf[o*2]<<16 | m_pDataBuf[o*2+1]<<24 |
-                m_pDataBuf[o*2+2]<<8 | m_pDataBuf[o*2+3]<<0);
-    }
-    else if(m_str4BytesOrder == "3412")
-    {
-        return (int)(m_pDataBuf[o*2]<<16 | m_pDataBuf[o*2+1]<<24 |
-                m_pDataBuf[o*2+2]<<0 | m_pDataBuf[o*2+3]<<8);
-    }
-    else if(m_str4BytesOrder == "2143")
-    {
-        return (int)(m_pDataBuf[o*2]<<8 | m_pDataBuf[o*2+1]<<0 |
-                m_pDataBuf[o*2+2]<<24 | m_pDataBuf[o*2+3]<<16);
-    }
-    else if(m_str4BytesOrder == "2134")
-    {
-        return (int)(m_pDataBuf[o*2]<<8 | m_pDataBuf[o*2+1]<<0 |
-                m_pDataBuf[o*2+2]<<16 | m_pDataBuf[o*2+3]<<24);
-    }
-    else if(m_str4BytesOrder == "1243")
-    {
-        return (int)(m_pDataBuf[o*2]<<0 | m_pDataBuf[o*2+1]<<8 |
-                m_pDataBuf[o*2+2]<<24 | m_pDataBuf[o*2+3]<<16);
-    }
-    else if(m_str4BytesOrder == "1234")
-    {
-        return (int)(m_pDataBuf[o*2]<<0 | m_pDataBuf[o*2+1]<<8 |
-                m_pDataBuf[o*2+2]<<16 | m_pDataBuf[o*2+3]<<24);
-    }
-    return 0;
-}
-
-
-
-unsigned int ModbusRTU::GetUnsignedIntValue()
-{
-    return GetUnsignedIntValue(m_iCurReadAddress);
-}
-
-
-
-unsigned int ModbusRTU::GetUnsignedIntValue(int add)
-{
-    int o = add - m_iCurReadAddress;
-
-    if(m_str4BytesOrder == "4321")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<24 | m_pDataBuf[o*2+1]<<16 |
-                m_pDataBuf[o*2+2]<<8 | m_pDataBuf[o*2+3]<<0);
-    }
-    else if(m_str4BytesOrder == "4312")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<24 | m_pDataBuf[o*2+1]<<16 |
-                m_pDataBuf[o*2+2]<<0 | m_pDataBuf[o*2+3]<<8);
-    }
-    else if(m_str4BytesOrder == "3421")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<16 | m_pDataBuf[o*2+1]<<24 |
-                m_pDataBuf[o*2+2]<<8 | m_pDataBuf[o*2+3]<<0);
-    }
-    else if(m_str4BytesOrder == "3412")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<16 | m_pDataBuf[o*2+1]<<24 |
-                m_pDataBuf[o*2+2]<<0 | m_pDataBuf[o*2+3]<<8);
-    }
-    else if(m_str4BytesOrder == "2143")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<8 | m_pDataBuf[o*2+1]<<0 |
-                m_pDataBuf[o*2+2]<<24 | m_pDataBuf[o*2+3]<<16);
-    }
-    else if(m_str4BytesOrder == "2134")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<8 | m_pDataBuf[o*2+1]<<0 |
-                m_pDataBuf[o*2+2]<<16 | m_pDataBuf[o*2+3]<<24);
-    }
-    else if(m_str4BytesOrder == "1243")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<0 | m_pDataBuf[o*2+1]<<8 |
-                m_pDataBuf[o*2+2]<<24 | m_pDataBuf[o*2+3]<<16);
-    }
-    else if(m_str4BytesOrder == "1234")
-    {
-        return (unsigned int)(m_pDataBuf[o*2]<<0 | m_pDataBuf[o*2+1]<<8 |
-                m_pDataBuf[o*2+2]<<16 | m_pDataBuf[o*2+3]<<24);
-    }
-    return 0;
-}
-
-
-
-float ModbusRTU::GetFloatValue()
-{
-    return GetFloatValue(m_iCurReadAddress);
-}
-
-
-
-float ModbusRTU::GetFloatValue(int add)
-{
-    union unionFloat
-    {
-        float ufloat;
-        unsigned char ubytes[4];
-    };
-    unionFloat uFloat;
-    int o = add - m_iCurReadAddress;
-
-    if(m_strFloatBytesOrder == "4321")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+3];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+2];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+1];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+0];
-        return uFloat.ufloat;
-    }
-    else if(m_strFloatBytesOrder == "4312")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+3];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+2];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+0];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+1];
-        return uFloat.ufloat;
-    }
-    else if(m_strFloatBytesOrder == "3421")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+2];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+3];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+1];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+0];
-        return uFloat.ufloat;
-    }
-    else if(m_strFloatBytesOrder == "3412")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+2];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+3];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+0];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+1];
-        return uFloat.ufloat;
-    }
-    else if(m_strFloatBytesOrder == "2143")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+1];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+0];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+3];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+2];
-        return uFloat.ufloat;
-    }
-    else if(m_strFloatBytesOrder == "2134")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+1];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+0];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+2];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+3];
-        return uFloat.ufloat;
-    }
-    else if(m_strFloatBytesOrder == "1243")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+0];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+1];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+3];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+2];
-        return uFloat.ufloat;
-    }
-    else if(m_strFloatBytesOrder == "1234")
-    {
-        uFloat.ubytes[0] = m_pDataBuf[o*2+0];
-        uFloat.ubytes[1] = m_pDataBuf[o*2+1];
-        uFloat.ubytes[2] = m_pDataBuf[o*2+2];
-        uFloat.ubytes[3] = m_pDataBuf[o*2+3];
-        return uFloat.ufloat;
-    }
-    return 0;
-}
-
-
-
-
 
 
 

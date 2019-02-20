@@ -61,15 +61,10 @@ public:
     virtual QString GetPortName();
 
 private:
-    IPort *iFacePort;
     NetPort* netPort_;
     NetDevicePrivate *pNetDevicePrivate;
-    QQueue<IOTag *> mWriteQueue;
-    QList<IOTag *> mReadList;
-    bool mbIsRunning;
     TCPIPModbus mTCPIPModbus;
-    qint32 miFailCnt; // 通信失败次数
-    QMutex m_WriteMutex;
+
 };
 
 #endif // TCPIPModbusDEVICE_H

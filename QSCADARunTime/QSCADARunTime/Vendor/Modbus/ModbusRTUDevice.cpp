@@ -8,53 +8,17 @@
 
 #include <QDebug>
 
-#define BUFFER_SIZE    (256)
-static unsigned char readBuf[BUFFER_SIZE];
-static unsigned char writeBuf[BUFFER_SIZE];
-
-static void ClearReadBuffer()
-{
-    for(int i=0; i<BUFFER_SIZE; i++)
-        readBuf[i] = 0;
-}
-
-static void ClearWriteBuffer()
-{
-    for(int i=0; i<BUFFER_SIZE; i++)
-        writeBuf[i] = 0;
-}
-
 
 ModbusRTUDevice::ModbusRTUDevice()
-    : iFacePort(nullptr),
-      pComDevicePrivate(0),
-      miFailCnt(0)
+    : pComDevicePrivate(0)
 {
-    mReadList.clear();
-    mWriteQueue.clear();
     comPort_ = new ComPort();
     iFacePort = comPort_;
     mModbusRTU.SetPort(iFacePort);
-    mbIsRunning = false;
 }
 
 ModbusRTUDevice::~ModbusRTUDevice()
 {
-    Stop();
-
-    qDeleteAll(mReadList);
-    mReadList.clear();
-
-    if(!mWriteQueue.isEmpty())
-    {
-        qDeleteAll(mWriteQueue);
-        mWriteQueue.clear();
-    }
-
-    if(iFacePort != nullptr)
-    {
-        iFacePort->close();
-    }
     if(comPort_ != nullptr)
     {
         delete comPort_;

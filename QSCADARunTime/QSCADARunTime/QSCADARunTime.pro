@@ -58,7 +58,9 @@ SOURCES += \
     Script/JavaScript.cpp \
     Script/RunScript.cpp \
     DB/DatabaseHelper.cpp \
-    SysRuntimeEvent.cpp
+    SysRuntimeEvent.cpp \
+    Vendor/DataPack.cpp \
+    Vendor/Modbus/Modbus.cpp
 
 
 HEADERS  += \
@@ -88,7 +90,9 @@ HEADERS  += \
     DB/DatabaseHelper.h \
     FileTansfer.h \
     SysRuntimeEvent.h \
-    Singleton.h
+    Singleton.h \
+    Vendor/DataPack.h \
+    Vendor/Modbus/Modbus.h
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp

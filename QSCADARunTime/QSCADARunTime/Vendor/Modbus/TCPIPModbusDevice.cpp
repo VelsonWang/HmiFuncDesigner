@@ -9,53 +9,17 @@
 
 #include <QDebug>
 
-#define BUFFER_SIZE    (256)
-static unsigned char readBuf[BUFFER_SIZE];
-static unsigned char writeBuf[BUFFER_SIZE];
-
-static void ClearReadBuffer()
-{
-    for(int i=0; i<BUFFER_SIZE; i++)
-        readBuf[i] = 0;
-}
-
-static void ClearWriteBuffer()
-{
-    for(int i=0; i<BUFFER_SIZE; i++)
-        writeBuf[i] = 0;
-}
-
 
 TCPIPModbusDevice::TCPIPModbusDevice()
-    : iFacePort(nullptr),
-      pNetDevicePrivate(0),
-      miFailCnt(0)
+    : pNetDevicePrivate(0)
 {
-    mReadList.clear();
-    mWriteQueue.clear();
     netPort_ = new NetPort();
     iFacePort = netPort_;
     mTCPIPModbus.SetPort(iFacePort);
-    mbIsRunning = false;
 }
 
 TCPIPModbusDevice::~TCPIPModbusDevice()
 {
-    Stop();
-
-    qDeleteAll(mReadList);
-    mReadList.clear();
-
-    if(!mWriteQueue.isEmpty())
-    {
-        qDeleteAll(mWriteQueue);
-        mWriteQueue.clear();
-    }
-
-    if(iFacePort != nullptr)
-    {
-        iFacePort->close();
-    }
     if(netPort_ != nullptr)
     {
         delete netPort_;
