@@ -1,5 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    ELine \
+#    ELine \
     DrawApplication

@@ -6,37 +6,57 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>680</height>
+    <width>1052</width>
+    <height>701</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>绘制系统</string>
+   <string>MainWindow</string>
   </property>
-  <property name="windowIcon">
-   <iconset resource="images.qrc">
-    <normaloff>:/images/appicon.png</normaloff>:/images/appicon.png</iconset>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QTabBar::tab {
+	     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+                                 stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+	border-style: solid;
+	border-width: 1px;	
+ 	border-color: rgb(162,162,162);
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+	min-width: 25ex;
+	min-height: 7ex;
+}
+
+ QTabBar::tab:selected, QTabBar::tab:hover {
+     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+                                 stop: 0 #fafafa, stop: 0.4 #f4f4f4,
+                                 stop: 0.5 #e7e7e7, stop: 1.0 #fafafa);
+ }
+
+ QTabBar::tab:selected {
+     border-color: #9B9B9B;
+     border-bottom-color: #C2C7CB; 
+ }
+
+ QTabBar::tab:!selected {
+     margin-top: 2px; 
+ }
+</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QVBoxLayout" name="verticalLayout">
-    <property name="spacing">
-     <number>1</number>
-    </property>
+   <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="topMargin">
-     <number>1</number>
-    </property>
-    <property name="rightMargin">
-     <number>1</number>
+     <number>0</number>
     </property>
     <property name="bottomMargin">
-     <number>1</number>
+     <number>0</number>
     </property>
-    <item>
-     <widget class="QMdiArea" name="mdiArea"/>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -44,57 +64,34 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>709</width>
-     <height>23</height>
+     <width>1052</width>
+     <height>17</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>文件</string>
-    </property>
-    <widget class="QMenu" name="menuRecentFileList">
-     <property name="title">
-      <string>最近文件列表</string>
-     </property>
-    </widget>
-    <addaction name="actionNew"/>
-    <addaction name="actionOpen"/>
-    <addaction name="actionSave"/>
-    <addaction name="actionSaveAs"/>
-    <addaction name="actionSaveAsImage"/>
-    <addaction name="actionPrinter"/>
-    <addaction name="separator"/>
-    <addaction name="menuRecentFileList"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <addaction name="menu"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="movable">
+    <bool>false</bool>
+   </property>
+   <property name="floatable">
+    <bool>false</bool>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNew"/>
-   <addaction name="actionOpen"/>
-   <addaction name="actionSave"/>
-   <addaction name="actionPrinter"/>
-   <addaction name="actionExit"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="dockControl">
-   <property name="minimumSize">
-    <size>
-     <width>162</width>
-     <height>145</height>
-    </size>
-   </property>
+  <widget class="QDockWidget" name="dockGraphPages">
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QWidget" name="dockGraphPagesLayout">
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <property name="spacing">
       <number>1</number>
@@ -112,87 +109,17 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="QToolBox" name="toolBox">
-       <property name="minimumSize">
-        <size>
-         <width>160</width>
-         <height>0</height>
-        </size>
-       </property>
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="pageBasicEelement">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>160</width>
-          <height>525</height>
-         </rect>
-        </property>
-        <attribute name="label">
-         <string>基本图元</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_3">
-         <item>
-          <widget class="ToolButton" name="tbtnToolSelect">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="text">
-            <string>选择工具</string>
-           </property>
-           <property name="icon">
-            <iconset resource="images.qrc">
-             <normaloff>:/images/toolselect.png</normaloff>:/images/toolselect.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>32</width>
-             <height>32</height>
-            </size>
-           </property>
-           <property name="toolButtonStyle">
-            <enum>Qt::ToolButtonTextBesideIcon</enum>
-           </property>
-           <property name="arrowType">
-            <enum>Qt::NoArrow</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="BasicControl">
-        <property name="geometry">
-         <rect>
-          <x>0</x>
-          <y>0</y>
-          <width>160</width>
-          <height>525</height>
-         </rect>
-        </property>
-        <attribute name="label">
-         <string>基本控件</string>
-        </attribute>
-       </widget>
-      </widget>
+      <layout class="QVBoxLayout" name="GraphPagesLayout"/>
      </item>
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockElementList">
-   <property name="minimumSize">
-    <size>
-     <width>160</width>
-     <height>125</height>
-    </size>
-   </property>
+  <widget class="QDockWidget" name="dockElemets">
    <attribute name="dockWidgetArea">
-    <number>2</number>
+    <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout_4">
+   <widget class="QWidget" name="dockElemetsLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <property name="spacing">
       <number>1</number>
      </property>
@@ -209,102 +136,17 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="QTabWidget" name="tabWidget">
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tabGraphLibrary">
-        <attribute name="title">
-         <string>图库</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_5">
-         <property name="spacing">
-          <number>1</number>
-         </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
-          <number>1</number>
-         </property>
-         <item>
-          <widget class="QTreeView" name="treeViewGraphLibrary"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabGraph">
-        <attribute name="title">
-         <string>图形</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_6">
-         <property name="spacing">
-          <number>1</number>
-         </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
-          <number>1</number>
-         </property>
-         <item>
-          <widget class="QTreeView" name="treeViewGraph"/>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabGraphElement">
-        <attribute name="title">
-         <string>图元</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_7">
-         <property name="spacing">
-          <number>1</number>
-         </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
-          <number>1</number>
-         </property>
-         <item>
-          <widget class="QListView" name="listViewGraphElement"/>
-         </item>
-        </layout>
-       </widget>
-      </widget>
+      <layout class="QVBoxLayout" name="ElemetsLayout"/>
      </item>
     </layout>
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockProperty">
-   <property name="minimumSize">
-    <size>
-     <width>208</width>
-     <height>0</height>
-    </size>
-   </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <layout class="QVBoxLayout" name="verticalLayout_8" stretch="0">
+   <widget class="QWidget" name="dockPropertyLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_5">
      <property name="spacing">
       <number>1</number>
      </property>
@@ -321,37 +163,34 @@
       <number>1</number>
      </property>
      <item>
-      <widget class="QTabWidget" name="tabWidget_2">
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tab">
-        <attribute name="title">
-         <string>属性编辑器</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_9">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QtTreePropertyBrowser" name="propertyEditor" native="true">
-           <property name="minimumSize">
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
+      <layout class="QVBoxLayout" name="PropertyLayout"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockObjectTree">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockObjectTreeLayout">
+    <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
+     <property name="spacing">
+      <number>1</number>
+     </property>
+     <property name="leftMargin">
+      <number>1</number>
+     </property>
+     <property name="topMargin">
+      <number>1</number>
+     </property>
+     <property name="rightMargin">
+      <number>1</number>
+     </property>
+     <property name="bottomMargin">
+      <number>1</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" name="ObjectTreeLayout"/>
      </item>
     </layout>
    </widget>
@@ -362,10 +201,7 @@
      <normaloff>:/images/filenew.png</normaloff>:/images/filenew.png</iconset>
    </property>
    <property name="text">
-    <string>新建图形</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
+    <string>Новый проект или экран</string>
    </property>
   </action>
   <action name="actionOpen">
@@ -374,10 +210,17 @@
      <normaloff>:/images/fileopen.png</normaloff>:/images/fileopen.png</iconset>
    </property>
    <property name="text">
-    <string>打开</string>
+    <string>Открыть проект или экран</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+O</string>
+  </action>
+  <action name="actionLatestProjects">
+   <property name="text">
+    <string>Недавние проекты</string>
+   </property>
+  </action>
+  <action name="actionLatestScreens">
+   <property name="text">
+    <string>Недавние экраны</string>
    </property>
   </action>
   <action name="actionSave">
@@ -386,55 +229,115 @@
      <normaloff>:/images/filesave.png</normaloff>:/images/filesave.png</iconset>
    </property>
    <property name="text">
-    <string>保存</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Сохранить проект</string>
    </property>
   </action>
   <action name="actionSaveAs">
    <property name="text">
-    <string>另存为</string>
+    <string>Сохранить экран как</string>
    </property>
   </action>
-  <action name="actionSaveAsImage">
+  <action name="actionAppExit">
    <property name="text">
-    <string>存成图片</string>
+    <string>Выход</string>
    </property>
   </action>
-  <action name="actionPrinter">
+  <action name="actionScreenSettings">
+   <property name="text">
+    <string>Настройки экрана</string>
+   </property>
+  </action>
+  <action name="actionShowGrid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="icon">
     <iconset resource="images.qrc">
-     <normaloff>:/images/fileprint.png</normaloff>:/images/fileprint.png</iconset>
+     <normaloff>:/images/showgrid.png</normaloff>:/images/showgrid.png</iconset>
    </property>
    <property name="text">
-    <string>打印</string>
+    <string>Сетка</string>
    </property>
   </action>
-  <action name="actionExit">
-   <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/fileexit.PNG</normaloff>:/images/fileexit.PNG</iconset>
+  <action name="actionLin">
+   <property name="checkable">
+    <bool>true</bool>
    </property>
    <property name="text">
-    <string>退出</string>
+    <string>Линейка</string>
+   </property>
+  </action>
+  <action name="actionUnderView">
+   <property name="text">
+    <string>Предварительный просмотр</string>
+   </property>
+   <property name="shortcutContext">
+    <enum>Qt::WindowShortcut</enum>
+   </property>
+  </action>
+  <action name="action0_125">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>0.125</string>
+   </property>
+  </action>
+  <action name="action0_25">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>0.25</string>
+   </property>
+  </action>
+  <action name="action0_5">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>0.5</string>
+   </property>
+  </action>
+  <action name="action1">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1</string>
+   </property>
+  </action>
+  <action name="action2">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>2</string>
+   </property>
+  </action>
+  <action name="action4">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>4</string>
+   </property>
+  </action>
+  <action name="action8">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>8</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Закрыть проект</string>
    </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QtTreePropertyBrowser</class>
-   <extends>QWidget</extends>
-   <header>../qtpropertybrowser/src/qttreepropertybrowser.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>ToolButton</class>
-   <extends>QToolButton</extends>
-   <header>ToolButton.h</header>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="images.qrc"/>
  </resources>

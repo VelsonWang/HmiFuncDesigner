@@ -1,85 +1,124 @@
-#ifndef MAINWINDOW_H
+﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <QMainWindow>
-#include <QDomDocument>
-#include <QStandardItemModel>
-#include <QMap>
-#include "ChildGraphWin.h"
-#include "PublicDefine.h"
-#include "IDrawApplicationPlugin.h"
-#include "IElement.h"
+#include <QUndoView>
+#include <QUndoGroup>
+#include <QUndoStack>
+#include "objectstreeview.h"
+#include "ProjectTreeView.h"
+#include "ElementLibraryWidget.h"
+#include "GraphPage.h"
+#include "newcomponentdialog.h"
+#include "propertyeditor/propertymodel.h"
+#include "propertyeditor/propertytableview.h"
+#include "deviceeditor/deviceeditordialog.h"
+#include "indicationeditor/indicationeditordialog.h"
+#include "savestrategydialog.h"
+#include "previewwindow.h"
+#include "GraphPageManager.h"
+#include "ui_mainwindow.h"
 
-namespace Ui {
-class MainWindow;
-}
-
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public Ui::MainWindow
 {
     Q_OBJECT
-
+    
 public:
-    explicit MainWindow(QString projpath, QString drawPageName, QWidget *parent = 0);
-    void setStatusBarMessage(const QString &msg);
-    ~MainWindow();
-
-private:
-    ChildGraphWin* activeMdiChild();
-    ChildGraphWin* createMdiChild(QString filePathName, QString page);
-    ChildGraphWin* findMdiChild(const QString &windowTitle);
-    void doOpenDraw(QString file); // 打开画面
-    void readSettings();  // 读取窗口设置
-    void writeSettings(); // 写入窗口设置
-    void initWindow(); // 初始化窗口
-    void LoadDrawNameList();
-    void SaveDrawNameList();
-    void TreeViewGraphUISetting(); // 图形列表UI设置
-    void TreeViewGraphUpdate(); // 图形列表更新
-    void ToolBoxUISetting(); // 工具箱UI设置
-
-private slots:
-    void setActiveSubWindow(ChildGraphWin *window);
-    ChildGraphWin* getActiveSubWindow();
-
-private slots:
-    void on_actionOpen_triggered();
-    void on_actionSave_triggered();
-    void on_actionNew_triggered();
-    void on_treeViewGraph_doubleClicked(const QModelIndex &index);
-    void ToolButtonClick(QString s);
-
-signals:
-    void sigToolButtonClick(StdElement *e);
-
-private:
-    Ui::MainWindow *ui;
-    ChildGraphWin *m_ChildGraphWin;
-    QString m_ProjectPath;
-    QStringList m_GraphPageNameList;
-    QStandardItemModel *pTreeViewGraphModel;
-
+    explicit MainWindow(QWidget *parent = 0);
+    bool isGridVisible() const;
 
 protected:
-    void closeEvent(QCloseEvent *event);  // 关闭事件
-
-///////////////////////////////////////////////////
-
-public:
-    void LoadPlugin();
-    IDrawApplicationPlugin* GetPlugin(const QString &class_type,const QString &element_name);
-    IDrawApplicationPlugin* GetPluginByElementName(const QString &element_name);
-    QMap<QString, IDrawApplicationPlugin*> GetPluginByType(const QString &class_type);
-    void ReleasePlugin();
+    void closeEvent(QCloseEvent *);
 
 private:
-    //------type---------name-------plugin
-    QMap<QString, QMap<QString, IDrawApplicationPlugin*> > m_toolPlugins;
+    void initView();
+    void createMenus();
+    void createActions();
+    void createToolbars();
+    void createUndoView();
+    void addNewGraphPage();
+    void saveImage();
+    QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
+    int exitResponse();
+    QString getFileName();
+    void updateGraphPageViewInfo(const QString &);
+    void updateObjectTree();
+    void connectGraphPage(GraphPage *graphPage);
+    void disconnectGraphPage(GraphPage *graphPage);
+    void saveProject(const QString &);
+    void loadProject(const QString &);
+    void removeGraphPage(QGraphicsView *view);
+    bool isGraphPageOpen(const QString &filename);
+    bool createDocument(GraphPage *graphPage,QGraphicsView *view,const QString &filename);
 
+    QAction *actionShowGraphObj;
+    QAction *actionShowTreeObj;
+    QAction *actionShowPropEditor;
+    QAction *actionShowProjTree;
+    QAction *actionNew;
+    QAction *actionOpen;
+    QAction *actionSaveProject;
+    QAction *actionSaveGraphPageAs;
+    QAction *actionSaveGraphPage;
+    QAction *actionExit;
+    QAction *actionShowGrid;
+    QAction *actionShowLinear;
+    QAction *actionZoomIn;
+    QAction *actionZoomOut;
+    QAction *actionPreview;
+    QAction *actionUndo;
+    QAction *actionRedo;
+    QAction *actionCloseGraphPage;
+    QAction *actionCloseAll;
+    QAction *actionShowDevDialog;
+    QAction *actionShowIndicationDialog;
 
-//////////////////////////////////////////////////////
+    GraphPage *currentGraphPage;
+    QGraphicsView *currentView;
 
+    QTabWidget *GraphPageTabWidget;
+    ProjectTreeView *projTree;
+    ObjectsTreeView *objTree;
+    ElementLibraryWidget *elementWidget;
+    PropertyTableView *propertyView;
+    PropertyModel *propertyModel;
+    DeviceEditorDialog *deviceEditor;
+    QUndoGroup *undoGroup;
+    PreviewWindow *preview;
 
+    bool gridVisible;
+    int currentGraphPageIndex;
 
+public slots:
+    void slotNewElementAdded();
+    void slotElementsDeleted();
+    void slotElementIdChanged();
+    void slotElementPropertyChanged();
+    void slotGraphPagePropertyChanged();
+
+private slots:
+    QGraphicsView *createTabView();
+    void slotShowGraphObj(bool);
+    void slotShowTreeObj(bool);
+    void slotShowPropEditor(bool);
+    void slotShowProjTree(bool);
+    void slotEditNew();
+    void slotEditOpen();
+    void slotSaveProject();
+    void slotSaveGraphPageAs();
+    void slotSaveGraphPage();
+    void slotExit();
+    void slotShowGrid(bool);
+    void slotShowLinear(bool);
+    void slotZoomIn();
+    void slotZoomOut();
+    void slotPreview();
+    void slotUpdateActions();
+    void slotChangeGraphPage(int);
+    void slotChangeGraphPageName();
+    void slotCloseGraphPage();
+    void slotCloseAll();
+    void slotShowDevDialog();
+    void slotShowIndicationDialog();
 };
 
 #endif // MAINWINDOW_H
