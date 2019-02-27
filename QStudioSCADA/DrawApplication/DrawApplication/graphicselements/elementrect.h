@@ -4,9 +4,9 @@
 #include <QGraphicsSceneEvent>
 #include <QPainter>
 #include <QDataStream>
-#include "figure.h"
+#include "Element.h"
 
-class ElementRect : public Figure
+class ElementRect : public Element
 {
     Q_OBJECT
 public:

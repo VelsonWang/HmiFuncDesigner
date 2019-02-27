@@ -3,11 +3,11 @@
 
 #include <QListWidget>
 
-class ProjectTreeView : public QListWidget
+class GraphPageTreeView : public QListWidget
 {
     Q_OBJECT
 public:
-    ProjectTreeView(QWidget *parent = 0);
+    GraphPageTreeView(QWidget *parent = 0);
     void graphPageChangeName(int index,const QString &);
     void updateView();
 

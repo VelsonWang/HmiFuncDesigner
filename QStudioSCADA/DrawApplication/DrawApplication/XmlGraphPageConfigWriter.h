@@ -6,12 +6,12 @@
 #include <QFile>
 #include "GraphPage.h"
 
-class XmlGraphPageConfigWriter : QObject
+class XmlGraphPageConfigWriter : public QObject
 {
 public:
     XmlGraphPageConfigWriter(QObject *parent = 0);
-    void writeGraphPageConfig(QFile &file, GraphPage *screen);
-    void writeLibraryConfig(QFile &file,GraphPage *screen);
+    void writeGraphPageConfig(QFile &file, GraphPage *graphPage);
+    void writeLibraryConfig(QFile &file, GraphPage *graphPage);
 };
 
 #endif // XMLGRAPHPAHECONFIGWRITER_H

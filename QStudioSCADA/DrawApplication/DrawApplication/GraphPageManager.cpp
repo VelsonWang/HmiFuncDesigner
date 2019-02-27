@@ -9,30 +9,30 @@ GraphPageManager::GraphPageManager()
 GraphPageManager *GraphPageManager::getInstance() {
 
     if (!instance_) {
-        instance_ = new GraphPageManager;
+        instance_ = new GraphPageManager();
     }
 
     return instance_;
 }
 
-void GraphPageManager::addGraphPage(GraphPage *GraphPage) {
+void GraphPageManager::addGraphPage(GraphPage *graphPage) {
 
-    graphPageList.insert(graphPageList.end(),GraphPage);
+    graphPageList_.append(graphPage);
 }
 
-void GraphPageManager::removeGraphPage(GraphPage *GraphPage) {
+void GraphPageManager::removeGraphPage(GraphPage *graphPage) {
 
-    graphPageList.removeAt(graphPageList.indexOf(GraphPage));
+    graphPageList_.removeAt(graphPageList_.indexOf(graphPage));
 }
 
 GraphPage *GraphPageManager::getGraphPageById(const QString &id) const {
 
-    QListIterator <GraphPage*> i(graphPageList);
+    QListIterator <GraphPage*> iter(graphPageList_);
     GraphPage *graphPage;
 
-    while (i.hasNext()) {
+    while (iter.hasNext()) {
 
-        graphPage = i.next();
+        graphPage = iter.next();
 
         if (graphPage->getGraphPageId().contains(id, Qt::CaseInsensitive)) {
             return graphPage;
@@ -44,9 +44,10 @@ GraphPage *GraphPageManager::getGraphPageById(const QString &id) const {
 
 int GraphPageManager::getIndexByGraphPage(GraphPage *graphPage) {
 
-    return graphPageList.indexOf(graphPage);
+    return graphPageList_.indexOf(graphPage);
 }
 
-QList <GraphPage*> GraphPageManager::getGraphPageList() const {
-    return graphPageList;
+QList<GraphPage*> GraphPageManager::getGraphPageList() const {
+
+    return graphPageList_;
 }

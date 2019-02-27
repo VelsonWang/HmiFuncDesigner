@@ -1,9 +1,9 @@
-#ifndef OBJECTSTREEVIEW_H
+﻿#ifndef OBJECTSTREEVIEW_H
 #define OBJECTSTREEVIEW_H
 
 #include <QTreeWidget>
 #include <QGraphicsItem>
-#include "graphicselements/figure.h"
+#include "graphicselements/Element.h"
 
 class ObjectsTreeView : public QTreeWidget
 {
@@ -24,7 +24,7 @@ private:
     QList <QGraphicsItem*> contentList;
 
 private slots:
-    void slotItemChanged(QTreeWidgetItem*,int);
+    void slotItemChanged(QTreeWidgetItem*, int);
 };
 
 #endif // OBJECTSTREEVIEW_H

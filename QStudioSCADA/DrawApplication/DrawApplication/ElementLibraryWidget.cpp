@@ -9,6 +9,6 @@ ElementLibraryWidget::ElementLibraryWidget(QWidget *parent) :
     libraryGridLayout->addWidget(&libraryListWidget);
     setWindowFlags(Qt::Tool);
 
-    connect(pbLoadLibrary,SIGNAL(clicked()),&libraryListWidget,SLOT(loadLibrary()));
+    connect(pbLoadLibrary, SIGNAL(clicked()), &libraryListWidget, SLOT(loadLibrary()));
 }
 

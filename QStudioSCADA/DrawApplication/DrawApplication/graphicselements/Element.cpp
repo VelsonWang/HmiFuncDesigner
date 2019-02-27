@@ -1,4 +1,4 @@
-﻿#include "figure.h"
+﻿#include "Element.h"
 #include <QtDebug>
 
 /**
@@ -7,128 +7,128 @@ without using PropertyEditor - height, width, xpos,ypos,
 zvalue (using context menu on the scene)
 */
 
-Figure::~Figure() {
+Element::~Element() {
 
 }
 
-void Figure::setElementId(const QString &id) {
+void Element::setElementId(const QString &id) {
     elementId = id;
 }
 
-QString Figure::getElementId() const {
+QString Element::getElementId() const {
     return elementId;
 }
 
-QString Figure::getInternalElementType() const {
+QString Element::getInternalElementType() const {
 
     return internalElementType;
 }
 
-QIcon Figure::getElementIcon() const {
+QIcon Element::getElementIcon() const {
     return elementIcon;
 }
 
-void Figure::setElementWidth(int width) {
+void Element::setElementWidth(int width) {
     elementWidth = width;
     updatePropertyModel();
 }
 
-int Figure::getElementWidth() const {
+int Element::getElementWidth() const {
     return elementWidth;
 }
 
-void Figure::setElementHeight(int height) {
+void Element::setElementHeight(int height) {
     elementHeight = height;
     updatePropertyModel();
 }
 
-int Figure::getElementHeight() const {
+int Element::getElementHeight() const {
     return elementHeight;
 }
 
-void Figure::setElementXPos(int xpos) {
+void Element::setElementXPos(int xpos) {
     elementXPos = xpos;
     setX(elementXPos);
     updatePropertyModel();
 }
 
-int Figure::getElementXPos() const {
+int Element::getElementXPos() const {
     return elementXPos;
 }
 
-void Figure::setElementYPos(int ypos) {
+void Element::setElementYPos(int ypos) {
     elementYPos = ypos;
     setY(elementYPos);
     updatePropertyModel();
 }
 
-int Figure::getElementYPos() const {
+int Element::getElementYPos() const {
     return elementYPos;
 }
 
-void Figure::setGraphPageLink(const QString &link) {
+void Element::setGraphPageLink(const QString &link) {
     graphPageLink = link;
 }
 
-QString Figure::getGraphPageLink() const {
+QString Element::getGraphPageLink() const {
     return graphPageLink;
 }
 
-void Figure::setMessageType(const QString &msgType) {
+void Element::setMessageType(const QString &msgType) {
     messageType = msgType;
 }
 
-QString Figure::getMessageType() const {
+QString Element::getMessageType() const {
     return messageType;
 }
 
-void Figure::setElementZValue(int zval) {
+void Element::setElementZValue(int zval) {
     elementZValue = zval;
     setZValue(elementZValue);
     updatePropertyModel();
 }
 
-int Figure::getElementZValue() const {
+int Element::getElementZValue() const {
     return elementZValue;
 }
 
-void Figure::setIndicationRule(const QString &rule) {
+void Element::setIndicationRule(const QString &rule) {
     indicationRule = rule;
 }
 
-QString Figure::getIndicationRule() const {
+QString Element::getIndicationRule() const {
     return indicationRule;
 }
 
-void Figure::setLinkingType(const QString &mLinkingType) {
+void Element::setLinkingType(const QString &mLinkingType) {
     linkingType = mLinkingType;
 }
 
-QString Figure::getLinkingType() const {
+QString Element::getLinkingType() const {
     return linkingType;
 }
 
-void Figure::setDeviceLink(const QString &mDeviceLink) {
+void Element::setDeviceLink(const QString &mDeviceLink) {
     deviceLink = mDeviceLink;
 }
 
-QString Figure::getDeviceLink() const {
+QString Element::getDeviceLink() const {
     return deviceLink;
 }
 
-void Figure::setSignalLink(const QString &mSignalLink) {
+void Element::setSignalLink(const QString &mSignalLink) {
     signalLink = mSignalLink;
 }
 
-QString Figure::getSignalLink() const {
+QString Element::getSignalLink() const {
     return signalLink;
 }
 
-QList <Property*> Figure::getPropertyList() const {
+QList <Property*> Element::getPropertyList() const {
     return propList;
 }
 
-void Figure::moveTo(int x, int y) {
+void Element::moveTo(int x, int y) {
 
     elementXPos = elementXPos + x;
     elementYPos = elementYPos + y;
@@ -137,7 +137,7 @@ void Figure::moveTo(int x, int y) {
     updatePropertyModel();
 }
 
-void Figure::setAngle(qreal angle_) {
+void Element::setAngle(qreal angle_) {
 
     QTransform transform;
     transform.rotate(angle_);
@@ -145,11 +145,11 @@ void Figure::setAngle(qreal angle_) {
     setTransform(transform);
 }
 
-qreal Figure::angle() const {
+qreal Element::angle() const {
     return elemAngle;
 }
 
-void Figure::init() {
+void Element::init() {
 
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIsMovable |
@@ -177,13 +177,13 @@ void Figure::init() {
     rd = RdNone;
 }
 
-void Figure::setBlocked(bool blocked) {
+void Element::setBlocked(bool blocked) {
 
     setFlag(QGraphicsItem::ItemIsMovable,!blocked);
 }
 
-void Figure::addNodePoint() {
+void Element::addNodePoint() {
 }
 
-void Figure::removeNodePoint() {
+void Element::removeNodePoint() {
 }

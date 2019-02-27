@@ -1,4 +1,4 @@
-﻿#include "objectstreeview.h"
+﻿#include "ObjectsTreeView.h"
 #include <QtDebug>
 
 ObjectsTreeView::ObjectsTreeView(QWidget *parent)
@@ -13,7 +13,7 @@ ObjectsTreeView::ObjectsTreeView(QWidget *parent)
     setWindowFlags(Qt::Tool);
     setWindowTitle(trUtf8("对象树"));
 
-    connect(this,SIGNAL(itemClicked(QTreeWidgetItem*,int)),SLOT(slotItemChanged(QTreeWidgetItem*,int)));
+    connect(this, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(slotItemChanged(QTreeWidgetItem*,int)));
 }
 
 void ObjectsTreeView::setContentList(const QList<QGraphicsItem *> &items) {
@@ -29,20 +29,20 @@ void ObjectsTreeView::updateContent() {
 
 void ObjectsTreeView::clearModel() {
 
-    model()->removeRows(0,model()->rowCount(),QModelIndex());
+    model()->removeRows(0, model()->rowCount(), QModelIndex());
 }
 
 void ObjectsTreeView::fillTreeModel() {
 
     foreach (QGraphicsItem *item, contentList) {
 
-        Figure *figure = dynamic_cast<Figure*>(item);
+        Element *ele = dynamic_cast<Element *>(item);
 
-        if (figure) {
+        if (ele) {
             QTreeWidgetItem *treeItem = new QTreeWidgetItem(this);
-            treeItem->setText(0,figure->getElementId());
-            treeItem->setText(1,figure->getInternalElementType());
-            treeItem->setIcon(0,figure->getElementIcon());
+            treeItem->setText(0, ele->getElementId());
+            treeItem->setText(1, ele->getInternalElementType());
+            treeItem->setIcon(0, ele->getElementIcon());
         }
     }
 }
@@ -58,7 +58,7 @@ void ObjectsTreeView::slotItemChanged(QTreeWidgetItem *item, int column) {
         return;
     }
 
-    foreach (QGraphicsItem *item,contentList) {
+    foreach (QGraphicsItem *item, contentList) {
         item->setSelected(false);
     }
 

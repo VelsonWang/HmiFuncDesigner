@@ -1,5 +1,5 @@
-#include "elementlibrarylistwidget.h"
-#include "elementlibrarylistwidgetitem.h"
+﻿#include "ElementLibraryListWidget.h"
+#include "ElementLibraryListWidgetItem.h"
 #include <QFileDialog>
 #include <QApplication>
 #include <QtDebug>
@@ -53,7 +53,6 @@ void ElementLibraryListWidget::loadLibrary() {
     const QString &filename = QFileDialog::getOpenFileName(this,trUtf8("Open"),".",
                                                            trUtf8("Mnemo designer library (*.mdlib)"));
     QFileInfo fi(filename);
-
 
     if (filename.isEmpty()) {
         return;

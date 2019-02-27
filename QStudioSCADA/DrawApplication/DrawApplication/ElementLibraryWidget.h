@@ -2,8 +2,8 @@
 #define ELEMENTLIBRARYWIDGET_H
 
 #include <QWidget>
-#include "elementsimplelistwidget.h"
-#include "elementlibrarylistwidget.h"
+#include "ElementSimpleListWidget.h"
+#include "ElementLibraryListWidget.h"
 #include "ui_ElementLibraryWidget.h"
 
 class ElementLibraryWidget : public QWidget, public Ui::ElementLibraryWidget

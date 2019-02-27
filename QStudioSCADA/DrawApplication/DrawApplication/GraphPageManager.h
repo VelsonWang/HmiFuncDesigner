@@ -12,13 +12,13 @@ public:
     void addGraphPage(GraphPage*);
     GraphPage *getGraphPageById(const QString &) const;
     int getIndexByGraphPage(GraphPage *);
-    QList <GraphPage*> getGraphPageList() const;
+    QList<GraphPage*> getGraphPageList() const;
     void removeGraphPage(GraphPage *graphPage);
 
 private:
     GraphPageManager();
     static GraphPageManager *instance_;
-    QList <GraphPage *> graphPageList;
+    QList<GraphPage *> graphPageList_;
 };
 
 #endif // GRAPHPAGEMANAGER_H

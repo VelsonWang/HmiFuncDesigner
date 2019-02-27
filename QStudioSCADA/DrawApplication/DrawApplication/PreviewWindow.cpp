@@ -1,4 +1,4 @@
-﻿#include "previewwindow.h"
+﻿#include "PreviewWindow.h"
 
 PreviewWindow::PreviewWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -11,16 +11,19 @@ PreviewWindow::PreviewWindow(QWidget *parent) :
 
 void PreviewWindow::createActions() {
 
-    actionClose = new QAction(QIcon(":/images/fullscreen.png"),trUtf8("退出预览 (ESC)"),
+    actionClose = new QAction(QIcon(":/images/fullscreen.png"),
+                              trUtf8("退出预览 (ESC)"),
                               this);
-    actionPrint = new QAction(QIcon(":/images/fileprint.png"),trUtf8("打印"),this);
+    actionPrint = new QAction(QIcon(":/images/fileprint.png"),
+                              trUtf8("打印"),
+                              this);
 
     toolBar->addAction(actionClose);
     toolBar->addAction(actionPrint);
     toolBar->setMovable(false);
 
-    connect(actionClose,SIGNAL(triggered()),SLOT(slotClose()));
-    connect(actionPrint,SIGNAL(triggered()),SLOT(slotPrint()));
+    connect(actionClose, SIGNAL(triggered()), SLOT(slotClose()));
+    connect(actionPrint, SIGNAL(triggered()), SLOT(slotPrint()));
 }
 
 void PreviewWindow::updatePreview(const QPixmap &pixmap) {
@@ -45,14 +48,14 @@ void PreviewWindow::slotClose() {
 void PreviewWindow::slotPrint() {
 
     QPrinter printer;
-    printer.setPaperSize(QSizeF(previewLabel->width(),previewLabel->height()),
+    printer.setPaperSize(QSizeF(previewLabel->width(), previewLabel->height()),
                          QPrinter::Point);
 
     QPrintDialog dialog(&printer);
 
     if (dialog.exec()) {
         QPainter painter(&printer);
-        painter.drawPixmap(0,0,previewPixmap);
+        painter.drawPixmap(0, 0, previewPixmap);
     }
 }
 

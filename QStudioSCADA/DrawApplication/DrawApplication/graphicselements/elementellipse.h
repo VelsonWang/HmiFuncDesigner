@@ -4,9 +4,9 @@
 #include <QGraphicsSceneEvent>
 #include <QPainter>
 #include <QDataStream>
-#include "figure.h"
+#include "Element.h"
 
-class ElementEllipse : public Figure
+class ElementEllipse : public Element
 {
     Q_OBJECT
 public:

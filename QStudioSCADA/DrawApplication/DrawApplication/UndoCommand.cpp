@@ -57,61 +57,61 @@ void RemoveCommand::redo() {
 
 
 
-ChangePositionCommand::ChangePositionCommand(Figure *fig,
+ChangePositionCommand::ChangePositionCommand(Element *element,
                                              QPointF oldPos,
                                              QUndoCommand *parent)
     : QUndoCommand(parent)
 {
-    figure = fig;
+    element_ = element;
     this->oldPos = oldPos;
-    newPos = fig->pos();
+    newPos = element->pos();
 }
 
 void ChangePositionCommand::undo() {
 
-    figure->setPos(oldPos);
-    figure->scene()->update();
+    element_->setPos(oldPos);
+    element_->scene()->update();
 }
 
 void ChangePositionCommand::redo() {
 
-    figure->setPos(newPos);
-    figure->scene()->update();
+    element_->setPos(newPos);
+    element_->scene()->update();
 }
 
 
-ChangeSizeCommand::ChangeSizeCommand(Figure *fig,
+ChangeSizeCommand::ChangeSizeCommand(Element *element,
                                      int width,
                                      int height,
                                      QPointF pos,
                                      QUndoCommand *parent)
     : QUndoCommand(parent)
 {
-    figure = fig;
+    element_ = element;
     oldWidth = width;
     oldHeight = height;
     oldPos = pos;
 
-    newWidth = figure->getElementWidth();
-    newHeight = figure->getElementHeight();
-    newPos = figure->pos();
+    newWidth = element_->getElementWidth();
+    newHeight = element_->getElementHeight();
+    newPos = element_->pos();
 }
 
 void ChangeSizeCommand::undo() {
 
-    figure->setElementWidth(oldWidth);
-    figure->setElementHeight(oldHeight);
-    figure->setElementXPos(oldPos.x());
-    figure->setElementYPos(oldPos.y());
-    figure->updateBoundingElement();
-    figure->scene()->update();
+    element_->setElementWidth(oldWidth);
+    element_->setElementHeight(oldHeight);
+    element_->setElementXPos(oldPos.x());
+    element_->setElementYPos(oldPos.y());
+    element_->updateBoundingElement();
+    element_->scene()->update();
 }
 
 void ChangeSizeCommand::redo() {
 
-    figure->setElementWidth(newWidth);
-    figure->setElementHeight(newHeight);
-    figure->setElementXPos(newPos.x());
-    figure->setElementYPos(newPos.y());
-    figure->scene()->update();
+    element_->setElementWidth(newWidth);
+    element_->setElementHeight(newHeight);
+    element_->setElementXPos(newPos.x());
+    element_->setElementYPos(newPos.y());
+    element_->scene()->update();
 }

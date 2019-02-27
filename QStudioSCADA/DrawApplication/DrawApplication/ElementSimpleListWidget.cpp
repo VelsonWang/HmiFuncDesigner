@@ -1,4 +1,4 @@
-﻿#include "elementsimplelistwidget.h"
+﻿#include "ElementSimpleListWidget.h"
 #include <QMimeData>
 #include <QDrag>
 #include <QApplication>
@@ -12,12 +12,12 @@ ElementSimpleListWidget::ElementSimpleListWidget(QListWidget *parent) :
 
 void ElementSimpleListWidget::addElements() {
 
-    QListWidgetItem *lineItem = new QListWidgetItem(QIcon(":/images/lineitem.png"),trUtf8("直线"));
-    QListWidgetItem *rectItem = new QListWidgetItem(QIcon(":/images/rectitem.png"),trUtf8("矩形"));
-    QListWidgetItem *ellipseItem = new QListWidgetItem(QIcon(":/images/ellipseitem.png"),trUtf8("椭圆形"));
-    QListWidgetItem *arrowItem = new QListWidgetItem(QIcon(":/images/arrowitem.png"),trUtf8("箭头"));
-    QListWidgetItem *polygonItem = new QListWidgetItem(QIcon(":/images/polygon.png"),trUtf8("多边形"));
-    QListWidgetItem *textItem = new QListWidgetItem(QIcon(":/images/textitem.png"),trUtf8("文本"));
+    QListWidgetItem *lineItem = new QListWidgetItem(QIcon(":/images/lineitem.png"), trUtf8("直线"));
+    QListWidgetItem *rectItem = new QListWidgetItem(QIcon(":/images/rectitem.png"), trUtf8("矩形"));
+    QListWidgetItem *ellipseItem = new QListWidgetItem(QIcon(":/images/ellipseitem.png"), trUtf8("椭圆形"));
+    QListWidgetItem *arrowItem = new QListWidgetItem(QIcon(":/images/arrowitem.png"), trUtf8("箭头"));
+    QListWidgetItem *polygonItem = new QListWidgetItem(QIcon(":/images/polygon.png"), trUtf8("多边形"));
+    QListWidgetItem *textItem = new QListWidgetItem(QIcon(":/images/textitem.png"), trUtf8("文本"));
 
     addItem(lineItem);
     addItem(rectItem);

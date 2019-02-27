@@ -22,8 +22,8 @@ void XmlGraphPageConfigWriter::writeGraphPageConfig(QFile &file, GraphPage *grap
 
     while (it.hasNext()) {
 
-        Figure *fig = static_cast<Figure*>(it.next());
-        fig->writeAsXml(writer);
+        Element *ele = static_cast<Element *>(it.next());
+        ele->writeAsXml(writer);
     }
 
     writer.writeEndElement();
@@ -41,8 +41,8 @@ void XmlGraphPageConfigWriter::writeLibraryConfig(QFile &file, GraphPage *graphP
 
     while (it.hasNext()) {
 
-        Figure *fig = static_cast<Figure*>(it.next());
-        fig->writeAsXml(writer);
+        Element *ele = static_cast<Element *>(it.next());
+        ele->writeAsXml(writer);
     }
 
     writer.writeEndElement();

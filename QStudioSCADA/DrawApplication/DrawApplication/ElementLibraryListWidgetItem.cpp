@@ -1,4 +1,4 @@
-#include "elementlibrarylistwidgetitem.h"
+﻿#include "ElementLibraryListWidgetItem.h"
 
 ElementLibraryListWidgetItem::ElementLibraryListWidgetItem()
 {

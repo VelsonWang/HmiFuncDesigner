@@ -1,9 +1,9 @@
-#ifndef SAVESTRATEGYDIALOG_H
+﻿#ifndef SAVESTRATEGYDIALOG_H
 #define SAVESTRATEGYDIALOG_H
 
 #include <QDialog>
 #include "DrawAppDefs.h"
-#include "ui_savestrategydialog.h"
+#include "ui_SaveStrategyDialog.h"
 
 class SaveStrategyDialog : public QDialog, public Ui::SaveStrategyDialog
 {
@@ -11,7 +11,7 @@ class SaveStrategyDialog : public QDialog, public Ui::SaveStrategyDialog
     
 public:
     explicit SaveStrategyDialog(QWidget *parent = 0);
-    SaveScreenType getLastChoose() const;
+    SaveGraphPageType getLastChoose() const;
 
 public slots:
     void slotCancel();
@@ -20,7 +20,7 @@ public slots:
     void slotItemClicked(QListWidgetItem *);
 
 private:
-    SaveScreenType lastChooseItem;
+    SaveGraphPageType lastChooseItem;
 };
 
 #endif // SAVESTRATEGYDIALOG_H

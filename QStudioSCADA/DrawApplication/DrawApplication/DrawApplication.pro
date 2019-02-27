@@ -14,45 +14,42 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp \
-    objectstreeview.cpp \
-    elementsimplelistwidget.cpp \
-    newcomponentdialog.cpp \
-    savestrategydialog.cpp \
-    previewwindow.cpp \
-    elementlibrarylistwidget.cpp \
-    elementlibrarylistwidgetitem.cpp \
     GraphPage.cpp \
     GraphPageManager.cpp \
     XmlGraphPageConfigWriter.cpp \
-    ProjectTreeView.cpp \
     UndoCommand.cpp \
-    ElementLibraryWidget.cpp
+    ElementLibraryWidget.cpp \
+    ObjectsTreeView.cpp \
+    ElementLibraryListWidget.cpp \
+    ElementLibraryListWidgetItem.cpp \
+    ElementSimpleListWidget.cpp \
+    PreviewWindow.cpp \
+    SaveStrategyDialog.cpp \
+    GraphPageTreeView.cpp \
+    MainWindow.cpp
 
 HEADERS  += \
-    mainwindow.h \
-    objectstreeview.h \
     itemtypes.h \
-    elementsimplelistwidget.h \
-    newcomponentdialog.h \
-    savestrategydialog.h \
-    previewwindow.h \
-    elementlibrarylistwidget.h \
-    elementlibrarylistwidgetitem.h \
     GraphPage.h \
     GraphPageManager.h \
     XmlGraphPageConfigWriter.h \
-    ProjectTreeView.h \
     UndoCommand.h \
     DrawAppDefs.h \
-    ElementLibraryWidget.h
+    ElementLibraryWidget.h \
+    ObjectsTreeView.h \
+    ElementLibraryListWidget.h \
+    ElementLibraryListWidgetItem.h \
+    ElementSimpleListWidget.h \
+    PreviewWindow.h \
+    SaveStrategyDialog.h \
+    GraphPageTreeView.h \
+    MainWindow.h
 
 FORMS    += \
-    mainwindow.ui \
-    newcomponentdialog.ui \
-    savestrategydialog.ui \
-    previewwindow.ui \
-    ElementLibraryWidget.ui
+    ElementLibraryWidget.ui \
+    PreviewWindow.ui \
+    SaveStrategyDialog.ui \
+    MainWindow.ui
 
 RESOURCES += \
     images.qrc
@@ -61,4 +58,4 @@ RC_FILE = application.rc
 
 include(graphicselements/graphicselements.pri)
 include(propertyeditor/propertyeditor.pri)
-include(indicationeditor/indicationeditor.pri)
+

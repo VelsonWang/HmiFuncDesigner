@@ -4,19 +4,16 @@
 #include <QUndoView>
 #include <QUndoGroup>
 #include <QUndoStack>
-#include "objectstreeview.h"
-#include "ProjectTreeView.h"
+#include "ObjectsTreeView.h"
+#include "GraphPageTreeView.h"
 #include "ElementLibraryWidget.h"
 #include "GraphPage.h"
-#include "newcomponentdialog.h"
 #include "propertyeditor/propertymodel.h"
 #include "propertyeditor/propertytableview.h"
-#include "deviceeditor/deviceeditordialog.h"
-#include "indicationeditor/indicationeditordialog.h"
-#include "savestrategydialog.h"
-#include "previewwindow.h"
+#include "SaveStrategyDialog.h"
+#include "PreviewWindow.h"
 #include "GraphPageManager.h"
-#include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 
 class MainWindow : public QMainWindow, public Ui::MainWindow
 {
@@ -69,19 +66,16 @@ private:
     QAction *actionRedo;
     QAction *actionCloseGraphPage;
     QAction *actionCloseAll;
-    QAction *actionShowDevDialog;
-    QAction *actionShowIndicationDialog;
 
     GraphPage *currentGraphPage;
     QGraphicsView *currentView;
 
-    QTabWidget *GraphPageTabWidget;
-    ProjectTreeView *projTree;
+    QTabWidget *graphPageTabWidget_;
+    GraphPageTreeView *grapePageTree_;
     ObjectsTreeView *objTree;
     ElementLibraryWidget *elementWidget;
     PropertyTableView *propertyView;
     PropertyModel *propertyModel;
-    DeviceEditorDialog *deviceEditor;
     QUndoGroup *undoGroup;
     PreviewWindow *preview;
 
@@ -117,8 +111,6 @@ private slots:
     void slotChangeGraphPageName();
     void slotCloseGraphPage();
     void slotCloseAll();
-    void slotShowDevDialog();
-    void slotShowIndicationDialog();
 };
 
 #endif // MAINWINDOW_H

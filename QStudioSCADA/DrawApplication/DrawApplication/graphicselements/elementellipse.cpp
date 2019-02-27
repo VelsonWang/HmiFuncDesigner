@@ -3,7 +3,7 @@
 
 ElementEllipse::ElementEllipse()
 {
-    elementId = trUtf8("椭圆");
+    elementId = trUtf8("椭圆形");
     internalElementType = trUtf8("Ellipse");
     elementIcon = QIcon(":/images/ellipseitem.png");
 

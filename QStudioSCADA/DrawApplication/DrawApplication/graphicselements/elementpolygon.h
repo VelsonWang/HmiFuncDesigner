@@ -4,9 +4,9 @@
 #include <QGraphicsSceneEvent>
 #include <QPainter>
 #include <QDataStream>
-#include "figure.h"
+#include "Element.h"
 
-class ElementPolygon : public Figure
+class ElementPolygon : public Element
 {
 public:
     ElementPolygon();

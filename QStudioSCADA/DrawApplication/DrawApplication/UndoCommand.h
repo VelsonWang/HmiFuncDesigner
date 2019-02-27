@@ -3,7 +3,7 @@
 
 #include <QUndoCommand>
 #include "GraphPage.h"
-#include "graphicselements/figure.h"
+#include "graphicselements/Element.h"
 
 class GraphPage;
 
@@ -17,7 +17,7 @@ public:
     void redo();
 
 private:
-    QList <QGraphicsItem*> items;
+    QList<QGraphicsItem*> items;
     GraphPage *graphPage;
 };
 
@@ -31,21 +31,21 @@ public:
     void redo();
 
 private:
-    QList <QGraphicsItem*> items;
+    QList<QGraphicsItem*> items;
     GraphPage *graphPage;
 };
 
 class ChangePositionCommand : public QUndoCommand {
 
 public:
-    ChangePositionCommand(Figure * fig,
+    ChangePositionCommand(Element *element,
                           QPointF oldPos,
                           QUndoCommand *parent = 0);
     void undo();
     void redo();
 
 private:
-    Figure *figure;
+    Element *element_;
     QPointF newPos;
     QPointF oldPos;
 };
@@ -53,7 +53,7 @@ private:
 class ChangeSizeCommand : public QUndoCommand {
 
 public:
-    ChangeSizeCommand(Figure *fig,
+    ChangeSizeCommand(Element *element,
                       int width,
                       int height,
                       QPointF pos,
@@ -62,7 +62,7 @@ public:
     void redo();
 
 private:
-    Figure *figure;
+    Element *element_;
     int oldWidth;
     int oldHeight;
     QPointF oldPos;

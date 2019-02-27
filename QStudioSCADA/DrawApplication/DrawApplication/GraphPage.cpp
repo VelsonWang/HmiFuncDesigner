@@ -35,13 +35,16 @@ const QString MimeType = "rti/mnemodesigner";
 
 
 GraphPage::GraphPage(const QRectF &rect, QObject *parent)
-    : QGraphicsScene(parent),propertyModel(0), filename(QString()),unsavedFlag(false)
+    : QGraphicsScene(parent),
+      propertyModel(0),
+      filename(QString()),
+      unsavedFlag(false)
 {
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
     if (rect.width() == 0 || rect.height() == 0) {
-        setSceneRect(0,0,800,480);
+        setSceneRect(0, 0, 800, 480);
     }
     else {
         setSceneRect(rect);
@@ -53,7 +56,7 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent)
     GraphPageHeight = sceneRect().height();
     GraphPagePriority.clear();
     GraphPagePriority.append(trUtf8("主要的"));
-    GraphPageBackground = QColor(Qt::black);
+    GraphPageBackground = QColor(Qt::white);
 
     m_undoStack = new QUndoStack(this);
     m_undoStack->setUndoLimit(20);
@@ -62,7 +65,7 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent)
     createContextMenuActions();
     updateActions();
 
-    connect(this,SIGNAL(selectionChanged()),SLOT(slotSelectionChanged()));
+    connect(this, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()));
 }
 
 void GraphPage::setActive(bool active) {
@@ -71,24 +74,27 @@ void GraphPage::setActive(bool active) {
 }
 
 bool GraphPage::active() {
+
     return onActive;
 }
 
 bool GraphPage::getUnsavedFlag() {
+
     return unsavedFlag;
 }
 
 void GraphPage::setPropertyModel(PropertyModel *model) {
+
     propertyModel = model;
     fillGraphPagePropertyModel();
 
-    connect(propertyModel,SIGNAL(onDataChangedByEditor(Property*)),SLOT(slotElementPropertyChanged(Property*)));
-    connect(propertyModel,SIGNAL(onDataChangedByEditor(Property*)),SLOT(slotGraphPagePropertyChanged(Property*)));
+    connect(propertyModel, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotElementPropertyChanged(Property* )));
+    connect(propertyModel, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotGraphPagePropertyChanged(Property* )));
 }
 
 void GraphPage::fillGridPixmap() {
 
-    gridPixmap = QPixmap(QSize(sceneRect().width(),sceneRect().height()));
+    gridPixmap = QPixmap(QSize(sceneRect().width(), sceneRect().height()));
     gridPixmap.fill(GraphPageBackground);
 
     QPainter painter(&gridPixmap);
@@ -120,14 +126,15 @@ void GraphPage::setGridVisible(bool on) {
         fillGridPixmap();
     }
     else {
-        gridPixmap = QPixmap(QSize(sceneRect().width(),sceneRect().height()));
+        gridPixmap = QPixmap(QSize(sceneRect().width(), sceneRect().height()));
         gridPixmap.fill(GraphPageBackground);
     }
 
-    invalidate(sceneRect(),BackgroundLayer);
+    invalidate(sceneRect(), BackgroundLayer);
 }
 
 bool GraphPage::isGridVisible() const {
+
     return gridVisible;
 }
 
@@ -208,35 +215,35 @@ void GraphPage::createPropertyList() {
 
     widthProperty = new IntegerProperty(trUtf8("宽度"));
     widthProperty->setId(GRAPHPAGE_WIDTH);
-    widthProperty->setSettings(0,5000);
+    widthProperty->setSettings(0, 5000);
     propList.insert(propList.end(),widthProperty);
 
     heightProperty = new IntegerProperty(trUtf8("高度"));
     heightProperty->setId(GRAPHPAGE_HEIGHT);
-    heightProperty->setSettings(0,5000);
-    propList.insert(propList.end(),heightProperty);
+    heightProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty);
 }
 
 void GraphPage::createContextMenuActions() {
 
-    inGroupAction = new QAction(QIcon(":/images/group.png"),trUtf8("分组"),&contextServiceMenu);
-    connect(inGroupAction,SIGNAL(triggered()),SLOT(slotGroupElements()));
+    inGroupAction = new QAction(QIcon(":/images/group.png"), trUtf8("分组"), &contextServiceMenu);
+    connect(inGroupAction, SIGNAL(triggered()), SLOT(slotGroupElements()));
 
-    outGroupAction = new QAction(QIcon(":/images/ungroup.png"),trUtf8("分类"),&contextServiceMenu);
+    outGroupAction = new QAction(QIcon(":/images/ungroup.png"), trUtf8("分类"), &contextServiceMenu);
 
-    alignTopAction = new QAction(QIcon(":/images/align-top.png"),trUtf8("顶部对齐"),&contextServiceMenu);
+    alignTopAction = new QAction(QIcon(":/images/align-top.png"), trUtf8("顶部对齐"), &contextServiceMenu);
     alignTopAction->setData(Qt::AlignTop);
-    connect(alignTopAction,SIGNAL(triggered()),SLOT(slotAlignElements()));
+    connect(alignTopAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
-    alignDownAction = new QAction(QIcon(":/images/align-bottom.png"),trUtf8("底部对齐"),&contextServiceMenu);
+    alignDownAction = new QAction(QIcon(":/images/align-bottom.png"), trUtf8("底部对齐"), &contextServiceMenu);
     alignDownAction->setData(Qt::AlignBottom);
-    connect(alignDownAction,SIGNAL(triggered()),SLOT(slotAlignElements()));
+    connect(alignDownAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
-    alignRightAction = new QAction(QIcon(":/images/align-right.png"),trUtf8("右对齐"),&contextServiceMenu);
+    alignRightAction = new QAction(QIcon(":/images/align-right.png"), trUtf8("右对齐"), &contextServiceMenu);
     alignRightAction->setData(Qt::AlignRight);
-    connect(alignRightAction,SIGNAL(triggered()),SLOT(slotAlignElements()));
+    connect(alignRightAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
-    alignLeftAction = new QAction(QIcon(":/images/align-left.png"),trUtf8("左对齐"),&contextServiceMenu);
+    alignLeftAction = new QAction(QIcon(":/images/align-left.png"), trUtf8("左对齐"), &contextServiceMenu);
     alignLeftAction->setData(Qt::AlignLeft);
     connect(alignLeftAction,SIGNAL(triggered()),SLOT(slotAlignElements()));
 
@@ -329,14 +336,14 @@ void GraphPage::updateActions() {
 
 void GraphPage::slotAddNodePoint() {
 
-    Figure *fig = static_cast<Figure*>(selectedItems().first());
-    fig->addNodePoint();
+    Element *ele = static_cast<Element *>(selectedItems().first());
+    ele->addNodePoint();
 }
 
 void GraphPage::slotRemoveNodePoint() {
 
-    Figure *fig = static_cast<Figure*>(selectedItems().first());
-    fig->removeNodePoint();
+    Element *ele = static_cast<Element *>(selectedItems().first());
+    ele->removeNodePoint();
 }
 
 void GraphPage::slotShowAdditionalProperties() {
@@ -370,7 +377,7 @@ void GraphPage::slotSelectionChanged() {
     }
 
     propertyModel->resetModel();
-    currentItem = dynamic_cast<Figure*>(selectedItems().first());
+    currentItem = dynamic_cast<Element *>(selectedItems().first());
 
     if (!currentItem) {
         return;
@@ -385,15 +392,15 @@ void GraphPage::slotSelectionChanged() {
 
 void GraphPage::slotElementMoved(QPointF oldPos) {
 
-    Figure *fig = (Figure*)sender();
+    Element *ele = (Element *)sender();
 
-    m_undoStack->push(new ChangePositionCommand(fig,oldPos));
+    m_undoStack->push(new ChangePositionCommand(ele, oldPos));
 }
 
 void GraphPage::slotElementResized(int width, int height,QPointF pos) {
 
-    Figure *fig = (Figure*)sender();
-    m_undoStack->push(new ChangeSizeCommand(fig,width,height,pos));
+    Element *ele = (Element *)sender();
+    m_undoStack->push(new ChangeSizeCommand(ele, width, height, pos));
 }
 
 void GraphPage::drawBackground(QPainter *painter, const QRectF &rect) {
@@ -406,7 +413,7 @@ void GraphPage::drawBackground(QPainter *painter, const QRectF &rect) {
     painter->drawRect(rect);
 
     if (gridVisible) {
-        painter->drawPixmap(0,0,gridPixmap);
+        painter->drawPixmap(0, 0, gridPixmap);
     }
 
     painter->restore();
@@ -526,7 +533,7 @@ void GraphPage::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
     contextMenu.exec(event->screenPos());
 }
 
-void GraphPage::connectItem(Figure *item) {
+void GraphPage::connectItem(Element *item) {
 
     connect(item,SIGNAL(elementMoved(QPointF)),SLOT(slotElementMoved(QPointF)));
     connect(item,SIGNAL(elementResized(int,int,QPointF)),SLOT(slotElementResized(int,int,QPointF)));
@@ -534,40 +541,40 @@ void GraphPage::connectItem(Figure *item) {
 
 void GraphPage::createItems(const QString &typeId, QPointF position) {
 
-    Figure *last = 0;
+    Element *last = 0;
 
     if (typeId == trUtf8("直线")) {
-        Figure *line = new ElementLine();
+        Element *line = new ElementLine();
         line->setClickPosition(position);
         last = line;
         connectItem(line);
     }
     else if (typeId == trUtf8("箭头")) {
-        Figure *arrow = new ElementArrow();
+        Element *arrow = new ElementArrow();
         arrow->setClickPosition(position);
         last = arrow;
         connectItem(arrow);
     }
     else if (typeId == trUtf8("矩形")) {
-        Figure *rect = new ElementRect();
+        Element *rect = new ElementRect();
         rect->setClickPosition(position);
         last = rect;
         connectItem(rect);
     }
     else if (typeId == trUtf8("多边形")) {
-        Figure *polygon = new ElementPolygon();
+        Element *polygon = new ElementPolygon();
         polygon->setClickPosition(position);
         last = polygon;
         connectItem(polygon);
     }
-    else if (typeId == trUtf8("椭圆")) {
-        Figure *ellipse = new ElementEllipse();
+    else if (typeId == trUtf8("椭圆形")) {
+        Element *ellipse = new ElementEllipse();
         ellipse->setClickPosition(position);
         last = ellipse;
         connectItem(ellipse);
     }
     else if (typeId == trUtf8("文本")) {
-        Figure *text = new ElementText();
+        Element *text = new ElementText();
         text->setClickPosition(position);
         last = text;
         connectItem(text);
@@ -627,11 +634,11 @@ void GraphPage::slotAlignElements() {
 
     if (alignment == Qt::AlignLeft || alignment == Qt::AlignRight) {
         for (int i = 0; i < items.count(); ++i)
-            ((Figure*)items.at(i))->moveTo(offset - coordinates.at(i), 0);
+            ((Element *)items.at(i))->moveTo(offset - coordinates.at(i), 0);
     }
     else {
         for (int i = 0; i < items.count(); ++i)
-            ((Figure*)items.at(i))->moveTo(0,offset - coordinates.at(i));
+            ((Element *)items.at(i))->moveTo(0, offset - coordinates.at(i));
     }
 }
 
@@ -658,16 +665,16 @@ void GraphPage::populateCoordinates(const Qt::Alignment &alignment,
 void GraphPage::slotFrontPlanElements() {
 
     foreach (QGraphicsItem *item,selectedItems()) {
-        Figure *fig = (Figure*)item;
-        fig->setElementZValue(fig->getElementZValue() + 1);
+        Element *ele = (Element *)item;
+        ele->setElementZValue(ele->getElementZValue() + 1);
     }
 }
 
 void GraphPage::slotBehindPlanElements() {
 
     foreach (QGraphicsItem *item,selectedItems()) {
-        Figure *fig = (Figure*)item;
-        fig->setElementZValue(fig->getElementZValue() - 1);
+        Element *ele = (Element*)item;
+        ele->setElementZValue(ele->getElementZValue() - 1);
     }
 }
 
@@ -720,10 +727,10 @@ void GraphPage::keyPressEvent(QKeyEvent *event) {
 void GraphPage::moveSelectedElements(int xOffset, int yOffset) {
 
     foreach (QGraphicsItem *item,items()) {
-        Figure *fig = dynamic_cast<Figure*>(item);
+        Element *ele = dynamic_cast<Element *>(item);
 
-        if (fig) {
-            fig->moveTo(xOffset,yOffset);
+        if (ele) {
+            ele->moveTo(xOffset, yOffset);
         }
     }
 }
@@ -833,9 +840,9 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
     } //for
 
     foreach (QGraphicsItem *item,copyList) {
-        Figure *fig = (Figure*)item;
-        fig->setSelected(select);
-        fig->moveTo(offset,offset);
+        Element *ele = (Element *)item;
+        ele->setSelected(select);
+        ele->moveTo(offset,offset);
     }
 
     m_undoStack->push(new AddCommand(copyList,this));
@@ -1010,11 +1017,11 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
             if (xml.name() == "element") {
 
                 if (xml.attributes().hasAttribute("internalType")) {
-                    Figure *fig = createFigure(xml.attributes().value("internalType").toString());
-                    if (fig) {
-                        fig->readFromXml(xml.attributes());
-                        connectItem(fig);
-                        addItem(fig);
+                    Element *ele = createElement(xml.attributes().value("internalType").toString());
+                    if (ele) {
+                        ele->readFromXml(xml.attributes());
+                        connectItem(ele);
+                        addItem(ele);
                     }
                 }
             }
@@ -1054,7 +1061,7 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
     fillGridPixmap();
 }
 
-Figure *GraphPage::createFigure(const QString &internalType) {
+Element *GraphPage::createElement(const QString &internalType) {
 
     if (internalType == "Arrow") {
         return new ElementArrow();
@@ -1141,11 +1148,11 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
             if (xml.name() == "element") {
 
                 if (xml.attributes().hasAttribute("internalType")) {
-                    Figure *fig = createFigure(xml.attributes().value("internalType").toString());
-                    if (fig) {
-                        fig->readFromXml(xml.attributes());
-                        connectItem(fig);
-                        addItem(fig);
+                    Element *ele = createElement(xml.attributes().value("internalType").toString());
+                    if (ele) {
+                        ele->readFromXml(xml.attributes());
+                        connectItem(ele);
+                        addItem(ele);
                     }
                 }
             }

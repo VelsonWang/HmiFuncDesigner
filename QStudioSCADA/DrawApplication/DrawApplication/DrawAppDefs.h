@@ -39,7 +39,7 @@ enum ComponentType {
     NEW_GRAPHPAGE
 };
 
-enum SaveScreenType {
+enum SaveGraphPageType {
     SAVE_XML,
     SAVE_BINARY,
     SAVE_IMAGE

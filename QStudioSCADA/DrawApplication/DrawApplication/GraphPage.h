@@ -33,10 +33,10 @@ class GraphPage : public QGraphicsScene
 
 public:
     GraphPage(const QRectF &rect,QObject *parent = 0);
+
     void setGridVisible(bool);
     bool isGridVisible() const;
 
-    /** Properties*/
     void setGraphPageId(const QString &);
     QString getGraphPageId() const;
 
@@ -68,16 +68,16 @@ public:
     void loadAsXML(const QString &filename);
     void loadAsBinary(const QString &filename);
 
-    void writeItems(QDataStream &out,const QList <QGraphicsItem*> &items);
+    void writeItems(QDataStream &out,const QList<QGraphicsItem*> &items);
     void readItems(QDataStream &in,int offset,bool select);
 
     void addElementEvent();
     void removeElementEvent();
     void cleanPropertyModel();
-    void connectItem(Figure *item);
+    void connectItem(Element *item);
     bool getUnsavedFlag();
 
-    friend QDataStream &operator<<(QDataStream &out,const GraphPage &GraphPage);
+    friend QDataStream &operator<<(QDataStream &out, const GraphPage &GraphPage);
     friend QDataStream &operator>>(QDataStream &in, GraphPage &GraphPage);
 
 protected:
@@ -91,7 +91,7 @@ protected:
 
 private:
     bool gridVisible;
-    Figure *currentItem;
+    Element *currentItem;
     static const int gridSize = 20;
     static const int pasteOffset = 20;
     QString GraphPageId;
@@ -117,7 +117,6 @@ private:
     IntegerProperty *widthProperty;
     IntegerProperty *heightProperty;
 
-    /** Контекстное меню*/
     QMenu contextMenu;
     QMenu contextServiceMenu;
     QMenu contextNodePointMenu;
@@ -139,21 +138,22 @@ private:
     QAction *actionSelectAll;
     QAction *actionAdditional;
 
-    void createItems(const QString &,QPointF);
+    void createItems(const QString &, QPointF);
     void fillGridPixmap();
     void createPropertyList();
     void createContextMenuActions();
-    void populateCoordinates(const Qt::Alignment &,QVector <double> *,
+    void populateCoordinates(const Qt::Alignment &,
+                             QVector<double> *,
                              const QList <QGraphicsItem*> &);
-    void copyItems(const QList <QGraphicsItem*> &items);
+    void copyItems(const QList<QGraphicsItem*> &items);
     void updateActions();
-    void moveSelectedElements(int xOffset,int yOffset);
+    void moveSelectedElements(int xOffset, int yOffset);
 
     //XML LOAD
     void readGraphPageConfig(QFile &file);
     void readGraphPageTag(QXmlStreamReader &xml);
     void setGraphPageAttributes(QXmlStreamReader &xml);
-    Figure *createFigure(const QString &internalType);
+    Element *createElement(const QString &internalType);
 
     void loadLibrary(QByteArray &data);
     void readLibraryConfig(QFile &file);

@@ -1,5 +1,5 @@
-﻿#ifndef FIGURE_H
-#define FIGURE_H
+﻿#ifndef ELEMENT_H
+#define ELEMENT_H
 
 #include <QGraphicsObject>
 #include <QGraphicsScene>
@@ -15,11 +15,11 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 
-class Figure : public QGraphicsObject
+class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    virtual ~Figure();
+    virtual ~Element();
 
     void init();
 
@@ -129,4 +129,4 @@ signals:
     void elementResized(int,int,QPointF);
 };
 
-#endif // FIGURE_H
+#endif // ELEMENT_H

@@ -2,12 +2,12 @@
 #define TEXTITEM_HPP
 
 #include "itemtypes.h"
-#include "graphicselements/figure.h"
+#include "graphicselements/Element.h"
 #include <QPainter>
 #include <QDataStream>
 #include <QGraphicsSceneMouseEvent>
 
-class ElementText : public Figure
+class ElementText : public Element
 {
     Q_OBJECT
 
