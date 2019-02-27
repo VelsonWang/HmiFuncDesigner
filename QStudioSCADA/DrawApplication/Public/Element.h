@@ -4,14 +4,13 @@
 #include <QGraphicsObject>
 #include <QGraphicsScene>
 #include <QCursor>
-#include "itemtypes.h"
-#include "propertyeditor/propertymodel.h"
-#include "propertyeditor/boolproperty.h"
-#include "propertyeditor/emptyproperty.h"
-#include "propertyeditor/colorproperty.h"
-#include "propertyeditor/textproperty.h"
-#include "propertyeditor/integerproperty.h"
-#include "DrawAppDefs.h"
+#include "PublicDefine.h"
+#include "propertymodel.h"
+#include "boolproperty.h"
+#include "emptyproperty.h"
+#include "colorproperty.h"
+#include "textproperty.h"
+#include "integerproperty.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 

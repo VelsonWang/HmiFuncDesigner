@@ -1,7 +1,9 @@
 ﻿#include "ElementSimpleListWidget.h"
+#include "PluginManager.h"
 #include <QMimeData>
 #include <QDrag>
 #include <QApplication>
+#include <QDebug>
 
 ElementSimpleListWidget::ElementSimpleListWidget(QListWidget *parent) :
     QListWidget(parent)
@@ -12,19 +14,20 @@ ElementSimpleListWidget::ElementSimpleListWidget(QListWidget *parent) :
 
 void ElementSimpleListWidget::addElements() {
 
-    QListWidgetItem *lineItem = new QListWidgetItem(QIcon(":/images/lineitem.png"), trUtf8("直线"));
-    QListWidgetItem *rectItem = new QListWidgetItem(QIcon(":/images/rectitem.png"), trUtf8("矩形"));
-    QListWidgetItem *ellipseItem = new QListWidgetItem(QIcon(":/images/ellipseitem.png"), trUtf8("椭圆形"));
-    QListWidgetItem *arrowItem = new QListWidgetItem(QIcon(":/images/arrowitem.png"), trUtf8("箭头"));
-    QListWidgetItem *polygonItem = new QListWidgetItem(QIcon(":/images/polygon.png"), trUtf8("多边形"));
-    QListWidgetItem *textItem = new QListWidgetItem(QIcon(":/images/textitem.png"), trUtf8("文本"));
-
-    addItem(lineItem);
-    addItem(rectItem);
-    addItem(ellipseItem);
-    addItem(arrowItem);
-    addItem(polygonItem);
-    addItem(textItem);
+    QMap<QString, IDrawApplicationPlugin*> pluginMap = PluginManager::getInstance()->getPluginByType(trUtf8("基本图元"));
+    QMapIterator<QString, IDrawApplicationPlugin*> iter(pluginMap);
+    while(iter.hasNext())
+    {
+        iter.next();
+        //qDebug() << __FUNCTION__ << __LINE__ << iter.key();
+        IDrawApplicationPlugin* plugin = iter.value();
+        if(plugin != nullptr) {
+            QIcon ico = plugin->getElementIcon();
+            QString eleName = plugin->getElementName();
+            QListWidgetItem *lineItem = new QListWidgetItem(ico, eleName);
+            addItem(lineItem);
+        }
+    }
 }
 
 void ElementSimpleListWidget::mousePressEvent(QMouseEvent *event) {

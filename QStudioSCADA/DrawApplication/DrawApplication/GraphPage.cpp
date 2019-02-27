@@ -3,9 +3,13 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QFileInfo>
-#include <QtDebug>
+#include <QDebug>
 #include <QFileDialog>
 #include "xmlGraphPageconfigwriter.h"
+#include "ElementGroup.h"
+#include "IDrawApplicationPlugin.h"
+#include "PluginManager.h"
+
 
 /** Template algorithms*/
 template<template<typename T> class S, typename T>
@@ -543,41 +547,23 @@ void GraphPage::createItems(const QString &typeId, QPointF position) {
 
     Element *last = 0;
 
-    if (typeId == trUtf8("直线")) {
-        Element *line = new ElementLine();
-        line->setClickPosition(position);
-        last = line;
-        connectItem(line);
-    }
-    else if (typeId == trUtf8("箭头")) {
-        Element *arrow = new ElementArrow();
-        arrow->setClickPosition(position);
-        last = arrow;
-        connectItem(arrow);
-    }
-    else if (typeId == trUtf8("矩形")) {
-        Element *rect = new ElementRect();
-        rect->setClickPosition(position);
-        last = rect;
-        connectItem(rect);
-    }
-    else if (typeId == trUtf8("多边形")) {
-        Element *polygon = new ElementPolygon();
-        polygon->setClickPosition(position);
-        last = polygon;
-        connectItem(polygon);
-    }
-    else if (typeId == trUtf8("椭圆形")) {
-        Element *ellipse = new ElementEllipse();
-        ellipse->setClickPosition(position);
-        last = ellipse;
-        connectItem(ellipse);
-    }
-    else if (typeId == trUtf8("文本")) {
-        Element *text = new ElementText();
-        text->setClickPosition(position);
-        last = text;
-        connectItem(text);
+    QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
+    while(iter.hasNext())
+    {
+        iter.next();
+        QMapIterator<QString, IDrawApplicationPlugin*>  it(iter.value());
+        while(it.hasNext())
+        {
+            it.next();
+            IDrawApplicationPlugin *plugin = it.value();
+            if(plugin != nullptr && plugin->getElementName() == typeId) {
+
+                Element *ele = plugin->createElement();
+                ele->setClickPosition(position);
+                last = ele;
+                connectItem(ele);
+            }
+        }
     }
 
     if (last) {
@@ -791,48 +777,67 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
     for (int i = 0; i < itemsCount; i++) {
 
         in >> objectType;
+#if 0
+        QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
+        while(iter.hasNext())
+        {
+            iter.next();
+            QMapIterator<QString, IDrawApplicationPlugin*>  it(iter.value());
+            while(it.hasNext())
+            {
+                it.next();
+                IDrawApplicationPlugin *plugin = it.value();
+                if(plugin != nullptr && plugin->getElementID() == objectType) {
 
+                    Element *ele = plugin->createElement();
+                    ele->setClickPosition(position);
+                    last = ele;
+                    connectItem(ele);
+                }
+            }
+        }
+#endif
         switch (objectType) {
         case LineItemType: {
-            ElementLine *line = new ElementLine();
-            in >> *line;
-            connectItem(line);
-            copyList.insert(copyList.end(),line);
+//            ElementLine *line = new ElementLine();
+//            in >> *line;
+//            connectItem(line);
+//            copyList.insert(copyList.end(),line);
             break;
         }
         case ArrowItemType: {
-            ElementArrow *arrow = new ElementArrow();
-            in >> *arrow;
-            connectItem(arrow);
-            copyList.insert(copyList.end(),arrow);
+//            ElementArrow *arrow = new ElementArrow();
+//            in >> *arrow;
+//            connectItem(arrow);
+//            copyList.insert(copyList.end(),arrow);
             break;
         }
         case EllipseItemType: {
-            ElementEllipse *ellipse = new ElementEllipse;
-            in >> *ellipse;
-            connectItem(ellipse);
-            copyList.insert(copyList.end(),ellipse);
+//            ElementEllipse *ellipse = new ElementEllipse;
+//            in >> *ellipse;
+//            connectItem(ellipse);
+//            copyList.insert(copyList.end(),ellipse);
             break;
         }
         case RectItemType: {
-            ElementRect *rect = new ElementRect();
-            in >> *rect;
-            connectItem(rect);
-            copyList.insert(copyList.end(),rect);
+//            ElementRect *rect = new ElementRect();
+//            in >> *rect;
+//            connectItem(rect);
+//            copyList.insert(copyList.end(),rect);
             break;
         }
         case PolygonItemType: {
-            ElementPolygon *polygon = new ElementPolygon();
-            in >> *polygon;
-            connectItem(polygon);
-            copyList.insert(copyList.end(),polygon);
+//            ElementPolygon *polygon = new ElementPolygon();
+//            in >> *polygon;
+//            connectItem(polygon);
+//            copyList.insert(copyList.end(),polygon);
             break;
         }
         case TextItemType: {
-            ElementText *text = new ElementText();
-            in >> *text;
-            connectItem(text);
-            copyList.insert(copyList.end(),text);
+//            ElementText *text = new ElementText();
+//            in >> *text;
+//            connectItem(text);
+//            copyList.insert(copyList.end(),text);
             break;
         }
         }
@@ -859,29 +864,49 @@ void GraphPage::writeItems(QDataStream &out, const QList<QGraphicsItem *> &items
 
         out << type;
 
+#if 0
+        QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
+        while(iter.hasNext())
+        {
+            iter.next();
+            QMapIterator<QString, IDrawApplicationPlugin*>  it(iter.value());
+            while(it.hasNext())
+            {
+                it.next();
+                IDrawApplicationPlugin *plugin = it.value();
+                if(plugin != nullptr && plugin->getElementID() == objectType) {
+
+                    Element *ele = plugin->createElement();
+                    ele->setClickPosition(position);
+                    last = ele;
+                    connectItem(ele);
+                }
+            }
+        }
+#endif
         switch (type) {
         case LineItemType: {
-            out << *static_cast<ElementLine*>(items[j]);
+//            out << *static_cast<ElementLine*>(items[j]);
             break;
         }
         case ArrowItemType: {
-            out << *static_cast<ElementArrow*>(items[j]);
+//            out << *static_cast<ElementArrow*>(items[j]);
             break;
         }
         case EllipseItemType: {
-            out << *static_cast<ElementEllipse*>(items[j]);
+//            out << *static_cast<ElementEllipse*>(items[j]);
             break;
         }
         case RectItemType: {
-            out << *static_cast<ElementRect*>(items[j]);
+//            out << *static_cast<ElementRect*>(items[j]);
             break;
         }
         case PolygonItemType: {
-            out << *static_cast<ElementPolygon*>(items[j]);
+//            out << *static_cast<ElementPolygon*>(items[j]);
             break;
         }
         case TextItemType: {
-            out << *static_cast<ElementText*>(items[j]);
+//            out << *static_cast<ElementText*>(items[j]);
             break;
         }
         }
@@ -1063,31 +1088,22 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
 
 Element *GraphPage::createElement(const QString &internalType) {
 
-    if (internalType == "Arrow") {
-        return new ElementArrow();
+    QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
+    while(iter.hasNext())
+    {
+        iter.next();
+        QMapIterator<QString, IDrawApplicationPlugin*>  it(iter.value());
+        while(it.hasNext())
+        {
+            it.next();
+            IDrawApplicationPlugin *plugin = it.value();
+            if(plugin != nullptr && plugin->getElementIDString() == internalType) {
+                return plugin->createElement();
+            }
+        }
     }
 
-    if (internalType == "Ellipse") {
-        return new ElementEllipse();
-    }
-
-    if (internalType == "Line") {
-        return new ElementLine();
-    }
-
-    if (internalType == "Polygon") {
-        return new ElementPolygon();
-    }
-
-    if (internalType == "Rect") {
-        return new ElementRect();
-    }
-
-    if (internalType == "Text") {
-        return new ElementText();
-    }
-
-    return NULL;
+    return nullptr;
 }
 
 /**

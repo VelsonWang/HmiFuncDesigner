@@ -12,6 +12,19 @@ CONFIG += c++11
 TARGET = DrawApplication
 TEMPLATE = app
 
+DESTDIR = $$IDE_BIN_PATH
+
+CONFIG(debug, debug|release) { #debug
+    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
+    LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
+    LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
+} else { # release
+    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
+    LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
+    LIBS += -L$$IDE_LIBRARY_PATH -lHelper
+}
+
+
 SOURCES += \
     main.cpp \
     GraphPage.cpp \
@@ -26,15 +39,17 @@ SOURCES += \
     PreviewWindow.cpp \
     SaveStrategyDialog.cpp \
     GraphPageTreeView.cpp \
-    MainWindow.cpp
+    MainWindow.cpp \
+    ../Public/PubTool.cpp \
+    ../Public/Element.cpp \
+    ../Public/ElementGroup.cpp \
+    PluginManager.cpp
 
 HEADERS  += \
-    itemtypes.h \
     GraphPage.h \
     GraphPageManager.h \
     XmlGraphPageConfigWriter.h \
     UndoCommand.h \
-    DrawAppDefs.h \
     ElementLibraryWidget.h \
     ObjectsTreeView.h \
     ElementLibraryListWidget.h \
@@ -43,7 +58,13 @@ HEADERS  += \
     PreviewWindow.h \
     SaveStrategyDialog.h \
     GraphPageTreeView.h \
-    MainWindow.h
+    MainWindow.h \
+    ../Public/PublicDefine.h \
+    ../Public/PubTool.h \
+    ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
+    ../Public/Element.h \
+    ../Public/ElementGroup.h \
+    PluginManager.h
 
 FORMS    += \
     ElementLibraryWidget.ui \
@@ -56,6 +77,6 @@ RESOURCES += \
 
 RC_FILE = application.rc
 
-include(graphicselements/graphicselements.pri)
-include(propertyeditor/propertyeditor.pri)
+
+include(../propertyeditor/propertyeditor.pri)
 

@@ -3,7 +3,7 @@
 
 #include <QUndoCommand>
 #include "GraphPage.h"
-#include "graphicselements/Element.h"
+#include "Element.h"
 
 class GraphPage;
 

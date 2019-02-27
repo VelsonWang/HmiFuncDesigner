@@ -1,4 +1,4 @@
-#include "elementgroup.h"
+﻿#include "ElementGroup.h"
 #include <QPainter>
 #include <QCursor>
 

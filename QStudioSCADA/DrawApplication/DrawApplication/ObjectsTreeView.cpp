@@ -1,4 +1,5 @@
 ﻿#include "ObjectsTreeView.h"
+#include "Element.h"
 #include <QtDebug>
 
 ObjectsTreeView::ObjectsTreeView(QWidget *parent)

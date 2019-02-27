@@ -2,7 +2,7 @@
 #define SAVESTRATEGYDIALOG_H
 
 #include <QDialog>
-#include "DrawAppDefs.h"
+#include "PublicDefine.h"
 #include "ui_SaveStrategyDialog.h"
 
 class SaveStrategyDialog : public QDialog, public Ui::SaveStrategyDialog

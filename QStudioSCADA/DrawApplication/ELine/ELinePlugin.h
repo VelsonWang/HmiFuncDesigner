@@ -1,4 +1,4 @@
-#ifndef MODBUSRTU_H
+﻿#ifndef MODBUSRTU_H
 #define MODBUSRTU_H
 
 #include <QObject>
@@ -17,19 +17,21 @@ public:
     /////////////////////<plugin operation>////////////////////////////
 
     // 插件初始化
-    void Initialize() Q_DECL_OVERRIDE;
-    // 插件类型
-    QString GetPluginType() Q_DECL_OVERRIDE;
-    // 插件ID
-    tGraphType GetPluginID() Q_DECL_OVERRIDE;
+    void initialize() Q_DECL_OVERRIDE;
+    // 插件类型名称
+    QString getPluginTypeName() Q_DECL_OVERRIDE;
     // 插件名称
-    QString GetPluginName() Q_DECL_OVERRIDE;
+    QString getPluginName() Q_DECL_OVERRIDE;
     // 获取元素的图标
-    QIcon GetElementIcon() Q_DECL_OVERRIDE;
+    QIcon getElementIcon() Q_DECL_OVERRIDE;
     // 获取元素名称
-    QString GetElementName() Q_DECL_OVERRIDE;
+    QString getElementName() Q_DECL_OVERRIDE;
+    // 获取元素ID
+    int getElementID() Q_DECL_OVERRIDE;
+    // 获取元素ID String
+    QString getElementIDString() Q_DECL_OVERRIDE;
     // 创建元素
-    StdElement* CreateElement() Q_DECL_OVERRIDE;
+    Element* createElement() Q_DECL_OVERRIDE;
 
     /////////////////////<plugin operation>////////////////////////////
 

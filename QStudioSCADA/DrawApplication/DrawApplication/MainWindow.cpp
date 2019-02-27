@@ -1,12 +1,17 @@
 ﻿#include "MainWindow.h"
+#include "Helper.h"
 #include <QDebug>
 
-MainWindow::MainWindow(QWidget *parent) :
+MainWindow::MainWindow(const QString &projpath,
+                       const QString &graphPageName,
+                       QWidget *parent) :
     QMainWindow(parent),
     currentGraphPage(0),
     currentView(0),
     gridVisible(true),
-    currentGraphPageIndex(0)
+    currentGraphPageIndex(0),
+    projpath_(projpath),
+    graphPageName_(graphPageName)
 {
     setupUi(this);
 
@@ -21,8 +26,18 @@ MainWindow::MainWindow(QWidget *parent) :
     setWindowTitle(trUtf8("编辑器"));
     setWindowIcon(QIcon(":/images/application.png"));
 
-    connect(graphPageTabWidget_,SIGNAL(currentChanged(int)),SLOT(slotChangeGraphPage(int)));
+    connect(graphPageTabWidget_, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
+
+
+
 }
+
+
+MainWindow::~MainWindow() {
+
+
+}
+
 
 void MainWindow::initView() {
 
@@ -879,3 +894,10 @@ void MainWindow::saveImage() {
                                  trUtf8("文件无法保存"), QMessageBox::Ok);
     }
 }
+
+
+
+
+
+
+

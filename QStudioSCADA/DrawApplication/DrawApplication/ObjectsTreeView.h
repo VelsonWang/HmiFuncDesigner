@@ -3,7 +3,6 @@
 
 #include <QTreeWidget>
 #include <QGraphicsItem>
-#include "graphicselements/Element.h"
 
 class ObjectsTreeView : public QTreeWidget
 {

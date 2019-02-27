@@ -1,8 +1,8 @@
-#ifndef ELEMENTGROUP_H
+﻿#ifndef ELEMENTGROUP_H
 #define ELEMENTGROUP_H
 
 #include <QGraphicsItemGroup>
-#include "itemtypes.h"
+#include "PublicDefine.h"
 
 class ElementGroup : public QGraphicsItemGroup
 {

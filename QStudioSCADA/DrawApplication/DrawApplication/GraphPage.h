@@ -11,20 +11,14 @@
 #include <QMessageBox>
 #include <QClipboard>
 #include <QApplication>
-#include "graphicselements/elementline.h"
-#include "graphicselements/elementarrow.h"
-#include "graphicselements/elementrect.h"
-#include "graphicselements/elementellipse.h"
-#include "graphicselements/elementtext.h"
-#include "propertyeditor/propertymodel.h"
-#include "propertyeditor/emptyproperty.h"
-#include "propertyeditor/textproperty.h"
-#include "propertyeditor/colorproperty.h"
-#include "propertyeditor/integerproperty.h"
-#include "propertyeditor/enumproperty.h"
-#include "graphicselements/elementgroup.h"
-#include "graphicselements/elementpolygon.h"
+#include "propertymodel.h"
+#include "emptyproperty.h"
+#include "textproperty.h"
+#include "colorproperty.h"
+#include "integerproperty.h"
+#include "enumproperty.h"
 #include "UndoCommand.h"
+#include "Element.h"
 #include <QFile>
 
 class GraphPage : public QGraphicsScene

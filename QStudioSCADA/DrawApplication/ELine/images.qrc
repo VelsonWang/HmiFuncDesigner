@@ -1,5 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>images/toolline.png</file>
+        <file>images/lineitem.png</file>
     </qresource>
 </RCC>

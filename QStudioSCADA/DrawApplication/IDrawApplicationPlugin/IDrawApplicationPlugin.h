@@ -5,7 +5,7 @@
 
 #include <QStringList>
 #include <QIcon>
-#include "../Public/IElement.h"
+#include "../Public/Element.h"
 #include "../Public/PublicDefine.h"
 
 /*
@@ -17,19 +17,21 @@ public:
     virtual ~IDrawApplicationPlugin() {}
 
     // 插件初始化
-    virtual void Initialize() = 0;
-    // 插件类型
-    virtual QString GetPluginType() = 0;
-    // 插件ID
-    virtual tGraphType GetPluginID() = 0;
+    virtual void initialize() = 0;
+    // 插件类型名称
+    virtual QString getPluginTypeName() = 0;
     // 插件名称
-    virtual QString GetPluginName() = 0;
+    virtual QString getPluginName() = 0;
     // 获取元素的图标
-    virtual QIcon GetElementIcon() = 0;
+    virtual QIcon getElementIcon() = 0;
     // 获取元素名称
-    virtual QString GetElementName() = 0;
+    virtual QString getElementName() = 0;
+    // 获取元素ID
+    virtual int getElementID() = 0;
+    // 获取元素ID String
+    virtual QString getElementIDString() = 0;
     // 创建元素
-    virtual StdElement* CreateElement() = 0;
+    virtual Element* createElement() = 0;
 
 };
 

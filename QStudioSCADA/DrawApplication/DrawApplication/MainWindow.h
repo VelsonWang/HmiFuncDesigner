@@ -8,19 +8,24 @@
 #include "GraphPageTreeView.h"
 #include "ElementLibraryWidget.h"
 #include "GraphPage.h"
-#include "propertyeditor/propertymodel.h"
-#include "propertyeditor/propertytableview.h"
+#include "propertymodel.h"
+#include "propertytableview.h"
 #include "SaveStrategyDialog.h"
 #include "PreviewWindow.h"
 #include "GraphPageManager.h"
 #include "ui_MainWindow.h"
+
 
 class MainWindow : public QMainWindow, public Ui::MainWindow
 {
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(const QString &projpath,
+                        const QString &graphPageName,
+                        QWidget *parent = 0);
+    ~MainWindow();
+
     bool isGridVisible() const;
 
 protected:
@@ -46,6 +51,40 @@ private:
     void removeGraphPage(QGraphicsView *view);
     bool isGraphPageOpen(const QString &filename);
     bool createDocument(GraphPage *graphPage,QGraphicsView *view,const QString &filename);
+
+public slots:
+    void slotNewElementAdded();
+    void slotElementsDeleted();
+    void slotElementIdChanged();
+    void slotElementPropertyChanged();
+    void slotGraphPagePropertyChanged();
+
+private slots:
+    QGraphicsView *createTabView();
+    void slotShowGraphObj(bool);
+    void slotShowTreeObj(bool);
+    void slotShowPropEditor(bool);
+    void slotShowProjTree(bool);
+    void slotEditNew();
+    void slotEditOpen();
+    void slotSaveProject();
+    void slotSaveGraphPageAs();
+    void slotSaveGraphPage();
+    void slotExit();
+    void slotShowGrid(bool);
+    void slotShowLinear(bool);
+    void slotZoomIn();
+    void slotZoomOut();
+    void slotPreview();
+    void slotUpdateActions();
+    void slotChangeGraphPage(int);
+    void slotChangeGraphPageName();
+    void slotCloseGraphPage();
+    void slotCloseAll();
+
+private:
+    QString projpath_;
+    QString graphPageName_;
 
     QAction *actionShowGraphObj;
     QAction *actionShowTreeObj;
@@ -82,35 +121,7 @@ private:
     bool gridVisible;
     int currentGraphPageIndex;
 
-public slots:
-    void slotNewElementAdded();
-    void slotElementsDeleted();
-    void slotElementIdChanged();
-    void slotElementPropertyChanged();
-    void slotGraphPagePropertyChanged();
 
-private slots:
-    QGraphicsView *createTabView();
-    void slotShowGraphObj(bool);
-    void slotShowTreeObj(bool);
-    void slotShowPropEditor(bool);
-    void slotShowProjTree(bool);
-    void slotEditNew();
-    void slotEditOpen();
-    void slotSaveProject();
-    void slotSaveGraphPageAs();
-    void slotSaveGraphPage();
-    void slotExit();
-    void slotShowGrid(bool);
-    void slotShowLinear(bool);
-    void slotZoomIn();
-    void slotZoomOut();
-    void slotPreview();
-    void slotUpdateActions();
-    void slotChangeGraphPage(int);
-    void slotChangeGraphPageName();
-    void slotCloseGraphPage();
-    void slotCloseAll();
 };
 
 #endif // MAINWINDOW_H
