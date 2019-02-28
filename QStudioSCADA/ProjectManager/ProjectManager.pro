@@ -19,11 +19,6 @@ DESTDIR = $$IDE_BIN_PATH
 #Use the -Lpath command to add a path to the list of directories to search for libraries. 
 #Use -llibrary (dash, lower case L,library name) to add a reference to the actual library.
 
-#win32:LIBS += -lmywin32lib
-#macx:LIBS += -lmymacxlib
-#!win32:!macx:LIBS += -lmyunixlib
-#win32:debug:CONFIG += console
-
 #message(libout_path $$IDE_LIBRARY_PATH)
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
@@ -47,10 +42,6 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtils
 }
 
-UI_DIR=../../build-QStudioSCADA/ProjectManager/ui
-MOC_DIR=../../build-QStudioSCADA/ProjectManager/moc
-OBJECTS_DIR=../../build-QStudioSCADA/ProjectManager/obj
-RCC_DIR=../../build-QStudioSCADA/ProjectManager/rcc
 
 # debug: The project is being built in debug mode.
 # release: The project is being built in release mode.
@@ -58,13 +49,6 @@ RCC_DIR=../../build-QStudioSCADA/ProjectManager/rcc
 # macx: The project is being built in a Mac OS X environment.
 # unix (including Linux): The project is being built in a Unix environment.
 
-# win32 {
-# 	LIBS += -lmywin32lib
-# } else macx {
-# 	LIBS += -lmymacxlib
-# } else {
-# 	LIBS += -lmyunixlib
-# }
 
 SOURCES += main.cpp\
         MainWindow.cpp \

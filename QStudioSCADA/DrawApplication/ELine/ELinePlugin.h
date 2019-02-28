@@ -1,5 +1,5 @@
-﻿#ifndef MODBUSRTU_H
-#define MODBUSRTU_H
+﻿#ifndef ELINEPLUGIN_H
+#define ELINEPLUGIN_H
 
 #include <QObject>
 #include "../IDrawApplicationPlugin/IDrawApplicationPlugin.h"
@@ -39,4 +39,4 @@ public:
 
 };
 
-#endif // MODBUSRTU_H
+#endif // ELINEPLUGIN_H

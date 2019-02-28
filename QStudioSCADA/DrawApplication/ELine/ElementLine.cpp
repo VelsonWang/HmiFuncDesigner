@@ -370,6 +370,61 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
     updatePropertyModel();
 }
 
+void ElementLine::writeData(QDataStream &out) {
+
+    out << this->elementId
+        << this->x()
+        << this->y()
+        << this->zValue()
+        << this->elementWidth
+        << this->elementHeight
+        << this->backgroundColor
+        << this->borderWidth
+        << this->elemAngle
+        << this->block
+        << this->indicationRule;
+}
+
+void ElementLine::readData(QDataStream &in) {
+
+    QString id;
+    qreal xpos;
+    qreal ypos;
+    qreal zvalue;
+    int width;
+    int height;
+    QColor backColor;
+    int borderWidth;
+    qreal angle;
+    bool block;
+    QString rule;
+
+    in >> id
+       >> xpos
+       >> ypos
+       >> zvalue
+       >> width
+       >> height
+       >> backColor
+       >> borderWidth
+       >> angle
+       >> block
+       >> rule;
+
+    this->setElementId(id);
+    this->setElementXPos(xpos);
+    this->setElementYPos(ypos);
+    this->setElementZValue(zvalue);
+    this->setElementWidth(width);
+    this->setElementHeight(height);
+    this->backgroundColor = backColor;
+    this->borderWidth = borderWidth;
+    this->setAngle(angle);
+    this->block = block;
+    this->setIndicationRule(rule);
+    this->updateBoundingElement();
+    this->updatePropertyModel();
+}
 
 QDataStream &operator<<(QDataStream &out,const ElementLine &line) {
 

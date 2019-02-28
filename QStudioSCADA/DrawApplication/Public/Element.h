@@ -37,6 +37,9 @@ public:
     virtual void addNodePoint();
     virtual void removeNodePoint();
 
+    virtual void writeData(QDataStream &out) = 0;
+    virtual void readData(QDataStream &in) = 0;
+
     /** Properties*/
     void setElementId(const QString &);
     QString getElementId() const;

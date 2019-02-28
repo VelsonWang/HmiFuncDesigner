@@ -539,8 +539,8 @@ void GraphPage::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
 
 void GraphPage::connectItem(Element *item) {
 
-    connect(item,SIGNAL(elementMoved(QPointF)),SLOT(slotElementMoved(QPointF)));
-    connect(item,SIGNAL(elementResized(int,int,QPointF)),SLOT(slotElementResized(int,int,QPointF)));
+    connect(item, SIGNAL(elementMoved(QPointF)), SLOT(slotElementMoved(QPointF)));
+    connect(item, SIGNAL(elementResized(int,int,QPointF)), SLOT(slotElementResized(int,int,QPointF)));
 }
 
 void GraphPage::createItems(const QString &typeId, QPointF position) {
@@ -777,71 +777,23 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
     for (int i = 0; i < itemsCount; i++) {
 
         in >> objectType;
-#if 0
-        QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
-        while(iter.hasNext())
-        {
+
+        QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*>> iter(PluginManager::getInstance()->plugins_);
+        while(iter.hasNext()) {
             iter.next();
-            QMapIterator<QString, IDrawApplicationPlugin*>  it(iter.value());
-            while(it.hasNext())
-            {
+            QMapIterator<QString, IDrawApplicationPlugin*> it(iter.value());
+            while(it.hasNext()) {
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
 
                     Element *ele = plugin->createElement();
-                    ele->setClickPosition(position);
-                    last = ele;
+                    ele->readData(in);
                     connectItem(ele);
+                    copyList.insert(copyList.end(), ele);
                 }
             }
         }
-#endif
-        switch (objectType) {
-        case LineItemType: {
-//            ElementLine *line = new ElementLine();
-//            in >> *line;
-//            connectItem(line);
-//            copyList.insert(copyList.end(),line);
-            break;
-        }
-        case ArrowItemType: {
-//            ElementArrow *arrow = new ElementArrow();
-//            in >> *arrow;
-//            connectItem(arrow);
-//            copyList.insert(copyList.end(),arrow);
-            break;
-        }
-        case EllipseItemType: {
-//            ElementEllipse *ellipse = new ElementEllipse;
-//            in >> *ellipse;
-//            connectItem(ellipse);
-//            copyList.insert(copyList.end(),ellipse);
-            break;
-        }
-        case RectItemType: {
-//            ElementRect *rect = new ElementRect();
-//            in >> *rect;
-//            connectItem(rect);
-//            copyList.insert(copyList.end(),rect);
-            break;
-        }
-        case PolygonItemType: {
-//            ElementPolygon *polygon = new ElementPolygon();
-//            in >> *polygon;
-//            connectItem(polygon);
-//            copyList.insert(copyList.end(),polygon);
-            break;
-        }
-        case TextItemType: {
-//            ElementText *text = new ElementText();
-//            in >> *text;
-//            connectItem(text);
-//            copyList.insert(copyList.end(),text);
-            break;
-        }
-        }
-
     } //for
 
     foreach (QGraphicsItem *item,copyList) {
@@ -864,53 +816,19 @@ void GraphPage::writeItems(QDataStream &out, const QList<QGraphicsItem *> &items
 
         out << type;
 
-#if 0
         QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
-        while(iter.hasNext())
-        {
+        while(iter.hasNext()) {
             iter.next();
             QMapIterator<QString, IDrawApplicationPlugin*>  it(iter.value());
-            while(it.hasNext())
-            {
+            while(it.hasNext()) {
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
-                if(plugin != nullptr && plugin->getElementID() == objectType) {
-
-                    Element *ele = plugin->createElement();
-                    ele->setClickPosition(position);
-                    last = ele;
-                    connectItem(ele);
+                if(plugin != nullptr && plugin->getElementID() == type) {
+                    Element *ele = static_cast<Element *>(items[j]);
+                    ele->writeData(out);
                 }
             }
         }
-#endif
-        switch (type) {
-        case LineItemType: {
-//            out << *static_cast<ElementLine*>(items[j]);
-            break;
-        }
-        case ArrowItemType: {
-//            out << *static_cast<ElementArrow*>(items[j]);
-            break;
-        }
-        case EllipseItemType: {
-//            out << *static_cast<ElementEllipse*>(items[j]);
-            break;
-        }
-        case RectItemType: {
-//            out << *static_cast<ElementRect*>(items[j]);
-            break;
-        }
-        case PolygonItemType: {
-//            out << *static_cast<ElementPolygon*>(items[j]);
-            break;
-        }
-        case TextItemType: {
-//            out << *static_cast<ElementText*>(items[j]);
-            break;
-        }
-        }
-
     }
 }
 

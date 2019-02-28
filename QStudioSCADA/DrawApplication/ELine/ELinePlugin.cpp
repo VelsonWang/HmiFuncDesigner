@@ -73,7 +73,7 @@ int ELinePlugin::getElementID()
     return LineItemType;
 }
 
-// 获取元素ID String
+
 /**
  * @brief ELinePlugin::getElementIDString
  * @details 获取元素ID String

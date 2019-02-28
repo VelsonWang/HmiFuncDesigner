@@ -19,6 +19,9 @@ public:
     void writeAsXml(QXmlStreamWriter &);
     void readFromXml(const QXmlStreamAttributes &);
 
+    void writeData(QDataStream &out);
+    void readData(QDataStream &in);
+
     enum {Type = LineItemType};
     int type() const {
         return Type;

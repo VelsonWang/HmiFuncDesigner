@@ -29,11 +29,6 @@ else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lHelper
 }
 
-UI_DIR=../../build-QStudioSCADA/RtdbView/ui
-MOC_DIR=../../build-QStudioSCADA/RtdbView/moc
-OBJECTS_DIR=../../build-QStudioSCADA/RtdbView/obj
-RCC_DIR=../../build-QStudioSCADA/RtdbView/rcc
-
 SOURCES += main.cpp\
         MainWindow.cpp \
     MdiChildWindow.cpp \
