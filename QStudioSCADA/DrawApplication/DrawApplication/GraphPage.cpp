@@ -846,7 +846,7 @@ void GraphPage::saveAsBinary(const QString &filename) {
     QFileInfo fi(filename);
 
     if (GraphPageId != fi.baseName()) {
-        QString newName = fi.absolutePath() + "/" + GraphPageId + ".mdGraphPagebin";
+        QString newName = fi.absolutePath() + "/" + GraphPageId + ".drwb";
         file.rename(newName);
     }
 
@@ -893,7 +893,7 @@ void GraphPage::saveAsXML(const QString &filename) {
     QFileInfo fi(filename);
 
     if (GraphPageId != fi.baseName()) {
-        QString newName = fi.absolutePath() + "/" + GraphPageId + ".mdGraphPagexml";
+        QString newName = fi.absolutePath() + "/" + GraphPageId + ".drwx";
         file.rename(newName);
     }
 
@@ -1106,9 +1106,9 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
 
 void GraphPage::slotSaveAsLibrary() {
 
-    QString filename = QFileDialog::getSaveFileName(0,trUtf8("Save designer library"),
+    QString filename = QFileDialog::getSaveFileName(0,trUtf8("Save graph library"),
                                                     QString("."),
-                                                    trUtf8("Library (*.mdlib)"));
+                                                    trUtf8("Library (*.drwlib)"));
 
     QFile file(filename);
 

@@ -28,8 +28,6 @@ MainWindow::MainWindow(const QString &projpath,
 
     connect(graphPageTabWidget_, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
 
-
-
 }
 
 
@@ -525,18 +523,19 @@ void MainWindow::slotEditOpen() {
 
     const QString &filename = QFileDialog::getOpenFileName(this,
                                                            trUtf8("Open"),
-                                                           ".", trUtf8("Mnemo designer project (*.mdproj);;"
-                                                                       "Mnemo designer GraphPage Bin (*.mdGraphPagebin);;"
-                                                                       "Mnemo designer GraphPage XML (*.mdGraphPagexml)"));
+                                                           ".",
+                                                           trUtf8("GraphPage (*.drw);;"
+                                                                  "GraphPage Bin (*.drwb);;"
+                                                                  "GraphPage XML (*.drwx)"));
     if (filename.isEmpty()) {
         return;
     }
 
-    if (filename.toLower().endsWith(".mdproj")) {
+    if (filename.toLower().endsWith(".drw")) {
         loadProject(filename);
     }
 
-    if (filename.toLower().endsWith(".mdGraphPagebin")) {
+    if (filename.toLower().endsWith(".drwb")) {
         //refactor it!!!
 
         QGraphicsView *view = createTabView();
@@ -553,7 +552,7 @@ void MainWindow::slotEditOpen() {
         graphPage->loadAsBinary(filename);
     }
 
-    if (filename.toLower().endsWith(".mdGraphPagexml")) {
+    if (filename.toLower().endsWith(".drwx")) {
 
         QGraphicsView *view = createTabView();
 
@@ -646,18 +645,22 @@ void MainWindow::loadProject(const QString &filename) {
 
 void MainWindow::slotSaveProject() {
 
-    int r = QMessageBox::information(this,trUtf8("保存"),trUtf8("保存画面?"),
+    int r = QMessageBox::information(this,
+                                     trUtf8("保存"),
+                                     trUtf8("保存画面?"),
                                      QMessageBox::Ok|QMessageBox::Cancel);
 
     if (r == QMessageBox::Ok) {
-        QString fileName = QFileDialog::getSaveFileName(this,trUtf8("Save as"),
-                                                        ".",trUtf8("Mnemo designer (*.mdproj)"));
+        QString fileName = QFileDialog::getSaveFileName(this,
+                                                        trUtf8("Save as"),
+                                                        ".",
+                                                        trUtf8("GraphPage (*.drw)"));
         if (fileName.isEmpty()) {
             return;
         }
 
-        if (!fileName.toLower().endsWith(".mdproj")) {
-            fileName += ".mdproj";
+        if (!fileName.toLower().endsWith(".drw")) {
+            fileName += ".drw";
         }
 
         saveProject(fileName);
@@ -672,7 +675,7 @@ void MainWindow::saveProject(const QString &filename) {
     QFile file(filename);
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(this,trUtf8("错误"),trUtf8("无法保存文件"),
+        QMessageBox::information(this, trUtf8("错误"), trUtf8("无法保存文件"),
                                  QMessageBox::Ok);
     }
 
@@ -705,17 +708,19 @@ void MainWindow::slotSaveGraphPageAs() {
         switch (saveAsDialog.getLastChoose()) {
 
             case SAVE_XML: {
-                    QString filename = QFileDialog::getSaveFileName(this,trUtf8("Save as"),
-                                                                QString("./%1").arg(currentGraphPage->getGraphPageId()),
-                                                                trUtf8("XML(*.mdGraphPagexml)"));
+                    QString filename = QFileDialog::getSaveFileName(this,
+                                                                    trUtf8("Save as"),
+                                                                    QString("./%1").arg(currentGraphPage->getGraphPageId()),
+                                                                    trUtf8("GraphPage (*.drwx)"));
                     currentGraphPage->setFileName(filename);
                     currentGraphPage->saveAsXML(filename);
                     break;
                 }
             case SAVE_BINARY: {
-                    QString filename = QFileDialog::getSaveFileName(this,trUtf8("Save as"),
-                                                                QString("./%1").arg(currentGraphPage->getGraphPageId()),
-                                                                trUtf8("Binary(*.mdGraphPagebin)"));
+                    QString filename = QFileDialog::getSaveFileName(this,
+                                                                    trUtf8("Save as"),
+                                                                    QString("./%1").arg(currentGraphPage->getGraphPageId()),
+                                                                    trUtf8("GraphPage(*.drwb)"));
                     currentGraphPage->setFileName(filename);
                     currentGraphPage->saveAsBinary(filename);
                     break;
@@ -729,9 +734,10 @@ void MainWindow::slotSaveGraphPageAs() {
 
 QString MainWindow::getFileName() {
 
-    QString filename = QFileDialog::getSaveFileName(this,trUtf8("Save as"),
+    QString filename = QFileDialog::getSaveFileName(this,
+                                                    trUtf8("Save as"),
                                                     QString("./%1").arg(currentGraphPage->getGraphPageId()),
-                                                    trUtf8("Binary(*.mdGraphPagebin);;XML(*.mdGraphPagexml)"));
+                                                    trUtf8("GraphPage(*.drwb);;XML(*.drwx)"));
     return filename;
 }
 
@@ -761,13 +767,13 @@ void MainWindow::slotSaveGraphPage() {
 
         QFileInfo fi(fileName);
 
-        if (fileName.toLower().endsWith(".mdGraphPagexml")) {
+        if (fileName.toLower().endsWith(".drwx")) {
             currentGraphPage->setFileName(fileName);
             updateGraphPageViewInfo(fileName);
             currentGraphPage->saveAsXML(fileName);
         }
 
-        if (fileName.toLower().endsWith(".mdGraphPagebin")) {
+        if (fileName.toLower().endsWith(".drwb")) {
             currentGraphPage->setFileName(fileName);
             updateGraphPageViewInfo(fileName);
             currentGraphPage->saveAsBinary(fileName);

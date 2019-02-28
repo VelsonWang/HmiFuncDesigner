@@ -50,8 +50,6 @@ private slots:
     void DeleteDrawPage();
     void CopyDrawPage();
     void PasteDrawPage();
-
-
     void on_listViewDrawPage_doubleClicked(const QModelIndex &index);
 
 private:

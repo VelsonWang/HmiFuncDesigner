@@ -283,6 +283,11 @@ void DrawPageWin::ListViewUpdate()
 {
     pListDrawPageModel->clear();
     ListViewUISetting();
+
+    QStandardItem *pNewWin = new QStandardItem(QIcon(":/images/drawexec.png"), tr("新建画面"));
+    pNewWin->setEditable(false);
+    pListDrawPageModel->appendRow(pNewWin);
+
     for(int i=0; i<this->m_DrawList.count(); i++)
     {
         QStandardItem *pDrawPage = new QStandardItem(QIcon(":/images/drawexec.png"), this->m_DrawList.at(i));
@@ -299,6 +304,11 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
 
     if(item == NULL)
         return;
+
+    if(item->text() == tr("新建画面")) {
+        NewDrawPage();
+        return;
+    }
 
     QString fileDrawApplication = "";
 #ifdef Q_OS_WIN
