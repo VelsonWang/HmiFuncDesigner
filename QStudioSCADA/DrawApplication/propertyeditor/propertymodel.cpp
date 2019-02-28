@@ -14,7 +14,7 @@ void PropertyModel::addProperty(Property *prop) {
         return;
     }
 
-    beginInsertRows(QModelIndex(),propsList.size(),propsList.size());
+    beginInsertRows(QModelIndex(), propsList.size(), propsList.size());
     propsList.append(prop);
     endInsertRows();
 }

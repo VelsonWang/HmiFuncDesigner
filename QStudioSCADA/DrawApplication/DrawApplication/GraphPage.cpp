@@ -522,14 +522,22 @@ void GraphPage::dragMoveEvent(QGraphicsSceneDragDropEvent *event) {
     }
 }
 
+void GraphPage::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+
+    QGraphicsScene::mousePressEvent(event);
+
+    if (!itemAt(event->scenePos(), QTransform())) {
+        fillGraphPagePropertyModel();
+    }
+}
+
 void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
 
-    if (!itemAt(event->scenePos(),QTransform())) {
-        fillGraphPagePropertyModel();
-        return;
-    }
+    QGraphicsScene::mouseDoubleClickEvent(event);
 
-    return;
+    if (!itemAt(event->scenePos(), QTransform())) {
+        fillGraphPagePropertyModel();
+    }
 }
 
 void GraphPage::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {

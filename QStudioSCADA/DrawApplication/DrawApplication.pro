@@ -1,7 +1,5 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    ELine \
-    EArrow \
-    EEllipse \
+    Plugins \
     DrawApplication

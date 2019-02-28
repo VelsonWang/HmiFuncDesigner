@@ -77,7 +77,7 @@ void MainWindow::createActions() {
     actionShowPropEditor->setChecked(true);
     connect(actionShowPropEditor,SIGNAL(triggered(bool)),SLOT(slotShowPropEditor(bool)));
 
-    actionShowProjTree = new QAction(trUtf8("项目树"),this);
+    actionShowProjTree = new QAction(trUtf8("画面树"),this);
     actionShowProjTree->setCheckable(true);
     actionShowProjTree->setChecked(true);
     connect(actionShowProjTree,SIGNAL(triggered(bool)),SLOT(slotShowProjTree(bool)));
@@ -86,11 +86,11 @@ void MainWindow::createActions() {
     actionNew->setShortcut(QString("Ctrl+N"));
     connect(actionNew,SIGNAL(triggered()),SLOT(slotEditNew()));
 
-    actionOpen = new QAction(QIcon(":/images/fileopen.png"),trUtf8("打开一个项目"),this);
+    actionOpen = new QAction(QIcon(":/images/fileopen.png"),trUtf8("打开"),this);
     actionOpen->setShortcut(QString("Ctrl+O"));
     connect(actionOpen,SIGNAL(triggered()),SLOT(slotEditOpen()));
 
-    actionSaveProject = new QAction(QIcon(":/images/filesave.png"),trUtf8("保存项目"),this);
+    actionSaveProject = new QAction(QIcon(":/images/filesave.png"),trUtf8("保存"),this);
     connect(actionSaveProject,SIGNAL(triggered()),SLOT(slotSaveProject()));
 
     actionSaveGraphPageAs = new QAction(trUtf8("另存为"),this);
@@ -646,7 +646,7 @@ void MainWindow::loadProject(const QString &filename) {
 
 void MainWindow::slotSaveProject() {
 
-    int r = QMessageBox::information(this,trUtf8("保存"),trUtf8("保存这个项目?"),
+    int r = QMessageBox::information(this,trUtf8("保存"),trUtf8("保存画面?"),
                                      QMessageBox::Ok|QMessageBox::Cancel);
 
     if (r == QMessageBox::Ok) {
