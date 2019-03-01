@@ -1,5 +1,5 @@
 ﻿#include "DatabaseHelper.h"
-#include "log4qt/logger.h"
+#include "Log.h"
 
 
 DatabaseHelper::DatabaseHelper(const QString &dbname,
@@ -30,8 +30,7 @@ bool DatabaseHelper::openDatabase()
 			db = QSqlDatabase::addDatabase("QMYSQL");
             if(!db.open(user_, pwd_))
             {
-                Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-                log->error(QString("Open Database Failed!"));
+                Log4Error(QString("Open Database Failed!"));
 				return false;
 			}
 			db.exec("set names 'utf-8'");
@@ -43,8 +42,7 @@ bool DatabaseHelper::openDatabase()
             db.setDatabaseName(name_);
             if(!db.open())
             {
-                Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-                log->error(QString("Open Database Failed!"));
+                Log4Error(QString("Open Database Failed!"));
 				return false;
 			}
         }
@@ -55,8 +53,7 @@ bool DatabaseHelper::openDatabase()
     }
     catch(...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("Open Database Failed Exception!"));
+        Log4Error(QString("Open Database Failed Exception!"));
         return false;
 	}
 	return true;
@@ -92,8 +89,7 @@ bool DatabaseHelper::isOpenDatabase()
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("Open Database: %1 Failed Exception!").arg(name_));
+        Log4Error(QString("Open Database: %1 Failed Exception!").arg(name_));
 		return false;
 	}
 	return ret;
@@ -109,8 +105,7 @@ bool DatabaseHelper::createDatabase()
 		{
             if(!query.exec(QString("create database %1").arg(name_)))
 			{
-                Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-                log->error(QString("Create Database: %1 Failed!").arg(name_));
+                Log4Error(QString("Create Database: %1 Failed!").arg(name_));
 				return false;
 			}
 		}
@@ -118,8 +113,7 @@ bool DatabaseHelper::createDatabase()
 	}
 	catch (...)
 	{
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("Create Database: %1 Failed Exception!").arg(name_));
+        Log4Error(QString("Create Database: %1 Failed Exception!").arg(name_));
 		return false;
 	}
 	return true;
@@ -137,8 +131,7 @@ int DatabaseHelper::createTable(QString table,
     
     if(table.isEmpty() || count == 0 || count != typeList.count())
 	{
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("create table: %1 failed!").arg(table));
+        Log4Error(QString("create table: %1 failed!").arg(table));
         return 0;
 	}
 
@@ -169,8 +162,7 @@ int DatabaseHelper::createTable(QString table,
 
         if(!query.exec(QString("create table %1(%2)").arg(table,key)))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("create table: %1 failed! deatil: %2!").arg(table).arg(query.lastError().text()));
+            Log4Error(QString("create table: %1 failed! deatil: %2!").arg(table).arg(query.lastError().text()));
             return 0;
         }
         return 1;
@@ -206,8 +198,7 @@ int DatabaseHelper::createTable(QString table,
             {
                 if(!query.exec(QString("alter table %1 add column %2 %3").arg(table,fieldList.at(i),typeList.at(i))))
                 {
-                    Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-                    log->error(QString("alter table: %1 failed! deatil: Failed or Exception").arg(table));
+                    Log4Error(QString("alter table: %1 failed! deatil: Failed or Exception").arg(table));
                     return 0;
                 }
                 ret = 2;
@@ -217,8 +208,7 @@ int DatabaseHelper::createTable(QString table,
 			{
 				if(!query.exec(QString("alter table %1 change %2 %3 %4").arg(table,oldFieldList.at(pos),fieldList.at(i),typeList.at(i))))
 				{
-                    Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-                    log->error(QString("alter table: %1 failed! deatil: Failed or Exception").arg(table));
+                    Log4Error(QString("alter table: %1 failed! deatil: Failed or Exception").arg(table));
 					return 0;
 				}
 				ret = 3;
@@ -278,8 +268,7 @@ bool DatabaseHelper::getRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("get record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("get record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -293,8 +282,7 @@ bool DatabaseHelper::getRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("get record: %1 failed! Exception: %2")
+        Log4Error(QString("get record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -322,8 +310,7 @@ bool DatabaseHelper::getRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("get record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("get record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -335,8 +322,7 @@ bool DatabaseHelper::getRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("get record: %1 failed! Exception: %2")
+        Log4Error(QString("get record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -364,8 +350,7 @@ bool DatabaseHelper::getRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("get record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("get record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -377,8 +362,7 @@ bool DatabaseHelper::getRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("get record: %1 failed! Exception: %2")
+        Log4Error(QString("get record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -413,8 +397,7 @@ bool DatabaseHelper::getRecord(const QString &table,
 	{
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("get record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("get record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -434,8 +417,7 @@ bool DatabaseHelper::getRecord(const QString &table,
 	}
 	catch (...)
 	{
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("get record: %1 failed! Exception: %2")
+        Log4Error(QString("get record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -460,8 +442,7 @@ bool DatabaseHelper::setRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("set record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("set record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -470,8 +451,7 @@ bool DatabaseHelper::setRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("set record: %1 failed! Exception: %2")
+        Log4Error(QString("set record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -491,8 +471,7 @@ bool DatabaseHelper::setRecord(const QString &table,
     count = keyList.count();
     if(!count || count != valueList.count())
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("set record: %1 failed! keylist.count != valuelist.count").arg(table));
+        Log4Error(QString("set record: %1 failed! keylist.count != valuelist.count").arg(table));
         return false;
     }
 
@@ -508,8 +487,7 @@ bool DatabaseHelper::setRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("set record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("set record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -518,8 +496,7 @@ bool DatabaseHelper::setRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("set record: %1 failed! Exception: %2")
+        Log4Error(QString("set record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -539,8 +516,7 @@ bool DatabaseHelper::insertRecord(const QString &table,
     count = keyList.count();
     if(!count || count != valueList.count())
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("insert record: %1 failed! keylist.count != valuelist.count").arg(table));
+        Log4Error(QString("insert record: %1 failed! keylist.count != valuelist.count").arg(table));
         return false;
     }
 
@@ -560,8 +536,7 @@ bool DatabaseHelper::insertRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("insert record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("insert record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -570,8 +545,7 @@ bool DatabaseHelper::insertRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("insert record: %1 failed! Exception: %2")
+        Log4Error(QString("insert record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -588,8 +562,7 @@ bool DatabaseHelper::insertRecord(const QString &table,
     QString value,sql;
     if(key.isEmpty() || !valueList.count())
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("insert record: %1 failed! keylist.count != valuelist.count").arg(table));
+        Log4Error(QString("insert record: %1 failed! keylist.count != valuelist.count").arg(table));
         return false;
     }
 
@@ -608,8 +581,7 @@ bool DatabaseHelper::insertRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("insert record: %1 failed! %2 ,error: %3!")
+            Log4Error(QString("insert record: %1 failed! %2 ,error: %3!")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -618,8 +590,7 @@ bool DatabaseHelper::insertRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("insert record: %1 failed! Exception: %2")
+        Log4Error(QString("insert record: %1 failed! Exception: %2")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -636,8 +607,7 @@ bool DatabaseHelper::copyRecord(const QString &tableFrom,
     QString sql;
     if(tableFrom.isEmpty() || tableTo.isEmpty())
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("copy record: form %1 to %2 failed!").arg(tableFrom).arg(tableTo));
+        Log4Error(QString("copy record: form %1 to %2 failed!").arg(tableFrom).arg(tableTo));
         return false;
     }
 
@@ -650,8 +620,7 @@ bool DatabaseHelper::copyRecord(const QString &tableFrom,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("copy record: form %1 to %2 failed! %3 ,error: %4!")
+            Log4Error(QString("copy record: form %1 to %2 failed! %3 ,error: %4!")
                        .arg(tableFrom)
                        .arg(tableTo)
                        .arg(sql)
@@ -661,8 +630,7 @@ bool DatabaseHelper::copyRecord(const QString &tableFrom,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("copy record: form %1 to %2 failed! Exception: %3")
+        Log4Error(QString("copy record: form %1 to %2 failed! Exception: %3")
                    .arg(tableFrom)
                    .arg(tableTo)
                    .arg(sql));
@@ -681,8 +649,7 @@ bool DatabaseHelper::insertOrUpdateRecord(const QString &table,
 
     if(!count || count != valueList.count())
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("insert record to %1 failed! keylist.count != valuelist.count").arg(table));
+        Log4Error(QString("insert record to %1 failed! keylist.count != valuelist.count").arg(table));
         return false;
     }
 
@@ -714,8 +681,7 @@ bool DatabaseHelper::insertOrUpdateRecord(const QString &table,
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("insert record to %1 failed! %2, error: %3")
+            Log4Error(QString("insert record to %1 failed! %2, error: %3")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -724,8 +690,7 @@ bool DatabaseHelper::insertOrUpdateRecord(const QString &table,
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("insert record to %1 failed! %2, Exception")
+        Log4Error(QString("insert record to %1 failed! %2, Exception")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -745,8 +710,7 @@ bool DatabaseHelper::deleteRecord(const QString &table, const QString &expr)
     {
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("delete record from %1 failed! %2, error: %3")
+            Log4Error(QString("delete record from %1 failed! %2, error: %3")
                        .arg(table)
                        .arg(sql)
                        .arg(query.lastError().text()));
@@ -755,8 +719,7 @@ bool DatabaseHelper::deleteRecord(const QString &table, const QString &expr)
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("delete record to %1 failed! %2, Exception")
+        Log4Error(QString("delete record to %1 failed! %2, Exception")
                    .arg(table)
                    .arg(sql));
         return false;
@@ -795,13 +758,11 @@ void DatabaseHelper::excSQL(const QString& sql, QList<QStringList>& result)
 
     try
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->info(QString("DB sql:%1").arg(sql));
+        Log4Info(QString("DB sql:%1").arg(sql));
 
         if(!query.exec(sql))
         {
-            Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-            log->error(QString("sql execute fail:(%1) sql:%2")
+            Log4Error(QString("sql execute fail:(%1) sql:%2")
                        .arg(query.lastError().text())
                        .arg(sql));
         }
@@ -820,8 +781,7 @@ void DatabaseHelper::excSQL(const QString& sql, QList<QStringList>& result)
     }
     catch (...)
     {
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("DatabaseHelper");
-        log->error(QString("sql execute exception:(%1) sql:%2")
+        Log4Error(QString("sql execute exception:(%1) sql:%2")
                    .arg(query.lastError().text())
                    .arg(sql));
     }

@@ -5,19 +5,14 @@
 #include "public.h"
 #include "TimerTask.h"
 #include "httpserver.h"
+#include "VersionInfo.h"
+#include "Log.h"
 #include <QDebug>
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
 #include <iostream>
 
-
-#include "log4qt/consoleappender.h"
-#include "log4qt/logger.h"
-#include "log4qt/logmanager.h"
-#include "log4qt/ttcclayout.h"
-#include "log4qt/propertyconfigurator.h"
-#include "log4qt/basicconfigurator.h"
 
 #ifndef Q_OS_WIN
 #include "eventdispatcher_libev/eventdispatcher_libev.h"
@@ -56,6 +51,52 @@ void customMessageHandler(QtMsgType type, const QMessageLogContext &context,cons
         ts << txt << endl;
 }
 
+QString getSystemInfo() {
+
+    QString s = "\n";
+    s.append(QString("Build:%1 Version:%2\n").arg(GIT_HASH).arg(VER_FILE));
+    s.append("System Info: \n");
+
+    QTextStream out(&s);
+
+    QSysInfo systemInfo;
+#ifdef Q_OS_WIN
+    out << " Windows Version:          " << systemInfo.windowsVersion()         << endl;
+#endif
+    out << " Build Cpu Architecture:   " << systemInfo.buildCpuArchitecture()   << endl;
+    out << " Current Cpu Architecture: " << systemInfo.currentCpuArchitecture() << endl;
+    out << " Kernel Type:              " << systemInfo.kernelType()             << endl;
+    out << " Kernel Version:           " << systemInfo.kernelVersion()          << endl;
+    out << " Machine Host Name:        " << systemInfo.machineHostName()        << endl;
+    out << " Product Type:             " << systemInfo.productType()            << endl;
+    out << " Product Version:          " << systemInfo.productVersion()         << endl;
+    out << " Byte Order:               " << systemInfo.buildAbi()               << endl;
+    out << " Pretty ProductName:       " << systemInfo.prettyProductName()      << endl;
+
+    // root
+    QStorageInfo storage = QStorageInfo::root();
+
+    out << storage.rootPath()                                             << endl;
+    out << "isReadOnly:" << storage.isReadOnly()                          << endl;
+    out << "name:" << storage.name()                                      << endl;
+    out << "fileSystemType:" << storage.fileSystemType()                  << endl;
+    out << "size:" << storage.bytesTotal()/1000/1000 << "MB"              << endl;
+    out << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB" << endl;
+
+    // current volumn
+    QStorageInfo storageCurrent(qApp->applicationDirPath());
+
+    out << qApp->applicationDirPath()                                            << endl;
+    out << storageCurrent.rootPath()                                             << endl;
+    out << "isReadOnly:" << storageCurrent.isReadOnly()                          << endl;
+    out << "name:" << storageCurrent.name()                                      << endl;
+    out << "fileSystemType:" << storageCurrent.fileSystemType()                  << endl;
+    out << "size:" << storageCurrent.bytesTotal()/1000/1000 << "MB"              << endl;
+    out << "availableSize:" << storageCurrent.bytesAvailable()/1000/1000 << "MB" << endl;
+
+    return s;
+}
+
 
 int main(int argc, char *argv[])
 {
@@ -68,11 +109,8 @@ int main(int argc, char *argv[])
     QApplication  a(argc, argv);
     //std::cout << "???" << std::endl;
 
-    Log4Qt::BasicConfigurator::configure();
-    Log4Qt::PropertyConfigurator::configure(QCoreApplication::applicationDirPath() + "/log4j.properties");
-
-    Log4Qt::Logger *a1 = Log4Qt::Logger::logger("Run_Logger");
-    a1->info("start SCADARunTime!");
+    Log4Info(getSystemInfo());
+    Log4Info("start SCADARunTime!");
 
     HttpServer server;
     server.init(60000);

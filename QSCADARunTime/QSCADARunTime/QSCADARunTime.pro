@@ -35,6 +35,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor/Modbus \
                Event \
                Script \
+               Log
 
 SOURCES += \
         qextserial/qextserialport.cpp \
@@ -60,7 +61,8 @@ SOURCES += \
     DB/DatabaseHelper.cpp \
     SysRuntimeEvent.cpp \
     Vendor/DataPack.cpp \
-    Vendor/Modbus/Modbus.cpp
+    Vendor/Modbus/Modbus.cpp \
+    Log/Log.cpp
 
 
 HEADERS  += \
@@ -92,7 +94,9 @@ HEADERS  += \
     SysRuntimeEvent.h \
     Singleton.h \
     Vendor/DataPack.h \
-    Vendor/Modbus/Modbus.h
+    Vendor/Modbus/Modbus.h \
+    Log/Log.h \
+    VersionInfo.h
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp
