@@ -1,4 +1,4 @@
-#ifndef CHILDBASE_H
+﻿#ifndef CHILDBASE_H
 #define CHILDBASE_H
 
 #include <QWidget>
@@ -25,9 +25,9 @@ public:
     // 保存文件
     virtual void save() = 0;
     // 显示大图标
-    virtual void ShowLargeIcon() = 0;
+    virtual void showLargeIcon() = 0;
     // 显示小图标
-    virtual void ShowSmallIcon() = 0;
+    virtual void showSmallIcon() = 0;
 
 public:
     QString m_strProjectName;

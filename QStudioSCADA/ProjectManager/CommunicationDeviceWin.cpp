@@ -3,6 +3,7 @@
 #include "NewComDeviceDialog.h"
 #include "NewNetDeviceDialog.h"
 #include "DeviceBase.h"
+#include "ProjectMgrUtils.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
@@ -22,7 +23,7 @@ CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
     m_pLinkManager = nullptr;
-    setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
+    setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 CommunicationDeviceWin::~CommunicationDeviceWin()
@@ -41,7 +42,6 @@ void CommunicationDeviceWin::ListViewUISetting()
     ui->listViewCommunicationDevice->setGridSize(QSize(120, 120));
     ui->listViewCommunicationDevice->setWordWrap(true);
     ui->listViewCommunicationDevice->setSpacing(20);
-    // 设置QListView大小改变时，图标的调整模式，默认是固定的，但可以改成自动调整：
     ui->listViewCommunicationDevice->setResizeMode(QListView::Adjust);
     //设置图标可不可以移动，默认是可移动的，但可以改成静态的：
     ui->listViewCommunicationDevice->setMovement(QListView::Static);
@@ -50,7 +50,7 @@ void CommunicationDeviceWin::ListViewUISetting()
 void CommunicationDeviceWin::ListViewUpdate(const QString &it)
 {
     if(m_pLinkManager == nullptr)
-        m_pLinkManager = new LinkManager(m_strProjectName.left(m_strProjectName.lastIndexOf("/")));
+        m_pLinkManager = new LinkManager(ProjectMgrUtils::getProjectPath(m_strProjectName));
 
     if(it == tr("通讯设备")) {
         ListViewCommunicationDeviceUpdate();
@@ -92,10 +92,10 @@ void CommunicationDeviceWin::ListViewCommunicationDeviceUpdate()
 
     //////////////////////////////////////////////////
 
-    m_pLinkManager->DevList.clear();
+    m_pLinkManager->devList.clear();
     m_pLinkManager->loadFromFile(DATA_SAVE_FORMAT);
-    for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-        DeviceBase *dev = m_pLinkManager->DevList.at(i);
+    for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+        DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(dev->m_sDeviceType == "COM") {
             QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pm_com.png"), dev->m_sDeviceName);
             pNewComDevice->setEditable(false);
@@ -130,10 +130,10 @@ void CommunicationDeviceWin::ListViewCOMDeviceUpdate()
     pNewComDevice->setEditable(false);
     pListViewCommDevModel->appendRow(pNewComDevice);
 
-    m_pLinkManager->DevList.clear();
+    m_pLinkManager->devList.clear();
     m_pLinkManager->loadFromFile(DATA_SAVE_FORMAT);
-    for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-        DeviceBase *dev = m_pLinkManager->DevList.at(i);
+    for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+        DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(dev->m_sDeviceType == "COM") {
             QStandardItem *pComDevice = new QStandardItem(QIcon(":/images/pm_com.png"), dev->m_sDeviceName);
             pComDevice->setEditable(false);
@@ -156,10 +156,10 @@ void CommunicationDeviceWin::ListViewNetDeviceUpdate()
     pNewNetDevice->setEditable(false);
     pListViewCommDevModel->appendRow(pNewNetDevice);
 
-    m_pLinkManager->DevList.clear();
+    m_pLinkManager->devList.clear();
     m_pLinkManager->loadFromFile(DATA_SAVE_FORMAT);
-    for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-        DeviceBase *dev = m_pLinkManager->DevList.at(i);
+    for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+        DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(dev->m_sDeviceType == "NET") {
             QStandardItem *pNetDevice = new QStandardItem(QIcon(":/images/pm_net.PNG"), dev->m_sDeviceName);
             pNetDevice->setEditable(false);
@@ -191,29 +191,29 @@ void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const 
     QStandardItem *item = pListViewCommDevModel->itemFromIndex(index);
     if(m_strProjectName == "")
         return;
-    QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     if(item->text() == tr("新建串口设备")) {
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this, strProjectPath);
         QStringList list;
-        for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-            DeviceBase *dev = m_pLinkManager->DevList.at(i);
+        for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+            DeviceBase *dev = m_pLinkManager->devList.at(i);
             list << dev->m_sDeviceName;
         }
         pNewComDeviceDlg->SetListDeviceName(list);
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
-            m_pLinkManager->AddDevice((DeviceBase *)pNewComDeviceDlg->GetComDevice());
+            m_pLinkManager->addDevice((DeviceBase *)pNewComDeviceDlg->GetComDevice());
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);            
         }
     } else if(item->text() == tr("新建网络设备")) {
         NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this, strProjectPath);
         QStringList list;
-        for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-            DeviceBase *dev = m_pLinkManager->DevList.at(i);
+        for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+            DeviceBase *dev = m_pLinkManager->devList.at(i);
             list << dev->m_sDeviceName;
         }
         pNewNetDeviceDlg->SetListDeviceName(list);
         if(pNewNetDeviceDlg->exec() == QDialog::Accepted) {
-            m_pLinkManager->AddDevice((DeviceBase *)pNewNetDeviceDlg->GetNetDevice());
+            m_pLinkManager->addDevice((DeviceBase *)pNewNetDeviceDlg->GetNetDevice());
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);
         }
     } else if(item->text() == tr("新建总线设备")) {
@@ -221,15 +221,15 @@ void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const 
     } else if(item->text() == tr("新建OPC设备")) {
 
     } else {
-        for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-            DeviceBase *dev = m_pLinkManager->DevList.at(i);
+        for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+            DeviceBase *dev = m_pLinkManager->devList.at(i);
             if(item->text() == dev->m_sDeviceName) {
                 if(dev->m_sDeviceType == "COM") {
                     NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this, strProjectPath);
                     pNewComDeviceDlg->loadFromFile(DATA_SAVE_FORMAT, strProjectPath + "/" + dev->m_sDeviceName + ".odb");
                     QStringList list;
-                    for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-                        DeviceBase *dev = m_pLinkManager->DevList.at(i);
+                    for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+                        DeviceBase *dev = m_pLinkManager->devList.at(i);
                         list << dev->m_sDeviceName;
                     }
                     pNewComDeviceDlg->SetListDeviceName(list);
@@ -242,8 +242,8 @@ void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const 
                     NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this, strProjectPath);
                     pNewNetDeviceDlg->loadFromFile(DATA_SAVE_FORMAT, strProjectPath + "/" + dev->m_sDeviceName + ".odb");
                     QStringList list;
-                    for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-                        DeviceBase *dev = m_pLinkManager->DevList.at(i);
+                    for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+                        DeviceBase *dev = m_pLinkManager->devList.at(i);
                         list << dev->m_sDeviceName;
                     }
                     pNewNetDeviceDlg->SetListDeviceName(list);
@@ -296,7 +296,7 @@ void CommunicationDeviceWin::NewDevice()
     if(m_strProjectName == "")
         return;
 
-    QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     QList<QStandardItem *> itemList;
 
     if(m_strItemName == tr("串口设备")) {
@@ -306,13 +306,13 @@ void CommunicationDeviceWin::NewDevice()
         //QStandardItem *item = itemList.at(0);
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this, strProjectPath);
         QStringList list;
-        for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-            DeviceBase *dev = m_pLinkManager->DevList.at(i);
+        for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+            DeviceBase *dev = m_pLinkManager->devList.at(i);
             list << dev->m_sDeviceName;
         }
         pNewComDeviceDlg->SetListDeviceName(list);
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
-            m_pLinkManager->AddDevice((DeviceBase *)pNewComDeviceDlg->GetComDevice());
+            m_pLinkManager->addDevice((DeviceBase *)pNewComDeviceDlg->GetComDevice());
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);
         }
     } else if(m_strItemName == tr("网络设备")) {
@@ -321,13 +321,13 @@ void CommunicationDeviceWin::NewDevice()
             return;
         NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this, strProjectPath);
         QStringList list;
-        for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-            DeviceBase *dev = m_pLinkManager->DevList.at(i);
+        for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+            DeviceBase *dev = m_pLinkManager->devList.at(i);
             list << dev->m_sDeviceName;
         }
         pNewNetDeviceDlg->SetListDeviceName(list);
         if(pNewNetDeviceDlg->exec() == QDialog::Accepted) {
-            m_pLinkManager->AddDevice((DeviceBase *)pNewNetDeviceDlg->GetNetDevice());
+            m_pLinkManager->addDevice((DeviceBase *)pNewNetDeviceDlg->GetNetDevice());
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);
         }
     } else if(m_strItemName == tr("总线设备")) {
@@ -349,10 +349,10 @@ void CommunicationDeviceWin::ModifyDevice()
     QStandardItem *item = pListViewCommDevModel->itemFromIndex(idx);
     if(m_strProjectName == "")
         return;
-    QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
 
-    for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-        DeviceBase *dev = m_pLinkManager->DevList.at(i);
+    for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+        DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(item->text() == dev->m_sDeviceName) {
             if(dev->m_sDeviceType == "COM") {
                 NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this, strProjectPath);
@@ -384,14 +384,14 @@ void CommunicationDeviceWin::DeleteDevice()
     QModelIndex idx = ui->listViewCommunicationDevice->selectionModel()->currentIndex();
     QStandardItem *item = pListViewCommDevModel->itemFromIndex(idx);
 
-    for(int i=0; i<m_pLinkManager->DevList.count(); i++) {
-        DeviceBase *dev = m_pLinkManager->DevList.at(i);
+    for(int i=0; i<m_pLinkManager->devList.count(); i++) {
+        DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(item->text() == dev->m_sDeviceName) {
-            QString strProjPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+            QString strProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
             QFile file(strProjPath + "/" + dev->m_sDeviceName + ".odb");
             if(file.exists())
                 file.remove();
-            m_pLinkManager->DelDevice(dev);
+            m_pLinkManager->delDevice(dev);
             m_pLinkManager->saveToFile(DATA_SAVE_FORMAT);
             break;
         }
@@ -419,7 +419,7 @@ void CommunicationDeviceWin::save()
 /*
 * 显示大图标
 */
-void CommunicationDeviceWin::ShowLargeIcon()
+void CommunicationDeviceWin::showLargeIcon()
 {
     ui->listViewCommunicationDevice->setIconSize(QSize(32, 32));
 }
@@ -427,7 +427,7 @@ void CommunicationDeviceWin::ShowLargeIcon()
 /*
 * 显示小图标
 */
-void CommunicationDeviceWin::ShowSmallIcon()
+void CommunicationDeviceWin::showSmallIcon()
 {
     ui->listViewCommunicationDevice->setIconSize(QSize(24, 24));
 }

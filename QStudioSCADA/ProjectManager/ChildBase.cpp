@@ -1,4 +1,4 @@
-#include "ChildBase.h"
+﻿#include "ChildBase.h"
 
 
 ChildBase::ChildBase(QWidget *parent,
@@ -8,9 +8,10 @@ ChildBase::ChildBase(QWidget *parent,
     m_strItemName(itemName),
     m_strProjectName(projName)
 {
-    setMinimumSize(600,400);
+    setMinimumSize(600, 400);
     this->m_bModifiedFlag = false;
 }
+
 ChildBase::~ChildBase()
 {
 

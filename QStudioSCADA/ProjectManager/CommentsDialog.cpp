@@ -1,4 +1,4 @@
-#include "CommentsDialog.h"
+﻿#include "CommentsDialog.h"
 #include "ui_CommentsDialog.h"
 
 CommentsDialog::CommentsDialog(QWidget *parent) :
@@ -14,12 +14,12 @@ CommentsDialog::~CommentsDialog()
 }
 
 
-void CommentsDialog::SetCommentsText(QString s)
+void CommentsDialog::setCommentsText(QString s)
 {
     ui->textComments->setPlainText(s);
 }
 
-QString CommentsDialog::GetCommentsText()
+QString CommentsDialog::getCommentsText()
 {
     return ui->textComments->toPlainText();
 }

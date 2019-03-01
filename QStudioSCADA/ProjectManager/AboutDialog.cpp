@@ -1,4 +1,4 @@
-#include "AboutDialog.h"
+﻿#include "AboutDialog.h"
 #include "ui_AboutDialog.h"
 #include "VersionInfo.h"
 

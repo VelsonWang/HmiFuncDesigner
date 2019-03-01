@@ -1,4 +1,4 @@
-#ifndef COMMUNICATIONDEVICEWIN_H
+﻿#ifndef COMMUNICATIONDEVICEWIN_H
 #define COMMUNICATIONDEVICEWIN_H
 
 #include "ChildBase.h"
@@ -28,9 +28,9 @@ public:
     // 保存文件
     void save();
     // 显示大图标
-    void ShowLargeIcon();
+    void showLargeIcon();
     // 显示小图标
-    void ShowSmallIcon();
+    void showSmallIcon();
 
 private:
     void ListViewUISetting();

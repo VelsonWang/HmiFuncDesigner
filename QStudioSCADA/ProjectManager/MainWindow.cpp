@@ -12,7 +12,7 @@
 #include "configutils.h"
 #include "Helper.h"
 #include "AboutDialog.h"
-
+#include "ProjectMgrUtils.h"
 #include <QDialog>
 #include <QCloseEvent>
 #include <QSettings>
@@ -255,9 +255,9 @@ void MainWindow::VariableGroupRename()
                 else
                     qDebug()<<"window == NULL";
                 QString srcfile, desfile;
-                srcfile = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + var->m_name + ".odb";
+                srcfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + var->m_name + ".odb";
                 var->m_name = pDlg->GetGroupName();
-                desfile = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + var->m_name + ".odb";
+                desfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + var->m_name + ".odb";
                 QFile::rename(srcfile ,desfile);
                 m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
                 UpdateDeviceVariableTableGroup();
@@ -281,7 +281,7 @@ void MainWindow::VariableDeleteGroup()
                 findForm->hide();
             }
             QString file = "";
-            file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + var->m_name + ".odb";
+            file = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + var->m_name + ".odb";
             QFile delFile(file);
             if(delFile.exists()) {
                 delFile.remove();
@@ -316,8 +316,8 @@ void MainWindow::VariableGroupCopy()
             newVar->m_type = var->m_type;
             newVar->m_name = QString("复制_%1").arg(var->m_name);
             QString srcfile, desfile;
-            srcfile = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + var->m_name + ".odb";
-            desfile = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + newVar->m_name + ".odb";
+            srcfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + var->m_name + ".odb";
+            desfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + newVar->m_name + ".odb";
             QFile::copy(srcfile ,desfile);
             m_pIoDBVarGroups->m_VarBlockGroupList.append(newVar);
             m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
@@ -627,7 +627,7 @@ void MainWindow::UpdateProjectName(QString name)
 {
     if(name != NULL) {
         m_strProjectName = name;
-        m_strProjectPath = name.left(name.lastIndexOf("/"));
+        m_strProjectPath = ProjectMgrUtils::getProjectPath(name);
         QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
         pProjectItem->setText(strName);
     } else {
@@ -1160,7 +1160,7 @@ void MainWindow::on_actionBigIcon_triggered()
     ui->actionSmallIcon->setChecked(false);
     ChildForm *findForm = findMdiChild(this->m_CurItem);
     if(findForm != NULL) {
-        findForm->ShowLargeIcon();
+        findForm->showLargeIcon();
     }
 }
 
@@ -1174,6 +1174,6 @@ void MainWindow::on_actionSmallIcon_triggered()
     ui->actionSmallIcon->setChecked(true);
     ChildForm *findForm = findMdiChild(this->m_CurItem);
     if(findForm != NULL) {
-        findForm->ShowSmallIcon();
+        findForm->showSmallIcon();
     }
 }

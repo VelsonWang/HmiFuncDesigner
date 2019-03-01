@@ -12,7 +12,7 @@
 #include "reader.h"
 #include "variantdata.h"
 #include "Helper.h"
-
+#include "ProjectMgrUtils.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
@@ -1017,11 +1017,11 @@ bool VariableManagerWin::loadFromFile(SaveFormat saveFormat, const QString &it)
     QString file = "";
 
     if(it == tr("设备变量")) {
-        file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
+        file = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
     } else if(it == tr("中间变量")) {
-        file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/TmpVarList.odb";
+        file = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/TmpVarList.odb";
     } else if(it == tr("系统变量")) {
-        file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/SysVarList.odb";
+        file = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/SysVarList.odb";
         QString srcfile = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
         QFile testFile(file);
         if(testFile.exists()) {
@@ -1047,9 +1047,9 @@ bool VariableManagerWin::saveToFile(SaveFormat saveFormat, const QString &it)
 {
     QString file = "";
     if(it == tr("设备变量")) {
-        file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
+        file = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + m_IOVariableListWhat + ".odb";
     } else if(it == tr("中间变量")) {
-        file = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/TmpVarList.odb";
+        file = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/TmpVarList.odb";
     } else if(it == tr("系统变量")) {
         return true;
     }
@@ -1214,7 +1214,7 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
             }
             delete pDlg;
         } else if(columnIndex == pTagIOTableModel->Column::ProjectConverter) {
-            TagFuncEditDialog *pDlg = new TagFuncEditDialog(m_strProjectName.left(m_strProjectName.lastIndexOf("/")), this);
+            TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_strProjectName), this);
             pDlg->SetData(item.m_sProjectConverter);
             if(pDlg->exec() == QDialog::Accepted) {
                 item.m_sProjectConverter = pDlg->GetData();
@@ -1223,9 +1223,9 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
             delete pDlg;
         } else if(columnIndex == pTagIOTableModel->Column::Comments) {
             CommentsDialog *pDlg = new CommentsDialog(this);
-            pDlg->SetCommentsText(item.m_sComments);
+            pDlg->setCommentsText(item.m_sComments);
             if(pDlg->exec() == QDialog::Accepted) {
-                item.m_sComments = pDlg->GetCommentsText();
+                item.m_sComments = pDlg->getCommentsText();
                 pTagIOTableModel->UpdateRow(rowIndex, item);
             }
             delete pDlg;
@@ -1276,7 +1276,7 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
             }
             delete pDlg;
         } else if(columnIndex == pTagTmpTableModel->Column::ProjectConverter) {
-            TagFuncEditDialog *pDlg = new TagFuncEditDialog(m_strProjectName.left(m_strProjectName.lastIndexOf("/")), this);
+            TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_strProjectName), this);
             pDlg->SetData(item.m_sProjectConverter);
             if(pDlg->exec() == QDialog::Accepted) {
                 item.m_sProjectConverter = pDlg->GetData();
@@ -1285,9 +1285,9 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
             delete pDlg;
         } else if(columnIndex == pTagTmpTableModel->Column::Comments) {
             CommentsDialog *pDlg = new CommentsDialog(this);
-            pDlg->SetCommentsText(item.m_sComments);
+            pDlg->setCommentsText(item.m_sComments);
             if(pDlg->exec() == QDialog::Accepted) {
-                item.m_sComments = pDlg->GetCommentsText();
+                item.m_sComments = pDlg->getCommentsText();
                 pTagTmpTableModel->UpdateRow(rowIndex, item);
             }
             delete pDlg;
@@ -1595,7 +1595,7 @@ void VariableManagerWin::save()
 /*
 * 显示大图标
 */
-void VariableManagerWin::ShowLargeIcon()
+void VariableManagerWin::showLargeIcon()
 {
 
 }
@@ -1603,7 +1603,7 @@ void VariableManagerWin::ShowLargeIcon()
 /*
 * 显示小图标
 */
-void VariableManagerWin::ShowSmallIcon()
+void VariableManagerWin::showSmallIcon()
 {
 
 }

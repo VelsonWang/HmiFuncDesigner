@@ -2,6 +2,7 @@
 #include "ui_RealTimeDatabaseWin.h"
 #include "configutils.h"
 #include "Helper.h"
+#include "ProjectMgrUtils.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
@@ -19,7 +20,7 @@ RealTimeDatabaseWin::RealTimeDatabaseWin(QWidget *parent,
     ui->setupUi(this);
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
-    m_ProjPath = projName.left(projName.lastIndexOf("/"));
+    m_ProjPath = ProjectMgrUtils::getProjectPath(projName);
     ListViewInitUi();
 }
 
@@ -34,7 +35,7 @@ RealTimeDatabaseWin::~RealTimeDatabaseWin()
 
 void RealTimeDatabaseWin::init()
 {
-    m_ProjPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    m_ProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
 }
 
 void RealTimeDatabaseWin::ListViewInitUi()
@@ -79,7 +80,7 @@ void RealTimeDatabaseWin::save()
 /*
 * 显示大图标
 */
-void RealTimeDatabaseWin::ShowLargeIcon()
+void RealTimeDatabaseWin::showLargeIcon()
 {
     ui->listView->setIconSize(QSize(32, 32));
 }
@@ -87,7 +88,7 @@ void RealTimeDatabaseWin::ShowLargeIcon()
 /*
 * 显示小图标
 */
-void RealTimeDatabaseWin::ShowSmallIcon()
+void RealTimeDatabaseWin::showSmallIcon()
 {
     ui->listView->setIconSize(QSize(24, 24));
 }

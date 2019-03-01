@@ -1,10 +1,10 @@
-#include "SystemParametersWin.h"
+﻿#include "SystemParametersWin.h"
 #include "ui_SystemParametersWin.h"
 #include "NewProjectDialog.h"
 #include "NetSettingDialog.h"
 #include "DatabaseSettingDialog.h"
 #include "UserAuthorityDialog.h"
-
+#include "ProjectMgrUtils.h"
 #include <QFileInfo>
 #include <QApplication>
 #include <QFileInfo>
@@ -73,9 +73,9 @@ SystemParametersWin::~SystemParametersWin()
 
 
 
-QString SystemParametersWin::userFriendlyCurrentFile() const // 提取文件名
+QString SystemParametersWin::userFriendlyCurrentFile() const
 {
-    return QFileInfo(curFile).fileName();  // 从文件路径中提取文件名
+    return QFileInfo(curFile).fileName();
 }
 
 QString SystemParametersWin::currentFile() const
@@ -97,7 +97,7 @@ void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &in
     qDebug() << m_strProjectName << item->text();
     if(m_strProjectName == "")
         return;
-    QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     if(item->text() == "运行系统")
     {
         NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
@@ -160,7 +160,7 @@ void SystemParametersWin::save()
 /*
 * 显示大图标
 */
-void SystemParametersWin::ShowLargeIcon()
+void SystemParametersWin::showLargeIcon()
 {
     ui->listViewProject->setIconSize(QSize(32, 32));
 }
@@ -168,7 +168,7 @@ void SystemParametersWin::ShowLargeIcon()
 /*
 * 显示小图标
 */
-void SystemParametersWin::ShowSmallIcon()
+void SystemParametersWin::showSmallIcon()
 {
     ui->listViewProject->setIconSize(QSize(24, 24));
 }

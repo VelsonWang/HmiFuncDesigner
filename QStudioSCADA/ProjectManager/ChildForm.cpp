@@ -1,5 +1,5 @@
-﻿#include "childform.h"
-#include "ui_childform.h"
+﻿#include "ChildForm.h"
+#include "ui_ChildForm.h"
 #include <QDebug>
 
 ChildForm::ChildForm(QWidget *parent, const QString & projName) :
@@ -9,7 +9,7 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     m_strProjectName(projName)
 {
     ui->setupUi(this);
-    setMinimumSize(600,400);
+    setMinimumSize(600, 400);
     qRegisterMetaType<PAGE_FLOWTYPE>("PAGE_FLOWTYPE");
 
     // 系统参数设置页面
@@ -321,40 +321,40 @@ void ChildForm::save()
 /*
 * 显示大图标
 */
-void ChildForm::ShowLargeIcon()
+void ChildForm::showLargeIcon()
 {
     if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
-        m_sysParamWinPtr->ShowLargeIcon();
+        m_sysParamWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
-        m_communicationDeviceWinPtr->ShowLargeIcon();
+        m_communicationDeviceWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->ShowLargeIcon();
+        m_variableManagerWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        m_drawPageWinPtr->ShowLargeIcon();
+        m_drawPageWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
-        m_rtdbWinPtr->ShowLargeIcon();
+        m_rtdbWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
-        m_scriptManageWinPtr->ShowLargeIcon();
+        m_scriptManageWinPtr->showLargeIcon();
     }
 }
 
 /*
 * 显示小图标
 */
-void ChildForm::ShowSmallIcon()
+void ChildForm::showSmallIcon()
 {
     if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
-        m_sysParamWinPtr->ShowSmallIcon();
+        m_sysParamWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
-        m_communicationDeviceWinPtr->ShowSmallIcon();
+        m_communicationDeviceWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->ShowSmallIcon();
+        m_variableManagerWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        m_drawPageWinPtr->ShowSmallIcon();
+        m_drawPageWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
-        m_rtdbWinPtr->ShowSmallIcon();
+        m_rtdbWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
-        m_scriptManageWinPtr->ShowSmallIcon();
+        m_scriptManageWinPtr->showSmallIcon();
     }
 }
 

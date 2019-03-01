@@ -7,7 +7,7 @@
 #include <QMap>
 #include "SystemParametersWin.h"
 #include "ChildBase.h"
-#include "childform.h"
+#include "ChildForm.h"
 #include "DBVarGroup.h"
 
 namespace Ui {

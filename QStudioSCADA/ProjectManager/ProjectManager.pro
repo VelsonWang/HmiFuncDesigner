@@ -84,7 +84,8 @@ SOURCES += main.cpp\
     InsertFunctionDialog.cpp \
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
-    childform.cpp
+    ChildForm.cpp \
+    ProjectMgrUtils.cpp
 
 HEADERS  += MainWindow.h \
     NewProjectDialog.h \
@@ -120,8 +121,9 @@ HEADERS  += MainWindow.h \
     InsertFunctionDialog.h \
     InsertTagDialog.h \
     ScriptRunConditionEditorDlg.h \
-    childform.h \
-    FileTansfer.h
+    FileTansfer.h \
+    ChildForm.h \
+    ProjectMgrUtils.h
 
 FORMS    += MainWindow.ui \
     NewProjectDialog.ui \
@@ -148,7 +150,7 @@ FORMS    += MainWindow.ui \
     InsertFunctionDialog.ui \
     InsertTagDialog.ui \
     ScriptRunConditionEditorDlg.ui \
-    childform.ui
+    ChildForm.ui
 
 RESOURCES += \
     images.qrc \

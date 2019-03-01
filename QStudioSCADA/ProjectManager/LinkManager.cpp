@@ -1,58 +1,58 @@
-#include "LinkManager.h"
+﻿#include "LinkManager.h"
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QDebug>
 
-LinkManager::LinkManager(QString ProjectPath) :
-    m_ProjectPath(ProjectPath)
+LinkManager::LinkManager(QString projectPath) :
+    m_ProjectPath(projectPath)
 {
 
 }
 
-void LinkManager::AddDevice(DeviceBase *dev)
+void LinkManager::addDevice(DeviceBase *dev)
 {
-    DevList.append(dev);
+    devList.append(dev);
 }
 
-void LinkManager::DelDevice(DeviceBase *dev)
+void LinkManager::delDevice(DeviceBase *dev)
 {
-    DevList.removeOne(dev);
+    devList.removeOne(dev);
 }
 
 void LinkManager::load(const QJsonObject &json)
 {
-    DevList.clear();
-    QJsonArray DeviceArray = json["DeviceArray"].toArray();
-    for (int i = 0; i < DeviceArray.size(); ++i) {
+    devList.clear();
+    QJsonArray deviceArray = json["DeviceArray"].toArray();
+    for (int i = 0; i < deviceArray.size(); ++i) {
         DeviceBase *dev = new DeviceBase();
-        QJsonObject jsonObj = DeviceArray[i].toObject();
+        QJsonObject jsonObj = deviceArray[i].toObject();
         //jsonObj["path"] = "";
         dev->m_sProtocol = jsonObj["prog"].toString();
         dev->m_sDeviceType = jsonObj["type"].toString();
         dev->m_sDeviceName = jsonObj["name"].toString();
         //jsonObj["bstop"] = false;
         dev->m_sLink = jsonObj["rdy"].toString();
-        DevList.append(dev);
+        devList.append(dev);
     }
 }
 
 void LinkManager::save(QJsonObject &json)
 {
-    QJsonArray DeviceArray;
-    for(int i = 0; i < DevList.count(); i++)
+    QJsonArray deviceArray;
+    for(int i = 0; i < devList.count(); i++)
     {
         QJsonObject jsonObj;
         jsonObj["ramid"] = i;
         jsonObj["path"] = "";
-        jsonObj["prog"] = DevList.at(i)->m_sProtocol;
-        jsonObj["type"] = DevList.at(i)->m_sDeviceType; //COM,NET,BUS,OPC
-        jsonObj["name"] = DevList.at(i)->m_sDeviceName;
+        jsonObj["prog"] = devList.at(i)->m_sProtocol;
+        jsonObj["type"] = devList.at(i)->m_sDeviceType; //COM,NET,BUS,OPC
+        jsonObj["name"] = devList.at(i)->m_sDeviceName;
         jsonObj["bstop"] = false;
-        jsonObj["rdy"] = DevList.at(i)->m_sLink;
-        DeviceArray.append(jsonObj);
+        jsonObj["rdy"] = devList.at(i)->m_sLink;
+        deviceArray.append(jsonObj);
     }
-    json["DeviceArray"] = DeviceArray;
+    json["DeviceArray"] = deviceArray;
 }
 
 bool LinkManager::loadFromFile(SaveFormat saveFormat)

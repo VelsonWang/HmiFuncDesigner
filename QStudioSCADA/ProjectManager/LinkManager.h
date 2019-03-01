@@ -1,4 +1,4 @@
-#ifndef LINKMANAGER_H
+﻿#ifndef LINKMANAGER_H
 #define LINKMANAGER_H
 
 #include "../Public/Public.h"
@@ -12,12 +12,12 @@ class LinkManager
 {
 
 public:
-    LinkManager(QString ProjectPath);
-    void AddDevice(DeviceBase *dev);
-    void DelDevice(DeviceBase *dev);
+    LinkManager(QString projectPath);
+    void addDevice(DeviceBase *dev);
+    void delDevice(DeviceBase *dev);
 
 public:
-    QList<DeviceBase *> DevList;
+    QList<DeviceBase *> devList;
 
 private:
 

@@ -1,4 +1,5 @@
-#include "DBVarGroup.h"
+﻿#include "DBVarGroup.h"
+#include "ProjectMgrUtils.h"
 #include <QFile>
 
 DBVarGroup::DBVarGroup() :
@@ -11,7 +12,7 @@ DBVarGroup::DBVarGroup() :
 DBVarGroups::DBVarGroups(QString projName) :
     m_strProjectName(projName)
 {
-    m_strProjectPath = projName.left(projName.lastIndexOf("/"));
+    m_strProjectPath = ProjectMgrUtils::getProjectPath(projName);
 }
 
 

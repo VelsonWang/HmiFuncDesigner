@@ -3,7 +3,7 @@
 #include "configutils.h"
 #include "Helper.h"
 #include "DrawListUtils.h"
-
+#include "ProjectMgrUtils.h"
 #include <QMenu>
 #include <QAction>
 #include <QFile>
@@ -23,7 +23,7 @@ DrawPageWin::DrawPageWin(QWidget *parent,
     ui->setupUi(this);
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
-    m_ProjPath = projName.left(projName.lastIndexOf("/"));
+    m_ProjPath = ProjectMgrUtils::getProjectPath(projName);
     setContextMenuPolicy(Qt::DefaultContextMenu);
     pListDrawPageModel = new QStandardItemModel();
     ui->listViewDrawPage->setModel(pListDrawPageModel);
@@ -42,7 +42,7 @@ DrawPageWin::~DrawPageWin()
 void DrawPageWin::init()
 {
     if(!m_strProjectName.isEmpty()) {
-        m_ProjPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+        m_ProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
         open();
         ListViewUpdate();
     }
@@ -72,7 +72,7 @@ void DrawPageWin::save()
 /*
 * 显示大图标
 */
-void DrawPageWin::ShowLargeIcon()
+void DrawPageWin::showLargeIcon()
 {
     ui->listViewDrawPage->setIconSize(QSize(32, 32));
 }
@@ -80,7 +80,7 @@ void DrawPageWin::ShowLargeIcon()
 /*
 * 显示小图标
 */
-void DrawPageWin::ShowSmallIcon()
+void DrawPageWin::showSmallIcon()
 {
     ui->listViewDrawPage->setIconSize(QSize(24, 24));
 }
@@ -260,7 +260,8 @@ void DrawPageWin::contextMenuEvent(QContextMenuEvent * event)
 
 void DrawPageWin::closeEvent(QCloseEvent *event)
 {
-    QString strProjPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    Q_UNUSED(event)
+    QString strProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     DrawListUtils::SaveDrawList(strProjPath, this->m_DrawList);
 }
 

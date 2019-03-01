@@ -17,6 +17,7 @@
 #include "configutils.h"
 #include "ScriptConditionConfigForm.h"
 #include "ScriptEditorDlg.h"
+#include "ProjectMgrUtils.h"
 
 QList<ScriptObject *> ScriptFileManage::m_listScriptInfo = QList<ScriptObject *>();
 
@@ -113,7 +114,7 @@ void ScriptFileManage::load(const QString &filename, SaveFormat saveFormat)
 
 void ScriptFileManage::save(const QString &filename, SaveFormat saveFormat)
 {
-    QString strPath = filename.left(filename.lastIndexOf("/"));
+    QString strPath = ProjectMgrUtils::getProjectPath(filename);
     QDir dir(strPath);
     if(!dir.exists())
     {
@@ -192,7 +193,7 @@ ScriptManageWin::~ScriptManageWin()
 */
 void ScriptManageWin::open()
 {
-    QString fileDes = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/Scripts/Script.info";
+    QString fileDes = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/Scripts/Script.info";
     ScriptFileManage::load(fileDes, DATA_SAVE_FORMAT);
 
     m_pListWidget->clear();
@@ -214,14 +215,14 @@ void ScriptManageWin::open()
 */
 void ScriptManageWin::save()
 {
-    QString fileDes = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/Scripts/Script.info";
+    QString fileDes = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/Scripts/Script.info";
     ScriptFileManage::save(fileDes, DATA_SAVE_FORMAT);
 }
 
 /*
 * 显示大图标
 */
-void ScriptManageWin::ShowLargeIcon()
+void ScriptManageWin::showLargeIcon()
 {
     m_pListWidget->setIconSize(QSize(32, 32));
 }
@@ -229,7 +230,7 @@ void ScriptManageWin::ShowLargeIcon()
 /*
 * 显示小图标
 */
-void ScriptManageWin::ShowSmallIcon()
+void ScriptManageWin::showSmallIcon()
 {
     m_pListWidget->setIconSize(QSize(24, 24));
 }
@@ -286,7 +287,7 @@ void ScriptManageWin::NewScript()
     if(m_strProjectName == "")
         return;
 
-    QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     QListWidgetItem *pCurItem = m_pListWidget->currentItem();
 
     /////////////////////////////////////////////////////////////////////////////
@@ -320,7 +321,7 @@ void ScriptManageWin::ModifyScript()
     if(m_strProjectName == "")
         return;
 
-    QString strProjectPath = m_strProjectName.left(m_strProjectName.lastIndexOf("/"));
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     QListWidgetItem *pCurItem = m_pListWidget->currentItem();
     QString scriptFileName = strProjectPath + "/Scripts/" + pCurItem->text() + ".js";
 
@@ -376,7 +377,7 @@ void ScriptManageWin::DeleteScript()
     ScriptObject *pObj = ScriptFileManage::GetScriptObject(pCurItem->text());
     ScriptFileManage::DeleteScriptInfo(pObj);
 
-    QString scriptFileName = m_strProjectName.left(m_strProjectName.lastIndexOf("/")) + "/Scripts/" + pCurItem->text() + ".js";
+    QString scriptFileName = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/Scripts/" + pCurItem->text() + ".js";
     QFile scriptFile(scriptFileName);
     if(scriptFile.exists())
         scriptFile.remove();

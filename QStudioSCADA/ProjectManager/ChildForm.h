@@ -76,9 +76,9 @@ public:
     // 保存文件
     virtual void save();
     // 显示大图标
-    virtual void ShowLargeIcon();
+    virtual void showLargeIcon();
     // 显示小图标
-    virtual void ShowSmallIcon();
+    virtual void showSmallIcon();
 
 private:
 

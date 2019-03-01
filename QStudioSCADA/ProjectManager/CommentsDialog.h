@@ -1,4 +1,4 @@
-#ifndef COMMENTSDIALOG_H
+﻿#ifndef COMMENTSDIALOG_H
 #define COMMENTSDIALOG_H
 
 #include <QDialog>
@@ -14,12 +14,11 @@ class CommentsDialog : public QDialog
 public:
     explicit CommentsDialog(QWidget *parent = 0);
     ~CommentsDialog();
-    void SetCommentsText(QString s);
-    QString GetCommentsText();
+    void setCommentsText(QString s);
+    QString getCommentsText();
 
 private slots:
     void on_btnOk_clicked();
-
     void on_btnExit_clicked();
 
 private:

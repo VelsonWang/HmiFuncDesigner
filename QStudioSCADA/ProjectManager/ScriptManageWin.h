@@ -55,9 +55,9 @@ public:
     // 保存文件
     void save();
     // 显示大图标
-    void ShowLargeIcon();
+    void showLargeIcon();
     // 显示小图标
-    void ShowSmallIcon();
+    void showSmallIcon();
 
 signals:
 
