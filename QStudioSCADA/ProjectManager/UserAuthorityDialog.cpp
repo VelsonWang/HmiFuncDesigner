@@ -1,4 +1,4 @@
-#include "UserAuthorityDialog.h"
+﻿#include "UserAuthorityDialog.h"
 #include "ui_UserAuthorityDialog.h"
 #include <QStandardItem>
 #include <QModelIndex>
@@ -49,13 +49,10 @@ QVariant TagUserTableModel::data(const QModelIndex &index, int role) const
             case Name5: option.currentText = item.m_sName5; break;
             default: Q_ASSERT(false);
         }
-        QFontMetrics fontMetrics(data(index, Qt::FontRole)
-                                 .value<QFont>());
+        QFontMetrics fontMetrics(data(index, Qt::FontRole).value<QFont>());
         option.fontMetrics = fontMetrics;
-        QSize size(fontMetrics.width(option.currentText),
-                   fontMetrics.height());
-        return qApp->style()->sizeFromContents(QStyle::CT_ComboBox,
-                                               &option, size);
+        QSize size(fontMetrics.width(option.currentText), fontMetrics.height());
+        return qApp->style()->sizeFromContents(QStyle::CT_ComboBox, &option, size);
     }
     if (role == Qt::DisplayRole || role == Qt::EditRole)
     {
@@ -77,7 +74,6 @@ QVariant TagUserTableModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-//enum Column {Index, Name, PassWord, Authority, Comments, Name2, Name3, Name4, Name5};
 
 QVariant TagUserTableModel::headerData(int section,
         Qt::Orientation orientation, int role) const
@@ -170,11 +166,11 @@ void TagUserTableModel::load(const QJsonObject &json)
     QJsonObject jsonObj;
 
     m_tagUserItems.clear();
-    QJsonArray UserArray = json["UserArray"].toArray();
-    for (int i = 0; i < UserArray.size(); ++i)
+    QJsonArray userArray = json["UserArray"].toArray();
+    for (int i = 0; i < userArray.size(); ++i)
     {
         TagUserItem item;
-        jsonObj = UserArray[i].toObject();
+        jsonObj = userArray[i].toObject();
         item.m_sIndex = jsonObj["sIndex"].toString();
         item.m_sName = jsonObj["sName"].toString();
         item.m_sPassWord = jsonObj["sPassWord"].toString();
@@ -191,7 +187,7 @@ void TagUserTableModel::load(const QJsonObject &json)
 
 void TagUserTableModel::save(QJsonObject &json)
 {
-    QJsonArray UserArray;
+    QJsonArray userArray;
     QJsonObject jsonObj;
     TagUserItem item;
 
@@ -207,9 +203,9 @@ void TagUserTableModel::save(QJsonObject &json)
         jsonObj["sName3"] = item.m_sName3;
         jsonObj["sName4"] = item.m_sName4;
         jsonObj["sName5"] = item.m_sName5;
-        UserArray.append(jsonObj);
+        userArray.append(jsonObj);
     }
-    json["UserArray"] = UserArray;
+    json["UserArray"] = userArray;
 }
 
 

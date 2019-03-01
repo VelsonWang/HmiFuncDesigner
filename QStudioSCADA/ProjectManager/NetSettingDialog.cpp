@@ -1,4 +1,4 @@
-#include "NetSettingDialog.h"
+﻿#include "NetSettingDialog.h"
 #include "ui_NetSettingDialog.h"
 #include <QRegExp>
 #include <QRegExpValidator>
@@ -39,7 +39,6 @@ bool NetSettingDialog::check_data()
 
     bool ok = false;
     int iHeartbeatTime = ui->editHeartbeatTime->text().toInt(&ok);
-    iHeartbeatTime = iHeartbeatTime;  // avoid warning!
     if(ui->editHeartbeatTime->text().isEmpty() || !ok)
     {
         QMessageBox::information(this, tr("系统提示"), tr("心跳探测间隔设置错误！"));
@@ -48,7 +47,6 @@ bool NetSettingDialog::check_data()
 
     ok = false;
     int iDatabaseSyncTime = ui->editDatabaseSyncTime->text().toInt(&ok);
-    iDatabaseSyncTime = iDatabaseSyncTime;
     if(ui->editDatabaseSyncTime->text().isEmpty() || !ok)
     {
         QMessageBox::information(this, tr("系统提示"), tr("数据库同步时间设置错误！"));
