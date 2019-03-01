@@ -22,18 +22,14 @@ SystemParametersWin::SystemParametersWin(QWidget *parent,
     ui->setupUi(this);
     this->setWindowTitle(itemName);
     setAttribute(Qt::WA_DeleteOnClose);
-    isUntitled = true;    // not saved
 
     ui->listViewProject->setViewMode(QListView::IconMode);
     ui->listViewProject->setIconSize(QSize(32, 32));
     ui->listViewProject->setGridSize(QSize(120, 120));
     ui->listViewProject->setWordWrap(true);
     ui->listViewProject->setSpacing(20);
-    // 设置QListView大小改变时，图标的调整模式，默认是固定的，但可以改成自动调整：
     ui->listViewProject->setResizeMode(QListView::Adjust);
-    //设置图标可不可以移动，默认是可移动的，但可以改成静态的：
     ui->listViewProject->setMovement(QListView::Static);
-
 
     pListViewProjectModel = new QStandardItemModel();
     QStandardItem *pRunSystem = new QStandardItem(QIcon(":/images/pm_runcon.png"), tr("运行系统"));
@@ -52,16 +48,6 @@ SystemParametersWin::SystemParametersWin(QWidget *parent,
     pUserAuthority->setEditable(false);
     pListViewProjectModel->appendRow(pUserAuthority);
 
-    /*
-    QStandardItem *pMQSetting = new QStandardItem(QIcon(":/images/pm_mq.png"), tr("MQ设置"));
-    pMQSetting->setEditable(false);
-    pListViewProjectModel->appendRow(pMQSetting);
-
-    QStandardItem *pPageSetting = new QStandardItem(QIcon(":/images/pm_setpage.png"), tr("页面设置"));
-    pPageSetting->setEditable(false);
-    pListViewProjectModel->appendRow(pPageSetting);
-    */
-
     ui->listViewProject->setModel(pListViewProjectModel);
 }
 
@@ -70,75 +56,37 @@ SystemParametersWin::~SystemParametersWin()
     delete ui;
 }
 
-
-
-
-QString SystemParametersWin::userFriendlyCurrentFile() const
-{
-    return QFileInfo(curFile).fileName();
-}
-
-QString SystemParametersWin::currentFile() const
-{
-    return curFile;
-}
-
-void SystemParametersWin::setCurrentFile(const QString &fileName)
-{
-    curFile = QFileInfo(fileName).canonicalFilePath(); // 去除路径中的符号链接,".",".."等
-    isUntitled = false;
-    setWindowModified(false);
-    setWindowTitle(QFileInfo(curFile).fileName() + "[*]");
-}
-
 void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &index)
 {
     QStandardItem *item = pListViewProjectModel->itemFromIndex(index);
-    qDebug() << m_strProjectName << item->text();
+
     if(m_strProjectName == "")
         return;
+
     QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
-    if(item->text() == "运行系统")
-    {
+    if(item->text() == tr("运行系统")) {
         NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
         pNewProjectDlg->loadFromFile(DATA_SAVE_FORMAT, m_strProjectName);
-        if(pNewProjectDlg->exec() == QDialog::Accepted)
-        {
+        if(pNewProjectDlg->exec() == QDialog::Accepted) {
 
         }
-    }
-    else if(item->text() == "组网设置")
-    {
+    } else if(item->text() == tr("组网设置")) {
         NetSettingDialog *pNetSettingDialog = new NetSettingDialog(this, strProjectPath);
-        if(pNetSettingDialog->exec() == QDialog::Accepted)
-        {
+        if(pNetSettingDialog->exec() == QDialog::Accepted) {
 
         }
-    }
-    else if(item->text() == "数据库设置")
-    {
+    } else if(item->text() == tr("数据库设置")) {
         DatabaseSettingDialog *pDatabaseSettingDialog = new DatabaseSettingDialog(this, strProjectPath);
-        if(pDatabaseSettingDialog->exec() == QDialog::Accepted)
-        {
+        if(pDatabaseSettingDialog->exec() == QDialog::Accepted) {
 
         }
-    }
-    else if(item->text() == "用户权限")
-    {
+    } else if(item->text() == tr("用户权限")) {
         UserAuthorityDialog *pUserAuthorityDialog = new UserAuthorityDialog(this, strProjectPath);
-        if(pUserAuthorityDialog->exec() == QDialog::Accepted)
-        {
+        if(pUserAuthorityDialog->exec() == QDialog::Accepted) {
 
         }
     }
-    else if(item->text() == "MQ设置")
-    {
 
-    }
-    else if(item->text() == "页面设置")
-    {
-
-    }
 }
 
 /*

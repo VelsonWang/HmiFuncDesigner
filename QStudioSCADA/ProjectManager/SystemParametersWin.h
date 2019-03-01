@@ -19,11 +19,6 @@ public:
     ~SystemParametersWin();
 
 public:
-    QString userFriendlyCurrentFile() const; // 提取文件名
-    QString currentFile() const;
-
-
-public:
     // 打开文件
     void open();
     // 保存文件
@@ -36,11 +31,6 @@ public:
 
 private slots:
     void on_listViewProject_doubleClicked(const QModelIndex &index);
-
-private:
-    void setCurrentFile(const QString &fileName);
-    QString curFile;
-    bool isUntitled;    // saved flag
 
 private:
     Ui::SystemParametersWin *ui;
