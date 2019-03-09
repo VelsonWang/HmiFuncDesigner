@@ -152,9 +152,6 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property) {
         return;
     }
 
-    unsavedFlag = true;
-    emit GraphPagePropertyChanged();
-
     switch (property->getId()) {
 
     case GRAPHPAGE_ID:
@@ -175,6 +172,9 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property) {
     }
 
     fillGridPixmap();
+
+    unsavedFlag = true;
+    emit GraphPagePropertyChanged();
 }
 
 void GraphPage::cleanPropertyModel() {
@@ -467,7 +467,7 @@ int GraphPage::getGraphPageWidth() const {
 
 void GraphPage::setGraphPageWidth(int width) {
     GraphPageWidth = width;
-    setSceneRect(0,0,GraphPageWidth,GraphPageHeight);
+    setSceneRect(0, 0, GraphPageWidth, GraphPageHeight);
 }
 
 int GraphPage::getGraphPageHeight() const {
@@ -476,7 +476,7 @@ int GraphPage::getGraphPageHeight() const {
 
 void GraphPage::setGraphPageHeight(int height) {
     GraphPageHeight = height;
-    setSceneRect(0,0,GraphPageWidth,GraphPageHeight);
+    setSceneRect(0, 0, GraphPageWidth, GraphPageHeight);
 }
 
 void GraphPage::dragEnterEvent(QGraphicsSceneDragDropEvent *event) {

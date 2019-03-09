@@ -344,7 +344,8 @@ void MainWindow::slotUpdateActions() {
 
     for (int i = 0; i < graphPageTabWidget_->count(); i++) {
         QGraphicsView *view = (QGraphicsView*)graphPageTabWidget_->widget(i);
-
+        GraphPage *scene = dynamic_cast<GraphPage *>(view->scene());
+        view->setFixedSize(scene->getGraphPageWidth(), scene->getGraphPageHeight());
         if (!((GraphPage*)view->scene())->undoStack()->isClean() ||
             ((GraphPage*)view->scene())->getUnsavedFlag())
         {
