@@ -14,6 +14,8 @@ const int TextItemType = QGraphicsItem::UserType + 14;
 const int GroupItemType = QGraphicsItem::UserType + 16;
 const int PolygonItemType = QGraphicsItem::UserType + 17;
 
+const int PushButtonItemType = QGraphicsItem::UserType + 40;
+
 
 enum {
     EL_X = 0, //coord X
