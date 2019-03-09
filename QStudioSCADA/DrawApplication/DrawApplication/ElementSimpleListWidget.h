@@ -1,4 +1,4 @@
-#ifndef ELEMENTSIMPLELISTWIDGET_H
+﻿#ifndef ELEMENTSIMPLELISTWIDGET_H
 #define ELEMENTSIMPLELISTWIDGET_H
 
 #include <QListWidget>
@@ -8,18 +8,17 @@ class ElementSimpleListWidget : public QListWidget
 {
     Q_OBJECT
 public:
-    explicit ElementSimpleListWidget(QListWidget *parent = 0);
-    
+    explicit ElementSimpleListWidget(QString name, QListWidget *parent = 0);
+
 protected:
     void mousePressEvent(QMouseEvent *event);
     void mouseMoveEvent(QMouseEvent *event);
 
 private:
     void startDrag();
-    void addElements();
+    void addElements(QString name);
 
-    QPoint startPos;
-    
+    QPoint startPos; 
 };
 
 #endif // ELEMENTSIMPLELISTWIDGET_H

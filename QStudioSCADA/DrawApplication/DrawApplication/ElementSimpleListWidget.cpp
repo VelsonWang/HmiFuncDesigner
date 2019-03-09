@@ -5,21 +5,20 @@
 #include <QApplication>
 #include <QDebug>
 
-ElementSimpleListWidget::ElementSimpleListWidget(QListWidget *parent) :
+ElementSimpleListWidget::ElementSimpleListWidget(QString name, QListWidget *parent) :
     QListWidget(parent)
 {
     setSpacing(5);
-    addElements();
+    addElements(name);
 }
 
-void ElementSimpleListWidget::addElements() {
+void ElementSimpleListWidget::addElements(QString name) {
 
-    QMap<QString, IDrawApplicationPlugin*> pluginMap = PluginManager::getInstance()->getPluginByType(trUtf8("基本图元"));
+    QMap<QString, IDrawApplicationPlugin*> pluginMap = PluginManager::getInstance()->getPluginByType(name);
     QMapIterator<QString, IDrawApplicationPlugin*> iter(pluginMap);
     while(iter.hasNext())
     {
         iter.next();
-        //qDebug() << __FUNCTION__ << __LINE__ << iter.key();
         IDrawApplicationPlugin* plugin = iter.value();
         if(plugin != nullptr) {
             QIcon ico = plugin->getElementIcon();
