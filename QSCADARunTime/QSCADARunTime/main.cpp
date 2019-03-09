@@ -120,14 +120,14 @@ int main(int argc, char *argv[])
     const QString &userName = "admin";
     const QString &password = "admin";
     QStorageInfo storageRoot = QStorageInfo::root();
-    const QString &rootPath = storageRoot.rootPath();
+    const QString &rootPath = "/";//storageRoot.rootPath();
     quint32 port = 60001;
 
     FtpServer ftpServer(&a, rootPath, port, userName, password, false, false);
     if (ftpServer.isListening()) {
-        QString ftpServerInfo = QString("FtpServer Listening at %1:%2").arg(FtpServer::lanIp()).arg(port);
-        ftpServerInfo += QString("\r\nFtpServer User: %1").arg(userName);
-        ftpServerInfo += QString("\r\nFtpServer Password: %1").arg(password);
+        QString ftpServerInfo = QString("\nFtpServer Listening at %1:%2").arg(FtpServer::lanIp()).arg(port);
+        ftpServerInfo += QString("\nFtpServer User: %1").arg(userName);
+        ftpServerInfo += QString("\nFtpServer Password: %1").arg(password);
         Log4Info(ftpServerInfo);
     } else {
         Log4Info("Failed to start FtpServer.");

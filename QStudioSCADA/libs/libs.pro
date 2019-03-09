@@ -14,6 +14,7 @@ SUBDIRS   = \
     qtpropertybrowser \
     qscintilla \
     Lua \
+    Ftp
 
 
 for(l, SUBDIRS) {
