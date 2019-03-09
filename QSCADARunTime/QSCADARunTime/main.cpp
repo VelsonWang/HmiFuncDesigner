@@ -7,6 +7,7 @@
 #include "httpserver.h"
 #include "VersionInfo.h"
 #include "Log.h"
+#include "ftpserver.h"
 #include <QDebug>
 #include <QFile>
 #include <QDir>
@@ -97,7 +98,6 @@ QString getSystemInfo() {
     return s;
 }
 
-
 int main(int argc, char *argv[])
 {
     int ret = 0;
@@ -112,8 +112,26 @@ int main(int argc, char *argv[])
     Log4Info(getSystemInfo());
     Log4Info("start SCADARunTime!");
 
-    HttpServer server;
-    server.init(60000);
+    // start http server
+    HttpServer httpServer;
+    httpServer.init(60000);
+
+    // start ftp server
+    const QString &userName = "admin";
+    const QString &password = "admin";
+    QStorageInfo storageRoot = QStorageInfo::root();
+    const QString &rootPath = storageRoot.rootPath();
+    quint32 port = 60001;
+
+    FtpServer ftpServer(&a, rootPath, port, userName, password, false, false);
+    if (ftpServer.isListening()) {
+        QString ftpServerInfo = QString("FtpServer Listening at %1:%2").arg(FtpServer::lanIp()).arg(port);
+        ftpServerInfo += QString("\r\nFtpServer User: %1").arg(userName);
+        ftpServerInfo += QString("\r\nFtpServer Password: %1").arg(password);
+        Log4Info(ftpServerInfo);
+    } else {
+        Log4Info("Failed to start FtpServer.");
+    }
 
     QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
     QDir dir(projPath);

@@ -23,6 +23,7 @@ CONFIG += C++11
 
 include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
+include(../QFtpServer/QFtpServer.pri)
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor \
