@@ -64,9 +64,27 @@
 
 6. **逻辑编程，JavaScript编程。**
 
-   
+    
 
-### 5.联系方式
+### 5.系统变量管理器
+
+![SystemVariableManager](md/SystemVariableManager.png)
+
+
+
+### 6.实时数据库显示
+
+![RTDBView](md/RTDBView.png)
+
+
+
+### 7.画面编辑
+
+![GraphPageEdit](md/GraphPageEdit.png)
+
+
+
+### 8.联系方式
 
 **邮箱：VelsonWang@qq.com**
 
