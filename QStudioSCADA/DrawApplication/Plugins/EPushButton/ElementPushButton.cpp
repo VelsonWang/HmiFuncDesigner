@@ -229,7 +229,7 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
     painter->setBrush(Qt::NoBrush);
 
     QFont font = painter->font();
-    font.setFamily("PushButton");
+    font.setFamily("Arial Black");
     font.setPointSize(fontSize);
 
     painter->setFont(font);
