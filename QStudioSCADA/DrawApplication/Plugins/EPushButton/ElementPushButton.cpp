@@ -10,12 +10,12 @@ ElementPushButton::ElementPushButton()
 
     init();
 
-    elementWidth = 80;
-    elementHeight = 32;
-    backgroundColor = QColor(Qt::darkGray);
+    elementWidth = 100;
+    elementHeight = 40;
+    backgroundColor = QColor(Qt::gray);
     signBackgroundColor = QColor(Qt::black);
-    borderWidth = 2;
-    borderColor = QColor(Qt::gray);
+    borderWidth = 4;
+    borderColor = QColor(Qt::lightGray);
     elementText = trUtf8("弹出按钮");
 
     createPropertyList();
@@ -217,11 +217,12 @@ void ElementPushButton::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 void ElementPushButton::drawPushButton(QPainter *painter) {
 
-    QColor color(225, 225, 225);
     QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
-    PubTool::DrawFrameRect(painter, rect, borderColor);
-
-    QColor color1(236, 236, 236);
+    for(int i=0; i<borderWidth; i++) {
+        PubTool::DrawFrameRect(painter, rect, borderColor);
+        rect.adjust(1, 1, -1, -1);
+    }
+    rect.adjust(-1, -1, 0, 0);
     PubTool::FillFullRect(painter, rect, backgroundColor);
 
     painter->setPen(textColor);
