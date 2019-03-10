@@ -7,7 +7,8 @@ include(../../propertyeditor/propertyeditor.pri)
 SOURCES += \
     ../../Public/Element.cpp \
     ElementPushButton.cpp \
-    PushButtonPlugin.cpp
+    PushButtonPlugin.cpp \
+    ../../Public/PubTool.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -15,7 +16,8 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementPushButton.h \
-    PushButtonPlugin.h
+    PushButtonPlugin.h \
+    ../../Public/PubTool.h
 
 DISTFILES += PushButton.json
 

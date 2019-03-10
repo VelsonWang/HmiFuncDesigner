@@ -1,4 +1,5 @@
 ﻿#include "ElementPushButton.h"
+#include "PubTool.h"
 #include <QtDebug>
 
 ElementPushButton::ElementPushButton()
@@ -8,6 +9,15 @@ ElementPushButton::ElementPushButton()
     elementIcon = QIcon(":/images/PushButton.png");
 
     init();
+
+    elementWidth = 80;
+    elementHeight = 32;
+    backgroundColor = QColor(Qt::darkGray);
+    signBackgroundColor = QColor(Qt::black);
+    borderWidth = 2;
+    borderColor = QColor(Qt::gray);
+    elementText = trUtf8("弹出按钮");
+
     createPropertyList();
     updatePropertyModel();
 }
@@ -207,13 +217,12 @@ void ElementPushButton::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
 void ElementPushButton::drawPushButton(QPainter *painter) {
 
-    painter->setPen(borderColor);
-    painter->setBrush(backgroundColor);
-    painter->drawRect(elementRect);
+    QColor color(225, 225, 225);
+    QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+    PubTool::DrawFrameRect(painter, rect, borderColor);
 
-
-
-
+    QColor color1(236, 236, 236);
+    PubTool::FillFullRect(painter, rect, backgroundColor);
 
     painter->setPen(textColor);
     painter->setBrush(Qt::NoBrush);
