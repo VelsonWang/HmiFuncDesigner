@@ -74,14 +74,6 @@ QString Element::getGraphPageLink() const {
     return graphPageLink;
 }
 
-void Element::setMessageType(const QString &msgType) {
-    messageType = msgType;
-}
-
-QString Element::getMessageType() const {
-    return messageType;
-}
-
 void Element::setElementZValue(int zval) {
     elementZValue = zval;
     setZValue(elementZValue);
@@ -90,38 +82,6 @@ void Element::setElementZValue(int zval) {
 
 int Element::getElementZValue() const {
     return elementZValue;
-}
-
-void Element::setIndicationRule(const QString &rule) {
-    indicationRule = rule;
-}
-
-QString Element::getIndicationRule() const {
-    return indicationRule;
-}
-
-void Element::setLinkingType(const QString &mLinkingType) {
-    linkingType = mLinkingType;
-}
-
-QString Element::getLinkingType() const {
-    return linkingType;
-}
-
-void Element::setDeviceLink(const QString &mDeviceLink) {
-    deviceLink = mDeviceLink;
-}
-
-QString Element::getDeviceLink() const {
-    return deviceLink;
-}
-
-void Element::setSignalLink(const QString &mSignalLink) {
-    signalLink = mSignalLink;
-}
-
-QString Element::getSignalLink() const {
-    return signalLink;
 }
 
 QList <Property*> Element::getPropertyList() const {
@@ -170,7 +130,6 @@ void Element::init() {
 
     elemAngle = 0;
     rotationCount = 0;
-    block = false;
 
     setSelected(true);
 

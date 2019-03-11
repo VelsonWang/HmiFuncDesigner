@@ -18,10 +18,12 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
+    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lHelper
+    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
 }
 
 
@@ -76,7 +78,4 @@ RESOURCES += \
     images.qrc
 
 RC_FILE = application.rc
-
-
-include(../propertyeditor/propertyeditor.pri)
 

@@ -1,6 +1,8 @@
 
-INCLUDEPATH += $$PWD
+include(../../QStudioSCADAlibrary.pri)
 
+CONFIG -= shared dll
+CONFIG += staticlib
 
 HEADERS += \
     $$PWD/boolproperty.h \
@@ -32,4 +34,7 @@ SOURCES += \
     $$PWD/enumproperty.cpp
 
 FORMS +=
+
+
+
 

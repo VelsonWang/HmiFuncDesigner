@@ -93,17 +93,6 @@ void ElementPushButton::createPropertyList() {
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
     propList.insert(propList.end(),angleProperty);
-
-    serviceProperty = new EmptyProperty(trUtf8("服务"));
-    propList.insert(propList.end(),serviceProperty);
-
-    blockedProperty = new BoolProperty(trUtf8("块"));
-    blockedProperty->setId(EL_BLOCK);
-    propList.insert(propList.end(),blockedProperty);
-
-    messageTypeProperty = new TextProperty(trUtf8("消息类型"));
-    messageTypeProperty->setId(EL_MESSAGE_TYPE);
-    propList.insert(propList.end(),messageTypeProperty);
 }
 
 void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
@@ -146,14 +135,6 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
         break;
-    case EL_BLOCK:
-        block = value.toBool();
-        setBlocked(block);
-        break;
-    case EL_MESSAGE_TYPE:
-        messageType = value.toString();
-        setMessageType(messageType);
-        break;
     }
 
     update();
@@ -172,8 +153,6 @@ void ElementPushButton::updatePropertyModel() {
     fontSizeProperty->setValue(fontSize);
     elementTextProperty->setValue(elementText);
     angleProperty->setValue(elemAngle);
-    blockedProperty->setValue(block);
-    messageTypeProperty->setValue(messageType);
 }
 
 void ElementPushButton::setClickPosition(QPointF position) {
@@ -368,12 +347,6 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("textcolor",textColor.name());
     writer.writeAttribute("fontsize",QString::number(fontSize));
     writer.writeAttribute("elemAngle",QString::number(elemAngle));
-    writer.writeAttribute("block",QString(QVariant(block).toString()));
-    writer.writeAttribute("indicationrule",indicationRule);
-    writer.writeAttribute("linkingType",linkingType);
-    writer.writeAttribute("deviceLink",deviceLink);
-    writer.writeAttribute("signalLink",signalLink);
-    writer.writeAttribute("messageType",messageType);
     writer.writeEndElement();
 }
 
@@ -423,36 +396,22 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
         setBlocked(attributes.value("block").toString().toInt());
     }
 
-    if (attributes.hasAttribute("indicationrule")) {
-        setIndicationRule(attributes.value("indicationrule").toString());
-    }
-
-    if (attributes.hasAttribute("linkingType")) {
-        setLinkingType(attributes.value("linkingType").toString());
-    }
-
-    if (attributes.hasAttribute("deviceLink")) {
-        setDeviceLink(attributes.value("deviceLink").toString());
-    }
-
-    if (attributes.hasAttribute("signalLink")) {
-        setSignalLink(attributes.value("signalLink").toString());
-    }
-
-    if (attributes.hasAttribute("messageType")) {
-        setMessageType(attributes.value("messageType").toString());
-    }
-
     updateBoundingElement();
     updatePropertyModel();
 }
 
 void ElementPushButton::writeData(QDataStream &out) {
 
-    out << this->elementId << this->x() << this->y()
-        << this->zValue() << this->elementWidth << this->elementHeight
-        << this->elementText << this->textColor << this->fontSize
-        << this->elemAngle << this->block << this->indicationRule;
+    out << this->elementId
+        << this->x()
+        << this->y()
+        << this->zValue()
+        << this->elementWidth
+        << this->elementHeight
+        << this->elementText
+        << this->textColor
+        << this->fontSize
+        << this->elemAngle;
 }
 
 void ElementPushButton::readData(QDataStream &in) {
@@ -467,11 +426,17 @@ void ElementPushButton::readData(QDataStream &in) {
     QColor textColor;
     int fontSize;
     qreal angle;
-    bool block;
-    QString rule;
 
-    in >> id >> xpos >> ypos >> zvalue >> width >>
-          height >> text >> textColor >> fontSize >> angle >> block >> rule;
+    in >> id
+       >> xpos
+       >> ypos
+       >> zvalue
+       >> width
+       >> height
+       >> text
+       >> textColor
+       >> fontSize
+       >> angle;
 
     this->setElementId(id);
     this->setElementXPos(xpos);
@@ -483,18 +448,22 @@ void ElementPushButton::readData(QDataStream &in) {
     this->textColor = textColor;
     this->fontSize = fontSize;
     this->setAngle(angle);
-    this->block = block;
-    this->setIndicationRule(rule);
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
 
 QDataStream &operator<<(QDataStream &out,const ElementPushButton &rect) {
 
-    out << rect.elementId << rect.x() << rect.y()
-        << rect.zValue() << rect.elementWidth << rect.elementHeight
-        << rect.elementText << rect.textColor << rect.fontSize
-        << rect.elemAngle << rect.block << rect.indicationRule;
+    out << rect.elementId
+        << rect.x()
+        << rect.y()
+        << rect.zValue()
+        << rect.elementWidth
+        << rect.elementHeight
+        << rect.elementText
+        << rect.textColor
+        << rect.fontSize
+        << rect.elemAngle;
     return out;
 }
 
@@ -510,11 +479,17 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
     QColor textColor;
     int fontSize;
     qreal angle;
-    bool block;
-    QString rule;
 
-    in >> id >> xpos >> ypos >> zvalue >> width >>
-          height >> text >> textColor >> fontSize >> angle >> block >> rule;
+    in >> id
+       >> xpos
+       >> ypos
+       >> zvalue
+       >> width
+       >> height
+       >> text
+       >> textColor
+       >> fontSize
+       >> angle;
 
     rect.setElementId(id);
     rect.setElementXPos(xpos);
@@ -526,8 +501,6 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
     rect.textColor = textColor;
     rect.fontSize = fontSize;
     rect.setAngle(angle);
-    rect.block = block;
-    rect.setIndicationRule(rule);
     rect.updateBoundingElement();
     rect.updatePropertyModel();
 

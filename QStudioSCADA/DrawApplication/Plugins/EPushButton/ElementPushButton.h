@@ -57,8 +57,7 @@ private:
     IntegerProperty *fontSizeProperty;
     IntegerProperty *angleProperty;
     BoolProperty *blockedProperty;
-    EmptyProperty *serviceProperty;
-    TextProperty *messageTypeProperty;
+
 };
 
 #endif // PUSHBUTTONITEM_HPP

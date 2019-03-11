@@ -158,17 +158,6 @@ void ElementPolygon::createPropertyList() {
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
     propList.insert(propList.end(),angleProperty);
-
-    blockedProperty = new BoolProperty(trUtf8("块"));
-    blockedProperty->setId(EL_BLOCK);
-    propList.insert(propList.end(),blockedProperty);
-
-    serviceProperty = new EmptyProperty(trUtf8("服务"));
-    propList.insert(propList.end(),serviceProperty);
-
-    messageTypeProperty = new TextProperty(trUtf8("消息类型"));
-    messageTypeProperty->setId(EL_MESSAGE_TYPE);
-    propList.insert(propList.end(),messageTypeProperty);
 }
 
 void ElementPolygon::updateElementProperty(uint id, const QVariant &value) {
@@ -211,14 +200,6 @@ void ElementPolygon::updateElementProperty(uint id, const QVariant &value) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
         break;
-    case EL_BLOCK:
-        block = value.toBool();
-        setBlocked(block);
-        break;
-    case EL_MESSAGE_TYPE:
-        messageType = value.toString();
-        setMessageType(messageType);
-        break;
     }
 
     scene()->update();
@@ -235,8 +216,6 @@ void ElementPolygon::updatePropertyModel() {
     borderColorProperty->setValue(borderColor);
     borderWidthProperty->setValue(borderWidth);
     angleProperty->setValue(elemAngle);
-    blockedProperty->setValue(block);
-    messageTypeProperty->setValue(messageType);
 }
 
 void ElementPolygon::setClickPosition(QPointF position) {
@@ -412,13 +391,7 @@ void ElementPolygon::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("borderColor",borderColor.name());
     writer.writeAttribute("borderWidth",QString::number(borderWidth));
     writer.writeAttribute("elemAngle",QString::number(elemAngle));
-    writer.writeAttribute("block",QString(QVariant(block).toString()));
     writer.writeAttribute("points",createPointsXmlString());
-    writer.writeAttribute("indicationrule",indicationRule);
-    writer.writeAttribute("linkingType",linkingType);
-    writer.writeAttribute("deviceLink",deviceLink);
-    writer.writeAttribute("signalLink",signalLink);
-    writer.writeAttribute("messageType",messageType);
     writer.writeEndElement();
 }
 
@@ -480,26 +453,6 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
         points = m_points;
     }
 
-    if (attributes.hasAttribute("indicationrule")) {
-        setIndicationRule(attributes.value("indicationrule").toString());
-    }
-
-    if (attributes.hasAttribute("linkingType")) {
-        setLinkingType(attributes.value("linkingType").toString());
-    }
-
-    if (attributes.hasAttribute("deviceLink")) {
-        setDeviceLink(attributes.value("deviceLink").toString());
-    }
-
-    if (attributes.hasAttribute("signalLink")) {
-        setSignalLink(attributes.value("signalLink").toString());
-    }
-
-    if (attributes.hasAttribute("messageType")) {
-        setMessageType(attributes.value("messageType").toString());
-    }
-
     updateBoundingElement();
     updatePropertyModel();
 }
@@ -516,14 +469,11 @@ void ElementPolygon::writeData(QDataStream &out) {
         << this->borderColor
         << this->borderWidth
         << this->elemAngle
-        << this->block
         << this->points.size();
 
     for (int i = 0; i < this->points.size(); i++) {
         out << this->points[i];
     }
-
-    out << this->indicationRule;
 }
 
 
@@ -539,13 +489,20 @@ void ElementPolygon::readData(QDataStream &in) {
     QColor borderColor;
     int borderWidth;
     qreal angle;
-    bool block;
     int pointsCount;
     QVector <QPointF> points;
-    QString rule;
 
-    in >> id >> xpos >> ypos >> zvalue >> width >> height >> backColor
-       >> borderColor >> borderWidth >> angle >> block >> pointsCount >> rule;
+    in >> id
+       >> xpos
+       >> ypos
+       >> zvalue
+       >> width
+       >> height
+       >> backColor
+       >> borderColor
+       >> borderWidth
+       >> angle
+       >> pointsCount;
 
     for (int i = 0; i < pointsCount; i++) {
         QPointF point;
@@ -563,10 +520,8 @@ void ElementPolygon::readData(QDataStream &in) {
     this->borderColor = borderColor;
     this->borderWidth = borderWidth;
     this->setAngle(angle);
-    this->block = block;
     this->points.clear();
     this->points = points;
-    this->setIndicationRule(rule);
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
@@ -576,15 +531,20 @@ QDataStream &operator<<(QDataStream &out,const ElementPolygon &polygon)
 {
 
     out << polygon.elementId
-        << polygon.x() << polygon.y() << polygon.zValue()
-        << polygon.elementWidth << polygon.elementHeight << polygon.backgroundColor << polygon.borderColor
-        << polygon.borderWidth  << polygon.elemAngle << polygon.block << polygon.points.size();
+        << polygon.x()
+        << polygon.y()
+        << polygon.zValue()
+        << polygon.elementWidth
+        << polygon.elementHeight
+        << polygon.backgroundColor
+        << polygon.borderColor
+        << polygon.borderWidth
+        << polygon.elemAngle
+        << polygon.points.size();
 
     for (int i = 0; i < polygon.points.size(); i++) {
         out << polygon.points[i];
     }
-
-    out << polygon.indicationRule;
 
     return out;
 }
@@ -602,13 +562,20 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
     QColor borderColor;
     int borderWidth;
     qreal angle;
-    bool block;
     int pointsCount;
     QVector <QPointF> points;
-    QString rule;
 
-    in >> id >> xpos >> ypos >> zvalue >> width >> height >> backColor
-       >> borderColor >> borderWidth >> angle >> block >> pointsCount >> rule;
+    in >> id
+       >> xpos
+       >> ypos
+       >> zvalue
+       >> width
+       >> height
+       >> backColor
+       >> borderColor
+       >> borderWidth
+       >> angle
+       >> pointsCount;
 
     for (int i = 0; i < pointsCount; i++) {
         QPointF point;
@@ -626,10 +593,8 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
     polygon.borderColor = borderColor;
     polygon.borderWidth = borderWidth;
     polygon.setAngle(angle);
-    polygon.block = block;
     polygon.points.clear();
     polygon.points = points;
-    polygon.setIndicationRule(rule);
     polygon.updateBoundingElement();
     polygon.updatePropertyModel();
 

@@ -83,17 +83,6 @@ void ElementEllipse::createPropertyList() {
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
     propList.insert(propList.end(),angleProperty);
-
-    blockedProperty = new BoolProperty(trUtf8("块"));
-    blockedProperty->setId(EL_BLOCK);
-    propList.insert(propList.end(),blockedProperty);
-
-    serviceProperty = new EmptyProperty(trUtf8("服务"));
-    propList.insert(propList.end(),serviceProperty);
-
-    messageTypeProperty = new TextProperty(trUtf8("消息类型"));
-    messageTypeProperty->setId(EL_MESSAGE_TYPE);
-    propList.insert(propList.end(),messageTypeProperty);
 }
 
 void ElementEllipse::updateElementProperty(uint id, const QVariant &value) {
@@ -136,14 +125,6 @@ void ElementEllipse::updateElementProperty(uint id, const QVariant &value) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
         break;
-    case EL_BLOCK:
-        block = value.toBool();
-        setBlocked(block);
-        break;
-    case EL_MESSAGE_TYPE:
-        messageType = value.toString();
-        setMessageType(messageType);
-        break;
     }
 
     update();
@@ -162,8 +143,6 @@ void ElementEllipse::updatePropertyModel() {
     borderColorProperty->setValue(borderColor);
     borderWidthProperty->setValue(borderWidth);
     angleProperty->setValue(elemAngle);
-    blockedProperty->setValue(block);
-    messageTypeProperty->setValue(messageType);
 }
 
 void ElementEllipse::setClickPosition(QPointF position) {
@@ -334,12 +313,6 @@ void ElementEllipse::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("borderColor",borderColor.name());
     writer.writeAttribute("borderWidth",QString::number(borderWidth));
     writer.writeAttribute("elemAngle",QString::number(elemAngle));
-    writer.writeAttribute("block",QString(QVariant(block).toString()));
-    writer.writeAttribute("indicationrule",indicationRule);
-    writer.writeAttribute("linkingType",linkingType);
-    writer.writeAttribute("deviceLink",deviceLink);
-    writer.writeAttribute("signalLink",signalLink);
-    writer.writeAttribute("messageType",messageType);
     writer.writeEndElement();
 }
 
@@ -389,26 +362,6 @@ void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
         setBlocked(attributes.value("block").toString().toInt());
     }
 
-    if (attributes.hasAttribute("indicationrule")) {
-        setIndicationRule(attributes.value("indicationrule").toString());
-    }
-
-    if (attributes.hasAttribute("linkingType")) {
-        setLinkingType(attributes.value("linkingType").toString());
-    }
-
-    if (attributes.hasAttribute("deviceLink")) {
-        setDeviceLink(attributes.value("deviceLink").toString());
-    }
-
-    if (attributes.hasAttribute("signalLink")) {
-        setSignalLink(attributes.value("signalLink").toString());
-    }
-
-    if (attributes.hasAttribute("messageType")) {
-        setMessageType(attributes.value("messageType").toString());
-    }
-
     updateBoundingElement();
     updatePropertyModel();
 }
@@ -423,9 +376,7 @@ void ElementEllipse::writeData(QDataStream &out) {
         << this->backgroundColor
         << this->borderColor
         << this->borderWidth
-        << this->elemAngle
-        << this->block
-        << this->indicationRule;
+        << this->elemAngle;
 }
 
 void ElementEllipse::readData(QDataStream &in) {
@@ -439,8 +390,6 @@ void ElementEllipse::readData(QDataStream &in) {
     QColor borderColor;
     int borderWidth;
     qreal angle;
-    bool block;
-    QString rule;
 
     in >> id
        >> xpos
@@ -451,9 +400,7 @@ void ElementEllipse::readData(QDataStream &in) {
        >> backColor
        >> borderColor
        >> borderWidth
-       >> angle
-       >> block
-       >> rule;
+       >> angle;
 
     this->setElementId(id);
     this->setElementXPos(xpos);
@@ -465,8 +412,6 @@ void ElementEllipse::readData(QDataStream &in) {
     this->borderColor = borderColor;
     this->borderWidth = borderWidth;
     this->setAngle(angle);
-    this->block = block;
-    this->setIndicationRule(rule);
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
@@ -474,9 +419,15 @@ void ElementEllipse::readData(QDataStream &in) {
 QDataStream &operator<<(QDataStream &out,const ElementEllipse &rect) {
 
     out << rect.elementId
-        << rect.x() << rect.y() << rect.zValue()
-        << rect.elementWidth << rect.elementHeight << rect.backgroundColor << rect.borderColor
-        << rect.borderWidth  << rect.elemAngle << rect.block << rect.indicationRule;
+        << rect.x()
+        << rect.y()
+        << rect.zValue()
+        << rect.elementWidth
+        << rect.elementHeight
+        << rect.backgroundColor
+        << rect.borderColor
+        << rect.borderWidth
+        << rect.elemAngle;
 
     return out;
 }
@@ -493,11 +444,17 @@ QDataStream &operator>>(QDataStream &in,ElementEllipse &rect) {
     QColor borderColor;
     int borderWidth;
     qreal angle;
-    bool block;
-    QString rule;
 
-    in >> id >> xpos >> ypos >> zvalue >> width >> height >> backColor
-       >> borderColor >> borderWidth >> angle >> block >> rule;
+    in >> id
+       >> xpos
+       >> ypos
+       >> zvalue
+       >> width
+       >> height
+       >> backColor
+       >> borderColor
+       >> borderWidth
+       >> angle;
 
     rect.setElementId(id);
     rect.setElementXPos(xpos);
@@ -509,8 +466,6 @@ QDataStream &operator>>(QDataStream &in,ElementEllipse &rect) {
     rect.borderColor = borderColor;
     rect.borderWidth = borderWidth;
     rect.setAngle(angle);
-    rect.block = block;
-    rect.setIndicationRule(rule);
     rect.updateBoundingElement();
     rect.updatePropertyModel();
 

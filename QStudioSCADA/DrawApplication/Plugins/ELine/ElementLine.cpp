@@ -76,17 +76,6 @@ void ElementLine::createPropertyList() {
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
     propList.insert(propList.end(),angleProperty);
-
-    blockedProperty = new BoolProperty(trUtf8("块"));
-    blockedProperty->setId(EL_BLOCK);
-    propList.insert(propList.end(),blockedProperty);
-
-    serviceProperty = new EmptyProperty(trUtf8("服务"));
-    propList.insert(propList.end(),serviceProperty);
-
-    messageTypeProperty = new TextProperty(trUtf8("消息类型"));
-    messageTypeProperty->setId(EL_MESSAGE_TYPE);
-    propList.insert(propList.end(),messageTypeProperty);
 }
 
 void ElementLine::updateElementProperty(uint id, const QVariant &value) {
@@ -126,14 +115,6 @@ void ElementLine::updateElementProperty(uint id, const QVariant &value) {
            elemAngle = value.toInt();
            setAngle(elemAngle);
            break;
-       case EL_BLOCK:
-           block = value.toBool();
-           setBlocked(block);
-           break;
-       case EL_MESSAGE_TYPE:
-           messageType = value.toString();
-           setMessageType(messageType);
-           break;
        }
 
     update();
@@ -151,8 +132,6 @@ void ElementLine::updatePropertyModel() {
     backColorProperty->setValue(backgroundColor);
     borderWidthProperty->setValue(borderWidth);
     angleProperty->setValue(elemAngle);
-    blockedProperty->setValue(block);
-    messageTypeProperty->setValue(messageType);
 }
 
 void ElementLine::setClickPosition(QPointF position) {
@@ -295,12 +274,6 @@ void ElementLine::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("borderColor",borderColor.name());
     writer.writeAttribute("borderWidth",QString::number(borderWidth));
     writer.writeAttribute("elemAngle",QString::number(elemAngle));
-    writer.writeAttribute("block",QString(QVariant(block).toString()));
-    writer.writeAttribute("indicationrule",indicationRule);
-    writer.writeAttribute("linkingType",linkingType);
-    writer.writeAttribute("deviceLink",deviceLink);
-    writer.writeAttribute("signalLink",signalLink);
-    writer.writeAttribute("messageType",messageType);
     writer.writeEndElement();
 }
 
@@ -346,26 +319,6 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
         setBlocked(attributes.value("block").toString().toInt());
     }
 
-    if (attributes.hasAttribute("indicationrule")) {
-        setIndicationRule(attributes.value("indicationrule").toString());
-    }
-
-    if (attributes.hasAttribute("linkingType")) {
-        setLinkingType(attributes.value("linkingType").toString());
-    }
-
-    if (attributes.hasAttribute("deviceLink")) {
-        setDeviceLink(attributes.value("deviceLink").toString());
-    }
-
-    if (attributes.hasAttribute("signalLink")) {
-        setSignalLink(attributes.value("signalLink").toString());
-    }
-
-    if (attributes.hasAttribute("messageType")) {
-        setMessageType(attributes.value("messageType").toString());
-    }
-
     updateBoundingElement();
     updatePropertyModel();
 }
@@ -380,9 +333,7 @@ void ElementLine::writeData(QDataStream &out) {
         << this->elementHeight
         << this->backgroundColor
         << this->borderWidth
-        << this->elemAngle
-        << this->block
-        << this->indicationRule;
+        << this->elemAngle;
 }
 
 void ElementLine::readData(QDataStream &in) {
@@ -397,7 +348,6 @@ void ElementLine::readData(QDataStream &in) {
     int borderWidth;
     qreal angle;
     bool block;
-    QString rule;
 
     in >> id
        >> xpos
@@ -408,8 +358,7 @@ void ElementLine::readData(QDataStream &in) {
        >> backColor
        >> borderWidth
        >> angle
-       >> block
-       >> rule;
+       >> block;
 
     this->setElementId(id);
     this->setElementXPos(xpos);
@@ -420,17 +369,21 @@ void ElementLine::readData(QDataStream &in) {
     this->backgroundColor = backColor;
     this->borderWidth = borderWidth;
     this->setAngle(angle);
-    this->block = block;
-    this->setIndicationRule(rule);
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
 
 QDataStream &operator<<(QDataStream &out,const ElementLine &line) {
 
-    out << line.elementId << line.x() << line.y() << line.zValue()
-        << line.elementWidth << line.elementHeight << line.backgroundColor
-        << line.borderWidth << line.elemAngle << line.block << line.indicationRule;
+    out << line.elementId
+        << line.x()
+        << line.y()
+        << line.zValue()
+        << line.elementWidth
+        << line.elementHeight
+        << line.backgroundColor
+        << line.borderWidth
+        << line.elemAngle;
     return out;
 }
 
@@ -445,12 +398,16 @@ QDataStream &operator>>(QDataStream &in,ElementLine &line) {
     QColor backColor;
     int borderWidth;
     qreal angle;
-    bool block;
-    QString rule;
 
-    in >> id >> xpos >> ypos >> zvalue >> width
-       >> height >> backColor >> borderWidth
-       >> angle >> block >> rule;
+    in >> id
+       >> xpos
+       >> ypos
+       >> zvalue
+       >> width
+       >> height
+       >> backColor
+       >> borderWidth
+       >> angle;
 
     line.setElementId(id);
     line.setElementXPos(xpos);
@@ -461,8 +418,6 @@ QDataStream &operator>>(QDataStream &in,ElementLine &line) {
     line.backgroundColor = backColor;
     line.borderWidth = borderWidth;
     line.setAngle(angle);
-    line.block = block;
-    line.setIndicationRule(rule);
     line.updateBoundingElement();
     line.updatePropertyModel();
 

@@ -1,8 +1,11 @@
 
 include(../../DrawApplicationPlugin.pri)
 
-
-include(../../propertyeditor/propertyeditor.pri)
+CONFIG(debug, debug|release) { #debug
+    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+} else { # release
+    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+}
 
 SOURCES += ELinePlugin.cpp \
     ../../Public/Element.cpp \

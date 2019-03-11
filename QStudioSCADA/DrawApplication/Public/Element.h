@@ -40,7 +40,6 @@ public:
     virtual void writeData(QDataStream &out) = 0;
     virtual void readData(QDataStream &in) = 0;
 
-    /** Properties*/
     void setElementId(const QString &);
     QString getElementId() const;
 
@@ -66,27 +65,11 @@ public:
     void setGraphPageLink(const QString &);
     QString getGraphPageLink() const;
 
-    void setMessageType(const QString &);
-    QString getMessageType() const;
-
-    void setIndicationRule(const QString &);
-    QString getIndicationRule() const;
-
-    void setLinkingType(const QString &mLinkingType);
-    QString getLinkingType() const;
-
-    void setDeviceLink(const QString &mDeviceLink);
-    QString getDeviceLink() const;
-
-    void setSignalLink(const QString &mSignalLink);
-    QString getSignalLink() const;
-
     void moveTo(int x,int y);
 
 protected:
     QString elementId;
     QString graphPageLink;
-    QString messageType;
     QColor backgroundColor;
     QColor signBackgroundColor;
     QColor borderColor;
@@ -96,15 +79,10 @@ protected:
     int elementXPos;
     int elementYPos;
     int elementZValue;
-    bool block;
     QString elementText;
     QColor textColor;
     int fontSize;
     qreal elemAngle;
-    QString indicationRule;
-    QString linkingType;
-    QString deviceLink;
-    QString signalLink;
 
     QIcon elementIcon;
     QString internalElementType;

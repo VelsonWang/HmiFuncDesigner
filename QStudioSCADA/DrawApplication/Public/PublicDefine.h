@@ -24,22 +24,20 @@ enum {
     EL_HEIGHT = 3,
     EL_TOOLTIP = 4,
     EL_ID = 5, //unique id
-    EL_BLOCK = 6,//blocking element, not movable
-    EL_BACKGROUND = 7,
-    EL_SIGN_BACKGROUND = 8,
-    EL_BORDER_COLOR = 9,
-    EL_BORDER_WIDTH = 10,
-    EL_BORDER_STYLE = 11,
-    EL_ANGLE = 12,
-    EL_Z_VALUE = 13,
-    EL_LINE_WIDTH = 14,
-    EL_TEXT = 15,
-    EL_FONT_FAMILY = 16,
-    EL_FONT_SIZE = 17,
-    EL_FONT_COLOR = 18,
-    EL_GRAPHPAGE_LINK = 19, //transition to screen
-    EL_MESSAGE_TYPE = 20, //accociate message 001-016
-    EL_PROPERTY_EMPTY = 21
+    EL_BACKGROUND = 6,
+    EL_SIGN_BACKGROUND = 7,
+    EL_BORDER_COLOR = 8,
+    EL_BORDER_WIDTH = 9,
+    EL_BORDER_STYLE = 10,
+    EL_ANGLE = 11,
+    EL_Z_VALUE = 12,
+    EL_LINE_WIDTH = 13,
+    EL_TEXT = 14,
+    EL_FONT_FAMILY = 15,
+    EL_FONT_SIZE = 16,
+    EL_FONT_COLOR = 17,
+    EL_GRAPHPAGE_LINK = 18, //transition to screen
+    EL_PROPERTY_EMPTY = 19
 };
 
 enum {
