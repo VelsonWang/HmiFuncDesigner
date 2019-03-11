@@ -10,6 +10,7 @@ CONFIG += staticlib
 SOURCES += MiscUtils.cpp
 
 HEADERS += MiscUtils.h \
-    Singleton.h
+    Singleton.h \
+    ObjectCreator.h
 
 
