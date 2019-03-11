@@ -1,28 +1,28 @@
-﻿#include "ElementPushButton.h"
+﻿#include "ElementInputEdit.h"
 #include "PubTool.h"
 #include <QtDebug>
 
-ElementPushButton::ElementPushButton()
+ElementInputEdit::ElementInputEdit()
 {
-    elementId = trUtf8("弹出按钮");
-    internalElementType = trUtf8("PushButton");
-    elementIcon = QIcon(":/images/PushButton.png");
+    elementId = trUtf8("输入编辑框");
+    internalElementType = trUtf8("InputEdit");
+    elementIcon = QIcon(":/images/InputEdit.png");
 
     init();
 
-    elementWidth = 100;
-    elementHeight = 40;
-    backgroundColor = QColor(240, 240, 240);
+    elementWidth = 80;
+    elementHeight = 26;
+    backgroundColor = QColor(Qt::white);
     signBackgroundColor = QColor(Qt::black);
-    borderWidth = 4;
-    borderColor = QColor(112, 112, 112);
-    elementText = trUtf8("弹出按钮");
+    borderWidth = 2;
+    borderColor = QColor(61, 123, 173);
+    elementText = trUtf8("输入编辑框");
 
     createPropertyList();
     updatePropertyModel();
 }
 
-QRectF ElementPushButton::boundingRect() const {
+QRectF ElementInputEdit::boundingRect() const {
 
     qreal extra = 5;
 
@@ -30,7 +30,7 @@ QRectF ElementPushButton::boundingRect() const {
     return rect.normalized().adjusted(-extra,-extra,extra,extra);
 }
 
-QPainterPath ElementPushButton::shape() const {
+QPainterPath ElementInputEdit::shape() const {
     QPainterPath path;
     path.addRect(elementRect);
 
@@ -42,7 +42,7 @@ QPainterPath ElementPushButton::shape() const {
     return path;
 }
 
-void ElementPushButton::createPropertyList() {
+void ElementInputEdit::createPropertyList() {
 
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
@@ -95,7 +95,7 @@ void ElementPushButton::createPropertyList() {
     propList.insert(propList.end(),angleProperty);
 }
 
-void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
+void ElementInputEdit::updateElementProperty(uint id, const QVariant &value) {
 
     switch (id) {
 
@@ -141,7 +141,7 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
     scene()->update();
 }
 
-void ElementPushButton::updatePropertyModel() {
+void ElementInputEdit::updatePropertyModel() {
 
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
@@ -155,7 +155,7 @@ void ElementPushButton::updatePropertyModel() {
     angleProperty->setValue(elemAngle);
 }
 
-void ElementPushButton::setClickPosition(QPointF position) {
+void ElementInputEdit::setClickPosition(QPointF position) {
 
     prepareGeometryChange();
     elementXPos = position.x();
@@ -167,18 +167,18 @@ void ElementPushButton::setClickPosition(QPointF position) {
     updatePropertyModel();
 }
 
-void ElementPushButton::updateBoundingElement() {
+void ElementInputEdit::updateBoundingElement() {
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementPushButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
+void ElementInputEdit::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
 
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
 
-    drawPushButton(painter);
+    drawInputEdit(painter);
 
     if (isSelected()) {
 
@@ -194,18 +194,13 @@ void ElementPushButton::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     }
 }
 
-void ElementPushButton::drawPushButton(QPainter *painter) {
+void ElementInputEdit::drawInputEdit(QPainter *painter) {
 
     QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
     for(int i=0; i<borderWidth; i++) {
         PubTool::DrawFrameRect(painter, rect, borderColor);
-        if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
-        else rect.adjust(1, 1, 0, 0);
+        rect.adjust(1, 1, -1, -1);
     }
-
-    PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
-    rect.adjust(1, 1, -1, -1);
-
     rect.adjust(-1, -1, 0, 0);
     PubTool::FillFullRect(painter, rect, backgroundColor);
 
@@ -220,7 +215,7 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
     painter->drawText(boundingRect(), Qt::AlignCenter, elementText);
 }
 
-void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementInputEdit::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 
     QPointF mousePoint = event->pos();
 
@@ -256,7 +251,7 @@ void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementInputEdit::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
@@ -293,7 +288,7 @@ void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementInputEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
@@ -311,7 +306,7 @@ void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+void ElementInputEdit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
@@ -338,7 +333,7 @@ void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
 }
 
-void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
+void ElementInputEdit::writeAsXml(QXmlStreamWriter &writer) {
 
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
@@ -355,7 +350,7 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeEndElement();
 }
 
-void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("elementId")) {
         setElementId(attributes.value("elementId").toString());
@@ -405,7 +400,7 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
     updatePropertyModel();
 }
 
-void ElementPushButton::writeData(QDataStream &out) {
+void ElementInputEdit::writeData(QDataStream &out) {
 
     out << this->elementId
         << this->x()
@@ -419,7 +414,7 @@ void ElementPushButton::writeData(QDataStream &out) {
         << this->elemAngle;
 }
 
-void ElementPushButton::readData(QDataStream &in) {
+void ElementInputEdit::readData(QDataStream &in) {
 
     QString id;
     qreal xpos;
@@ -457,7 +452,7 @@ void ElementPushButton::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementPushButton &rect) {
+QDataStream &operator<<(QDataStream &out,const ElementInputEdit &rect) {
 
     out << rect.elementId
         << rect.x()
@@ -472,7 +467,7 @@ QDataStream &operator<<(QDataStream &out,const ElementPushButton &rect) {
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
+QDataStream &operator>>(QDataStream &in,ElementInputEdit &rect) {
 
     QString id;
     qreal xpos;

@@ -9,5 +9,6 @@ SUBDIRS += \
     ERect \
     EText \
 ###############<基本控件>##################
-    EPushButton
+    EPushButton \
+    EInputEdit
 

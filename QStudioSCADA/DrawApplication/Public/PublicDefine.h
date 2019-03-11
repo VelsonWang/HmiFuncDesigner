@@ -15,6 +15,8 @@ const int GroupItemType = QGraphicsItem::UserType + 16;
 const int PolygonItemType = QGraphicsItem::UserType + 17;
 
 const int PushButtonItemType = QGraphicsItem::UserType + 40;
+const int InputEditItemType = QGraphicsItem::UserType + 41;
+
 
 
 enum {
