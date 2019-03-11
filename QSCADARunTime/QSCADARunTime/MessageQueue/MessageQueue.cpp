@@ -26,7 +26,7 @@ MessageQueue::~MessageQueue()
 
 
 
-MessageQueue* MessageQueue::getinstance()
+MessageQueue* MessageQueue::getInstance()
 {
     QMutexLocker locker(&mutex_);
     if(msgQueue_ == nullptr) {
@@ -72,12 +72,12 @@ bool MessageQueue::registMsgQueue(const int& queueid)
 
 
 /**
- * @brief MessageQueue::removemsgqueue
+ * @brief MessageQueue::removeMsgQueue
  * @details 移除消息队列
  * @param queueid 消息队列ID
  * @return true false
  */
-bool MessageQueue::removemsgqueue(const int& queueid)
+bool MessageQueue::removeMsgQueue(const int& queueid)
 {
     TMsgManager::iterator it;
     bool ret = false;

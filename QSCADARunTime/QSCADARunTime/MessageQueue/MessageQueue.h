@@ -30,8 +30,6 @@ public:
     static MessageQueue* getInstance();
     static void deleteInstance();
 
-    virtual ~MessageQueue();
-
     bool registMsgQueue(const int& queueid);
     bool removeMsgQueue(const int& queueid);
 
@@ -40,7 +38,7 @@ public:
 
 private:
     MessageQueue();
-    ~MessageQueue();
+    virtual ~MessageQueue();
     MessageQueue(const MessageQueue &) = delete;
     MessageQueue &operator=(const MessageQueue &) = delete;
 
@@ -51,21 +49,5 @@ private:
     TMsgManager*  msgMgr_;
 };
 
-
-
-
-
-
-
-
-
-
-#endif
-
-class MessageQueue
-{
-public:
-    MessageQueue();
-};
 
 #endif // MESSAGEQUEUE_H
