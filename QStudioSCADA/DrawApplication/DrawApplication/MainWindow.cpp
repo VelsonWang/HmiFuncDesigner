@@ -206,6 +206,42 @@ void MainWindow::closeEvent(QCloseEvent *event) {
     event->accept();
 }
 
+
+/**
+ * @brief MainWindow::addAndSaveGraphPage
+ * @details 创建和保存画面， 用于工程管理器调用进程创建画面
+ * @param pagePath 画面路径
+ * @param pagePath 画面名称
+ * @param width 画面宽度
+ * @param height 画面高度
+ */
+void MainWindow::addAndSaveGraphPage(const QString &pagePath,
+                                     const QString &pageName,
+                                     int width,
+                                     int height)
+{
+    GraphPage *graphPage = new GraphPage(QRectF());
+    graphPage->setGridVisible(gridVisible);
+    graphPage->setGraphPageId(pageName);
+    graphPage->setGraphPageWidth(width);
+    graphPage->setGraphPageHeight(height);
+
+    QFile file(pagePath + "/" + pageName);
+
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::information(this,
+                                 trUtf8("错误"),
+                                 trUtf8("无法保存文件"),
+                                 QMessageBox::Ok);
+    }
+
+    QDataStream out(&file);
+    out << *graphPage;
+    graphPage->writeItems(out,graphPage->items());
+    file.close();
+}
+
+
 void MainWindow::slotEditNew() {
 
     addNewGraphPage();

@@ -94,14 +94,29 @@ void DrawPageWin::NewDrawPage()
     last = DrawListUtils::GetMaxDrawPageNum("draw", this->m_DrawList);
     QString strDrawPageName = QString("draw%1").arg(last);
 
-    // create draw page file
-    QFile file(m_ProjPath + "/" + strDrawPageName + ".drw");
-    if(!file.open(QIODevice::WriteOnly | QIODevice::Truncate))
+    QString fileDrawApplication = "";
+#ifdef Q_OS_WIN
+    fileDrawApplication = Helper::AppDir() + "/DrawApplication.exe";
+#elif Q_OS_LINUX
+    fileDrawApplication = Helper::AppDir() + "/DrawApplication";
+#else
+
+#endif
+    QFile file(fileDrawApplication);
+    if(file.exists())
     {
-        qDebug() << "Can't create draw page: " << strDrawPageName;
-        return;
+        QProcess *process = new QProcess();
+        QStringList argv;
+        QString strGraphPageName = strDrawPageName + ".drw";
+        int width = 800;
+        int height = 480;
+        argv << m_ProjPath
+             << strGraphPageName
+             << QString("new")
+             << QString::number(width)
+             << QString::number(height);
+        process->start(fileDrawApplication, argv);
     }
-    file.close();
 
     this->m_DrawList.append(strDrawPageName);
     setModifiedFlag(true);
@@ -325,7 +340,9 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
         QProcess *process = new QProcess();
         QStringList argv;
 
-        argv << m_ProjPath << item->text();
+        argv << m_ProjPath
+             << item->text()
+             << QString("open");
         process->start(fileDrawApplication, argv);
     }
 }
