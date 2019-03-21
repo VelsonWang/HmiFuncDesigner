@@ -8,6 +8,8 @@
 #include "VersionInfo.h"
 #include "Log.h"
 #include "ftpserver.h"
+#include "Global.h"
+#include "RunTimeMySQLDatabase.h"
 #include <QDebug>
 #include <QFile>
 #include <QDir>
@@ -109,8 +111,15 @@ int main(int argc, char *argv[])
     QApplication  a(argc, argv);
     //std::cout << "???" << std::endl;
 
-    Log4Info(getSystemInfo());
-    Log4Info("start SCADARunTime!");
+    // connect database, create database, tables if necessary
+    g_database = new RunTimeMySQLDatabase(QString("RunTimeDB"), QString("root"), QString("725431"));
+    if(g_database->openDatabase()) {
+        g_database->createDatabase();
+        g_database->createTables();
+    }
+
+    LogInfo(getSystemInfo());
+    LogInfo("start SCADARunTime!");
 
     // start http server
     HttpServer httpServer;
@@ -128,9 +137,9 @@ int main(int argc, char *argv[])
         QString ftpServerInfo = QString("\nFtpServer Listening at %1:%2").arg(FtpServer::lanIp()).arg(port);
         ftpServerInfo += QString("\nFtpServer User: %1").arg(userName);
         ftpServerInfo += QString("\nFtpServer Password: %1").arg(password);
-        Log4Info(ftpServerInfo);
+        LogInfo(ftpServerInfo);
     } else {
-        Log4Info("Failed to start FtpServer.");
+        LogInfo("Failed to start FtpServer.");
     }
 
     QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";

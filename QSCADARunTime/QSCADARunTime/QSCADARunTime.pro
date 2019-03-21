@@ -59,12 +59,16 @@ SOURCES += \
     Event/Event.cpp \
     Script/JavaScript.cpp \
     Script/RunScript.cpp \
-    DB/DatabaseHelper.cpp \
     SysRuntimeEvent.cpp \
     Vendor/DataPack.cpp \
     Vendor/Modbus/Modbus.cpp \
     Log/Log.cpp \
-    MessageQueue/MessageQueue.cpp
+    MessageQueue/MessageQueue.cpp \
+    DB/Database.cpp \
+    DB/MySQLDatabase.cpp \
+    DB/SQLiteDatabase.cpp \
+    DB/RunTimeMySQLDatabase.cpp \
+    Public/Global.cpp
 
 
 HEADERS  += \
@@ -91,7 +95,6 @@ HEADERS  += \
     Tag/Function.h \
     Script/JavaScript.h \
     Script/RunScript.h \
-    DB/DatabaseHelper.h \
     FileTansfer.h \
     SysRuntimeEvent.h \
     Singleton.h \
@@ -99,7 +102,12 @@ HEADERS  += \
     Vendor/Modbus/Modbus.h \
     Log/Log.h \
     VersionInfo.h \
-    MessageQueue/MessageQueue.h
+    MessageQueue/MessageQueue.h \
+    DB/Database.h \
+    DB/MySQLDatabase.h \
+    DB/SQLiteDatabase.h \
+    DB/RunTimeMySQLDatabase.h \
+    Public/Global.h
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp

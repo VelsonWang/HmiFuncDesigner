@@ -1,37 +1,31 @@
-﻿#ifndef DATABASEHELPER_H
-#define DATABASEHELPER_H
+﻿#ifndef DATABASE_H
+#define DATABASE_H
 
 #include <QtSql/QtSql>
 
 
-
-typedef enum EDBType
-{
-    DB_MYSQL = 1,
-    DB_SQLITE
-}DBType;
-
-class DatabaseHelper : public QObject
+class Database : public QObject
 {
     Q_OBJECT
 public:
-    DatabaseHelper(const QString &dbname = ":memory:",
-                   const QString &user = "root",
-                   const QString &pwd = "725431",
-                   DBType type = DB_SQLITE,
-                   QObject *parent = 0);
-    ~DatabaseHelper();
-	bool openDatabase();
-	bool closeDatabase();
-	bool isOpenDatabase();
-	bool createDatabase();
-    //when table is not exist then create it
-    bool createTable();
+    explicit Database(const QString &dbname = "db",
+                      const QString &user = "root",
+                      const QString &pwd = "725431",
+                      QObject *parent = 0);
+    virtual ~Database();
 
-    int createTable(QString table,
-                    QStringList fieldList,
-                    QStringList typeList,
-                    QString index="");
+    virtual bool openDatabase() = 0;
+    virtual bool closeDatabase() = 0;
+    virtual bool isOpenDatabase() = 0;
+    virtual bool createDatabase() = 0;
+
+    //when table is not exist then create it
+    virtual bool createTables() = 0;
+
+    virtual int createTable(const QString &table,
+                            QStringList fieldList,
+                            QStringList typeList,
+                            const QString &index="") = 0;
 
     //one key one value
     bool getRecord(const QString &table,
@@ -88,22 +82,18 @@ public:
     bool deleteRecord(const QString &table,
                       const QString &expr="");
 
-    bool insertOrUpdateRecord(const QString &table,
-                              const QStringList &keyList,
-                              const QStringList &valueList);
-
-    bool isContain(const QString& table);
+    virtual bool insertOrUpdateRecord(const QString &table,
+                                      const QStringList &keyList,
+                                      const QStringList &valueList) = 0;
 
     void excSQL(const QString& sql, QList<QStringList>& result);
     void excSQL(const QString& sql );
 
-private:
+public:
     QString name_;
     QString user_;
     QString pwd_;
 
-public:
-    DBType type_;
 };
 
-#endif // DATABASEHELPER_H
+#endif // Database_H

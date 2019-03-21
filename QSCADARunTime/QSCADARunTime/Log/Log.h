@@ -13,12 +13,12 @@
 #include "log4qt/basicconfigurator.h"
 
 
-#define Log4Debug LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).debug
-#define Log4Info  LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).info
-#define Log4Warn  LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).warn
-#define Log4Error LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).error
-#define Log4Fatal LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).fatal
-#define Log4qt    LogHelper(__FILE__, __LINE__, Q_FUNC_INFO)
+#define LogDebug LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).debug
+#define LogInfo  LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).info
+#define LogWarn  LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).warn
+#define LogError LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).error
+#define LogFatal LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).fatal
+#define LogQt    LogHelper(__FILE__, __LINE__, Q_FUNC_INFO)
 
 class Log : public QObject
 { 
