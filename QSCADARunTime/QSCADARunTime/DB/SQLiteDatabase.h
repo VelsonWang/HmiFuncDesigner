@@ -13,6 +13,8 @@ public:
     explicit SQLiteDatabase(const QString &dbname = "sqlitedb",
                    const QString &user = "root",
                    const QString &pwd = "725431",
+                   const QString &hostname = "127.0.0.1",
+                   int port = 0,
                    QObject *parent = 0);
 
     virtual ~SQLiteDatabase();

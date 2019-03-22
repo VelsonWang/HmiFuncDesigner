@@ -4,8 +4,10 @@
 MySQLDatabase::MySQLDatabase(const QString &dbname,
                              const QString &user,
                              const QString &pwd,
+                             const QString &hostname,
+                             int port,
                              QObject *parent)
-    : Database(dbname, user, pwd, parent)
+    : Database(dbname, user, pwd, hostname, port, parent)
 {
 
 }
@@ -19,6 +21,8 @@ bool MySQLDatabase::openDatabase()
 {
     try {
         QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
+        db.setHostName(hostName_);
+        db.setPort(port_);
         if(!db.open(user_, pwd_)) {
             LogError(QString("Open Database Failed!"));
             return false;

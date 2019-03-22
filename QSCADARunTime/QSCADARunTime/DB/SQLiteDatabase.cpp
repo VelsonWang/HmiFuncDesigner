@@ -5,8 +5,10 @@
 SQLiteDatabase::SQLiteDatabase(const QString &dbname,
                                const QString &user,
                                const QString &pwd,
+                               const QString &hostname,
+                               int port,
                                QObject *parent)
-    : Database(dbname, user, pwd, parent)
+    : Database(dbname, user, pwd, hostname, port, parent)
 {
 }
 

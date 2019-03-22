@@ -5,12 +5,16 @@
 Database::Database(const QString &dbname,
                    const QString &user,
                    const QString &pwd,
+                   const QString &hostname,
+                   int port,
                    QObject *parent)
     : QObject(parent)
 {
     name_ = dbname;
     user_ = user;
     pwd_ = pwd;
+    hostName_ = hostname;
+    port_ = port;
 }
 
 Database::~Database()

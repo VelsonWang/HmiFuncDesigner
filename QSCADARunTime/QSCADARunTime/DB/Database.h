@@ -8,9 +8,11 @@ class Database : public QObject
 {
     Q_OBJECT
 public:
-    explicit Database(const QString &dbname = "db",
+    explicit Database(const QString &dbname = "xpen",
                       const QString &user = "root",
                       const QString &pwd = "725431",
+                      const QString &hostname = "127.0.0.1",
+                      int port = 0,
                       QObject *parent = 0);
     virtual ~Database();
 
@@ -93,6 +95,8 @@ public:
     QString name_;
     QString user_;
     QString pwd_;
+    QString hostName_;
+    int port_;
 
 };
 

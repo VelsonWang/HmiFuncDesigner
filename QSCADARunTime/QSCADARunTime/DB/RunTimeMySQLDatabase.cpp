@@ -5,8 +5,10 @@
 RunTimeMySQLDatabase::RunTimeMySQLDatabase(const QString &dbname,
                                      const QString &user,
                                      const QString &pwd,
+                                     const QString &hostname,
+                                     int port,
                                      QObject *parent)
-    : MySQLDatabase(dbname, user, pwd, parent)
+    : MySQLDatabase(dbname, user, pwd, hostname, port, parent)
 {
 
 }

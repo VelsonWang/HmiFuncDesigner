@@ -112,7 +112,11 @@ int main(int argc, char *argv[])
     //std::cout << "???" << std::endl;
 
     // connect database, create database, tables if necessary
-    g_database = new RunTimeMySQLDatabase(QString("RunTimeDB"), QString("root"), QString("725431"));
+    g_database = new RunTimeMySQLDatabase(QString("RunTimeDB"),
+                                          QString("root"),
+                                          QString("725431"),
+                                          QString("127.0.0.1"),
+                                          3306);
     if(g_database->openDatabase()) {
         g_database->createDatabase();
         g_database->createTables();
