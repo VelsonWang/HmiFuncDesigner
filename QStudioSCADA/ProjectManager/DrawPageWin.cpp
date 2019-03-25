@@ -107,7 +107,7 @@ void DrawPageWin::NewDrawPage()
     {
         QProcess *process = new QProcess();
         QStringList argv;
-        QString strGraphPageName = strDrawPageName + ".drw";
+        QString strGraphPageName = strDrawPageName;
         int width = 800;
         int height = 480;
         argv << m_ProjPath
@@ -335,14 +335,14 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
 
 #endif
     QFile file(fileDrawApplication);
-    if(file.exists())
-    {
+    if(file.exists()) {
         QProcess *process = new QProcess();
         QStringList argv;
-
         argv << m_ProjPath
              << item->text()
-             << QString("open");
+             << QString("open")
+             << 0
+             << 0;
         process->start(fileDrawApplication, argv);
     }
 }

@@ -50,9 +50,9 @@ int main(int argc, char *argv[])
         mainWin.addAndSaveGraphPage(strProjPath, strGraphPageName, width, height);
         return 0;
     } else if(operate.toLower() == "open") {
-
-        mainWin.show();
+        mainWin.openGraphPage(strProjPath, strGraphPageName);
     }
+    mainWin.show();
 
     int ret = a.exec();
 

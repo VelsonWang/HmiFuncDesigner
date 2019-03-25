@@ -10,7 +10,6 @@
 #include "GraphPage.h"
 #include "propertymodel.h"
 #include "propertytableview.h"
-#include "SaveStrategyDialog.h"
 #include "PreviewWindow.h"
 #include "GraphPageManager.h"
 #include "ui_MainWindow.h"
@@ -32,6 +31,8 @@ public:
                              const QString &pageName,
                              int width,
                              int height);
+    // 打开画面
+    void openGraphPage(const QString &pagePath, const QString &pageName);
 
 protected:
     void closeEvent(QCloseEvent *);
@@ -43,7 +44,6 @@ private:
     void createToolbars();
     void createUndoView();
     void addNewGraphPage();
-    void saveImage();
     QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
     int exitResponse();
     QString getFileName();
@@ -51,11 +51,12 @@ private:
     void updateObjectTree();
     void connectGraphPage(GraphPage *graphPage);
     void disconnectGraphPage(GraphPage *graphPage);
-    void saveProject(const QString &);
-    void loadProject(const QString &);
     void removeGraphPage(QGraphicsView *view);
     bool isGraphPageOpen(const QString &filename);
-    bool createDocument(GraphPage *graphPage,QGraphicsView *view,const QString &filename);
+
+    bool createDocument(GraphPage *graphPage,
+                        QGraphicsView *view,
+                        const QString &filename);
 
 public slots:
     void slotNewElementAdded();
@@ -72,8 +73,6 @@ private slots:
     void slotShowProjTree(bool);
     void slotEditNew();
     void slotEditOpen();
-    void slotSaveProject();
-    void slotSaveGraphPageAs();
     void slotSaveGraphPage();
     void slotExit();
     void slotShowGrid(bool);
@@ -91,42 +90,38 @@ private:
     QString projpath_;
     QString graphPageName_;
 
-    QAction *actionShowGraphObj;
-    QAction *actionShowTreeObj;
-    QAction *actionShowPropEditor;
-    QAction *actionShowProjTree;
-    QAction *actionNew;
-    QAction *actionOpen;
-    QAction *actionSaveProject;
-    QAction *actionSaveGraphPageAs;
-    QAction *actionSaveGraphPage;
-    QAction *actionExit;
-    QAction *actionShowGrid;
-    QAction *actionShowLinear;
-    QAction *actionZoomIn;
-    QAction *actionZoomOut;
-    QAction *actionPreview;
-    QAction *actionUndo;
-    QAction *actionRedo;
-    QAction *actionCloseGraphPage;
-    QAction *actionCloseAll;
+    QAction *actionShowGraphObj_;
+    QAction *actionShowTreeObj_;
+    QAction *actionShowPropEditor_;
+    QAction *actionShowProjTree_;
+    QAction *actionNew_;
+    QAction *actionOpen_;
+    QAction *actionSaveGraphPage_;
+    QAction *actionExit_;
+    QAction *actionShowGrid_;
+    QAction *actionShowLinear_;
+    QAction *actionZoomIn_;
+    QAction *actionZoomOut_;
+    QAction *actionPreview_;
+    QAction *actionUndo_;
+    QAction *actionRedo_;
+    QAction *actionCloseGraphPage_;
+    QAction *actionCloseAll_;
 
-    GraphPage *currentGraphPage;
-    QGraphicsView *currentView;
+    GraphPage *currentGraphPage_;
+    QGraphicsView *currentView_;
 
     QTabWidget *graphPageTabWidget_;
     GraphPageTreeView *grapePageTree_;
-    ObjectsTreeView *objTree;
-    ElementLibraryWidget *elementWidget;
-    PropertyTableView *propertyView;
-    PropertyModel *propertyModel;
-    QUndoGroup *undoGroup;
-    PreviewWindow *preview;
+    ObjectsTreeView *objTree_;
+    ElementLibraryWidget *elementWidget_;
+    PropertyTableView *propertyView_;
+    PropertyModel *propertyModel_;
+    QUndoGroup *undoGroup_;
+    PreviewWindow *preview_;
 
-    bool gridVisible;
-    int currentGraphPageIndex;
-
-
+    bool gridVisible_;
+    int currentGraphPageIndex_;
 };
 
 #endif // MAINWINDOW_H

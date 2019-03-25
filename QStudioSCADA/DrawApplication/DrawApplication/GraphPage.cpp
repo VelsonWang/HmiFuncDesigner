@@ -893,18 +893,20 @@ void GraphPage::saveAsXML(const QString &filename) {
     QFileInfo fi(filename);
 
     if (GraphPageId != fi.baseName()) {
-        QString newName = fi.absolutePath() + "/" + GraphPageId + ".drwx";
+        QString newName = fi.absolutePath() + "/" + GraphPageId + ".drw";
         file.rename(newName);
     }
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(0,trUtf8("错误"),trUtf8("文件无法保存"),
+        QMessageBox::information(0,
+                                 trUtf8("错误"),
+                                 trUtf8("文件无法保存"),
                                  QMessageBox::Ok);
         return;
     }
 
     XmlGraphPageConfigWriter writer;
-    writer.writeGraphPageConfig(file,this);
+    writer.writeGraphPageConfig(file, this);
 
     unsavedFlag = false;
     m_undoStack->setClean();
@@ -922,7 +924,9 @@ void GraphPage::loadAsXML(const QString &filename) {
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(0,trUtf8("错误"),trUtf8("无法打开文件"),
+        QMessageBox::information(0,
+                                 trUtf8("错误"),
+                                 trUtf8("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }

@@ -39,7 +39,6 @@ SOURCES += \
     ElementLibraryListWidgetItem.cpp \
     ElementSimpleListWidget.cpp \
     PreviewWindow.cpp \
-    SaveStrategyDialog.cpp \
     GraphPageTreeView.cpp \
     MainWindow.cpp \
     ../Public/PubTool.cpp \
@@ -58,7 +57,6 @@ HEADERS  += \
     ElementLibraryListWidgetItem.h \
     ElementSimpleListWidget.h \
     PreviewWindow.h \
-    SaveStrategyDialog.h \
     GraphPageTreeView.h \
     MainWindow.h \
     ../Public/PublicDefine.h \
@@ -71,7 +69,6 @@ HEADERS  += \
 FORMS    += \
     ElementLibraryWidget.ui \
     PreviewWindow.ui \
-    SaveStrategyDialog.ui \
     MainWindow.ui
 
 RESOURCES += \
