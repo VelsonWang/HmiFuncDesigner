@@ -238,12 +238,12 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
         }
 
         GraphPage *graphPage = new GraphPage(QRectF());
-        graphPage->loadAsXML(fileName);
-        graphPage->setFileName(pageName + ".drw");
-        graphPage->setGraphPageId(pageName);
         if (!createDocument(graphPage, view, fileName)) {
             return;
         }
+        graphPage->loadAsXML(fileName);
+        graphPage->setFileName(pageName + ".drw");
+        graphPage->setGraphPageId(pageName);
     }
 }
 
@@ -596,8 +596,10 @@ void MainWindow::slotEditOpen() {
         }
 
         GraphPage *graphPage = new GraphPage(QRectF());
+        if (!createDocument(graphPage, view, filename)) {
+            return;
+        } 
         graphPage->loadAsXML(filename);
-
         int pos = filename.lastIndexOf("/");
         QString pageFileName = "";
         if (pos != -1) {
@@ -605,10 +607,6 @@ void MainWindow::slotEditOpen() {
         }
         graphPage->setFileName(pageFileName);
         graphPage->setGraphPageId(pageFileName.left(pageFileName.length() - 4));
-
-        if (!createDocument(graphPage, view, filename)) {
-            return;
-        }
 
     }
 }

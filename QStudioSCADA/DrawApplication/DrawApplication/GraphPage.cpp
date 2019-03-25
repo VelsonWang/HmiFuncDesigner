@@ -952,7 +952,7 @@ void GraphPage::readGraphPageConfig(QFile &file) {
 
         if (token == QXmlStreamReader::StartElement) {
 
-            if (reader.name() == "GraphPage") {
+            if (reader.name() == "graphPage") {
                 readGraphPageTag(reader);
             }
         }
@@ -965,7 +965,7 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
     copyList.clear();
     xml.readNext();
 
-    while (!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "GraphPage")) {
+    while (!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "graphPage")) {
 
         if (xml.tokenType() == QXmlStreamReader::StartElement) {
 
@@ -988,12 +988,12 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
 
 void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
 
-    if (xml.attributes().hasAttribute("filename")) {
-        setFileName(xml.attributes().value("filename").toString());
+    if (xml.attributes().hasAttribute("fileName")) {
+        setFileName(xml.attributes().value("fileName").toString());
     }
 
-    if (xml.attributes().hasAttribute("GraphPageId")) {
-        setGraphPageId(xml.attributes().value("GraphPageId").toString());
+    if (xml.attributes().hasAttribute("graphPageId")) {
+        setGraphPageId(xml.attributes().value("graphPageId").toString());
     }
 
     if (xml.attributes().hasAttribute("priority")) {
@@ -1009,8 +1009,7 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
     }
 
     if (xml.attributes().hasAttribute("background")) {
-        setGraphPageBackground(
-                    QColor(xml.attributes().value("background").toString()));
+        setGraphPageBackground(QColor(xml.attributes().value("background").toString()));
     }
 
     fillGridPixmap();
@@ -1049,7 +1048,9 @@ void GraphPage::loadLibrary(QByteArray &data) {
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(0,trUtf8("错误"),trUtf8("无法打开文件"),
+        QMessageBox::information(0,
+                                 trUtf8("错误"),
+                                 trUtf8("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }
@@ -1110,7 +1111,8 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
 
 void GraphPage::slotSaveAsLibrary() {
 
-    QString filename = QFileDialog::getSaveFileName(0,trUtf8("Save graph library"),
+    QString filename = QFileDialog::getSaveFileName(0,
+                                                    trUtf8("Save graph library"),
                                                     QString("."),
                                                     trUtf8("Library (*.drwlib)"));
 

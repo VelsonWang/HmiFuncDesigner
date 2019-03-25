@@ -11,7 +11,7 @@ void XmlGraphPageConfigWriter::writeGraphPageConfig(QFile &file, GraphPage *grap
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
     writer.writeStartElement("graphPage");
-    writer.writeAttribute("filename",graphPage->getFileName());
+    writer.writeAttribute("fileName",graphPage->getFileName());
     writer.writeAttribute("graphPageId",graphPage->getGraphPageId());
     writer.writeAttribute("priority",graphPage->getGraphPagePriority());
     writer.writeAttribute("width",QString::number(graphPage->getGraphPageWidth()));
