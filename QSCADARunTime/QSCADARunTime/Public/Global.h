@@ -3,6 +3,7 @@
 
 class RunTimeMySQLDatabase;
 
+#define KEY_CODE    ("{:)RUNTIME@20190318&:)JASONWANG}")
 
 extern RunTimeMySQLDatabase *g_database;
 

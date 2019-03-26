@@ -1,5 +1,11 @@
 ﻿#include "MainWindow.h"
 #include "VersionInfo.h"
+#include "qtsingleapplication.h"
+#include "ConfigUtils.h"
+#include "edncrypt.h"
+#include "cregister.h"
+#include "cregisterdialog.h"
+
 #include <QApplication>
 #include <QTextCodec>
 #include <QFont>
@@ -7,7 +13,11 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication app(argc, argv);
+    QtSingleApplication app(argc, argv);
+
+    if (app.isRunning())
+        return !app.sendMessage("project manager start " + app.applicationDirPath());
+
     app.setOrganizationName("JasonWangCtd");
     app.setApplicationName("SCADA ProjectManager");
     app.setApplicationDisplayName("SCADA ProjectManager");
@@ -20,7 +30,17 @@ int main(int argc, char *argv[])
     font.setPointSize(10);
     app.setFont(font);
 
+#if 0
+    // 检查序列号授权信息
+    if(!CRegister::CheckRegisterCode()) {
+        if(QDialog::Accepted != CRegisterDialog::RegisterDialog()) {
+            return 0;
+        }
+    }
+#endif
+
     MainWindow win;
+    app.setActivationWindow(&win);
     win.show();
 
     return app.exec();

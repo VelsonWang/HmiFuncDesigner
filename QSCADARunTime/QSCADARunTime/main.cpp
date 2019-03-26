@@ -10,6 +10,8 @@
 #include "ftpserver.h"
 #include "Global.h"
 #include "RunTimeMySQLDatabase.h"
+#include "configutils.h"
+#include "edncrypt.h"
 #include <QDebug>
 #include <QFile>
 #include <QDir>
@@ -111,12 +113,24 @@ int main(int argc, char *argv[])
     QApplication  a(argc, argv);
     //std::cout << "???" << std::endl;
 
+    // connect database
+    QString configPath = QApplication::applicationDirPath() + "/setting.ini";
+    QString strInput = "";
+    QString databaseName = ConfigUtils::getCfgStr(configPath, "Database", "DatabaseName", "runtimedb");
+    strInput = ConfigUtils::getCfgStr(configPath, "Database", "UserName", "");
+    QString mysqlUserName = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
+    strInput = ConfigUtils::getCfgStr(configPath, "Database", "PassWord", "");
+    QString mysqlPassword = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
+    QString hostname = ConfigUtils::getCfgStr(configPath, "Database", "HostName", "127.0.0.1");
+    int mysqlPort = ConfigUtils::getCfgInt(configPath, "Database", "Port", 3306);
+
     // connect database, create database, tables if necessary
-    g_database = new RunTimeMySQLDatabase(QString("RunTimeDB"),
-                                          QString("root"),
-                                          QString("725431"),
-                                          QString("127.0.0.1"),
-                                          3306);
+    g_database = new RunTimeMySQLDatabase(databaseName, mysqlUserName, mysqlPassword, hostname, mysqlPort);
+    if(g_database->openDatabase()) {
+        g_database->createDatabase();
+        g_database->createTables();
+    }
+
     if(g_database->openDatabase()) {
         g_database->createDatabase();
         g_database->createTables();
@@ -130,11 +144,13 @@ int main(int argc, char *argv[])
     httpServer.init(60000);
 
     // start ftp server
-    const QString &userName = "admin";
-    const QString &password = "admin";
+    strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "UserName", "admin");
+    const QString &userName = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
+    strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "PassWord", "admin");
+    const QString &password = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
     QStorageInfo storageRoot = QStorageInfo::root();
-    const QString &rootPath = "/";//storageRoot.rootPath();
-    quint32 port = 60001;
+    const QString &rootPath = "/"; //storageRoot.rootPath();
+    quint32 port = ConfigUtils::getCfgInt(configPath, "FtpServer", "Port", 60001);
 
     FtpServer ftpServer(&a, rootPath, port, userName, password, false, false);
     if (ftpServer.isListening()) {

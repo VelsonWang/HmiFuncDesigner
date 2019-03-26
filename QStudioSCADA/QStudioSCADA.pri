@@ -95,6 +95,7 @@ osx {
     IDE_DATA_PATH    = $$IDE_OUTPUT_PATH/../QStudioSCADABin
     IDE_DOC_PATH     = $$IDE_OUTPUT_PATH/../QStudioSCADABin/doc
     IDE_BIN_PATH     = $$IDE_OUTPUT_PATH/../QStudioSCADABin/bin
+    IDE_TOOL_PATH    = $$IDE_OUTPUT_PATH/../QStudioSCADABin/tools
     win32: \
         IDE_LIBEXEC_PATH = $$IDE_OUTPUT_PATH/../QStudioSCADABin/bin
     else: \
@@ -120,6 +121,7 @@ osx {
 
 INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/Utils \
+    $$IDE_SOURCE_TREE/libs/edncrypt \
     $$IDE_SOURCE_TREE/libs/ConfigUtils \
     $$IDE_SOURCE_TREE/libs/DrawListUtils \
     $$IDE_SOURCE_TREE/libs/Csv \

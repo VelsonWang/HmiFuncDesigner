@@ -5,6 +5,7 @@ TEMPLATE  = subdirs
 
 SUBDIRS   = \
     Utils \
+    edncrypt \
     ConfigUtils \
     XmlUtils \
     Csv \
@@ -16,6 +17,7 @@ SUBDIRS   = \
     Lua \
     Ftp \
     PropertyEditor
+
 
 
 for(l, SUBDIRS) {

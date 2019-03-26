@@ -6,7 +6,10 @@ QT += network
 QT += script
 QT += sql
 
-DESTDIR = $$_PRO_FILE_PWD_/../../RuntimeBin
+TARGET_BIN_PATH = $$_PRO_FILE_PWD_/../../RuntimeBin
+LINK_LIBRARY_PATH = $$_PRO_FILE_PWD_/../../lib
+
+DESTDIR = $$TARGET_BIN_PATH
 
 TARGET = QSCADARunTime
 TEMPLATE = app
@@ -38,8 +41,25 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Script \
                Log
 
+LIBRARY_SRC_PATH = $$_PRO_FILE_PWD_/../../QStudioSCADA
+INCLUDEPATH += \
+    $$LIBRARY_SRC_PATH/libs/edncrypt \
+    $$LIBRARY_SRC_PATH/libs/ConfigUtils \
+    $$LIBRARY_SRC_PATH/libs/Helper
+
+CONFIG(debug, debug|release) { #debug
+    LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
+    LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lHelperd
+}
+else { # release
+    LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
+    LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lHelper
+}
+
 SOURCES += \
-        qextserial/qextserialport.cpp \
+    qextserial/qextserialport.cpp \
     DB/DBTagObject.cpp \
     DB/RealTimeDB.cpp \
     Tag/Tag.cpp \
@@ -72,8 +92,8 @@ SOURCES += \
 
 
 HEADERS  += \
-        qextserial/qextserialport_global.h \
-        qextserial/qextserialport.h \
+    qextserial/qextserialport_global.h \
+    qextserial/qextserialport.h \
     DB/DBTagObject.h \
     DB/RealTimeDB.h \
     Tag/Tag.h \
@@ -136,3 +156,12 @@ HEADERS  += \
 unix:include($$PWD/eventdispatcher_libev/eventdispatcher_libev.pri)
 
 FORMS +=
+
+DISTFILES += \
+    setting.ini
+
+# copy config files to applicationDirPath
+config.path = $$TARGET_BIN_PATH
+config.files = ./*.ini
+INSTALLS += config
+

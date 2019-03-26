@@ -12,6 +12,14 @@ TEMPLATE = app
 
 DESTDIR = $$IDE_BIN_PATH
 
+
+INCLUDEPATH += .
+INCLUDEPATH += $$PWD/../common/qtsingleapplication
+INCLUDEPATH += $$PWD/../common/register
+
+include($$PWD/../common/qtsingleapplication/qtsingleapplication.pri)
+include($$PWD/../common/register/register.pri)
+
 #CONFIG += debug_and_release
 #CONFIG += release
 #DEFINES += QT_NO_DEBUG_OUTPUT
@@ -21,6 +29,7 @@ DESTDIR = $$IDE_BIN_PATH
 
 #message(libout_path $$IDE_LIBRARY_PATH)
 CONFIG(debug, debug|release) { #debug
+    LIBS += -L$$IDE_LIBRARY_PATH -ledncryptd
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
@@ -32,6 +41,7 @@ CONFIG(debug, debug|release) { #debug
     #message(LIBS $$LIBS)
 }
 else { # release
+    LIBS += -L$$IDE_LIBRARY_PATH -ledncrypt
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lHelper
@@ -41,7 +51,6 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lLua
     LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtils
 }
-
 
 # debug: The project is being built in debug mode.
 # release: The project is being built in release mode.
