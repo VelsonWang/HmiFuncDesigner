@@ -1,6 +1,8 @@
 ﻿#include "NewProjectDialog.h"
 #include "ui_NewProjectDialog.h"
 #include "configutils.h"
+#include "Singleton.h"
+#include "ProjectInfoManger.h"
 #include <QDir>
 #include <QDialog>
 #include <QFileDialog>
@@ -40,7 +42,7 @@ NewProjectDialog::NewProjectDialog(QWidget *parent) :
     for (int i=0; i< slistDev.count(); i++)
     {
         int value = settingsDev.value(slistDev.at(i)).toInt();
-        m_DeviceMap.insert(slistDev.at(i),value);
+        deviceMap_.insert(slistDev.at(i),value);
         ui->cboDevType->insertItem(i, slistDev.at(i));
     }
     settingsDev.endGroup();
@@ -118,7 +120,23 @@ void NewProjectDialog::on_btnOk_clicked()
 {
     if(check_data())
     {
-        saveToFile(DATA_SAVE_FORMAT);
+        ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
+        projMgr.setProjectName(ui->editProjectName->text());
+        projMgr.setProjectDescription(ui->editProjectDescription->toPlainText());
+        projMgr.setProjectPath(ui->editProjectPath->text());
+        projMgr.setDeviceType(ui->cboDevType->currentText());
+        projMgr.setStationNumber(ui->editStationNumber->text());
+        projMgr.setStartPage(ui->editStartPage->text());
+        projMgr.setStationAddress(ui->editStationAddress->text());
+        projMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
+        projMgr.setPageScanPeriod(ui->editPageScanPeriod->text());
+        projMgr.setDataScanPeriod(ui->editDataScanPeriod->text());
+
+        QString strProjPath =  ui->editProjectPath->text();
+        QString strProjName = ui->editProjectName->text();
+        QString file = strProjPath + "/" + strProjName + "/" + strProjName + ".proj";
+        projectName_ = file;
+        projMgr.saveToFile(strProjPath, strProjName, DATA_SAVE_FORMAT);
         QDialog::accept();
     }
 }
@@ -128,70 +146,25 @@ void NewProjectDialog::on_btnExit_clicked()
     QDialog::reject();
 }
 
-void NewProjectDialog::load(const QJsonObject &json)
-{
-    ui->editProjectName->setText(json["sProjectName"].toString());
-    ui->editProjectDescription->setPlainText(json["sProjectDescription"].toString());
-    ui->editProjectPath->setText(json["sProjectPath"].toString());
-    ui->cboDevType->setCurrentText(json["sDeviceType"].toString());
-    ui->editStationNumber->setText(json["sStationNumber"].toString());
-    ui->editStartPage->setText(json["sStartPage"].toString());
-    ui->editStationAddress->setText(json["sStationAddress"].toString());
-    ui->chkProjectEncrypt->setChecked(json["bProjectEncrypt"].toBool());
-    ui->editPageScanPeriod->setText(json["sPageScanPeriod"].toString());
-    ui->editDataScanPeriod->setText(json["sDataScanPeriod"].toString());
-}
-
-void NewProjectDialog::save(QJsonObject &json)
-{
-    json["sProjectName"] = ui->editProjectName->text();
-    json["sProjectDescription"] = ui->editProjectDescription->toPlainText();
-    json["sProjectPath"] = ui->editProjectPath->text();
-    json["sDeviceType"] = ui->cboDevType->currentText();
-    json["sStationNumber"] = ui->editStationNumber->text();
-    json["sStartPage"] = ui->editStartPage->text();
-    json["sStationAddress"] = ui->editStationAddress->text();
-    json["bProjectEncrypt"] = ui->chkProjectEncrypt->isChecked();
-    json["sPageScanPeriod"] = ui->editPageScanPeriod->text();
-    json["sDataScanPeriod"] = ui->editDataScanPeriod->text();
-}
-
-bool NewProjectDialog::loadFromFile(SaveFormat saveFormat, QString file)
-{
-    QFile loadFile(file);
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open load file.");
-        return false;
-    }
-    m_strProjectName = file;
-    QByteArray saveData = loadFile.readAll();
-    QJsonDocument loadDoc(saveFormat == Json ? QJsonDocument::fromJson(saveData) : QJsonDocument::fromBinaryData(saveData));
-    load(loadDoc.object());
-    loadFile.close();
-    return true;
-}
-
-bool NewProjectDialog::saveToFile(SaveFormat saveFormat)
-{
-    QString strDir =  ui->editProjectPath->text();
-    QDir dir(strDir);
-    dir.mkpath(strDir + "/" + ui->editProjectName->text());
-    QString file = strDir + "/" + ui->editProjectName->text() + "/" + ui->editProjectName->text() + ".proj";
-    QFile saveFile(file);
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
-        return false;
-    }
-    m_strProjectName = file;
-    QJsonObject obj;
-    save(obj);
-    QJsonDocument saveDoc(obj);
-    saveFile.write(saveFormat == Json ? saveDoc.toJson() : saveDoc.toBinaryData());
-    saveFile.close();
-    return true;
-}
 
 QString NewProjectDialog::GetProjectName()
 {
-    return m_strProjectName;
+    return projectName_;
 }
+
+bool NewProjectDialog::loadFromFile(SaveFormat saveFormat, const QString &file) {
+    ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
+    projMgr.loadFromFile(saveFormat, file);
+    ui->editProjectName->setText(projMgr.getProjectName());
+    ui->editProjectDescription->setPlainText(projMgr.getProjectDescription());
+    ui->editProjectPath->setText(projMgr.getProjectPath());
+    ui->cboDevType->setCurrentText(projMgr.getDeviceType());
+    ui->editStationNumber->setText(projMgr.getStationNumber());
+    ui->editStartPage->setText(projMgr.getStartPage());
+    ui->editStationAddress->setText(projMgr.getStationAddress());
+    ui->chkProjectEncrypt->setChecked(projMgr.getProjectEncrypt());
+    ui->editPageScanPeriod->setText(projMgr.getPageScanPeriod());
+    ui->editDataScanPeriod->setText(projMgr.getDataScanPeriod());
+}
+
+

@@ -1,6 +1,10 @@
 ﻿#include "MainWindow.h"
 #include "Helper.h"
+#include <QDesktopWidget>
+#include <QApplication>
+#include <QRect>
 #include <QDebug>
+
 
 MainWindow::MainWindow(const QString &projpath,
                        const QString &graphPageName,
@@ -27,6 +31,14 @@ MainWindow::MainWindow(const QString &projpath,
     setWindowIcon(QIcon(":/images/application.png"));
 
     connect(graphPageTabWidget_, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
+
+    QDesktopWidget * pDesktopWidget = QApplication::desktop();
+    QRect rect = pDesktopWidget->screenGeometry();
+    int screenWidth = rect.width();
+    int screenHeight = rect.height();
+    this->resize(screenWidth*3/4, screenHeight*3/4);
+
+    Helper::WidgetMoveCenter(this);
 }
 
 

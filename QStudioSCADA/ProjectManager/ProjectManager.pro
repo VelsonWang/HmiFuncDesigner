@@ -85,7 +85,8 @@ SOURCES += main.cpp\
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
     ChildForm.cpp \
-    ProjectMgrUtils.cpp
+    ProjectMgrUtils.cpp \
+    ProjectInfoManger.cpp
 
 HEADERS  += MainWindow.h \
     NewProjectDialog.h \
@@ -123,7 +124,8 @@ HEADERS  += MainWindow.h \
     ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
     ChildForm.h \
-    ProjectMgrUtils.h
+    ProjectMgrUtils.h \
+    ProjectInfoManger.h
 
 FORMS    += MainWindow.ui \
     NewProjectDialog.ui \

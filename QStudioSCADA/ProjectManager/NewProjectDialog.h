@@ -4,7 +4,6 @@
 #include "../Public/Public.h"
 #include <QDialog>
 #include <QMap>
-#include <QJsonObject>
 
 namespace Ui {
 class NewProjectDialog;
@@ -18,14 +17,10 @@ public:
     explicit NewProjectDialog(QWidget *parent = 0);
     ~NewProjectDialog();
 
-public:
-    bool loadFromFile(SaveFormat saveFormat, QString file);
-    bool saveToFile(SaveFormat saveFormat);
     QString GetProjectName();
+    bool loadFromFile(SaveFormat saveFormat, const QString &file);
 
 private:
-    void load(const QJsonObject &json);
-    void save(QJsonObject &json);
     bool check_data();
 
 private slots:
@@ -37,8 +32,8 @@ private slots:
 
 private:
     Ui::NewProjectDialog *ui;
-    QMap<QString, int>  m_DeviceMap;
-    QString m_strProjectName;
+    QMap<QString, int> deviceMap_;
+    QString projectName_;
 };
 
 #endif // NEWPROJECTDIALOG_H

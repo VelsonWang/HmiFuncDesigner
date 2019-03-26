@@ -12,6 +12,9 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QDebug>
+#include "../Public/Public.h"
+#include "ProjectInfoManger.h"
+#include "Singleton.h"
 
 
 DrawPageWin::DrawPageWin(QWidget *parent,
@@ -108,8 +111,10 @@ void DrawPageWin::NewDrawPage()
         QProcess *process = new QProcess();
         QStringList argv;
         QString strGraphPageName = strDrawPageName;
-        int width = 800;
-        int height = 480;
+        ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
+        projMgr.loadFromFile(DATA_SAVE_FORMAT, m_strProjectName);
+        int width = projMgr.getGraphPageWidth();
+        int height = projMgr.getGraphPageHeight();
         argv << m_ProjPath
              << strGraphPageName
              << QString("new")
