@@ -124,6 +124,7 @@ void DrawPageWin::NewDrawPage()
 
     DrawListUtils::drawList_.append(strDrawPageName);
     setModifiedFlag(true);
+    save();
     ListViewUpdate();
 }
 
@@ -151,10 +152,8 @@ reinput:
         if(strNewName == "")
             goto reinput;
 
-        for(int i=0; i<DrawListUtils::drawList_.count(); i++)
-        {
-            if(strOldName == DrawListUtils::drawList_.at(i))
-            {
+        for(int i=0; i<DrawListUtils::drawList_.count(); i++) {
+            if(strOldName == DrawListUtils::drawList_.at(i)) {
                 DrawListUtils::drawList_.replace(i, strNewName);
                 // rename file
                 QString oldName = m_ProjPath + "/" + strOldName + ".drw";
@@ -164,6 +163,9 @@ reinput:
                 break;
             }
         }
+
+        setModifiedFlag(true);
+        save();
     }
 }
 
@@ -177,10 +179,8 @@ void DrawPageWin::DeleteDrawPage()
     QStandardItem *item = this->pListDrawPageModel->itemFromIndex(idx);
     QString strName = item->text();
 
-    for(int i=0; i<DrawListUtils::drawList_.count(); i++)
-    {
-        if(strName == DrawListUtils::drawList_.at(i))
-        {
+    for(int i=0; i<DrawListUtils::drawList_.count(); i++) {
+        if(strName == DrawListUtils::drawList_.at(i)) {
             DrawListUtils::drawList_.removeAt(i);
             // delete file
             QString fileName = m_ProjPath + "/" + strName + ".drw";
@@ -193,6 +193,7 @@ void DrawPageWin::DeleteDrawPage()
     }
 
     setModifiedFlag(true);
+    save();
 }
 
 /*
@@ -232,6 +233,7 @@ regetnum:
     file.copy(pasteFileName);
     ListViewUpdate();
     setModifiedFlag(true);
+    save();
 }
 
 
@@ -308,8 +310,7 @@ void DrawPageWin::ListViewUpdate()
     pNewWin->setEditable(false);
     pListDrawPageModel->appendRow(pNewWin);
 
-    for(int i=0; i<DrawListUtils::drawList_.count(); i++)
-    {
+    for(int i=0; i<DrawListUtils::drawList_.count(); i++) {
         QStandardItem *pDrawPage = new QStandardItem(QIcon(":/images/drawexec.png"), DrawListUtils::drawList_.at(i));
         pDrawPage->setEditable(false);
         pListDrawPageModel->appendRow(pDrawPage);

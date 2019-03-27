@@ -11,6 +11,7 @@ QStudioSCADABin/bin/UploadProjects/
 QStudioSCADABin/bin/tmp/
 QStudioSCADABin/bin/*.exe
 QStudioSCADABin/bin/*.dll
+QStudioSCADABin/bin/printsupport/*.dll
 QStudioSCADABin/demo/
 QStudioSCADABin/deviceplugins/
 QStudioSCADABin/DrawApplicationPlugins/
