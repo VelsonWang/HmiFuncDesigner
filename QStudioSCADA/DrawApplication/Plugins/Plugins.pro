@@ -10,5 +10,6 @@ SUBDIRS += \
     EText \
 ###############<基本控件>##################
     EPushButton \
-    EInputEdit
+    EInputEdit \
+    EPicture
 

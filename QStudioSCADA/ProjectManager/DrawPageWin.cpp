@@ -56,8 +56,7 @@ void DrawPageWin::init()
 */
 void DrawPageWin::open()
 {
-    this->m_DrawList.clear();
-    DrawListUtils::LoadDrawList(m_ProjPath, this->m_DrawList);
+    DrawListUtils::loadDrawList(m_ProjPath);
 }
 
 /*
@@ -68,7 +67,7 @@ void DrawPageWin::save()
     if(getModifiedFlag())
     {
         setModifiedFlag(true);
-        DrawListUtils::SaveDrawList(m_ProjPath, this->m_DrawList);
+        DrawListUtils::saveDrawList(m_ProjPath);
     }
 }
 
@@ -94,7 +93,7 @@ void DrawPageWin::showSmallIcon()
 void DrawPageWin::NewDrawPage()
 {
     int last = 0;
-    last = DrawListUtils::GetMaxDrawPageNum("draw", this->m_DrawList);
+    last = DrawListUtils::getMaxDrawPageNum("draw");
     QString strDrawPageName = QString("draw%1").arg(last);
 
     QString fileDrawApplication = "";
@@ -123,7 +122,7 @@ void DrawPageWin::NewDrawPage()
         process->start(fileDrawApplication, argv);
     }
 
-    this->m_DrawList.append(strDrawPageName);
+    DrawListUtils::drawList_.append(strDrawPageName);
     setModifiedFlag(true);
     ListViewUpdate();
 }
@@ -152,11 +151,11 @@ reinput:
         if(strNewName == "")
             goto reinput;
 
-        for(int i=0; i<this->m_DrawList.count(); i++)
+        for(int i=0; i<DrawListUtils::drawList_.count(); i++)
         {
-            if(strOldName == this->m_DrawList.at(i))
+            if(strOldName == DrawListUtils::drawList_.at(i))
             {
-                this->m_DrawList.replace(i, strNewName);
+                DrawListUtils::drawList_.replace(i, strNewName);
                 // rename file
                 QString oldName = m_ProjPath + "/" + strOldName + ".drw";
                 QString newName = m_ProjPath + "/" + strNewName + ".drw";
@@ -178,11 +177,11 @@ void DrawPageWin::DeleteDrawPage()
     QStandardItem *item = this->pListDrawPageModel->itemFromIndex(idx);
     QString strName = item->text();
 
-    for(int i=0; i<this->m_DrawList.count(); i++)
+    for(int i=0; i<DrawListUtils::drawList_.count(); i++)
     {
-        if(strName == this->m_DrawList.at(i))
+        if(strName == DrawListUtils::drawList_.at(i))
         {
-            this->m_DrawList.removeAt(i);
+            DrawListUtils::drawList_.removeAt(i);
             // delete file
             QString fileName = m_ProjPath + "/" + strName + ".drw";
             QFile file(fileName);
@@ -215,15 +214,15 @@ void DrawPageWin::PasteDrawPage()
     int last = 0;
 
 regetnum:
-    last = DrawListUtils::GetMaxDrawPageNum(m_CopyDrawPageFileName, this->m_DrawList);
+    last = DrawListUtils::getMaxDrawPageNum(m_CopyDrawPageFileName);
     QString strDrawPageName = m_CopyDrawPageFileName + QString("-%1").arg(last);
-    if(this->m_DrawList.contains(strDrawPageName))
+    if(DrawListUtils::drawList_.contains(strDrawPageName))
     {
         m_CopyDrawPageFileName = strDrawPageName;
         goto regetnum;
     }
 
-    this->m_DrawList.append(strDrawPageName);
+    DrawListUtils::drawList_.append(strDrawPageName);
 
     // copy file
     QString fileName = m_ProjPath + "/" + m_CopyDrawPageFileName + ".drw";
@@ -282,7 +281,7 @@ void DrawPageWin::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event)
     QString strProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
-    DrawListUtils::SaveDrawList(strProjPath, this->m_DrawList);
+    DrawListUtils::saveDrawList(strProjPath);
 }
 
 
@@ -309,9 +308,9 @@ void DrawPageWin::ListViewUpdate()
     pNewWin->setEditable(false);
     pListDrawPageModel->appendRow(pNewWin);
 
-    for(int i=0; i<this->m_DrawList.count(); i++)
+    for(int i=0; i<DrawListUtils::drawList_.count(); i++)
     {
-        QStandardItem *pDrawPage = new QStandardItem(QIcon(":/images/drawexec.png"), this->m_DrawList.at(i));
+        QStandardItem *pDrawPage = new QStandardItem(QIcon(":/images/drawexec.png"), DrawListUtils::drawList_.at(i));
         pDrawPage->setEditable(false);
         pListDrawPageModel->appendRow(pDrawPage);
     }

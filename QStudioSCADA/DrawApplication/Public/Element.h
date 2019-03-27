@@ -11,6 +11,7 @@
 #include "colorproperty.h"
 #include "textproperty.h"
 #include "integerproperty.h"
+#include "fileproperty.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 
@@ -67,6 +68,12 @@ public:
 
     void moveTo(int x,int y);
 
+    // 设置工程路径
+    void setProjectPath(const QString &path);
+    // 获取工程路径
+    QString getProjectPath() const;
+
+
 protected:
     QString elementId;
     QString graphPageLink;
@@ -103,6 +110,8 @@ protected:
     };
 
     ResizeDirection rd;
+
+    QString strProjectPath_; // 工程路径
 
 signals:
     void elementMoved(QPointF);

@@ -11,20 +11,17 @@ public:
     DrawListUtils();
 
 public:
-    /*
-    * 加载画面名称列表
-    */
-    static void LoadDrawList(QString path, QStringList &slist);
+    // 加载画面名称列表
+    static void loadDrawList(const QString &path);
 
-    /*
-    * 保存画面名称列表
-    */
-    static void SaveDrawList(QString path, QStringList &slist);
+    // 保存画面名称列表
+    static void saveDrawList(const QString &path);
 
-    /*
-    * 获取画面名最大数值
-    */
-    static int GetMaxDrawPageNum(QString name, QStringList &slist);
+    // 获取画面名最大数值
+    static int getMaxDrawPageNum(const QString &name);
+
+    // 画面列表
+    static QStringList drawList_;
 
 };
 

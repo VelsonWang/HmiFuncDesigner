@@ -1,4 +1,5 @@
 ﻿#include <QApplication>
+#include <QMessageBox>
 #include "MainWindow.h"
 #include "configutils.h"
 #include "DrawListUtils.h"
@@ -36,10 +37,14 @@ int main(int argc, char *argv[])
         strProjPath = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "/");
 
         int last = 0;
-        QStringList DrawList;
-        DrawListUtils::LoadDrawList(strProjPath, DrawList);
-        last = DrawListUtils::GetMaxDrawPageNum("draw", DrawList);
+        DrawListUtils::loadDrawList(strProjPath);
+        last = DrawListUtils::getMaxDrawPageNum("draw");
         strGraphPageName = QString("draw%1").arg(last);
+    }
+
+    if(operate == "") {
+        QMessageBox::information(Q_NULLPTR, "提示", "画面编辑程序只能由工程管理器调用！");
+        return 0;
     }
 
     // 加载元素插件

@@ -1,5 +1,6 @@
 ﻿#include "MainWindow.h"
 #include "Helper.h"
+#include "DrawListUtils.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QRect>
@@ -145,8 +146,10 @@ void MainWindow::createActions() {
 void MainWindow::createMenus() {
 
     QMenu *filemenu = new QMenu(trUtf8("文件"), this);
+#if 0  // for test we need this
     filemenu->addAction(actionNew);
     filemenu->addAction(actionOpen);
+#endif
     filemenu->addAction(actionSaveGraphPage_);
     filemenu->addSeparator();
     filemenu->addAction(actionCloseGraphPage_);
@@ -253,6 +256,7 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
         if (!createDocument(graphPage, view, fileName)) {
             return;
         }
+        graphPage->setProjectPath(pagePath);
         graphPage->loadAsXML(fileName);
         graphPage->setFileName(pageName + ".drw");
         graphPage->setGraphPageId(pageName);
@@ -331,6 +335,7 @@ void MainWindow::addNewGraphPage() {
     }
 
     GraphPage *graphPage = new GraphPage(QRectF());
+    graphPage->setProjectPath(projpath_);
     graphPage->setGridVisible(gridVisible_);
     currentGraphPage_ = graphPage;
     view->setScene(graphPage);
@@ -611,6 +616,7 @@ void MainWindow::slotEditOpen() {
         if (!createDocument(graphPage, view, filename)) {
             return;
         } 
+        graphPage->setProjectPath(projpath_);
         graphPage->loadAsXML(filename);
         int pos = filename.lastIndexOf("/");
         QString pageFileName = "";

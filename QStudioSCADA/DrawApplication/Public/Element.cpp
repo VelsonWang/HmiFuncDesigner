@@ -146,3 +146,23 @@ void Element::addNodePoint() {
 
 void Element::removeNodePoint() {
 }
+
+/**
+ * @brief Element::setProjectPath
+ * @details 设置工程路径
+ * @param path 工程路径
+ */
+void Element::setProjectPath(const QString &path) {
+    if(strProjectPath_ != path)
+        strProjectPath_ = path;
+}
+
+
+/**
+ * @brief Element::getProjectPath
+ * @details 获取工程路径
+ * @return 工程路径
+ */
+QString Element::getProjectPath() const {
+    return strProjectPath_;
+}

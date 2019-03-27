@@ -1,4 +1,5 @@
 #include "propertytableview.h"
+#include <QDebug>
 
 PropertyTableView::PropertyTableView(PropertyModel *model, QWidget *parent)
     : QTableView(parent)
@@ -25,3 +26,4 @@ void PropertyTableView::init() {
     delegate = new PropertyDelegate(this);
     setItemDelegate(delegate);
 }
+

@@ -55,6 +55,9 @@ public:
     QString getFileName() const;
     void setFileName(const QString &);
 
+    QString getProjectPath() const;
+    void setProjectPath(const QString &);
+
     void fillGraphPagePropertyModel();
 
     void saveAsXML(const QString &filename);
@@ -185,6 +188,9 @@ signals:
     void elementPropertyChanged();
     void GraphPagePropertyChanged();
     void GraphPageSaved();
+
+private:
+    QString projpath_;
 };
 
 #endif // GRAPHPAGE_H

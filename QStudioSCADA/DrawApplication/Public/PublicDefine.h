@@ -16,7 +16,7 @@ const int PolygonItemType = QGraphicsItem::UserType + 17;
 
 const int PushButtonItemType = QGraphicsItem::UserType + 40;
 const int InputEditItemType = QGraphicsItem::UserType + 41;
-
+const int PictureItemType = QGraphicsItem::UserType + 42;
 
 
 enum {
@@ -39,7 +39,12 @@ enum {
     EL_FONT_SIZE = 16,
     EL_FONT_COLOR = 17,
     EL_GRAPHPAGE_LINK = 18, //transition to screen
-    EL_PROPERTY_EMPTY = 19
+    EL_FILE = 19,
+
+
+
+
+    EL_PROPERTY_EMPTY = 255
 };
 
 enum {
@@ -57,8 +62,7 @@ enum ComponentType {
 
 enum SaveGraphPageType {
     SAVE_XML,
-    SAVE_BINARY,
-    SAVE_IMAGE
+    SAVE_BINARY
 };
 
 

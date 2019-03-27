@@ -3,6 +3,7 @@
 
 #include <QTableView>
 #include <QHeaderView>
+#include <QFocusEvent>
 #include "propertymodel.h"
 #include "propertydelegate.h"
 

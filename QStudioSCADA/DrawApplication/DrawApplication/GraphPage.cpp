@@ -42,7 +42,8 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent)
     : QGraphicsScene(parent),
       propertyModel(0),
       filename(QString()),
-      unsavedFlag(false)
+      unsavedFlag(false),
+      projpath_(QString())
 {
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
@@ -567,9 +568,12 @@ void GraphPage::createItems(const QString &typeId, QPointF position) {
             if(plugin != nullptr && plugin->getElementName() == typeId) {
 
                 Element *ele = plugin->createElement();
-                ele->setClickPosition(position);
-                last = ele;
-                connectItem(ele);
+                if(ele != Q_NULLPTR) {
+                    ele->setProjectPath(projpath_);
+                    ele->setClickPosition(position);
+                    last = ele;
+                    connectItem(ele);
+                }
             }
         }
     }
@@ -796,9 +800,12 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
 
                     Element *ele = plugin->createElement();
-                    ele->readData(in);
-                    connectItem(ele);
-                    copyList.insert(copyList.end(), ele);
+                    if(ele != Q_NULLPTR) {
+                        ele->setProjectPath(projpath_);
+                        ele->readData(in);
+                        connectItem(ele);
+                        copyList.insert(copyList.end(), ele);
+                    }
                 }
             }
         }
@@ -851,7 +858,9 @@ void GraphPage::saveAsBinary(const QString &filename) {
     }
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(0,trUtf8("错误"),trUtf8("文件无法保存"),
+        QMessageBox::information(0,
+                                 trUtf8("错误"),
+                                 trUtf8("文件无法保存"),
                                  QMessageBox::Ok);
         return;
     }
@@ -873,7 +882,9 @@ void GraphPage::loadAsBinary(const QString &filename) {
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(0,trUtf8("错误"),trUtf8("文件无法保存"),
+        QMessageBox::information(0,
+                                 trUtf8("错误"),
+                                 trUtf8("文件无法保存"),
                                  QMessageBox::Ok);
         return;
     }
@@ -974,6 +985,7 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         connectItem(ele);
                         addItem(ele);
@@ -1097,6 +1109,7 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         connectItem(ele);
                         addItem(ele);
@@ -1130,6 +1143,26 @@ void GraphPage::slotSaveAsLibrary() {
     file.close();
 }
 
+/**
+ * @brief GraphPage::getProjectPath
+ * @details 获取工程路径
+ * @return 工程路径
+ */
+QString GraphPage::getProjectPath() const {
+    return projpath_;
+}
+
+
+/**
+ * @brief GraphPage::setProjectPath
+ * @details 设置工程路径
+ * @param path 工程路径
+ */
+void GraphPage::setProjectPath(const QString &path) {
+    projpath_ = path;
+}
+
+
 QDataStream &operator<<(QDataStream &out,const GraphPage &GraphPage) {
 
     out << GraphPage.getFileName() << GraphPage.getGraphPageId() << GraphPage.getGraphPagePriority()
@@ -1160,3 +1193,4 @@ QDataStream &operator>>(QDataStream &in,GraphPage &GraphPage) {
 
     return in;
 }
+

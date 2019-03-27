@@ -55,7 +55,6 @@ private slots:
 private:
     Ui::DrawPageWin *ui;
     QStandardItemModel *pListDrawPageModel;
-    QStringList m_DrawList;
     QString m_ProjPath;
     QString m_CopyDrawPageFileName;
 
