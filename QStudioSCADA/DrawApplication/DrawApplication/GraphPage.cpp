@@ -158,9 +158,6 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property) {
     case GRAPHPAGE_ID:
         setGraphPageId(property->getValue().toString());
         break;
-    case GRAPHPAGE_PRIORITY:
-        setGraphPagePriority(property->getValue().toString());
-        break;
     case GRAPHPAGE_BACKGROUND:
         setGraphPageBackground(property->getValue().value<QColor>());
         break;
@@ -186,7 +183,6 @@ void GraphPage::cleanPropertyModel() {
 void GraphPage::fillGraphPagePropertyModel() {
 
     idProperty->setValue(GraphPageId);
-    priorityProperty->setValue(GraphPagePriority);
     backgroundProperty->setValue(GraphPageBackground);
     widthProperty->setValue(GraphPageWidth);
     heightProperty->setValue(GraphPageHeight);
@@ -206,13 +202,8 @@ void GraphPage::createPropertyList() {
     idProperty->setId(GRAPHPAGE_ID);
     propList.insert(propList.end(),idProperty);
 
-    titleProperty = new EmptyProperty(trUtf8("标题"));
+    titleProperty = new EmptyProperty(trUtf8("基本属性"));
     propList.insert(propList.end(),titleProperty);
-
-    priorityProperty = new EnumProperty(trUtf8("主要"));
-    priorityProperty->setId(GRAPHPAGE_PRIORITY);
-    priorityProperty->setLiterals(QStringList() << trUtf8("主要") << trUtf8("嵌入"));
-    propList.insert(propList.end(),priorityProperty);
 
     backgroundProperty = new ColorProperty(trUtf8("背景"));
     backgroundProperty->setId(GRAPHPAGE_BACKGROUND);
@@ -443,14 +434,6 @@ void GraphPage::setGraphPageId(const QString &id) {
 
 QString GraphPage::getGraphPageId() const {
     return GraphPageId;
-}
-
-void GraphPage::setGraphPagePriority(const QString &priority) {
-    GraphPagePriority =  priority;
-}
-
-QString GraphPage::getGraphPagePriority() const {
-    return GraphPagePriority;
 }
 
 void GraphPage::setGraphPageBackground(const QColor &color) {
@@ -925,10 +908,6 @@ void GraphPage::saveAsXML(const QString &filename) {
     emit GraphPageSaved();
 }
 
-/**
-XML GraphPage LOADING-------------------------------
-*/
-
 
 void GraphPage::loadAsXML(const QString &filename) {
 
@@ -1008,10 +987,6 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
         setGraphPageId(xml.attributes().value("graphPageId").toString());
     }
 
-    if (xml.attributes().hasAttribute("priority")) {
-        setGraphPagePriority(xml.attributes().value("priority").toString());
-    }
-
     if (xml.attributes().hasAttribute("width")) {
         setGraphPageWidth(xml.attributes().value("width").toString().toInt());
     }
@@ -1030,12 +1005,10 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
 Element *GraphPage::createElement(const QString &internalType) {
 
     QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
-    while(iter.hasNext())
-    {
+    while(iter.hasNext()) {
         iter.next();
         QMapIterator<QString, IDrawApplicationPlugin*>  it(iter.value());
-        while(it.hasNext())
-        {
+        while(it.hasNext()) {
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementIDString() == internalType) {
@@ -1047,9 +1020,6 @@ Element *GraphPage::createElement(const QString &internalType) {
     return nullptr;
 }
 
-/**
-XML LIBRARY LOADING-------------------------------
-*/
 
 void GraphPage::loadLibrary(QByteArray &data) {
 
@@ -1165,8 +1135,10 @@ void GraphPage::setProjectPath(const QString &path) {
 
 QDataStream &operator<<(QDataStream &out,const GraphPage &GraphPage) {
 
-    out << GraphPage.getFileName() << GraphPage.getGraphPageId() << GraphPage.getGraphPagePriority()
-        << GraphPage.getGraphPageBackground() << GraphPage.getGraphPageHeight()
+    out << GraphPage.getFileName()
+        << GraphPage.getGraphPageId()
+        << GraphPage.getGraphPageBackground()
+        << GraphPage.getGraphPageHeight()
         << GraphPage.getGraphPageWidth();
 
     return out;
@@ -1176,16 +1148,19 @@ QDataStream &operator>>(QDataStream &in,GraphPage &GraphPage) {
 
     QString filename;
     QString id;
-    QString priority;
+
     QColor backColor;
     int height;
     int width;
 
-    in >> filename >> id >> priority >> backColor >> height >> width;
+    in >> filename
+            >> id
+            >> backColor
+            >> height
+            >> width;
 
     GraphPage.setFileName(filename);
     GraphPage.setGraphPageId(id);
-    GraphPage.setGraphPagePriority(priority);
     GraphPage.setGraphPageWidth(width);
     GraphPage.setGraphPageHeight(height);
     GraphPage.setGraphPageBackground(backColor);

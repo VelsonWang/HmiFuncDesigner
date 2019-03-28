@@ -34,9 +34,6 @@ public:
     void setGraphPageId(const QString &);
     QString getGraphPageId() const;
 
-    void setGraphPagePriority(const QString &);
-    QString getGraphPagePriority() const;
-
     void setGraphPageBackground(const QColor &);
     QColor getGraphPageBackground() const;
 
@@ -88,54 +85,6 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 
 private:
-    bool gridVisible;
-    Element *currentItem;
-    static const int gridSize = 20;
-    static const int pasteOffset = 20;
-    QString GraphPageId;
-    QString GraphPagePriority;
-    QString filename;
-    QColor GraphPageBackground;
-    int GraphPageWidth;
-    int GraphPageHeight;
-
-    bool onActive;
-    bool unsavedFlag;
-
-    PropertyModel *propertyModel;
-    QUndoStack *m_undoStack;
-    QPixmap gridPixmap;
-    QList <Property *> propList;
-    QList <QGraphicsItem*> copyList;
-
-    TextProperty *idProperty;
-    EmptyProperty *titleProperty;
-    EnumProperty *priorityProperty;
-    ColorProperty *backgroundProperty;
-    IntegerProperty *widthProperty;
-    IntegerProperty *heightProperty;
-
-    QMenu contextMenu;
-    QMenu contextServiceMenu;
-    QMenu contextNodePointMenu;
-
-    QAction *inGroupAction;
-    QAction *outGroupAction;
-    QAction *alignTopAction;
-    QAction *alignDownAction;
-    QAction *alignRightAction;
-    QAction *alignLeftAction;
-    QAction *frontPlanAction;
-    QAction *behindPlanAction;
-    QAction *saveAsLibraryAction;
-    QAction *actionAddNodePoint;
-    QAction *actionRemoveNodePoint;
-    QAction *actionDelete;
-    QAction *actionCopy;
-    QAction *actionPaste;
-    QAction *actionSelectAll;
-    QAction *actionAdditional;
-
     void createItems(const QString &, QPointF);
     void fillGridPixmap();
     void createPropertyList();
@@ -191,6 +140,52 @@ signals:
 
 private:
     QString projpath_;
+    bool gridVisible;
+    Element *currentItem;
+    static const int gridSize = 20;
+    static const int pasteOffset = 20;
+    QString GraphPageId;
+    QString GraphPagePriority;
+    QString filename;
+    QColor GraphPageBackground;
+    int GraphPageWidth;
+    int GraphPageHeight;
+
+    bool onActive;
+    bool unsavedFlag;
+
+    PropertyModel *propertyModel;
+    QUndoStack *m_undoStack;
+    QPixmap gridPixmap;
+    QList <Property *> propList;
+    QList <QGraphicsItem*> copyList;
+
+    TextProperty *idProperty;
+    EmptyProperty *titleProperty;
+    ColorProperty *backgroundProperty;
+    IntegerProperty *widthProperty;
+    IntegerProperty *heightProperty;
+
+    QMenu contextMenu;
+    QMenu contextServiceMenu;
+    QMenu contextNodePointMenu;
+
+    QAction *inGroupAction;
+    QAction *outGroupAction;
+    QAction *alignTopAction;
+    QAction *alignDownAction;
+    QAction *alignRightAction;
+    QAction *alignLeftAction;
+    QAction *frontPlanAction;
+    QAction *behindPlanAction;
+    QAction *saveAsLibraryAction;
+    QAction *actionAddNodePoint;
+    QAction *actionRemoveNodePoint;
+    QAction *actionDelete;
+    QAction *actionCopy;
+    QAction *actionPaste;
+    QAction *actionSelectAll;
+    QAction *actionAdditional;
 };
 
 #endif // GRAPHPAGE_H

@@ -38,7 +38,6 @@ SOURCES += \
     ElementLibraryListWidget.cpp \
     ElementLibraryListWidgetItem.cpp \
     ElementSimpleListWidget.cpp \
-    PreviewWindow.cpp \
     GraphPageTreeView.cpp \
     MainWindow.cpp \
     ../Public/PubTool.cpp \
@@ -56,7 +55,6 @@ HEADERS  += \
     ElementLibraryListWidget.h \
     ElementLibraryListWidgetItem.h \
     ElementSimpleListWidget.h \
-    PreviewWindow.h \
     GraphPageTreeView.h \
     MainWindow.h \
     ../Public/PublicDefine.h \
@@ -68,7 +66,6 @@ HEADERS  += \
 
 FORMS    += \
     ElementLibraryWidget.ui \
-    PreviewWindow.ui \
     MainWindow.ui
 
 RESOURCES += \

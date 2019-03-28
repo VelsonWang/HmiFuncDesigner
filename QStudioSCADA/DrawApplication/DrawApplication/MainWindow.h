@@ -10,7 +10,6 @@
 #include "GraphPage.h"
 #include "propertymodel.h"
 #include "propertytableview.h"
-#include "PreviewWindow.h"
 #include "GraphPageManager.h"
 #include "ui_MainWindow.h"
 
@@ -79,7 +78,6 @@ private slots:
     void slotShowLinear(bool);
     void slotZoomIn();
     void slotZoomOut();
-    void slotPreview();
     void slotUpdateActions();
     void slotChangeGraphPage(int);
     void slotChangeGraphPageName();
@@ -102,7 +100,6 @@ private:
     QAction *actionShowLinear_;
     QAction *actionZoomIn_;
     QAction *actionZoomOut_;
-    QAction *actionPreview_;
     QAction *actionUndo_;
     QAction *actionRedo_;
     QAction *actionCloseGraphPage_;
@@ -118,7 +115,6 @@ private:
     PropertyTableView *propertyView_;
     PropertyModel *propertyModel_;
     QUndoGroup *undoGroup_;
-    PreviewWindow *preview_;
 
     bool gridVisible_;
     int currentGraphPageIndex_;

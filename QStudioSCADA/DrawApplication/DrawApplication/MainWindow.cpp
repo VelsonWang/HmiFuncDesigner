@@ -3,7 +3,10 @@
 #include "DrawListUtils.h"
 #include <QDesktopWidget>
 #include <QApplication>
+#include <QFileInfo>
 #include <QRect>
+#include <QGraphicsView>
+#include <QFileDialog>
 #include <QDebug>
 
 
@@ -62,8 +65,6 @@ void MainWindow::initView() {
     propertyModel_ = new PropertyModel();
     propertyView_ = new PropertyTableView(propertyModel_);
     this->PropertyLayout->addWidget(propertyView_);
-
-    preview_ = new PreviewWindow;
 
     objTree_ = new ObjectsTreeView();
     this->ObjectTreeLayout->addWidget(objTree_);
@@ -129,9 +130,6 @@ void MainWindow::createActions() {
     actionZoomOut_ = new QAction(QIcon(":/images/zoom-out.png"), trUtf8("缩小"), this);
     connect(actionZoomOut_, SIGNAL(triggered()), SLOT(slotZoomOut()));
 
-    actionPreview_ = new QAction(QIcon(":/images/preview.png"), trUtf8("预览"), this);
-    connect(actionPreview_, SIGNAL(triggered()), SLOT(slotPreview()));
-
     actionUndo_ = undoGroup_->createUndoAction(this);
     actionUndo_->setIcon(QIcon(":/images/undo.png"));
     actionUndo_->setText(trUtf8("撤销"));
@@ -173,7 +171,6 @@ void MainWindow::createToolbars() {
     //toolBar->addAction(actionShowLinear);
     toolBar->addAction(actionZoomOut_);
     toolBar->addAction(actionZoomIn_);
-    toolBar->addAction(actionPreview_);
     toolBar->addSeparator();
     toolBar->addAction(actionUndo_);
     toolBar->addAction(actionRedo_);
@@ -417,7 +414,6 @@ void MainWindow::slotUpdateActions() {
 
     actionZoomIn_->setEnabled(graphPageTabWidget_->count() ? true : false);
     actionZoomOut_->setEnabled(graphPageTabWidget_->count() ? true : false);
-    actionPreview_->setEnabled(graphPageTabWidget_->count() ? true : false);
     actionShowGrid->setEnabled(graphPageTabWidget_->count() ? true : false);
 
     if (!currentGraphPage_) {
@@ -745,9 +741,9 @@ void MainWindow::slotExit() {
 int MainWindow::exitResponse() {
 
     int ret = QMessageBox::information(this,
-                                     trUtf8("退出程序"),
-                                     trUtf8("文件已修改。是否保存?"),
-                                     QMessageBox::Yes | QMessageBox::No);
+                                       trUtf8("退出程序"),
+                                       trUtf8("文件已修改。是否保存?"),
+                                       QMessageBox::Yes | QMessageBox::No);
     return ret;
 }
 
@@ -769,22 +765,6 @@ void MainWindow::slotZoomOut() {
     }
 }
 
-void MainWindow::slotPreview() {
-
-    if (!currentGraphPage_) {
-        return;
-    }
-
-    QPixmap pixmap(currentGraphPage_->width(), currentGraphPage_->height());
-
-    {
-        QPainter painter(&pixmap);
-        painter.setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-        currentGraphPage_->render(&painter);
-    }
-
-    preview_->updatePreview(pixmap);
-}
 
 
 
