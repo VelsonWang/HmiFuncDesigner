@@ -1,5 +1,6 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    QSCADARunTime
+    QSCADARunTime \
+    RunTimeViews
 
