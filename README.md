@@ -3,18 +3,17 @@
 ​	**QStudioSCADA是一款集HMI，数据采集于一体的软件，开源旨在技术分享、相互学习、提升技术。目前软件处于开发中，功能不完善，很多代码也需要重构，但是我相信在不久的将来本软件功能会更加完善！如果这份代码有幸被你看到了，而且对此也有兴趣，那么期待你的加入！！**
 
 
-### 0. 代码下载
- 1. **打开Git Bash命令行工具， 执行 git clone https://github.com/VelsonWang/QStudioSCADA.git 克隆代码至本地目录。**
- 
- 
- 
-### 1. 软件环境
+### 1. 代码下载
+  1. **打开Git Bash命令行工具， 执行 git clone https://github.com/VelsonWang/QStudioSCADA.git 克隆代码至本地目录。**
+  2.  **同步远端更新代码至本地，执行 git pull origin。**
+
+### 2. 软件环境
 
 ​	**Qt5.10.1 + MinGW530_32**
 
 
 
-### 2. QStudioSCADA软件编译	
+### 3. QStudioSCADA软件编译	
 
  1. **打开"Qt Creator 4.5.1 (Community)"软件，打开QStudioSCADA/QStudioSCADA.pro工程。**
 
@@ -34,7 +33,7 @@
 
 ​	
 
-### 3. QSCADARunTime软件编译
+### 4. QSCADARunTime软件编译
 
 1. **打开"Qt Creator 4.5.1 (Community)"软件，打开QSCADARunTime/QSCADARunTime.pro工程。**
 
@@ -50,7 +49,7 @@
 
    
 
-### 4.工程管理器QStudioSCADA
+### 5.工程管理器QStudioSCADA
 
 ![ProjectManager](md/_projectman_1546500878_8823.png)
 
@@ -70,25 +69,25 @@
 
     
 
-### 5.系统变量管理器
+### 6.系统变量管理器
 
 ![SystemVariableManager](md/SystemVariableManager.png)
 
 
 
-### 6.实时数据库显示
+### 7.实时数据库显示
 
 ![RTDBView](md/RTDBView.png)
 
 
 
-### 7.画面编辑
+### 8.画面编辑
 
 ![GraphPageEdit](md/GraphPageEdit.png)
 
 
 
-### 8.联系方式
+### 9.联系方式
 
 **Email：VelsonWang@qq.com**
 
