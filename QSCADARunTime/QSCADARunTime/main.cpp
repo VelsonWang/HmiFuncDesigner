@@ -1,5 +1,4 @@
-﻿#include <QCoreApplication>
-#include <QApplication>
+﻿
 #include "tcpserver.h"
 #include "SCADARunTime.h"
 #include "public.h"
@@ -12,8 +11,13 @@
 #include "RunTimeMySQLDatabase.h"
 #include "configutils.h"
 #include "edncrypt.h"
+#include "MainWindow.h"
+#include "ProjectInfoManger.h"
+
+#include <QApplication>
 #include <QDebug>
 #include <QFile>
+#include <QFileInfo>
 #include <QDir>
 #include <QTextStream>
 #include <iostream>
@@ -23,37 +27,48 @@
 #include "eventdispatcher_libev/eventdispatcher_libev.h"
 #endif
 
-void customMessageHandler(QtMsgType type, const QMessageLogContext &context,const QString & msg)
-{
-        QString txt;
-        switch (type) {
-        //调试信息提示
-        case QtDebugMsg:
-//            txt = QString("%1: Debug: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-//                    .arg(context.file).arg(context.line).arg(context.function).arg(msg);
-            txt = msg;
-                break;
+void customMessageHandler(QtMsgType type,
+                          const QMessageLogContext &context,
+                          const QString & msg) {
+    QString txt;
+    switch (type) {
+    //调试信息提示
+    case QtDebugMsg:
+        //            txt = QString("%1: Debug: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
+        //                    .arg(context.file).arg(context.line).arg(context.function).arg(msg);
+        txt = msg;
+        break;
 
         //一般的warning提示
-        case QtWarningMsg:
-                txt = QString("%1:Warning: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-                        .arg(context.file).arg(context.line).arg(context.function).arg(msg);
+    case QtWarningMsg:
+        txt = QString("%1:Warning: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
+                .arg(context.file)
+                .arg(context.line)
+                .arg(context.function)
+                .arg(msg);
         break;
         //严重错误提示
-        case QtCriticalMsg:
-                txt = QString("%1:Critical: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-                        .arg(context.file).arg(context.line).arg(context.function).arg(msg);
+    case QtCriticalMsg:
+        txt = QString("%1:Critical: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
+                .arg(context.file)
+                .arg(context.line)
+                .arg(context.function)
+                .arg(msg);
         break;
         //致命错误提示
-        case QtFatalMsg:
-                txt = QString("%1:Fatal: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-                        .arg(context.file).arg(context.line).arg(context.function).arg(msg);
-                abort();
-        }
-        QFile outFile(QString("%1/%2.txt").arg(QDir::currentPath()).arg(QDate::currentDate().toString("yyyy-MM-dd")));
-        outFile.open(QIODevice::WriteOnly | QIODevice::Append);
-        QTextStream ts(&outFile);
-        ts << txt << endl;
+    case QtFatalMsg:
+        txt = QString("%1:Fatal: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
+                .arg(context.file)
+                .arg(context.line)
+                .arg(context.function)
+                .arg(msg);
+        abort();
+    }
+    QFile outFile(QString("%1/%2.txt").arg(QDir::currentPath())
+                  .arg(QDate::currentDate().toString("yyyy-MM-dd")));
+    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
+    QTextStream ts(&outFile);
+    ts << txt << endl;
 }
 
 QString getSystemInfo() {
@@ -109,11 +124,10 @@ int main(int argc, char *argv[])
 #ifndef Q_OS_WIN
     //QCoreApplication::setEventDispatcher(new EventDispatcherLibEv());
 #endif
-    //QCoreApplication a(argc, argv);
-    QApplication  a(argc, argv);
-    //std::cout << "???" << std::endl;
+    QApplication  app(argc, argv);
 
-    // connect database
+    //////////////////////////////////////////////////////////////////////////////
+    /// connect database
     QString configPath = QApplication::applicationDirPath() + "/setting.ini";
     QString strInput = "";
     QString databaseName = ConfigUtils::getCfgStr(configPath, "Database", "DatabaseName", "runtimedb");
@@ -136,14 +150,18 @@ int main(int argc, char *argv[])
         g_database->createTables();
     }
 
+    //////////////////////////////////////////////////////////////////////////////
+
     LogInfo(getSystemInfo());
     LogInfo("start SCADARunTime!");
 
-    // start http server
+    //////////////////////////////////////////////////////////////////////////////
+    /// start http server
     HttpServer httpServer;
     httpServer.init(60000);
 
-    // start ftp server
+    //////////////////////////////////////////////////////////////////////////////
+    /// start ftp server
     strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "UserName", "admin");
     const QString &userName = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
     strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "PassWord", "admin");
@@ -152,7 +170,7 @@ int main(int argc, char *argv[])
     const QString &rootPath = "/"; //storageRoot.rootPath();
     quint32 port = ConfigUtils::getCfgInt(configPath, "FtpServer", "Port", 60001);
 
-    FtpServer ftpServer(&a, rootPath, port, userName, password, false, false);
+    FtpServer ftpServer(&app, rootPath, port, userName, password, false, false);
     if (ftpServer.isListening()) {
         QString ftpServerInfo = QString("\nFtpServer Listening at %1:%2").arg(FtpServer::lanIp()).arg(port);
         ftpServerInfo += QString("\nFtpServer User: %1").arg(userName);
@@ -161,6 +179,8 @@ int main(int argc, char *argv[])
     } else {
         LogInfo("Failed to start FtpServer.");
     }
+
+    //////////////////////////////////////////////////////////////////////////////
 
     QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
     QDir dir(projPath);
@@ -185,7 +205,37 @@ int main(int argc, char *argv[])
 
     TimerTask *pTimerTask = new TimerTask();
 
-    ret = a.exec();
+    //////////////////////////////////////////////////////////////////////////////
+    // start graph page show
+
+    // find project infomation file
+    QFileInfo srcFileInfo(projPath);
+    QString projInfoFile = "";
+    QString projInfoFileName = "";
+    if (srcFileInfo.isDir()) {
+        QDir sourceDir(projPath);
+        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+        foreach (const QString &fileName, fileNames) {
+            if(fileName.endsWith("proj")) {
+                projInfoFile = fileName;
+                QFileInfo info(projInfoFile);
+                projInfoFileName = info.fileName();
+            }
+
+        }
+    }
+    if(projInfoFile == "") {
+        LogError("project information file not found!");
+        ret = app.exec();
+    } else {
+        ProjectInfoManger projInfoMgr;
+        projInfoMgr.loadFromFile(DATA_SAVE_FORMAT, projPath + "/" + projInfoFile);
+        QString startPageFile = projInfoMgr.getStartPage();
+        MainWindow mainWin(projPath, startPageFile);
+        mainWin.openGraphPage(projPath, startPageFile);
+        mainWin.show();
+        ret = app.exec();
+    }
 
     delete pTimerTask;
 

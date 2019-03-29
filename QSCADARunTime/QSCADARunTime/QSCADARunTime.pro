@@ -1,7 +1,7 @@
 
-QT += core gui
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT += core
+QT += gui
+QT += widgets
 QT += network
 QT += script
 QT += sql
@@ -14,8 +14,6 @@ DESTDIR = $$TARGET_BIN_PATH
 TARGET = QSCADARunTime
 TEMPLATE = app
 
-QT -= gui
-
 # turn on console
 CONFIG(debug, debug|release) { #debug
     CONFIG += console
@@ -27,6 +25,7 @@ CONFIG += C++11
 include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
 include(../QFtpServer/QFtpServer.pri)
+include(../Views/Views.pri)
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor \
@@ -45,18 +44,32 @@ LIBRARY_SRC_PATH = $$_PRO_FILE_PWD_/../../QStudioSCADA
 INCLUDEPATH += \
     $$LIBRARY_SRC_PATH/libs/edncrypt \
     $$LIBRARY_SRC_PATH/libs/ConfigUtils \
-    $$LIBRARY_SRC_PATH/libs/Helper
+    $$LIBRARY_SRC_PATH/libs/Helper \
+    $$LIBRARY_SRC_PATH/libs/PropertyEditor \
+    $$LIBRARY_SRC_PATH/libs/DrawListUtils \
+    $$LIBRARY_SRC_PATH/libs/Utils
 
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
     LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lHelperd
+
+    LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
 }
 else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
     LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lHelper
+
+    LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtils
 }
+
 
 SOURCES += \
     qextserial/qextserialport.cpp \
