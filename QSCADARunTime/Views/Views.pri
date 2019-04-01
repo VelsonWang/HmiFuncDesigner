@@ -11,7 +11,9 @@ INCLUDEPATH += \
     $$PWD/Elements \
     $$PWD/Elements/EArrow \
     $$PWD/Elements/ELine \
-    $$PWD/Elements/EEllipse
+    $$PWD/Elements/EEllipse \
+    $$PWD/Elements/ERect \
+    $$PWD/Elements/EText
 
 
 SOURCES += \
@@ -30,7 +32,11 @@ SOURCES += \
     $$PWD/Elements/ELine/ElementLine.cpp \
     $$PWD/Elements/ELine/ELine.cpp \
     $$PWD/Elements/EEllipse/ElementEllipse.cpp \
-    $$PWD/Elements/EEllipse/EEllipse.cpp
+    $$PWD/Elements/EEllipse/EEllipse.cpp \
+    $$PWD/Elements/ERect/ElementRect.cpp \
+    $$PWD/Elements/ERect/ERect.cpp \
+    $$PWD/Elements/EText/ElementText.cpp \
+    $$PWD/Elements/EText/EText.cpp
 
 HEADERS  += \
     $$PWD/GraphPage.h \
@@ -50,7 +56,11 @@ HEADERS  += \
     $$PWD/Elements/ELine/ElementLine.h \
     $$PWD/Elements/ELine/ELine.h \
     $$PWD/Elements/EEllipse/ElementEllipse.h \
-    $$PWD/Elements/EEllipse/EEllipse.h
+    $$PWD/Elements/EEllipse/EEllipse.h \
+    $$PWD/Elements/ERect/ElementRect.h \
+    $$PWD/Elements/ERect/ERect.h \
+    $$PWD/Elements/EText/ElementText.h \
+    $$PWD/Elements/EText/EText.h
 
 FORMS    +=
 
