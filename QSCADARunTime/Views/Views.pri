@@ -9,7 +9,8 @@ INCLUDEPATH += \
     $$PWD/ \
     $$PWD/Public \
     $$PWD/Elements \
-    $$PWD/Elements/EArrow
+    $$PWD/Elements/EArrow \
+    $$PWD/Elements/ELine
 
 
 
@@ -25,7 +26,9 @@ SOURCES += \
 
 SOURCES += \
     $$PWD/Elements/EArrow/ElementArrow.cpp \
-    $$PWD/Elements/EArrow/EArrow.cpp
+    $$PWD/Elements/EArrow/EArrow.cpp \
+    $$PWD/Elements/ELine/ElementLine.cpp \
+    $$PWD/Elements/ELine/ELine.cpp
 
 HEADERS  += \
     $$PWD/GraphPage.h \
@@ -41,7 +44,9 @@ HEADERS  += \
 
 HEADERS  += \
     $$PWD/Elements/EArrow/ElementArrow.h \
-    $$PWD/Elements/EArrow/EArrow.h
+    $$PWD/Elements/EArrow/EArrow.h \
+    $$PWD/Elements/ELine/ElementLine.h \
+    $$PWD/Elements/ELine/ELine.h
 
 FORMS    +=
 

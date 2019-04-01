@@ -13,7 +13,6 @@ public:
     ElementArrow();
     void setClickPosition(QPointF);
     void updateBoundingElement();
-    void updateElementProperty(uint id, const QVariant &value);
     void readFromXml(const QXmlStreamAttributes &);
     void readData(QDataStream &in);
 

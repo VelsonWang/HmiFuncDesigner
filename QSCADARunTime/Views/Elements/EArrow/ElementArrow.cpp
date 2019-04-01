@@ -1,6 +1,5 @@
 ﻿#include "elementarrow.h"
 #include "math.h"
-#include "ObjectCreator.h"
 #include <QtDebug>
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
@@ -31,50 +30,6 @@ QRectF ElementArrow::boundingRect() const {
 
     return QRectF(lx,ty,rx - lx, by - ty).normalized()
             .adjusted(-extra,-extra,extra,extra);
-}
-
-void ElementArrow::updateElementProperty(uint id, const QVariant &value) {
-
-    switch (id) {
-
-       case EL_ID:
-           elementId = value.toString();
-           break;
-       case EL_X:
-           elementXPos = value.toInt();
-           setElementXPos(elementXPos);
-           break;
-       case EL_Y:
-           elementYPos = value.toInt();
-           setElementYPos(elementYPos);
-           break;
-       case EL_Z_VALUE:
-           elementZValue = value.toInt();
-           setZValue(elementZValue);
-           break;
-       case EL_WIDTH:
-           elementWidth = value.toInt();
-           updateBoundingElement();
-           break;
-       case EL_HEIGHT:
-           elementHeight = value.toInt();
-           updateBoundingElement();
-           break;
-       case EL_BACKGROUND:
-           backgroundColor = value.value<QColor>();
-           break;
-       case EL_BORDER_WIDTH:
-           borderWidth = value.toInt();
-           break;
-       case EL_ANGLE:
-           elemAngle = value.toInt();
-           setAngle(elemAngle);
-           break;
-       }
-
-
-    update();
-    scene()->update();
 }
 
 
@@ -128,7 +83,7 @@ void ElementArrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 }
 
 void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
+    Q_UNUSED(event)
 }
 
 void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event) {

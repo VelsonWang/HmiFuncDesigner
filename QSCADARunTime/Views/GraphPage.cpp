@@ -9,6 +9,7 @@
 #include "IDrawGraphPage.h"
 
 #include "EArrow/EArrow.h"
+#include "ELine/ELine.h"
 
 template<template<typename T> class S, typename T>
 T min(const S<T> &sequence)
@@ -38,11 +39,11 @@ static QMap<int, CreateObjFunc> mapIDFuncData_;
 static QMap<QString, CreateObjFunc> mapIDStringFuncData_;
 
 #define REGISTER_CREATEOR(elementName, elementID, elementIDString, className) \
-{ \
+do{ \
     mapNameFuncData_[elementName] = className::creatObjFunc; \
     mapIDFuncData_[elementID] = className::creatObjFunc; \
     mapIDStringFuncData_[elementIDString] = className::creatObjFunc; \
-    }
+    }while(0)
 
 /**
  * @brief registerCreateObjectFunc
@@ -54,7 +55,8 @@ void registerCreateObjectFunc() {
     mapIDFuncData_.clear();
     mapIDStringFuncData_.clear();
 
-    REGISTER_CREATEOR(QObject::trUtf8("箭头"), ArrowItemType, "Arrow", EArrow)
+    REGISTER_CREATEOR(QObject::trUtf8("箭头"), ArrowItemType, "Arrow", EArrow);
+    REGISTER_CREATEOR(QObject::trUtf8("直线"), ArrowItemType, "Line", ELine);
 
 
 
@@ -576,6 +578,7 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
                         ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         addItem(ele);
+                        ele->setSelected(false);
                     }
                 }
             }

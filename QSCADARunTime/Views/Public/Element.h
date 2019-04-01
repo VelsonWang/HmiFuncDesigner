@@ -27,7 +27,6 @@ public:
     qreal angle() const;
 
     virtual void setClickPosition(QPointF) = 0;
-    virtual void updateElementProperty(uint id, const QVariant &value) = 0;
     virtual void updateBoundingElement() = 0;
     virtual void readFromXml(const QXmlStreamAttributes &) = 0;
     virtual void setBlocked(bool);
