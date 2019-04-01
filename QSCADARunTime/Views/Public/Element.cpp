@@ -1,11 +1,6 @@
 ﻿#include "Element.h"
 #include <QtDebug>
 
-/**
-Calling updatePropertyModel() for properties which can change
-without using PropertyEditor - height, width, xpos,ypos,
-zvalue (using context menu on the scene)
-*/
 
 Element::~Element() {
 
@@ -22,10 +17,6 @@ QString Element::getElementId() const {
 QString Element::getInternalElementType() const {
 
     return internalElementType;
-}
-
-QIcon Element::getElementIcon() const {
-    return elementIcon;
 }
 
 void Element::setElementWidth(int width) {

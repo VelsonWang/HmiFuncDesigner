@@ -7,7 +7,6 @@
 
 class EArrow : public QObject, IDrawGraphPage
 {
-
 public:
     EArrow();
 
@@ -26,6 +25,10 @@ public:
     QString getElementIDString() Q_DECL_OVERRIDE;
     // 创建元素
     Element* createElement() Q_DECL_OVERRIDE;
+
+signals:
+
+private slots:
 
 };
 

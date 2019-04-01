@@ -10,8 +10,8 @@ INCLUDEPATH += \
     $$PWD/Public \
     $$PWD/Elements \
     $$PWD/Elements/EArrow \
-    $$PWD/Elements/ELine
-
+    $$PWD/Elements/ELine \
+    $$PWD/Elements/EEllipse
 
 
 SOURCES += \
@@ -28,7 +28,9 @@ SOURCES += \
     $$PWD/Elements/EArrow/ElementArrow.cpp \
     $$PWD/Elements/EArrow/EArrow.cpp \
     $$PWD/Elements/ELine/ElementLine.cpp \
-    $$PWD/Elements/ELine/ELine.cpp
+    $$PWD/Elements/ELine/ELine.cpp \
+    $$PWD/Elements/EEllipse/ElementEllipse.cpp \
+    $$PWD/Elements/EEllipse/EEllipse.cpp
 
 HEADERS  += \
     $$PWD/GraphPage.h \
@@ -46,7 +48,9 @@ HEADERS  += \
     $$PWD/Elements/EArrow/ElementArrow.h \
     $$PWD/Elements/EArrow/EArrow.h \
     $$PWD/Elements/ELine/ElementLine.h \
-    $$PWD/Elements/ELine/ELine.h
+    $$PWD/Elements/ELine/ELine.h \
+    $$PWD/Elements/EEllipse/ElementEllipse.h \
+    $$PWD/Elements/EEllipse/EEllipse.h
 
 FORMS    +=
 

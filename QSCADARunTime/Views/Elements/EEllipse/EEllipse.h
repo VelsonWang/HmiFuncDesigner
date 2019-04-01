@@ -1,19 +1,19 @@
-﻿#ifndef ELINE_H
-#define ELINE_H
+﻿#ifndef EELLIPSE_H
+#define EELLIPSE_H
 
 #include <QObject>
 #include "Public/IDrawGraphPage.h"
 
 
-class ELine : public QObject, IDrawGraphPage
+class EEllipse : public QObject, IDrawGraphPage
 {
     Q_OBJECT
 public:
-    ELine();
+    EEllipse();
 
     static IDrawGraphPage* creatObjFunc()
     {
-        return new ELine;
+        return new EEllipse;
     }
 
     // 初始化
@@ -33,4 +33,4 @@ private slots:
 
 };
 
-#endif // ELINE_H
+#endif // EELLIPSE_H

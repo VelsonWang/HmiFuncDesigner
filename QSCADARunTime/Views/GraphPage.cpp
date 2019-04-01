@@ -10,6 +10,7 @@
 
 #include "EArrow/EArrow.h"
 #include "ELine/ELine.h"
+#include "EEllipse/EEllipse.h"
 
 template<template<typename T> class S, typename T>
 T min(const S<T> &sequence)
@@ -56,7 +57,8 @@ void registerCreateObjectFunc() {
     mapIDStringFuncData_.clear();
 
     REGISTER_CREATEOR(QObject::trUtf8("箭头"), ArrowItemType, "Arrow", EArrow);
-    REGISTER_CREATEOR(QObject::trUtf8("直线"), ArrowItemType, "Line", ELine);
+    REGISTER_CREATEOR(QObject::trUtf8("直线"), LineItemType, "Line", ELine);
+    REGISTER_CREATEOR(QObject::trUtf8("椭圆形"), EllipseItemType, "Ellipse", EEllipse);
 
 
 

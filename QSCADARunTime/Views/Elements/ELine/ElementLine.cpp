@@ -5,8 +5,6 @@ ElementLine::ElementLine()
 {
     elementId = trUtf8("直线");
     internalElementType = trUtf8("Line");
-    elementIcon = QIcon(":/images/lineitem.png");
-
     init();
 }
 
@@ -54,13 +52,6 @@ void ElementLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     painter->setPen(itemPen);
     painter->drawLine(elementLine);
 
-    if (isSelected()) {
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementLine.p1() - QPointF(3,3),elementLine.p1() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementLine.p2() - QPointF(3,3),elementLine.p2() + QPointF(3,3)));
-    }
 }
 
 void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {

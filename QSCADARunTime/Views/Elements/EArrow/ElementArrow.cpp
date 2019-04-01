@@ -10,8 +10,6 @@ ElementArrow::ElementArrow()
 {
     elementId = trUtf8("箭头");
     internalElementType = trUtf8("Arrow");
-    elementIcon = QIcon(":/images/arrowitem.png");
-
     init();
 }
 
@@ -72,14 +70,6 @@ void ElementArrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
                                                   cos(angle + Pi - Pi / 3) * arrowSize);
 
     painter->drawPolyline(QPolygonF() << sourceArrowP1 << elementLine.p1() << sourceArrowP2);
-
-    if (isSelected()) {
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementLine.p1() - QPointF(3,3),elementLine.p1() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementLine.p2() - QPointF(3,3),elementLine.p2() + QPointF(3,3)));
-    }
 }
 
 void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {

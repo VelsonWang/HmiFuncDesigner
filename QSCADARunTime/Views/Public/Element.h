@@ -52,8 +52,6 @@ public:
     void setElementZValue(int);
     int getElementZValue() const;
 
-    QIcon getElementIcon() const;
-
     QString getInternalElementType() const;
 
     void setGraphPageLink(const QString &);
@@ -84,7 +82,6 @@ protected:
     int fontSize;
     qreal elemAngle;
 
-    QIcon elementIcon;
     QString internalElementType;
 
     bool resizing;

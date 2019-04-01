@@ -13,13 +13,7 @@ public:
     ElementEllipse();
     void setClickPosition(QPointF);
     void updateBoundingElement();
-    void updateElementProperty(uint id, const QVariant &value);
-    void updatePropertyModel();
-    void createPropertyList();
-    void writeAsXml(QXmlStreamWriter &);
     void readFromXml(const QXmlStreamAttributes &);
-
-    void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
     enum {Type = EllipseItemType};
@@ -28,7 +22,6 @@ public:
         return Type;
     }
 
-    friend QDataStream &operator<<(QDataStream &out,const ElementEllipse &rect);
     friend QDataStream &operator>>(QDataStream &in,ElementEllipse &rect);
 
 protected:
@@ -42,18 +35,6 @@ protected:
 
 private:
     QRectF elementRect;
-    TextProperty *idProperty;
-    EmptyProperty *titleProperty;
-    IntegerProperty *xCoordProperty;
-    IntegerProperty *yCoordProperty;
-    IntegerProperty *zValueProperty;
-    IntegerProperty *widthProperty;
-    IntegerProperty *heightProperty;
-    ColorProperty *backColorProperty;
-    ColorProperty *borderColorProperty;
-    IntegerProperty *borderWidthProperty;
-    IntegerProperty *angleProperty;
-    BoolProperty *blockedProperty;
 
 };
 
