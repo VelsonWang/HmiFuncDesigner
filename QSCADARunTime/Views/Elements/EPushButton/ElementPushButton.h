@@ -15,13 +15,7 @@ public:
     explicit ElementPushButton();
     void setClickPosition(QPointF);
     void updateBoundingElement();
-    void updateElementProperty(uint id, const QVariant &value);
-    void updatePropertyModel();
-    void createPropertyList();
-    void writeAsXml(QXmlStreamWriter &);
     void readFromXml(const QXmlStreamAttributes &);
-
-    void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
     enum {Type = PushButtonItemType};
@@ -30,7 +24,6 @@ public:
         return Type;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementPushButton &textItem);
     friend QDataStream &operator>>(QDataStream &in, ElementPushButton &textItem);
 
 protected:
@@ -45,19 +38,6 @@ protected:
 private:
     QRectF elementRect;
     void drawPushButton(QPainter *painter);
-    TextProperty *idProperty;
-    EmptyProperty *titleProperty;
-    IntegerProperty *xCoordProperty;
-    IntegerProperty *yCoordProperty;
-    IntegerProperty *zValueProperty;
-    IntegerProperty *widthProperty;
-    IntegerProperty *heightProperty;
-    TextProperty *elementTextProperty;
-    ColorProperty *textColorProperty;
-    IntegerProperty *fontSizeProperty;
-    IntegerProperty *angleProperty;
-    BoolProperty *blockedProperty;
-
 };
 
 #endif // PUSHBUTTONITEM_HPP

@@ -6,10 +6,7 @@ ElementPushButton::ElementPushButton()
 {
     elementId = trUtf8("弹出按钮");
     internalElementType = trUtf8("PushButton");
-    elementIcon = QIcon(":/images/PushButton.png");
-
     init();
-
     elementWidth = 100;
     elementHeight = 40;
     backgroundColor = QColor(240, 240, 240);
@@ -17,9 +14,6 @@ ElementPushButton::ElementPushButton()
     borderWidth = 4;
     borderColor = QColor(112, 112, 112);
     elementText = trUtf8("弹出按钮");
-
-    createPropertyList();
-    updatePropertyModel();
 }
 
 QRectF ElementPushButton::boundingRect() const {
@@ -33,126 +27,7 @@ QRectF ElementPushButton::boundingRect() const {
 QPainterPath ElementPushButton::shape() const {
     QPainterPath path;
     path.addRect(elementRect);
-
-    if (isSelected()) {
-        path.addRect(QRectF(elementRect.topLeft() - QPointF(3,3),elementRect.topLeft() + QPointF(3,3)));
-        path.addRect(QRectF(elementRect.bottomRight() - QPointF(3,3),elementRect.bottomRight() + QPointF(3,3)));
-    }
-
     return path;
-}
-
-void ElementPushButton::createPropertyList() {
-
-    idProperty = new TextProperty(trUtf8("ID"));
-    idProperty->setId(EL_ID);
-    propList.insert(propList.end(),idProperty);
-
-    titleProperty = new EmptyProperty(trUtf8("标题"));
-    propList.insert(propList.end(),titleProperty);
-
-    xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0,5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(),xCoordProperty);
-
-    yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
-    propList.insert(propList.end(),yCoordProperty);
-
-    zValueProperty = new IntegerProperty(trUtf8("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000,1000);
-    propList.insert(propList.end(),zValueProperty);
-
-    widthProperty = new IntegerProperty(trUtf8("宽度"));
-    widthProperty->setId(EL_WIDTH);
-    widthProperty->setSettings(0,5000);
-    propList.insert(propList.end(),widthProperty);
-
-    heightProperty = new IntegerProperty(trUtf8("高度"));
-    heightProperty->setId(EL_HEIGHT);
-    heightProperty->setSettings(0,5000);
-    propList.insert(propList.end(),heightProperty);
-
-    elementTextProperty = new TextProperty(trUtf8("文本"));
-    elementTextProperty->setId(EL_TEXT);
-    propList.insert(propList.end(),elementTextProperty);
-
-    textColorProperty = new ColorProperty(trUtf8("颜色"));
-    textColorProperty->setId(EL_FONT_COLOR);
-    propList.insert(propList.end(),textColorProperty);
-
-    fontSizeProperty = new IntegerProperty(trUtf8("字体"));
-    fontSizeProperty->setId(EL_FONT_SIZE);
-    fontSizeProperty->setSettings(8,72);
-    propList.insert(propList.end(),fontSizeProperty);
-
-    angleProperty = new IntegerProperty(trUtf8("角度"));
-    angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0,360);
-    propList.insert(propList.end(),angleProperty);
-}
-
-void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
-
-    switch (id) {
-
-    case EL_ID:
-        elementId = value.toString();
-        break;
-    case EL_X:
-        elementXPos = value.toInt();
-        setElementXPos(elementXPos);
-        break;
-    case EL_Y:
-        elementYPos = value.toInt();
-        setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
-        elementZValue = value.toInt();
-        setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
-        elementWidth = value.toInt();
-        updateBoundingElement();
-        break;
-    case EL_HEIGHT:
-        elementHeight = value.toInt();
-        updateBoundingElement();
-        break;
-    case EL_FONT_COLOR:
-        textColor = value.value<QColor>();
-        break;
-    case EL_FONT_SIZE:
-        fontSize = value.toInt();
-        break;
-    case EL_TEXT:
-        elementText = value.toString();
-        break;
-    case EL_ANGLE:
-        elemAngle = value.toInt();
-        setAngle(elemAngle);
-        break;
-    }
-
-    update();
-    scene()->update();
-}
-
-void ElementPushButton::updatePropertyModel() {
-
-    idProperty->setValue(elementId);
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    widthProperty->setValue(elementWidth);
-    heightProperty->setValue(elementHeight);
-    textColorProperty->setValue(textColor);
-    fontSizeProperty->setValue(fontSize);
-    elementTextProperty->setValue(elementText);
-    angleProperty->setValue(elemAngle);
 }
 
 void ElementPushButton::setClickPosition(QPointF position) {
@@ -164,7 +39,6 @@ void ElementPushButton::setClickPosition(QPointF position) {
     setY(elementYPos);
 
     elementRect.setRect(0,0,elementWidth,elementHeight);
-    updatePropertyModel();
 }
 
 void ElementPushButton::updateBoundingElement() {
@@ -179,19 +53,6 @@ void ElementPushButton::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
 
     drawPushButton(painter);
-
-    if (isSelected()) {
-
-        painter->setPen(QPen(borderColor));
-        painter->setBrush(Qt::NoBrush);
-        painter->drawRect(boundingRect());
-
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementRect.topLeft() - QPointF(3,3),elementRect.topLeft() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementRect.bottomRight() - QPointF(3,3),elementRect.bottomRight() + QPointF(3,3)));
-    }
 }
 
 void ElementPushButton::drawPushButton(QPainter *painter) {
@@ -221,39 +82,7 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
 }
 
 void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
-    QPointF mousePoint = event->pos();
-
-    if (resizing) {
-
-        setCursor(Qt::SizeFDiagCursor);
-
-        switch (rd) {
-
-        case RdBottomRight:
-            elementRect.setBottomRight(mousePoint);
-            elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
-            elementHeight = qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y());
-            break;
-        case RdTopLeft:
-            elementRect.setTopLeft(mousePoint);
-            setElementXPos(mapToScene(elementRect.topLeft()).x());
-            setElementYPos(mapToScene(elementRect.topLeft()).y());
-            setElementWidth(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x()));
-            setElementHeight(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y()));
-            updateBoundingElement();
-            break;
-        case RdNone:
-            QGraphicsObject::mouseMoveEvent(event);
-            break;
-        }
-
-        scene()->update();
-        return;
-    }
-    else {
-        QGraphicsObject::mouseMoveEvent(event);
-    }
+    Q_UNUSED(event)
 }
 
 void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -298,7 +127,6 @@ void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
-    updatePropertyModel();
 
     if (oldPos != pos()) {
         emit elementMoved(oldPos);
@@ -336,23 +164,6 @@ void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     }
 
     QGraphicsObject::hoverEnterEvent(event);
-}
-
-void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
-
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("elementtext",elementText);
-    writer.writeAttribute("textcolor",textColor.name());
-    writer.writeAttribute("fontsize",QString::number(fontSize));
-    writer.writeAttribute("elemAngle",QString::number(elemAngle));
-    writer.writeEndElement();
 }
 
 void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
@@ -397,26 +208,7 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
         setAngle(attributes.value("elemAngle").toString().toInt());
     }
 
-    if (attributes.hasAttribute("block")) {
-        setBlocked(attributes.value("block").toString().toInt());
-    }
-
     updateBoundingElement();
-    updatePropertyModel();
-}
-
-void ElementPushButton::writeData(QDataStream &out) {
-
-    out << this->elementId
-        << this->x()
-        << this->y()
-        << this->zValue()
-        << this->elementWidth
-        << this->elementHeight
-        << this->elementText
-        << this->textColor
-        << this->fontSize
-        << this->elemAngle;
 }
 
 void ElementPushButton::readData(QDataStream &in) {
@@ -454,23 +246,8 @@ void ElementPushButton::readData(QDataStream &in) {
     this->fontSize = fontSize;
     this->setAngle(angle);
     this->updateBoundingElement();
-    this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementPushButton &rect) {
-
-    out << rect.elementId
-        << rect.x()
-        << rect.y()
-        << rect.zValue()
-        << rect.elementWidth
-        << rect.elementHeight
-        << rect.elementText
-        << rect.textColor
-        << rect.fontSize
-        << rect.elemAngle;
-    return out;
-}
 
 QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
 
@@ -507,7 +284,6 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
     rect.fontSize = fontSize;
     rect.setAngle(angle);
     rect.updateBoundingElement();
-    rect.updatePropertyModel();
 
     return in;
 }

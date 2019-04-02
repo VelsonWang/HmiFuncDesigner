@@ -15,8 +15,9 @@ INCLUDEPATH += \
     $$PWD/Elements/ERect \
     $$PWD/Elements/EText \
     $$PWD/Elements/EPolygon \
-    $$PWD/Elements/EPicture
-
+    $$PWD/Elements/EPicture \
+    $$PWD/Elements/EInputEdit \
+    $$PWD/Elements/EPushButton
 
 SOURCES += \
     $$PWD/GraphPage.cpp \
@@ -42,7 +43,11 @@ SOURCES += \
     $$PWD/Elements/EPolygon/ElementPolygon.cpp \
     $$PWD/Elements/EPolygon/EPolygon.cpp \
     $$PWD/Elements/EPicture/ElementPicture.cpp \
-    $$PWD/Elements/EPicture/EPicture.cpp
+    $$PWD/Elements/EPicture/EPicture.cpp \
+    $$PWD/Elements/EInputEdit/ElementInputEdit.cpp \
+    $$PWD/Elements/EInputEdit/EInputEdit.cpp \
+    $$PWD/Elements/EPushButton/ElementPushButton.cpp \
+    $$PWD/Elements/EPushButton/EPushButton.cpp
 
 HEADERS  += \
     $$PWD/GraphPage.h \
@@ -70,7 +75,11 @@ HEADERS  += \
     $$PWD/Elements/EPolygon/ElementPolygon.h \
     $$PWD/Elements/EPolygon/EPolygon.h \
     $$PWD/Elements/EPicture/ElementPicture.h \
-    $$PWD/Elements/EPicture/EPicture.h
+    $$PWD/Elements/EPicture/EPicture.h \
+    $$PWD/Elements/EInputEdit/ElementInputEdit.h \
+    $$PWD/Elements/EInputEdit/EInputEdit.h \
+    $$PWD/Elements/EPushButton/ElementPushButton.h \
+    $$PWD/Elements/EPushButton/EPushButton.h
 
 FORMS    +=
 
