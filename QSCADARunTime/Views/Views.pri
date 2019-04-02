@@ -14,7 +14,9 @@ INCLUDEPATH += \
     $$PWD/Elements/EEllipse \
     $$PWD/Elements/ERect \
     $$PWD/Elements/EText \
-    $$PWD/Elements/EPolygon
+    $$PWD/Elements/EPolygon \
+    $$PWD/Elements/EPicture
+
 
 SOURCES += \
     $$PWD/GraphPage.cpp \
@@ -38,7 +40,9 @@ SOURCES += \
     $$PWD/Elements/EText/ElementText.cpp \
     $$PWD/Elements/EText/EText.cpp \
     $$PWD/Elements/EPolygon/ElementPolygon.cpp \
-    $$PWD/Elements/EPolygon/EPolygon.cpp
+    $$PWD/Elements/EPolygon/EPolygon.cpp \
+    $$PWD/Elements/EPicture/ElementPicture.cpp \
+    $$PWD/Elements/EPicture/EPicture.cpp
 
 HEADERS  += \
     $$PWD/GraphPage.h \
@@ -64,7 +68,9 @@ HEADERS  += \
     $$PWD/Elements/EText/ElementText.h \
     $$PWD/Elements/EText/EText.h \
     $$PWD/Elements/EPolygon/ElementPolygon.h \
-    $$PWD/Elements/EPolygon/EPolygon.h
+    $$PWD/Elements/EPolygon/EPolygon.h \
+    $$PWD/Elements/EPicture/ElementPicture.h \
+    $$PWD/Elements/EPicture/EPicture.h
 
 FORMS    +=
 

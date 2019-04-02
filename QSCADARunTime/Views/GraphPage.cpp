@@ -14,6 +14,7 @@
 #include "ERect/ERect.h"
 #include "EText/EText.h"
 #include "EPolygon/EPolygon.h"
+#include "EPicture/EPicture.h"
 
 template<template<typename T> class S, typename T>
 T min(const S<T> &sequence)
@@ -65,6 +66,8 @@ void registerCreateObjectFunc() {
     REGISTER_CREATEOR(QObject::trUtf8("矩形"), RectItemType, "Rect", ERect);
     REGISTER_CREATEOR(QObject::trUtf8("文本"), TextItemType, "Text", EText);
     REGISTER_CREATEOR(QObject::trUtf8("多边形"), PolygonItemType, "Polygon", EPolygon);
+    REGISTER_CREATEOR(QObject::trUtf8("图片"), PictureItemType, "Picture", EPicture);
+
 
 }
 
