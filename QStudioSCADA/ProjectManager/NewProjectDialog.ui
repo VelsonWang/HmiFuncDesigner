@@ -124,7 +124,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="editStartPage"/>
+         <widget class="QComboBox" name="cboStartPage"/>
         </item>
         <item>
          <widget class="QLabel" name="label_7">

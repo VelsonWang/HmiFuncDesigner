@@ -65,7 +65,7 @@ void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &in
 
     QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     if(item->text() == tr("运行系统")) {
-        NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
+        NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this, strProjectPath);
         pNewProjectDlg->loadFromFile(DATA_SAVE_FORMAT, m_strProjectName);
         if(pNewProjectDlg->exec() == QDialog::Accepted) {
 

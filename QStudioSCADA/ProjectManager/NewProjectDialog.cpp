@@ -3,6 +3,7 @@
 #include "configutils.h"
 #include "Singleton.h"
 #include "ProjectInfoManger.h"
+#include "DrawListUtils.h"
 #include <QDir>
 #include <QDialog>
 #include <QFileDialog>
@@ -13,9 +14,10 @@
 #include <QJsonDocument>
 #include <QDebug>
 
-NewProjectDialog::NewProjectDialog(QWidget *parent) :
+NewProjectDialog::NewProjectDialog(QWidget *parent, QString projPath) :
     QDialog(parent),
-    ui(new Ui::NewProjectDialog)
+    ui(new Ui::NewProjectDialog),
+    projectPath_(projPath)
 {
     ui->setupUi(this);
 
@@ -23,7 +25,15 @@ NewProjectDialog::NewProjectDialog(QWidget *parent) :
     ui->editProjectDescription->setText("demo1 project");
     ui->editStationNumber->setText("0");
     ui->editStationAddress->setText("192.168.1.10");
-    ui->editStartPage->setText("draw1.drw");
+
+    ui->cboStartPage->clear();
+    DrawListUtils::loadDrawList(projPath);
+    for(int i=0; i<DrawListUtils::drawList_.count(); i++) {
+        QString strPageName = DrawListUtils::drawList_.at(i) + ".drw";
+        ui->cboStartPage->addItem(strPageName);
+    }
+    ui->cboStartPage->addItem("None");
+
     ui->editPageScanPeriod->setText("500");
     ui->editDataScanPeriod->setText("500");
 
@@ -126,7 +136,7 @@ void NewProjectDialog::on_btnOk_clicked()
         projMgr.setProjectPath(ui->editProjectPath->text());
         projMgr.setDeviceType(ui->cboDevType->currentText());
         projMgr.setStationNumber(ui->editStationNumber->text());
-        projMgr.setStartPage(ui->editStartPage->text());
+        projMgr.setStartPage(ui->cboStartPage->currentText());
         projMgr.setStationAddress(ui->editStationAddress->text());
         projMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
         projMgr.setPageScanPeriod(ui->editPageScanPeriod->text());
@@ -157,14 +167,15 @@ bool NewProjectDialog::loadFromFile(SaveFormat saveFormat, const QString &file) 
     projMgr.loadFromFile(saveFormat, file);
     ui->editProjectName->setText(projMgr.getProjectName());
     ui->editProjectDescription->setPlainText(projMgr.getProjectDescription());
-    ui->editProjectPath->setText(projMgr.getProjectPath());
     ui->cboDevType->setCurrentText(projMgr.getDeviceType());
     ui->editStationNumber->setText(projMgr.getStationNumber());
-    ui->editStartPage->setText(projMgr.getStartPage());
+    ui->cboStartPage->setCurrentText(projMgr.getStartPage());
     ui->editStationAddress->setText(projMgr.getStationAddress());
     ui->chkProjectEncrypt->setChecked(projMgr.getProjectEncrypt());
     ui->editPageScanPeriod->setText(projMgr.getPageScanPeriod());
     ui->editDataScanPeriod->setText(projMgr.getDataScanPeriod());
+
+    ui->editProjectPath->setText(projectPath_);
 }
 
 

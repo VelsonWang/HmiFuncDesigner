@@ -231,10 +231,14 @@ int main(int argc, char *argv[])
         ProjectInfoManger projInfoMgr;
         projInfoMgr.loadFromFile(DATA_SAVE_FORMAT, projPath + "/" + projInfoFile);
         QString startPageFile = projInfoMgr.getStartPage();
-        MainWindow mainWin(projPath, startPageFile);
-        mainWin.openGraphPage(projPath, startPageFile);
-        mainWin.show();
-        ret = app.exec();
+        if(startPageFile.toLower() != "none") {
+            MainWindow mainWin(projPath, startPageFile);
+            mainWin.openGraphPage(projPath, startPageFile);
+            mainWin.show();
+            ret = app.exec();
+        } else {
+            ret = app.exec();
+        }
     }
 
     delete pTimerTask;

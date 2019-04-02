@@ -98,7 +98,7 @@ bool ProjectInfoManger::saveToFile(const QString &projPath,
     QString strDir =  projPath;
     QDir dir(strDir);
     dir.mkpath(strDir + "/" + projName);
-    QString file = strDir + "/" + projName + "/" + projName + ".proj";
+    QString file = strDir + "/" + projName + ".proj";
     QFile saveFile(file);
     if (!saveFile.open(QIODevice::WriteOnly)) {
         qWarning("Couldn't open save file.");
