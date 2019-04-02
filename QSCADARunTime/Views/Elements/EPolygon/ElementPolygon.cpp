@@ -5,13 +5,8 @@ ElementPolygon::ElementPolygon()
 {
     elementId = trUtf8("多边形");
     internalElementType = trUtf8("Polygon");
-    elementIcon = QIcon(":/images/polygon.png");
-
     clickPoint = -1;
-
     init();
-    createPropertyList();
-    updatePropertyModel();
     createPoints();
 }
 
@@ -106,116 +101,7 @@ QRectF ElementPolygon::boundingRect() const {
 QPainterPath ElementPolygon::shape() const {
     QPainterPath path;
     path.addPolygon(polygon);
-
-    if (isSelected()) {
-
-        for (int i = 0; i < points.count(); i++) {
-            path.addRect(QRectF(points[i] - QPointF(3,3),points[i] + QPointF(3,3)));
-        }
-    }
-
     return path;
-}
-
-void ElementPolygon::createPropertyList() {
-
-    idProperty = new TextProperty(trUtf8("ID"));
-    idProperty->setId(EL_ID);
-    propList.insert(propList.end(),idProperty);
-
-    titleProperty = new EmptyProperty(trUtf8("标题"));
-    propList.insert(propList.end(),titleProperty);
-
-    xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0,5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(),xCoordProperty);
-
-    yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
-    propList.insert(propList.end(),yCoordProperty);
-
-    zValueProperty = new IntegerProperty(trUtf8("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000,1000);
-    propList.insert(propList.end(),zValueProperty);
-
-    backColorProperty = new ColorProperty(trUtf8("背景颜色"));
-    backColorProperty->setId(EL_BACKGROUND);
-    propList.insert(propList.end(),backColorProperty);
-
-    borderColorProperty = new ColorProperty(trUtf8("边框颜色"));
-    borderColorProperty->setId(EL_BORDER_COLOR);
-    propList.insert(propList.end(),borderColorProperty);
-
-    borderWidthProperty = new IntegerProperty(trUtf8("边框宽度"));
-    borderWidthProperty->setId(EL_BORDER_WIDTH);
-    borderWidthProperty->setSettings(0,5);
-    propList.insert(propList.end(),borderWidthProperty);
-
-    angleProperty = new IntegerProperty(trUtf8("角度"));
-    angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0,360);
-    propList.insert(propList.end(),angleProperty);
-}
-
-void ElementPolygon::updateElementProperty(uint id, const QVariant &value) {
-
-    switch (id) {
-
-    case EL_ID:
-        elementId = value.toString();
-        break;
-    case EL_X:
-        elementXPos = value.toInt();
-        setElementXPos(elementXPos);
-        break;
-    case EL_Y:
-        elementYPos = value.toInt();
-        setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
-        elementZValue = value.toInt();
-        setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
-        elementWidth = value.toInt();
-        updateBoundingElement();
-        break;
-    case EL_HEIGHT:
-        elementHeight = value.toInt();
-        updateBoundingElement();
-        break;
-    case EL_BACKGROUND:
-        backgroundColor = value.value<QColor>();
-        break;
-    case EL_BORDER_COLOR:
-        borderColor = value.value<QColor>();
-        break;
-    case EL_BORDER_WIDTH:
-        borderWidth = value.toInt();
-        break;
-    case EL_ANGLE:
-        elemAngle = value.toInt();
-        setAngle(elemAngle);
-        break;
-    }
-
-    scene()->update();
-    update();
-}
-
-void ElementPolygon::updatePropertyModel() {
-
-    idProperty->setValue(elementId);
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    backColorProperty->setValue(backgroundColor);
-    borderColorProperty->setValue(borderColor);
-    borderWidthProperty->setValue(borderWidth);
-    angleProperty->setValue(elemAngle);
 }
 
 void ElementPolygon::setClickPosition(QPointF position) {
@@ -225,8 +111,6 @@ void ElementPolygon::setClickPosition(QPointF position) {
     elementYPos = position.y();
     setX(elementXPos);
     setY(elementYPos);
-
-    updatePropertyModel();
 }
 
 void ElementPolygon::updateBoundingElement() {
@@ -245,41 +129,11 @@ void ElementPolygon::paint(QPainter *painter, const QStyleOptionGraphicsItem *op
     painter->setPen(QPen(borderColor,borderWidth));
     painter->setBrush(QBrush(backgroundColor));
     painter->drawPolygon(polygon);
-
-    if (isSelected()) {
-
-        painter->setPen(Qt::gray);
-        painter->setBrush(Qt::NoBrush);
-        painter->drawRect(boundingRect());
-
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-
-        for (int i = 0; i < points.count(); i++) {
-            painter->drawRect(QRectF(points[i] - QPointF(3,3),points[i] + QPointF(3,3)));
-        }
-    }
 }
 
 void ElementPolygon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-
-    QPointF mousePoint = event->pos();
-
-    if (resizing) {
-
-        setCursor(Qt::SizeFDiagCursor);
-
-        points.replace(clickPoint,mousePoint);
-        createPath();
-        update(boundingRect());
-        scene()->update();
-        return;
-    }
-    else {
-        QGraphicsObject::mouseMoveEvent(event);
-    }
+    Q_UNUSED(event)
 }
 
 void ElementPolygon::mousePressEvent(QGraphicsSceneMouseEvent *event) {
@@ -323,7 +177,6 @@ void ElementPolygon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
-    updatePropertyModel();
 
     if (oldPos != pos()) {
         emit elementMoved(oldPos);
@@ -336,32 +189,6 @@ void ElementPolygon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-/*void ElementPolygon::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(10,10);
-    QPointF topLeft = boundingRect().topLeft();
-    QPointF bottomRight = boundingRect().bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
-
-        setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
-
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
-}*/
 
 QString ElementPolygon::createPointsXmlString() const {
 
@@ -377,23 +204,6 @@ QString ElementPolygon::createPointsXmlString() const {
     return xmlString;
 }
 
-void ElementPolygon::writeAsXml(QXmlStreamWriter &writer) {
-
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("background",backgroundColor.name());
-    writer.writeAttribute("borderColor",borderColor.name());
-    writer.writeAttribute("borderWidth",QString::number(borderWidth));
-    writer.writeAttribute("elemAngle",QString::number(elemAngle));
-    writer.writeAttribute("points",createPointsXmlString());
-    writer.writeEndElement();
-}
 
 void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
 
@@ -437,10 +247,6 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
         setAngle(attributes.value("elemAngle").toString().toInt());
     }
 
-    if (attributes.hasAttribute("block")) {
-        setBlocked(attributes.value("block").toString().toInt());
-    }
-
     if (attributes.hasAttribute("points")) {
         QStringList list = attributes.value("points").toString().split(",",QString::SkipEmptyParts);
         QVector <QPointF> m_points;
@@ -454,26 +260,6 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
-    updatePropertyModel();
-}
-
-void ElementPolygon::writeData(QDataStream &out) {
-
-    out << this->elementId
-        << this->x()
-        << this->y()
-        << this->zValue()
-        << this->elementWidth
-        << this->elementHeight
-        << this->backgroundColor
-        << this->borderColor
-        << this->borderWidth
-        << this->elemAngle
-        << this->points.size();
-
-    for (int i = 0; i < this->points.size(); i++) {
-        out << this->points[i];
-    }
 }
 
 
@@ -523,31 +309,8 @@ void ElementPolygon::readData(QDataStream &in) {
     this->points.clear();
     this->points = points;
     this->updateBoundingElement();
-    this->updatePropertyModel();
 }
 
-
-QDataStream &operator<<(QDataStream &out,const ElementPolygon &polygon)
-{
-
-    out << polygon.elementId
-        << polygon.x()
-        << polygon.y()
-        << polygon.zValue()
-        << polygon.elementWidth
-        << polygon.elementHeight
-        << polygon.backgroundColor
-        << polygon.borderColor
-        << polygon.borderWidth
-        << polygon.elemAngle
-        << polygon.points.size();
-
-    for (int i = 0; i < polygon.points.size(); i++) {
-        out << polygon.points[i];
-    }
-
-    return out;
-}
 
 QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
 {
@@ -596,7 +359,6 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
     polygon.points.clear();
     polygon.points = points;
     polygon.updateBoundingElement();
-    polygon.updatePropertyModel();
 
     return in;
 }

@@ -13,6 +13,7 @@
 #include "EEllipse/EEllipse.h"
 #include "ERect/ERect.h"
 #include "EText/EText.h"
+#include "EPolygon/EPolygon.h"
 
 template<template<typename T> class S, typename T>
 T min(const S<T> &sequence)
@@ -63,6 +64,7 @@ void registerCreateObjectFunc() {
     REGISTER_CREATEOR(QObject::trUtf8("椭圆形"), EllipseItemType, "Ellipse", EEllipse);
     REGISTER_CREATEOR(QObject::trUtf8("矩形"), RectItemType, "Rect", ERect);
     REGISTER_CREATEOR(QObject::trUtf8("文本"), TextItemType, "Text", EText);
+    REGISTER_CREATEOR(QObject::trUtf8("多边形"), PolygonItemType, "Polygon", EPolygon);
 
 }
 

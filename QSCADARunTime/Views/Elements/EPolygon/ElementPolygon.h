@@ -12,16 +12,9 @@ public:
     ElementPolygon();
     void setClickPosition(QPointF);
     void updateBoundingElement();
-
-    void updateElementProperty(uint id, const QVariant &value);
-    void updatePropertyModel();
-    void createPropertyList();
     void addNodePoint();
     void removeNodePoint();
-    void writeAsXml(QXmlStreamWriter &);
     void readFromXml(const QXmlStreamAttributes &);
-
-    void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
     enum {Type = PolygonItemType};
@@ -30,14 +23,12 @@ public:
         return Type;
     }
 
-    friend QDataStream &operator<<(QDataStream &out,const ElementPolygon &rect);
     friend QDataStream &operator>>(QDataStream &in,ElementPolygon &rect);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    //void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
     QPainterPath shape() const;
@@ -50,18 +41,6 @@ private:
     void createPoints();
     QString createPointsXmlString() const;
     int clickPoint;
-
-    TextProperty *idProperty;
-    EmptyProperty *titleProperty;
-    IntegerProperty *xCoordProperty;
-    IntegerProperty *yCoordProperty;
-    IntegerProperty *zValueProperty;
-    ColorProperty *backColorProperty;
-    ColorProperty *borderColorProperty;
-    IntegerProperty *borderWidthProperty;
-    IntegerProperty *angleProperty;
-    BoolProperty *blockedProperty;
-
 };
 
 #endif // ELEMENTPOLYGON_H
