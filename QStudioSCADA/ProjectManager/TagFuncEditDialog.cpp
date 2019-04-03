@@ -1,5 +1,5 @@
 ﻿#include "TagFuncEditDialog.h"
-#include "VariableManagerWin.h"
+#include "TagManager.h"
 #include "configutils.h"
 #include "Helper.h"
 #include <QFile>
@@ -611,7 +611,7 @@ void TagFuncEditDialog::GetElementProperty(PFuncObjectItem pFuncObj)
         {
             argName = QString("var%1").arg(i+1);
             argItem = m_pVariantManager->addProperty(QtVariantPropertyManager::enumTypeId(), argName);
-            VariableManagerWin::GetAllProjectVariableName(m_strProjectPath, m_varsList, "ALL");
+            TagManager::getAllTagName(m_strProjectPath, m_varsList, "ALL");
             argItem->setAttribute(QLatin1String("enumNames"), m_varsList);
             if(m_varsList.indexOf(m_pCurFuncObj->argList.at(i).arg) != -1)
             {

@@ -40,6 +40,7 @@ enum {
     EL_FONT_COLOR = 17,
     EL_GRAPHPAGE_LINK = 18, //transition to screen
     EL_FILE = 19,
+    EL_FUNCTION = 20,
 
 
 

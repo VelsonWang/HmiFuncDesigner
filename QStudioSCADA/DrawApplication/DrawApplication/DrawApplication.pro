@@ -73,3 +73,9 @@ RESOURCES += \
 
 RC_FILE = application.rc
 
+######################################################
+
+DISTFILES += \
+    $$IDE_BIN_PATH/Config/DrawAppJScriptFun.xml
+
+

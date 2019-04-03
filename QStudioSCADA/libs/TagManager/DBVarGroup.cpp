@@ -1,24 +1,22 @@
 ﻿#include "DBVarGroup.h"
-#include "ProjectMgrUtils.h"
 #include <QFile>
 
 DBVarGroup::DBVarGroup() :
     m_type(""),
-    m_name("")
-{
+    m_name("") {
 
 }
 
-DBVarGroups::DBVarGroups(QString projName) :
-    m_strProjectName(projName)
-{
-    m_strProjectPath = ProjectMgrUtils::getProjectPath(projName);
+DBVarGroups::DBVarGroups() {
+
 }
 
+void DBVarGroups::setProjectPath(const QString &path) {
+    szProjectPath_ = path;
+}
 
-void DBVarGroups::load(const QJsonObject &json)
-{
-    m_VarBlockGroupList.clear();
+void DBVarGroups::load(const QJsonObject &json) {
+    varBlockGroupList_.clear();
     QJsonArray DevVarTabArray = json["DevVarTabArray"].toArray();
     for (int i = 0; i < DevVarTabArray.size(); ++i) {
         DBVarGroup *pVarGroup = new DBVarGroup();
@@ -26,28 +24,26 @@ void DBVarGroups::load(const QJsonObject &json)
         pVarGroup->m_iPageID = jsonObj["pageid"].toInt();
         pVarGroup->m_type = jsonObj["type"].toString();
         pVarGroup->m_name = jsonObj["name"].toString();
-        m_VarBlockGroupList.append(pVarGroup);
+        varBlockGroupList_.append(pVarGroup);
     }
 }
 
-void DBVarGroups::save(QJsonObject &json)
-{
+void DBVarGroups::save(QJsonObject &json) {
     QJsonArray DevVarTabArray;
-    for(int i = 0; i < m_VarBlockGroupList.count(); i++)
+    for(int i = 0; i < varBlockGroupList_.count(); i++)
     {
         QJsonObject jsonObj;
-        m_VarBlockGroupList.at(i)->m_iPageID = i;
-        jsonObj["pageid"] = m_VarBlockGroupList.at(i)->m_iPageID;
-        jsonObj["type"] = m_VarBlockGroupList.at(i)->m_type;
-        jsonObj["name"] = m_VarBlockGroupList.at(i)->m_name;
+        varBlockGroupList_.at(i)->m_iPageID = i;
+        jsonObj["pageid"] = varBlockGroupList_.at(i)->m_iPageID;
+        jsonObj["type"] = varBlockGroupList_.at(i)->m_type;
+        jsonObj["name"] = varBlockGroupList_.at(i)->m_name;
         DevVarTabArray.append(jsonObj);
     }
     json["DevVarTabArray"] = DevVarTabArray;
 }
 
-bool DBVarGroups::loadFromFile(SaveFormat saveFormat)
-{
-    QString file = m_strProjectPath + "/DBVarList.odb";
+bool DBVarGroups::loadFromFile(SaveFormat saveFormat) {
+    QString file = szProjectPath_ + "/DBVarList.odb";
     QFile loadFile(file);
     if (!loadFile.open(QIODevice::ReadOnly)) {
         qWarning("Couldn't open load file.");
@@ -60,9 +56,8 @@ bool DBVarGroups::loadFromFile(SaveFormat saveFormat)
     return true;
 }
 
-bool DBVarGroups::saveToFile(SaveFormat saveFormat)
-{
-    QString file = m_strProjectPath + "/DBVarList.odb";
+bool DBVarGroups::saveToFile(SaveFormat saveFormat) {
+    QString file = szProjectPath_ + "/DBVarList.odb";
     QFile saveFile(file);
     if (!saveFile.open(QIODevice::WriteOnly)) {
         qWarning("Couldn't open save file.");

@@ -3,9 +3,11 @@
 
 #include "PublicDefine.h"
 #include "Element.h"
+#include "functionproperty.h"
 #include <QPainter>
 #include <QDataStream>
 #include <QGraphicsSceneMouseEvent>
+
 
 class ElementPushButton : public Element
 {
@@ -43,8 +45,11 @@ protected:
     QPainterPath shape() const;
 
 private:
-    QRectF elementRect;
     void drawPushButton(QPainter *painter);
+
+private:
+    QRectF elementRect;
+    QStringList funcs_;
     TextProperty *idProperty;
     EmptyProperty *titleProperty;
     IntegerProperty *xCoordProperty;
@@ -56,8 +61,7 @@ private:
     ColorProperty *textColorProperty;
     IntegerProperty *fontSizeProperty;
     IntegerProperty *angleProperty;
-    BoolProperty *blockedProperty;
-
+    FunctionProperty *funcProperty;
 };
 
 #endif // PUSHBUTTONITEM_HPP

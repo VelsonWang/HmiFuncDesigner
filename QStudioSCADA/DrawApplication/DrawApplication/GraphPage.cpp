@@ -966,6 +966,7 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
                     if (ele) {
                         ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
+                        ele->setSelected(false);
                         connectItem(ele);
                         addItem(ele);
                     }

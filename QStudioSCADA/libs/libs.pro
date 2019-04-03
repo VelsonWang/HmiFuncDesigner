@@ -16,7 +16,8 @@ SUBDIRS   = \
     qscintilla \
     Lua \
     Ftp \
-    PropertyEditor
+    PropertyEditor \
+    TagManager
 
 
 

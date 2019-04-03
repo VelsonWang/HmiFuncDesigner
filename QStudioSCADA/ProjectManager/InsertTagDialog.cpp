@@ -1,6 +1,6 @@
 #include "InsertTagDialog.h"
 #include "ui_InsertTagDialog.h"
-#include "VariableManagerWin.h"
+#include "TagManager.h"
 
 InsertTagDialog::InsertTagDialog(QString projectPath, QWidget *parent) :
     QDialog(parent),
@@ -10,7 +10,7 @@ InsertTagDialog::InsertTagDialog(QString projectPath, QWidget *parent) :
     ui->setupUi(this);
 
     m_varsList.clear();
-    VariableManagerWin::GetAllProjectVariableName(m_strProjectPath, m_varsList, "IO");
+    TagManager::getAllTagName(m_strProjectPath, m_varsList, "IO");
     for(QString varName : m_varsList)
     {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pj_var.png"), varName);
@@ -18,7 +18,7 @@ InsertTagDialog::InsertTagDialog(QString projectPath, QWidget *parent) :
     }
 
     m_varsList.clear();
-    VariableManagerWin::GetAllProjectVariableName(m_strProjectPath, m_varsList, "TMP");
+    TagManager::getAllTagName(m_strProjectPath, m_varsList, "TMP");
     for(QString varName : m_varsList)
     {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pj_var.png"), varName);
@@ -26,7 +26,7 @@ InsertTagDialog::InsertTagDialog(QString projectPath, QWidget *parent) :
     }
 
     m_varsList.clear();
-    VariableManagerWin::GetAllProjectVariableName(m_strProjectPath, m_varsList, "SYS");
+    TagManager::getAllTagName(m_strProjectPath, m_varsList, "SYS");
     for(QString varName : m_varsList)
     {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pj_var.png"), varName);

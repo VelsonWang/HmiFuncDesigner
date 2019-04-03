@@ -114,7 +114,6 @@ protected:
 
 private:
     Ui::MainWindow *ui;
-    DBVarGroups *m_pIoDBVarGroups;
     QString m_strProjectPath;
     QString m_strProjectName;
     QString m_CurItem;

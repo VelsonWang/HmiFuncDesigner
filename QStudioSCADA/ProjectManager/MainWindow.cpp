@@ -13,6 +13,7 @@
 #include "Helper.h"
 #include "AboutDialog.h"
 #include "ProjectMgrUtils.h"
+#include "TagManager.h"
 #include <QDialog>
 #include <QCloseEvent>
 #include <QSettings>
@@ -201,9 +202,9 @@ void MainWindow::CreateDefaultIOTagGroup()
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
         pGroup->m_name = QString(tr("IO设备[缺省]"));
-        pGroup->m_iPageID = m_pIoDBVarGroups->m_VarBlockGroupList.count();
-        m_pIoDBVarGroups->m_VarBlockGroupList.append(pGroup);
-        m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
+        pGroup->m_iPageID = TagManager::ioDBVarGroups_.varBlockGroupList_.count();
+        TagManager::ioDBVarGroups_.varBlockGroupList_.append(pGroup);
+        TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
         UpdateDeviceVariableTableGroup();
     }
 }
@@ -221,9 +222,9 @@ void MainWindow::VariableGroupAdd()
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
         pGroup->m_name = pDlg->GetGroupName();
-        pGroup->m_iPageID = m_pIoDBVarGroups->m_VarBlockGroupList.count();
-        m_pIoDBVarGroups->m_VarBlockGroupList.append(pGroup);
-        m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
+        pGroup->m_iPageID = TagManager::ioDBVarGroups_.varBlockGroupList_.count();
+        TagManager::ioDBVarGroups_.varBlockGroupList_.append(pGroup);
+        TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
         UpdateDeviceVariableTableGroup();       
         if(window != NULL) {
             QString titleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
@@ -241,7 +242,7 @@ void MainWindow::VariableGroupRename()
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
     ChildForm* window = findMdiChild(this->m_CurItem);
 
-    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+    foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
         if(text == var->m_name) {
             NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
             pDlg->SetDialogName("新建数据组");
@@ -259,7 +260,7 @@ void MainWindow::VariableGroupRename()
                 var->m_name = pDlg->GetGroupName();
                 desfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + var->m_name + ".odb";
                 QFile::rename(srcfile ,desfile);
-                m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
+                TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
                 UpdateDeviceVariableTableGroup();
             }
         }
@@ -274,7 +275,7 @@ void MainWindow::VariableDeleteGroup()
     QModelIndex ModelIndex = ui->treeViewProject->selectionModel()->currentIndex();
     QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
 
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+    foreach(DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
         if(qTiem->text() == var->m_name) {
             ChildForm *findForm = findMdiChild(m_strProjectName);
             if(findForm != NULL) {
@@ -286,11 +287,11 @@ void MainWindow::VariableDeleteGroup()
             if(delFile.exists()) {
                 delFile.remove();
             }
-            m_pIoDBVarGroups->m_VarBlockGroupList.removeOne(var);
+            TagManager::ioDBVarGroups_.varBlockGroupList_.removeOne(var);
             break;
         }
     }
-    m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
+    TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
     UpdateDeviceVariableTableGroup();
 }
 
@@ -303,14 +304,14 @@ void MainWindow::VariableGroupCopy()
     QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
 
     // check the same name first
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+    foreach(DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
         if(var->m_name == QString("复制_%1").arg(qTiem->text())) {
             QMessageBox::information(this, "系统提示", "同名文件存在，请先修改名称！");
             return;
         }
     }
 
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+    foreach(DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
         if(qTiem->text() == var->m_name) {
             DBVarGroup *newVar = new DBVarGroup();
             newVar->m_type = var->m_type;
@@ -319,8 +320,8 @@ void MainWindow::VariableGroupCopy()
             srcfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + var->m_name + ".odb";
             desfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + newVar->m_name + ".odb";
             QFile::copy(srcfile ,desfile);
-            m_pIoDBVarGroups->m_VarBlockGroupList.append(newVar);
-            m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
+            TagManager::ioDBVarGroups_.varBlockGroupList_.append(newVar);
+            TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
             UpdateDeviceVariableTableGroup();
             break;
         }
@@ -334,7 +335,7 @@ void MainWindow::VariableModifyGroupID()
 {
     QModelIndex index = ui->treeViewProject->currentIndex();
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+    foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
         if(text == var->m_name) {
             NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
             pDlg->SetDialogName("设置设备ID");
@@ -361,7 +362,7 @@ void MainWindow::contextMenuEvent(QContextMenuEvent * /*event*/)
     if(m_CurTreeViewItem == "设备变量")
         found = true;
 
-    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
+    foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_)
     {
         if(m_CurTreeViewItem == var->m_name)
             found = true;
@@ -479,9 +480,9 @@ void MainWindow::on_actionNewPoject_triggered()
     if(pNewProjectDlg->exec() == QDialog::Accepted) {
         UpdateProjectName(pNewProjectDlg->GetProjectName());
         updateRecentProjectList(pNewProjectDlg->GetProjectName());
-        m_pIoDBVarGroups = new DBVarGroups(m_strProjectName);
+        TagManager::ioDBVarGroups_.setProjectPath(ProjectMgrUtils::getProjectPath(m_strProjectName));
         CreateDefaultIOTagGroup();
-        m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
+        TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
         UpdateDeviceVariableTableGroup();
     }
 }
@@ -498,8 +499,8 @@ void MainWindow::doOpenProject(QString proj)
     QString strFile = Helper::AppDir() + "/lastpath.ini";
     ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
     // 加载设备变量组信息
-    m_pIoDBVarGroups = new DBVarGroups(m_strProjectName);
-    m_pIoDBVarGroups->loadFromFile(DATA_SAVE_FORMAT);
+    TagManager::ioDBVarGroups_.setProjectPath(ProjectMgrUtils::getProjectPath(m_strProjectName));
+    TagManager::ioDBVarGroups_.loadFromFile(DATA_SAVE_FORMAT);
     UpdateDeviceVariableTableGroup();
     updateRecentProjectList(proj);
 }
@@ -570,7 +571,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         winTittle = item->text();
     } else {
         // 设备变量
-        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
             if(item->text() == var->m_name) {
                 winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(item->text());
             }
@@ -587,7 +588,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
         VarFound = true;
     } else {
         // 设备变量
-        foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+        foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
             if(item->text() == var->m_name)
                 VarFound = true;
         }
@@ -633,8 +634,8 @@ void MainWindow::UpdateProjectName(QString name)
     } else {
         m_strProjectName = "";
         m_strProjectPath = "";
-        qDeleteAll(m_pIoDBVarGroups->m_VarBlockGroupList);
-        m_pIoDBVarGroups->m_VarBlockGroupList.clear();
+        qDeleteAll(TagManager::ioDBVarGroups_.varBlockGroupList_);
+        TagManager::ioDBVarGroups_.varBlockGroupList_.clear();
 
         pTreeViewProjectModel->clear();
         ui->treeViewProject->reset();
@@ -655,7 +656,7 @@ void MainWindow::UpdateDeviceVariableTableGroup()
         pDevVariableTabList.takeFirst();
     //while(pDevVariable->rowCount())
     pDevVariable->removeRows(0, pDevVariable->rowCount());
-    foreach (DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList)
+    foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_)
     {
         QStandardItem *pDevVarTab = new QStandardItem(QIcon(":/images/pj_zone.png"), var->m_name);
         pDevVarTab->setEditable(false);
@@ -950,7 +951,7 @@ void MainWindow::on_actionImportTag_triggered()
     QString strGroupName = strCsvName.right(strCsvName.length() - strCsvName.lastIndexOf("-") - 1);
 
     bool found = false;
-    foreach(DBVarGroup *var, m_pIoDBVarGroups->m_VarBlockGroupList) {
+    foreach(DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
         if(strGroupName == var->m_name) {
             found = true;
             break;
@@ -960,8 +961,8 @@ void MainWindow::on_actionImportTag_triggered()
         DBVarGroup *pGroup = new DBVarGroup();
         pGroup->m_type = "WorkNode";
         pGroup->m_name = strGroupName;
-        m_pIoDBVarGroups->m_VarBlockGroupList.append(pGroup);
-        m_pIoDBVarGroups->saveToFile(DATA_SAVE_FORMAT);
+        TagManager::ioDBVarGroups_.varBlockGroupList_.append(pGroup);
+        TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
         UpdateDeviceVariableTableGroup();
         enableToolBar(strCsvName);
     }

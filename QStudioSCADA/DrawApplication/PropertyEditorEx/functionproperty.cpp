@@ -1,0 +1,48 @@
+#include "functionproperty.h"
+
+FunctionProperty::FunctionProperty(const QString &pname)
+    : Property(pname)
+{
+}
+
+QVariant FunctionProperty::data(int column, int role) {
+
+    if (column == ColumnData && (Qt::DisplayRole == role)) {
+        return value;
+    }
+    else if(Qt::EditRole == role)
+        return QVariant();
+    else
+        return Property::data(column, role);
+}
+
+QWidget* FunctionProperty::createEditor(QWidget *parent, const QStyleOptionViewItem &options, const QAbstractItemDelegate *delegate) {
+
+    Q_UNUSED(options)
+    Q_UNUSED(delegate)
+
+    FunctionPropertyEditor *tmpWidget = new FunctionPropertyEditor(parent);
+    tmpWidget->setFunctions(value.toStringList());
+    return tmpWidget;
+}
+
+bool FunctionProperty::setEditorData(QWidget* editor)
+{
+    FunctionPropertyEditor* tmpWidget = qobject_cast<FunctionPropertyEditor*>(editor);
+    if(tmpWidget)
+        tmpWidget->setFunctions(value.toStringList());
+    else
+        return false;
+
+    return true;
+}
+
+QVariant FunctionProperty::getEditorData(QWidget* editor) const
+{
+    FunctionPropertyEditor* tmpWidget = qobject_cast<FunctionPropertyEditor*>(editor);
+    if(tmpWidget)
+        return tmpWidget->getFunctions();
+
+    return QVariant();
+}
+

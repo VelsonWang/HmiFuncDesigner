@@ -93,6 +93,10 @@ void ElementPushButton::createPropertyList() {
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
     propList.insert(propList.end(),angleProperty);
+
+    funcProperty = new FunctionProperty(trUtf8("功能操作"));
+    funcProperty->setId(EL_FUNCTION);
+    propList.insert(propList.end(), funcProperty);
 }
 
 void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
@@ -135,6 +139,9 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
         break;
+    case EL_FUNCTION:
+        funcs_ = value.toStringList();
+        break;
     }
 
     update();
@@ -153,6 +160,7 @@ void ElementPushButton::updatePropertyModel() {
     fontSizeProperty->setValue(fontSize);
     elementTextProperty->setValue(elementText);
     angleProperty->setValue(elemAngle);
+    funcProperty->setValue(funcs_);
 }
 
 void ElementPushButton::setClickPosition(QPointF position) {
@@ -341,17 +349,18 @@ void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
 
     writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("elementtext",elementText);
-    writer.writeAttribute("textcolor",textColor.name());
-    writer.writeAttribute("fontsize",QString::number(fontSize));
-    writer.writeAttribute("elemAngle",QString::number(elemAngle));
+    writer.writeAttribute("internalType", internalElementType);
+    writer.writeAttribute("elementId", elementId);
+    writer.writeAttribute("x", QString::number(x()));
+    writer.writeAttribute("y", QString::number(y()));
+    writer.writeAttribute("z", QString::number(zValue()));
+    writer.writeAttribute("width", QString::number(elementWidth));
+    writer.writeAttribute("height", QString::number(elementHeight));
+    writer.writeAttribute("elementtext", elementText);
+    writer.writeAttribute("textcolor", textColor.name());
+    writer.writeAttribute("fontsize", QString::number(fontSize));
+    writer.writeAttribute("elemAngle", QString::number(elemAngle));
+    writer.writeAttribute("functions", funcs_.join("|"));
     writer.writeEndElement();
 }
 
@@ -397,8 +406,9 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
         setAngle(attributes.value("elemAngle").toString().toInt());
     }
 
-    if (attributes.hasAttribute("block")) {
-        setBlocked(attributes.value("block").toString().toInt());
+    if (attributes.hasAttribute("functions")) {
+        QString listString = attributes.value("functions").toString();
+        funcs_ = listString.split('|');
     }
 
     updateBoundingElement();
@@ -416,7 +426,8 @@ void ElementPushButton::writeData(QDataStream &out) {
         << this->elementText
         << this->textColor
         << this->fontSize
-        << this->elemAngle;
+        << this->elemAngle
+        << this->funcs_;
 }
 
 void ElementPushButton::readData(QDataStream &in) {
@@ -431,6 +442,7 @@ void ElementPushButton::readData(QDataStream &in) {
     QColor textColor;
     int fontSize;
     qreal angle;
+    QStringList funcs;
 
     in >> id
        >> xpos
@@ -441,7 +453,8 @@ void ElementPushButton::readData(QDataStream &in) {
        >> text
        >> textColor
        >> fontSize
-       >> angle;
+       >> angle
+       >> funcs;
 
     this->setElementId(id);
     this->setElementXPos(xpos);
@@ -453,26 +466,28 @@ void ElementPushButton::readData(QDataStream &in) {
     this->textColor = textColor;
     this->fontSize = fontSize;
     this->setAngle(angle);
+    this->funcs_ = funcs;
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementPushButton &rect) {
+QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
 
-    out << rect.elementId
-        << rect.x()
-        << rect.y()
-        << rect.zValue()
-        << rect.elementWidth
-        << rect.elementHeight
-        << rect.elementText
-        << rect.textColor
-        << rect.fontSize
-        << rect.elemAngle;
+    out << ele.elementId
+        << ele.x()
+        << ele.y()
+        << ele.zValue()
+        << ele.elementWidth
+        << ele.elementHeight
+        << ele.elementText
+        << ele.textColor
+        << ele.fontSize
+        << ele.elemAngle
+        << ele.funcs_;
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
+QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
 
     QString id;
     qreal xpos;
@@ -484,6 +499,7 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
     QColor textColor;
     int fontSize;
     qreal angle;
+    QStringList funcs;
 
     in >> id
        >> xpos
@@ -494,20 +510,22 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &rect) {
        >> text
        >> textColor
        >> fontSize
-       >> angle;
+       >> angle
+       >> funcs;
 
-    rect.setElementId(id);
-    rect.setElementXPos(xpos);
-    rect.setElementYPos(ypos);
-    rect.setElementZValue(zvalue);
-    rect.setElementWidth(width);
-    rect.setElementHeight(height);
-    rect.elementText = text;
-    rect.textColor = textColor;
-    rect.fontSize = fontSize;
-    rect.setAngle(angle);
-    rect.updateBoundingElement();
-    rect.updatePropertyModel();
+    ele.setElementId(id);
+    ele.setElementXPos(xpos);
+    ele.setElementYPos(ypos);
+    ele.setElementZValue(zvalue);
+    ele.setElementWidth(width);
+    ele.setElementHeight(height);
+    ele.elementText = text;
+    ele.textColor = textColor;
+    ele.fontSize = fontSize;
+    ele.setAngle(angle);
+    ele.funcs_ = funcs;
+    ele.updateBoundingElement();
+    ele.updatePropertyModel();
 
     return in;
 }

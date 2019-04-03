@@ -18,8 +18,9 @@ HEADERS += \
     $$PWD/integerproperty.h \
     $$PWD/textproperty.h \
     $$PWD/enumproperty.h \
-    fileproperty.h \
-    filepropertyeditor.h
+    $$PWD/fileproperty.h \
+    $$PWD/filepropertyeditor.h \
+    $$PWD/listproperty.h
 
 SOURCES += \
     $$PWD/boolproperty.cpp \
@@ -34,8 +35,9 @@ SOURCES += \
     $$PWD/integerproperty.cpp \
     $$PWD/textproperty.cpp \
     $$PWD/enumproperty.cpp \
-    fileproperty.cpp \
-    filepropertyeditor.cpp
+    $$PWD/fileproperty.cpp \
+    $$PWD/filepropertyeditor.cpp \
+    $$PWD/listproperty.cpp
 
 FORMS +=
 

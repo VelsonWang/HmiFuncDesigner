@@ -181,12 +181,7 @@ void TagSystemTableModel::load(const QJsonObject &json)
     for (int i = 0; i < tagSysArray.size(); ++i) {
         QJsonObject jsonObj = tagSysArray[i].toObject();
         TagSysItem item;
-        item.m_TagID = jsonObj["iID"].toInt();
-        item.m_sName = jsonObj["sName"].toString();
-        item.m_sDescription = jsonObj["sDescription"].toString();
-        item.m_sUnit = jsonObj["sUnit"].toString();
-        item.m_sProjectConverter = jsonObj["sProjectConverter"].toString();
-        item.m_sComments = jsonObj["sComments"].toString();
+        item.load(jsonObj);
         m_tagSysItems.append(item);
     }
 }
@@ -195,16 +190,10 @@ void TagSystemTableModel::load(const QJsonObject &json)
 void TagSystemTableModel::save(QJsonObject &json)
 {
     QJsonArray tagSysArray;
-    for(int i = 0; i < m_tagSysItems.size(); i++)
-    {
+    for(int i = 0; i < m_tagSysItems.size(); i++) {
         TagSysItem item =  m_tagSysItems.at(i);
         QJsonObject jsonObj;
-        jsonObj["iID"] =  item.m_TagID;
-        jsonObj["sName"] = item.m_sName;
-        jsonObj["sDescription"] = item.m_sDescription;
-        jsonObj["sUnit"] = item.m_sUnit;
-        jsonObj["sProjectConverter"] = item.m_sProjectConverter;
-        jsonObj["sComments"]= item.m_sComments;
+        item.save(jsonObj);
         tagSysArray.append(jsonObj);
     }
     json["SysVarArray"] = tagSysArray;
@@ -383,17 +372,7 @@ void TagTmpTableModel::load(const QJsonObject &json)
     for (int i = 0; i < TmpVarArray.size(); ++i) {
         QJsonObject jsonObj = TmpVarArray[i].toObject();
         TagTmpItem item;
-        item.m_TagID = jsonObj["iID"].toInt();
-        item.m_sName = jsonObj["sName"].toString();
-        item.m_sDescription = jsonObj["sDescription"].toString();
-        item.m_sUnit = jsonObj["sUnit"].toString();
-        item.m_sProjectConverter = jsonObj["sProjectConverter"].toString();
-        item.m_sComments = jsonObj["sComments"].toString();
-        item.m_sDataType = jsonObj["sDataType"].toString();
-        item.m_sActionScope = jsonObj["sActionScope"].toString();
-        item.m_sDataAttribute = jsonObj["sDataAttribute"].toString();
-        item.m_sAlarm = jsonObj["sAlarm"].toString();
-        item.m_sArchiveFile = jsonObj["sArchiveFile"].toString();
+        item.load(jsonObj);
         m_tagTmpItems.append(item);
     }
 
@@ -403,21 +382,10 @@ void TagTmpTableModel::load(const QJsonObject &json)
 void TagTmpTableModel::save(QJsonObject &json)
 {
     QJsonArray TmpVarArray;
-    for(int i = 0; i < m_tagTmpItems.size(); i++)
-    {
+    for(int i = 0; i < m_tagTmpItems.size(); i++) {
         TagTmpItem item =  m_tagTmpItems.at(i);
         QJsonObject jsonObj;
-        jsonObj["iID"] = item.m_TagID;
-        jsonObj["sDataType"] = item.m_sDataType;
-        jsonObj["sName"] = item.m_sName;
-        jsonObj["sDescription"] = item.m_sDescription;
-        jsonObj["sUnit"] = item.m_sUnit;
-        jsonObj["sActionScope"] = item.m_sActionScope;
-        jsonObj["sDataAttribute"] = item.m_sDataAttribute;
-        jsonObj["sAlarm"] = item.m_sAlarm;
-        jsonObj["sArchiveFile"] = item.m_sArchiveFile;
-        jsonObj["sProjectConverter"] = item.m_sProjectConverter;
-        jsonObj["sComments"] = item.m_sComments;
+        item.save(jsonObj);
         TmpVarArray.append(jsonObj);
     }
     json["TmpVarArray"] = TmpVarArray;
@@ -684,16 +652,7 @@ void TagIOTableModel::load(const QJsonObject &json)
     for (int i = 0; i < IOVarArray.size(); ++i) {
         QJsonObject jsonObj = IOVarArray[i].toObject();
         TagIOItem item;
-        item.m_TagID = jsonObj["iID"].toInt();
-        item.m_sName = jsonObj["sName"].toString();
-        item.m_sDescription = jsonObj["sDescription"].toString();
-        item.m_sUnit = jsonObj["sUnit"].toString();
-        item.m_sProjectConverter = jsonObj["sProjectConverter"].toString();
-        item.m_sComments = jsonObj["sComments"].toString();
-        item.m_sDataType = jsonObj["sDataType"].toString();
-        item.m_sIOConnect = jsonObj["sIOConnect"].toString();
-        item.m_sAlarm = jsonObj["sAlarm"].toString();
-        item.m_sArchiveFile = jsonObj["sArchiveFile"].toString();
+        item.load(jsonObj);
         m_tagIOItems.append(item);
     }
 }
@@ -702,20 +661,10 @@ void TagIOTableModel::load(const QJsonObject &json)
 void TagIOTableModel::save(QJsonObject &json)
 {
     QJsonArray IOVarArray;
-    for(int i = 0; i < m_tagIOItems.size(); i++)
-    {
+    for(int i = 0; i < m_tagIOItems.size(); i++) {
         TagIOItem item =  m_tagIOItems.at(i);
         QJsonObject jsonObj;
-        jsonObj["iID"] = item.m_TagID;
-        jsonObj["sDataType"] = item.m_sDataType;
-        jsonObj["sName"] = item.m_sName;
-        jsonObj["sDescription"] = item.m_sDescription;
-        jsonObj["sUnit"] = item.m_sUnit;
-        jsonObj["sIOConnect"] = item.m_sIOConnect;
-        jsonObj["sAlarm"] = item.m_sAlarm;
-        jsonObj["sArchiveFile"] = item.m_sArchiveFile;
-        jsonObj["sProjectConverter"] = item.m_sProjectConverter;
-        jsonObj["sComments"] = item.m_sComments;
+        item.save(jsonObj);
         IOVarArray.append(jsonObj);
     }
     json["IOVarArray"] = IOVarArray;
@@ -1605,94 +1554,6 @@ void VariableManagerWin::showLargeIcon()
 */
 void VariableManagerWin::showSmallIcon()
 {
-
-}
-
-
-
-/*
-* 获取工程所有变量的名称
-* type: IO, TMP, SYS, ALL
-*/
-void VariableManagerWin::GetAllProjectVariableName(const QString &proj_path,
-                                                   QStringList &varList,
-                                                   const QString &type)
-{
-    varList.clear();
-
-    TagTmpTableModel* pTagTmpModel = new TagTmpTableModel();
-    TagSystemTableModel *pTagSystemModel = new TagSystemTableModel();
-    TagIOTableModel *pTagIOModel = new TagIOTableModel();
-
-    //-------------设备变量------------------//
-    if(type == "ALL" || type == "IO") {
-        QFile loadFileVarList(proj_path + "/DBVarList.odb");
-        if (!loadFileVarList.open(QIODevice::ReadOnly))
-            return;
-        QByteArray loadData = loadFileVarList.readAll();
-        QJsonDocument loadDoc(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(loadData) : QJsonDocument::fromBinaryData(loadData));
-        loadFileVarList.close();
-
-        QJsonObject jsonDBVarList = loadDoc.object();
-        if(jsonDBVarList != QJsonObject()) {
-            QJsonArray DevVarTabArray = jsonDBVarList["DevVarTabArray"].toArray();
-            for (int i = 0; i < DevVarTabArray.size(); ++i) {
-                QJsonObject jsonObj = DevVarTabArray[i].toObject();
-                QString varGroupName = jsonObj["name"].toString();
-                QString fileDev = proj_path + "/DevVarList-" + varGroupName+ ".odb";
-                QFile loadFileDev(fileDev);
-                if (!loadFileDev.open(QIODevice::ReadOnly)) {
-                    qWarning() << QString("Couldn't open load file: %1.").arg(fileDev);
-                    return ;
-                }
-                QByteArray loadDataDev = loadFileDev.readAll();
-                QJsonDocument loadDocDev(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(loadDataDev) : QJsonDocument::fromBinaryData(loadDataDev));
-                pTagIOModel->load(loadDocDev.object());
-                foreach(TagIOItem item, pTagIOModel->m_tagIOItems) {
-                    varList << (tr("设备变量.") + varGroupName + "." + item.m_sName);
-                }
-                loadFileDev.close();
-            }
-        }
-    }
-
-    //-------------中间变量------------------//
-    if(type == "ALL" || type == "TMP") {
-        QString fileTmp = proj_path + "/TmpVarList.odb";
-        QFile loadFileTmp(fileTmp);
-        if (!loadFileTmp.open(QIODevice::ReadOnly)) {
-            qWarning() << QString("Couldn't open load file: %1.").arg(fileTmp);
-            return;
-        }
-        QByteArray loadDataTmp = loadFileTmp.readAll();
-        QJsonDocument loadDocTmp(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(loadDataTmp) : QJsonDocument::fromBinaryData(loadDataTmp));
-        pTagTmpModel->load(loadDocTmp.object());
-        foreach(TagTmpItem item, pTagTmpModel->m_tagTmpItems) {
-            varList << (tr("中间变量.") + item.m_sName);
-        }
-        loadFileTmp.close();
-    }
-
-    //-------------系统变量------------------//
-    if(type == "ALL" || type == "SYS") {
-        QString fileSys = proj_path + "/SysVarList.odb";
-        QFile loadFileSys(fileSys);
-        if (!loadFileSys.open(QIODevice::ReadOnly)) {
-            qWarning() << QString("Couldn't open load file: %1.").arg(fileSys);
-            return;
-        }
-        QByteArray loadDataSys = loadFileSys.readAll();
-        QJsonDocument loadDocSys(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(loadDataSys) : QJsonDocument::fromBinaryData(loadDataSys));
-        pTagSystemModel->load(loadDocSys.object());
-        foreach(TagSysItem item, pTagSystemModel->m_tagSysItems) {
-            varList << (tr("系统变量.") + item.m_sName);
-        }
-        loadFileSys.close();
-    }
-
-    delete pTagTmpModel;
-    delete pTagSystemModel;
-    delete pTagIOModel;
 
 }
 

@@ -1,7 +1,7 @@
 #ifndef DBVARGROUP_H
 #define DBVARGROUP_H
 
-#include "../Public/Public.h"
+#include "../../Public/Public.h"
 #include <QString>
 #include <QList>
 #include <QJsonObject>
@@ -22,7 +22,8 @@ public:
 class DBVarGroups
 {
 public:
-    DBVarGroups(QString projName);
+    DBVarGroups();
+    void setProjectPath(const QString &path);
 
 private:
     void load(const QJsonObject &json);
@@ -33,11 +34,10 @@ public:
     bool saveToFile(SaveFormat saveFormat);
 
 private:
-    QString m_strProjectName;
-    QString m_strProjectPath;
+    QString szProjectPath_;
 
 public:
-    QList<DBVarGroup *> m_VarBlockGroupList;
+    QList<DBVarGroup *> varBlockGroupList_;
 };
 
 

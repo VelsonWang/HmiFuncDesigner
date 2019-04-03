@@ -38,6 +38,7 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowserd
     LIBS += -L$$LINK_LIBRARY_PATH -lLuad
     LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
     #message(LIBS $$LIBS)
 }
 else { # release
@@ -50,6 +51,7 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
     LIBS += -L$$LINK_LIBRARY_PATH -lLua
     LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
 }
 
 # debug: The project is being built in debug mode.
@@ -74,7 +76,6 @@ SOURCES += main.cpp\
     VariableManagerWin.cpp \
     VariableEditDialog.cpp \
     CommentsDialog.cpp \
-    DBVarGroup.cpp \
     NewVariableGroupDialog.cpp \
     DeviceListDialog.cpp \
     SelectProtocolDialog.cpp \
@@ -112,7 +113,6 @@ HEADERS  += MainWindow.h \
     VariableManagerWin.h \
     VariableEditDialog.h \
     CommentsDialog.h \
-    DBVarGroup.h \
     NewVariableGroupDialog.h \
     DeviceListDialog.h \
     SelectProtocolDialog.h \
