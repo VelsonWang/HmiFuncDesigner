@@ -5,6 +5,9 @@
 #include <QFile>
 #include <QHeaderView>
 #include <QMessageBox>
+#include <QApplication>
+#include <QRect>
+#include <QDesktopWidget>
 #include <QDebug>
 
 
@@ -297,6 +300,7 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent) :
     leftLayout->addWidget(labelFunc);
 
     m_pTreeViewFunc = new QTreeView(splitterLeft);
+    m_pTreeViewFunc->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     m_pTreeViewFunc->setObjectName(QStringLiteral("treeViewFunc"));
     connect(m_pTreeViewFunc,SIGNAL(clicked(QModelIndex)), this, SLOT(on_treeViewFunc_clicked(const QModelIndex &)));
     connect(m_pTreeViewFunc,SIGNAL(doubleClicked(QModelIndex)), this, SLOT(on_treeViewFunc_doubleClicked(const QModelIndex &)));
@@ -333,6 +337,7 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent) :
     m_funcTableView->setModel(m_pfuncItemModel);
     m_funcTableView->setColumnWidth(0, 160);
     m_funcTableView->setColumnWidth(1, 120);
+    m_funcTableView->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QHeaderView *pVHeaderView = m_funcTableView->verticalHeader();
     pVHeaderView->setSectionResizeMode(QHeaderView::ResizeToContents);
     //QHeaderView *pHHeaderView = m_funcTableView->horizontalHeader();
@@ -360,9 +365,10 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent) :
             this, SLOT(FuncPropertyValueChanged(QtProperty *, const QVariant &)));
     m_pVariantFactory = new QtVariantEditorFactory(splitterRight);
     m_pPropertyEditor = new QtTreePropertyBrowser(splitterRight);
+    m_pPropertyEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_pPropertyEditor->setHeaderLabels(QStringList() << tr("参数名称") << tr("参数值"));
     m_pPropertyEditor->setColumnWidth(0, 60);
-    m_pPropertyEditor->setColumnWidth(1, 200);
+    m_pPropertyEditor->setColumnWidth(1, 300);
     m_pPropertyEditor->setFactoryForManager(m_pVariantManager, m_pVariantFactory);
 
     widgetRightLayout->addWidget(m_pPropertyEditor);
@@ -451,7 +457,12 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent) :
 
     /////////////////////////////////////////////////////////////////
 
-    this->resize(700, 320);
+    QDesktopWidget * pDesktopWidget = QApplication::desktop();
+    QRect rect = pDesktopWidget->screenGeometry();
+    int screenWidth = rect.width();
+    int screenHeight = rect.height();
+    this->resize(screenWidth/2, screenHeight/2);
+
 }
 
 TagFuncEditDialog::~TagFuncEditDialog()
