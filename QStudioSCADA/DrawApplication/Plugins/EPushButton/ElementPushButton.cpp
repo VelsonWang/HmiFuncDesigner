@@ -153,7 +153,6 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
         break;
     case EL_FUNCTION:
         funcs_ = value.toStringList();
-        qDebug() << funcs_;
         break;
     }
 

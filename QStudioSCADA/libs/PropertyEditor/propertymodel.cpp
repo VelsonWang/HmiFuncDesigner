@@ -39,11 +39,13 @@ bool PropertyModel::setData(const QModelIndex &index, const QVariant &value, int
     if (index.column() == 1 && tmpProperty) {
 
         bool tmpHasChanged = tmpProperty->setData(value,role);
-
+#if 0
         if (tmpHasChanged) {
             emit onDataChangedByEditor(tmpProperty);
         }
-
+#else
+        emit onDataChangedByEditor(tmpProperty);
+#endif
         emit dataChanged(index,index);
     }
 

@@ -45,7 +45,7 @@ typedef struct
 class FuncObjectItem
 {
 public:
-    TFuncObjectItem()
+    FuncObjectItem()
     {
         name = "";
         event = "";

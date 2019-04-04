@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 #include <QApplication>
-#include <QtDebug>
+#include <QDebug>
 
 FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
     QWidget(parent),
@@ -20,7 +20,7 @@ FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
     connect(toolButton_, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
 
     textLabel_ = new QLabel(this);
-    textLabel_->setText(tr("功能操作..."));
+    textLabel_->setText(tr(""));
 
     spacer_ = new QSpacerItem(1, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
 
@@ -32,19 +32,15 @@ FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
     layout->addWidget(toolButton_);
 }
 
-void FunctionPropertyEditor::setFunctions(const QStringList &funcs)
-{
+void FunctionPropertyEditor::setFunctions(const QStringList &funcs) {
     if (funcs_ != funcs) {
         funcs_ = funcs;
-        textLabel_->setText(tr("功能操作..."));
     }
 }
 
-void FunctionPropertyEditor::onToolButtonClicked()
-{
-    FunctionEditorDialog dlg;
+void FunctionPropertyEditor::onToolButtonClicked() {
+    FunctionEditorDialog dlg(0, supportEvents_);
     dlg.setFunctions(funcs_);
-    dlg.setSupportEvents(supportEvents_);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList funcs = dlg.getFunctions();
         if (funcs != funcs_) {

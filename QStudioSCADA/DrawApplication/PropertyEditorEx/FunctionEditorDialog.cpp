@@ -199,6 +199,8 @@ void FunctionEditorDialog::setFunctions(const QStringList &funcs) {
             TFuncObjectItem *pNewFuncObj = new TFuncObjectItem();
             pNewFuncObj->setFuncString(szFuncEvent);
             TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(pNewFuncObj->szName_);
+            if(pFuncObjectItem == nullptr)
+                continue;
             int count = pNewFuncObj->argList_.count();
             for(int i=0; i<count; i++) {
                 ArgItem *pArgItem = pNewFuncObj->argList_.at(i);
@@ -207,8 +209,14 @@ void FunctionEditorDialog::setFunctions(const QStringList &funcs) {
             }
             pNewFuncObj->szDesc_ = pFuncObjectItem->szDesc_;
             pNewFuncObj->szFuncNameOrg_ = pFuncObjectItem->szFuncNameOrg_;
-            pNewFuncObj->setFuncString(szFuncEvent);
             selectFuncObjItemList_.append(pNewFuncObj);
+
+            int iRowCount = ui->tableEventFunc->rowCount();
+            ui->tableEventFunc->insertRow(iRowCount);
+            QTableWidgetItem *itemFuncName = new QTableWidgetItem(pNewFuncObj->getFuncString());
+            ui->tableEventFunc->setItem(iRowCount, 0, itemFuncName);
+            QTableWidgetItem *itemFuncEvent = new QTableWidgetItem(pNewFuncObj->szEvent_);
+            ui->tableEventFunc->setItem(iRowCount, 1, itemFuncEvent);
         }
     }
 }
@@ -310,7 +318,6 @@ void FunctionEditorDialog::on_btnCancel_clicked()
  * @param item 列表项
  */
 void FunctionEditorDialog::listItemClicked(QListWidgetItem *item) {
-    qDebug() << item->text();
     TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(item->text());
     if(pFuncObjectItem != nullptr) {
         ui->plainTextFuncDesc->setPlainText(pFuncObjectItem->szDesc_);
@@ -399,17 +406,15 @@ void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index) {
     if(pItem == nullptr)
         return;
     QString szFuncNameOrg = pItem->text();
-    for(int i=0; i<selectFuncObjItemList_.count(); i++) {
-        TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(i);
-        if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
-            ui->plainTextFuncDesc->setPlainText(pFuncObjItem->szDesc_);
-            szSelectedFuncName_ = pFuncObjItem->szName_;
-            createPropertyList();
-            propertyModel_->resetModel();
-            QListIterator<Property *> iter(getPropertyList());
-            while (iter.hasNext()) {
-                propertyModel_->addProperty(iter.next());
-            }
+    TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(pItem->row());
+    if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
+        ui->plainTextFuncDesc->setPlainText(pFuncObjItem->szDesc_);
+        szSelectedFuncName_ = pFuncObjItem->szName_;
+        createPropertyList();
+        propertyModel_->resetModel();
+        QListIterator<Property *> iter(getPropertyList());
+        while (iter.hasNext()) {
+            propertyModel_->addProperty(iter.next());
         }
     }
 }
@@ -420,36 +425,34 @@ void FunctionEditorDialog::createPropertyList() {
     if(pItem == nullptr)
         return;
     QString szFuncNameOrg = pItem->text();
-    for(int i=0; i<selectFuncObjItemList_.count(); i++) {
-        TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(i);
-        if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
+    TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(pItem->row());
+    if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
 
-            ListProperty *propEvent = new ListProperty(tr("事件类型"));
-            propEvent->setId(EL_EVENT);
-            propEvent->setList(supportEvents_);
-            propList_.insert(propList_.end(), propEvent);
+        ListProperty *propEvent = new ListProperty(tr("事件类型"));
+        propEvent->setId(EL_EVENT);
+        propEvent->setList(supportEvents_);
+        propList_.insert(propList_.end(), propEvent);
 
-            EmptyProperty *funcNameProp = new EmptyProperty(pFuncObjItem->szName_);
-            propList_.insert(propList_.end(), funcNameProp);
-            foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
-                if(pArgItem->type == "VALUE") {
-                    TextProperty *varProp = new TextProperty(pArgItem->name);
-                    varProp->setId(EL_TEXT);
-                    propList_.insert(propList_.end(), varProp);
-                } else if(pArgItem->type == "TAGLIST") {
-                    ListProperty *tagProp = new ListProperty(pArgItem->name);
-                    tagProp->setId(EL_TAG);
-                    QStringList varList;
-                    TagManager::getAllTagName(TagManager::getProjectPath(), varList);
-                    tagProp->setList(varList);
-                    propList_.insert(propList_.end(), tagProp);
-                } else if(pArgItem->type == "GRAPHPAGELIST") {
-                    ListProperty *graphProp = new ListProperty(pArgItem->name);
-                    graphProp->setId(EL_GRAPHPAGE);
-                    DrawListUtils::loadDrawList(DrawListUtils::getProjectPath());
-                    graphProp->setList(DrawListUtils::drawList_);
-                    propList_.insert(propList_.end(), graphProp);
-                }
+        EmptyProperty *funcNameProp = new EmptyProperty(pFuncObjItem->szName_);
+        propList_.insert(propList_.end(), funcNameProp);
+        foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
+            if(pArgItem->type == "VALUE") {
+                TextProperty *varProp = new TextProperty(pArgItem->name);
+                varProp->setId(EL_TEXT);
+                propList_.insert(propList_.end(), varProp);
+            } else if(pArgItem->type == "TAGLIST") {
+                ListProperty *tagProp = new ListProperty(pArgItem->name);
+                tagProp->setId(EL_TAG);
+                QStringList varList;
+                TagManager::getAllTagName(TagManager::getProjectPath(), varList);
+                tagProp->setList(varList);
+                propList_.insert(propList_.end(), tagProp);
+            } else if(pArgItem->type == "GRAPHPAGELIST") {
+                ListProperty *graphProp = new ListProperty(pArgItem->name);
+                graphProp->setId(EL_GRAPHPAGE);
+                DrawListUtils::loadDrawList(DrawListUtils::getProjectPath());
+                graphProp->setList(DrawListUtils::drawList_);
+                propList_.insert(propList_.end(), graphProp);
             }
         }
     }

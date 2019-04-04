@@ -176,6 +176,8 @@ bool NewProjectDialog::loadFromFile(SaveFormat saveFormat, const QString &file) 
     ui->editDataScanPeriod->setText(projMgr.getDataScanPeriod());
 
     ui->editProjectPath->setText(projectPath_);
+
+    return true;
 }
 
 

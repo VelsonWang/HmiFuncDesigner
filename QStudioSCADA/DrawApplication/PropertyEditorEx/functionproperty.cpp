@@ -10,10 +10,7 @@ FunctionProperty::FunctionProperty(const QString &pname)
 
 QVariant FunctionProperty::data(int column, int role) {
 
-    if (column == ColumnData && (Qt::DisplayRole == role)) {
-        return value;
-    }
-    else if(Qt::EditRole == role)
+    if(Qt::EditRole == role)
         return QVariant();
     else
         return Property::data(column, role);
