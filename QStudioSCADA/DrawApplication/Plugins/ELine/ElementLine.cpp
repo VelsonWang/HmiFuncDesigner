@@ -1,7 +1,8 @@
 ﻿#include "elementline.h"
 #include <QtDebug>
 
-ElementLine::ElementLine()
+ElementLine::ElementLine(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("直线");
     internalElementType = trUtf8("Line");

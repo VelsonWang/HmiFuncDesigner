@@ -1,7 +1,8 @@
 ﻿#include "elementtext.h"
 #include <QtDebug>
 
-ElementText::ElementText()
+ElementText::ElementText(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("文本");
     internalElementType = trUtf8("Text");

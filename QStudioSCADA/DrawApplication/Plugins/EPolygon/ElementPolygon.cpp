@@ -1,7 +1,8 @@
 ﻿#include "elementpolygon.h"
 #include <QtDebug>
 
-ElementPolygon::ElementPolygon()
+ElementPolygon::ElementPolygon(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("多边形");
     internalElementType = trUtf8("Polygon");

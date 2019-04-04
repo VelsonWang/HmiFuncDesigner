@@ -4,7 +4,7 @@
 TextProperty::TextProperty(const QString &name)
     : Property(name)
 {
-    value.setValue(QString("text"));
+    value.setValue(QString(""));
     value.convert(QVariant::String);
 }
 

@@ -13,6 +13,8 @@ public:
     PropertyTableView(PropertyModel *model,QWidget *parent = 0);
 
     void init();
+    void setPropertyKeyColumnWidth(int width);
+    void setPropertyValueColumnWidth(int width);
 
 private:
     PropertyDelegate *delegate;

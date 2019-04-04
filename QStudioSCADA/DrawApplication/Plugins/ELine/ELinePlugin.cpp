@@ -89,7 +89,7 @@ QString ELinePlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ELinePlugin::createElement()
+Element* ELinePlugin::createElement(const QString &projPath)
 {
-    return new ElementLine();
+    return new ElementLine(projPath);
 }

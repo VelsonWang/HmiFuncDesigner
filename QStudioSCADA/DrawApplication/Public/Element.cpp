@@ -7,6 +7,10 @@ without using PropertyEditor - height, width, xpos,ypos,
 zvalue (using context menu on the scene)
 */
 
+Element::Element(const QString &projPath) :
+    strProjectPath_(projPath) {
+}
+
 Element::~Element() {
 
 }

@@ -5,8 +5,9 @@
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 
-ElementArrow::ElementArrow()
-    : arrowSize(10)
+ElementArrow::ElementArrow(const QString &projPath)
+    : Element(projPath),
+      arrowSize(10)
 {
     elementId = trUtf8("箭头");
     internalElementType = trUtf8("Arrow");

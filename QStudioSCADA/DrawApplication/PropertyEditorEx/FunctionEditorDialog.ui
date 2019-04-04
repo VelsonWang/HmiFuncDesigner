@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>977</width>
+    <width>1199</width>
     <height>568</height>
    </rect>
   </property>
@@ -108,6 +108,12 @@
             </property>
             <item>
              <widget class="QLabel" name="label_4">
+              <property name="minimumSize">
+               <size>
+                <width>360</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>设置参数属性：</string>
               </property>

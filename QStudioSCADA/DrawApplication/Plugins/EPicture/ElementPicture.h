@@ -10,7 +10,7 @@ class ElementPicture : public Element
 {
     Q_OBJECT
 public:
-    ElementPicture();
+    ElementPicture(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
     void updateElementProperty(uint id, const QVariant &value);

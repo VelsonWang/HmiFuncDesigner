@@ -51,6 +51,7 @@ struct TagSysItem
         m_sUnit = rh.m_sUnit;
         m_sProjectConverter = rh.m_sProjectConverter;
         m_sComments = rh.m_sComments;
+        return *this;
     }
 
     void load(const QJsonObject &json) {
@@ -133,6 +134,7 @@ struct TagTmpItem
         m_sArchiveFile = rh.m_sArchiveFile;
         m_sProjectConverter = rh.m_sProjectConverter;
         m_sComments = rh.m_sComments;
+        return *this;
     }
 
     void load(const QJsonObject &json) {
@@ -226,6 +228,7 @@ struct TagIOItem
         m_sArchiveFile = rh.m_sArchiveFile;
         m_sProjectConverter = rh.m_sProjectConverter;
         m_sComments = rh.m_sComments;
+        return *this;
     }
 
     void load(const QJsonObject &json) {

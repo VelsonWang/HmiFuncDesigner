@@ -2,7 +2,8 @@
 #include "PubTool.h"
 #include <QtDebug>
 
-ElementInputEdit::ElementInputEdit()
+ElementInputEdit::ElementInputEdit(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("输入编辑框");
     internalElementType = trUtf8("InputEdit");

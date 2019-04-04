@@ -15,8 +15,12 @@ QWidget *ListProperty::createEditor(QWidget *parent,
     Q_UNUSED(delegate)
 
     QComboBox *tmpEditor = new QComboBox(parent);
-    tmpEditor->setView(new QListView());
+    QListView *pListView = new QListView();
+
     tmpEditor->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+    pListView->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
+
+    tmpEditor->setView(pListView);
     tmpEditor->addItems(szList_);
     tmpEditor->setCurrentText(value.toString());
 
@@ -35,4 +39,6 @@ QVariant ListProperty::getEditorData(QWidget *editor) const {
 
 void ListProperty::setList(const QStringList &list) {
     szList_ = list;
+    if(szList_.count() > 0)
+        value.setValue(szList_.at(0));
 }

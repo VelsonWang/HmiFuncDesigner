@@ -31,7 +31,7 @@ public:
     // 获取元素ID String
     QString getElementIDString() Q_DECL_OVERRIDE;
     // 创建元素
-    Element* createElement() Q_DECL_OVERRIDE;
+    Element* createElement(const QString &projPath) Q_DECL_OVERRIDE;
 
     /////////////////////<plugin operation>////////////////////////////
 

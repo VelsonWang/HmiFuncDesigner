@@ -4,7 +4,8 @@
 #include <QDir>
 #include <QDebug>
 
-ElementPicture::ElementPicture()
+ElementPicture::ElementPicture(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("图片");
     internalElementType = trUtf8("Picture");

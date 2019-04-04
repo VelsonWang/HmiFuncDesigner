@@ -1,0 +1,12 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<ElementSupportEventList>
+    <ElementSupportEvent name="PushButton" ShowName="弹出按钮">
+        <Event name="Press" ShowName="按下事件">
+            <desc>弹出按钮被按下时触发本事件</desc>
+        </Event>
+        <Event name="Release" ShowName="抬起事件">
+            <desc>弹出按钮从按下至抬起时触发本事件</desc>
+        </Event>
+    </ElementSupportEvent>
+</ElementSupportEventList>

@@ -9,7 +9,7 @@
 class ElementPolygon : public Element
 {
 public:
-    ElementPolygon();
+    ElementPolygon(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
 

@@ -76,6 +76,7 @@ RC_FILE = application.rc
 ######################################################
 
 DISTFILES += \
-    $$IDE_BIN_PATH/Config/DrawAppJScriptFun.xml
+    $$IDE_BIN_PATH/Config/DrawAppJScriptFun.xml \
+    ../../../QStudioSCADABin/bin/Config/ElementSupportEvents.xml
 
 

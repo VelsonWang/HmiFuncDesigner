@@ -41,8 +41,9 @@ enum {
     EL_GRAPHPAGE_LINK = 18, //transition to screen
     EL_FILE = 19,
     EL_FUNCTION = 20,
-
-
+    EL_GRAPHPAGE = 21,
+    EL_TAG = 22,
+    EL_EVENT = 23,
 
 
     EL_PROPERTY_EMPTY = 255

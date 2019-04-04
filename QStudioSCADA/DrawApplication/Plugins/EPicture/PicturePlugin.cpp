@@ -89,7 +89,7 @@ QString PicturePlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* PicturePlugin::createElement()
+Element* PicturePlugin::createElement(const QString &projPath)
 {
-    return new ElementPicture();
+    return new ElementPicture(projPath);
 }

@@ -89,7 +89,7 @@ QString EllipsePlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EllipsePlugin::createElement()
+Element* EllipsePlugin::createElement(const QString &projPath)
 {
-    return new ElementEllipse();
+    return new ElementEllipse(projPath);
 }

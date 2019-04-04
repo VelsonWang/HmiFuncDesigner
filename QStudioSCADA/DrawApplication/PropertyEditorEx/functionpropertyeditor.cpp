@@ -34,7 +34,7 @@ FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
 
 void FunctionPropertyEditor::setFunctions(const QStringList &funcs)
 {
-    if (funcs_ != funcs_) {
+    if (funcs_ != funcs) {
         funcs_ = funcs;
         textLabel_->setText(tr("功能操作..."));
     }
@@ -43,6 +43,8 @@ void FunctionPropertyEditor::setFunctions(const QStringList &funcs)
 void FunctionPropertyEditor::onToolButtonClicked()
 {
     FunctionEditorDialog dlg;
+    dlg.setFunctions(funcs_);
+    dlg.setSupportEvents(supportEvents_);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList funcs = dlg.getFunctions();
         if (funcs != funcs_) {
@@ -68,3 +70,11 @@ QStringList FunctionPropertyEditor::getFunctions() const
     return funcs_;
 }
 
+/**
+ * @brief FunctionPropertyEditor::setSupportEvents
+ * @details 设置支持的事件列表
+ * @param events 事件列表
+ */
+void FunctionPropertyEditor::setSupportEvents(QStringList events) {
+    supportEvents_ = events;
+}

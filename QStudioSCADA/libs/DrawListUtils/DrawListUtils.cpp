@@ -10,7 +10,7 @@
 
 
 QStringList DrawListUtils::drawList_;
-
+QString DrawListUtils::szProjectPath_;
 
 DrawListUtils::DrawListUtils() {
     drawList_.clear();
@@ -23,6 +23,8 @@ DrawListUtils::DrawListUtils() {
  * @param path 工程路径
  */
 void DrawListUtils::loadDrawList(const QString &path) {
+
+    setProjectPath(path);
 
     drawList_.clear();
 
@@ -125,5 +127,26 @@ int DrawListUtils::getMaxDrawPageNum(const QString &name)
     ret++;
 
     return ret;
+}
+
+/**
+ * @brief TagManager::setProjectPath
+ * @details 设置工程路径
+ * @param path 工程路径
+ */
+void DrawListUtils::setProjectPath(const QString &path) {
+    if(szProjectPath_ != path) {
+        szProjectPath_ = path;
+    }
+}
+
+
+/**
+ * @brief TagManager::getProjectPath
+ * @details 取得工程路径
+ * @return 工程路径
+ */
+QString DrawListUtils::getProjectPath() {
+    return szProjectPath_;
 }
 

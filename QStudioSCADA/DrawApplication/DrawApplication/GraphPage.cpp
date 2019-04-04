@@ -550,9 +550,8 @@ void GraphPage::createItems(const QString &typeId, QPointF position) {
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementName() == typeId) {
 
-                Element *ele = plugin->createElement();
+                Element *ele = plugin->createElement(projpath_);
                 if(ele != Q_NULLPTR) {
-                    ele->setProjectPath(projpath_);
                     ele->setClickPosition(position);
                     last = ele;
                     connectItem(ele);
@@ -782,9 +781,8 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
 
-                    Element *ele = plugin->createElement();
+                    Element *ele = plugin->createElement(projpath_);
                     if(ele != Q_NULLPTR) {
-                        ele->setProjectPath(projpath_);
                         ele->readData(in);
                         connectItem(ele);
                         copyList.insert(copyList.end(), ele);
@@ -964,7 +962,6 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
-                        ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         ele->setSelected(false);
                         connectItem(ele);
@@ -1013,7 +1010,7 @@ Element *GraphPage::createElement(const QString &internalType) {
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementIDString() == internalType) {
-                return plugin->createElement();
+                return plugin->createElement(projpath_);
             }
         }
     }
@@ -1080,7 +1077,6 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
-                        ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         connectItem(ele);
                         addItem(ele);

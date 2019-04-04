@@ -10,7 +10,7 @@ class ElementLine : public Element
 {
     Q_OBJECT
 public:
-    ElementLine();
+    ElementLine(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
     void updateElementProperty(uint id, const QVariant &value);

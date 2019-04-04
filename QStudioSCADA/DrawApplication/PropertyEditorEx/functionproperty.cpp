@@ -1,8 +1,11 @@
 #include "functionproperty.h"
 
+
 FunctionProperty::FunctionProperty(const QString &pname)
     : Property(pname)
 {
+    value.setValue(QStringList());
+    value.convert(QVariant::StringList);
 }
 
 QVariant FunctionProperty::data(int column, int role) {
@@ -22,6 +25,7 @@ QWidget* FunctionProperty::createEditor(QWidget *parent, const QStyleOptionViewI
     Q_UNUSED(delegate)
 
     FunctionPropertyEditor *tmpWidget = new FunctionPropertyEditor(parent);
+    tmpWidget->setSupportEvents(supportEvents_);
     tmpWidget->setFunctions(value.toStringList());
     return tmpWidget;
 }
@@ -46,3 +50,11 @@ QVariant FunctionProperty::getEditorData(QWidget* editor) const
     return QVariant();
 }
 
+/**
+ * @brief FunctionProperty::setSupportEvents
+ * @details 设置支持的事件列表
+ * @param events 事件列表
+ */
+void FunctionProperty::setSupportEvents(QStringList events) {
+    supportEvents_ = events;
+}

@@ -89,7 +89,7 @@ QString PolygonPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* PolygonPlugin::createElement()
+Element* PolygonPlugin::createElement(const QString &projPath)
 {
-    return new ElementPolygon();
+    return new ElementPolygon(projPath);
 }

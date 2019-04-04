@@ -14,7 +14,7 @@ class ElementPushButton : public Element
     Q_OBJECT
 
 public:
-    explicit ElementPushButton();
+    explicit ElementPushButton(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
     void updateElementProperty(uint id, const QVariant &value);
@@ -46,6 +46,7 @@ protected:
 
 private:
     void drawPushButton(QPainter *painter);
+    void getSupportEvents(QStringList &listValue);
 
 private:
     QRectF elementRect;

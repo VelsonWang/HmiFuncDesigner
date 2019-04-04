@@ -15,6 +15,7 @@ public:
     explicit FunctionPropertyEditor(QWidget *parent = 0);
     QStringList getFunctions() const;
     bool eventFilter(QObject *obj, QEvent *ev);
+    void setSupportEvents(QStringList events);
 
 signals:
     void dataChangedByUser(const QStringList &funcs, FunctionPropertyEditor* editor);
@@ -30,6 +31,7 @@ private:
     QToolButton* toolButton_;
     QLabel* textLabel_;
     QSpacerItem* spacer_;
+    QStringList supportEvents_;
 };
 
 #endif // FUNCTIONPROPERTYEDITOR_H

@@ -5,10 +5,14 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
     LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
     LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
+    LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtilsd
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
     LIBS += -L$$IDE_LIBRARY_PATH -lHelper
     LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
+    LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtils
 }
 
 

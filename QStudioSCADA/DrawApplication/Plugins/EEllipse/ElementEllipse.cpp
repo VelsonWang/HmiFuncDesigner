@@ -1,7 +1,8 @@
 ﻿#include "ElementEllipse.h"
 #include <QDebug>
 
-ElementEllipse::ElementEllipse()
+ElementEllipse::ElementEllipse(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("椭圆形");
     internalElementType = trUtf8("Ellipse");

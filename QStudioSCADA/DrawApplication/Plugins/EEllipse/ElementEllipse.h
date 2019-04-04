@@ -10,7 +10,7 @@ class ElementEllipse : public Element
 {
     Q_OBJECT
 public:
-    ElementEllipse();
+    ElementEllipse(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
     void updateElementProperty(uint id, const QVariant &value);

@@ -27,3 +27,11 @@ void PropertyTableView::init() {
     setItemDelegate(delegate);
 }
 
+void PropertyTableView::setPropertyKeyColumnWidth(int width) {
+    setColumnWidth(0, width);
+}
+
+
+void PropertyTableView::setPropertyValueColumnWidth(int width) {
+    setColumnWidth(1, width);
+}

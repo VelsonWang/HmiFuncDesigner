@@ -12,7 +12,7 @@ class ElementText : public Element
     Q_OBJECT
 
 public:
-    explicit ElementText();
+    explicit ElementText(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
     void updateElementProperty(uint id, const QVariant &value);

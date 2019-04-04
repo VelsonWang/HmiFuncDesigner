@@ -1,7 +1,8 @@
 ﻿#include "elementrect.h"
 #include <QtDebug>
 
-ElementRect::ElementRect()
+ElementRect::ElementRect(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("矩形");
     internalElementType = trUtf8("Rect");

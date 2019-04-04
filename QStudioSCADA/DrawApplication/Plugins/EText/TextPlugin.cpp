@@ -89,7 +89,7 @@ QString TextPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* TextPlugin::createElement()
+Element* TextPlugin::createElement(const QString &projPath)
 {
-    return new ElementText();
+    return new ElementText(projPath);
 }

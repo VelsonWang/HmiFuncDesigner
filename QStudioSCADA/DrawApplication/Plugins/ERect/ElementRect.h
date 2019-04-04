@@ -10,7 +10,7 @@ class ElementRect : public Element
 {
     Q_OBJECT
 public:
-    ElementRect();
+    ElementRect(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
     void updateElementProperty(uint id, const QVariant &value);

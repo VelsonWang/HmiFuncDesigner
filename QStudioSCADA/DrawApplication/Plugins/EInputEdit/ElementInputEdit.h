@@ -12,7 +12,7 @@ class ElementInputEdit : public Element
     Q_OBJECT
 
 public:
-    explicit ElementInputEdit();
+    explicit ElementInputEdit(const QString &projPath);
     void setClickPosition(QPointF);
     void updateBoundingElement();
     void updateElementProperty(uint id, const QVariant &value);

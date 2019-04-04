@@ -1,8 +1,14 @@
 ﻿#include "ElementPushButton.h"
 #include "PubTool.h"
-#include <QtDebug>
+#include "TagManager.h"
+#include "DrawListUtils.h"
+#include "Helper.h"
+#include "xmlobject.h"
+#include <QMessageBox>
+#include <QDebug>
 
-ElementPushButton::ElementPushButton()
+ElementPushButton::ElementPushButton(const QString &projPath) :
+    Element(projPath)
 {
     elementId = trUtf8("弹出按钮");
     internalElementType = trUtf8("PushButton");
@@ -17,6 +23,9 @@ ElementPushButton::ElementPushButton()
     borderWidth = 4;
     borderColor = QColor(112, 112, 112);
     elementText = trUtf8("弹出按钮");
+
+    TagManager::setProjectPath(projPath);
+    DrawListUtils::setProjectPath(projPath);
 
     createPropertyList();
     updatePropertyModel();
@@ -94,8 +103,11 @@ void ElementPushButton::createPropertyList() {
     angleProperty->setSettings(0,360);
     propList.insert(propList.end(),angleProperty);
 
+    QStringList listEvents;
+    getSupportEvents(listEvents);
     funcProperty = new FunctionProperty(trUtf8("功能操作"));
     funcProperty->setId(EL_FUNCTION);
+    funcProperty->setSupportEvents(listEvents);
     propList.insert(propList.end(), funcProperty);
 }
 
@@ -141,6 +153,7 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
         break;
     case EL_FUNCTION:
         funcs_ = value.toStringList();
+        qDebug() << funcs_;
         break;
     }
 
@@ -470,6 +483,50 @@ void ElementPushButton::readData(QDataStream &in) {
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
+
+void ElementPushButton::getSupportEvents(QStringList &listValue) {
+
+    QString xmlFileName = Helper::AppDir() + "/Config/ElementSupportEvents.xml";
+
+    QFile fileCfg(xmlFileName);
+    if(!fileCfg.exists()) {
+        QMessageBox::critical(0, tr("提示"), tr("事件配置列表文件不存在！"));
+        return;
+    }
+    if(!fileCfg.open(QFile::ReadOnly)) {
+        return;
+    }
+    QString buffer = fileCfg.readAll();
+    fileCfg.close();
+    XMLObject xmlFuncSupportList;
+    if(!xmlFuncSupportList.load(buffer, 0)) {
+        return;
+    }
+
+    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+
+    foreach(XMLObject* eventGroup, childrenFuncSupport) {
+        QString szEventGroupName = eventGroup->getProperty("name");
+        if(szEventGroupName == "PushButton") {
+
+            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
+            if(childrenGroup.size() < 1)
+                continue;
+
+            foreach(XMLObject* event, childrenGroup) {
+                QString eventName = event->getProperty("name");
+                QString eventShowName = event->getProperty("ShowName");
+                listValue << eventShowName;
+
+                QList<XMLObject*> funcDesc = event->getChildren();
+                if(funcDesc.size() < 1)
+                    continue;
+                QString strDesc = event->getCurrentChild("desc")->getText();
+            }
+        }
+    }
+}
+
 
 QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
 

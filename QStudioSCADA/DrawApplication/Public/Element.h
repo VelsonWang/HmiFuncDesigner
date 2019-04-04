@@ -12,6 +12,7 @@
 #include "textproperty.h"
 #include "integerproperty.h"
 #include "fileproperty.h"
+#include "listproperty.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 
@@ -19,6 +20,7 @@ class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
+    Element(const QString &projPath);
     virtual ~Element();
 
     void init();

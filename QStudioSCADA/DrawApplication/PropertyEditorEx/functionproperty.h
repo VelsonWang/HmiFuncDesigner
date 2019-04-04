@@ -12,6 +12,11 @@ public:
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &options, const QAbstractItemDelegate *delegate);
     bool setEditorData(QWidget *editor);
     QVariant getEditorData(QWidget *editor) const;
+
+    void setSupportEvents(QStringList events);
+
+private:
+    QStringList supportEvents_;
 };
 
 #endif // FUNCTIONPROPERTY_H
