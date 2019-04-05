@@ -1,7 +1,5 @@
 #include "ModbusASCII.h"
 
-
-
 ModbusASCII::ModbusASCII()
 {
 

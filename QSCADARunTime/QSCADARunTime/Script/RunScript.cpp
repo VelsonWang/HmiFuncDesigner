@@ -167,6 +167,7 @@ bool RunScript::loadScriptObjects()
         {}
         scriptFile.close();
     }
+	return true;
 }
 
 /**
@@ -181,6 +182,7 @@ bool RunScript::runOnStartScripts()
     {
         m_threadPool.start(new RunScriptTask(m_pScriptEngine, m_runOnStartList.at(i)));
     }
+	return true;
 }
 
 /**
@@ -198,6 +200,7 @@ bool RunScript::runOnPeriodScripts()
         connect(m_timerPeriod, SIGNAL(timeout()), this, SLOT(timeout()));
         m_timerPeriod->start(1);
     }
+	return true;
 }
 
 void RunScript::stopRunOnPeriodScripts()
@@ -269,4 +272,5 @@ bool RunScript::runOnConditionScripts(qint32 tagId)
             }
         }
     }
+	return true;
 }
