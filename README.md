@@ -10,7 +10,7 @@
 ### 2. 软件环境
 
 ​	**Qt5.10.1 + MinGW530_32**
-
+    **如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
 
 
 ### 3. QStudioSCADA软件编译	
