@@ -3,18 +3,24 @@
 #include <QPainter>
 #include <QtDebug>
 #include "property.h"
+#include "propertymodel.h"
 
 PropertyDelegate::PropertyDelegate(QObject *parent) :
-    QStyledItemDelegate(parent),rowHeight(0),addRowHeight(false)
+    QStyledItemDelegate(parent),
+    rowHeight(0),
+    addRowHeight(false)
 {
 }
 
-QWidget *PropertyDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const {
+QWidget *PropertyDelegate::createEditor(QWidget *parent,
+                                        const QStyleOptionViewItem &option,
+                                        const QModelIndex &index) const {
 
     QWidget *tmpWidget = NULL;
 
     if (index.isValid()) {
-        Property *tmpProperty = reinterpret_cast<Property*>(index.internalPointer());
+        const PropertyModel *pModel = dynamic_cast<const PropertyModel*>(index.model());
+        Property *tmpProperty = pModel->getProperty(index.row());
         tmpWidget = tmpProperty->createEditor(parent,option,this);
     }
 
@@ -26,7 +32,8 @@ void PropertyDelegate::setEditorData(QWidget *editor, const QModelIndex &index) 
     bool done = false;
 
     if (index.isValid() && editor) {
-        Property *tmpProperty = reinterpret_cast<Property*>(index.internalPointer());
+        const PropertyModel *pModel = dynamic_cast<const PropertyModel*>(index.model());
+        Property *tmpProperty = pModel->getProperty(index.row());
         done = tmpProperty->setEditorData(editor);
     }
 
@@ -40,25 +47,27 @@ void PropertyDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, 
     QVariant tmpData;
 
     if (index.isValid() && editor) {
-
-        Property *tmpProperty = reinterpret_cast<Property*>(index.internalPointer());
+        const PropertyModel *pModel = dynamic_cast<const PropertyModel*>(index.model());
+        Property *tmpProperty = pModel->getProperty(index.row());
         tmpData = tmpProperty->getEditorData(editor);
     }
 
     if (tmpData.isNull()) {
-
-        QStyledItemDelegate::setModelData(editor,model,index);
+        QStyledItemDelegate::setModelData(editor, model, index);
     }
     else {
-        model->setData(index,tmpData);
+        model->setData(index, tmpData);
     }
 }
 
 void PropertyDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
 
     bool done = false;
-    if(index.isValid() && index.column() == 1)
-        done = reinterpret_cast<Property*>(index.internalPointer())->paint(painter, option, index, this);
+    if(index.isValid() && index.column() == 1) {
+        const PropertyModel *pModel = dynamic_cast<const PropertyModel*>(index.model());
+        Property *tmpProperty = pModel->getProperty(index.row());
+        done = tmpProperty->paint(painter, option, index, this);
+    }
 
     if(!done)
         QStyledItemDelegate::paint(painter, option, index);

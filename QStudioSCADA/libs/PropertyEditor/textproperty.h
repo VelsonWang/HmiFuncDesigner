@@ -10,9 +10,11 @@ public:
 
     virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& options, const QAbstractItemDelegate* delegate);
     virtual QVariant getEditorData(QWidget* editor) const;
+    void setReadOnly(bool readOnly);
 
 protected:
     QString text;
+    bool readOnly_;
 };
 
 #endif // TEXTPROPERTY_H

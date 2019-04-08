@@ -40,6 +40,7 @@ void ElementPicture::createPropertyList() {
 
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
+    idProperty->setReadOnly(true);
     propList.insert(propList.end(),idProperty);
 
     titleProperty = new EmptyProperty(trUtf8("标题"));

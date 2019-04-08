@@ -39,13 +39,10 @@ bool PropertyModel::setData(const QModelIndex &index, const QVariant &value, int
     if (index.column() == 1 && tmpProperty) {
 
         bool tmpHasChanged = tmpProperty->setData(value,role);
-#if 0
         if (tmpHasChanged) {
             emit onDataChangedByEditor(tmpProperty);
         }
-#else
-        emit onDataChangedByEditor(tmpProperty);
-#endif
+
         emit dataChanged(index,index);
     }
 
@@ -77,16 +74,6 @@ QVariant PropertyModel::headerData(int section, Qt::Orientation orientation, int
     return QVariant();
 }
 
-QModelIndex PropertyModel::index(int row, int column, const QModelIndex &parent) const {
-
-    if (hasIndex(row,column,parent)) {
-        return createIndex(row,column,(void*)propsList[row]);
-    }
-    else {
-        return QModelIndex();
-    }
-}
-
 int PropertyModel::rowCount(const QModelIndex &parent) const {
 
     Q_UNUSED(parent)
@@ -101,15 +88,26 @@ int PropertyModel::columnCount(const QModelIndex &parent) const {
 
 Property *PropertyModel::getProperty(const QModelIndex &index) const {
 
-    if (index.isValid()) {
-        Property *prop = static_cast<Property*>(index.internalPointer());
-
+    if (index.isValid() && index.row() < propsList.count()) {
+        Property *prop = propsList[index.row()];
         if (prop) {
             return prop;
         }
     }
 
-    return NULL;
+    return nullptr;
+}
+
+Property *PropertyModel::getProperty(int row) const {
+
+    if (row < propsList.count()) {
+        Property *prop = propsList[row];
+        if (prop) {
+            return prop;
+        }
+    }
+
+    return nullptr;
 }
 
 void PropertyModel::resetModel() {

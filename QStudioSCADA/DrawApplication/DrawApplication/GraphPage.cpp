@@ -200,6 +200,7 @@ void GraphPage::createPropertyList() {
 
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(GRAPHPAGE_ID);
+    idProperty->setReadOnly(true);
     propList.insert(propList.end(),idProperty);
 
     titleProperty = new EmptyProperty(trUtf8("基本属性"));

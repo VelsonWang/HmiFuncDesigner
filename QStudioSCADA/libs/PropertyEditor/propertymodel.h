@@ -16,8 +16,8 @@ public:
     Qt::ItemFlags flags(const QModelIndex &index) const;
     int rowCount(const QModelIndex &parent) const;
     int columnCount(const QModelIndex &parent) const;
-    QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
     Property *getProperty(const QModelIndex &) const;
+    Property *getProperty(int row) const;
     void addProperty(Property *prop);
     void resetModel();
 
