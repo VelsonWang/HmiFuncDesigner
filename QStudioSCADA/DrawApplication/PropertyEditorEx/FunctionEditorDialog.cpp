@@ -14,7 +14,8 @@
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events) :
     QDialog(parent),
     ui(new Ui::FunctionEditorDialog),
-    supportEvents_(events)
+    supportEvents_(events),
+    iSelectedCurRow_(-1)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("功能操作编辑"));
@@ -401,12 +402,13 @@ void FunctionEditorDialog::clearProperty() {
 
 void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index) {
     Q_UNUSED(index)
+    iSelectedCurRow_ = ui->tableEventFunc->currentRow();
     clearProperty();
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
     if(pItem == nullptr)
         return;
-    QString szFuncNameOrg = pItem->text();
-    TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(pItem->row());
+    QString szFuncNameOrg = ui->tableEventFunc->item(iSelectedCurRow_, 0)->text();
+    TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
     if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
         ui->plainTextFuncDesc->setPlainText(pFuncObjItem->szDesc_);
         szSelectedFuncName_ = pFuncObjItem->szName_;
@@ -424,7 +426,8 @@ void FunctionEditorDialog::createPropertyList() {
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
     if(pItem == nullptr)
         return;
-    QString szFuncNameOrg = pItem->text();
+    QTableWidgetItem *pItemNeed = ui->tableEventFunc->item(pItem->row(), 0);
+    QString szFuncNameOrg = pItemNeed->text();
     TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(pItem->row());
     if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
 
@@ -440,6 +443,8 @@ void FunctionEditorDialog::createPropertyList() {
                 TextProperty *varProp = new TextProperty(pArgItem->name);
                 varProp->setId(EL_TEXT);
                 propList_.insert(propList_.end(), varProp);
+                if(pArgItem->value == "")
+                    pArgItem->value = "0";
             } else if(pArgItem->type == "TAGLIST") {
                 ListProperty *tagProp = new ListProperty(pArgItem->name);
                 tagProp->setId(EL_TAG);
@@ -447,12 +452,16 @@ void FunctionEditorDialog::createPropertyList() {
                 TagManager::getAllTagName(TagManager::getProjectPath(), varList);
                 tagProp->setList(varList);
                 propList_.insert(propList_.end(), tagProp);
+                if(pArgItem->value == "")
+                    pArgItem->value = varList.at(0);
             } else if(pArgItem->type == "GRAPHPAGELIST") {
                 ListProperty *graphProp = new ListProperty(pArgItem->name);
                 graphProp->setId(EL_GRAPHPAGE);
                 DrawListUtils::loadDrawList(DrawListUtils::getProjectPath());
                 graphProp->setList(DrawListUtils::drawList_);
                 propList_.insert(propList_.end(), graphProp);
+                if(pArgItem->value == "")
+                    pArgItem->value = DrawListUtils::drawList_.at(0);
             }
         }
     }
@@ -461,13 +470,7 @@ void FunctionEditorDialog::createPropertyList() {
 void FunctionEditorDialog::updateElementProperty(uint id, const QVariant &value) {
 
     TFuncObjectItem *pFuncObjItem;
-    int pos = 0;
-    for(pos=0; pos<selectFuncObjItemList_.count(); pos++) {
-        pFuncObjItem = selectFuncObjItemList_.at(pos);
-        if(pFuncObjItem->szName_ == szSelectedFuncName_) {
-            break;
-        }
-    }
+    pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
 
     foreach (Property *prop, propList_) {
         if(prop->getId() == id) {
@@ -482,12 +485,9 @@ void FunctionEditorDialog::updateElementProperty(uint id, const QVariant &value)
                 pFuncObjItem->szEvent_ = value.toString();
             }
 
-            QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
-            if(pItem == nullptr)
-                return;
             QString szFunc = pFuncObjItem->getFuncString();
-            ui->tableEventFunc->item(pItem->row(), 0)->setText(szFunc);
-            ui->tableEventFunc->item(pItem->row(), 1)->setText(pFuncObjItem->szEvent_);
+            ui->tableEventFunc->item(iSelectedCurRow_, 0)->setText(szFunc);
+            ui->tableEventFunc->item(iSelectedCurRow_, 1)->setText(pFuncObjItem->szEvent_);
             break;
         }
     }

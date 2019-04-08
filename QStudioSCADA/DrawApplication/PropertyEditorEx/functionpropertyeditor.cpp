@@ -35,6 +35,7 @@ FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
 void FunctionPropertyEditor::setFunctions(const QStringList &funcs) {
     if (funcs_ != funcs) {
         funcs_ = funcs;
+        textLabel_->setText(funcs.join("|"));
     }
 }
 

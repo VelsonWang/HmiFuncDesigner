@@ -172,6 +172,7 @@ private:
     PropertyTableView *propertyView_;
     PropertyModel *propertyModel_;
     QString szSelectedFuncName_;
+    int iSelectedCurRow_;
     QList<TFuncObjectItem *> funcObjItemList_;
     QList<TFuncObjectItem *> selectFuncObjItemList_;
     QList<QListWidget *> listWidgetList_;
