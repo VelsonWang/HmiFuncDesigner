@@ -434,6 +434,7 @@ void FunctionEditorDialog::createPropertyList() {
         ListProperty *propEvent = new ListProperty(tr("事件类型"));
         propEvent->setId(EL_EVENT);
         propEvent->setList(supportEvents_);
+        propEvent->setValue(pFuncObjItem->szEvent_);
         propList_.insert(propList_.end(), propEvent);
 
         EmptyProperty *funcNameProp = new EmptyProperty(pFuncObjItem->szName_);
@@ -445,6 +446,7 @@ void FunctionEditorDialog::createPropertyList() {
                 propList_.insert(propList_.end(), varProp);
                 if(pArgItem->value == "")
                     pArgItem->value = "0";
+                varProp->setValue(pArgItem->value);
             } else if(pArgItem->type == "TAGLIST") {
                 ListProperty *tagProp = new ListProperty(pArgItem->name);
                 tagProp->setId(EL_TAG);
@@ -454,6 +456,7 @@ void FunctionEditorDialog::createPropertyList() {
                 propList_.insert(propList_.end(), tagProp);
                 if(pArgItem->value == "")
                     pArgItem->value = varList.at(0);
+                tagProp->setValue(pArgItem->value);
             } else if(pArgItem->type == "GRAPHPAGELIST") {
                 ListProperty *graphProp = new ListProperty(pArgItem->name);
                 graphProp->setId(EL_GRAPHPAGE);
@@ -462,6 +465,7 @@ void FunctionEditorDialog::createPropertyList() {
                 propList_.insert(propList_.end(), graphProp);
                 if(pArgItem->value == "")
                     pArgItem->value = DrawListUtils::drawList_.at(0);
+                graphProp->setValue(pArgItem->value);
             }
         }
     }
