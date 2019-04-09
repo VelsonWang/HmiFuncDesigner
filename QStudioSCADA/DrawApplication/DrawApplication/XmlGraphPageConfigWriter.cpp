@@ -16,7 +16,7 @@ void XmlGraphPageConfigWriter::writeGraphPageConfig(QFile &file, GraphPage *grap
     writer.writeAttribute("width", QString::number(graphPage->getGraphPageWidth()));
     writer.writeAttribute("height", QString::number(graphPage->getGraphPageHeight()));
     writer.writeAttribute("background", graphPage->getGraphPageBackground().name());
-
+    writer.writeAttribute("functions", graphPage->getSelectedFunctions().join("|"));
     QListIterator <QGraphicsItem*> it(graphPage->items());
 
     while (it.hasNext()) {

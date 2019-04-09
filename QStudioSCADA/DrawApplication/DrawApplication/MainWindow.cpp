@@ -1,5 +1,6 @@
 ﻿#include "MainWindow.h"
 #include "Helper.h"
+#include "TagManager.h"
 #include "DrawListUtils.h"
 #include <QDesktopWidget>
 #include <QApplication>
@@ -43,6 +44,9 @@ MainWindow::MainWindow(const QString &projpath,
     this->resize(screenWidth*3/4, screenHeight*3/4);
 
     Helper::WidgetMoveCenter(this);
+
+    TagManager::setProjectPath(projpath);
+    DrawListUtils::setProjectPath(projpath);
 }
 
 

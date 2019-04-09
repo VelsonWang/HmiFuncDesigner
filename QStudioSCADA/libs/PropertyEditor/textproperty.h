@@ -10,6 +10,8 @@ public:
 
     virtual QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& options, const QAbstractItemDelegate* delegate);
     virtual QVariant getEditorData(QWidget* editor) const;
+    virtual QVariant data (int column = ColumnProperty, int role = Qt::DisplayRole);
+    virtual Qt::ItemFlags flags(int column = ColumnProperty);
     void setReadOnly(bool readOnly);
 
 protected:

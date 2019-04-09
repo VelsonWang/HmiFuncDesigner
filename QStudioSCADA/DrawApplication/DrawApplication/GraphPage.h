@@ -11,6 +11,7 @@
 #include <QMessageBox>
 #include <QClipboard>
 #include <QApplication>
+#include <QFile>
 #include "propertymodel.h"
 #include "emptyproperty.h"
 #include "textproperty.h"
@@ -19,7 +20,8 @@
 #include "enumproperty.h"
 #include "UndoCommand.h"
 #include "Element.h"
-#include <QFile>
+#include "functionproperty.h"
+
 
 class GraphPage : public QGraphicsScene
 {
@@ -42,6 +44,9 @@ public:
 
     void setGraphPageHeight(int);
     int getGraphPageHeight() const;
+
+    void setSelectedFunctions(QStringList funcs);
+    QStringList getSelectedFunctions();
 
     void setPropertyModel(PropertyModel *model);
     QUndoStack *undoStack() const;
@@ -71,8 +76,8 @@ public:
     void connectItem(Element *item);
     bool getUnsavedFlag();
 
-    friend QDataStream &operator<<(QDataStream &out, const GraphPage &GraphPage);
-    friend QDataStream &operator>>(QDataStream &in, GraphPage &GraphPage);
+    friend QDataStream &operator<<(QDataStream &out, GraphPage &page);
+    friend QDataStream &operator>>(QDataStream &in, GraphPage &page);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
@@ -105,6 +110,8 @@ private:
     void loadLibrary(QByteArray &data);
     void readLibraryConfig(QFile &file);
     void readLibraryTag(QXmlStreamReader &xml);
+
+    void getSupportEvents(QStringList &listValue);
 
 private slots:
     void slotGroupElements();
@@ -144,12 +151,13 @@ private:
     Element *currentItem;
     static const int gridSize = 20;
     static const int pasteOffset = 20;
-    QString GraphPageId;
-    QString GraphPagePriority;
+    QString graphPageId;
+    QString graphPagePriority;
     QString filename;
-    QColor GraphPageBackground;
-    int GraphPageWidth;
-    int GraphPageHeight;
+    QColor graphPageBackground;
+    int graphPageWidth;
+    int graphPageHeight;
+    QStringList funcs_;
 
     bool onActive;
     bool unsavedFlag;
@@ -165,6 +173,7 @@ private:
     ColorProperty *backgroundProperty;
     IntegerProperty *widthProperty;
     IntegerProperty *heightProperty;
+    FunctionProperty *funcProperty;
 
     QMenu contextMenu;
     QMenu contextServiceMenu;

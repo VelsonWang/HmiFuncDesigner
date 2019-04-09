@@ -9,7 +9,8 @@
 #include "ElementGroup.h"
 #include "IDrawApplicationPlugin.h"
 #include "PluginManager.h"
-
+#include "Helper.h"
+#include "xmlobject.h"
 
 /** Template algorithms*/
 template<template<typename T> class S, typename T>
@@ -34,8 +35,7 @@ T max(const S<T> &sequence)
     return maximum;
 }
 
-const QString MimeType = "rti/mnemodesigner";
-/** !!*/
+const QString MimeType = "rti/designer";
 
 
 GraphPage::GraphPage(const QRectF &rect, QObject *parent)
@@ -57,11 +57,11 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent)
 
     gridVisible = false;
 
-    GraphPageWidth = sceneRect().width();
-    GraphPageHeight = sceneRect().height();
-    GraphPagePriority.clear();
-    GraphPagePriority.append(trUtf8("主要的"));
-    GraphPageBackground = QColor(Qt::white);
+    graphPageWidth = sceneRect().width();
+    graphPageHeight = sceneRect().height();
+    graphPagePriority.clear();
+    graphPagePriority.append(trUtf8("主要的"));
+    graphPageBackground = QColor(Qt::white);
 
     m_undoStack = new QUndoStack(this);
     m_undoStack->setUndoLimit(20);
@@ -100,18 +100,17 @@ void GraphPage::setPropertyModel(PropertyModel *model) {
 void GraphPage::fillGridPixmap() {
 
     gridPixmap = QPixmap(QSize(sceneRect().width(), sceneRect().height()));
-    gridPixmap.fill(GraphPageBackground);
+    gridPixmap.fill(graphPageBackground);
 
     QPainter painter(&gridPixmap);
 
     const int maxX = static_cast<int>(std::ceil(width())/gridSize)*gridSize;
     const int maxY = static_cast<int>(std::ceil(height())/gridSize)*gridSize;
 
-    if (GraphPageBackground == Qt::black) {
+    if (graphPageBackground == Qt::black) {
         painter.setPen(Qt::white);
         painter.setBrush(Qt::NoBrush);
-    }
-    else {
+    } else {
         painter.setPen(Qt::black);
         painter.setBrush(Qt::NoBrush);
     }
@@ -132,7 +131,7 @@ void GraphPage::setGridVisible(bool on) {
     }
     else {
         gridPixmap = QPixmap(QSize(sceneRect().width(), sceneRect().height()));
-        gridPixmap.fill(GraphPageBackground);
+        gridPixmap.fill(graphPageBackground);
     }
 
     invalidate(sceneRect(), BackgroundLayer);
@@ -167,6 +166,9 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property) {
     case GRAPHPAGE_HEIGHT:
         setGraphPageHeight(property->getValue().toInt());
         break;
+    case EL_FUNCTION:
+        setSelectedFunctions(property->getValue().toStringList());
+        break;
     }
 
     fillGridPixmap();
@@ -182,10 +184,11 @@ void GraphPage::cleanPropertyModel() {
 
 void GraphPage::fillGraphPagePropertyModel() {
 
-    idProperty->setValue(GraphPageId);
-    backgroundProperty->setValue(GraphPageBackground);
-    widthProperty->setValue(GraphPageWidth);
-    heightProperty->setValue(GraphPageHeight);
+    idProperty->setValue(graphPageId);
+    backgroundProperty->setValue(graphPageBackground);
+    widthProperty->setValue(graphPageWidth);
+    heightProperty->setValue(graphPageHeight);
+    funcProperty->setValue(funcs_);
 
     propertyModel->resetModel();
 
@@ -206,7 +209,7 @@ void GraphPage::createPropertyList() {
     titleProperty = new EmptyProperty(trUtf8("基本属性"));
     propList.insert(propList.end(),titleProperty);
 
-    backgroundProperty = new ColorProperty(trUtf8("背景"));
+    backgroundProperty = new ColorProperty(trUtf8("背景颜色"));
     backgroundProperty->setId(GRAPHPAGE_BACKGROUND);
     propList.insert(propList.end(),backgroundProperty);
 
@@ -219,6 +222,13 @@ void GraphPage::createPropertyList() {
     heightProperty->setId(GRAPHPAGE_HEIGHT);
     heightProperty->setSettings(0, 5000);
     propList.insert(propList.end(), heightProperty);
+
+    QStringList listEvents;
+    getSupportEvents(listEvents);
+    funcProperty = new FunctionProperty(trUtf8("功能操作"));
+    funcProperty->setId(EL_FUNCTION);
+    funcProperty->setSupportEvents(listEvents);
+    propList.insert(propList.end(), funcProperty);
 }
 
 void GraphPage::createContextMenuActions() {
@@ -380,10 +390,11 @@ void GraphPage::slotSelectionChanged() {
         return;
     }
 
-    QListIterator <Property*> i(currentItem->getPropertyList());
+    currentItem->updatePropertyModel();
+    QListIterator<Property*> iter(currentItem->getPropertyList());
 
-    while (i.hasNext()) {
-        propertyModel->addProperty(i.next());
+    while (iter.hasNext()) {
+        propertyModel->addProperty(iter.next());
     }
 }
 
@@ -406,7 +417,7 @@ void GraphPage::drawBackground(QPainter *painter, const QRectF &rect) {
 
     painter->setRenderHints(QPainter::Antialiasing);
     painter->setPen(Qt::NoPen);
-    painter->setBrush(GraphPageBackground);
+    painter->setBrush(graphPageBackground);
     painter->drawRect(rect);
 
     if (gridVisible) {
@@ -429,39 +440,39 @@ QString GraphPage::getFileName() const {
 }
 
 void GraphPage::setGraphPageId(const QString &id) {
-    GraphPageId = id;
+    graphPageId = id;
     emit changeGraphPageName();
 }
 
 QString GraphPage::getGraphPageId() const {
-    return GraphPageId;
+    return graphPageId;
 }
 
 void GraphPage::setGraphPageBackground(const QColor &color) {
-    GraphPageBackground = color;
-    setBackgroundBrush(GraphPageBackground);
+    graphPageBackground = color;
+    setBackgroundBrush(graphPageBackground);
 }
 
 QColor GraphPage::getGraphPageBackground() const {
-    return GraphPageBackground;
+    return graphPageBackground;
 }
 
 int GraphPage::getGraphPageWidth() const {
-    return GraphPageWidth;
+    return graphPageWidth;
 }
 
 void GraphPage::setGraphPageWidth(int width) {
-    GraphPageWidth = width;
-    setSceneRect(0, 0, GraphPageWidth, GraphPageHeight);
+    graphPageWidth = width;
+    setSceneRect(0, 0, graphPageWidth, graphPageHeight);
 }
 
 int GraphPage::getGraphPageHeight() const {
-    return GraphPageHeight;
+    return graphPageHeight;
 }
 
 void GraphPage::setGraphPageHeight(int height) {
-    GraphPageHeight = height;
-    setSceneRect(0, 0, GraphPageWidth, GraphPageHeight);
+    graphPageHeight = height;
+    setSceneRect(0, 0, graphPageWidth, graphPageHeight);
 }
 
 void GraphPage::dragEnterEvent(QGraphicsSceneDragDropEvent *event) {
@@ -834,8 +845,8 @@ void GraphPage::saveAsBinary(const QString &filename) {
     QFile file(filename);
     QFileInfo fi(filename);
 
-    if (GraphPageId != fi.baseName()) {
-        QString newName = fi.absolutePath() + "/" + GraphPageId + ".drwb";
+    if (graphPageId != fi.baseName()) {
+        QString newName = fi.absolutePath() + "/" + graphPageId + ".drwb";
         file.rename(newName);
     }
 
@@ -885,8 +896,8 @@ void GraphPage::saveAsXML(const QString &filename) {
     QFile file(filename);
     QFileInfo fi(filename);
 
-    if (GraphPageId != fi.baseName()) {
-        QString newName = fi.absolutePath() + "/" + GraphPageId + ".drw";
+    if (graphPageId != fi.baseName()) {
+        QString newName = fi.absolutePath() + "/" + graphPageId + ".drw";
         file.rename(newName);
     }
 
@@ -996,6 +1007,11 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
 
     if (xml.attributes().hasAttribute("background")) {
         setGraphPageBackground(QColor(xml.attributes().value("background").toString()));
+    }
+
+    if (xml.attributes().hasAttribute("functions")) {
+        QString listString = xml.attributes().value("functions").toString();
+        setSelectedFunctions(listString.split('|'));
     }
 
     fillGridPixmap();
@@ -1131,18 +1147,82 @@ void GraphPage::setProjectPath(const QString &path) {
 }
 
 
-QDataStream &operator<<(QDataStream &out,const GraphPage &GraphPage) {
+/**
+ * @brief GraphPage::setSelectedFunctions
+ * @details 设置功能操作属性数据
+ * @param funcs
+ */
+void GraphPage::setSelectedFunctions(QStringList funcs) {
+    funcs_ = funcs;
+}
 
-    out << GraphPage.getFileName()
-        << GraphPage.getGraphPageId()
-        << GraphPage.getGraphPageBackground()
-        << GraphPage.getGraphPageHeight()
-        << GraphPage.getGraphPageWidth();
+
+/**
+ * @brief GraphPage::getSelectedFunctions
+ * @details 获取功能操作属性数据
+ * @param funcs
+ */
+QStringList GraphPage::getSelectedFunctions() {
+    return funcs_;
+}
+
+void GraphPage::getSupportEvents(QStringList &listValue) {
+
+    QString xmlFileName = Helper::AppDir() + "/Config/ElementSupportEvents.xml";
+
+    QFile fileCfg(xmlFileName);
+    if(!fileCfg.exists()) {
+        QMessageBox::critical(0, tr("提示"), tr("事件配置列表文件不存在！"));
+        return;
+    }
+    if(!fileCfg.open(QFile::ReadOnly)) {
+        return;
+    }
+    QString buffer = fileCfg.readAll();
+    fileCfg.close();
+    XMLObject xmlFuncSupportList;
+    if(!xmlFuncSupportList.load(buffer, 0)) {
+        return;
+    }
+
+    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+
+    foreach(XMLObject* eventGroup, childrenFuncSupport) {
+        QString szEventGroupName = eventGroup->getProperty("name");
+        if(szEventGroupName == "GraphPage") {
+
+            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
+            if(childrenGroup.size() < 1)
+                continue;
+
+            foreach(XMLObject* event, childrenGroup) {
+                QString eventName = event->getProperty("name");
+                QString eventShowName = event->getProperty("ShowName");
+                listValue << eventShowName;
+
+                QList<XMLObject*> funcDesc = event->getChildren();
+                if(funcDesc.size() < 1)
+                    continue;
+                QString strDesc = event->getCurrentChild("desc")->getText();
+            }
+        }
+    }
+}
+
+
+QDataStream &operator<<(QDataStream &out, GraphPage &page) {
+
+    out << page.getFileName()
+        << page.getGraphPageId()
+        << page.getGraphPageBackground()
+        << page.getGraphPageHeight()
+        << page.getGraphPageWidth()
+        << page.getSelectedFunctions();
 
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,GraphPage &GraphPage) {
+QDataStream &operator>>(QDataStream &in, GraphPage &page) {
 
     QString filename;
     QString id;
@@ -1150,19 +1230,22 @@ QDataStream &operator>>(QDataStream &in,GraphPage &GraphPage) {
     QColor backColor;
     int height;
     int width;
+    QStringList funcs;
 
     in >> filename
             >> id
             >> backColor
             >> height
-            >> width;
+            >> width
+            >> funcs;
 
-    GraphPage.setFileName(filename);
-    GraphPage.setGraphPageId(id);
-    GraphPage.setGraphPageWidth(width);
-    GraphPage.setGraphPageHeight(height);
-    GraphPage.setGraphPageBackground(backColor);
-    GraphPage.fillGridPixmap();
+    page.setFileName(filename);
+    page.setGraphPageId(id);
+    page.setGraphPageWidth(width);
+    page.setGraphPageHeight(height);
+    page.setGraphPageBackground(backColor);
+    page.setSelectedFunctions(funcs);
+    page.fillGridPixmap();
 
     return in;
 }

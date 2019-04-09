@@ -18,12 +18,16 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
+    LIBS += -L$$IDE_LIBRARY_PATH -lXmlUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+    LIBS += -L$$IDE_LIBRARY_PATH -lTagManagerd
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lHelper
+    LIBS += -L$$IDE_LIBRARY_PATH -lXmlUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+    LIBS += -L$$IDE_LIBRARY_PATH -lTagManager
 }
 
 
@@ -43,7 +47,10 @@ SOURCES += \
     ../Public/PubTool.cpp \
     ../Public/Element.cpp \
     ../Public/ElementGroup.cpp \
-    PluginManager.cpp
+    PluginManager.cpp \
+    ../PropertyEditorEx/FunctionEditorDialog.cpp \
+    ../PropertyEditorEx/functionproperty.cpp \
+    ../PropertyEditorEx/functionpropertyeditor.cpp
 
 HEADERS  += \
     GraphPage.h \
@@ -62,11 +69,15 @@ HEADERS  += \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../Public/Element.h \
     ../Public/ElementGroup.h \
-    PluginManager.h
+    PluginManager.h \
+    ../PropertyEditorEx/FunctionEditorDialog.h \
+    ../PropertyEditorEx/functionproperty.h \
+    ../PropertyEditorEx/functionpropertyeditor.h
 
 FORMS    += \
     ElementLibraryWidget.ui \
-    MainWindow.ui
+    MainWindow.ui \
+    ../PropertyEditorEx/FunctionEditorDialog.ui
 
 RESOURCES += \
     images.qrc
