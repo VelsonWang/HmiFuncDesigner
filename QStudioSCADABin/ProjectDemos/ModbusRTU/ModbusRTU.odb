@@ -1,0 +1,17 @@
+{
+    "bDynamicOptimization": false,
+    "fStopbit": "1",
+    "iBaudrate": "9600",
+    "iCtrlVar": "",
+    "iDatabit": "8",
+    "iFrameLen": "64",
+    "iFrameTimePeriod": "50",
+    "iRemotePort": "",
+    "iStateVar": "",
+    "iTimeout": "50",
+    "sDeviceName": "ModbusRTU",
+    "sLink": "主链路",
+    "sPortNumber": "COM0",
+    "sProtocol": "ModbusRTU",
+    "sVerifybit": "无校验"
+}

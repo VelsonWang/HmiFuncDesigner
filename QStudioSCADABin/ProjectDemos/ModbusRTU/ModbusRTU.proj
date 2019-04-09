@@ -1,0 +1,12 @@
+{
+    "bProjectEncrypt": false,
+    "sDataScanPeriod": "500",
+    "sDeviceType": "TPC(800*600)",
+    "sPageScanPeriod": "500",
+    "sProjectDescription": "demo1 project",
+    "sProjectName": "ModbusRTU",
+    "sProjectPath": "E:/JasonWang/QStudioSCADA/QStudioSCADABin/ProjectDemos/ModbusRTU",
+    "sStartPage": "None",
+    "sStationAddress": "192.168.1.10",
+    "sStationNumber": "0"
+}

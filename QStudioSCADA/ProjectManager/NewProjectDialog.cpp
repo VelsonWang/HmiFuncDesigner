@@ -144,7 +144,7 @@ void NewProjectDialog::on_btnOk_clicked()
 
         QString strProjPath =  ui->editProjectPath->text();
         QString strProjName = ui->editProjectName->text();
-        QString file = strProjPath + "/" + strProjName + "/" + strProjName + ".proj";
+        QString file = strProjPath + "/" + strProjName + ".proj";
         projectName_ = file;
         projMgr.saveToFile(strProjPath, strProjName, DATA_SAVE_FORMAT);
         QDialog::accept();

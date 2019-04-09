@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphPage fileName="draw1.drw" graphPageId="draw1" width="800" height="600" background="#ffffff" functions="">
+    <element internalType="Polygon" elementId="多边形" x="25" y="48" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0" points="45,45,150,75,200,150,"/>
+    <element internalType="Text" elementId="文本" x="59" y="274" z="0" width="127" height="29" elementtext="文本" textcolor="#000000" fontsize="10" elemAngle="0"/>
+    <element internalType="Ellipse" elementId="椭圆形" x="104" y="362" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0"/>
+    <element internalType="Line" elementId="直线" x="50" y="500" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0"/>
+    <element internalType="Rect" elementId="矩形" x="339" y="69" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0"/>
+    <element internalType="Arrow" elementId="箭头" x="345" y="236" z="0" width="70" height="70" background="#0000ff" borderWidth="2" elemAngle="0"/>
+    <element internalType="PushButton" elementId="弹出按钮" x="355" y="376" z="0" width="100" height="40" elementtext="弹出按钮" textcolor="#000000" fontsize="10" elemAngle="0" functions=""/>
+    <element internalType="InputEdit" elementId="输入编辑框" x="362" y="495" z="0" width="80" height="26" elementtext="输入编辑框" textcolor="#000000" fontsize="10" elemAngle="0"/>
+    <element internalType="Picture" elementId="图片" x="573" y="114" z="0" width="153" height="73" picture="" elemAngle="0"/>
+</graphPage>
