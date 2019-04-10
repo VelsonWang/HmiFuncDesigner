@@ -8,6 +8,7 @@ zvalue (using context menu on the scene)
 */
 
 Element::Element(const QString &projPath) :
+    elementId(""),
     strProjectPath_(projPath) {
 }
 
@@ -70,14 +71,6 @@ int Element::getElementYPos() const {
     return elementYPos;
 }
 
-void Element::setGraphPageLink(const QString &link) {
-    graphPageLink = link;
-}
-
-QString Element::getGraphPageLink() const {
-    return graphPageLink;
-}
-
 void Element::setElementZValue(int zval) {
     elementZValue = zval;
     setZValue(elementZValue);
@@ -122,10 +115,10 @@ void Element::init() {
 
     resizing = false;
 
-    elementWidth = 70;
-    elementHeight = 70;
+    elementWidth = 80;
+    elementHeight = 32;
     elementZValue = zValue();
-    backgroundColor = QColor(Qt::blue);
+    backgroundColor = QColor(Qt::white);
     signBackgroundColor = QColor(Qt::black);
     borderWidth = 2;
     borderColor = QColor(Qt::black);

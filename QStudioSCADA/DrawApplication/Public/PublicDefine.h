@@ -44,7 +44,8 @@ enum {
     EL_GRAPHPAGE = 21,
     EL_TAG = 22,
     EL_EVENT = 23,
-
+    EL_H_ALIGN = 24,
+    EL_V_ALIGN = 25,
 
     EL_PROPERTY_EMPTY = 255
 };

@@ -1,10 +1,13 @@
 ﻿#include "elementtext.h"
 #include <QtDebug>
 
+int ElementText::iLastIndex_ = 1;
+
 ElementText::ElementText(const QString &projPath) :
     Element(projPath)
 {
-    elementId = trUtf8("文本");
+    elementId = QString(tr("Text_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    iLastIndex_++;
     internalElementType = trUtf8("Text");
     elementIcon = QIcon(":/images/textitem.png");
 
@@ -71,6 +74,24 @@ void ElementText::createPropertyList() {
     elementTextProperty = new TextProperty(trUtf8("文本"));
     elementTextProperty->setId(EL_TEXT);
     propList.insert(propList.end(),elementTextProperty);
+
+    // 水平对齐
+    hAlignProperty_ = new ListProperty(tr("水平对齐"));
+    hAlignProperty_->setId(EL_H_ALIGN);
+    QStringList hAlignList;
+    hAlignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
+    hAlignProperty_->setList(hAlignList);
+    propList.insert(propList.end(), hAlignProperty_);
+
+    // 垂直对齐
+    vAlignProperty_ = new ListProperty(tr("水平对齐"));
+    vAlignProperty_->setId(EL_V_ALIGN);
+    QStringList vAlignList;
+    vAlignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
+    vAlignProperty_->setList(vAlignList);
+    propList.insert(propList.end(), vAlignProperty_);
+
+
 
     textColorProperty = new ColorProperty(trUtf8("颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
@@ -337,7 +358,12 @@ void ElementText::writeAsXml(QXmlStreamWriter &writer) {
 void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("elementId")) {
-        setElementId(attributes.value("elementId").toString());
+        QString szID = attributes.value("elementId").toString();
+        setElementId(szID);
+        int index = getIndexFromIDString(szID);
+        if(iLastIndex_ < index) {
+            iLastIndex_ = index;
+        }
     }
 
     if (attributes.hasAttribute("x")) {
@@ -423,6 +449,10 @@ void ElementText::readData(QDataStream &in) {
        >> angle;
 
     this->setElementId(id);
+    int index = getIndexFromIDString(id);
+    if(iLastIndex_ < index) {
+        iLastIndex_ = index;
+    }
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
@@ -434,6 +464,26 @@ void ElementText::readData(QDataStream &in) {
     this->setAngle(angle);
     this->updateBoundingElement();
     this->updatePropertyModel();
+}
+
+/**
+ * @brief ElementText::getIndexFromIDString
+ * @details 控件唯一标识字符串，形如："文本_0001"
+ * @param szID 控件唯一标识
+ * @return 分配的索引值
+ */
+int ElementText::getIndexFromIDString(const QString &szID) {
+    int pos = szID.indexOf("_");
+    if(pos > -1) {
+        QString szIndex = szID.right(4);
+        bool ok = false;
+        int iRet = szIndex.toInt(&ok);
+        if(!ok) {
+            return 0;
+        }
+        return iRet;
+    }
+    return 0;
 }
 
 QDataStream &operator<<(QDataStream &out,const ElementText &rect) {
@@ -476,6 +526,10 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
        >> angle;
 
     rect.setElementId(id);
+    int index = rect.getIndexFromIDString(id);
+    if(rect.iLastIndex_ < index) {
+        rect.iLastIndex_ = index;
+    }
     rect.setElementXPos(xpos);
     rect.setElementYPos(ypos);
     rect.setElementZValue(zvalue);

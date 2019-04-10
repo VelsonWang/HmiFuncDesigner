@@ -78,7 +78,6 @@ public:
 
 protected:
     QString elementId;
-    QString graphPageLink;
     QColor backgroundColor;
     QColor signBackgroundColor;
     QColor borderColor;

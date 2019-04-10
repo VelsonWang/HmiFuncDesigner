@@ -24,6 +24,9 @@ public:
     void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
+    // 获取分配的索引值
+    int getIndexFromIDString(const QString &szID);
+
     enum {Type = TextItemType};
 
     int type() const {
@@ -43,8 +46,18 @@ protected:
     QPainterPath shape() const;
 
 private:
-    QRectF elementRect;
     void drawText(QPainter *painter);
+
+private:
+    static int iLastIndex_;
+    QRectF elementRect;
+
+    // 水平对齐
+    QString *szHAlign_;
+    // 垂直对齐
+    QString *szVAlign_;
+
+
     TextProperty *idProperty;
     EmptyProperty *titleProperty;
     IntegerProperty *xCoordProperty;
@@ -53,6 +66,12 @@ private:
     IntegerProperty *widthProperty;
     IntegerProperty *heightProperty;
     TextProperty *elementTextProperty;
+    // 水平对齐
+    ListProperty *hAlignProperty_;
+    // 垂直对齐
+    ListProperty *vAlignProperty_;
+
+
     ColorProperty *textColorProperty;
     IntegerProperty *fontSizeProperty;
     IntegerProperty *angleProperty;
