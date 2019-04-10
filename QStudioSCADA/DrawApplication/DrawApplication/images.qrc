@@ -57,5 +57,6 @@
         <file>images/deviceeditor.png</file>
         <file>images/export.png</file>
         <file>images/indication.png</file>
+		<file>images/saveproject.png</file>
     </qresource>
 </RCC>

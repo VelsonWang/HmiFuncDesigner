@@ -44,11 +44,33 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="tabPosition">
-      <enum>QTabWidget::North</enum>
+      <enum>QTabWidget::South</enum>
      </property>
      <property name="currentIndex">
       <number>0</number>
      </property>
+     <widget class="QWidget" name="tabElements">
+      <attribute name="title">
+       <string>图形</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="layoutElements">
+       <property name="spacing">
+        <number>1</number>
+       </property>
+       <property name="leftMargin">
+        <number>1</number>
+       </property>
+       <property name="topMargin">
+        <number>1</number>
+       </property>
+       <property name="rightMargin">
+        <number>1</number>
+       </property>
+       <property name="bottomMargin">
+        <number>1</number>
+       </property>
+      </layout>
+     </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
        <string>图库</string>

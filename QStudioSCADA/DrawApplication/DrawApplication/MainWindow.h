@@ -69,7 +69,6 @@ private slots:
     void slotShowGraphObj(bool);
     void slotShowTreeObj(bool);
     void slotShowPropEditor(bool);
-    void slotShowProjTree(bool);
     void slotEditNew();
     void slotEditOpen();
     void slotSaveGraphPage();
@@ -91,7 +90,6 @@ private:
     QAction *actionShowGraphObj_;
     QAction *actionShowTreeObj_;
     QAction *actionShowPropEditor_;
-    QAction *actionShowProjTree_;
     QAction *actionNew_;
     QAction *actionOpen_;
     QAction *actionSaveGraphPage_;
@@ -109,7 +107,6 @@ private:
     QGraphicsView *currentView_;
 
     QTabWidget *graphPageTabWidget_;
-    GraphPageTreeView *grapePageTree_;
     ObjectsTreeView *objTree_;
     ElementLibraryWidget *elementWidget_;
     PropertyTableView *propertyView_;

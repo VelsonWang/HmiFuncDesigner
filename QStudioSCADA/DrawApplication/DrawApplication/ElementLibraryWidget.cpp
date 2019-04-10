@@ -1,8 +1,7 @@
 ﻿#include "ElementLibraryWidget.h"
 #include "configutils.h"
 #include "Helper.h"
-#include <QTabWidget>
-#include <QDebug>
+#include <QToolBox>
 
 ElementLibraryWidget::ElementLibraryWidget(QWidget *parent) :
     QWidget(parent)
@@ -13,14 +12,24 @@ ElementLibraryWidget::ElementLibraryWidget(QWidget *parent) :
     QString iniFileName = Helper::AppDir() + "/Config/DrawApplication.ini";
     QStringList sEleTypeList;
     ConfigUtils::getCfgList(iniFileName, "ElementTypeList", "list", sEleTypeList);
-    for (int i=0; i< sEleTypeList.count(); i++)
-    {
+    QToolBox *toolBox = new QToolBox(this);
+    for (int i=0; i< sEleTypeList.count(); i++) {
         QString nameTmp = sEleTypeList.at(i);
         QString name = QString(nameTmp.toLatin1());
+        QWidget *page = new QWidget();
+        QVBoxLayout *vLayout = new QVBoxLayout(page);
+        vLayout->setSpacing(2);
+        vLayout->setContentsMargins(1, 1, 1, 1);
+        vLayout->setObjectName(QStringLiteral("vLayout"));
+
         ElementSimpleListWidget *eleWidget = new ElementSimpleListWidget(name);
-        pTab->insertTab(i, eleWidget, name);
+        vLayout->addWidget(eleWidget);
+
+        toolBox->addItem(page, name);
         elementListWidget.append(eleWidget);
     }
+    toolBox->setCurrentIndex(0);
+    this->layoutElements->addWidget(toolBox);
     pTab->setCurrentIndex(0);
 
     libraryGridLayout->addWidget(&libraryListWidget);

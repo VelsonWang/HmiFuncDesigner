@@ -35,7 +35,6 @@ SOURCES += \
     main.cpp \
     GraphPage.cpp \
     GraphPageManager.cpp \
-    XmlGraphPageConfigWriter.cpp \
     UndoCommand.cpp \
     ElementLibraryWidget.cpp \
     ObjectsTreeView.cpp \
@@ -55,7 +54,6 @@ SOURCES += \
 HEADERS  += \
     GraphPage.h \
     GraphPageManager.h \
-    XmlGraphPageConfigWriter.h \
     UndoCommand.h \
     ElementLibraryWidget.h \
     ObjectsTreeView.h \

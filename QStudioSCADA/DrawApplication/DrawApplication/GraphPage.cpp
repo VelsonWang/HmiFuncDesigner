@@ -5,7 +5,6 @@
 #include <QFileInfo>
 #include <QDebug>
 #include <QFileDialog>
-#include "xmlGraphPageconfigwriter.h"
 #include "ElementGroup.h"
 #include "IDrawApplicationPlugin.h"
 #include "PluginManager.h"
@@ -909,8 +908,7 @@ void GraphPage::saveAsXML(const QString &filename) {
         return;
     }
 
-    XmlGraphPageConfigWriter writer;
-    writer.writeGraphPageConfig(file, this);
+    writeGraphPage(file, this);
 
     unsavedFlag = false;
     m_undoStack->setClean();
@@ -1121,8 +1119,7 @@ void GraphPage::slotSaveAsLibrary() {
         return;
     }
 
-    XmlGraphPageConfigWriter writer;
-    writer.writeLibraryConfig(file,this);
+    writeLibrary(file,this);
 
     file.close();
 }
@@ -1207,6 +1204,47 @@ void GraphPage::getSupportEvents(QStringList &listValue) {
             }
         }
     }
+}
+
+void GraphPage::writeGraphPage(QFile &file, GraphPage *graphPage) {
+
+    QXmlStreamWriter writer(&file);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("graphPage");
+    writer.writeAttribute("fileName", graphPage->getFileName());
+    writer.writeAttribute("graphPageId", graphPage->getGraphPageId());
+    writer.writeAttribute("width", QString::number(graphPage->getGraphPageWidth()));
+    writer.writeAttribute("height", QString::number(graphPage->getGraphPageHeight()));
+    writer.writeAttribute("background", graphPage->getGraphPageBackground().name());
+    writer.writeAttribute("functions", graphPage->getSelectedFunctions().join("|"));
+    QListIterator <QGraphicsItem*> it(graphPage->items());
+
+    while (it.hasNext()) {
+        Element *ele = static_cast<Element *>(it.next());
+        ele->writeAsXml(writer);
+    }
+
+    writer.writeEndElement();
+    writer.writeEndDocument();
+}
+
+void GraphPage::writeLibrary(QFile &file, GraphPage *graphPage) {
+
+    QXmlStreamWriter writer(&file);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("Library");
+
+    QListIterator <QGraphicsItem*> it(graphPage->selectedItems());
+
+    while (it.hasNext()) {
+        Element *ele = static_cast<Element *>(it.next());
+        ele->writeAsXml(writer);
+    }
+
+    writer.writeEndElement();
+    writer.writeEndDocument();
 }
 
 

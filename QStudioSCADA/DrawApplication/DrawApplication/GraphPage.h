@@ -113,6 +113,9 @@ private:
 
     void getSupportEvents(QStringList &listValue);
 
+    void writeGraphPage(QFile &file, GraphPage *graphPage);
+    void writeLibrary(QFile &file, GraphPage *graphPage);
+
 private slots:
     void slotGroupElements();
     void slotUngroupElements();
