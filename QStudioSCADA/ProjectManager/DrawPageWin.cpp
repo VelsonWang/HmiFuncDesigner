@@ -347,10 +347,7 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
         QProcess *process = new QProcess();
         QStringList argv;
         argv << m_ProjPath
-             << item->text()
-             << QString("open")
-             << 0
-             << 0;
+             << item->text();
         process->start(fileDrawApplication, argv);
     }
 }
