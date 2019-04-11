@@ -118,6 +118,12 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockProperty">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="windowTitle">
     <string>属性编辑</string>
    </property>

@@ -36,7 +36,11 @@ public:
 private:
     void ListViewUISetting();
     void ListViewUpdate();
-
+    // 创建空的画面页
+    void createEmptyGraphpage(const QString &projPath,
+                              const QString &graphPageName,
+                              int width,
+                              int height);
 
 
 protected:

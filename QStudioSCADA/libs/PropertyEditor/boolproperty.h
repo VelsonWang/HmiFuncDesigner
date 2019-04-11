@@ -10,10 +10,12 @@ public:
     virtual QVariant data (int column = ColumnProperty, int role = Qt::DisplayRole);
     virtual bool setData (const QVariant& data, int role = Qt::EditRole);
     virtual Qt::ItemFlags flags(int column = ColumnProperty);
+    void setTrueText(const QString &text);
+    void setFalseText(const QString &text);
 
 protected:
-    static QVariant trueText;
-    static QVariant falseText;
+    QVariant trueText;
+    QVariant falseText;
 };
 
 #endif // BOOLPROPERTY_H

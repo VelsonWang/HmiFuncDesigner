@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphPage fileName="draw2.drw" graphPageId="draw2" width="800" height="600" background="#ffffff" functions="">
+    <element internalType="Text" elementId="Text_0001" x="165" y="171" z="0" width="415" height="115" elementtext="test line mmm" halign="left" valign="top" backgroundColor="#55aa00" transparentBackground="false" textcolor="#ff0000" font="楷体,36,-1,5,50,0,0,0,0,0,Regular" borderWidth="6" borderColor="#5500ff" hideOnClick="false" showOnInitial="true" elemAngle="0"/>
+</graphPage>

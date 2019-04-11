@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graphPage fileName="draw1.drw" graphPageId="draw1" width="800" height="600" background="#ffffff" functions="">
     <element internalType="Polygon" elementId="多边形" x="25" y="48" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0" points="45,45,150,75,200,150,"/>
-    <element internalType="Text" elementId="文本" x="59" y="274" z="0" width="127" height="29" elementtext="文本" textcolor="#000000" fontsize="10" elemAngle="0"/>
+    <element internalType="Text" elementId="文本_0001" x="59" y="274" z="0" width="127" height="29" elementtext="文本" textcolor="#000000" fontsize="10" elemAngle="0"/>
     <element internalType="Ellipse" elementId="椭圆形" x="104" y="362" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0"/>
     <element internalType="Line" elementId="直线" x="50" y="500" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0"/>
     <element internalType="Rect" elementId="矩形" x="339" y="69" z="0" width="70" height="70" background="#0000ff" borderColor="#000000" borderWidth="2" elemAngle="0"/>

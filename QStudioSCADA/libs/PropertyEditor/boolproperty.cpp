@@ -1,8 +1,5 @@
 #include "boolproperty.h"
 
-QVariant BoolProperty::trueText;
-QVariant BoolProperty::falseText;
-
 BoolProperty::BoolProperty(const QString &name)
     : Property(name)
 {
@@ -33,11 +30,19 @@ bool BoolProperty::setData(const QVariant &data, int role)
     return false;
 }
 
-//! Returns item flags
+
 Qt::ItemFlags BoolProperty::flags(int column)
 {
     if(column == ColumnData)
         return Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable;
     else
         return Property::flags(column);
+}
+
+void BoolProperty::setTrueText(const QString &text) {
+    trueText = text;
+}
+
+void BoolProperty::setFalseText(const QString &text) {
+    falseText = text;
 }

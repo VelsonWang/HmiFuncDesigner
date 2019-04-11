@@ -56,7 +56,6 @@ private:
     ColorProperty *textColorProperty;
     IntegerProperty *fontSizeProperty;
     IntegerProperty *angleProperty;
-    BoolProperty *blockedProperty;
 
 };
 

@@ -87,42 +87,45 @@ void DrawPageWin::showSmallIcon()
     ui->listViewDrawPage->setIconSize(QSize(24, 24));
 }
 
+
+/**
+ * @brief DrawPageWin::createEmptyGraphpage
+ * @details 创建空的画面页
+ * @param projPath 工程路径
+ * @param graphPageName 画面名称
+ * @param width 画面宽度
+ * @param height 画面高度
+ */
+void DrawPageWin::createEmptyGraphpage(const QString &projPath,
+                                       const QString &graphPageName,
+                                       int width,
+                                       int height) {
+    QString fileName = projPath + "/" + graphPageName + ".drw";
+    QString szContent = QString("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" \
+                "<graphPage fileName=\"%1.drw\" graphPageId=\"%1\" width=\"%2\" height=\"%3\" background=\"#ffffff\">\n" \
+                "</graphPage>")
+            .arg(graphPageName)
+            .arg(QString::number(width))
+            .arg(QString::number(height));
+
+    Helper::writeString(fileName, szContent);
+}
+
 /*
 * 新建画面
 */
 void DrawPageWin::NewDrawPage()
 {
-    int last = 0;
-    last = DrawListUtils::getMaxDrawPageNum("draw");
-    QString strDrawPageName = QString("draw%1").arg(last);
+    int last = DrawListUtils::getMaxDrawPageNum("draw");
+    QString szGraphPageName = QString("draw%1").arg(last);
 
-    QString fileDrawApplication = "";
-#ifdef Q_OS_WIN
-    fileDrawApplication = Helper::AppDir() + "/DrawApplication.exe";
-#elif Q_OS_LINUX
-    fileDrawApplication = Helper::AppDir() + "/DrawApplication";
-#else
+    ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
+    projMgr.loadFromFile(DATA_SAVE_FORMAT, m_strProjectName);
+    int width = projMgr.getGraphPageWidth();
+    int height = projMgr.getGraphPageHeight();
 
-#endif
-    QFile file(fileDrawApplication);
-    if(file.exists())
-    {
-        QProcess *process = new QProcess();
-        QStringList argv;
-        QString strGraphPageName = strDrawPageName;
-        ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
-        projMgr.loadFromFile(DATA_SAVE_FORMAT, m_strProjectName);
-        int width = projMgr.getGraphPageWidth();
-        int height = projMgr.getGraphPageHeight();
-        argv << m_ProjPath
-             << strGraphPageName
-             << QString("new")
-             << QString::number(width)
-             << QString::number(height);
-        process->start(fileDrawApplication, argv);
-    }
-
-    DrawListUtils::drawList_.append(strDrawPageName);
+    createEmptyGraphpage(m_ProjPath, szGraphPageName, width, height);
+    DrawListUtils::drawList_.append(szGraphPageName);
     setModifiedFlag(true);
     save();
     ListViewUpdate();

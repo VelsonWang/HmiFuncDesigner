@@ -46,6 +46,12 @@ enum {
     EL_EVENT = 23,
     EL_H_ALIGN = 24,
     EL_V_ALIGN = 25,
+    EL_TRANSPARENT_BACKGROUND = 26,
+    EL_FONT = 27,
+    EL_HIDE_ON_CLICK = 28,
+    EL_SHOW_ON_INITIAL = 29,
+
+
 
     EL_PROPERTY_EMPTY = 255
 };

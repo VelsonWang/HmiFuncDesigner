@@ -1,4 +1,5 @@
 <?xml version='1.0'?>
 <List>
-    <DRAW name="draw1" type="DRAW"/>
+    <DRAW type="DRAW" name="draw1"/>
+    <DRAW type="DRAW" name="draw2"/>
 </List>

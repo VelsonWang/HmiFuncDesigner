@@ -74,7 +74,6 @@ void ColorPropertyEditor::onToolButtonClicked()
     QRgb oldRgba = Color.rgba();
     QRgb newRgba = QColorDialog::getRgba(oldRgba, &ok, this);
     if (ok && newRgba != oldRgba) {
-        qDebug() << "OKCOLOR";
         setColor(QColor::fromRgba(newRgba));
         emit dataChangedByUser(Color, this);
     }

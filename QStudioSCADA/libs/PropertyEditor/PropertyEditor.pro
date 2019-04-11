@@ -20,7 +20,9 @@ HEADERS += \
     $$PWD/enumproperty.h \
     $$PWD/fileproperty.h \
     $$PWD/filepropertyeditor.h \
-    $$PWD/listproperty.h
+    $$PWD/listproperty.h \
+    $$PWD/fontproperty.h \
+    $$PWD/fontpropertyeditor.h
 
 SOURCES += \
     $$PWD/boolproperty.cpp \
@@ -37,7 +39,9 @@ SOURCES += \
     $$PWD/enumproperty.cpp \
     $$PWD/fileproperty.cpp \
     $$PWD/filepropertyeditor.cpp \
-    $$PWD/listproperty.cpp
+    $$PWD/listproperty.cpp \
+    $$PWD/fontproperty.cpp \
+    $$PWD/fontpropertyeditor.cpp
 
 FORMS +=
 

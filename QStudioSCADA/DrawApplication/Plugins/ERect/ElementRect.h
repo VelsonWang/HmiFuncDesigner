@@ -53,7 +53,6 @@ private:
     ColorProperty *borderColorProperty;
     IntegerProperty *borderWidthProperty;
     IntegerProperty *angleProperty;
-    BoolProperty *blockedProperty;
 
 };
 

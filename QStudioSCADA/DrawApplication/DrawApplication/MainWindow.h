@@ -25,11 +25,6 @@ public:
     ~MainWindow();
 
     bool isGridVisible() const;
-    // 创建和保存画面
-    void addAndSaveGraphPage(const QString &pagePath,
-                             const QString &pageName,
-                             int width,
-                             int height);
     // 打开画面
     void openGraphPage(const QString &pagePath, const QString &pageName);
 

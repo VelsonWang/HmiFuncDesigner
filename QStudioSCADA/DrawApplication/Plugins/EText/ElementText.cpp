@@ -1,4 +1,5 @@
 ﻿#include "elementtext.h"
+#include "PubTool.h"
 #include <QtDebug>
 
 int ElementText::iLastIndex_ = 1;
@@ -10,6 +11,14 @@ ElementText::ElementText(const QString &projPath) :
     iLastIndex_++;
     internalElementType = trUtf8("Text");
     elementIcon = QIcon(":/images/textitem.png");
+    szHAlign_ = tr("左对齐");
+    szVAlign_ = tr("居中对齐");
+    backgroundColor_ = Qt::white;
+    transparentBackground_ = true;
+    borderWidth_ = 0;;
+    borderColor_ = Qt::black;
+    hideOnClick_ = false;
+    showOnInitial_ = true;
 
     init();
     createPropertyList();
@@ -17,9 +26,7 @@ ElementText::ElementText(const QString &projPath) :
 }
 
 QRectF ElementText::boundingRect() const {
-
     qreal extra = 5;
-
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra,-extra,extra,extra);
 }
@@ -27,12 +34,10 @@ QRectF ElementText::boundingRect() const {
 QPainterPath ElementText::shape() const {
     QPainterPath path;
     path.addRect(elementRect);
-
     if (isSelected()) {
         path.addRect(QRectF(elementRect.topLeft() - QPointF(3,3),elementRect.topLeft() + QPointF(3,3)));
         path.addRect(QRectF(elementRect.bottomRight() - QPointF(3,3),elementRect.bottomRight() + QPointF(3,3)));
     }
-
     return path;
 }
 
@@ -41,35 +46,35 @@ void ElementText::createPropertyList() {
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
-    propList.insert(propList.end(),idProperty);
+    propList.insert(propList.end(), idProperty);
 
     titleProperty = new EmptyProperty(trUtf8("标题"));
-    propList.insert(propList.end(),titleProperty);
+    propList.insert(propList.end(), titleProperty);
 
     xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0,5000);
+    xCoordProperty->setSettings(0, 5000);
     xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(),xCoordProperty);
+    propList.insert(propList.end(), xCoordProperty);
 
     yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
     yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
-    propList.insert(propList.end(),yCoordProperty);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
 
     zValueProperty = new IntegerProperty(trUtf8("Z 值"));
     zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000,1000);
-    propList.insert(propList.end(),zValueProperty);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
 
     widthProperty = new IntegerProperty(trUtf8("宽度"));
     widthProperty->setId(EL_WIDTH);
-    widthProperty->setSettings(0,5000);
-    propList.insert(propList.end(),widthProperty);
+    widthProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty);
 
     heightProperty = new IntegerProperty(trUtf8("高度"));
     heightProperty->setId(EL_HEIGHT);
-    heightProperty->setSettings(0,5000);
-    propList.insert(propList.end(),heightProperty);
+    heightProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty);
 
     elementTextProperty = new TextProperty(trUtf8("文本"));
     elementTextProperty->setId(EL_TEXT);
@@ -91,20 +96,64 @@ void ElementText::createPropertyList() {
     vAlignProperty_->setList(vAlignList);
     propList.insert(propList.end(), vAlignProperty_);
 
+    // 背景颜色
+    backgroundColorProperty_ = new ColorProperty(tr("背景颜色"));
+    backgroundColorProperty_->setId(EL_BACKGROUND);
+    backgroundColorProperty_->setValue(backgroundColor_);
+    propList.insert(propList.end(), backgroundColorProperty_);
 
+    // 透明背景颜色
+    transparentBackgroundProperty_ = new BoolProperty(tr("透明背景颜色"));
+    transparentBackgroundProperty_->setId(EL_TRANSPARENT_BACKGROUND);
+    transparentBackgroundProperty_->setTrueText(tr("透明"));
+    transparentBackgroundProperty_->setFalseText(tr("不透明"));
+    transparentBackgroundProperty_->setValue(transparentBackground_);
+    propList.insert(propList.end(), transparentBackgroundProperty_);
 
-    textColorProperty = new ColorProperty(trUtf8("颜色"));
+    // 字体
+    fontProperty_ = new FontProperty(tr("字体"));
+    fontProperty_->setId(EL_FONT);
+    fontProperty_->setValue(QFont("Arial Black", 12));
+    propList.insert(propList.end(), fontProperty_);
+
+    // 文本颜色
+    textColorProperty = new ColorProperty(trUtf8("文本颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
     propList.insert(propList.end(),textColorProperty);
 
-    fontSizeProperty = new IntegerProperty(trUtf8("字体"));
-    fontSizeProperty->setId(EL_FONT_SIZE);
-    fontSizeProperty->setSettings(8,72);
-    propList.insert(propList.end(),fontSizeProperty);
+    // 边框宽度
+    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
+    borderWidthProperty_->setId(EL_BORDER_WIDTH);
+    borderWidthProperty_->setSettings(0, 1000);
+    borderWidthProperty_->setValue(borderWidth_);
+    propList.insert(propList.end(), borderWidthProperty_);
 
+    // 边框颜色
+    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
+    borderColorProperty_->setId(EL_BORDER_COLOR);
+    borderColorProperty_->setValue(borderColor_);
+    propList.insert(propList.end(), borderColorProperty_);
+
+    // 点击隐藏
+    hideOnClickProperty_ = new BoolProperty(tr("点击隐藏"));
+    hideOnClickProperty_->setId(EL_HIDE_ON_CLICK);
+    hideOnClickProperty_->setTrueText(tr("是"));
+    hideOnClickProperty_->setFalseText(tr("否"));
+    hideOnClickProperty_->setValue(hideOnClick_);
+    propList.insert(propList.end(), hideOnClickProperty_);
+
+    // 初始可见性
+    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
+    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
+    showOnInitialProperty_->setTrueText(tr("显示"));
+    showOnInitialProperty_->setFalseText(tr("不显示"));
+    showOnInitialProperty_->setValue(showOnInitial_);
+    propList.insert(propList.end(), showOnInitialProperty_);
+
+    // 旋转角度
     angleProperty = new IntegerProperty(trUtf8("角度"));
     angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0,360);
+    angleProperty->setSettings(0, 360);
     propList.insert(propList.end(),angleProperty);
 }
 
@@ -135,14 +184,38 @@ void ElementText::updateElementProperty(uint id, const QVariant &value) {
         elementHeight = value.toInt();
         updateBoundingElement();
         break;
+    case EL_TEXT:
+        elementText = value.toString();
+        break;
+    case EL_H_ALIGN:
+        szHAlign_ = value.toString();
+        break;
+    case EL_V_ALIGN:
+        szVAlign_ = value.toString();
+        break;
+    case EL_BACKGROUND:
+        backgroundColor_ = value.value<QColor>();
+        break;
+    case EL_TRANSPARENT_BACKGROUND:
+        transparentBackground_ = value.toBool();
+        break;
+    case EL_FONT:
+        font_ = value.value<QFont>();
+        break;
     case EL_FONT_COLOR:
         textColor = value.value<QColor>();
         break;
-    case EL_FONT_SIZE:
-        fontSize = value.toInt();
+    case EL_BORDER_WIDTH:
+        borderWidth_ = value.toInt();
         break;
-    case EL_TEXT:
-        elementText = value.toString();
+    case EL_BORDER_COLOR:
+        borderColor_ = value.value<QColor>();
+        break;
+    case EL_HIDE_ON_CLICK:
+        hideOnClick_ = value.toBool();
+        break;
+    case EL_SHOW_ON_INITIAL:
+        showOnInitial_ = value.toBool();
         break;
     case EL_ANGLE:
         elemAngle = value.toInt();
@@ -162,20 +235,26 @@ void ElementText::updatePropertyModel() {
     zValueProperty->setValue(elementZValue);
     widthProperty->setValue(elementWidth);
     heightProperty->setValue(elementHeight);
+    hAlignProperty_->setValue(szHAlign_);
+    vAlignProperty_->setValue(szVAlign_);
+    backgroundColorProperty_->setValue(backgroundColor_);
+    transparentBackgroundProperty_->setValue(transparentBackground_);
+    fontProperty_->setValue(font_);
     textColorProperty->setValue(textColor);
-    fontSizeProperty->setValue(fontSize);
     elementTextProperty->setValue(elementText);
+    borderWidthProperty_->setValue(borderWidth_);
+    borderColorProperty_->setValue(borderColor_);
+    hideOnClickProperty_->setValue(hideOnClick_);
+    showOnInitialProperty_->setValue(showOnInitial_);
     angleProperty->setValue(elemAngle);
 }
 
 void ElementText::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
     setX(elementXPos);
     setY(elementYPos);
-
     elementRect.setRect(0,0,elementWidth,elementHeight);
     updatePropertyModel();
 }
@@ -185,16 +264,30 @@ void ElementText::updateBoundingElement() {
 }
 
 void ElementText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
 
+    // 背景色不透明显示
+    if(!transparentBackground_) {
+        QBrush brush(backgroundColor_);
+        painter->fillRect(elementRect, brush);
+    }
+
+    // 绘制文本
     drawText(painter);
 
-    if (isSelected()) {
+    // 绘制边框
+    if(borderWidth_ > 0) {
+        QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+        for(int i=0; i<borderWidth_; i++) {
+            PubTool::DrawFrameRect(painter, rect, borderColor_);
+            rect.adjust(1, 1, -1, -1);
+        }
+    }
 
+    if (isSelected()) {
         painter->setPen(QPen(borderColor));
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(boundingRect());
@@ -208,16 +301,32 @@ void ElementText::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 }
 
 void ElementText::drawText(QPainter *painter) {
-
     painter->setPen(textColor);
     painter->setBrush(Qt::NoBrush);
+    painter->setFont(font_);
 
-    QFont font = painter->font();
-    font.setFamily("Arial Black");
-    font.setPointSize(fontSize);
+    int hFlags = Qt::AlignLeft;
+    if(szHAlign_ == tr("左对齐")) {
+        hFlags = Qt::AlignLeft;
+    } else if(szHAlign_ == tr("居中对齐")) {
+        hFlags = Qt::AlignHCenter;
+    } else if(szHAlign_ == tr("右对齐")) {
+        hFlags = Qt::AlignRight;
+    }
 
-    painter->setFont(font);
-    painter->drawText(boundingRect(),Qt::AlignCenter,elementText);
+    int vFlags = Qt::AlignVCenter;
+    if(szVAlign_ == tr("上对齐")) {
+        vFlags = Qt::AlignTop;
+    } else if(szVAlign_ == tr("居中对齐")) {
+        vFlags = Qt::AlignVCenter;
+    } else if(szVAlign_ == tr("下对齐")) {
+        vFlags = Qt::AlignBottom;
+    }
+
+    QRectF rect(elementRect.toRect());
+    QRectF textRect = rect.normalized().adjusted(borderWidth_, borderWidth_, -borderWidth_, -borderWidth_);
+
+    painter->drawText(textRect, hFlags|vFlags, elementText);
 }
 
 void ElementText::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -341,17 +450,25 @@ void ElementText::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 void ElementText::writeAsXml(QXmlStreamWriter &writer) {
 
     writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("elementtext",elementText);
-    writer.writeAttribute("textcolor",textColor.name());
-    writer.writeAttribute("fontsize",QString::number(fontSize));
-    writer.writeAttribute("elemAngle",QString::number(elemAngle));
+    writer.writeAttribute("internalType", internalElementType);
+    writer.writeAttribute("elementId", elementId);
+    writer.writeAttribute("x", QString::number(x()));
+    writer.writeAttribute("y", QString::number(y()));
+    writer.writeAttribute("z", QString::number(zValue()));
+    writer.writeAttribute("width", QString::number(elementWidth));
+    writer.writeAttribute("height", QString::number(elementHeight));
+    writer.writeAttribute("elementtext", elementText);
+    writer.writeAttribute("halign", getHAlignString());
+    writer.writeAttribute("valign", getVAlignString());
+    writer.writeAttribute("backgroundColor", backgroundColor_.name());
+    writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
+    writer.writeAttribute("textcolor", textColor.name());
+    writer.writeAttribute("font", font_.toString());
+    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
+    writer.writeAttribute("borderColor", borderColor_.name());
+    writer.writeAttribute("hideOnClick", hideOnClick_?"true":"false");
+    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
+    writer.writeAttribute("elemAngle", QString::number(elemAngle));
     writer.writeEndElement();
 }
 
@@ -390,20 +507,63 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
         elementText = attributes.value("elementtext").toString();
     }
 
+    if (attributes.hasAttribute("halign")) {
+        QString align = attributes.value("halign").toString();
+        this->setHAlignString(align);
+    }
+
+    if (attributes.hasAttribute("valign")) {
+        QString align = attributes.value("valign").toString();
+        this->setVAlignString(align);
+    }
+
+    if (attributes.hasAttribute("backgroundColor")) {
+        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
+    }
+
+    if (attributes.hasAttribute("transparentBackground")) {
+        QString value = attributes.value("transparentBackground").toString();
+        transparentBackground_ = false;
+        if(value == "true") {
+            transparentBackground_ = true;
+        }
+    }
+
     if (attributes.hasAttribute("textcolor")) {
         textColor = QColor(attributes.value("textcolor").toString());
     }
 
-    if (attributes.hasAttribute("fontsize")) {
-        fontSize = attributes.value("fontsize").toString().toInt();
+    if (attributes.hasAttribute("font")) {
+        QString szFont = attributes.value("font").toString();
+        font_.fromString(szFont);
+    }
+
+    if (attributes.hasAttribute("borderWidth")) {
+        borderWidth_ = attributes.value("borderWidth").toInt();
+    }
+
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
+    }
+
+    if (attributes.hasAttribute("hideOnClick")) {
+        QString value = attributes.value("hideOnClick").toString();
+        hideOnClick_ = false;
+        if(value == "true") {
+            hideOnClick_ = true;
+        }
+    }
+
+    if (attributes.hasAttribute("showOnInitial")) {
+        QString value = attributes.value("showOnInitial").toString();
+        showOnInitial_ = false;
+        if(value == "true") {
+            showOnInitial_ = true;
+        }
     }
 
     if (attributes.hasAttribute("elemAngle")) {
         setAngle(attributes.value("elemAngle").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("block")) {
-        setBlocked(attributes.value("block").toString().toInt());
     }
 
     updateBoundingElement();
@@ -419,8 +579,16 @@ void ElementText::writeData(QDataStream &out) {
         << this->elementWidth
         << this->elementHeight
         << this->elementText
+        << this->getHAlignString()
+        << this->getVAlignString()
+        << this->backgroundColor_
+        << this->transparentBackground_
         << this->textColor
-        << this->fontSize
+        << this->font_.toString()
+        << this->borderWidth_
+        << this->borderColor_
+        << this->hideOnClick_
+        << this->showOnInitial_
         << this->elemAngle;
 }
 
@@ -433,8 +601,16 @@ void ElementText::readData(QDataStream &in) {
     int width;
     int height;
     QString text;
+    QString hAlign;
+    QString vAlign;
+    QColor backgroundColor;
+    bool transparentBackground;
     QColor textColor;
-    int fontSize;
+    QString font;
+    int borderWidth;
+    QColor borderColor;
+    bool hideOnClick;
+    bool showOnInitial;
     qreal angle;
 
     in >> id
@@ -444,8 +620,16 @@ void ElementText::readData(QDataStream &in) {
        >> width
        >> height
        >> text
+       >> hAlign
+       >> vAlign
+       >> backgroundColor
+       >> transparentBackground
        >> textColor
-       >> fontSize
+       >> font
+       >> borderWidth
+       >> borderColor
+       >> hideOnClick
+       >> showOnInitial
        >> angle;
 
     this->setElementId(id);
@@ -459,8 +643,16 @@ void ElementText::readData(QDataStream &in) {
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->elementText = text;
+    this->setHAlignString(hAlign);
+    this->setVAlignString(vAlign);
+    this->backgroundColor_ = backgroundColor;
+    this->transparentBackground_ = transparentBackground;
     this->textColor = textColor;
-    this->fontSize = fontSize;
+    this->font_ = font;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
+    this->hideOnClick_ = hideOnClick;
+    this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
     this->updatePropertyModel();
@@ -486,6 +678,69 @@ int ElementText::getIndexFromIDString(const QString &szID) {
     return 0;
 }
 
+/**
+ * @brief ElementText::getHAlignString
+ * @return 水平方向对齐方式
+ */
+QString ElementText::getHAlignString() const {
+    if(szHAlign_ == tr("左对齐")) {
+        return QString("left");
+    } else if(szHAlign_ == tr("居中对齐")) {
+        return QString("center");
+    } else if(szHAlign_ == tr("右对齐")) {
+        return QString("right");
+    }
+    return QString("");
+}
+
+
+/**
+ * @brief ElementText::setHAlignString
+ * @details 设置水平方向对齐方式
+ * @param szAlign 水平方向对齐方式
+ */
+void ElementText::setHAlignString(const QString& szAlign) {
+    if(szAlign == QString("left")) {
+        szHAlign_ = tr("左对齐");
+    } else if(szAlign == QString("center")) {
+        szHAlign_ = tr("居中对齐");
+    } else if(szAlign == QString("right")) {
+        szHAlign_ = tr("右对齐");
+    }
+}
+
+
+/**
+ * @brief ElementText::getVAlignString
+ * @return 垂直方向对齐方式
+ */
+QString ElementText::getVAlignString() const {
+    if(szVAlign_ == tr("上对齐")) {
+        return QString("top");
+    } else if(szVAlign_ == tr("居中对齐")) {
+        return QString("center");
+    } else if(szVAlign_ == tr("下对齐")) {
+        return QString("bottom");
+    }
+    return QString("");
+}
+
+/**
+ * @brief ElementText::setVAlignString
+ * @details 设置垂直方向对齐方式
+ * @param szAlign 垂直方向对齐方式
+ */
+void ElementText::setVAlignString(const QString& szAlign) {
+    if(szAlign == QString("top")) {
+        szVAlign_ = tr("上对齐");
+    } else if(szAlign == QString("center")) {
+        szVAlign_ = tr("居中对齐");
+    } else if(szAlign == QString("bottom")) {
+        szVAlign_ = tr("下对齐");
+    }
+}
+
+
 QDataStream &operator<<(QDataStream &out,const ElementText &rect) {
 
     out << rect.elementId
@@ -495,8 +750,16 @@ QDataStream &operator<<(QDataStream &out,const ElementText &rect) {
         << rect.elementWidth
         << rect.elementHeight
         << rect.elementText
+        << rect.getHAlignString()
+        << rect.getVAlignString()
+        << rect.backgroundColor_
+        << rect.transparentBackground_
         << rect.textColor
-        << rect.fontSize
+        << rect.font_
+        << rect.borderWidth_
+        << rect.borderColor_
+        << rect.hideOnClick_
+        << rect.showOnInitial_
         << rect.elemAngle;
     return out;
 }
@@ -510,8 +773,16 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
     int width;
     int height;
     QString text;
+    QString hAlign;
+    QString vAlign;
+    QColor backgroundColor;
+    bool transparentBackground;
     QColor textColor;
-    int fontSize;
+    QString font;
+    int borderWidth;
+    QColor borderColor;
+    bool hideOnClick;
+    bool showOnInitial;
     qreal angle;
 
     in >> id
@@ -521,8 +792,16 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
        >> width
        >> height
        >> text
+       >> hAlign
+       >> vAlign
+       >> backgroundColor
+       >> transparentBackground
        >> textColor
-       >> fontSize
+       >> font
+       >> borderWidth
+       >> borderColor
+       >> hideOnClick
+       >> showOnInitial
        >> angle;
 
     rect.setElementId(id);
@@ -536,8 +815,16 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
     rect.setElementWidth(width);
     rect.setElementHeight(height);
     rect.elementText = text;
+    rect.setHAlignString(hAlign);
+    rect.setVAlignString(vAlign);
+    rect.backgroundColor_ = backgroundColor;
+    rect.transparentBackground_ = transparentBackground;
     rect.textColor = textColor;
-    rect.fontSize = fontSize;
+    rect.font_ = font;
+    rect.borderWidth_ = borderWidth;
+    rect.borderColor_ = borderColor;
+    rect.hideOnClick_ = hideOnClick;
+    rect.showOnInitial_ = showOnInitial;
     rect.setAngle(angle);
     rect.updateBoundingElement();
     rect.updatePropertyModel();

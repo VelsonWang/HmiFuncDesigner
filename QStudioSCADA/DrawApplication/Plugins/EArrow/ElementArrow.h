@@ -49,7 +49,6 @@ private:
     ColorProperty *backColorProperty;
     IntegerProperty *borderWidthProperty;
     IntegerProperty *angleProperty;
-    BoolProperty *blockedProperty;
 
     qreal arrowSize;
 };

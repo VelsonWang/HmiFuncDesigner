@@ -204,30 +204,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
 
 
 /**
- * @brief MainWindow::addAndSaveGraphPage
- * @details 创建和保存画面， 用于工程管理器调用进程创建画面
- * @param pagePath 画面路径
- * @param pagePath 画面名称
- * @param width 画面宽度
- * @param height 画面高度
- */
-void MainWindow::addAndSaveGraphPage(const QString &pagePath,
-                                     const QString &pageName,
-                                     int width,
-                                     int height) {
-
-    QString fileName = pagePath + "/" + pageName + ".drw";
-    GraphPage *graphPage = new GraphPage(QRectF());
-    graphPage->setFileName(pageName + ".drw");
-    graphPage->setGridVisible(gridVisible_);
-    graphPage->setGraphPageId(pageName);
-    graphPage->setGraphPageWidth(width);
-    graphPage->setGraphPageHeight(height);
-    graphPage->saveAsXML(fileName);
-}
-
-
-/**
  * @brief openGraphPage
  * @details 打开画面
  * @param pagePath 画面路径

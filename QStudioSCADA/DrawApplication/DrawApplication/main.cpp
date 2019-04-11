@@ -11,38 +11,19 @@
  * @param argv argv[0]--application name,
  *             argv[1]--project path,
  *             argv[2]--graph page name,
- *             argv[3]--new, open,
- *             argv[4]--graph page width
- *             argv[5]--graph page height
  * @return
  */
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
 
-    QString strProjPath = "";
-    QString strGraphPageName = "";
-    QString operate = "";
-    int width = 0;
-    int height = 0;
+    QString szProjPath = "";
+    QString szGraphPageName = "";
 
-    if(argc == 6) {
-        strProjPath = argv[1];
-        strGraphPageName = argv[2];
-        operate = argv[3];
-        width = QString(argv[4]).toInt();
-        height = QString(argv[5]).toInt();
+    if(argc == 3) {
+        szProjPath = argv[1];
+        szGraphPageName = argv[2];
     } else {
-        QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
-        strProjPath = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "/");
-
-        int last = 0;
-        DrawListUtils::loadDrawList(strProjPath);
-        last = DrawListUtils::getMaxDrawPageNum("draw");
-        strGraphPageName = QString("draw%1").arg(last);
-    }
-
-    if(operate == "") {
         QMessageBox::information(Q_NULLPTR, "提示", "画面编辑程序只能由工程管理器调用！");
         return 0;
     }
@@ -50,13 +31,8 @@ int main(int argc, char *argv[])
     // 加载元素插件
     PluginManager::getInstance()->loadPlugin();
 
-    MainWindow mainWin(strProjPath, strGraphPageName);
-    if(operate.toLower() == "new") {
-        mainWin.addAndSaveGraphPage(strProjPath, strGraphPageName, width, height);
-        return 0;
-    } else if(operate.toLower() == "open") {
-        mainWin.openGraphPage(strProjPath, strGraphPageName);
-    }
+    MainWindow mainWin(szProjPath, szGraphPageName);
+    mainWin.openGraphPage(szProjPath, szGraphPageName);
     mainWin.show();
 
     int ret = a.exec();

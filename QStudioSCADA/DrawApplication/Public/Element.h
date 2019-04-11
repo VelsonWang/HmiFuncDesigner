@@ -13,6 +13,7 @@
 #include "integerproperty.h"
 #include "fileproperty.h"
 #include "listproperty.h"
+#include "fontproperty.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 
