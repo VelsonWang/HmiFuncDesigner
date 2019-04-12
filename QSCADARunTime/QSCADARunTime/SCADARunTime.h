@@ -14,6 +14,8 @@
 #include "PortThread.h"
 #include "RunScript.h"
 
+class MainWindow;
+
 class SCADARunTime : public QObject
 {
     Q_OBJECT
@@ -43,6 +45,7 @@ private:
     QList<IVendor *> m_VendorList;
     QList<PortThread *> m_listPortThread;
     static RunScript *m_pRunScript;
+    MainWindow *showViewWin_;
 };
 
 extern SCADARunTime *g_SCADARunTimePtr;

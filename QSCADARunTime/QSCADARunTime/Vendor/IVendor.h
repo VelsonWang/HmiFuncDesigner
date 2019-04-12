@@ -36,11 +36,6 @@ public:
             qDeleteAll(mWriteQueue);
             mWriteQueue.clear();
         }
-
-        if(iFacePort != nullptr)
-        {
-            iFacePort->close();
-        }
     }
 
     // 获取设备名称

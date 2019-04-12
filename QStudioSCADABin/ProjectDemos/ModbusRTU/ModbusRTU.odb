@@ -11,7 +11,7 @@
     "iTimeout": "50",
     "sDeviceName": "ModbusRTU",
     "sLink": "主链路",
-    "sPortNumber": "COM0",
+    "sPortNumber": "COM1",
     "sProtocol": "ModbusRTU",
     "sVerifybit": "无校验"
 }

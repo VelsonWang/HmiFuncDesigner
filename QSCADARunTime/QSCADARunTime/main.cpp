@@ -11,8 +11,6 @@
 #include "RunTimeMySQLDatabase.h"
 #include "configutils.h"
 #include "edncrypt.h"
-#include "MainWindow.h"
-#include "ProjectInfoManger.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -196,8 +194,7 @@ int main(int argc, char *argv[])
 
     QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
     QDir projSaveDir(projSavePath);
-    if(!projSaveDir.exists())
-    {
+    if(!projSaveDir.exists()) {
         projSaveDir.mkpath(projSavePath);
     }
     TcpServer ser(&runTime);
@@ -205,41 +202,7 @@ int main(int argc, char *argv[])
 
     TimerTask *pTimerTask = new TimerTask();
 
-    //////////////////////////////////////////////////////////////////////////////
-    // start graph page show
-
-    // find project infomation file
-    QFileInfo srcFileInfo(projPath);
-    QString projInfoFile = "";
-    QString projInfoFileName = "";
-    if (srcFileInfo.isDir()) {
-        QDir sourceDir(projPath);
-        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-        foreach (const QString &fileName, fileNames) {
-            if(fileName.endsWith("proj")) {
-                projInfoFile = fileName;
-                QFileInfo info(projInfoFile);
-                projInfoFileName = info.fileName();
-            }
-
-        }
-    }
-    if(projInfoFile == "") {
-        LogError("project information file not found!");
-        ret = app.exec();
-    } else {
-        ProjectInfoManger projInfoMgr;
-        projInfoMgr.loadFromFile(DATA_SAVE_FORMAT, projPath + "/" + projInfoFile);
-        QString startPageFile = projInfoMgr.getStartPage();
-        if(startPageFile.toLower() != "none") {
-            MainWindow mainWin(projPath, startPageFile);
-            mainWin.openGraphPage(projPath, startPageFile);
-            mainWin.show();
-            ret = app.exec();
-        } else {
-            ret = app.exec();
-        }
-    }
+    ret = app.exec();
 
     delete pTimerTask;
 

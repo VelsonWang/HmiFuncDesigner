@@ -9,6 +9,9 @@
 #include "IOTag.h"
 #include "SysRuntimeEvent.h"
 #include "log4qt/logger.h"
+#include "Log.h"
+#include "MainWindow.h"
+#include "ProjectInfoManger.h"
 #include <QTextStream>
 #include <QTextCodec>
 #include <QDebug>
@@ -221,6 +224,11 @@ bool SCADARunTime::Unload()
     qDeleteAll(m_listPortThread);
     m_listPortThread.clear();
 
+    if(showViewWin_ != nullptr) {
+        delete showViewWin_;
+        showViewWin_ = nullptr;
+    }
+
     return true;
 }
 
@@ -252,6 +260,38 @@ void SCADARunTime::Start()
     if(m_pRunScript == nullptr)
         m_pRunScript = new RunScript(m_sProjectPath);
     m_pRunScript->runOnPeriodScripts();
+
+    //////////////////////////////////////////////////////////////////////////////
+    // start graph page show
+
+    // find project infomation file
+    QFileInfo srcFileInfo(m_sProjectPath);
+    QString projInfoFile = "";
+    QString projInfoFileName = "";
+    if (srcFileInfo.isDir()) {
+        QDir sourceDir(m_sProjectPath);
+        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+        foreach (const QString &fileName, fileNames) {
+            if(fileName.endsWith("proj")) {
+                projInfoFile = fileName;
+                QFileInfo info(projInfoFile);
+                projInfoFileName = info.fileName();
+            }
+
+        }
+    }
+    if(projInfoFile == "") {
+        LogError("project information file not found!");
+    } else {
+        ProjectInfoManger projInfoMgr;
+        projInfoMgr.loadFromFile(DATA_SAVE_FORMAT, m_sProjectPath + "/" + projInfoFile);
+        QString startPageFile = projInfoMgr.getStartPage();
+        if(startPageFile.toLower() != "none") {
+            showViewWin_ = new MainWindow(m_sProjectPath, startPageFile);
+            showViewWin_->openGraphPage(m_sProjectPath, startPageFile);
+            showViewWin_->show();
+        }
+    }
 }
 
 void SCADARunTime::Stop()
