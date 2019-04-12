@@ -1,6 +1,5 @@
 ﻿#include "elementtext.h"
-#include "PubTool.h"
-#include <QtDebug>
+#include <QDebug>
 
 int ElementText::iLastIndex_ = 1;
 
@@ -260,7 +259,7 @@ void ElementText::setClickPosition(QPointF position) {
 }
 
 void ElementText::updateBoundingElement() {
-    elementRect.setRect(0,0,elementWidth,elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
@@ -279,13 +278,9 @@ void ElementText::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     drawText(painter);
 
     // 绘制边框
-    if(borderWidth_ > 0) {
-        QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
-        for(int i=0; i<borderWidth_; i++) {
-            PubTool::DrawFrameRect(painter, rect, borderColor_);
-            rect.adjust(1, 1, -1, -1);
-        }
-    }
+    painter->setPen(QPen(borderColor_, borderWidth_));
+    painter->setBrush(Qt::NoBrush);
+    painter->drawRect(elementRect);
 
     if (isSelected()) {
         painter->setPen(QPen(borderColor));
@@ -660,7 +655,7 @@ void ElementText::readData(QDataStream &in) {
 
 /**
  * @brief ElementText::getIndexFromIDString
- * @details 控件唯一标识字符串，形如："文本_0001"
+ * @details 控件唯一标识字符串，形如："Text_0001"
  * @param szID 控件唯一标识
  * @return 分配的索引值
  */

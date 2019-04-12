@@ -1,14 +1,24 @@
 ﻿#include "elementpolygon.h"
+#include "TagManager.h"
 #include <QtDebug>
 
+int ElementPolygon::iLastIndex_ = 1;
+
 ElementPolygon::ElementPolygon(const QString &projPath) :
-    Element(projPath)
-{
-    elementId = trUtf8("多边形");
+    Element(projPath) {
+    elementId = QString(tr("Polygon_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    iLastIndex_++;
     internalElementType = trUtf8("Polygon");
     elementIcon = QIcon(":/images/polygon.png");
+    fillColor_ = Qt::white;
+    isFill_ = true;
+    borderWidth_ = 1;
+    borderColor_ = Qt::black;
+    showOnInitial_ = true;
 
     clickPoint = -1;
+
+    TagManager::setProjectPath(projPath);
 
     init();
     createPropertyList();
@@ -17,7 +27,6 @@ ElementPolygon::ElementPolygon(const QString &projPath) :
 }
 
 void ElementPolygon::addNodePoint() {
-
     qreal minx, y = 0;
     bool first = true;
 
@@ -38,7 +47,6 @@ void ElementPolygon::addNodePoint() {
 }
 
 void ElementPolygon::removeNodePoint() {
-
     QPointF minXPoint;
     bool first = true;
 
@@ -71,7 +79,6 @@ void ElementPolygon::createPoints() {
 }
 
 void ElementPolygon::createPath() {
-
     polygon.clear();
     for (int i = 0; i < points.count(); i++) {
         polygon.append(points[i]);
@@ -79,7 +86,6 @@ void ElementPolygon::createPath() {
 }
 
 QRectF ElementPolygon::boundingRect() const {
-
     qreal extra = 5;
     qreal minx, maxx, miny, maxy;
     bool first = true;
@@ -119,7 +125,6 @@ QPainterPath ElementPolygon::shape() const {
 }
 
 void ElementPolygon::createPropertyList() {
-
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
@@ -143,18 +148,54 @@ void ElementPolygon::createPropertyList() {
     zValueProperty->setSettings(-1000,1000);
     propList.insert(propList.end(),zValueProperty);
 
-    backColorProperty = new ColorProperty(trUtf8("背景颜色"));
-    backColorProperty->setId(EL_BACKGROUND);
-    propList.insert(propList.end(),backColorProperty);
+    // 选择变量
+    tagSelectProperty_ = new ListProperty(tr("选择变量"));
+    tagSelectProperty_->setId(EL_TAG);
+    QStringList varList;
+    TagManager::getAllTagName(TagManager::getProjectPath(), varList);
+    tagSelectProperty_->setList(varList);
+    propList.insert(propList.end(), tagSelectProperty_);
 
-    borderColorProperty = new ColorProperty(trUtf8("边框颜色"));
-    borderColorProperty->setId(EL_BORDER_COLOR);
-    propList.insert(propList.end(),borderColorProperty);
+    // 填充颜色列表
+    tagColorListProperty_ = new TagColorListProperty(tr("填充颜色列表"));
+    tagColorListProperty_->setId(EL_TAG_COLOR_LIST);
+    tagColorListProperty_->setValue(tagColorList_);
+    propList.insert(propList.end(), tagColorListProperty_);
 
-    borderWidthProperty = new IntegerProperty(trUtf8("边框宽度"));
-    borderWidthProperty->setId(EL_BORDER_WIDTH);
-    borderWidthProperty->setSettings(0,5);
-    propList.insert(propList.end(),borderWidthProperty);
+    // 填充颜色
+    fillColorProperty_ = new ColorProperty(tr("填充颜色"));
+    fillColorProperty_->setId(EL_FILL_COLOR);
+    fillColorProperty_->setValue(fillColor_);
+    propList.insert(propList.end(), fillColorProperty_);
+
+    // 是否填充颜色
+    isFillProperty_ = new BoolProperty(tr("填充"));
+    isFillProperty_->setId(EL_IS_FILL_COLOR);
+    isFillProperty_->setTrueText(tr("填充"));
+    isFillProperty_->setFalseText(tr("不填充"));
+    isFillProperty_->setValue(isFill_);
+    propList.insert(propList.end(), isFillProperty_);
+
+    // 边框宽度
+    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
+    borderWidthProperty_->setId(EL_BORDER_WIDTH);
+    borderWidthProperty_->setSettings(0, 1000);
+    borderWidthProperty_->setValue(borderWidth_);
+    propList.insert(propList.end(), borderWidthProperty_);
+
+    // 边框颜色
+    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
+    borderColorProperty_->setId(EL_BORDER_COLOR);
+    borderColorProperty_->setValue(borderColor_);
+    propList.insert(propList.end(), borderColorProperty_);
+
+    // 初始可见性
+    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
+    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
+    showOnInitialProperty_->setTrueText(tr("显示"));
+    showOnInitialProperty_->setFalseText(tr("不显示"));
+    showOnInitialProperty_->setValue(showOnInitial_);
+    propList.insert(propList.end(), showOnInitialProperty_);
 
     angleProperty = new IntegerProperty(trUtf8("角度"));
     angleProperty->setId(EL_ANGLE);
@@ -163,9 +204,7 @@ void ElementPolygon::createPropertyList() {
 }
 
 void ElementPolygon::updateElementProperty(uint id, const QVariant &value) {
-
     switch (id) {
-
     case EL_ID:
         elementId = value.toString();
         break;
@@ -181,22 +220,26 @@ void ElementPolygon::updateElementProperty(uint id, const QVariant &value) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
         break;
-    case EL_WIDTH:
-        elementWidth = value.toInt();
-        updateBoundingElement();
+    case EL_TAG:
+        szTagSelected_ = value.toString();
         break;
-    case EL_HEIGHT:
-        elementHeight = value.toInt();
-        updateBoundingElement();
+    case EL_TAG_COLOR_LIST:
+        tagColorList_ = value.toStringList();
         break;
-    case EL_BACKGROUND:
-        backgroundColor = value.value<QColor>();
+    case EL_FILL_COLOR:
+        fillColor_ = value.value<QColor>();
         break;
-    case EL_BORDER_COLOR:
-        borderColor = value.value<QColor>();
+    case EL_IS_FILL_COLOR:
+        isFill_ = value.toBool();
         break;
     case EL_BORDER_WIDTH:
-        borderWidth = value.toInt();
+        borderWidth_ = value.toInt();
+        break;
+    case EL_BORDER_COLOR:
+        borderColor_ = value.value<QColor>();
+        break;
+    case EL_SHOW_ON_INITIAL:
+        showOnInitial_ = value.toBool();
         break;
     case EL_ANGLE:
         elemAngle = value.toInt();
@@ -209,19 +252,21 @@ void ElementPolygon::updateElementProperty(uint id, const QVariant &value) {
 }
 
 void ElementPolygon::updatePropertyModel() {
-
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
     zValueProperty->setValue(elementZValue);
-    backColorProperty->setValue(backgroundColor);
-    borderColorProperty->setValue(borderColor);
-    borderWidthProperty->setValue(borderWidth);
+    tagSelectProperty_->setValue(szTagSelected_);
+    tagColorListProperty_->setValue(tagColorList_);
+    fillColorProperty_->setValue(fillColor_);
+    isFillProperty_->setValue(isFill_);
+    borderWidthProperty_->setValue(borderWidth_);
+    borderColorProperty_->setValue(borderColor_);
+    showOnInitialProperty_->setValue(showOnInitial_);
     angleProperty->setValue(elemAngle);
 }
 
 void ElementPolygon::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
@@ -232,47 +277,44 @@ void ElementPolygon::setClickPosition(QPointF position) {
 }
 
 void ElementPolygon::updateBoundingElement() {
-
     prepareGeometryChange();
     createPath();
 }
 
-void ElementPolygon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementPolygon::paint(QPainter *painter,
+                           const QStyleOptionGraphicsItem *option,
+                           QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::SmoothPixmapTransform);
 
-    painter->setPen(QPen(borderColor,borderWidth));
-    painter->setBrush(QBrush(backgroundColor));
+    painter->setPen(QPen(borderColor_, borderWidth_));
+    if(isFill_) {
+        painter->setBrush(QBrush(fillColor_));
+    } else {
+        painter->setBrush(Qt::NoBrush);
+    }
     painter->drawPolygon(polygon);
 
     if (isSelected()) {
-
         painter->setPen(Qt::gray);
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(boundingRect());
-
         setCursor(Qt::SizeAllCursor);
         painter->setBrush(Qt::red);
         painter->setPen(Qt::red);
-
         for (int i = 0; i < points.count(); i++) {
             painter->drawRect(QRectF(points[i] - QPointF(3,3),points[i] + QPointF(3,3)));
         }
     }
 }
 
-void ElementPolygon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-
+void ElementPolygon::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     QPointF mousePoint = event->pos();
 
     if (resizing) {
-
         setCursor(Qt::SizeFDiagCursor);
-
         points.replace(clickPoint,mousePoint);
         createPath();
         update(boundingRect());
@@ -285,7 +327,6 @@ void ElementPolygon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 }
 
 void ElementPolygon::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
 
     if (event->button() & Qt::LeftButton) {
@@ -321,7 +362,6 @@ bool ElementPolygon::hasClickedOn(QPointF pressPoint, QPointF point) const {
 }
 
 void ElementPolygon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -338,33 +378,6 @@ void ElementPolygon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-/*void ElementPolygon::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(10,10);
-    QPointF topLeft = boundingRect().topLeft();
-    QPointF bottomRight = boundingRect().bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
-
-        setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
-
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
-}*/
-
 QString ElementPolygon::createPointsXmlString() const {
 
     QString xmlString;
@@ -380,27 +393,32 @@ QString ElementPolygon::createPointsXmlString() const {
 }
 
 void ElementPolygon::writeAsXml(QXmlStreamWriter &writer) {
-
     writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("background",backgroundColor.name());
-    writer.writeAttribute("borderColor",borderColor.name());
-    writer.writeAttribute("borderWidth",QString::number(borderWidth));
-    writer.writeAttribute("elemAngle",QString::number(elemAngle));
-    writer.writeAttribute("points",createPointsXmlString());
+    writer.writeAttribute("internalType", internalElementType);
+    writer.writeAttribute("elementId", elementId);
+    writer.writeAttribute("x", QString::number(x()));
+    writer.writeAttribute("y", QString::number(y()));
+    writer.writeAttribute("z", QString::number(zValue()));
+    writer.writeAttribute("tag", szTagSelected_);
+    writer.writeAttribute("tagColorList", tagColorList_.join("|"));
+    writer.writeAttribute("fillColor", fillColor_.name());
+    writer.writeAttribute("isFill", isFill_?"true":"false");
+    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
+    writer.writeAttribute("borderColor", borderColor_.name());
+    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
+    writer.writeAttribute("elemAngle", QString::number(elemAngle));
+    writer.writeAttribute("points", createPointsXmlString());
     writer.writeEndElement();
 }
 
 void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
-        setElementId(attributes.value("elementId").toString());
+        QString szID = attributes.value("elementId").toString();
+        setElementId(szID);
+        int index = getIndexFromIDString(szID);
+        if(iLastIndex_ < index) {
+            iLastIndex_ = index;
+        }
     }
 
     if (attributes.hasAttribute("x")) {
@@ -415,32 +433,45 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
         setZValue(attributes.value("z").toString().toInt());
     }
 
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
+    if (attributes.hasAttribute("tag")) {
+        szTagSelected_ = attributes.value("tag").toString();
     }
 
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
+    if (attributes.hasAttribute("tagColorList")) {
+        QString listString = attributes.value("tagColorList").toString();
+        tagColorList_ = listString.split('|');
     }
 
-    if (attributes.hasAttribute("background")) {
-        backgroundColor = QColor(attributes.value("background").toString());
+    if (attributes.hasAttribute("fillColor")) {
+        fillColor_ = QColor(attributes.value("fillColor").toString());
     }
 
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor = QColor(attributes.value("borderColor").toString());
+    if (attributes.hasAttribute("isFill")) {
+        QString value = attributes.value("isFill").toString();
+        isFill_ = false;
+        if(value == "true") {
+            isFill_ = true;
+        }
     }
 
     if (attributes.hasAttribute("borderWidth")) {
-        borderWidth = attributes.value("borderWidth").toString().toInt();
+        borderWidth_ = attributes.value("borderWidth").toInt();
+    }
+
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
+    }
+
+    if (attributes.hasAttribute("showOnInitial")) {
+        QString value = attributes.value("showOnInitial").toString();
+        showOnInitial_ = false;
+        if(value == "true") {
+            showOnInitial_ = true;
+        }
     }
 
     if (attributes.hasAttribute("elemAngle")) {
         setAngle(attributes.value("elemAngle").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("block")) {
-        setBlocked(attributes.value("block").toString().toInt());
     }
 
     if (attributes.hasAttribute("points")) {
@@ -460,16 +491,17 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
 }
 
 void ElementPolygon::writeData(QDataStream &out) {
-
     out << this->elementId
         << this->x()
         << this->y()
         << this->zValue()
-        << this->elementWidth
-        << this->elementHeight
-        << this->backgroundColor
-        << this->borderColor
-        << this->borderWidth
+        << this->szTagSelected_
+        << this->tagColorList_
+        << this->fillColor_
+        << this->isFill_
+        << this->borderWidth_
+        << this->borderColor_
+        << this->showOnInitial_
         << this->elemAngle
         << this->points.size();
 
@@ -480,29 +512,32 @@ void ElementPolygon::writeData(QDataStream &out) {
 
 
 void ElementPolygon::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
-    int width;
-    int height;
-    QColor backColor;
-    QColor borderColor;
+    QString szTagSelected;
+    QStringList tagColorList;
+    QString fillColor;
+    bool isFill;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
     int pointsCount;
+    bool showOnInitial;
     QVector <QPointF> points;
 
     in >> id
        >> xpos
        >> ypos
        >> zvalue
-       >> width
-       >> height
-       >> backColor
-       >> borderColor
+       >> szTagSelected
+       >> tagColorList
+       >> fillColor
+       >> isFill
        >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle
        >> pointsCount;
 
@@ -513,14 +548,20 @@ void ElementPolygon::readData(QDataStream &in) {
     }
 
     this->setElementId(id);
+    int index = getIndexFromIDString(id);
+    if(iLastIndex_ < index) {
+        iLastIndex_ = index;
+    }
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
-    this->setElementWidth(width);
-    this->setElementHeight(height);
-    this->backgroundColor = backColor;
-    this->borderColor = borderColor;
-    this->borderWidth = borderWidth;
+    this->szTagSelected_ = szTagSelected;
+    this->tagColorList_ = tagColorList;
+    this->fillColor_ = fillColor;
+    this->isFill_ = isFill;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
+    this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->points.clear();
     this->points = points;
@@ -529,18 +570,39 @@ void ElementPolygon::readData(QDataStream &in) {
 }
 
 
-QDataStream &operator<<(QDataStream &out,const ElementPolygon &polygon)
-{
+/**
+ * @brief ElementPolygon::getIndexFromIDString
+ * @details 控件唯一标识字符串，形如："Polygon_0001"
+ * @param szID 控件唯一标识
+ * @return 分配的索引值
+ */
+int ElementPolygon::getIndexFromIDString(const QString &szID) {
+    int pos = szID.indexOf("_");
+    if(pos > -1) {
+        QString szIndex = szID.right(4);
+        bool ok = false;
+        int iRet = szIndex.toInt(&ok);
+        if(!ok) {
+            return 0;
+        }
+        return iRet;
+    }
+    return 0;
+}
 
+
+QDataStream &operator<<(QDataStream &out, const ElementPolygon &polygon) {
     out << polygon.elementId
         << polygon.x()
         << polygon.y()
         << polygon.zValue()
-        << polygon.elementWidth
-        << polygon.elementHeight
-        << polygon.backgroundColor
-        << polygon.borderColor
-        << polygon.borderWidth
+        << polygon.szTagSelected_
+        << polygon.tagColorList_
+        << polygon.fillColor_
+        << polygon.isFill_
+        << polygon.borderWidth_
+        << polygon.borderColor_
+        << polygon.showOnInitial_
         << polygon.elemAngle
         << polygon.points.size();
 
@@ -551,18 +613,18 @@ QDataStream &operator<<(QDataStream &out,const ElementPolygon &polygon)
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
-{
-
+QDataStream &operator>>(QDataStream &in, ElementPolygon &polygon) {
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
-    int width;
-    int height;
-    QColor backColor;
-    QColor borderColor;
+    QString szTagSelected;
+    QStringList tagColorList;
+    QString fillColor;
+    bool isFill;
     int borderWidth;
+    QColor borderColor;
+    bool showOnInitial;
     qreal angle;
     int pointsCount;
     QVector <QPointF> points;
@@ -571,11 +633,13 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
        >> xpos
        >> ypos
        >> zvalue
-       >> width
-       >> height
-       >> backColor
-       >> borderColor
+       >> szTagSelected
+       >> tagColorList
+       >> fillColor
+       >> isFill
        >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle
        >> pointsCount;
 
@@ -586,19 +650,25 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
     }
 
     polygon.setElementId(id);
+    int index = polygon.getIndexFromIDString(id);
+    if(polygon.iLastIndex_ < index) {
+        polygon.iLastIndex_ = index;
+    }
     polygon.setElementXPos(xpos);
     polygon.setElementYPos(ypos);
     polygon.setElementZValue(zvalue);
-    polygon.setElementWidth(width);
-    polygon.setElementHeight(height);
-    polygon.backgroundColor = backColor;
-    polygon.borderColor = borderColor;
-    polygon.borderWidth = borderWidth;
+    polygon.szTagSelected_ = szTagSelected;
+    polygon.tagColorList_ = tagColorList;
+    polygon.fillColor_ = fillColor;
+    polygon.isFill_ = isFill;
+    polygon.borderWidth_ = borderWidth;
+    polygon.borderColor_ = borderColor;
+    polygon.showOnInitial_ = showOnInitial;
     polygon.setAngle(angle);
     polygon.points.clear();
     polygon.points = points;
     polygon.updateBoundingElement();
     polygon.updatePropertyModel();
 
-    return in;
+    return in;  
 }

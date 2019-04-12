@@ -50,6 +50,11 @@ enum {
     EL_FONT = 27,
     EL_HIDE_ON_CLICK = 28,
     EL_SHOW_ON_INITIAL = 29,
+    EL_FILL_COLOR = 30,
+    EL_IS_FILL_COLOR = 31,
+    EL_TAG_COLOR_LIST = 32,
+
+
 
 
 

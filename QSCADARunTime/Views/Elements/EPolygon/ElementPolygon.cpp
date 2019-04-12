@@ -3,7 +3,7 @@
 
 ElementPolygon::ElementPolygon()
 {
-    elementId = trUtf8("多边形");
+    elementId = trUtf8("Polygon");
     internalElementType = trUtf8("Polygon");
     clickPoint = -1;
     init();
@@ -11,7 +11,6 @@ ElementPolygon::ElementPolygon()
 }
 
 void ElementPolygon::addNodePoint() {
-
     qreal minx, y = 0;
     bool first = true;
 
@@ -32,7 +31,6 @@ void ElementPolygon::addNodePoint() {
 }
 
 void ElementPolygon::removeNodePoint() {
-
     QPointF minXPoint;
     bool first = true;
 
@@ -57,7 +55,6 @@ void ElementPolygon::removeNodePoint() {
 }
 
 void ElementPolygon::createPoints() {
-
     points.push_back(QPointF(45,45));
     points.push_back(QPointF(150,75));
     points.push_back(QPointF(200,150));
@@ -65,7 +62,6 @@ void ElementPolygon::createPoints() {
 }
 
 void ElementPolygon::createPath() {
-
     polygon.clear();
     for (int i = 0; i < points.count(); i++) {
         polygon.append(points[i]);
@@ -73,7 +69,6 @@ void ElementPolygon::createPath() {
 }
 
 QRectF ElementPolygon::boundingRect() const {
-
     qreal extra = 5;
     qreal minx, maxx, miny, maxy;
     bool first = true;
@@ -105,7 +100,6 @@ QPainterPath ElementPolygon::shape() const {
 }
 
 void ElementPolygon::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
@@ -114,20 +108,28 @@ void ElementPolygon::setClickPosition(QPointF position) {
 }
 
 void ElementPolygon::updateBoundingElement() {
-
     prepareGeometryChange();
     createPath();
 }
 
-void ElementPolygon::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementPolygon::paint(QPainter *painter,
+                           const QStyleOptionGraphicsItem *option,
+                           QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
+    if(!showOnInitial_) {
+        return;
+    }
+
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::SmoothPixmapTransform);
 
-    painter->setPen(QPen(borderColor,borderWidth));
-    painter->setBrush(QBrush(backgroundColor));
+    painter->setPen(QPen(borderColor_, borderWidth_));
+    if(isFill_) {
+        painter->setBrush(QBrush(fillColor_));
+    } else {
+        painter->setBrush(Qt::NoBrush);
+    }
     painter->drawPolygon(polygon);
 }
 
@@ -223,24 +225,41 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
         setZValue(attributes.value("z").toString().toInt());
     }
 
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
+    if (attributes.hasAttribute("tag")) {
+        szTagSelected_ = attributes.value("tag").toString();
     }
 
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
+    if (attributes.hasAttribute("tagColorList")) {
+        QString listString = attributes.value("tagColorList").toString();
+        tagColorList_ = listString.split('|');
     }
 
-    if (attributes.hasAttribute("background")) {
-        backgroundColor = QColor(attributes.value("background").toString());
+    if (attributes.hasAttribute("fillColor")) {
+        fillColor_ = QColor(attributes.value("fillColor").toString());
     }
 
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor = QColor(attributes.value("borderColor").toString());
+    if (attributes.hasAttribute("isFill")) {
+        QString value = attributes.value("isFill").toString();
+        isFill_ = false;
+        if(value == "true") {
+            isFill_ = true;
+        }
     }
 
     if (attributes.hasAttribute("borderWidth")) {
-        borderWidth = attributes.value("borderWidth").toString().toInt();
+        borderWidth_ = attributes.value("borderWidth").toInt();
+    }
+
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
+    }
+
+    if (attributes.hasAttribute("showOnInitial")) {
+        QString value = attributes.value("showOnInitial").toString();
+        showOnInitial_ = false;
+        if(value == "true") {
+            showOnInitial_ = true;
+        }
     }
 
     if (attributes.hasAttribute("elemAngle")) {
@@ -260,33 +279,40 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
+
+    if(!showOnInitial_) {
+        this->hide();
+    }
 }
 
 
 void ElementPolygon::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
-    int width;
-    int height;
-    QColor backColor;
-    QColor borderColor;
+    QString szTagSelected;
+    QStringList tagColorList;
+    QString fillColor;
+    bool isFill;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
     int pointsCount;
+    bool showOnInitial;
     QVector <QPointF> points;
 
     in >> id
        >> xpos
        >> ypos
        >> zvalue
-       >> width
-       >> height
-       >> backColor
-       >> borderColor
+       >> szTagSelected
+       >> tagColorList
+       >> fillColor
+       >> isFill
        >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle
        >> pointsCount;
 
@@ -300,30 +326,36 @@ void ElementPolygon::readData(QDataStream &in) {
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
-    this->setElementWidth(width);
-    this->setElementHeight(height);
-    this->backgroundColor = backColor;
-    this->borderColor = borderColor;
-    this->borderWidth = borderWidth;
+    this->szTagSelected_ = szTagSelected;
+    this->tagColorList_ = tagColorList;
+    this->fillColor_ = fillColor;
+    this->isFill_ = isFill;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
+    this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->points.clear();
     this->points = points;
     this->updateBoundingElement();
+
+    if(!showOnInitial_) {
+        this->hide();
+    }
 }
 
 
-QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
-{
-
+QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon) {
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
-    int width;
-    int height;
-    QColor backColor;
-    QColor borderColor;
+    QString szTagSelected;
+    QStringList tagColorList;
+    QString fillColor;
+    bool isFill;
     int borderWidth;
+    QColor borderColor;
+    bool showOnInitial;
     qreal angle;
     int pointsCount;
     QVector <QPointF> points;
@@ -332,11 +364,13 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
        >> xpos
        >> ypos
        >> zvalue
-       >> width
-       >> height
-       >> backColor
-       >> borderColor
+       >> szTagSelected
+       >> tagColorList
+       >> fillColor
+       >> isFill
        >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle
        >> pointsCount;
 
@@ -350,15 +384,21 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon)
     polygon.setElementXPos(xpos);
     polygon.setElementYPos(ypos);
     polygon.setElementZValue(zvalue);
-    polygon.setElementWidth(width);
-    polygon.setElementHeight(height);
-    polygon.backgroundColor = backColor;
-    polygon.borderColor = borderColor;
-    polygon.borderWidth = borderWidth;
+    polygon.szTagSelected_ = szTagSelected;
+    polygon.tagColorList_ = tagColorList;
+    polygon.fillColor_ = fillColor;
+    polygon.isFill_ = isFill;
+    polygon.borderWidth_ = borderWidth;
+    polygon.borderColor_ = borderColor;
+    polygon.showOnInitial_ = showOnInitial;
     polygon.setAngle(angle);
     polygon.points.clear();
     polygon.points = points;
     polygon.updateBoundingElement();
+
+    if(!polygon.showOnInitial_) {
+        polygon.hide();
+    }
 
     return in;
 }

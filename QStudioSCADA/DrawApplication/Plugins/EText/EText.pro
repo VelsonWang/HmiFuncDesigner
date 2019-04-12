@@ -10,8 +10,7 @@ CONFIG(debug, debug|release) { #debug
 SOURCES += \
     ../../Public/Element.cpp \
     ElementText.cpp \
-    TextPlugin.cpp \
-    ../../Public/PubTool.cpp
+    TextPlugin.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -19,8 +18,7 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementText.h \
-    TextPlugin.h \
-    ../../Public/PubTool.h
+    TextPlugin.h
 
 DISTFILES += EText.json
 
