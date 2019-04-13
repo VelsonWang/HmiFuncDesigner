@@ -73,22 +73,18 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent)
 }
 
 void GraphPage::setActive(bool active) {
-
     onActive = active;
 }
 
 bool GraphPage::active() {
-
     return onActive;
 }
 
 bool GraphPage::getUnsavedFlag() {
-
     return unsavedFlag;
 }
 
 void GraphPage::setPropertyModel(PropertyModel *model) {
-
     propertyModel = model;
     fillGraphPagePropertyModel();
 
@@ -97,7 +93,6 @@ void GraphPage::setPropertyModel(PropertyModel *model) {
 }
 
 void GraphPage::fillGridPixmap() {
-
     gridPixmap = QPixmap(QSize(sceneRect().width(), sceneRect().height()));
     gridPixmap.fill(graphPageBackground);
 
@@ -122,7 +117,6 @@ void GraphPage::fillGridPixmap() {
 }
 
 void GraphPage::setGridVisible(bool on) {
-
     gridVisible = on;
 
     if (gridVisible) {
@@ -137,12 +131,10 @@ void GraphPage::setGridVisible(bool on) {
 }
 
 bool GraphPage::isGridVisible() const {
-
     return gridVisible;
 }
 
 void GraphPage::slotGraphPagePropertyChanged(Property *property) {
-
     if (!selectedItems().isEmpty()) {
         return;
     }
@@ -152,7 +144,6 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property) {
     }
 
     switch (property->getId()) {
-
     case GRAPHPAGE_ID:
         setGraphPageId(property->getValue().toString());
         break;
@@ -177,12 +168,10 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property) {
 }
 
 void GraphPage::cleanPropertyModel() {
-
     propertyModel->resetModel();
 }
 
 void GraphPage::fillGraphPagePropertyModel() {
-
     idProperty->setValue(graphPageId);
     backgroundProperty->setValue(graphPageBackground);
     widthProperty->setValue(graphPageWidth);
@@ -199,7 +188,6 @@ void GraphPage::fillGraphPagePropertyModel() {
 }
 
 void GraphPage::createPropertyList() {
-
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(GRAPHPAGE_ID);
     idProperty->setReadOnly(true);
@@ -231,7 +219,6 @@ void GraphPage::createPropertyList() {
 }
 
 void GraphPage::createContextMenuActions() {
-
     inGroupAction = new QAction(QIcon(":/images/group.png"), trUtf8("分组"), &contextServiceMenu);
     connect(inGroupAction, SIGNAL(triggered()), SLOT(slotGroupElements()));
 
@@ -314,7 +301,6 @@ void GraphPage::createContextMenuActions() {
 }
 
 void GraphPage::updateActions() {
-
     actionCopy->setEnabled(selectedItems().count() == 0 ? false : true);
     actionDelete->setEnabled(selectedItems().count() == 0 ? false : true);
     saveAsLibraryAction->setEnabled(selectedItems().count() == 0 ? false : true);
@@ -341,24 +327,20 @@ void GraphPage::updateActions() {
 }
 
 void GraphPage::slotAddNodePoint() {
-
     Element *ele = static_cast<Element *>(selectedItems().first());
     ele->addNodePoint();
 }
 
 void GraphPage::slotRemoveNodePoint() {
-
     Element *ele = static_cast<Element *>(selectedItems().first());
     ele->removeNodePoint();
 }
 
 void GraphPage::slotShowAdditionalProperties() {
-
     //emit signalShowAddProperties();
 }
 
 void GraphPage::slotElementPropertyChanged(Property *property) {
-
     if (selectedItems().isEmpty()) {
         return;
     }
@@ -374,7 +356,6 @@ void GraphPage::slotElementPropertyChanged(Property *property) {
 }
 
 void GraphPage::slotSelectionChanged() {
-
     updateActions();
 
     if (selectedItems().isEmpty()) {
@@ -398,20 +379,17 @@ void GraphPage::slotSelectionChanged() {
 }
 
 void GraphPage::slotElementMoved(QPointF oldPos) {
-
     Element *ele = (Element *)sender();
 
     m_undoStack->push(new ChangePositionCommand(ele, oldPos));
 }
 
 void GraphPage::slotElementResized(int width, int height,QPointF pos) {
-
     Element *ele = (Element *)sender();
     m_undoStack->push(new ChangeSizeCommand(ele, width, height, pos));
 }
 
 void GraphPage::drawBackground(QPainter *painter, const QRectF &rect) {
-
     painter->save();
 
     painter->setRenderHints(QPainter::Antialiasing);
@@ -475,7 +453,6 @@ void GraphPage::setGraphPageHeight(int height) {
 }
 
 void GraphPage::dragEnterEvent(QGraphicsSceneDragDropEvent *event) {
-
     if (event->mimeData()->hasText()) {
         event->setDropAction(Qt::MoveAction);
         event->accept();
@@ -492,7 +469,6 @@ void GraphPage::dragEnterEvent(QGraphicsSceneDragDropEvent *event) {
 }
 
 void GraphPage::dropEvent(QGraphicsSceneDragDropEvent *event) {
-
     QPointF position = event->scenePos();
 
     if (event->mimeData()->hasFormat(QString("rti/lib"))) {
@@ -510,7 +486,6 @@ void GraphPage::dropEvent(QGraphicsSceneDragDropEvent *event) {
 }
 
 void GraphPage::dragMoveEvent(QGraphicsSceneDragDropEvent *event) {
-
     if (event->mimeData()->hasText()) {
         event->setDropAction(Qt::MoveAction);
         event->accept();
@@ -518,7 +493,6 @@ void GraphPage::dragMoveEvent(QGraphicsSceneDragDropEvent *event) {
 }
 
 void GraphPage::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QGraphicsScene::mousePressEvent(event);
 
     if (!itemAt(event->scenePos(), QTransform())) {
@@ -527,7 +501,6 @@ void GraphPage::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
-
     QGraphicsScene::mouseDoubleClickEvent(event);
 
     if (!itemAt(event->scenePos(), QTransform())) {
@@ -536,18 +509,15 @@ void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void GraphPage::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
-
     contextMenu.exec(event->screenPos());
 }
 
 void GraphPage::connectItem(Element *item) {
-
     connect(item, SIGNAL(elementMoved(QPointF)), SLOT(slotElementMoved(QPointF)));
     connect(item, SIGNAL(elementResized(int,int,QPointF)), SLOT(slotElementResized(int,int,QPointF)));
 }
 
 void GraphPage::createItems(const QString &typeId, QPointF position) {
-
     Element *last = 0;
 
     QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
@@ -580,8 +550,6 @@ void GraphPage::createItems(const QString &typeId, QPointF position) {
 }
 
 void GraphPage::slotGroupElements() {
-
-    /** Trash*/
     if (selectedItems().isEmpty()) {
         return;
     }
@@ -602,7 +570,6 @@ void GraphPage::slotUngroupElements() {
 }
 
 void GraphPage::slotAlignElements() {
-
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action)
         return;
@@ -635,8 +602,7 @@ void GraphPage::slotAlignElements() {
 
 void GraphPage::populateCoordinates(const Qt::Alignment &alignment,
         QVector<double> *coordinates,
-        const QList<QGraphicsItem*> &items)
-{
+        const QList<QGraphicsItem*> &items) {
     QListIterator<QGraphicsItem*> i(items);
     while (i.hasNext()) {
         QRectF rect = i.next()->sceneBoundingRect();
@@ -654,7 +620,6 @@ void GraphPage::populateCoordinates(const Qt::Alignment &alignment,
 }
 
 void GraphPage::slotFrontPlanElements() {
-
     foreach (QGraphicsItem *item,selectedItems()) {
         Element *ele = (Element *)item;
         ele->setElementZValue(ele->getElementZValue() + 1);
@@ -662,7 +627,6 @@ void GraphPage::slotFrontPlanElements() {
 }
 
 void GraphPage::slotBehindPlanElements() {
-
     foreach (QGraphicsItem *item,selectedItems()) {
         Element *ele = (Element*)item;
         ele->setElementZValue(ele->getElementZValue() - 1);
@@ -670,7 +634,6 @@ void GraphPage::slotBehindPlanElements() {
 }
 
 void GraphPage::slotEditDelete() {
-
     m_undoStack->push(new RemoveCommand(selectedItems(),this));
     propertyModel->resetModel();
     emit elementsDeleted();
@@ -685,7 +648,6 @@ void GraphPage::addElementEvent() {
 }
 
 void GraphPage::keyPressEvent(QKeyEvent *event) {
-
     if (event->key() == Qt::Key_Delete) {
 
         if (!selectedItems().isEmpty()) {
@@ -716,7 +678,6 @@ void GraphPage::keyPressEvent(QKeyEvent *event) {
 }
 
 void GraphPage::moveSelectedElements(int xOffset, int yOffset) {
-
     foreach (QGraphicsItem *item,items()) {
         Element *ele = dynamic_cast<Element *>(item);
 
@@ -727,14 +688,12 @@ void GraphPage::moveSelectedElements(int xOffset, int yOffset) {
 }
 
 void GraphPage::slotSelectAll() {
-
     foreach (QGraphicsItem *item,items()) {
         item->setSelected(true);
     }
 }
 
 void GraphPage::slotEditCopy() {
-
     QList <QGraphicsItem*> selItems = selectedItems();
 
     if (selItems.isEmpty()) {
@@ -745,7 +704,6 @@ void GraphPage::slotEditCopy() {
 }
 
 void GraphPage::copyItems(const QList<QGraphicsItem *> &items) {
-
     QByteArray copiedItems;
     QDataStream out(&copiedItems,QIODevice::WriteOnly);
     writeItems(out,items);
@@ -756,7 +714,6 @@ void GraphPage::copyItems(const QList<QGraphicsItem *> &items) {
 }
 
 void GraphPage::slotEditPaste() {
-
     QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
 
@@ -772,7 +729,6 @@ void GraphPage::slotEditPaste() {
 }
 
 void GraphPage::readItems(QDataStream &in, int offset, bool select) {
-
     int objectType;
     int itemsCount;
     copyList.clear();
@@ -813,7 +769,6 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
 }
 
 void GraphPage::writeItems(QDataStream &out, const QList<QGraphicsItem *> &items) {
-
     out << items.count();
 
     for (int j = 0; j < items.count(); j++) {
@@ -840,7 +795,6 @@ void GraphPage::writeItems(QDataStream &out, const QList<QGraphicsItem *> &items
 }
 
 void GraphPage::saveAsBinary(const QString &filename) {
-
     QFile file(filename);
     QFileInfo fi(filename);
 
@@ -870,7 +824,6 @@ void GraphPage::saveAsBinary(const QString &filename) {
 }
 
 void GraphPage::loadAsBinary(const QString &filename) {
-
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
@@ -891,7 +844,6 @@ void GraphPage::loadAsBinary(const QString &filename) {
 }
 
 void GraphPage::saveAsXML(const QString &filename) {
-
     QFile file(filename);
     QFileInfo fi(filename);
 
@@ -918,7 +870,6 @@ void GraphPage::saveAsXML(const QString &filename) {
 
 
 void GraphPage::loadAsXML(const QString &filename) {
-
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
@@ -936,12 +887,10 @@ void GraphPage::loadAsXML(const QString &filename) {
 }
 
 void GraphPage::readGraphPageConfig(QFile &file) {
-
     QXmlStreamReader reader;
     reader.setDevice(&file);
 
     while (!reader.atEnd() && !reader.hasError()) {
-
         QXmlStreamReader::TokenType token = reader.readNext();
 
         if (token == QXmlStreamReader::StartDocument) {
@@ -958,7 +907,6 @@ void GraphPage::readGraphPageConfig(QFile &file) {
 }
 
 void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
-
     setGraphPageAttributes(xml);
     copyList.clear();
     xml.readNext();
@@ -986,7 +934,6 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
 }
 
 void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
-
     if (xml.attributes().hasAttribute("fileName")) {
         setFileName(xml.attributes().value("fileName").toString());
     }
@@ -1016,7 +963,6 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
 }
 
 Element *GraphPage::createElement(const QString &internalType) {
-
     QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
     while(iter.hasNext()) {
         iter.next();
@@ -1035,7 +981,6 @@ Element *GraphPage::createElement(const QString &internalType) {
 
 
 void GraphPage::loadLibrary(QByteArray &data) {
-
     QDataStream in(&data,QIODevice::ReadOnly);
     QString filename;
     in >> filename;
@@ -1057,7 +1002,6 @@ void GraphPage::loadLibrary(QByteArray &data) {
 }
 
 void GraphPage::readLibraryConfig(QFile &file) {
-
     QXmlStreamReader reader;
     reader.setDevice(&file);
 
@@ -1079,7 +1023,6 @@ void GraphPage::readLibraryConfig(QFile &file) {
 }
 
 void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
-
     copyList.clear();
     xml.readNext();
 
@@ -1105,7 +1048,6 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
 }
 
 void GraphPage::slotSaveAsLibrary() {
-
     QString filename = QFileDialog::getSaveFileName(0,
                                                     trUtf8("Save graph library"),
                                                     QString("."),
@@ -1164,7 +1106,6 @@ QStringList GraphPage::getSelectedFunctions() {
 }
 
 void GraphPage::getSupportEvents(QStringList &listValue) {
-
     QString xmlFileName = Helper::AppDir() + "/Config/ElementSupportEvents.xml";
 
     QFile fileCfg(xmlFileName);
@@ -1207,7 +1148,6 @@ void GraphPage::getSupportEvents(QStringList &listValue) {
 }
 
 void GraphPage::writeGraphPage(QFile &file, GraphPage *graphPage) {
-
     QXmlStreamWriter writer(&file);
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
@@ -1230,7 +1170,6 @@ void GraphPage::writeGraphPage(QFile &file, GraphPage *graphPage) {
 }
 
 void GraphPage::writeLibrary(QFile &file, GraphPage *graphPage) {
-
     QXmlStreamWriter writer(&file);
     writer.setAutoFormatting(true);
     writer.writeStartDocument();
@@ -1249,7 +1188,6 @@ void GraphPage::writeLibrary(QFile &file, GraphPage *graphPage) {
 
 
 QDataStream &operator<<(QDataStream &out, GraphPage &page) {
-
     out << page.getFileName()
         << page.getGraphPageId()
         << page.getGraphPageBackground()
@@ -1261,7 +1199,6 @@ QDataStream &operator<<(QDataStream &out, GraphPage &page) {
 }
 
 QDataStream &operator>>(QDataStream &in, GraphPage &page) {
-
     QString filename;
     QString id;
 

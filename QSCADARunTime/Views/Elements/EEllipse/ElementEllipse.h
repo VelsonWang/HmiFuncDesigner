@@ -35,7 +35,20 @@ protected:
 
 private:
     QRectF elementRect;
-
+    // 关联的变量
+    QString szTagSelected_;
+    // 填充颜色列表
+    QStringList tagColorList_;
+    // 填充颜色
+    QColor fillColor_;
+    // 是否填充颜色
+    bool isFill_;
+    // 边框宽度
+    int borderWidth_;
+    // 边框颜色
+    QColor borderColor_;
+    // 初始可见性
+    bool showOnInitial_;
 };
 
 #endif // ELEMENTELLIPSE_H

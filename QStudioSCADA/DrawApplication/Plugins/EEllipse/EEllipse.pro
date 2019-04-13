@@ -3,14 +3,19 @@ include(../../DrawApplicationPlugin.pri)
 
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
 }
 
 SOURCES += \
     ../../Public/Element.cpp \
     ElementEllipse.cpp \
-    EllipsePlugin.cpp
+    EllipsePlugin.cpp \
+    ../../PropertyEditorEx/tagcolorlisteditordialog.cpp \
+    ../../PropertyEditorEx/tagcolorlistproperty.cpp \
+    ../../PropertyEditorEx/tagcolorlistpropertyeditor.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -18,13 +23,17 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementEllipse.h \
-    EllipsePlugin.h
+    EllipsePlugin.h \
+    ../../PropertyEditorEx/tagcolorlisteditordialog.h \
+    ../../PropertyEditorEx/tagcolorlistproperty.h \
+    ../../PropertyEditorEx/tagcolorlistpropertyeditor.h
 
 DISTFILES += EEllipse.json
 
 RESOURCES += \
     images.qrc
 
-FORMS +=
+FORMS += \
+    ../../PropertyEditorEx/tagcolorlisteditordialog.ui
 
 

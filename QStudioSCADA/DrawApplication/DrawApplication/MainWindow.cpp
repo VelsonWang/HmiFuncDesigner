@@ -210,7 +210,6 @@ void MainWindow::closeEvent(QCloseEvent *event) {
  * @param pagePath 画面名称
  */
 void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName) {
-
     QString fileName = pagePath + "/" + pageName + ".drw";
 
     if (fileName.toLower().endsWith(".drw")) {
@@ -228,6 +227,8 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
         }
         graphPage->setProjectPath(pagePath);
         graphPage->loadAsXML(fileName);
+        view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+        graphPage->fillGraphPagePropertyModel();
         graphPage->setFileName(pageName + ".drw");
         graphPage->setGraphPageId(pageName);
     }
@@ -283,7 +284,6 @@ QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const {
 }
 
 bool MainWindow::isGraphPageOpen(const QString &filename) {
-
     QListIterator <GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
 
     while (it.hasNext()) {
@@ -296,7 +296,6 @@ bool MainWindow::isGraphPageOpen(const QString &filename) {
 }
 
 void MainWindow::addNewGraphPage() {
-
     QGraphicsView *view = createTabView();
 
     if (graphPageTabWidget_->indexOf(view) != -1) {
@@ -328,7 +327,6 @@ void MainWindow::addNewGraphPage() {
 }
 
 void MainWindow::connectGraphPage(GraphPage *graphPage) {
-
     connect(graphPage->undoStack(), SIGNAL(indexChanged(int)), SLOT(slotUpdateActions()));
     connect(graphPage->undoStack(), SIGNAL(cleanChanged(bool)), SLOT(slotUpdateActions()));
     connect(graphPage, SIGNAL(newElementAdded()), SLOT(slotNewElementAdded()));
@@ -342,7 +340,6 @@ void MainWindow::connectGraphPage(GraphPage *graphPage) {
 }
 
 void MainWindow::disconnectGraphPage(GraphPage *graphPage) {
-
     disconnect(graphPage->undoStack(), SIGNAL(indexChanged(int)), this, SLOT(slotUpdateActions()));
     disconnect(graphPage->undoStack(), SIGNAL(cleanChanged(bool)), this, SLOT(slotUpdateActions()));
     disconnect(graphPage, SIGNAL(newElementAdded()), this, SLOT(slotNewElementAdded()));
@@ -356,12 +353,10 @@ void MainWindow::disconnectGraphPage(GraphPage *graphPage) {
 }
 
 QGraphicsView *MainWindow::createTabView() {
-
     QGraphicsView *view = new QGraphicsView;
     view->setDragMode(QGraphicsView::RubberBandDrag);
     view->setCacheMode(QGraphicsView::CacheBackground);
     view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
@@ -369,7 +364,6 @@ QGraphicsView *MainWindow::createTabView() {
 }
 
 void MainWindow::slotUpdateActions() {
-
     static const QIcon unsaved(":/images/filesave.png");
 
     for (int i = 0; i < graphPageTabWidget_->count(); i++) {
@@ -402,7 +396,6 @@ void MainWindow::slotUpdateActions() {
 }
 
 void MainWindow::slotChangeGraphPage(int GraphPageNum) {
-
     if (GraphPageNum == -1) {
         objTree_->clearModel();
         propertyModel_->resetModel();
@@ -425,19 +418,16 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum) {
 }
 
 void MainWindow::slotChangeGraphPageName() {
-
     graphPageTabWidget_->setTabText(currentGraphPageIndex_, currentGraphPage_->getGraphPageId());
     int index = GraphPageManager::getInstance()->getIndexByGraphPage(currentGraphPage_);
 }
 
 void MainWindow::updateObjectTree() {
-
     objTree_->setContentList(currentGraphPage_->items());
     objTree_->updateContent();
 }
 
 void MainWindow::slotElementIdChanged() {
-
     updateObjectTree();
 }
 
@@ -450,17 +440,14 @@ void MainWindow::slotGraphPagePropertyChanged() {
 }
 
 void MainWindow::slotNewElementAdded() {
-
     updateObjectTree();
 }
 
 void MainWindow::slotElementsDeleted() {
-
     updateObjectTree();
 }
 
 void MainWindow::slotShowGrid(bool on) {
-
     QListIterator <GraphPage*> iter(GraphPageManager::getInstance()->getGraphPageList());
 
     while (iter.hasNext()) {
@@ -471,23 +458,19 @@ void MainWindow::slotShowGrid(bool on) {
 }
 
 void MainWindow::slotShowGraphObj(bool on) {
-
     on ? this->dockElemets->show() : this->dockElemets->hide();
 }
 
 void MainWindow::slotShowTreeObj(bool on) {
-
     on ? this->dockObjectTree->show() : this->dockObjectTree->hide();
 }
 
 void MainWindow::slotShowPropEditor(bool on) {
-
     on ? this->dockProperty->show() : this->dockProperty->hide();
 }
 
 
 void MainWindow::slotCloseAll() {
-
     while (graphPageTabWidget_->count()) {
         QGraphicsView *view = static_cast<QGraphicsView*>(graphPageTabWidget_->widget(graphPageTabWidget_->currentIndex()));
         removeGraphPage(view);
@@ -500,7 +483,6 @@ void MainWindow::slotCloseAll() {
 }
 
 void MainWindow::removeGraphPage(QGraphicsView *view) {
-
     int index = graphPageTabWidget_->indexOf(view);
     GraphPage *graphPage = static_cast<GraphPage*>(view->scene());
 
@@ -523,7 +505,6 @@ void MainWindow::removeGraphPage(QGraphicsView *view) {
 }
 
 void MainWindow::slotCloseGraphPage() {
-
     QGraphicsView *view = currentView_;
     removeGraphPage(view);
     delete view;
@@ -537,7 +518,6 @@ void MainWindow::slotCloseGraphPage() {
 }
 
 void MainWindow::slotEditOpen() {
-
     const QString &filename = QFileDialog::getOpenFileName(this,
                                                            trUtf8("Open"),
                                                            ".",
@@ -590,7 +570,6 @@ void MainWindow::slotEditOpen() {
 bool MainWindow::createDocument(GraphPage *graphPage,
                                 QGraphicsView *view,
                                 const QString &filename) {
-
     if (isGraphPageOpen(filename)) {
         QMessageBox::information(this,
                                  trUtf8("打开文件错误"),
@@ -623,7 +602,6 @@ bool MainWindow::createDocument(GraphPage *graphPage,
 
 
 QString MainWindow::getFileName() {
-
     QString filename = QFileDialog::getSaveFileName(this,
                                                     trUtf8("Save as"),
                                                     QString("./%1").arg(currentGraphPage_->getGraphPageId()),
@@ -632,7 +610,6 @@ QString MainWindow::getFileName() {
 }
 
 void MainWindow::updateGraphPageViewInfo(const QString &fileName) {
-
     int index = graphPageTabWidget_->indexOf(currentView_);
     QFileInfo file(fileName);
     currentGraphPage_->setGraphPageId(file.baseName());
@@ -641,7 +618,6 @@ void MainWindow::updateGraphPageViewInfo(const QString &fileName) {
 }
 
 void MainWindow::slotSaveGraphPage() {
-
     if (!currentGraphPage_) {
         return;
     }
@@ -670,7 +646,6 @@ void MainWindow::slotSaveGraphPage() {
 }
 
 void MainWindow::slotExit() {
-
     if (graphPageTabWidget_->count() == 0) {
         QApplication::quit();
         return;
@@ -700,7 +675,6 @@ void MainWindow::slotExit() {
 }
 
 int MainWindow::exitResponse() {
-
     int ret = QMessageBox::information(this,
                                        trUtf8("退出程序"),
                                        trUtf8("文件已修改。是否保存?"),
@@ -713,14 +687,12 @@ void MainWindow::slotShowLinear(bool on) {
 }
 
 void MainWindow::slotZoomIn() {
-
     if (currentView_) {
         currentView_->scale(1.25, 1.25);
     }
 }
 
 void MainWindow::slotZoomOut() {
-
     if (currentView_) {
         currentView_->scale(1/1.25, 1/1.25);
     }

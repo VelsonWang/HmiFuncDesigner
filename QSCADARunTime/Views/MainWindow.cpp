@@ -42,7 +42,6 @@ MainWindow::~MainWindow() {
  * @param pagePath 画面名称
  */
 void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName) {
-
     QString fileName = pagePath + "/" + pageName;
 
     if (fileName.toLower().endsWith(".drw")) {
@@ -53,8 +52,13 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
         }
         graphPage->setProjectPath(pagePath);
         graphPage->loadAsXML(fileName);
+        view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+        qDebug() << graphPage->getGraphPageWidth() << graphPage->getGraphPageHeight();
         graphPage->setFileName(pageName + ".drw");
         graphPage->setGraphPageId(pageName);
+
+        this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+        moveCenter();
     }
 }
 
@@ -120,9 +124,6 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     currentView_ = view;
     GraphPageManager::getInstance()->addGraphPage(graphPage);
     graphPage->undoStack()->setClean();
-
-    this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    moveCenter();
 
     return true;
 }

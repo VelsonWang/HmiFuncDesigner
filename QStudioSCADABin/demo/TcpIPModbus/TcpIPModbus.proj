@@ -1,0 +1,12 @@
+{
+    "bProjectEncrypt": false,
+    "sDataScanPeriod": "500",
+    "sDeviceType": "TPC(800*480)",
+    "sPageScanPeriod": "500",
+    "sProjectDescription": "this project for test tcpip modbus protocol",
+    "sProjectName": "TcpIPModbus",
+    "sProjectPath": "D:/QStudioSCADA/build-QStudioSCADA/exec/demo",
+    "sStartPage": "draw1.drw",
+    "sStationAddress": "192.168.18.221",
+    "sStationNumber": "0"
+}
