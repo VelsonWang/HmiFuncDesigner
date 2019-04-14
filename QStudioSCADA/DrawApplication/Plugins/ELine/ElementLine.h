@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QDataStream>
 #include "Element.h"
+#include "tagcolorlistproperty.h"
 
 class ElementLine : public Element
 {
@@ -22,6 +23,9 @@ public:
     void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
+    // 获取分配的索引值
+    int getIndexFromIDString(const QString &szID);
+
     enum {Type = LineItemType};
     int type() const {
         return Type;
@@ -38,21 +42,36 @@ protected:
     QRectF boundingRect() const;
 
 private:
+    static int iLastIndex_;
     QLineF elementLine;
     QPointF p1;
     QPointF p2;
 
-    TextProperty *idProperty;
-    EmptyProperty *titleProperty;
-    IntegerProperty *xCoordProperty;
-    IntegerProperty *yCoordProperty;
-    IntegerProperty *zValueProperty;
-    IntegerProperty *widthProperty;
-    IntegerProperty *heightProperty;
-    ColorProperty *backColorProperty;
-    IntegerProperty *borderWidthProperty;
-    IntegerProperty *angleProperty;
+    // 边框宽度
+    int borderWidth_;
+    // 边框颜色
+    QColor borderColor_;
 
+    // ID
+    TextProperty *idProperty;
+    // 标题
+    EmptyProperty *titleProperty;
+    // X坐标
+    IntegerProperty *xCoordProperty;
+    // Y坐标
+    IntegerProperty *yCoordProperty;
+    // Z坐标
+    IntegerProperty *zValueProperty;
+    // 宽度
+    IntegerProperty *widthProperty_;
+    // 高度
+    IntegerProperty *heightProperty_;
+    // 边框宽度
+    IntegerProperty *borderWidthProperty_;
+    // 边框颜色
+    ColorProperty *borderColorProperty_;
+    // 旋转角度
+    IntegerProperty *angleProperty;
 };
 
 #endif // ELEMENTLINE_H

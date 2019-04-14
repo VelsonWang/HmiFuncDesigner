@@ -40,7 +40,6 @@ QPainterPath ElementEllipse::shape() const {
 }
 
 void ElementEllipse::createPropertyList() {
-
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);

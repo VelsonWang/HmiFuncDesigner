@@ -34,6 +34,10 @@ private:
     QLineF elementLine;
     QPointF p1;
     QPointF p2;
+    // 边框宽度
+    int borderWidth_;
+    // 边框颜色
+    QColor borderColor_;
 };
 
 #endif // ELEMENTLINE_H

@@ -1,22 +1,23 @@
 ﻿#include "elementline.h"
-#include <QtDebug>
+#include <QDebug>
+
+int ElementLine::iLastIndex_ = 1;
 
 ElementLine::ElementLine(const QString &projPath) :
-    Element(projPath)
-{
-    elementId = trUtf8("直线");
+    Element(projPath) {
+    elementId = QString(tr("Line_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    iLastIndex_++;
     internalElementType = trUtf8("Line");
     elementIcon = QIcon(":/images/lineitem.png");
-
+    borderWidth_ = 1;
+    borderColor_ = Qt::black;
     init();
     createPropertyList();
     updatePropertyModel();
 }
 
 QRectF ElementLine::boundingRect() const {
-
     qreal extra = 5;
-
     const qreal x1 = elementLine.p1().x();
     const qreal x2 = elementLine.p2().x();
     const qreal y1 = elementLine.p1().y();
@@ -26,54 +27,60 @@ QRectF ElementLine::boundingRect() const {
     qreal ty = qMin(y1,y2);
     qreal by = qMax(y1,y2);
 
-    return QRectF(lx,ty,rx - lx, by - ty).normalized()
-            .adjusted(-extra,-extra,extra,extra);;
+    return QRectF(lx, ty, rx - lx, by - ty).normalized()
+            .adjusted(-extra, -extra, extra, extra);;
 }
 
 void ElementLine::createPropertyList() {
-
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
-    propList.insert(propList.end(),idProperty);
+    propList.insert(propList.end(), idProperty);
 
     titleProperty = new EmptyProperty(trUtf8("标题"));
-    propList.insert(propList.end(),titleProperty);
+    propList.insert(propList.end(), titleProperty);
 
     xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0,5000);
+    xCoordProperty->setSettings(0, 5000);
     xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(),xCoordProperty);
+    propList.insert(propList.end(), xCoordProperty);
 
     yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
     yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
-    propList.insert(propList.end(),yCoordProperty);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
 
     zValueProperty = new IntegerProperty(trUtf8("Z 值"));
     zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000,1000);
-    propList.insert(propList.end(),zValueProperty);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
 
-    widthProperty = new IntegerProperty(trUtf8("宽度"));
-    widthProperty->setId(EL_WIDTH);
-    widthProperty->setSettings(0,5000);
-    propList.insert(propList.end(),widthProperty);
+    // 宽度
+    widthProperty_ = new IntegerProperty(tr("宽度"));
+    widthProperty_->setId(EL_WIDTH);
+    widthProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty_);
 
-    heightProperty = new IntegerProperty(trUtf8("高度"));
-    heightProperty->setId(EL_HEIGHT);
-    heightProperty->setSettings(0,5000);
-    propList.insert(propList.end(),heightProperty);
+    // 高度
+    heightProperty_ = new IntegerProperty(tr("高度"));
+    heightProperty_->setId(EL_HEIGHT);
+    heightProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty_);
 
-    backColorProperty = new ColorProperty(trUtf8("背景颜色"));
-    backColorProperty->setId(EL_BACKGROUND);
-    propList.insert(propList.end(),backColorProperty);
+    // 边框宽度
+    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
+    borderWidthProperty_->setId(EL_BORDER_WIDTH);
+    borderWidthProperty_->setSettings(0, 1000);
+    borderWidthProperty_->setValue(borderWidth_);
+    propList.insert(propList.end(), borderWidthProperty_);
 
-    borderWidthProperty = new IntegerProperty(trUtf8("边框颜色"));
-    borderWidthProperty->setId(EL_BORDER_WIDTH);
-    borderWidthProperty->setSettings(0,5);
-    propList.insert(propList.end(),borderWidthProperty);
+    // 边框颜色
+    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
+    borderColorProperty_->setId(EL_BORDER_COLOR);
+    borderColorProperty_->setValue(borderColor_);
+    propList.insert(propList.end(), borderColorProperty_);
 
+    // 旋转角度
     angleProperty = new IntegerProperty(trUtf8("角度"));
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
@@ -81,86 +88,78 @@ void ElementLine::createPropertyList() {
 }
 
 void ElementLine::updateElementProperty(uint id, const QVariant &value) {
-
     switch (id) {
+    case EL_ID:
+        elementId = value.toString();
+        break;
+    case EL_X:
+        elementXPos = value.toInt();
+        setElementXPos(elementXPos);
+        break;
+    case EL_Y:
+        elementYPos = value.toInt();
+        setElementYPos(elementYPos);
+        break;
+    case EL_Z_VALUE:
+        elementZValue = value.toInt();
+        setZValue(elementZValue);
+        break;
+    case EL_WIDTH:
+        elementWidth = value.toInt();
+        updateBoundingElement();
+        break;
+    case EL_HEIGHT:
+        elementHeight = value.toInt();
+        updateBoundingElement();
+        break;
+    case EL_BORDER_WIDTH:
+        borderWidth_ = value.toInt();
+        break;
+    case EL_BORDER_COLOR:
+        borderColor_ = value.value<QColor>();
+        break;
+    case EL_ANGLE:
+        elemAngle = value.toInt();
+        setAngle(elemAngle);
+        break;
+    }
 
-       case EL_ID:
-           elementId = value.toString();
-           break;
-       case EL_X:
-           elementXPos = value.toInt();
-           setElementXPos(elementXPos);
-           break;
-       case EL_Y:
-           elementYPos = value.toInt();
-           setElementYPos(elementYPos);
-           break;
-       case EL_Z_VALUE:
-           elementZValue = value.toInt();
-           setZValue(elementZValue);
-           break;
-       case EL_WIDTH:
-           elementWidth = value.toInt();
-           updateBoundingElement();
-           break;
-       case EL_HEIGHT:
-           elementHeight = value.toInt();
-           updateBoundingElement();
-           break;
-       case EL_BACKGROUND:
-           backgroundColor = value.value<QColor>();
-           break;
-       case EL_BORDER_WIDTH:
-           borderWidth = value.toInt();
-           break;
-       case EL_ANGLE:
-           elemAngle = value.toInt();
-           setAngle(elemAngle);
-           break;
-       }
-
-    update();
     scene()->update();
+    update();
 }
 
 void ElementLine::updatePropertyModel() {
-
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
     zValueProperty->setValue(elementZValue);
-    widthProperty->setValue(elementWidth);
-    heightProperty->setValue(elementHeight);
-    backColorProperty->setValue(backgroundColor);
-    borderWidthProperty->setValue(borderWidth);
+    widthProperty_->setValue(elementWidth);
+    heightProperty_->setValue(elementHeight);
+    borderWidthProperty_->setValue(borderWidth_);
+    borderColorProperty_->setValue(borderColor_);
     angleProperty->setValue(elemAngle);
 }
 
 void ElementLine::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     setElementXPos(position.x());
     setElementYPos(position.y());
-
-    elementLine.setLine(0,0, elementWidth,elementHeight);
+    elementLine.setLine(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
 void ElementLine::updateBoundingElement() {
-    elementLine.setLine(0,0,elementWidth,elementHeight);
+    elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
-void ElementLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementLine::paint(QPainter *painter,
+                        const QStyleOptionGraphicsItem *option,
+                        QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    QPen itemPen;
-    itemPen.setColor(backgroundColor);
-    itemPen.setWidth(borderWidth);
-
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-    painter->setPen(itemPen);
+    painter->setPen(QPen(borderColor_, borderWidth_));
     painter->drawLine(elementLine);
 
     if (isSelected()) {
@@ -173,14 +172,10 @@ void ElementLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 }
 
 void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
     if (resizing) {
-
         setCursor(Qt::SizeFDiagCursor);
         QPointF mousePoint = event->pos();
-
         switch (rd) {
-
         case RdBottomRight:
             elementLine.setP2(mousePoint);
             elementWidth = qAbs(elementLine.p1().x() - elementLine.p2().x());
@@ -201,8 +196,7 @@ void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 
         scene()->update();
         return;
-    }
-    else {
+    } else {
         QGraphicsObject::mouseMoveEvent(event);
     }
 }
@@ -217,22 +211,18 @@ void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (mousePoint.x() <= (pp1.x() + mouseHandler.x()) &&
         mousePoint.x() >= (pp1.x() - mouseHandler.x()) &&
         mousePoint.y() <= (pp1.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (pp1.y() - mouseHandler.y()))
-    {
+        mousePoint.y() >= (pp1.y() - mouseHandler.y())) {
         rd = RdTopLeft;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
              mousePoint.x() >= (pp2.x() - mouseHandler.x()) &&
              mousePoint.y() <= (pp2.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (pp2.y() - mouseHandler.y()))
-    {
+             mousePoint.y() >= (pp2.y() - mouseHandler.y())) {
         rd = RdBottomRight;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else {
+    } else {
         resizing = false;
         rd = RdNone;
     }
@@ -245,7 +235,6 @@ void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -263,7 +252,6 @@ void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementLine::writeAsXml(QXmlStreamWriter &writer) {
-
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
     writer.writeAttribute("elementId",elementId);
@@ -272,15 +260,13 @@ void ElementLine::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("z",QString::number(zValue()));
     writer.writeAttribute("width",QString::number(elementWidth));
     writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("background",backgroundColor.name());
-    writer.writeAttribute("borderColor",borderColor.name());
-    writer.writeAttribute("borderWidth",QString::number(borderWidth));
-    writer.writeAttribute("elemAngle",QString::number(elemAngle));
+    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
+    writer.writeAttribute("borderColor", borderColor_.name());
+    writer.writeAttribute("elemAngle", QString::number(elemAngle));
     writer.writeEndElement();
 }
 
 void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
         setElementId(attributes.value("elementId").toString());
     }
@@ -305,20 +291,16 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
         setElementHeight(attributes.value("height").toString().toInt());
     }
 
-    if (attributes.hasAttribute("background")) {
-        backgroundColor = QColor(attributes.value("background").toString());
+    if (attributes.hasAttribute("borderWidth")) {
+        borderWidth_ = attributes.value("borderWidth").toInt();
     }
 
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth = attributes.value("borderWidth").toString().toInt();
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
     }
 
     if (attributes.hasAttribute("elemAngle")) {
         setAngle(attributes.value("elemAngle").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("block")) {
-        setBlocked(attributes.value("block").toString().toInt());
     }
 
     updateBoundingElement();
@@ -326,30 +308,27 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
 }
 
 void ElementLine::writeData(QDataStream &out) {
-
     out << this->elementId
         << this->x()
         << this->y()
         << this->zValue()
         << this->elementWidth
         << this->elementHeight
-        << this->backgroundColor
-        << this->borderWidth
+        << this->borderWidth_
+        << this->borderColor_
         << this->elemAngle;
 }
 
 void ElementLine::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
-    bool block;
 
     in >> id
        >> xpos
@@ -357,10 +336,9 @@ void ElementLine::readData(QDataStream &in) {
        >> zvalue
        >> width
        >> height
-       >> backColor
        >> borderWidth
-       >> angle
-       >> block;
+       >> borderColor
+       >> angle;
 
     this->setElementId(id);
     this->setElementXPos(xpos);
@@ -368,37 +346,57 @@ void ElementLine::readData(QDataStream &in) {
     this->setElementZValue(zvalue);
     this->setElementWidth(width);
     this->setElementHeight(height);
-    this->backgroundColor = backColor;
-    this->borderWidth = borderWidth;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
     this->setAngle(angle);
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementLine &line) {
 
+/**
+ * @brief ElementLine::getIndexFromIDString
+ * @details 控件唯一标识字符串，形如："Line_0001"
+ * @param szID 控件唯一标识
+ * @return 分配的索引值
+ */
+int ElementLine::getIndexFromIDString(const QString &szID) {
+    int pos = szID.indexOf("_");
+    if(pos > -1) {
+        QString szIndex = szID.right(4);
+        bool ok = false;
+        int iRet = szIndex.toInt(&ok);
+        if(!ok) {
+            return 0;
+        }
+        return iRet;
+    }
+    return 0;
+}
+
+QDataStream &operator<<(QDataStream &out,const ElementLine &line) {
     out << line.elementId
         << line.x()
         << line.y()
         << line.zValue()
         << line.elementWidth
         << line.elementHeight
-        << line.backgroundColor
-        << line.borderWidth
+        << line.borderWidth_
+        << line.borderColor_
         << line.elemAngle;
+
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in,ElementLine &line) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
 
     in >> id
@@ -407,8 +405,8 @@ QDataStream &operator>>(QDataStream &in,ElementLine &line) {
        >> zvalue
        >> width
        >> height
-       >> backColor
        >> borderWidth
+       >> borderColor
        >> angle;
 
     line.setElementId(id);
@@ -417,8 +415,8 @@ QDataStream &operator>>(QDataStream &in,ElementLine &line) {
     line.setElementZValue(zvalue);
     line.setElementWidth(width);
     line.setElementHeight(height);
-    line.backgroundColor = backColor;
-    line.borderWidth = borderWidth;
+    line.borderWidth_ = borderWidth;
+    line.borderColor_ = borderColor;
     line.setAngle(angle);
     line.updateBoundingElement();
     line.updatePropertyModel();

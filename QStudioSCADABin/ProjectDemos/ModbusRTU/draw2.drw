@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graphPage fileName="draw2.drw" graphPageId="draw2" width="800" height="600" background="#ffffff" functions="">
-    <element internalType="Text" elementId="Text_0001" x="354" y="441" z="0" width="354" height="67" elementtext="test line mmm" halign="left" valign="top" backgroundColor="#55aa00" transparentBackground="false" textcolor="#ff0000" font="楷体,36,-1,5,50,0,0,0,0,0,Regular" borderWidth="4" borderColor="#5500ff" hideOnClick="false" showOnInitial="true" elemAngle="0"/>
-    <element internalType="Polygon" elementId="Polygon_0001" x="355" y="80" z="0" tag="系统变量.sys6" tagColorList="1:#55ff7f|2:#ff007f|3:#0000ff" fillColor="#0fbdcc" isFill="true" borderWidth="6" borderColor="#ff0000" showOnInitial="true" elemAngle="0" points="45,45,200,60,175,221,"/>
-    <element internalType="Ellipse" elementId="Ellipse_0001" x="63" y="190" z="0" width="304" height="159" tag="系统变量.sys6" tagColorList="1:#ff0000|2:#55ff00|3:#0000ff" fillColor="#55ff00" isFill="true" borderWidth="6" borderColor="#ff0000" showOnInitial="true" elemAngle="0"/>
+    <element internalType="Text" elementId="Text_0001" x="30" y="280" z="0" width="340" height="64" elementtext="test line mmm" halign="center" valign="center" backgroundColor="#55aa00" transparentBackground="false" textcolor="#ff0000" font="楷体,36,-1,5,50,0,0,0,0,0,Regular" borderWidth="4" borderColor="#5500ff" hideOnClick="false" showOnInitial="true" elemAngle="0"/>
+    <element internalType="Polygon" elementId="Polygon_0001" x="7" y="130" z="0" tag="系统变量.sys6" tagColorList="1:#55ff7f|2:#ff007f|3:#0000ff" fillColor="#0fbdcc" isFill="true" borderWidth="6" borderColor="#ff0000" showOnInitial="true" elemAngle="0" points="45,45,200,60,123,122,"/>
+    <element internalType="Ellipse" elementId="Ellipse_0001" x="46" y="53" z="0" width="165" height="75" tag="系统变量.sys6" tagColorList="1:#ff0000|2:#55ff00|3:#0000ff" fillColor="#55ff00" isFill="true" borderWidth="6" borderColor="#ff0000" showOnInitial="true" elemAngle="0"/>
+    <element internalType="Line" elementId="Line_0001" x="36" y="381" z="0" width="285" height="35" borderWidth="6" borderColor="#aaaaff" elemAngle="0"/>
 </graphPage>

@@ -1,17 +1,14 @@
 ﻿#include "elementline.h"
 #include <QtDebug>
 
-ElementLine::ElementLine()
-{
-    elementId = trUtf8("直线");
+ElementLine::ElementLine() {
+    elementId = trUtf8("Line");
     internalElementType = trUtf8("Line");
     init();
 }
 
 QRectF ElementLine::boundingRect() const {
-
     qreal extra = 5;
-
     const qreal x1 = elementLine.p1().x();
     const qreal x2 = elementLine.p2().x();
     const qreal y1 = elementLine.p1().y();
@@ -21,35 +18,30 @@ QRectF ElementLine::boundingRect() const {
     qreal ty = qMin(y1,y2);
     qreal by = qMax(y1,y2);
 
-    return QRectF(lx,ty,rx - lx, by - ty).normalized()
-            .adjusted(-extra,-extra,extra,extra);;
+    return QRectF(lx, ty, rx - lx, by - ty).normalized()
+            .adjusted(-extra, -extra, extra, extra);;
 }
 
 
 void ElementLine::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     setElementXPos(position.x());
     setElementYPos(position.y());
-
-    elementLine.setLine(0,0, elementWidth,elementHeight);
+    elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
 void ElementLine::updateBoundingElement() {
-    elementLine.setLine(0,0,elementWidth,elementHeight);
+    elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
-void ElementLine::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementLine::paint(QPainter *painter,
+                        const QStyleOptionGraphicsItem *option,
+                        QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    QPen itemPen;
-    itemPen.setColor(backgroundColor);
-    itemPen.setWidth(borderWidth);
-
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-    painter->setPen(itemPen);
+    painter->setPen(QPen(borderColor_, borderWidth_));
     painter->drawLine(elementLine);
 
 }
@@ -59,7 +51,6 @@ void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF pp1 = elementLine.p1();
@@ -68,22 +59,18 @@ void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (mousePoint.x() <= (pp1.x() + mouseHandler.x()) &&
         mousePoint.x() >= (pp1.x() - mouseHandler.x()) &&
         mousePoint.y() <= (pp1.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (pp1.y() - mouseHandler.y()))
-    {
+        mousePoint.y() >= (pp1.y() - mouseHandler.y())) {
         rd = RdTopLeft;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
              mousePoint.x() >= (pp2.x() - mouseHandler.x()) &&
              mousePoint.y() <= (pp2.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (pp2.y() - mouseHandler.y()))
-    {
+             mousePoint.y() >= (pp2.y() - mouseHandler.y())) {
         rd = RdBottomRight;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else {
+    } else {
         resizing = false;
         rd = RdNone;
     }
@@ -96,7 +83,6 @@ void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -113,7 +99,6 @@ void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
         setElementId(attributes.value("elementId").toString());
     }
@@ -138,12 +123,12 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
         setElementHeight(attributes.value("height").toString().toInt());
     }
 
-    if (attributes.hasAttribute("background")) {
-        backgroundColor = QColor(attributes.value("background").toString());
+    if (attributes.hasAttribute("borderWidth")) {
+        borderWidth_ = attributes.value("borderWidth").toInt();
     }
 
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth = attributes.value("borderWidth").toString().toInt();
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
     }
 
     if (attributes.hasAttribute("elemAngle")) {
@@ -155,15 +140,14 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
 
 
 void ElementLine::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
 
     in >> id
@@ -172,8 +156,8 @@ void ElementLine::readData(QDataStream &in) {
        >> zvalue
        >> width
        >> height
-       >> backColor
        >> borderWidth
+       >> borderColor
        >> angle;
 
     this->setElementId(id);
@@ -182,23 +166,22 @@ void ElementLine::readData(QDataStream &in) {
     this->setElementZValue(zvalue);
     this->setElementWidth(width);
     this->setElementHeight(height);
-    this->backgroundColor = backColor;
-    this->borderWidth = borderWidth;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
     this->setAngle(angle);
     this->updateBoundingElement();
 }
 
 
 QDataStream &operator>>(QDataStream &in,ElementLine &line) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
 
     in >> id
@@ -207,8 +190,8 @@ QDataStream &operator>>(QDataStream &in,ElementLine &line) {
        >> zvalue
        >> width
        >> height
-       >> backColor
        >> borderWidth
+       >> borderColor
        >> angle;
 
     line.setElementId(id);
@@ -217,8 +200,8 @@ QDataStream &operator>>(QDataStream &in,ElementLine &line) {
     line.setElementZValue(zvalue);
     line.setElementWidth(width);
     line.setElementHeight(height);
-    line.backgroundColor = backColor;
-    line.borderWidth = borderWidth;
+    line.borderWidth_ = borderWidth;
+    line.borderColor_ = borderColor;
     line.setAngle(angle);
     line.updateBoundingElement();
 
