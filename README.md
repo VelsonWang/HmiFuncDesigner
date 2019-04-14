@@ -9,8 +9,11 @@
 
 ### 2. 软件环境
 
-​	**Qt5.10.1 + MinGW530_32**
-    **如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
+​	1.**Qt5.10.1 + MinGW530_32** 
+
+​	2.**软件安装时必须包含Qt Script 模块**
+
+​	3.**如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
 
 
 ### 3. QStudioSCADA软件编译	
@@ -87,7 +90,13 @@
 
 
 
-### 9.联系方式
+### 9.画面解析运行
+
+![RuntimeViewShow](md/RuntimeViewShow.png)
+
+
+
+### 10.联系方式
 
 **Email：VelsonWang@qq.com**
 
