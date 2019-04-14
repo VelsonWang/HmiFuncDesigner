@@ -33,6 +33,10 @@ protected:
 private:
     QLineF elementLine;
     qreal arrowSize;
+    // 线条宽度
+    int borderWidth_;
+    // 线条颜色
+    QColor borderColor_;
 };
 
 #endif // ELEMENTARROW_H

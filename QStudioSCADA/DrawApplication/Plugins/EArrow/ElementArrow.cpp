@@ -4,81 +4,87 @@
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
+int ElementArrow::iLastIndex_ = 1;
 
 ElementArrow::ElementArrow(const QString &projPath)
     : Element(projPath),
-      arrowSize(10)
-{
-    elementId = trUtf8("箭头");
+      arrowSize(10) {
+    elementId = QString(tr("Arrow_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    iLastIndex_++;
     internalElementType = trUtf8("Arrow");
     elementIcon = QIcon(":/images/arrowitem.png");
-
+    borderWidth_ = 1;
+    borderColor_ = Qt::black;
     init();
     createPropertyList();
     updatePropertyModel();
 }
 
 QRectF ElementArrow::boundingRect() const {
-
     qreal extra = 5;
-
     const qreal x1 = elementLine.p1().x();
     const qreal x2 = elementLine.p2().x();
     const qreal y1 = elementLine.p1().y();
     const qreal y2 = elementLine.p2().y();
-    qreal lx = qMin(x1,x2);
-    qreal rx = qMax(x1,x2);
-    qreal ty = qMin(y1,y2);
-    qreal by = qMax(y1,y2);
+    qreal lx = qMin(x1, x2);
+    qreal rx = qMax(x1, x2);
+    qreal ty = qMin(y1, y2);
+    qreal by = qMax(y1, y2);
 
-    return QRectF(lx,ty,rx - lx, by - ty).normalized()
-            .adjusted(-extra,-extra,extra,extra);
+    return QRectF(lx, ty, rx - lx, by - ty).normalized()
+            .adjusted(-extra, -extra, extra, extra);
 }
 
 void ElementArrow::createPropertyList() {
-
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
-    propList.insert(propList.end(),idProperty);
+    propList.insert(propList.end(), idProperty);
 
     titleProperty = new EmptyProperty(trUtf8("标题"));
-    propList.insert(propList.end(),titleProperty);
+    propList.insert(propList.end(), titleProperty);
 
     xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0,5000);
+    xCoordProperty->setSettings(0, 5000);
     xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(),xCoordProperty);
+    propList.insert(propList.end(), xCoordProperty);
 
     yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
     yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
-    propList.insert(propList.end(),yCoordProperty);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
 
     zValueProperty = new IntegerProperty(trUtf8("Z 值"));
     zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000,1000);
-    propList.insert(propList.end(),zValueProperty);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
 
-    widthProperty = new IntegerProperty(trUtf8("宽度"));
-    widthProperty->setId(EL_WIDTH);
-    widthProperty->setSettings(0,5000);
-    propList.insert(propList.end(),widthProperty);
+    // 宽度
+    widthProperty_ = new IntegerProperty(tr("宽度"));
+    widthProperty_->setId(EL_WIDTH);
+    widthProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty_);
 
-    heightProperty = new IntegerProperty(trUtf8("高度"));
-    heightProperty->setId(EL_HEIGHT);
-    heightProperty->setSettings(0,5000);
-    propList.insert(propList.end(),heightProperty);
+    // 高度
+    heightProperty_ = new IntegerProperty(tr("高度"));
+    heightProperty_->setId(EL_HEIGHT);
+    heightProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty_);
 
-    backColorProperty = new ColorProperty(trUtf8("背景颜色"));
-    backColorProperty->setId(EL_BACKGROUND);
-    propList.insert(propList.end(),backColorProperty);
+    // 线条宽度
+    borderWidthProperty_ = new IntegerProperty(tr("线条宽度"));
+    borderWidthProperty_->setId(EL_BORDER_WIDTH);
+    borderWidthProperty_->setSettings(0, 1000);
+    borderWidthProperty_->setValue(borderWidth_);
+    propList.insert(propList.end(), borderWidthProperty_);
 
-    borderWidthProperty = new IntegerProperty(trUtf8("边框宽度"));
-    borderWidthProperty->setId(EL_BORDER_WIDTH);
-    borderWidthProperty->setSettings(0,5);
-    propList.insert(propList.end(),borderWidthProperty);
+    // 线条颜色
+    borderColorProperty_ = new ColorProperty(tr("线条颜色"));
+    borderColorProperty_->setId(EL_BORDER_COLOR);
+    borderColorProperty_->setValue(borderColor_);
+    propList.insert(propList.end(), borderColorProperty_);
 
+    // 旋转角度
     angleProperty = new IntegerProperty(trUtf8("角度"));
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
@@ -86,89 +92,79 @@ void ElementArrow::createPropertyList() {
 }
 
 void ElementArrow::updateElementProperty(uint id, const QVariant &value) {
-
     switch (id) {
+    case EL_ID:
+        elementId = value.toString();
+        break;
+    case EL_X:
+        elementXPos = value.toInt();
+        setElementXPos(elementXPos);
+        break;
+    case EL_Y:
+        elementYPos = value.toInt();
+        setElementYPos(elementYPos);
+        break;
+    case EL_Z_VALUE:
+        elementZValue = value.toInt();
+        setZValue(elementZValue);
+        break;
+    case EL_WIDTH:
+        elementWidth = value.toInt();
+        updateBoundingElement();
+        break;
+    case EL_HEIGHT:
+        elementHeight = value.toInt();
+        updateBoundingElement();
+        break;
+    case EL_BORDER_WIDTH:
+        borderWidth_ = value.toInt();
+        break;
+    case EL_BORDER_COLOR:
+        borderColor_ = value.value<QColor>();
+        break;
+    case EL_ANGLE:
+        elemAngle = value.toInt();
+        setAngle(elemAngle);
+        break;
+    }
 
-       case EL_ID:
-           elementId = value.toString();
-           break;
-       case EL_X:
-           elementXPos = value.toInt();
-           setElementXPos(elementXPos);
-           break;
-       case EL_Y:
-           elementYPos = value.toInt();
-           setElementYPos(elementYPos);
-           break;
-       case EL_Z_VALUE:
-           elementZValue = value.toInt();
-           setZValue(elementZValue);
-           break;
-       case EL_WIDTH:
-           elementWidth = value.toInt();
-           updateBoundingElement();
-           break;
-       case EL_HEIGHT:
-           elementHeight = value.toInt();
-           updateBoundingElement();
-           break;
-       case EL_BACKGROUND:
-           backgroundColor = value.value<QColor>();
-           break;
-       case EL_BORDER_WIDTH:
-           borderWidth = value.toInt();
-           break;
-       case EL_ANGLE:
-           elemAngle = value.toInt();
-           setAngle(elemAngle);
-           break;
-       }
-
-
-    update();
     scene()->update();
+    update();
 }
 
 void ElementArrow::updatePropertyModel() {
-
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
     zValueProperty->setValue(elementZValue);
-    widthProperty->setValue(elementWidth);
-    heightProperty->setValue(elementHeight);
-    backColorProperty->setValue(backgroundColor);
-    borderWidthProperty->setValue(borderWidth);
+    widthProperty_->setValue(elementWidth);
+    heightProperty_->setValue(elementHeight);
+    borderWidthProperty_->setValue(borderWidth_);
+    borderColorProperty_->setValue(borderColor_);
     angleProperty->setValue(elemAngle);
 }
 
 void ElementArrow::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     setElementXPos(position.x());
     setElementYPos(position.y());
-
-    elementLine.setLine(0,0, elementWidth,elementHeight);
+    elementLine.setLine(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
 void ElementArrow::updateBoundingElement() {
-    elementLine.setLine(0,0,elementWidth,elementHeight);
+    elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
-void ElementArrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementArrow::paint(QPainter *painter,
+                         const QStyleOptionGraphicsItem *option,
+                         QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
-    QPen itemPen;
-    itemPen.setColor(backgroundColor);
-    itemPen.setWidth(borderWidth);
-
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-    painter->setPen(itemPen);
+    painter->setPen(QPen(borderColor_, borderWidth_));
     painter->drawLine(elementLine);
-    painter->setBrush(backgroundColor);
 
     double angle = ::acos(elementLine.dx()/elementLine.length());
 
@@ -193,14 +189,11 @@ void ElementArrow::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 }
 
 void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
     if (resizing) {
-
         setCursor(Qt::SizeFDiagCursor);
         QPointF mousePoint = event->pos();
 
         switch (rd) {
-
         case RdBottomRight:
             elementLine.setP2(mousePoint);
             elementWidth = qAbs(elementLine.p1().x() - elementLine.p2().x());
@@ -228,7 +221,6 @@ void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF pp1 = elementLine.p1();
@@ -237,22 +229,18 @@ void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (mousePoint.x() <= (pp1.x() + mouseHandler.x()) &&
         mousePoint.x() >= (pp1.x() - mouseHandler.x()) &&
         mousePoint.y() <= (pp1.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (pp1.y() - mouseHandler.y()))
-    {
+        mousePoint.y() >= (pp1.y() - mouseHandler.y())) {
         rd = RdTopLeft;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
              mousePoint.x() >= (pp2.x() - mouseHandler.x()) &&
              mousePoint.y() <= (pp2.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (pp2.y() - mouseHandler.y()))
-    {
+             mousePoint.y() >= (pp2.y() - mouseHandler.y())) {
         rd = RdBottomRight;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else {
+    } else {
         resizing = false;
         rd = RdNone;
     }
@@ -265,7 +253,6 @@ void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementArrow::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -283,7 +270,6 @@ void ElementArrow::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementArrow::writeAsXml(QXmlStreamWriter &writer) {
-
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
     writer.writeAttribute("elementId",elementId);
@@ -292,14 +278,13 @@ void ElementArrow::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("z",QString::number(zValue()));
     writer.writeAttribute("width",QString::number(elementWidth));
     writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("background",backgroundColor.name());
-    writer.writeAttribute("borderWidth",QString::number(borderWidth));
-    writer.writeAttribute("elemAngle",QString::number(elemAngle));
+    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
+    writer.writeAttribute("borderColor", borderColor_.name());
+    writer.writeAttribute("elemAngle", QString::number(elemAngle));
     writer.writeEndElement();
 }
 
 void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
         setElementId(attributes.value("elementId").toString());
     }
@@ -324,20 +309,16 @@ void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
         setElementHeight(attributes.value("height").toString().toInt());
     }
 
-    if (attributes.hasAttribute("background")) {
-        backgroundColor = QColor(attributes.value("background").toString());
+    if (attributes.hasAttribute("borderWidth")) {
+        borderWidth_ = attributes.value("borderWidth").toInt();
     }
 
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth = attributes.value("borderWidth").toString().toInt();
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
     }
 
     if (attributes.hasAttribute("elemAngle")) {
         setAngle(attributes.value("elemAngle").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("block")) {
-        setBlocked(attributes.value("block").toString().toInt());
     }
 
     updateBoundingElement();
@@ -345,28 +326,26 @@ void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
 }
 
 void ElementArrow::writeData(QDataStream &out) {
-
     out << this->elementId
         << this->x()
         << this->y()
         << this->zValue()
         << this->elementWidth
         << this->elementHeight
-        << this->backgroundColor
-        << this->borderWidth
+        << this->borderWidth_
+        << this->borderColor_
         << this->elemAngle;
 }
 
 void ElementArrow::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
 
     in >> id
@@ -375,8 +354,8 @@ void ElementArrow::readData(QDataStream &in) {
        >> zvalue
        >> width
        >> height
-       >> backColor
        >> borderWidth
+       >> borderColor
        >> angle;
 
     this->setElementId(id);
@@ -385,37 +364,56 @@ void ElementArrow::readData(QDataStream &in) {
     this->setElementZValue(zvalue);
     this->setElementWidth(width);
     this->setElementHeight(height);
-    this->backgroundColor = backColor;
-    this->borderWidth = borderWidth;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
     this->setAngle(angle);
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementArrow &line) {
+/**
+ * @brief ElementArrow::getIndexFromIDString
+ * @details 控件唯一标识字符串，形如："Arrow_0001"
+ * @param szID 控件唯一标识
+ * @return 分配的索引值
+ */
+int ElementArrow::getIndexFromIDString(const QString &szID) {
+    int pos = szID.indexOf("_");
+    if(pos > -1) {
+        QString szIndex = szID.right(4);
+        bool ok = false;
+        int iRet = szIndex.toInt(&ok);
+        if(!ok) {
+            return 0;
+        }
+        return iRet;
+    }
+    return 0;
+}
 
+QDataStream &operator<<(QDataStream &out,const ElementArrow &line) {
     out << line.elementId
         << line.x()
         << line.y()
         << line.zValue()
         << line.elementWidth
         << line.elementHeight
-        << line.backgroundColor
-        << line.borderWidth
+        << line.borderWidth_
+        << line.borderColor_
         << line.elemAngle;
+
     return out;
 }
 
 QDataStream &operator>>(QDataStream &in,ElementArrow &line) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
 
     in >> id
@@ -424,8 +422,8 @@ QDataStream &operator>>(QDataStream &in,ElementArrow &line) {
        >> zvalue
        >> width
        >> height
-       >> backColor
        >> borderWidth
+       >> borderColor
        >> angle;
 
     line.setElementId(id);
@@ -434,8 +432,8 @@ QDataStream &operator>>(QDataStream &in,ElementArrow &line) {
     line.setElementZValue(zvalue);
     line.setElementWidth(width);
     line.setElementHeight(height);
-    line.backgroundColor = backColor;
-    line.borderWidth = borderWidth;
+    line.borderWidth_ = borderWidth;
+    line.borderColor_ = borderColor;
     line.setAngle(angle);
     line.updateBoundingElement();
     line.updatePropertyModel();

@@ -67,15 +67,15 @@ void ElementLine::createPropertyList() {
     heightProperty_->setSettings(0, 5000);
     propList.insert(propList.end(), heightProperty_);
 
-    // 边框宽度
-    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
+    // 线条宽度
+    borderWidthProperty_ = new IntegerProperty(tr("线条宽度"));
     borderWidthProperty_->setId(EL_BORDER_WIDTH);
     borderWidthProperty_->setSettings(0, 1000);
     borderWidthProperty_->setValue(borderWidth_);
     propList.insert(propList.end(), borderWidthProperty_);
 
-    // 边框颜色
-    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
+    // 线条颜色
+    borderColorProperty_ = new ColorProperty(tr("线条颜色"));
     borderColorProperty_->setId(EL_BORDER_COLOR);
     borderColorProperty_->setValue(borderColor_);
     propList.insert(propList.end(), borderColorProperty_);

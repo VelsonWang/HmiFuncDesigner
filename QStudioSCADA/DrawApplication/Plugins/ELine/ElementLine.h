@@ -47,9 +47,9 @@ private:
     QPointF p1;
     QPointF p2;
 
-    // 边框宽度
+    // 线条宽度
     int borderWidth_;
-    // 边框颜色
+    // 线条颜色
     QColor borderColor_;
 
     // ID
