@@ -53,7 +53,6 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
         graphPage->setProjectPath(pagePath);
         graphPage->loadAsXML(fileName);
         view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-        qDebug() << graphPage->getGraphPageWidth() << graphPage->getGraphPageHeight();
         graphPage->setFileName(pageName + ".drw");
         graphPage->setGraphPageId(pageName);
 

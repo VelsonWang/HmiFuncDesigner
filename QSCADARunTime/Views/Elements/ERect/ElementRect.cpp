@@ -1,19 +1,21 @@
 ﻿#include "elementrect.h"
-#include <QtDebug>
+#include <QDebug>
 
-ElementRect::ElementRect()
-{
-    elementId = trUtf8("矩形");
+ElementRect::ElementRect() {
+    elementId = trUtf8("Rect");
     internalElementType = trUtf8("Rect");
+    fillColor_ = Qt::white;
+    isFill_ = true;
+    borderWidth_ = 1;
+    borderColor_ = Qt::black;
+    showOnInitial_ = true;
     init();
 }
 
 QRectF ElementRect::boundingRect() const {
-
     qreal extra = 5;
-
     QRectF rect(elementRect.toRect());
-    return rect.normalized().adjusted(-extra,-extra,extra,extra);
+    return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
 QPainterPath ElementRect::shape() const {
@@ -24,29 +26,31 @@ QPainterPath ElementRect::shape() const {
 
 
 void ElementRect::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
     setX(elementXPos);
     setY(elementYPos);
-
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementRect::updateBoundingElement() {
-    elementRect.setRect(0,0,elementWidth,elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementRect::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementRect::paint(QPainter *painter,
+                        const QStyleOptionGraphicsItem *option,
+                        QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-
-    painter->setPen(QPen(borderColor,borderWidth));
-    painter->setBrush(QBrush(backgroundColor));
+    painter->setPen(QPen(borderColor_, borderWidth_));
+    if(isFill_) {
+        painter->setBrush(QBrush(fillColor_));
+    } else {
+        painter->setBrush(Qt::NoBrush);
+    }
     painter->drawRect(elementRect);
 }
 
@@ -55,7 +59,6 @@ void ElementRect::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementRect::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -64,22 +67,18 @@ void ElementRect::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         rd = RdTopLeft;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         rd = RdBottomRight;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else {
+    } else {
         resizing = false;
         rd = RdNone;
     }
@@ -92,7 +91,6 @@ void ElementRect::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -109,7 +107,6 @@ void ElementRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementRect::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -118,17 +115,12 @@ void ElementRect::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
-
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
-
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
     }
 
@@ -137,7 +129,6 @@ void ElementRect::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 
 
 void ElementRect::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
         setElementId(attributes.value("elementId").toString());
     }
@@ -162,16 +153,41 @@ void ElementRect::readFromXml(const QXmlStreamAttributes &attributes) {
         setElementHeight(attributes.value("height").toString().toInt());
     }
 
-    if (attributes.hasAttribute("background")) {
-        backgroundColor = QColor(attributes.value("background").toString());
+    if (attributes.hasAttribute("tag")) {
+        szTagSelected_ = attributes.value("tag").toString();
     }
 
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor = QColor(attributes.value("borderColor").toString());
+    if (attributes.hasAttribute("tagColorList")) {
+        QString listString = attributes.value("tagColorList").toString();
+        tagColorList_ = listString.split('|');
+    }
+
+    if (attributes.hasAttribute("fillColor")) {
+        fillColor_ = QColor(attributes.value("fillColor").toString());
+    }
+
+    if (attributes.hasAttribute("isFill")) {
+        QString value = attributes.value("isFill").toString();
+        isFill_ = false;
+        if(value == "true") {
+            isFill_ = true;
+        }
     }
 
     if (attributes.hasAttribute("borderWidth")) {
-        borderWidth = attributes.value("borderWidth").toString().toInt();
+        borderWidth_ = attributes.value("borderWidth").toInt();
+    }
+
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
+    }
+
+    if (attributes.hasAttribute("showOnInitial")) {
+        QString value = attributes.value("showOnInitial").toString();
+        showOnInitial_ = false;
+        if(value == "true") {
+            showOnInitial_ = true;
+        }
     }
 
     if (attributes.hasAttribute("elemAngle")) {
@@ -183,17 +199,20 @@ void ElementRect::readFromXml(const QXmlStreamAttributes &attributes) {
 
 
 void ElementRect::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
-    QColor borderColor;
+    QString szTagSelected;
+    QStringList tagColorList;
+    QString fillColor;
+    bool isFill;
     int borderWidth;
+    QColor borderColor;
     qreal angle;
+    bool showOnInitial;
 
     in >> id
        >> xpos
@@ -201,9 +220,13 @@ void ElementRect::readData(QDataStream &in) {
        >> zvalue
        >> width
        >> height
-       >> backColor
-       >> borderColor
+       >> szTagSelected
+       >> tagColorList
+       >> fillColor
+       >> isFill
        >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle;
 
     this->setElementId(id);
@@ -212,25 +235,32 @@ void ElementRect::readData(QDataStream &in) {
     this->setElementZValue(zvalue);
     this->setElementWidth(width);
     this->setElementHeight(height);
-    this->backgroundColor = backColor;
-    this->borderColor = borderColor;
-    this->borderWidth = borderWidth;
+    this->szTagSelected_ = szTagSelected;
+    this->tagColorList_ = tagColorList;
+    this->fillColor_ = fillColor;
+    this->isFill_ = isFill;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
+    this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
 }
 
 
-QDataStream &operator>>(QDataStream &in,ElementRect &rect) {
-
+QDataStream &operator>>(QDataStream &in, ElementRect &rect) {
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QColor backColor;
-    QColor borderColor;
+    QString szTagSelected;
+    QStringList tagColorList;
+    QString fillColor;
+    bool isFill;
     int borderWidth;
+    QColor borderColor;
+    bool showOnInitial;
     qreal angle;
 
     in >> id
@@ -239,9 +269,13 @@ QDataStream &operator>>(QDataStream &in,ElementRect &rect) {
        >> zvalue
        >> width
        >> height
-       >> backColor
-       >> borderColor
+       >> szTagSelected
+       >> tagColorList
+       >> fillColor
+       >> isFill
        >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle;
 
     rect.setElementId(id);
@@ -250,9 +284,13 @@ QDataStream &operator>>(QDataStream &in,ElementRect &rect) {
     rect.setElementZValue(zvalue);
     rect.setElementWidth(width);
     rect.setElementHeight(height);
-    rect.backgroundColor = backColor;
-    rect.borderColor = borderColor;
-    rect.borderWidth = borderWidth;
+    rect.szTagSelected_ = szTagSelected;
+    rect.tagColorList_ = tagColorList;
+    rect.fillColor_ = fillColor;
+    rect.isFill_ = isFill;
+    rect.borderWidth_ = borderWidth;
+    rect.borderColor_ = borderColor;
+    rect.showOnInitial_ = showOnInitial;
     rect.setAngle(angle);
     rect.updateBoundingElement();
 
