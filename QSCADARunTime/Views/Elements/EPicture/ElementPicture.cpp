@@ -4,19 +4,21 @@
 #include <QDir>
 #include <QDebug>
 
-ElementPicture::ElementPicture()
-{
+ElementPicture::ElementPicture() {
     elementId = trUtf8("图片");
     internalElementType = trUtf8("Picture");
     filePicture_ = QString();
+    showNoScale_ = false;
+    borderWidth_ = 1;
+    borderColor_ = Qt::black;
+    showOnInitial_ = true;
     init();
 }
 
 QRectF ElementPicture::boundingRect() const {
-
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
-    return rect.normalized().adjusted(-extra,-extra,extra,extra);
+    return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
 QPainterPath ElementPicture::shape() const {
@@ -27,43 +29,50 @@ QPainterPath ElementPicture::shape() const {
 
 
 void ElementPicture::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
     setX(elementXPos);
     setY(elementYPos);
-
-    elementRect.setRect(0,0,elementWidth,elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementPicture::updateBoundingElement() {
-    elementRect.setRect(0,0,elementWidth,elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementPicture::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementPicture::paint(QPainter *painter,
+                           const QStyleOptionGraphicsItem *option,
+                           QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
-    bool bDrawImage = false;
+
+    if(!showOnInitial_) {
+        return;
+    }
 
     if(filePicture_ != QString()) {
         QString picture = getProjectPath() + "/Pictures/" + filePicture_;
         if(QFile::exists(picture)) {
             QImage image(getProjectPath() + "/Pictures/" + filePicture_);
-
-            QImage scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+            QImage scaleImage;
+            if(showNoScale_) {
+                scaleImage = image;
+            } else {
+                scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+            }
             painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
             painter->drawImage(elementRect, scaleImage);
-            bDrawImage = true;
         }
     }
 
-    if(!bDrawImage) {
+    if(borderWidth_ < 1) {
         borderColor = Qt::gray;
-        painter->setPen(QPen(borderColor, borderWidth, Qt::DotLine));
-        painter->drawRect(elementRect);
+        painter->setPen(QPen(borderColor, 1, Qt::DotLine));
+    } else {
+        painter->setPen(QPen(borderColor_, borderWidth_, Qt::SolidLine));
     }
+    painter->drawRect(elementRect);
 }
 
 void ElementPicture::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -71,7 +80,6 @@ void ElementPicture::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -80,22 +88,18 @@ void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         rd = RdTopLeft;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         rd = RdBottomRight;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else {
+    } else {
         resizing = false;
         rd = RdNone;
     }
@@ -108,7 +112,6 @@ void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementPicture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -125,7 +128,6 @@ void ElementPicture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementPicture::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -134,17 +136,12 @@ void ElementPicture::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
-
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
-
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
     }
 
@@ -181,15 +178,42 @@ void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes) {
         filePicture_ = attributes.value("picture").toString();
     }
 
+    if (attributes.hasAttribute("showNoScale")) {
+        QString value = attributes.value("showNoScale").toString();
+        showNoScale_ = false;
+        if(value == "true") {
+            showNoScale_ = true;
+        }
+    }
+
+    if (attributes.hasAttribute("borderWidth")) {
+        borderWidth_ = attributes.value("borderWidth").toInt();
+    }
+
+    if (attributes.hasAttribute("borderColor")) {
+        borderColor_ = QColor(attributes.value("borderColor").toString());
+    }
+
+    if (attributes.hasAttribute("showOnInitial")) {
+        QString value = attributes.value("showOnInitial").toString();
+        showOnInitial_ = false;
+        if(value == "true") {
+            showOnInitial_ = true;
+        }
+    }
+
     if (attributes.hasAttribute("elemAngle")) {
         setAngle(attributes.value("elemAngle").toString().toInt());
     }
 
     updateBoundingElement();
+
+    if(!showOnInitial_) {
+        this->hide();
+    }
 }
 
 void ElementPicture::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
@@ -197,6 +221,9 @@ void ElementPicture::readData(QDataStream &in) {
     int width;
     int height;
     QString pic;
+    bool showNoScale;
+    int borderWidth;
+    bool showOnInitial;
     qreal angle;
 
     in >> id
@@ -206,6 +233,10 @@ void ElementPicture::readData(QDataStream &in) {
        >> width
        >> height
        >> pic
+       >> showNoScale
+       >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle;
 
     this->setElementId(id);
@@ -215,13 +246,20 @@ void ElementPicture::readData(QDataStream &in) {
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->filePicture_ = pic;
+    this->showNoScale_ = showNoScale;
+    this->borderWidth_ = borderWidth;
+    this->borderColor_ = borderColor;
+    this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
+
+    if(!showOnInitial_) {
+        this->hide();
+    }
 }
 
 
 QDataStream &operator>>(QDataStream &in,ElementPicture &picture) {
-
     QString id;
     qreal xpos;
     qreal ypos;
@@ -229,6 +267,10 @@ QDataStream &operator>>(QDataStream &in,ElementPicture &picture) {
     int width;
     int height;
     QString pic;
+    bool showNoScale;
+    int borderWidth;
+    QColor borderColor;
+    bool showOnInitial;
     qreal angle;
 
     in >> id
@@ -238,6 +280,10 @@ QDataStream &operator>>(QDataStream &in,ElementPicture &picture) {
        >> width
        >> height
        >> pic
+       >> showNoScale
+       >> borderWidth
+       >> borderColor
+       >> showOnInitial
        >> angle;
 
     picture.setElementId(id);
@@ -247,8 +293,16 @@ QDataStream &operator>>(QDataStream &in,ElementPicture &picture) {
     picture.setElementWidth(width);
     picture.setElementHeight(height);
     picture.filePicture_ = pic;
+    picture.showNoScale_ = showNoScale;
+    picture.borderWidth_ = borderWidth;
+    picture.borderColor_ = borderColor;
+    picture.showOnInitial_ = showOnInitial;
     picture.setAngle(angle);
     picture.updateBoundingElement();
+
+    if(!picture.showOnInitial_) {
+        picture.hide();
+    }
 
     return in;
 }

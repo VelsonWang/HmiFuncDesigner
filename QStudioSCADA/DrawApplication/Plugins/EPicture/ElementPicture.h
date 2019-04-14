@@ -22,6 +22,9 @@ public:
     void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
+    // 获取分配的索引值
+    int getIndexFromIDString(const QString &szID);
+
     enum {Type = PictureItemType};
 
     int type() const {
@@ -41,16 +44,43 @@ protected:
     QPainterPath shape() const;
 
 private:
+    static int iLastIndex_;
     QRectF elementRect;
     QString filePicture_;
+    // 原尺寸显示
+    bool showNoScale_;
+    // 边框宽度
+    int borderWidth_;
+    // 边框颜色
+    QColor borderColor_;
+    // 初始可见性
+    bool showOnInitial_;
+
+    // ID
     TextProperty *idProperty;
+    // 标题
     EmptyProperty *titleProperty;
+    // X坐标
     IntegerProperty *xCoordProperty;
+    // Y坐标
     IntegerProperty *yCoordProperty;
+    // Z坐标
     IntegerProperty *zValueProperty;
-    IntegerProperty *widthProperty;
-    IntegerProperty *heightProperty;
+    // 宽度
+    IntegerProperty *widthProperty_;
+    // 高度
+    IntegerProperty *heightProperty_;
+    // 选择图片
     FileProperty *fileProperty;
+    // 原尺寸显示
+    BoolProperty *showNoScaleProperty_;
+    // 边框宽度
+    IntegerProperty *borderWidthProperty_;
+    // 边框颜色
+    ColorProperty *borderColorProperty_;
+    // 初始可见性
+    BoolProperty *showOnInitialProperty_;
+    // 旋转角度
     IntegerProperty *angleProperty;
 
 

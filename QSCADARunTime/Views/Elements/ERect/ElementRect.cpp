@@ -44,6 +44,10 @@ void ElementRect::paint(QPainter *painter,
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
+    if(!showOnInitial_) {
+        return;
+    }
+
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
     painter->setPen(QPen(borderColor_, borderWidth_));
     if(isFill_) {
@@ -195,6 +199,10 @@ void ElementRect::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
+
+    if(!showOnInitial_) {
+        this->hide();
+    }
 }
 
 
@@ -244,6 +252,10 @@ void ElementRect::readData(QDataStream &in) {
     this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
+
+    if(!showOnInitial_) {
+        this->hide();
+    }
 }
 
 
@@ -293,6 +305,10 @@ QDataStream &operator>>(QDataStream &in, ElementRect &rect) {
     rect.showOnInitial_ = showOnInitial;
     rect.setAngle(angle);
     rect.updateBoundingElement();
+
+    if(!rect.showOnInitial_) {
+        rect.hide();
+    }
 
     return in;
 }

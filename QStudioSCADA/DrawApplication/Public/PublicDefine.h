@@ -53,7 +53,7 @@ enum {
     EL_FILL_COLOR = 30,
     EL_IS_FILL_COLOR = 31,
     EL_TAG_COLOR_LIST = 32,
-
+    EL_SHOW_SCALE = 33,
 
 
 
