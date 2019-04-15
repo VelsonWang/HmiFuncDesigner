@@ -53,7 +53,7 @@
 		</Func>
 		<Func name="GetSysValue">
 			<name>函数原型:double GetSysValue(string sSys)</name>
-			<desc>函数描述:设置系统变量值</desc>
+			<desc>函数描述:获取系统变量值</desc>
 			<args name="参数:">
                 <arg name="sSys" type="TagList">string sSys  // 系统变量名</arg>
 			</args>

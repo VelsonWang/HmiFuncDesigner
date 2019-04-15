@@ -14,7 +14,7 @@
    <string>MainWindow</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+   <iconset resource="images.qrc">
     <normaloff>:/images/appicon.png</normaloff>:/images/appicon.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
@@ -45,7 +45,7 @@
      <x>0</x>
      <y>0</y>
      <width>1185</width>
-     <height>17</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuProject">
@@ -239,7 +239,7 @@
   </widget>
   <action name="actionNewPoject">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/newproject.png</normaloff>:/images/newproject.png</iconset>
    </property>
    <property name="text">
@@ -254,7 +254,7 @@
   </action>
   <action name="actionOpenProject">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/openproject.png</normaloff>:/images/openproject.png</iconset>
    </property>
    <property name="text">
@@ -266,7 +266,7 @@
   </action>
   <action name="actionCloseProject">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/projectexit.png</normaloff>:/images/projectexit.png</iconset>
    </property>
    <property name="text">
@@ -275,7 +275,7 @@
   </action>
   <action name="actionSaveProject">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/saveproject.PNG</normaloff>:/images/saveproject.PNG</iconset>
    </property>
    <property name="text">
@@ -292,7 +292,7 @@
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/programexit.PNG</normaloff>:/images/programexit.PNG</iconset>
    </property>
    <property name="text">
@@ -354,7 +354,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/viewbig.png</normaloff>:/images/viewbig.png</iconset>
    </property>
    <property name="text">
@@ -369,7 +369,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/viewlittle.png</normaloff>:/images/viewlittle.png</iconset>
    </property>
    <property name="text">
@@ -384,7 +384,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/edittable.png</normaloff>:/images/edittable.png</iconset>
    </property>
    <property name="text">
@@ -395,8 +395,11 @@
    </property>
   </action>
   <action name="actionSimulate">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/offline.png</normaloff>:/images/offline.png</iconset>
    </property>
    <property name="text">
@@ -407,8 +410,11 @@
    </property>
   </action>
   <action name="actionRun">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/online.png</normaloff>:/images/online.png</iconset>
    </property>
    <property name="text">
@@ -420,7 +426,7 @@
   </action>
   <action name="actionDownload">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/download.png</normaloff>:/images/download.png</iconset>
    </property>
    <property name="text">
@@ -432,7 +438,7 @@
   </action>
   <action name="actionUpLoad">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/upload.PNG</normaloff>:/images/upload.PNG</iconset>
    </property>
    <property name="text">
@@ -444,7 +450,7 @@
   </action>
   <action name="actionUDisk">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/downusb.png</normaloff>:/images/downusb.png</iconset>
    </property>
    <property name="text">
@@ -456,7 +462,7 @@
   </action>
   <action name="actionAddTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/data_add.png</normaloff>:/images/data_add.png</iconset>
    </property>
    <property name="text">
@@ -468,7 +474,7 @@
   </action>
   <action name="actionAppendTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/data_supadd.png</normaloff>:/images/data_supadd.png</iconset>
    </property>
    <property name="text">
@@ -480,7 +486,7 @@
   </action>
   <action name="actionRowCopyTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/data_rowcopy.png</normaloff>:/images/data_rowcopy.png</iconset>
    </property>
    <property name="text">
@@ -492,7 +498,7 @@
   </action>
   <action name="actionColumnCopyTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/data_colcopy.png</normaloff>:/images/data_colcopy.png</iconset>
    </property>
    <property name="text">
@@ -504,7 +510,7 @@
   </action>
   <action name="actionModifyTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/icon_modify.png</normaloff>:/images/icon_modify.png</iconset>
    </property>
    <property name="text">
@@ -516,7 +522,7 @@
   </action>
   <action name="actionDeleteTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/icon_delete.png</normaloff>:/images/icon_delete.png</iconset>
    </property>
    <property name="text">
@@ -528,7 +534,7 @@
   </action>
   <action name="actionExportTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/data_export.png</normaloff>:/images/data_export.png</iconset>
    </property>
    <property name="text">
@@ -540,7 +546,7 @@
   </action>
   <action name="actionImportTag">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/data_inport.png</normaloff>:/images/data_inport.png</iconset>
    </property>
    <property name="text">
@@ -552,7 +558,7 @@
   </action>
   <action name="actionDeviceNew">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/icon_new.png</normaloff>:/images/icon_new.png</iconset>
    </property>
    <property name="text">
@@ -564,7 +570,7 @@
   </action>
   <action name="actionDeviceModify">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/icon_modify.png</normaloff>:/images/icon_modify.png</iconset>
    </property>
    <property name="text">
@@ -576,7 +582,7 @@
   </action>
   <action name="actionDeviceDelete">
    <property name="icon">
-    <iconset resource="../DrawApplication/DrawApplication/images.qrc">
+    <iconset resource="images.qrc">
      <normaloff>:/images/icon_delete.png</normaloff>:/images/icon_delete.png</iconset>
    </property>
    <property name="text">
@@ -605,7 +611,7 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="../DrawApplication/DrawApplication/images.qrc"/>
+  <include location="images.qrc"/>
  </resources>
  <connections/>
 </ui>
