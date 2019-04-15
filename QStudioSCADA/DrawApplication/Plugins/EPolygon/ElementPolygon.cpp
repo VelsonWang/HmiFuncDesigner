@@ -570,27 +570,6 @@ void ElementPolygon::readData(QDataStream &in) {
 }
 
 
-/**
- * @brief ElementPolygon::getIndexFromIDString
- * @details 控件唯一标识字符串，形如："Polygon_0001"
- * @param szID 控件唯一标识
- * @return 分配的索引值
- */
-int ElementPolygon::getIndexFromIDString(const QString &szID) {
-    int pos = szID.indexOf("_");
-    if(pos > -1) {
-        QString szIndex = szID.right(4);
-        bool ok = false;
-        int iRet = szIndex.toInt(&ok);
-        if(!ok) {
-            return 0;
-        }
-        return iRet;
-    }
-    return 0;
-}
-
-
 QDataStream &operator<<(QDataStream &out, const ElementPolygon &polygon) {
     out << polygon.elementId
         << polygon.x()

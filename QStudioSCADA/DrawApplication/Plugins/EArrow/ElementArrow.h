@@ -22,9 +22,6 @@ public:
     void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
-    // 获取分配的索引值
-    int getIndexFromIDString(const QString &szID);
-
     enum {Type = ArrowItemType};
     int type() const {
         return Type;

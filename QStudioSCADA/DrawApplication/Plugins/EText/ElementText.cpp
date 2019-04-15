@@ -453,8 +453,8 @@ void ElementText::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("width", QString::number(elementWidth));
     writer.writeAttribute("height", QString::number(elementHeight));
     writer.writeAttribute("elementtext", elementText);
-    writer.writeAttribute("halign", getHAlignString());
-    writer.writeAttribute("valign", getVAlignString());
+    writer.writeAttribute("halign", getHAlignString(szHAlign_));
+    writer.writeAttribute("valign", getVAlignString(szVAlign_));
     writer.writeAttribute("backgroundColor", backgroundColor_.name());
     writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
     writer.writeAttribute("textcolor", textColor.name());
@@ -504,12 +504,12 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align);
+        this->setHAlignString(align, szHAlign_);
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align);
+        this->setVAlignString(align, szVAlign_);
     }
 
     if (attributes.hasAttribute("backgroundColor")) {
@@ -574,8 +574,8 @@ void ElementText::writeData(QDataStream &out) {
         << this->elementWidth
         << this->elementHeight
         << this->elementText
-        << this->getHAlignString()
-        << this->getVAlignString()
+        << this->getHAlignString(szHAlign_)
+        << this->getVAlignString(szVAlign_)
         << this->backgroundColor_
         << this->transparentBackground_
         << this->textColor
@@ -638,8 +638,8 @@ void ElementText::readData(QDataStream &in) {
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->elementText = text;
-    this->setHAlignString(hAlign);
-    this->setVAlignString(vAlign);
+    this->setHAlignString(hAlign, szHAlign_);
+    this->setVAlignString(vAlign, szVAlign_);
     this->backgroundColor_ = backgroundColor;
     this->transparentBackground_ = transparentBackground;
     this->textColor = textColor;
@@ -653,121 +653,36 @@ void ElementText::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-/**
- * @brief ElementText::getIndexFromIDString
- * @details 控件唯一标识字符串，形如："Text_0001"
- * @param szID 控件唯一标识
- * @return 分配的索引值
- */
-int ElementText::getIndexFromIDString(const QString &szID) {
-    int pos = szID.indexOf("_");
-    if(pos > -1) {
-        QString szIndex = szID.right(4);
-        bool ok = false;
-        int iRet = szIndex.toInt(&ok);
-        if(!ok) {
-            return 0;
-        }
-        return iRet;
-    }
-    return 0;
-}
-
-/**
- * @brief ElementText::getHAlignString
- * @return 水平方向对齐方式
- */
-QString ElementText::getHAlignString() const {
-    if(szHAlign_ == tr("左对齐")) {
-        return QString("left");
-    } else if(szHAlign_ == tr("居中对齐")) {
-        return QString("center");
-    } else if(szHAlign_ == tr("右对齐")) {
-        return QString("right");
-    }
-    return QString("");
-}
-
-
-/**
- * @brief ElementText::setHAlignString
- * @details 设置水平方向对齐方式
- * @param szAlign 水平方向对齐方式
- */
-void ElementText::setHAlignString(const QString& szAlign) {
-    if(szAlign == QString("left")) {
-        szHAlign_ = tr("左对齐");
-    } else if(szAlign == QString("center")) {
-        szHAlign_ = tr("居中对齐");
-    } else if(szAlign == QString("right")) {
-        szHAlign_ = tr("右对齐");
-    }
-}
-
-
-/**
- * @brief ElementText::getVAlignString
- * @return 垂直方向对齐方式
- */
-QString ElementText::getVAlignString() const {
-    if(szVAlign_ == tr("上对齐")) {
-        return QString("top");
-    } else if(szVAlign_ == tr("居中对齐")) {
-        return QString("center");
-    } else if(szVAlign_ == tr("下对齐")) {
-        return QString("bottom");
-    }
-    return QString("");
-}
-
-/**
- * @brief ElementText::setVAlignString
- * @details 设置垂直方向对齐方式
- * @param szAlign 垂直方向对齐方式
- */
-void ElementText::setVAlignString(const QString& szAlign) {
-    if(szAlign == QString("top")) {
-        szVAlign_ = tr("上对齐");
-    } else if(szAlign == QString("center")) {
-        szVAlign_ = tr("居中对齐");
-    } else if(szAlign == QString("bottom")) {
-        szVAlign_ = tr("下对齐");
-    }
-}
-
-
-QDataStream &operator<<(QDataStream &out,const ElementText &rect) {
-
-    out << rect.elementId
-        << rect.x()
-        << rect.y()
-        << rect.zValue()
-        << rect.elementWidth
-        << rect.elementHeight
-        << rect.elementText
-        << rect.getHAlignString()
-        << rect.getVAlignString()
-        << rect.backgroundColor_
-        << rect.transparentBackground_
-        << rect.textColor
-        << rect.font_
-        << rect.borderWidth_
-        << rect.borderColor_
-        << rect.hideOnClick_
-        << rect.showOnInitial_
-        << rect.elemAngle;
+QDataStream &operator<<(QDataStream &out,const ElementText &text) {
+    out << text.elementId
+        << text.x()
+        << text.y()
+        << text.zValue()
+        << text.elementWidth
+        << text.elementHeight
+        << text.elementText
+        << text.getHAlignString(text.szHAlign_)
+        << text.getVAlignString(text.szVAlign_)
+        << text.backgroundColor_
+        << text.transparentBackground_
+        << text.textColor
+        << text.font_
+        << text.borderWidth_
+        << text.borderColor_
+        << text.hideOnClick_
+        << text.showOnInitial_
+        << text.elemAngle;
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementText &rect) {
-
+QDataStream &operator>>(QDataStream &in, ElementText &text) {
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
-    QString text;
+    QString txt;
     QString hAlign;
     QString vAlign;
     QColor backgroundColor;
@@ -786,7 +701,7 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
        >> zvalue
        >> width
        >> height
-       >> text
+       >> txt
        >> hAlign
        >> vAlign
        >> backgroundColor
@@ -799,30 +714,30 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
        >> showOnInitial
        >> angle;
 
-    rect.setElementId(id);
-    int index = rect.getIndexFromIDString(id);
-    if(rect.iLastIndex_ < index) {
-        rect.iLastIndex_ = index;
+    text.setElementId(id);
+    int index = text.getIndexFromIDString(id);
+    if(text.iLastIndex_ < index) {
+        text.iLastIndex_ = index;
     }
-    rect.setElementXPos(xpos);
-    rect.setElementYPos(ypos);
-    rect.setElementZValue(zvalue);
-    rect.setElementWidth(width);
-    rect.setElementHeight(height);
-    rect.elementText = text;
-    rect.setHAlignString(hAlign);
-    rect.setVAlignString(vAlign);
-    rect.backgroundColor_ = backgroundColor;
-    rect.transparentBackground_ = transparentBackground;
-    rect.textColor = textColor;
-    rect.font_ = font;
-    rect.borderWidth_ = borderWidth;
-    rect.borderColor_ = borderColor;
-    rect.hideOnClick_ = hideOnClick;
-    rect.showOnInitial_ = showOnInitial;
-    rect.setAngle(angle);
-    rect.updateBoundingElement();
-    rect.updatePropertyModel();
+    text.setElementXPos(xpos);
+    text.setElementYPos(ypos);
+    text.setElementZValue(zvalue);
+    text.setElementWidth(width);
+    text.setElementHeight(height);
+    text.elementText = txt;
+    text.setHAlignString(hAlign, text.szHAlign_);
+    text.setVAlignString(vAlign, text.szVAlign_);
+    text.backgroundColor_ = backgroundColor;
+    text.transparentBackground_ = transparentBackground;
+    text.textColor = textColor;
+    text.font_ = font;
+    text.borderWidth_ = borderWidth;
+    text.borderColor_ = borderColor;
+    text.hideOnClick_ = hideOnClick;
+    text.showOnInitial_ = showOnInitial;
+    text.setAngle(angle);
+    text.updateBoundingElement();
+    text.updatePropertyModel();
 
     return in;
 }

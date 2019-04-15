@@ -75,7 +75,12 @@ public:
     void setProjectPath(const QString &path);
     // 获取工程路径
     QString getProjectPath() const;
-
+    // 获取分配的索引值
+    int getIndexFromIDString(const QString &szID);
+    QString getHAlignString(const QString& szAlign) const;
+    void setHAlignString(const QString& szAlign, QString& szAlignSet);
+    QString getVAlignString(const QString& szAlign) const;
+    void setVAlignString(const QString& szAlign, QString& szAlignSet);
 
 protected:
     QString elementId;

@@ -77,7 +77,7 @@ void ElementPicture::createPropertyList() {
     heightProperty_->setSettings(0, 5000);
     propList.insert(propList.end(), heightProperty_);
 
-    fileProperty = new FileProperty(trUtf8("图片"));
+    fileProperty = new FileProperty(trUtf8("选择图片"));
     fileProperty->setId(EL_FILE);
     propList.insert(propList.end(), fileProperty);
 
@@ -143,19 +143,19 @@ void ElementPicture::updateElementProperty(uint id, const QVariant &value) {
         updateBoundingElement();
         break;
     case EL_FILE:
-        {
-            filePicture_ = value.toString();
-            QFileInfo info(filePicture_);
-            if(info.exists()) {
-                QString picturePath = getProjectPath() + "/Pictures";
-                QDir dir(picturePath);
-                if(!dir.exists())
-                    dir.mkpath(picturePath);
-                QFile::copy(filePicture_, picturePath + "/" + info.fileName());
-                filePicture_ = info.fileName();
-                updatePropertyModel();
-            }
-        }break;
+    {
+        filePicture_ = value.toString();
+        QFileInfo info(filePicture_);
+        if(info.exists()) {
+            QString picturePath = getProjectPath() + "/Pictures";
+            QDir dir(picturePath);
+            if(!dir.exists())
+                dir.mkpath(picturePath);
+            QFile::copy(filePicture_, picturePath + "/" + info.fileName());
+            filePicture_ = info.fileName();
+            updatePropertyModel();
+        }
+    }break;
     case EL_SHOW_SCALE:
         showNoScale_ = value.toBool();
         break;
@@ -367,9 +367,13 @@ void ElementPicture::writeAsXml(QXmlStreamWriter &writer) {
 }
 
 void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
-        setElementId(attributes.value("elementId").toString());
+        QString szID = attributes.value("elementId").toString();
+        setElementId(szID);
+        int index = getIndexFromIDString(szID);
+        if(iLastIndex_ < index) {
+            iLastIndex_ = index;
+        }
     }
 
     if (attributes.hasAttribute("x")) {
@@ -470,6 +474,10 @@ void ElementPicture::readData(QDataStream &in) {
        >> angle;
 
     this->setElementId(id);
+    int index = getIndexFromIDString(id);
+    if(iLastIndex_ < index) {
+        iLastIndex_ = index;
+    }
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
@@ -485,25 +493,6 @@ void ElementPicture::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-/**
- * @brief ElementPicture::getIndexFromIDString
- * @details 控件唯一标识字符串，形如："Picture_0001"
- * @param szID 控件唯一标识
- * @return 分配的索引值
- */
-int ElementPicture::getIndexFromIDString(const QString &szID) {
-    int pos = szID.indexOf("_");
-    if(pos > -1) {
-        QString szIndex = szID.right(4);
-        bool ok = false;
-        int iRet = szIndex.toInt(&ok);
-        if(!ok) {
-            return 0;
-        }
-        return iRet;
-    }
-    return 0;
-}
 
 QDataStream &operator<<(QDataStream &out,const ElementPicture &picture) {
     out << picture.elementId
@@ -550,6 +539,10 @@ QDataStream &operator>>(QDataStream &in,ElementPicture &picture) {
        >> angle;
 
     picture.setElementId(id);
+    int index = picture.getIndexFromIDString(id);
+    if(picture.iLastIndex_ < index) {
+        picture.iLastIndex_ = index;
+    }
     picture.setElementXPos(xpos);
     picture.setElementYPos(ypos);
     picture.setElementZValue(zvalue);

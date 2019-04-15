@@ -286,7 +286,12 @@ void ElementArrow::writeAsXml(QXmlStreamWriter &writer) {
 
 void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
     if (attributes.hasAttribute("elementId")) {
-        setElementId(attributes.value("elementId").toString());
+        QString szID = attributes.value("elementId").toString();
+        setElementId(szID);
+        int index = getIndexFromIDString(szID);
+        if(iLastIndex_ < index) {
+            iLastIndex_ = index;
+        }
     }
 
     if (attributes.hasAttribute("x")) {
@@ -359,6 +364,10 @@ void ElementArrow::readData(QDataStream &in) {
        >> angle;
 
     this->setElementId(id);
+    int index = getIndexFromIDString(id);
+    if(iLastIndex_ < index) {
+        iLastIndex_ = index;
+    }
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
@@ -371,41 +380,21 @@ void ElementArrow::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-/**
- * @brief ElementArrow::getIndexFromIDString
- * @details 控件唯一标识字符串，形如："Arrow_0001"
- * @param szID 控件唯一标识
- * @return 分配的索引值
- */
-int ElementArrow::getIndexFromIDString(const QString &szID) {
-    int pos = szID.indexOf("_");
-    if(pos > -1) {
-        QString szIndex = szID.right(4);
-        bool ok = false;
-        int iRet = szIndex.toInt(&ok);
-        if(!ok) {
-            return 0;
-        }
-        return iRet;
-    }
-    return 0;
-}
-
-QDataStream &operator<<(QDataStream &out,const ElementArrow &line) {
-    out << line.elementId
-        << line.x()
-        << line.y()
-        << line.zValue()
-        << line.elementWidth
-        << line.elementHeight
-        << line.borderWidth_
-        << line.borderColor_
-        << line.elemAngle;
+QDataStream &operator<<(QDataStream &out,const ElementArrow &arrow) {
+    out << arrow.elementId
+        << arrow.x()
+        << arrow.y()
+        << arrow.zValue()
+        << arrow.elementWidth
+        << arrow.elementHeight
+        << arrow.borderWidth_
+        << arrow.borderColor_
+        << arrow.elemAngle;
 
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementArrow &line) {
+QDataStream &operator>>(QDataStream &in, ElementArrow &arrow) {
     QString id;
     qreal xpos;
     qreal ypos;
@@ -426,17 +415,21 @@ QDataStream &operator>>(QDataStream &in,ElementArrow &line) {
        >> borderColor
        >> angle;
 
-    line.setElementId(id);
-    line.setElementXPos(xpos);
-    line.setElementYPos(ypos);
-    line.setElementZValue(zvalue);
-    line.setElementWidth(width);
-    line.setElementHeight(height);
-    line.borderWidth_ = borderWidth;
-    line.borderColor_ = borderColor;
-    line.setAngle(angle);
-    line.updateBoundingElement();
-    line.updatePropertyModel();
+    arrow.setElementId(id);
+    int index = arrow.getIndexFromIDString(id);
+    if(arrow.iLastIndex_ < index) {
+        arrow.iLastIndex_ = index;
+    }
+    arrow.setElementXPos(xpos);
+    arrow.setElementYPos(ypos);
+    arrow.setElementZValue(zvalue);
+    arrow.setElementWidth(width);
+    arrow.setElementHeight(height);
+    arrow.borderWidth_ = borderWidth;
+    arrow.borderColor_ = borderColor;
+    arrow.setAngle(angle);
+    arrow.updateBoundingElement();
+    arrow.updatePropertyModel();
 
     return in;
 }

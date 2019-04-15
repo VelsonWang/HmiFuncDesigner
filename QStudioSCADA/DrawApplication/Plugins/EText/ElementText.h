@@ -24,13 +24,6 @@ public:
     void writeData(QDataStream &out);
     void readData(QDataStream &in);
 
-    // 获取分配的索引值
-    int getIndexFromIDString(const QString &szID);
-    QString getHAlignString() const;
-    void setHAlignString(const QString& szAlign);
-    QString getVAlignString() const;
-    void setVAlignString(const QString& szAlign);
-
     enum {Type = TextItemType};
 
     int type() const {

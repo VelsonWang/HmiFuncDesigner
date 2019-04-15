@@ -49,16 +49,44 @@ private:
     void getSupportEvents(QStringList &listValue);
 
 private:
+    static int iLastIndex_;
     QRectF elementRect;
     QStringList funcs_;
+    // 显示内容
+    QString showContent_;
+    bool bShowContentText_;
+    // 图片名
+    QString filePicture_;
+    // 水平对齐
+    QString szHAlign_;
+    // 垂直对齐
+    QString szVAlign_;
+
+    // ID
     TextProperty *idProperty;
+    // 标题
     EmptyProperty *titleProperty;
+    // X坐标
     IntegerProperty *xCoordProperty;
+    // Y坐标
     IntegerProperty *yCoordProperty;
+    // Z坐标
     IntegerProperty *zValueProperty;
-    IntegerProperty *widthProperty;
-    IntegerProperty *heightProperty;
+    // 宽度
+    IntegerProperty *widthProperty_;
+    // 高度
+    IntegerProperty *heightProperty_;
+    // 显示内容
+    ListProperty *showContentProperty_;
+    // 选择图片
+    FileProperty *fileProperty;
+    // 显示文本
     TextProperty *elementTextProperty;
+    // 水平对齐
+    ListProperty *hAlignProperty_;
+    // 垂直对齐
+    ListProperty *vAlignProperty_;
+
     ColorProperty *textColorProperty;
     IntegerProperty *fontSizeProperty;
     IntegerProperty *angleProperty;

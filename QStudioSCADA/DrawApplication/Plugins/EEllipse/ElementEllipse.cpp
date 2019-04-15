@@ -370,7 +370,12 @@ void ElementEllipse::writeAsXml(QXmlStreamWriter &writer) {
 
 void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
     if (attributes.hasAttribute("elementId")) {
-        setElementId(attributes.value("elementId").toString());
+        QString szID = attributes.value("elementId").toString();
+        setElementId(szID);
+        int index = getIndexFromIDString(szID);
+        if(iLastIndex_ < index) {
+            iLastIndex_ = index;
+        }
     }
 
     if (attributes.hasAttribute("x")) {
@@ -487,6 +492,10 @@ void ElementEllipse::readData(QDataStream &in) {
        >> angle;
 
     this->setElementId(id);
+    int index = getIndexFromIDString(id);
+    if(iLastIndex_ < index) {
+        iLastIndex_ = index;
+    }
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
@@ -504,25 +513,6 @@ void ElementEllipse::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-/**
- * @brief ElementEllipse::getIndexFromIDString
- * @details 控件唯一标识字符串，形如："Ellipse_0001"
- * @param szID 控件唯一标识
- * @return 分配的索引值
- */
-int ElementEllipse::getIndexFromIDString(const QString &szID) {
-    int pos = szID.indexOf("_");
-    if(pos > -1) {
-        QString szIndex = szID.right(4);
-        bool ok = false;
-        int iRet = szIndex.toInt(&ok);
-        if(!ok) {
-            return 0;
-        }
-        return iRet;
-    }
-    return 0;
-}
 
 QDataStream &operator<<(QDataStream &out,const ElementEllipse &ellipse) {
     out << ellipse.elementId
@@ -576,6 +566,10 @@ QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse) {
        >> angle;
 
     ellipse.setElementId(id);
+    int index = ellipse.getIndexFromIDString(id);
+    if(ellipse.iLastIndex_ < index) {
+        ellipse.iLastIndex_ = index;
+    }
     ellipse.setElementXPos(xpos);
     ellipse.setElementYPos(ypos);
     ellipse.setElementZValue(zvalue);

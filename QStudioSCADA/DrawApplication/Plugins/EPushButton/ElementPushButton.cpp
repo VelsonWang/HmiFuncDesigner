@@ -5,15 +5,23 @@
 #include "Helper.h"
 #include "xmlobject.h"
 #include <QMessageBox>
+#include <QFileInfo>
+#include <QFile>
+#include <QDir>
 #include <QDebug>
 
+int ElementPushButton::iLastIndex_ = 1;
+
 ElementPushButton::ElementPushButton(const QString &projPath) :
-    Element(projPath)
-{
-    elementId = trUtf8("弹出按钮");
+    Element(projPath) {
+    elementId = QString(tr("PushButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    iLastIndex_++;
     internalElementType = trUtf8("PushButton");
     elementIcon = QIcon(":/images/PushButton.png");
-
+    showContent_ = tr("文本");
+    bShowContentText_ = true;
+    szHAlign_ = tr("左对齐");
+    szVAlign_ = tr("居中对齐");
     init();
 
     elementWidth = 100;
@@ -52,43 +60,78 @@ QPainterPath ElementPushButton::shape() const {
 }
 
 void ElementPushButton::createPropertyList() {
-
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
-    propList.insert(propList.end(),idProperty);
+    propList.insert(propList.end(), idProperty);
 
     titleProperty = new EmptyProperty(trUtf8("标题"));
-    propList.insert(propList.end(),titleProperty);
+    propList.insert(propList.end(), titleProperty);
 
     xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0,5000);
+    xCoordProperty->setSettings(0, 5000);
     xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(),xCoordProperty);
+    propList.insert(propList.end(), xCoordProperty);
 
     yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
     yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
-    propList.insert(propList.end(),yCoordProperty);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
 
     zValueProperty = new IntegerProperty(trUtf8("Z 值"));
     zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000,1000);
-    propList.insert(propList.end(),zValueProperty);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
 
-    widthProperty = new IntegerProperty(trUtf8("宽度"));
-    widthProperty->setId(EL_WIDTH);
-    widthProperty->setSettings(0,5000);
-    propList.insert(propList.end(),widthProperty);
+    // 宽度
+    widthProperty_ = new IntegerProperty(tr("宽度"));
+    widthProperty_->setId(EL_WIDTH);
+    widthProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty_);
 
-    heightProperty = new IntegerProperty(trUtf8("高度"));
-    heightProperty->setId(EL_HEIGHT);
-    heightProperty->setSettings(0,5000);
-    propList.insert(propList.end(),heightProperty);
+    // 高度
+    heightProperty_ = new IntegerProperty(tr("高度"));
+    heightProperty_->setId(EL_HEIGHT);
+    heightProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty_);
 
+    // 显示内容
+    showContentProperty_ = new ListProperty(tr("显示内容"));
+    showContentProperty_->setId(EL_SHOW_CONTENT);
+    QStringList contents;
+    contents << tr("文本") << tr("图片");
+    showContentProperty_->setList(contents);
+    showContentProperty_->setValue(showContent_);
+    propList.insert(propList.end(), showContentProperty_);
+
+    // 文本
     elementTextProperty = new TextProperty(trUtf8("文本"));
     elementTextProperty->setId(EL_TEXT);
+    elementTextProperty->setValue(elementText);
     propList.insert(propList.end(),elementTextProperty);
+
+    // 水平对齐
+    hAlignProperty_ = new ListProperty(tr("水平对齐"));
+    hAlignProperty_->setId(EL_H_ALIGN);
+    QStringList hAlignList;
+    hAlignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
+    hAlignProperty_->setList(hAlignList);
+    propList.insert(propList.end(), hAlignProperty_);
+
+    // 垂直对齐
+    vAlignProperty_ = new ListProperty(tr("水平对齐"));
+    vAlignProperty_->setId(EL_V_ALIGN);
+    QStringList vAlignList;
+    vAlignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
+    vAlignProperty_->setList(vAlignList);
+    propList.insert(propList.end(), vAlignProperty_);
+
+    // 图片
+    fileProperty = new FileProperty(trUtf8("选择图片"));
+    fileProperty->setId(EL_FILE);
+    fileProperty->setValue(filePicture_);
+    propList.insert(propList.end(), fileProperty);
+
 
     textColorProperty = new ColorProperty(trUtf8("颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
@@ -113,9 +156,7 @@ void ElementPushButton::createPropertyList() {
 }
 
 void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
-
     switch (id) {
-
     case EL_ID:
         elementId = value.toString();
         break;
@@ -139,14 +180,42 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
         elementHeight = value.toInt();
         updateBoundingElement();
         break;
+    case EL_SHOW_CONTENT:
+        showContent_ = value.toString();
+        bShowContentText_ = true;
+        if(showContent_ == tr("图片")) {
+            bShowContentText_ = false;
+        }
+        updateBoundingElement();
+        break;
+    case EL_TEXT:
+        elementText = value.toString();
+        break;
+    case EL_H_ALIGN:
+        szHAlign_ = value.toString();
+        break;
+    case EL_V_ALIGN:
+        szVAlign_ = value.toString();
+        break;
+    case EL_FILE:
+    {
+        filePicture_ = value.toString();
+        QFileInfo info(filePicture_);
+        if(info.exists()) {
+            QString picturePath = getProjectPath() + "/Pictures";
+            QDir dir(picturePath);
+            if(!dir.exists())
+                dir.mkpath(picturePath);
+            QFile::copy(filePicture_, picturePath + "/" + info.fileName());
+            filePicture_ = info.fileName();
+            updatePropertyModel();
+        }
+    }break;
     case EL_FONT_COLOR:
         textColor = value.value<QColor>();
         break;
     case EL_FONT_SIZE:
         fontSize = value.toInt();
-        break;
-    case EL_TEXT:
-        elementText = value.toString();
         break;
     case EL_ANGLE:
         elemAngle = value.toInt();
@@ -162,29 +231,32 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
 }
 
 void ElementPushButton::updatePropertyModel() {
-
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
     zValueProperty->setValue(elementZValue);
-    widthProperty->setValue(elementWidth);
-    heightProperty->setValue(elementHeight);
+    widthProperty_->setValue(elementWidth);
+    heightProperty_->setValue(elementHeight);
+
+    showContentProperty_->setValue(showContent_);
+    elementTextProperty->setValue(elementText);
+    hAlignProperty_->setValue(szHAlign_);
+    vAlignProperty_->setValue(szVAlign_);
+    fileProperty->setValue(filePicture_);
+
     textColorProperty->setValue(textColor);
     fontSizeProperty->setValue(fontSize);
-    elementTextProperty->setValue(elementText);
     angleProperty->setValue(elemAngle);
     funcProperty->setValue(funcs_);
 }
 
 void ElementPushButton::setClickPosition(QPointF position) {
-
     prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
     setX(elementXPos);
     setY(elementYPos);
-
-    elementRect.setRect(0,0,elementWidth,elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
@@ -192,8 +264,9 @@ void ElementPushButton::updateBoundingElement() {
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementPushButton::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-
+void ElementPushButton::paint(QPainter *painter,
+                              const QStyleOptionGraphicsItem *option,
+                              QWidget *widget) {
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -239,6 +312,23 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
 
     painter->setFont(font);
     painter->drawText(boundingRect(), Qt::AlignCenter, elementText);
+
+    /*
+    if(filePicture_ != QString()) {
+        QString picture = getProjectPath() + "/Pictures/" + filePicture_;
+        if(QFile::exists(picture)) {
+            QImage image(getProjectPath() + "/Pictures/" + filePicture_);
+            QImage scaleImage;
+            if(showNoScale_) {
+                scaleImage = image;
+            } else {
+                scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+            }
+            painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+            painter->drawImage(elementRect, scaleImage);
+        }
+    }
+*/
 }
 
 void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -369,7 +459,11 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("z", QString::number(zValue()));
     writer.writeAttribute("width", QString::number(elementWidth));
     writer.writeAttribute("height", QString::number(elementHeight));
+    writer.writeAttribute("showContent", showContent_);
+    writer.writeAttribute("picture", filePicture_);
     writer.writeAttribute("elementtext", elementText);
+    writer.writeAttribute("halign", getHAlignString(szHAlign_));
+    writer.writeAttribute("valign", getVAlignString(szVAlign_));
     writer.writeAttribute("textcolor", textColor.name());
     writer.writeAttribute("fontsize", QString::number(fontSize));
     writer.writeAttribute("elemAngle", QString::number(elemAngle));
@@ -378,9 +472,13 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
 }
 
 void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
-        setElementId(attributes.value("elementId").toString());
+        QString szID = attributes.value("elementId").toString();
+        setElementId(szID);
+        int index = getIndexFromIDString(szID);
+        if(iLastIndex_ < index) {
+            iLastIndex_ = index;
+        }
     }
 
     if (attributes.hasAttribute("x")) {
@@ -403,8 +501,26 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
         setElementHeight(attributes.value("height").toString().toInt());
     }
 
+    if (attributes.hasAttribute("showContent")) {
+        showContent_ = attributes.value("showContent").toString();
+    }
+
+    if (attributes.hasAttribute("picture")) {
+        filePicture_ = attributes.value("picture").toString();
+    }
+
     if (attributes.hasAttribute("elementtext")) {
         elementText = attributes.value("elementtext").toString();
+    }
+
+    if (attributes.hasAttribute("halign")) {
+        QString align = attributes.value("halign").toString();
+        this->setHAlignString(align, szHAlign_);
+    }
+
+    if (attributes.hasAttribute("valign")) {
+        QString align = attributes.value("valign").toString();
+        this->setVAlignString(align, szVAlign_);
     }
 
     if (attributes.hasAttribute("textcolor")) {
@@ -429,14 +545,17 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
 }
 
 void ElementPushButton::writeData(QDataStream &out) {
-
     out << this->elementId
         << this->x()
         << this->y()
         << this->zValue()
         << this->elementWidth
         << this->elementHeight
+        << this->showContent_
+        << this->filePicture_
         << this->elementText
+        << this->getHAlignString(szHAlign_)
+        << this->getVAlignString(szVAlign_)
         << this->textColor
         << this->fontSize
         << this->elemAngle
@@ -444,14 +563,17 @@ void ElementPushButton::writeData(QDataStream &out) {
 }
 
 void ElementPushButton::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
+    QString showContent;
+    QString pic;
     QString text;
+    QString hAlign;
+    QString vAlign;
     QColor textColor;
     int fontSize;
     qreal angle;
@@ -463,19 +585,31 @@ void ElementPushButton::readData(QDataStream &in) {
        >> zvalue
        >> width
        >> height
+       >> showContent
+       >> pic
        >> text
+       >> hAlign
+       >> vAlign
        >> textColor
        >> fontSize
        >> angle
        >> funcs;
 
     this->setElementId(id);
+    int index = getIndexFromIDString(id);
+    if(iLastIndex_ < index) {
+        iLastIndex_ = index;
+    }
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
     this->setElementWidth(width);
     this->setElementHeight(height);
+    this->showContent_ = showContent;
+    this->filePicture_ = pic;
     this->elementText = text;
+    this->setHAlignString(hAlign, szHAlign_);
+    this->setVAlignString(vAlign, szVAlign_);
     this->textColor = textColor;
     this->fontSize = fontSize;
     this->setAngle(angle);
@@ -485,7 +619,6 @@ void ElementPushButton::readData(QDataStream &in) {
 }
 
 void ElementPushButton::getSupportEvents(QStringList &listValue) {
-
     QString xmlFileName = Helper::AppDir() + "/Config/ElementSupportEvents.xml";
 
     QFile fileCfg(xmlFileName);
@@ -527,16 +660,18 @@ void ElementPushButton::getSupportEvents(QStringList &listValue) {
     }
 }
 
-
 QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
-
     out << ele.elementId
         << ele.x()
         << ele.y()
         << ele.zValue()
         << ele.elementWidth
         << ele.elementHeight
+        << ele.showContent_
+        << ele.filePicture_
         << ele.elementText
+        << ele.getHAlignString(ele.szHAlign_)
+        << ele.getVAlignString(ele.szVAlign_)
         << ele.textColor
         << ele.fontSize
         << ele.elemAngle
@@ -545,14 +680,17 @@ QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
 }
 
 QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
-
     QString id;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
+    QString showContent;
+    QString pic;
     QString text;
+    QString hAlign;
+    QString vAlign;
     QColor textColor;
     int fontSize;
     qreal angle;
@@ -564,19 +702,31 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
        >> zvalue
        >> width
        >> height
+       >> showContent
+       >> pic
        >> text
+       >> hAlign
+       >> vAlign
        >> textColor
        >> fontSize
        >> angle
        >> funcs;
 
     ele.setElementId(id);
+    int index = ele.getIndexFromIDString(id);
+    if(ele.iLastIndex_ < index) {
+        ele.iLastIndex_ = index;
+    }
     ele.setElementXPos(xpos);
     ele.setElementYPos(ypos);
     ele.setElementZValue(zvalue);
     ele.setElementWidth(width);
     ele.setElementHeight(height);
+    ele.showContent_ = showContent;
+    ele.filePicture_ = pic;
     ele.elementText = text;
+    ele.setHAlignString(hAlign, ele.szHAlign_);
+    ele.setVAlignString(vAlign, ele.szVAlign_);
     ele.textColor = textColor;
     ele.fontSize = fontSize;
     ele.setAngle(angle);
