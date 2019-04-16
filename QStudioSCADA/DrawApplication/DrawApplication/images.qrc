@@ -14,17 +14,6 @@
         <file>images/rectitem.png</file>
         <file>images/rotate.png</file>
         <file>images/showgrid.png</file>
-        <file>images/specelem1.png</file>
-        <file>images/specelem2.png</file>
-        <file>images/specelem3.png</file>
-        <file>images/specelem4.png</file>
-        <file>images/specelem5.png</file>
-        <file>images/specelem6.png</file>
-        <file>images/specelem7.png</file>
-        <file>images/specelem8.png</file>
-        <file>images/specelem9.png</file>
-        <file>images/specelem10.png</file>
-        <file>images/spectextitem.png</file>
         <file>images/textitem.png</file>
         <file>images/apply.png</file>
         <file>images/project.png</file>
@@ -34,9 +23,6 @@
         <file>images/undo.png</file>
         <file>images/zoom-in.png</file>
         <file>images/zoom-out.png</file>
-        <file>images/preview.png</file>
-        <file>images/ruler.png</file>
-        <file>images/binary.png</file>
         <file>images/image.png</file>
         <file>images/xml.png</file>
         <file>images/application.png</file>
@@ -56,7 +42,6 @@
         <file>images/additional.png</file>
         <file>images/deviceeditor.png</file>
         <file>images/export.png</file>
-        <file>images/indication.png</file>
 		<file>images/saveproject.png</file>
     </qresource>
 </RCC>

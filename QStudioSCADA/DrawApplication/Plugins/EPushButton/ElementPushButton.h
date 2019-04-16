@@ -61,6 +61,11 @@ private:
     QString szHAlign_;
     // 垂直对齐
     QString szVAlign_;
+    // 按钮背景颜色
+    QColor backgroundColor_;
+    // 透明背景颜色
+    bool transparent_;
+
 
     // ID
     TextProperty *idProperty;
@@ -86,6 +91,10 @@ private:
     ListProperty *hAlignProperty_;
     // 垂直对齐
     ListProperty *vAlignProperty_;
+    // 按钮背景颜色
+    ColorProperty *backgroundColorProperty_;
+    // 透明
+    BoolProperty *transparentProperty_;
 
     ColorProperty *textColorProperty;
     IntegerProperty *fontSizeProperty;

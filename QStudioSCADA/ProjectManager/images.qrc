@@ -15,10 +15,6 @@
         <file>images/alignvertical123.png</file>
         <file>images/alignvertical.png</file>
         <file>images/appicon.png</file>
-        <file>images/back_left.png</file>
-        <file>images/back_main.png</file>
-        <file>images/ceditor.png</file>
-        <file>images/ceditor_splash.png</file>
         <file>images/checkbox.png</file>
         <file>images/clockwise.png</file>
         <file>images/clockwiseanti.png</file>
@@ -42,7 +38,6 @@
         <file>images/device.png</file>
         <file>images/device_not_start.png</file>
         <file>images/device_select.png</file>
-        <file>images/document.xpm</file>
         <file>images/download.png</file>
         <file>images/downusb.png</file>
         <file>images/drawexec.png</file>
@@ -79,8 +74,6 @@
         <file>images/icon_modify.png</file>
         <file>images/icon_new.png</file>
         <file>images/iconview.png</file>
-        <file>images/jseditor.png</file>
-        <file>images/listview.xpm</file>
         <file>images/lubocurv.png</file>
         <file>images/mode10.png</file>
         <file>images/mode11.png</file>
@@ -155,10 +148,8 @@
         <file>images/rtmeter.png</file>
         <file>images/rtmonitor.png</file>
         <file>images/rtreport.png</file>
-        <file>images/rtview_clearview.png</file>
         <file>images/rtview_connect.png</file>
         <file>images/rtview_ctl.png</file>
-        <file>images/rtview_ctlview.png</file>
         <file>images/rtview_exit.png</file>
         <file>images/rtview_print.png</file>
         <file>images/rtview_setstart.PNG</file>
@@ -178,64 +169,6 @@
         <file>images/sizeboth.png</file>
         <file>images/sizehor.png</file>
         <file>images/sizever.png</file>
-        <file>images/softplc_coil.png</file>
-        <file>images/softplc_compile.png</file>
-        <file>images/softplc_connect.png</file>
-        <file>images/softplc_copy.png</file>
-        <file>images/softplc_cut.png</file>
-        <file>images/softplc_delete.png</file>
-        <file>images/softplc_dline.png</file>
-        <file>images/softplc_draw_bi.png</file>
-        <file>images/softplc_draw_bieq.png</file>
-        <file>images/softplc_draw_cnt.png</file>
-        <file>images/softplc_draw_coil.png</file>
-        <file>images/softplc_draw_dline.png</file>
-        <file>images/softplc_draw_end.png</file>
-        <file>images/softplc_draw_eq.png</file>
-        <file>images/softplc_draw_jmpoff.png</file>
-        <file>images/softplc_draw_jmpon.png</file>
-        <file>images/softplc_draw_ld.png</file>
-        <file>images/softplc_draw_ldi.png</file>
-        <file>images/softplc_draw_ldn.png</file>
-        <file>images/softplc_draw_li.png</file>
-        <file>images/softplc_draw_lieq.png</file>
-        <file>images/softplc_draw_line.png</file>
-        <file>images/softplc_draw_minus.png</file>
-        <file>images/softplc_draw_move.png</file>
-        <file>images/softplc_draw_noeq.png</file>
-        <file>images/softplc_draw_over.png</file>
-        <file>images/softplc_draw_plus.png</file>
-        <file>images/softplc_draw_rcoil.png</file>
-        <file>images/softplc_draw_rsf.png</file>
-        <file>images/softplc_draw_scoil.png</file>
-        <file>images/softplc_draw_start.png</file>
-        <file>images/softplc_draw_tim.png</file>
-        <file>images/softplc_draw_times.png</file>
-        <file>images/softplc_end.png</file>
-        <file>images/softplc_exit.png</file>
-        <file>images/softplc_jno.png</file>
-        <file>images/softplc_joff.png</file>
-        <file>images/softplc_ld.png</file>
-        <file>images/softplc_ldi.png</file>
-        <file>images/softplc_line.png</file>
-        <file>images/softplc_not.png</file>
-        <file>images/softplc_open.png</file>
-        <file>images/softplc_paste.png</file>
-        <file>images/softplc_print.png</file>
-        <file>images/softplc_rcoil.png</file>
-        <file>images/softplc_redo.png</file>
-        <file>images/softplc_save.png</file>
-        <file>images/softplc_scoil.png</file>
-        <file>images/softplc_set.png</file>
-        <file>images/softplc_start.png</file>
-        <file>images/softplc_tostl.png</file>
-        <file>images/softplc_uline.png</file>
-        <file>images/softplc_undo.png</file>
-        <file>images/softplc_view.png</file>
-        <file>images/soure1.png</file>
-        <file>images/soure2.png</file>
-        <file>images/soure3.png</file>
-        <file>images/soure4.png</file>
         <file>images/start.png</file>
         <file>images/state_abnormal.png</file>
         <file>images/state_abnormal_accident.png</file>
@@ -261,31 +194,6 @@
         <file>images/textunderline.png</file>
         <file>images/texture.png</file>
         <file>images/textvercenter.png</file>
-        <file>images/tool3Dbutton.png</file>
-        <file>images/toolalarmview.png</file>
-        <file>images/toolarc.png</file>
-        <file>images/toolarrow.png</file>
-        <file>images/toolbar.png</file>
-        <file>images/toolbezier.png</file>
-        <file>images/toolbutton.png</file>
-        <file>images/toolcustomwidget.png</file>
-        <file>images/tooleleboard.png</file>
-        <file>images/toolellipse.png</file>
-        <file>images/toolflowline.png</file>
-        <file>images/toolgridtext.png</file>
-        <file>images/toolline.png</file>
-        <file>images/toolmeter.png</file>
-        <file>images/toolpicinpic.png</file>
-        <file>images/toolpie.png</file>
-        <file>images/toolpipe.png</file>
-        <file>images/toolpolygon.png</file>
-        <file>images/toolpolyline.png</file>
-        <file>images/toolrect.png</file>
-        <file>images/toolreport.png</file>
-        <file>images/toolroundrect.png</file>
-        <file>images/toolselect.png</file>
-        <file>images/toolsupergroup.png</file>
-        <file>images/tooltext.png</file>
         <file>images/trendChart.png</file>
         <file>images/txt.png</file>
         <file>images/upload.PNG</file>

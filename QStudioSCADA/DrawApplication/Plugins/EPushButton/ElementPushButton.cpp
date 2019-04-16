@@ -26,7 +26,7 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
 
     elementWidth = 100;
     elementHeight = 40;
-    backgroundColor = QColor(240, 240, 240);
+    backgroundColor_ = QColor(240, 240, 240);
     signBackgroundColor = QColor(Qt::black);
     borderWidth = 4;
     borderColor = QColor(112, 112, 112);
@@ -44,7 +44,7 @@ QRectF ElementPushButton::boundingRect() const {
     qreal extra = 5;
 
     QRectF rect(elementRect.toRect());
-    return rect.normalized().adjusted(-extra,-extra,extra,extra);
+    return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
 QPainterPath ElementPushButton::shape() const {
@@ -52,8 +52,8 @@ QPainterPath ElementPushButton::shape() const {
     path.addRect(elementRect);
 
     if (isSelected()) {
-        path.addRect(QRectF(elementRect.topLeft() - QPointF(3,3),elementRect.topLeft() + QPointF(3,3)));
-        path.addRect(QRectF(elementRect.bottomRight() - QPointF(3,3),elementRect.bottomRight() + QPointF(3,3)));
+        path.addRect(QRectF(elementRect.topLeft() - QPointF(3,3), elementRect.topLeft() + QPointF(3,3)));
+        path.addRect(QRectF(elementRect.bottomRight() - QPointF(3,3), elementRect.bottomRight() + QPointF(3,3)));
     }
 
     return path;
@@ -132,6 +132,19 @@ void ElementPushButton::createPropertyList() {
     fileProperty->setValue(filePicture_);
     propList.insert(propList.end(), fileProperty);
 
+    // 按钮背景颜色
+    backgroundColorProperty_ = new ColorProperty(tr("背景颜色"));
+    backgroundColorProperty_->setId(EL_BACKGROUND);
+    backgroundColorProperty_->setValue(backgroundColor_);
+    propList.insert(propList.end(), backgroundColorProperty_);
+
+    // 透明
+    transparentProperty_ = new BoolProperty(tr("透明显示"));
+    transparentProperty_->setId(EL_TRANSPARENT_BACKGROUND);
+    transparentProperty_->setTrueText(tr("透明"));
+    transparentProperty_->setFalseText(tr("不透明"));
+    transparentProperty_->setValue(transparent_);
+    propList.insert(propList.end(), transparentProperty_);
 
     textColorProperty = new ColorProperty(trUtf8("颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
@@ -200,17 +213,26 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
     case EL_FILE:
     {
         filePicture_ = value.toString();
-        QFileInfo info(filePicture_);
-        if(info.exists()) {
+        QFileInfo infoSrc(filePicture_);
+        if(infoSrc.exists()) {
             QString picturePath = getProjectPath() + "/Pictures";
             QDir dir(picturePath);
             if(!dir.exists())
                 dir.mkpath(picturePath);
-            QFile::copy(filePicture_, picturePath + "/" + info.fileName());
-            filePicture_ = info.fileName();
+            QString fileDes = picturePath + "/" + infoSrc.fileName();
+            QFileInfo infoDes(fileDes);
+            if(!infoDes.exists())
+                QFile::copy(filePicture_, fileDes);
+            filePicture_ = infoSrc.fileName();
             updatePropertyModel();
         }
     }break;
+    case EL_BACKGROUND:
+        backgroundColor_ = value.value<QColor>();
+        break;
+    case EL_TRANSPARENT_BACKGROUND:
+        transparent_ = value.toBool();
+        break;
     case EL_FONT_COLOR:
         textColor = value.value<QColor>();
         break;
@@ -237,13 +259,13 @@ void ElementPushButton::updatePropertyModel() {
     zValueProperty->setValue(elementZValue);
     widthProperty_->setValue(elementWidth);
     heightProperty_->setValue(elementHeight);
-
     showContentProperty_->setValue(showContent_);
     elementTextProperty->setValue(elementText);
     hAlignProperty_->setValue(szHAlign_);
     vAlignProperty_->setValue(szVAlign_);
     fileProperty->setValue(filePicture_);
-
+    backgroundColorProperty_->setValue(backgroundColor_);
+    transparentProperty_->setValue(transparent_);
     textColorProperty->setValue(textColor);
     fontSizeProperty->setValue(fontSize);
     angleProperty->setValue(elemAngle);
@@ -275,11 +297,9 @@ void ElementPushButton::paint(QPainter *painter,
     drawPushButton(painter);
 
     if (isSelected()) {
-
         painter->setPen(QPen(borderColor));
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(boundingRect());
-
         setCursor(Qt::SizeAllCursor);
         painter->setBrush(Qt::red);
         painter->setPen(Qt::red);
@@ -289,46 +309,48 @@ void ElementPushButton::paint(QPainter *painter,
 }
 
 void ElementPushButton::drawPushButton(QPainter *painter) {
-
     QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
-    for(int i=0; i<borderWidth; i++) {
-        PubTool::DrawFrameRect(painter, rect, borderColor);
-        if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
-        else rect.adjust(1, 1, 0, 0);
-    }
 
-    PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
-    rect.adjust(1, 1, -1, -1);
+    if(transparent_) {
+        painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
+        painter->setBrush(Qt::NoBrush);
+        painter->drawRect(rect);
+    } else {
+        for(int i=0; i<borderWidth; i++) {
+            PubTool::DrawFrameRect(painter, rect, borderColor);
+            if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
+            else rect.adjust(1, 1, 0, 0);
+        }
 
-    rect.adjust(-1, -1, 0, 0);
-    PubTool::FillFullRect(painter, rect, backgroundColor);
+        PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
+        rect.adjust(1, 1, -1, -1);
 
-    painter->setPen(textColor);
-    painter->setBrush(Qt::NoBrush);
+        rect.adjust(-1, -1, 0, 0);
 
-    QFont font = painter->font();
-    font.setFamily("Arial Black");
-    font.setPointSize(fontSize);
+        if(bShowContentText_) { // 文本+背景
+            PubTool::FillFullRect(painter, rect, backgroundColor_);
 
-    painter->setFont(font);
-    painter->drawText(boundingRect(), Qt::AlignCenter, elementText);
+            painter->setPen(textColor);
+            painter->setBrush(Qt::NoBrush);
 
-    /*
-    if(filePicture_ != QString()) {
-        QString picture = getProjectPath() + "/Pictures/" + filePicture_;
-        if(QFile::exists(picture)) {
-            QImage image(getProjectPath() + "/Pictures/" + filePicture_);
-            QImage scaleImage;
-            if(showNoScale_) {
-                scaleImage = image;
-            } else {
-                scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+            QFont font = painter->font();
+            font.setFamily("Arial Black");
+            font.setPointSize(fontSize);
+
+            painter->setFont(font);
+            painter->drawText(boundingRect(), Qt::AlignCenter, elementText);
+        } else { // 图片按钮
+            if(filePicture_ != QString()) {
+                QString picture = getProjectPath() + "/Pictures/" + filePicture_;
+                if(QFile::exists(picture)) {
+                    QImage image(getProjectPath() + "/Pictures/" + filePicture_);
+                    QImage scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+                    painter->drawImage(elementRect, scaleImage);
+                }
             }
-            painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-            painter->drawImage(elementRect, scaleImage);
         }
     }
-*/
 }
 
 void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -464,6 +486,8 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("elementtext", elementText);
     writer.writeAttribute("halign", getHAlignString(szHAlign_));
     writer.writeAttribute("valign", getVAlignString(szVAlign_));
+    writer.writeAttribute("backgroundColor", backgroundColor_.name());
+    writer.writeAttribute("transparent", transparent_?"true":"false");
     writer.writeAttribute("textcolor", textColor.name());
     writer.writeAttribute("fontsize", QString::number(fontSize));
     writer.writeAttribute("elemAngle", QString::number(elemAngle));
@@ -523,6 +547,18 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
         this->setVAlignString(align, szVAlign_);
     }
 
+    if (attributes.hasAttribute("backgroundColor")) {
+        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
+    }
+
+    if (attributes.hasAttribute("transparent")) {
+        QString value = attributes.value("transparent").toString();
+        transparent_ = false;
+        if(value == "true") {
+            transparent_ = true;
+        }
+    }
+
     if (attributes.hasAttribute("textcolor")) {
         textColor = QColor(attributes.value("textcolor").toString());
     }
@@ -556,6 +592,8 @@ void ElementPushButton::writeData(QDataStream &out) {
         << this->elementText
         << this->getHAlignString(szHAlign_)
         << this->getVAlignString(szVAlign_)
+        << this->backgroundColor_
+        << this->transparent_
         << this->textColor
         << this->fontSize
         << this->elemAngle
@@ -574,6 +612,8 @@ void ElementPushButton::readData(QDataStream &in) {
     QString text;
     QString hAlign;
     QString vAlign;
+    QColor backgroundColor;
+    bool transparent;
     QColor textColor;
     int fontSize;
     qreal angle;
@@ -590,6 +630,8 @@ void ElementPushButton::readData(QDataStream &in) {
        >> text
        >> hAlign
        >> vAlign
+       >> backgroundColor
+       >> transparent
        >> textColor
        >> fontSize
        >> angle
@@ -610,6 +652,8 @@ void ElementPushButton::readData(QDataStream &in) {
     this->elementText = text;
     this->setHAlignString(hAlign, szHAlign_);
     this->setVAlignString(vAlign, szVAlign_);
+    this->backgroundColor_ = backgroundColor;
+    this->transparent_ = transparent;
     this->textColor = textColor;
     this->fontSize = fontSize;
     this->setAngle(angle);
@@ -672,6 +716,8 @@ QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
         << ele.elementText
         << ele.getHAlignString(ele.szHAlign_)
         << ele.getVAlignString(ele.szVAlign_)
+        << ele.backgroundColor_
+        << ele.transparent_
         << ele.textColor
         << ele.fontSize
         << ele.elemAngle
@@ -688,6 +734,8 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
     int height;
     QString showContent;
     QString pic;
+    QColor backgroundColor;
+    bool transparent;
     QString text;
     QString hAlign;
     QString vAlign;
@@ -707,6 +755,8 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
        >> text
        >> hAlign
        >> vAlign
+       >> backgroundColor
+       >> transparent
        >> textColor
        >> fontSize
        >> angle
@@ -727,6 +777,8 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
     ele.elementText = text;
     ele.setHAlignString(hAlign, ele.szHAlign_);
     ele.setVAlignString(vAlign, ele.szVAlign_);
+    ele.backgroundColor_ = backgroundColor;
+    ele.transparent_ = transparent;
     ele.textColor = textColor;
     ele.fontSize = fontSize;
     ele.setAngle(angle);

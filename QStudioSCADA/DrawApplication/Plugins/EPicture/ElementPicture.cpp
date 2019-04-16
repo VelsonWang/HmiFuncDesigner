@@ -145,14 +145,17 @@ void ElementPicture::updateElementProperty(uint id, const QVariant &value) {
     case EL_FILE:
     {
         filePicture_ = value.toString();
-        QFileInfo info(filePicture_);
-        if(info.exists()) {
+        QFileInfo infoSrc(filePicture_);
+        if(infoSrc.exists()) {
             QString picturePath = getProjectPath() + "/Pictures";
             QDir dir(picturePath);
             if(!dir.exists())
                 dir.mkpath(picturePath);
-            QFile::copy(filePicture_, picturePath + "/" + info.fileName());
-            filePicture_ = info.fileName();
+            QString fileDes = picturePath + "/" + infoSrc.fileName();
+            QFileInfo infoDes(fileDes);
+            if(!infoDes.exists())
+                QFile::copy(filePicture_, fileDes);
+            filePicture_ = infoSrc.fileName();
             updatePropertyModel();
         }
     }break;
