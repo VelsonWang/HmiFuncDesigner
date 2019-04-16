@@ -65,7 +65,12 @@ private:
     QColor backgroundColor_;
     // 透明背景颜色
     bool transparent_;
-
+    // 字体
+    QFont font_;
+    // 初始有效性
+    bool enableOnInitial_;
+    // 初始可见性
+    bool showOnInitial_;
 
     // ID
     TextProperty *idProperty;
@@ -95,10 +100,17 @@ private:
     ColorProperty *backgroundColorProperty_;
     // 透明
     BoolProperty *transparentProperty_;
-
+    // 字体
+    FontProperty *fontProperty_;
+    // 文本颜色
     ColorProperty *textColorProperty;
-    IntegerProperty *fontSizeProperty;
+    // 旋转角度
     IntegerProperty *angleProperty;
+    // 初始有效性
+    BoolProperty *enableOnInitialProperty_;
+    // 初始可见性
+    BoolProperty *showOnInitialProperty_;
+    // 选择功能
     FunctionProperty *funcProperty;
 };
 

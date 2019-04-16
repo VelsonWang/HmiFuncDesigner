@@ -184,6 +184,7 @@ int Element::getIndexFromIDString(const QString &szID) {
     }
     return 0;
 }
+
 /**
  * @brief Element::getHAlignString
  * @param szAlign 对齐方式

@@ -55,7 +55,7 @@ enum {
     EL_TAG_COLOR_LIST = 32,
     EL_SHOW_SCALE = 33,
     EL_SHOW_CONTENT = 34,
-
+    EL_ENABLE_ON_INITIAL = 35,
 
 
 

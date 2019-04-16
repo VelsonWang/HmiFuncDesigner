@@ -36,8 +36,30 @@ protected:
     QPainterPath shape() const;
 
 private:
-    QRectF elementRect;
     void drawPushButton(QPainter *painter);
+
+private:
+    QRectF elementRect;
+    QStringList funcs_;
+    // 显示内容
+    QString showContent_;
+    bool bShowContentText_;
+    // 图片名
+    QString filePicture_;
+    // 水平对齐
+    QString szHAlign_;
+    // 垂直对齐
+    QString szVAlign_;
+    // 按钮背景颜色
+    QColor backgroundColor_;
+    // 透明背景颜色
+    bool transparent_;
+    // 字体
+    QFont font_;
+    // 初始有效性
+    bool enableOnInitial_;
+    // 初始可见性
+    bool showOnInitial_;
 };
 
 #endif // PUSHBUTTONITEM_HPP

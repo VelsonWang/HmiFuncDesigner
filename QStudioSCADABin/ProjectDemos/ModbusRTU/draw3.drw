@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <graphPage fileName="draw3.drw" graphPageId="draw3" width="800" height="600" background="#ffffff" functions="">
-    <element internalType="PushButton" elementId="PushButton_0001" x="602" y="310" z="0" width="100" height="40" picture="toolbutton.png" elementtext="弹出按钮" halign="left" valign="center" backgroundColor="#f0f0f0" transparent="false" textcolor="#000000" fontsize="10" elemAngle="0" functions=""/>
+    <element internalType="PushButton" elementId="PushButton_0001" x="359" y="284" z="0" width="343" height="66" showContent="文本" picture="toolbutton.png" elementtext="弹出按钮" halign="left" valign="top" backgroundColor="#55ff7f" transparent="false" font="黑体,18,-1,5,50,0,0,0,0,0,Regular" textcolor="#ff0000" fontsize="10" elemAngle="0" functions=""/>
 </graphPage>

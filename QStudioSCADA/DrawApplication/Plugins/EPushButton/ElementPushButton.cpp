@@ -20,10 +20,10 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
     elementIcon = QIcon(":/images/PushButton.png");
     showContent_ = tr("文本");
     bShowContentText_ = true;
-    szHAlign_ = tr("左对齐");
+    szHAlign_ = tr("居中对齐");
     szVAlign_ = tr("居中对齐");
+    font_ = QFont("宋体", 12);
     init();
-
     elementWidth = 100;
     elementHeight = 40;
     backgroundColor_ = QColor(240, 240, 240);
@@ -31,7 +31,8 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
     borderWidth = 4;
     borderColor = QColor(112, 112, 112);
     elementText = trUtf8("弹出按钮");
-
+    enableOnInitial_ = true;
+    showOnInitial_ = true;
     TagManager::setProjectPath(projPath);
     DrawListUtils::setProjectPath(projPath);
 
@@ -40,9 +41,7 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
 }
 
 QRectF ElementPushButton::boundingRect() const {
-
     qreal extra = 5;
-
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
@@ -108,7 +107,7 @@ void ElementPushButton::createPropertyList() {
     elementTextProperty = new TextProperty(trUtf8("文本"));
     elementTextProperty->setId(EL_TEXT);
     elementTextProperty->setValue(elementText);
-    propList.insert(propList.end(),elementTextProperty);
+    propList.insert(propList.end(), elementTextProperty);
 
     // 水平对齐
     hAlignProperty_ = new ListProperty(tr("水平对齐"));
@@ -146,20 +145,40 @@ void ElementPushButton::createPropertyList() {
     transparentProperty_->setValue(transparent_);
     propList.insert(propList.end(), transparentProperty_);
 
+    // 字体
+    fontProperty_ = new FontProperty(tr("字体"));
+    fontProperty_->setId(EL_FONT);
+    fontProperty_->setValue(QFont("Arial Black", 12));
+    propList.insert(propList.end(), fontProperty_);
+
+    // 文本颜色
     textColorProperty = new ColorProperty(trUtf8("颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
-    propList.insert(propList.end(),textColorProperty);
+    propList.insert(propList.end(), textColorProperty);
 
-    fontSizeProperty = new IntegerProperty(trUtf8("字体"));
-    fontSizeProperty->setId(EL_FONT_SIZE);
-    fontSizeProperty->setSettings(8,72);
-    propList.insert(propList.end(),fontSizeProperty);
-
+    // 旋转角度
     angleProperty = new IntegerProperty(trUtf8("角度"));
     angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0,360);
-    propList.insert(propList.end(),angleProperty);
+    angleProperty->setSettings(0, 360);
+    propList.insert(propList.end(), angleProperty);
 
+    // 初始有效性
+    enableOnInitialProperty_ = new BoolProperty(tr("初始有效性"));
+    enableOnInitialProperty_->setId(EL_ENABLE_ON_INITIAL);
+    enableOnInitialProperty_->setTrueText(tr("有效"));
+    enableOnInitialProperty_->setFalseText(tr("失效"));
+    enableOnInitialProperty_->setValue(enableOnInitial_);
+    propList.insert(propList.end(), enableOnInitialProperty_);
+
+    // 初始可见性
+    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
+    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
+    showOnInitialProperty_->setTrueText(tr("显示"));
+    showOnInitialProperty_->setFalseText(tr("不显示"));
+    showOnInitialProperty_->setValue(showOnInitial_);
+    propList.insert(propList.end(), showOnInitialProperty_);
+
+    // 选择功能
     QStringList listEvents;
     getSupportEvents(listEvents);
     funcProperty = new FunctionProperty(trUtf8("功能操作"));
@@ -201,6 +220,9 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
         }
         updateBoundingElement();
         break;
+    case EL_FONT:
+        font_ = value.value<QFont>();
+        break;
     case EL_TEXT:
         elementText = value.toString();
         break;
@@ -236,12 +258,15 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
     case EL_FONT_COLOR:
         textColor = value.value<QColor>();
         break;
-    case EL_FONT_SIZE:
-        fontSize = value.toInt();
-        break;
     case EL_ANGLE:
         elemAngle = value.toInt();
         setAngle(elemAngle);
+        break;
+    case EL_ENABLE_ON_INITIAL:
+        enableOnInitial_ = value.toBool();
+        break;
+    case EL_SHOW_ON_INITIAL:
+        showOnInitial_ = value.toBool();
         break;
     case EL_FUNCTION:
         funcs_ = value.toStringList();
@@ -266,9 +291,11 @@ void ElementPushButton::updatePropertyModel() {
     fileProperty->setValue(filePicture_);
     backgroundColorProperty_->setValue(backgroundColor_);
     transparentProperty_->setValue(transparent_);
+    fontProperty_->setValue(font_);
     textColorProperty->setValue(textColor);
-    fontSizeProperty->setValue(fontSize);
     angleProperty->setValue(elemAngle);
+    enableOnInitialProperty_->setValue(enableOnInitial_);
+    showOnInitialProperty_->setValue(showOnInitial_);
     funcProperty->setValue(funcs_);
 }
 
@@ -324,21 +351,36 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
 
         PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
         rect.adjust(1, 1, -1, -1);
-
         rect.adjust(-1, -1, 0, 0);
 
         if(bShowContentText_) { // 文本+背景
             PubTool::FillFullRect(painter, rect, backgroundColor_);
-
             painter->setPen(textColor);
             painter->setBrush(Qt::NoBrush);
+            painter->setFont(font_);
 
-            QFont font = painter->font();
-            font.setFamily("Arial Black");
-            font.setPointSize(fontSize);
+            int hFlags = Qt::AlignLeft;
+            if(szHAlign_ == tr("左对齐")) {
+                hFlags = Qt::AlignLeft;
+            } else if(szHAlign_ == tr("居中对齐")) {
+                hFlags = Qt::AlignHCenter;
+            } else if(szHAlign_ == tr("右对齐")) {
+                hFlags = Qt::AlignRight;
+            }
 
-            painter->setFont(font);
-            painter->drawText(boundingRect(), Qt::AlignCenter, elementText);
+            int vFlags = Qt::AlignVCenter;
+            if(szVAlign_ == tr("上对齐")) {
+                vFlags = Qt::AlignTop;
+            } else if(szVAlign_ == tr("居中对齐")) {
+                vFlags = Qt::AlignVCenter;
+            } else if(szVAlign_ == tr("下对齐")) {
+                vFlags = Qt::AlignBottom;
+            }
+
+            QRectF rect(elementRect.toRect());
+            QRectF textRect = rect.normalized().adjusted(borderWidth, borderWidth, -borderWidth, -borderWidth);
+            painter->drawText(textRect, hFlags|vFlags, elementText);
+
         } else { // 图片按钮
             if(filePicture_ != QString()) {
                 QString picture = getProjectPath() + "/Pictures/" + filePicture_;
@@ -354,15 +396,11 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
 }
 
 void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
 
     if (resizing) {
-
         setCursor(Qt::SizeFDiagCursor);
-
         switch (rd) {
-
         case RdBottomRight:
             elementRect.setBottomRight(mousePoint);
             elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
@@ -390,7 +428,6 @@ void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -399,22 +436,18 @@ void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         rd = RdTopLeft;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         rd = RdBottomRight;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else {
+    } else {
         resizing = false;
         rd = RdNone;
     }
@@ -427,7 +460,6 @@ void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -445,7 +477,6 @@ void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -454,17 +485,12 @@ void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
-
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
-
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
     }
 
@@ -472,7 +498,6 @@ void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
-
     writer.writeStartElement("element");
     writer.writeAttribute("internalType", internalElementType);
     writer.writeAttribute("elementId", elementId);
@@ -488,9 +513,12 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeAttribute("valign", getVAlignString(szVAlign_));
     writer.writeAttribute("backgroundColor", backgroundColor_.name());
     writer.writeAttribute("transparent", transparent_?"true":"false");
+    writer.writeAttribute("font", font_.toString());
     writer.writeAttribute("textcolor", textColor.name());
     writer.writeAttribute("fontsize", QString::number(fontSize));
     writer.writeAttribute("elemAngle", QString::number(elemAngle));
+    writer.writeAttribute("enableOnInitial", enableOnInitial_?"true":"false");
+    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
     writer.writeAttribute("functions", funcs_.join("|"));
     writer.writeEndElement();
 }
@@ -559,6 +587,11 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
         }
     }
 
+    if (attributes.hasAttribute("font")) {
+        QString szFont = attributes.value("font").toString();
+        font_.fromString(szFont);
+    }
+
     if (attributes.hasAttribute("textcolor")) {
         textColor = QColor(attributes.value("textcolor").toString());
     }
@@ -569,6 +602,22 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("elemAngle")) {
         setAngle(attributes.value("elemAngle").toString().toInt());
+    }
+
+    if (attributes.hasAttribute("enableOnInitial")) {
+        QString value = attributes.value("enableOnInitial").toString();
+        enableOnInitial_ = false;
+        if(value == "true") {
+            enableOnInitial_ = true;
+        }
+    }
+
+    if (attributes.hasAttribute("showOnInitial")) {
+        QString value = attributes.value("showOnInitial").toString();
+        showOnInitial_ = false;
+        if(value == "true") {
+            showOnInitial_ = true;
+        }
     }
 
     if (attributes.hasAttribute("functions")) {
@@ -594,9 +643,12 @@ void ElementPushButton::writeData(QDataStream &out) {
         << this->getVAlignString(szVAlign_)
         << this->backgroundColor_
         << this->transparent_
+        << this->font_.toString()
         << this->textColor
         << this->fontSize
         << this->elemAngle
+        << this->enableOnInitial_
+        << this->showOnInitial_
         << this->funcs_;
 }
 
@@ -614,9 +666,12 @@ void ElementPushButton::readData(QDataStream &in) {
     QString vAlign;
     QColor backgroundColor;
     bool transparent;
+    QString font;
     QColor textColor;
     int fontSize;
     qreal angle;
+    bool enableOnInitial;
+    bool showOnInitial;
     QStringList funcs;
 
     in >> id
@@ -632,9 +687,12 @@ void ElementPushButton::readData(QDataStream &in) {
        >> vAlign
        >> backgroundColor
        >> transparent
+       >> font
        >> textColor
        >> fontSize
        >> angle
+       >> enableOnInitial
+       >> showOnInitial
        >> funcs;
 
     this->setElementId(id);
@@ -657,6 +715,8 @@ void ElementPushButton::readData(QDataStream &in) {
     this->textColor = textColor;
     this->fontSize = fontSize;
     this->setAngle(angle);
+    this->enableOnInitial_ = enableOnInitial;
+    this->showOnInitial_ = showOnInitial;
     this->funcs_ = funcs;
     this->updateBoundingElement();
     this->updatePropertyModel();
@@ -718,9 +778,12 @@ QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
         << ele.getVAlignString(ele.szVAlign_)
         << ele.backgroundColor_
         << ele.transparent_
+        << ele.font_
         << ele.textColor
         << ele.fontSize
         << ele.elemAngle
+        << ele.enableOnInitial_
+        << ele.showOnInitial_
         << ele.funcs_;
     return out;
 }
@@ -739,9 +802,12 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
     QString text;
     QString hAlign;
     QString vAlign;
+    QString font;
     QColor textColor;
     int fontSize;
     qreal angle;
+    bool enableOnInitial;
+    bool showOnInitial;
     QStringList funcs;
 
     in >> id
@@ -757,9 +823,12 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
        >> vAlign
        >> backgroundColor
        >> transparent
+       >> font
        >> textColor
        >> fontSize
        >> angle
+       >> enableOnInitial
+       >> showOnInitial
        >> funcs;
 
     ele.setElementId(id);
@@ -779,9 +848,12 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
     ele.setVAlignString(vAlign, ele.szVAlign_);
     ele.backgroundColor_ = backgroundColor;
     ele.transparent_ = transparent;
+    ele.font_ = font;
     ele.textColor = textColor;
     ele.fontSize = fontSize;
     ele.setAngle(angle);
+    ele.enableOnInitial_ = enableOnInitial;
+    ele.showOnInitial_ = showOnInitial;
     ele.funcs_ = funcs;
     ele.updateBoundingElement();
     ele.updatePropertyModel();

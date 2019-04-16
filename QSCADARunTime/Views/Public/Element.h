@@ -64,6 +64,10 @@ public:
     // 获取工程路径
     QString getProjectPath() const;
 
+    QString getHAlignString(const QString& szAlign) const;
+    void setHAlignString(const QString& szAlign, QString& szAlignSet);
+    QString getVAlignString(const QString& szAlign) const;
+    void setVAlignString(const QString& szAlign, QString& szAlignSet);
 
 protected:
     QString elementId;

@@ -443,7 +443,6 @@ void ElementText::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 }
 
 void ElementText::writeAsXml(QXmlStreamWriter &writer) {
-
     writer.writeStartElement("element");
     writer.writeAttribute("internalType", internalElementType);
     writer.writeAttribute("elementId", elementId);
@@ -468,7 +467,6 @@ void ElementText::writeAsXml(QXmlStreamWriter &writer) {
 }
 
 void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
