@@ -6,6 +6,7 @@
 #include <QPainter>
 #include <QDataStream>
 #include <QGraphicsSceneMouseEvent>
+#include "tagcolorlistproperty.h"
 
 class ElementInputEdit : public Element
 {
@@ -43,18 +44,77 @@ protected:
     QPainterPath shape() const;
 
 private:
-    QRectF elementRect;
     void drawInputEdit(QPainter *painter);
+
+private:
+    static int iLastIndex_;
+    QRectF elementRect;
+    // 关联的变量
+    QString szTagSelected_;
+    // 水平对齐
+    QString szHAlign_;
+    // 垂直对齐
+    QString szVAlign_;
+    // 背景颜色
+    QColor backgroundColor_;
+    // 透明背景颜色
+    bool transparentBackground_;
+    // 字体
+    QFont font_;
+    // 边框宽度
+    int borderWidth_;
+    // 边框颜色
+    QColor borderColor_;
+    // 密码输入
+    bool inputPassword_;
+    // 初始有效性
+    bool enableOnInitial_;
+    // 初始可见性
+    bool showOnInitial_;
+
+
+
+    // ID
     TextProperty *idProperty;
+    // 标题
     EmptyProperty *titleProperty;
+    // 选择变量
+    ListProperty *tagSelectProperty_;
+    // X坐标
     IntegerProperty *xCoordProperty;
+    // Y坐标
     IntegerProperty *yCoordProperty;
+    // Z坐标
     IntegerProperty *zValueProperty;
+    // 宽度
     IntegerProperty *widthProperty;
+    // 高度
     IntegerProperty *heightProperty;
+    // 文本
     TextProperty *elementTextProperty;
+    // 水平对齐
+    ListProperty *hAlignProperty_;
+    // 垂直对齐
+    ListProperty *vAlignProperty_;
+    // 背景颜色
+    ColorProperty *backgroundColorProperty_;
+    // 透明背景颜色
+    BoolProperty *transparentBackgroundProperty_;
+    // 字体
+    FontProperty *fontProperty_;
+    // 文本颜色
     ColorProperty *textColorProperty;
-    IntegerProperty *fontSizeProperty;
+    // 边框宽度
+    IntegerProperty *borderWidthProperty_;
+    // 边框颜色
+    ColorProperty *borderColorProperty_;
+    // 密码输入
+    BoolProperty *inputPasswordProperty_;
+    // 初始有效性
+    BoolProperty *enableOnInitialProperty_;
+    // 初始可见性
+    BoolProperty *showOnInitialProperty_;
+    // 旋转角度
     IntegerProperty *angleProperty;
 
 };

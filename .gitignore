@@ -38,6 +38,8 @@ RuntimeBin/sqldrivers/
 RuntimeBin/*.exe
 RuntimeBin/*.dll
 
+third/
+
 delobj.bat
 
 *.user

@@ -14,7 +14,7 @@ ElementText::ElementText(const QString &projPath) :
     szVAlign_ = tr("居中对齐");
     backgroundColor_ = Qt::white;
     transparentBackground_ = true;
-    borderWidth_ = 0;;
+    borderWidth_ = 0;
     borderColor_ = Qt::black;
     hideOnClick_ = false;
     showOnInitial_ = true;
@@ -564,7 +564,6 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 }
 
 void ElementText::writeData(QDataStream &out) {
-
     out << this->elementId
         << this->x()
         << this->y()
@@ -586,7 +585,6 @@ void ElementText::writeData(QDataStream &out) {
 }
 
 void ElementText::readData(QDataStream &in) {
-
     QString id;
     qreal xpos;
     qreal ypos;

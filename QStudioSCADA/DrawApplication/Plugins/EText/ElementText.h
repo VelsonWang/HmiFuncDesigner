@@ -69,13 +69,21 @@ private:
     // 初始可见性
     bool showOnInitial_;
 
+    // ID
     TextProperty *idProperty;
+    // 标题
     EmptyProperty *titleProperty;
+    // X坐标
     IntegerProperty *xCoordProperty;
+    // Y坐标
     IntegerProperty *yCoordProperty;
+    // Z坐标
     IntegerProperty *zValueProperty;
+    // 宽度
     IntegerProperty *widthProperty;
+    // 高度
     IntegerProperty *heightProperty;
+    // 文本
     TextProperty *elementTextProperty;
     // 水平对齐
     ListProperty *hAlignProperty_;
