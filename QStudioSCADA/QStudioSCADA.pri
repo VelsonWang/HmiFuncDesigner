@@ -136,11 +136,13 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
     $$IDE_SOURCE_TREE/libs/PropertyEditor \
     $$IDE_SOURCE_TREE/libs/TagManager \
+	$$IDE_SOURCE_TREE/libs/SoftKeyboard \
     $$IDE_SOURCE_TREE/Devices/IDevicePlugin \
     $$IDE_SOURCE_TREE/DrawApplication/IDrawApplicationPlugin \
     $$IDE_SOURCE_TREE/DrawApplication/DrawApplication \
     $$IDE_SOURCE_TREE/DrawApplication/PropertyEditorEx \
     $$IDE_SOURCE_TREE/DrawApplication/Public
+	
 
 QTC_PLUGIN_DIRS_FROM_ENVIRONMENT = $$(QTC_PLUGIN_DIRS)
 QTC_PLUGIN_DIRS += $$split(QTC_PLUGIN_DIRS_FROM_ENVIRONMENT, $$QMAKE_DIRLIST_SEP)

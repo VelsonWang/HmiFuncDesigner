@@ -27,7 +27,8 @@ SOURCES += \
     $$PWD/Public/PubTool.cpp \
     $$PWD/Public/Element.cpp \
     $$PWD/Public/ElementGroup.cpp \
-    $$PWD/ProjectInfoManger.cpp
+    $$PWD/ProjectInfoManger.cpp \
+    $$PWD/Elements/EInputEdit/InputLineEdit.cpp
 
 SOURCES += \
     $$PWD/Elements/EArrow/ElementArrow.cpp \
@@ -59,7 +60,8 @@ HEADERS  += \
     $$PWD/IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     $$PWD/Public/Element.h \
     $$PWD/Public/ElementGroup.h \
-    $$PWD/ProjectInfoManger.h
+    $$PWD/ProjectInfoManger.h \
+    $$PWD/Elements/EInputEdit/InputLineEdit.h
 
 HEADERS  += \
     $$PWD/Elements/EArrow/ElementArrow.h \
