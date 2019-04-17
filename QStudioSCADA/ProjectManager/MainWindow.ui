@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1185</width>
-    <height>683</height>
+    <width>1267</width>
+    <height>694</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1185</width>
+     <width>1267</width>
      <height>23</height>
     </rect>
    </property>
@@ -385,7 +385,7 @@
    </property>
    <property name="icon">
     <iconset resource="images.qrc">
-     <normaloff>:/images/edittable.png</normaloff>:/images/edittable.png</iconset>
+     <normaloff>:/images/edit.png</normaloff>:/images/edit.png</iconset>
    </property>
    <property name="text">
     <string>编辑(&amp;E)</string>

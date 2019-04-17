@@ -49,6 +49,8 @@ private:
 private:
     static int iLastIndex_;
     QRectF elementRect;
+    // 允许编辑输入
+    bool enableEdit_;
     // 关联的变量
     QString szTagSelected_;
     // 水平对齐
@@ -78,6 +80,8 @@ private:
     TextProperty *idProperty;
     // 标题
     EmptyProperty *titleProperty;
+    // 允许编辑输入
+    BoolProperty *enableEditProperty_;
     // 选择变量
     ListProperty *tagSelectProperty_;
     // X坐标

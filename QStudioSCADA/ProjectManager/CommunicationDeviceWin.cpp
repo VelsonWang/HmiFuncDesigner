@@ -74,11 +74,11 @@ void CommunicationDeviceWin::ListViewCommunicationDeviceUpdate()
     ListViewUISetting();
 
     pListViewCommDevModel = new QStandardItemModel();
-    QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pm_com.png"), tr("新建串口设备"));
+    QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), tr("新建串口设备"));
     pNewComDevice->setEditable(false);
     pListViewCommDevModel->appendRow(pNewComDevice);
 
-    QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pm_net.PNG"), tr("新建网络设备"));
+    QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), tr("新建网络设备"));
     pNewNetDevice->setEditable(false);
     pListViewCommDevModel->appendRow(pNewNetDevice);
 
@@ -97,11 +97,11 @@ void CommunicationDeviceWin::ListViewCommunicationDeviceUpdate()
     for(int i=0; i<m_pLinkManager->devList.count(); i++) {
         DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(dev->m_sDeviceType == "COM") {
-            QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pm_com.png"), dev->m_sDeviceName);
+            QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), dev->m_sDeviceName);
             pNewComDevice->setEditable(false);
             pListViewCommDevModel->appendRow(pNewComDevice);
         } else if(dev->m_sDeviceType == "NET") {
-            QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pm_net.PNG"), dev->m_sDeviceName);
+            QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), dev->m_sDeviceName);
             pNewNetDevice->setEditable(false);
             pListViewCommDevModel->appendRow(pNewNetDevice);
         } else if(dev->m_sDeviceType == "BUS") {
@@ -126,7 +126,7 @@ void CommunicationDeviceWin::ListViewCOMDeviceUpdate()
     ListViewUISetting();
 
     pListViewCommDevModel = new QStandardItemModel();
-    QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pm_com.png"), tr("新建串口设备"));
+    QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), tr("新建串口设备"));
     pNewComDevice->setEditable(false);
     pListViewCommDevModel->appendRow(pNewComDevice);
 
@@ -135,7 +135,7 @@ void CommunicationDeviceWin::ListViewCOMDeviceUpdate()
     for(int i=0; i<m_pLinkManager->devList.count(); i++) {
         DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(dev->m_sDeviceType == "COM") {
-            QStandardItem *pComDevice = new QStandardItem(QIcon(":/images/pm_com.png"), dev->m_sDeviceName);
+            QStandardItem *pComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), dev->m_sDeviceName);
             pComDevice->setEditable(false);
             pListViewCommDevModel->appendRow(pComDevice);
         }
@@ -152,7 +152,7 @@ void CommunicationDeviceWin::ListViewNetDeviceUpdate()
     ListViewUISetting();
 
     pListViewCommDevModel = new QStandardItemModel();
-    QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pm_net.PNG"), tr("新建网络设备"));
+    QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), tr("新建网络设备"));
     pNewNetDevice->setEditable(false);
     pListViewCommDevModel->appendRow(pNewNetDevice);
 
@@ -161,7 +161,7 @@ void CommunicationDeviceWin::ListViewNetDeviceUpdate()
     for(int i=0; i<m_pLinkManager->devList.count(); i++) {
         DeviceBase *dev = m_pLinkManager->devList.at(i);
         if(dev->m_sDeviceType == "NET") {
-            QStandardItem *pNetDevice = new QStandardItem(QIcon(":/images/pm_net.PNG"), dev->m_sDeviceName);
+            QStandardItem *pNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), dev->m_sDeviceName);
             pNetDevice->setEditable(false);
             pListViewCommDevModel->appendRow(pNetDevice);
         }

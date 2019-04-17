@@ -57,6 +57,7 @@ enum {
     EL_SHOW_CONTENT = 34,
     EL_ENABLE_ON_INITIAL = 35,
     EL_INPUT_PASSWORD = 36,
+    EL_ENABLE_EDIT = 37,
 
 
 

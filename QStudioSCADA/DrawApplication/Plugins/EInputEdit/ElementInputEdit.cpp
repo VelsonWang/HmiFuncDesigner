@@ -16,6 +16,7 @@ ElementInputEdit::ElementInputEdit(const QString &projPath) :
     transparentBackground_ = false;
     borderWidth_ = 2;
     borderColor_ = QColor(61, 123, 173);
+    enableEdit_ = true;
     enableOnInitial_ = true;
     inputPassword_ = false;
     showOnInitial_ = true;
@@ -56,6 +57,14 @@ void ElementInputEdit::createPropertyList() {
     // 标题
     titleProperty = new EmptyProperty(trUtf8("标题"));
     propList.insert(propList.end(),titleProperty);
+
+    // 允许编辑输入
+    enableEditProperty_ = new BoolProperty(tr("允许编辑输入"));
+    enableEditProperty_->setId(EL_ENABLE_EDIT);
+    enableEditProperty_->setTrueText(tr("是"));
+    enableEditProperty_->setFalseText(tr("否"));
+    enableEditProperty_->setValue(enableEdit_);
+    propList.insert(propList.end(), enableEditProperty_);
 
     // 选择变量
     tagSelectProperty_ = new ListProperty(tr("选择变量"));
@@ -190,6 +199,9 @@ void ElementInputEdit::updateElementProperty(uint id, const QVariant &value) {
     case EL_ID:
         elementId = value.toString();
         break;
+    case EL_ENABLE_EDIT:
+        enableEdit_ = value.toBool();
+        break;
     case EL_TAG:
         szTagSelected_ = value.toString();
         break;
@@ -261,6 +273,7 @@ void ElementInputEdit::updateElementProperty(uint id, const QVariant &value) {
 
 void ElementInputEdit::updatePropertyModel() {
     idProperty->setValue(elementId);
+    enableEditProperty_->setValue(enableEdit_);
     tagSelectProperty_->setValue(szTagSelected_);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
@@ -362,7 +375,15 @@ void ElementInputEdit::drawInputEdit(QPainter *painter) {
 
     QRectF rect1(elementRect.toRect());
     QRectF textRect = rect1.normalized().adjusted(borderWidth_, borderWidth_, -borderWidth_, -borderWidth_);
-    painter->drawText(textRect, hFlags|vFlags, elementText);
+    QString szDrawText = elementText;
+    if(inputPassword_) {
+        int iLen = elementText.length();
+        szDrawText = "";
+        for(int i=0; i<iLen; i++) {
+            szDrawText.append(QChar('*'));
+        }
+    }
+    painter->drawText(textRect, hFlags|vFlags, szDrawText);
 }
 
 void ElementInputEdit::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
@@ -471,6 +492,7 @@ void ElementInputEdit::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
     writer.writeAttribute("elementId",elementId);
+    writer.writeAttribute("enableEdit", enableEdit_?"true":"false");
     writer.writeAttribute("tag", szTagSelected_);
     writer.writeAttribute("x",QString::number(x()));
     writer.writeAttribute("y",QString::number(y()));
@@ -500,6 +522,14 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
         int index = getIndexFromIDString(szID);
         if(iLastIndex_ < index) {
             iLastIndex_ = index;
+        }
+    }
+
+    if (attributes.hasAttribute("enableEdit")) {
+        QString value = attributes.value("enableEdit").toString();
+        enableEdit_ = false;
+        if(value == "true") {
+            enableEdit_ = true;
         }
     }
 
@@ -604,6 +634,7 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
 
 void ElementInputEdit::writeData(QDataStream &out) {
     out << this->elementId
+        << this->enableEdit_
         << this->szTagSelected_
         << this->x()
         << this->y()
@@ -627,6 +658,7 @@ void ElementInputEdit::writeData(QDataStream &out) {
 
 void ElementInputEdit::readData(QDataStream &in) {
     QString id;
+    bool enableEdit;
     QString szTagSelected;
     qreal xpos;
     qreal ypos;
@@ -648,6 +680,7 @@ void ElementInputEdit::readData(QDataStream &in) {
     qreal angle;
 
     in >> id
+       >> enableEdit
        >> szTagSelected
        >> xpos
        >> ypos
@@ -673,6 +706,7 @@ void ElementInputEdit::readData(QDataStream &in) {
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
+    this->enableEdit_ = enableEdit;
     this->szTagSelected_ = szTagSelected;
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
@@ -698,6 +732,7 @@ void ElementInputEdit::readData(QDataStream &in) {
 
 QDataStream &operator<<(QDataStream &out, const ElementInputEdit &edit) {
     out << edit.elementId
+        << edit.enableEdit_
         << edit.szTagSelected_
         << edit.x()
         << edit.y()
@@ -722,6 +757,7 @@ QDataStream &operator<<(QDataStream &out, const ElementInputEdit &edit) {
 
 QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
     QString id;
+    bool enableEdit;
     QString szTagSelected;
     qreal xpos;
     qreal ypos;
@@ -743,6 +779,7 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
     qreal angle;
 
     in >> id
+       >> enableEdit
        >> szTagSelected
        >> xpos
        >> ypos
@@ -768,6 +805,7 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
     if(edit.iLastIndex_ < index) {
         edit.iLastIndex_ = index;
     }
+    edit.enableEdit_ = enableEdit;
     edit.szTagSelected_ = szTagSelected;
     edit.setElementXPos(xpos);
     edit.setElementYPos(ypos);

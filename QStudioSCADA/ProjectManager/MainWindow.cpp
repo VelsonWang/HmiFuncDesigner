@@ -112,11 +112,11 @@ void MainWindow::setUpProjectTreeView()
     pDataBaseManager->appendRow(pHistoryDatabase);
     pProjectItem->appendRow(pDataBaseManager);
 
-    pDrawPage = new QStandardItem(QIcon(":/images/pj_draw.png"), tr("画面"));
+    pDrawPage = new QStandardItem(QIcon(":/images/pm_draw.png"), tr("画面"));
     pDrawPage->setEditable(false);
     pProjectItem->appendRow(pDrawPage);
 
-    pLogicProgram = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("逻辑编程"));
+    pLogicProgram = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
     pLogicProgram->setEditable(false);
     /*
     pLadderEditor = new QStandardItem(QIcon(":/images/pj_plc.png"), tr("梯形图"));

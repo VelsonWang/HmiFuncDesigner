@@ -53,7 +53,7 @@ void RealTimeDatabaseWin::ListViewInitUi()
     /////////////////////////////////////////////////
 
     pListViewModel = new QStandardItemModel();
-    QStandardItem *pRtdb = new QStandardItem(QIcon(":/images/pm_rtdb.png"), tr("实时数据库"));
+    QStandardItem *pRtdb = new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
     pRtdb->setEditable(false);
     pListViewModel->appendRow(pRtdb);
 
