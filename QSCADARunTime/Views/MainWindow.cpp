@@ -14,24 +14,39 @@ MainWindow::MainWindow(const QString &projpath,
                        const QString &graphPageName,
                        QWidget *parent) :
     QMainWindow(parent),
-    currentGraphPage_(0),
-    currentView_(0),
-    currentGraphPageIndex_(0),
+    currentGraphPage_(nullptr),
     projpath_(projpath),
     graphPageName_(graphPageName) {
 
     // 注册元素对象创建函数
     registerCreateObjectFunc();
 
-    setWindowFlags(Qt::FramelessWindowHint);
+    // 方便调试移动窗口暂时移除
+    //setWindowFlags(Qt::FramelessWindowHint);
+
+    DrawListUtils::loadDrawList(projpath_);
+    foreach (QString pageName, DrawListUtils::drawList_) {
+        QString fileName = projpath_ + "/" + pageName + ".drw";
+        if (fileName.toLower().endsWith(".drw")) {
+            GraphPage *graphPage = new GraphPage(QRectF(), this);
+            if (!createDocument(graphPage, fileName)) {
+                return;
+            }
+            graphPage->setProjectPath(projpath_);
+            graphPage->loadAsXML(fileName);
+            graphPage->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+            graphPage->setFileName(pageName + ".drw");
+            graphPage->setGraphPageId(pageName);
+        }
+    }
 
     moveCenter();
-
 }
 
 
 MainWindow::~MainWindow() {
-
+    GraphPageManager::releaseInstance();
+    currentGraphPage_ = nullptr;
 }
 
 
@@ -43,86 +58,42 @@ MainWindow::~MainWindow() {
  */
 void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName) {
     QString fileName = pagePath + "/" + pageName;
-
     if (fileName.toLower().endsWith(".drw")) {
-        QGraphicsView *view = createTabView();
-        GraphPage *graphPage = new GraphPage(QRectF());
-        if (!createDocument(graphPage, view, fileName)) {
-            return;
+        QString pageName_ = pageName;
+        QString pageId = pageName_.replace(".drw", "");
+        GraphPage *graphPage = GraphPageManager::getInstance()->getGraphPageById(pageId);
+        if(graphPage != nullptr) {
+            currentGraphPage_ = graphPage;
+            this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         }
-        graphPage->setProjectPath(pagePath);
-        graphPage->loadAsXML(fileName);
-        view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-        graphPage->setFileName(pageName + ".drw");
-        graphPage->setGraphPageId(pageName);
-
-        this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         moveCenter();
     }
 }
 
 
 bool MainWindow::isGraphPageOpen(const QString &filename) {
-
     QListIterator <GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
-
     while (it.hasNext()) {
         if (filename == it.next()->getFileName()) {
             return true;
         }
     }
-
     return false;
 }
 
-QGraphicsView *MainWindow::createTabView() {
-
-    QGraphicsView *view = new QGraphicsView(this);
-    view->setDragMode(QGraphicsView::RubberBandDrag);
-    view->setCacheMode(QGraphicsView::CacheBackground);
-    view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
-
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-
-    return view;
-}
-
-
-void MainWindow::slotCloseAll() {
-    currentView_ = 0;
-    currentGraphPage_ = 0;
-}
-
-void MainWindow::slotCloseGraphPage() {
-
-    QGraphicsView *view = currentView_;
-    delete view;
-
-    currentGraphPage_ = 0;
-    currentView_ = 0;
-}
-
 bool MainWindow::createDocument(GraphPage *graphPage,
-                                QGraphicsView *view,
                                 const QString &filename) {
-
     if (isGraphPageOpen(filename)) {
         QMessageBox::information(this,
                                  trUtf8("打开文件错误"),
                                  trUtf8("文件已打开"),
                                  QMessageBox::Ok);
         delete graphPage;
-        delete view;
         return false;
     }
 
     currentGraphPage_ = graphPage;
-    view->setScene(graphPage);
-    view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    currentView_ = view;
     GraphPageManager::getInstance()->addGraphPage(graphPage);
-    graphPage->undoStack()->setClean();
 
     return true;
 }

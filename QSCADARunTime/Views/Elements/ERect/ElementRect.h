@@ -11,10 +11,14 @@ class ElementRect : public Element
     Q_OBJECT
 public:
     ElementRect();
-    void setClickPosition(QPointF);
-    void updateBoundingElement();
-    void readFromXml(const QXmlStreamAttributes &);
-    void readData(QDataStream &in);
+    void setClickPosition(QPointF) override;
+    void updateBoundingElement() override;
+    void readFromXml(const QXmlStreamAttributes &) override;
+    void readData(QDataStream &in) override;
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     enum {Type = RectItemType};
 
@@ -25,11 +29,6 @@ public:
     friend QDataStream &operator>>(QDataStream &in,ElementRect &rect);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
     QPainterPath shape() const;
 

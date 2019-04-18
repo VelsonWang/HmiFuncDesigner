@@ -53,9 +53,11 @@ QString EArrow::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EArrow::createElement()
+Element* EArrow::createElement(QWidget *owner)
 {
-    return new ElementArrow();
+    ElementArrow *pEle = new ElementArrow();
+    pEle->setOwnerWidget(owner);
+    return pEle;
 }
 
 

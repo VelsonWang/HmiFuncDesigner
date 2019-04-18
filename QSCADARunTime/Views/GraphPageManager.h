@@ -9,6 +9,7 @@ class GraphPageManager : public QObject
     Q_OBJECT
 public:
     static GraphPageManager *getInstance();
+    static void releaseInstance();
     void addGraphPage(GraphPage*);
     GraphPage *getGraphPageById(const QString &) const;
     int getIndexByGraphPage(GraphPage *);
@@ -18,7 +19,7 @@ public:
 private:
     GraphPageManager();
     static GraphPageManager *instance_;
-    QList<GraphPage *> graphPageList_;
+    static QList<GraphPage *> graphPageList_;
 };
 
 #endif // GRAPHPAGEMANAGER_H

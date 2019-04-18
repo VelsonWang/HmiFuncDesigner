@@ -24,7 +24,7 @@ void InputMethodNumber::init(QString style, int fontSize) {
 }
 
 void InputMethodNumber::initForm() {
-    this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint/* | Qt::FramelessWindowHint*/);
     isFirst_ = true;
     isPress_ = false;
     timerPress_ = new QTimer(this);
@@ -48,11 +48,18 @@ void InputMethodNumber::initForm() {
     foreach (QPushButton * b, btn) {
         connect(b, SIGNAL(clicked()), this, SLOT(btn_clicked()));
     }
+}
 
+void InputMethodNumber::installInputMethod() {
     connect(qApp, SIGNAL(focusChanged(QWidget *, QWidget *)),
             this, SLOT(focusChanged(QWidget *, QWidget *)));
-
     qApp->installEventFilter(this);
+}
+
+void InputMethodNumber::unInstallInputMethod() {
+    disconnect(qApp, SIGNAL(focusChanged(QWidget *, QWidget *)),
+               this, SLOT(focusChanged(QWidget *, QWidget *)));
+    qApp->removeEventFilter(this);
 }
 
 void InputMethodNumber::initProperty() {

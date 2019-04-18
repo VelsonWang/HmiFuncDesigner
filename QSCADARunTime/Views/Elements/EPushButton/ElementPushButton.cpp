@@ -22,12 +22,13 @@ ElementPushButton::ElementPushButton() {
     elementText = trUtf8("弹出按钮");
     enableOnInitial_ = true;
     showOnInitial_ = true;
+    isSelected_ = false;
 }
 
 QRectF ElementPushButton::boundingRect() const {
-    qreal extra = 5;
+    qreal extra = 6;
     QRectF rect(elementRect.toRect());
-    return rect.normalized().adjusted(-extra, -extra, extra, extra);
+    return rect.normalized().adjusted(extra, extra, -extra, -extra);
 }
 
 QPainterPath ElementPushButton::shape() const {
@@ -37,11 +38,8 @@ QPainterPath ElementPushButton::shape() const {
 }
 
 void ElementPushButton::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
-    setX(elementXPos);
-    setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
@@ -49,30 +47,25 @@ void ElementPushButton::updateBoundingElement() {
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementPushButton::paint(QPainter *painter,
-                              const QStyleOptionGraphicsItem *option,
-                              QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
+void ElementPushButton::paint(QPainter *painter) {
     if(!showOnInitial_) {
         return;
     }
 
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
 
     drawPushButton(painter);
 
-    if (isSelected()) {
-        painter->setPen(QPen(borderColor));
+    if (isSelected_) {
+        painter->setPen(QPen(Qt::gray, 2, Qt::DashLine));
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(boundingRect());
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementRect.topLeft() - QPointF(3,3),elementRect.topLeft() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementRect.bottomRight() - QPointF(3,3),elementRect.bottomRight() + QPointF(3,3)));
     }
+    painter->restore();
 }
 
 void ElementPushButton::drawPushButton(QPainter *painter) {
@@ -135,79 +128,52 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
     }
 }
 
-void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPushButton::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
+void ElementPushButton::mousePressEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
+    if(!enableOnInitial_) {
+        return;
+    }
 
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
+    QPointF mousePoint = event->pos();
+    if (mousePoint.x() <= (elementXPos + elementWidth) &&
+            mousePoint.x() >= (elementXPos) &&
+            mousePoint.y() <= (elementYPos + elementHeight) &&
+            mousePoint.y() >= (elementYPos)) {
+        isSelected_ = true;
     } else {
-        resizing = false;
-        rd = RdNone;
+        isSelected_ = false;
     }
 
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
+    QWidget *pOwner = getOwnerWidget();
+    if(pOwner != nullptr) {
+        pOwner->update();
+    }
 }
 
-void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
+void ElementPushButton::mouseReleaseEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
+    if(!enableOnInitial_) {
+        return;
     }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
-}
-
-void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
 
     QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
+    if (mousePoint.x() <= (elementXPos + elementWidth) &&
+            mousePoint.x() >= (elementXPos) &&
+            mousePoint.y() <= (elementYPos + elementHeight) &&
+            mousePoint.y() >= (elementYPos)) {
+        isSelected_ = false;
     }
 
-    QGraphicsObject::hoverEnterEvent(event);
+    QWidget *pOwner = getOwnerWidget();
+    if(pOwner != nullptr) {
+        pOwner->update();
+    }
 }
+
 
 void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
     if (attributes.hasAttribute("elementId")) {
@@ -224,7 +190,7 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {
@@ -308,14 +274,6 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
-
-    if(enableOnInitial_) {
-        this->setEnabled(enableOnInitial_);
-    }
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 void ElementPushButton::readData(QDataStream &in) {
@@ -381,14 +339,6 @@ void ElementPushButton::readData(QDataStream &in) {
     this->showOnInitial_ = showOnInitial;
     this->funcs_ = funcs;
     this->updateBoundingElement();
-
-    if(enableOnInitial_) {
-        this->setEnabled(enableOnInitial_);
-    }
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 
@@ -456,14 +406,6 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
     ele.showOnInitial_ = showOnInitial;
     ele.funcs_ = funcs;
     ele.updateBoundingElement();
-
-    if(ele.enableOnInitial_) {
-        ele.setEnabled(ele.enableOnInitial_);
-    }
-
-    if(!ele.showOnInitial_) {
-        ele.hide();
-    }
 
     return in;
 }

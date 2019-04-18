@@ -55,7 +55,9 @@ QString EInputEdit::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EInputEdit::createElement()
+Element* EInputEdit::createElement(QWidget *owner)
 {
-    return new ElementInputEdit();
+    ElementInputEdit *pEle = new ElementInputEdit();
+    pEle->setOwnerWidget(owner);
+    return pEle;
 }

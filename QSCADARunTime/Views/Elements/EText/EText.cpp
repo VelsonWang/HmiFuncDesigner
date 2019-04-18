@@ -55,7 +55,9 @@ QString EText::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EText::createElement()
+Element* EText::createElement(QWidget *owner)
 {
-    return new ElementText();
+    ElementText *pEle = new ElementText();
+    pEle->setOwnerWidget(owner);
+    return pEle;
 }

@@ -3,6 +3,7 @@ QT += core
 QT += gui
 QT += xml
 QT += widgets
+QT += sql
 
 
 INCLUDEPATH += \
@@ -17,18 +18,19 @@ INCLUDEPATH += \
     $$PWD/Elements/EPolygon \
     $$PWD/Elements/EPicture \
     $$PWD/Elements/EInputEdit \
-    $$PWD/Elements/EPushButton
+    $$PWD/Elements/EPushButton \
+    $$PWD/SoftKeyboard
 
 SOURCES += \
     $$PWD/GraphPage.cpp \
     $$PWD/GraphPageManager.cpp \
-    $$PWD/UndoCommand.cpp \
     $$PWD/MainWindow.cpp \
     $$PWD/Public/PubTool.cpp \
     $$PWD/Public/Element.cpp \
     $$PWD/Public/ElementGroup.cpp \
     $$PWD/ProjectInfoManger.cpp \
-    $$PWD/Elements/EInputEdit/InputLineEdit.cpp
+    $$PWD/SoftKeyboard/InputMethodAlphabet.cpp \
+    $$PWD/SoftKeyboard/InputMethodNumber.cpp
 
 SOURCES += \
     $$PWD/Elements/EArrow/ElementArrow.cpp \
@@ -47,13 +49,13 @@ SOURCES += \
     $$PWD/Elements/EPicture/EPicture.cpp \
     $$PWD/Elements/EInputEdit/ElementInputEdit.cpp \
     $$PWD/Elements/EInputEdit/EInputEdit.cpp \
+    $$PWD/Elements/EInputEdit/InputLineEdit.cpp \
     $$PWD/Elements/EPushButton/ElementPushButton.cpp \
     $$PWD/Elements/EPushButton/EPushButton.cpp
 
-HEADERS  += \
+HEADERS += \
     $$PWD/GraphPage.h \
     $$PWD/GraphPageManager.h \
-    $$PWD/UndoCommand.h \
     $$PWD/MainWindow.h \
     $$PWD/Public/PublicDefine.h \
     $$PWD/Public/PubTool.h \
@@ -61,9 +63,11 @@ HEADERS  += \
     $$PWD/Public/Element.h \
     $$PWD/Public/ElementGroup.h \
     $$PWD/ProjectInfoManger.h \
-    $$PWD/Elements/EInputEdit/InputLineEdit.h
+    $$PWD/SoftKeyboard/InputMethodAlphabet.h \
+    $$PWD/SoftKeyboard/InputMethodNumber.h
 
-HEADERS  += \
+
+HEADERS += \
     $$PWD/Elements/EArrow/ElementArrow.h \
     $$PWD/Elements/EArrow/EArrow.h \
     $$PWD/Elements/ELine/ElementLine.h \
@@ -80,10 +84,13 @@ HEADERS  += \
     $$PWD/Elements/EPicture/EPicture.h \
     $$PWD/Elements/EInputEdit/ElementInputEdit.h \
     $$PWD/Elements/EInputEdit/EInputEdit.h \
+    $$PWD/Elements/EInputEdit/InputLineEdit.h \
     $$PWD/Elements/EPushButton/ElementPushButton.h \
     $$PWD/Elements/EPushButton/EPushButton.h
 
-FORMS    +=
+FORMS += \
+    $$PWD/SoftKeyboard/InputMethodAlphabet.ui \
+    $$PWD/SoftKeyboard/InputMethodNumber.ui
 
 
 

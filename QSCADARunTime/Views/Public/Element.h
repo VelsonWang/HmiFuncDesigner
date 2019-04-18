@@ -1,24 +1,19 @@
 ﻿#ifndef ELEMENT_H
 #define ELEMENT_H
 
-#include <QGraphicsObject>
-#include <QGraphicsScene>
+#include <QPainter>
 #include <QCursor>
+#include <QMouseEvent>
+#include <QWidget>
 #include "PublicDefine.h"
-#include "propertymodel.h"
-#include "boolproperty.h"
-#include "emptyproperty.h"
-#include "colorproperty.h"
-#include "textproperty.h"
-#include "integerproperty.h"
-#include "fileproperty.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 
-class Element : public QGraphicsObject
+class Element : public QObject
 {
     Q_OBJECT
 public:
+    explicit Element(QObject *parent = 0);
     virtual ~Element();
 
     void init();
@@ -28,11 +23,14 @@ public:
 
     virtual void setClickPosition(QPointF) = 0;
     virtual void updateBoundingElement() = 0;
-    virtual void readFromXml(const QXmlStreamAttributes &) = 0;
-    virtual void setBlocked(bool);
+    virtual void readFromXml(const QXmlStreamAttributes &) = 0;  
     virtual void addNodePoint();
     virtual void removeNodePoint();
     virtual void readData(QDataStream &in) = 0;
+    virtual void paint(QPainter *painter) = 0;
+    virtual void mousePressEvent(QMouseEvent *event) = 0;
+    virtual void mouseMoveEvent(QMouseEvent *event) = 0;
+    virtual void mouseReleaseEvent(QMouseEvent *event) = 0;
 
     void setElementId(const QString &);
     QString getElementId() const;
@@ -54,9 +52,6 @@ public:
 
     QString getInternalElementType() const;
 
-    void setGraphPageLink(const QString &);
-    QString getGraphPageLink() const;
-
     void moveTo(int x,int y);
 
     // 设置工程路径
@@ -69,9 +64,13 @@ public:
     QString getVAlignString(const QString& szAlign) const;
     void setVAlignString(const QString& szAlign, QString& szAlignSet);
 
+    // 设置元素所属窗口
+    void setOwnerWidget(QWidget *owner);
+    // 获取元素所属窗口
+    QWidget *getOwnerWidget();
+
 protected:
     QString elementId;
-    QString graphPageLink;
     QColor backgroundColor;
     QColor signBackgroundColor;
     QColor borderColor;
@@ -85,26 +84,9 @@ protected:
     QColor textColor;
     int fontSize;
     qreal elemAngle;
-
     QString internalElementType;
-
-    bool resizing;
-    int rotationCount;
-    QPointF oldPos;
-    int oldWidth;
-    int oldHeight;
-    QRectF handleTop;
-    QRectF handleBottom;
-
-    enum ResizeDirection{
-        RdBottomRight,
-        RdTopLeft,
-        RdNone
-    };
-
-    ResizeDirection rd;
-
     QString strProjectPath_; // 工程路径
+    QWidget *ownerWidget_;
 
 signals:
     void elementMoved(QPointF);

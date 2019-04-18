@@ -5,7 +5,7 @@
 #include "Element.h"
 #include <QPainter>
 #include <QDataStream>
-#include <QGraphicsSceneMouseEvent>
+
 
 class ElementPushButton : public Element
 {
@@ -13,10 +13,14 @@ class ElementPushButton : public Element
 
 public:
     explicit ElementPushButton();
-    void setClickPosition(QPointF);
-    void updateBoundingElement();
-    void readFromXml(const QXmlStreamAttributes &);
-    void readData(QDataStream &in);
+    void setClickPosition(QPointF) override;
+    void updateBoundingElement() override;
+    void readFromXml(const QXmlStreamAttributes &) override;
+    void readData(QDataStream &in) override;
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     enum {Type = PushButtonItemType};
 
@@ -27,11 +31,6 @@ public:
     friend QDataStream &operator>>(QDataStream &in, ElementPushButton &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
@@ -60,6 +59,7 @@ private:
     bool enableOnInitial_;
     // 初始可见性
     bool showOnInitial_;
+    bool isSelected_;
 };
 
 #endif // PUSHBUTTONITEM_HPP

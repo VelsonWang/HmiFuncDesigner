@@ -47,8 +47,7 @@ INCLUDEPATH += \
     $$LIBRARY_SRC_PATH/libs/Helper \
     $$LIBRARY_SRC_PATH/libs/PropertyEditor \
     $$LIBRARY_SRC_PATH/libs/DrawListUtils \
-    $$LIBRARY_SRC_PATH/libs/Utils \
-    $$LIBRARY_SRC_PATH/libs/SoftKeyboard
+    $$LIBRARY_SRC_PATH/libs/Utils
 
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
@@ -58,7 +57,6 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
     LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
-    LIBS += -L$$LINK_LIBRARY_PATH -lSoftKeyboardd
 }
 else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
@@ -68,7 +66,6 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
-    LIBS += -L$$LINK_LIBRARY_PATH -lSoftKeyboard
 }
 
 

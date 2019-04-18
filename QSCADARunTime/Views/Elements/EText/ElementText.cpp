@@ -2,7 +2,8 @@
 #include "PubTool.h"
 #include <QDebug>
 
-ElementText::ElementText() {
+ElementText::ElementText() :
+    bHide_(false) {
     elementId = trUtf8("Text");
     internalElementType = trUtf8("Text");
     init();
@@ -21,11 +22,8 @@ QPainterPath ElementText::shape() const {
 }
 
 void ElementText::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
-    setX(elementXPos);
-    setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
@@ -33,15 +31,16 @@ void ElementText::updateBoundingElement() {
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementText::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
-    if(!showOnInitial_) {
+void ElementText::paint(QPainter *painter) {
+    if(!showOnInitial_ || bHide_) {
         return;
     }
 
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
 
     // 背景色不透明显示
     if(!transparentBackground_) {
@@ -60,6 +59,7 @@ void ElementText::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             rect.adjust(1, 1, -1, -1);
         }
     }
+    painter->restore();
 }
 
 void ElementText::drawText(QPainter *painter) {
@@ -91,26 +91,18 @@ void ElementText::drawText(QPainter *painter) {
     painter->drawText(textRect, hFlags|vFlags, elementText);
 }
 
-void ElementText::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementText::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementText::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementText::mousePressEvent(QMouseEvent *event) {
     if(hideOnClick_) {
-        this->hide();
+        bHide_ = true;
     }
-
-    QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementText::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementText::mouseReleaseEvent(QMouseEvent *event) {
 
-    QGraphicsObject::mouseReleaseEvent(event);
-}
-
-void ElementText::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-
-    QGraphicsObject::hoverEnterEvent(event);
 }
 
 
@@ -129,7 +121,7 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {
@@ -146,12 +138,12 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align);
+        this->setHAlignString(align, szHAlign_);
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align);
+        this->setVAlignString(align, szVAlign_);
     }
 
     if (attributes.hasAttribute("backgroundColor")) {
@@ -204,10 +196,6 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 
@@ -257,8 +245,8 @@ void ElementText::readData(QDataStream &in) {
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->elementText = text;
-    this->setHAlignString(hAlign);
-    this->setVAlignString(vAlign);
+    this->setHAlignString(hAlign, szHAlign_);
+    this->setVAlignString(vAlign, szVAlign_);
     this->backgroundColor_ = backgroundColor;
     this->transparentBackground_ = transparentBackground;
     this->textColor = textColor;
@@ -269,75 +257,7 @@ void ElementText::readData(QDataStream &in) {
     this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
-
-
-/**
- * @brief ElementText::getHAlignString
- * @return 水平方向对齐方式
- */
-QString ElementText::getHAlignString() const {
-    if(szHAlign_ == tr("左对齐")) {
-        return QString("left");
-    } else if(szHAlign_ == tr("居中对齐")) {
-        return QString("center");
-    } else if(szHAlign_ == tr("右对齐")) {
-        return QString("right");
-    }
-    return QString("");
-}
-
-
-/**
- * @brief ElementText::setHAlignString
- * @details 设置水平方向对齐方式
- * @param szAlign 水平方向对齐方式
- */
-void ElementText::setHAlignString(const QString& szAlign) {
-    if(szAlign == QString("left")) {
-        szHAlign_ = tr("左对齐");
-    } else if(szAlign == QString("center")) {
-        szHAlign_ = tr("居中对齐");
-    } else if(szAlign == QString("right")) {
-        szHAlign_ = tr("右对齐");
-    }
-}
-
-
-/**
- * @brief ElementText::getVAlignString
- * @return 垂直方向对齐方式
- */
-QString ElementText::getVAlignString() const {
-    if(szVAlign_ == tr("上对齐")) {
-        return QString("top");
-    } else if(szVAlign_ == tr("居中对齐")) {
-        return QString("center");
-    } else if(szVAlign_ == tr("下对齐")) {
-        return QString("bottom");
-    }
-    return QString("");
-}
-
-/**
- * @brief ElementText::setVAlignString
- * @details 设置垂直方向对齐方式
- * @param szAlign 垂直方向对齐方式
- */
-void ElementText::setVAlignString(const QString& szAlign) {
-    if(szAlign == QString("top")) {
-        szVAlign_ = tr("上对齐");
-    } else if(szAlign == QString("center")) {
-        szVAlign_ = tr("居中对齐");
-    } else if(szAlign == QString("bottom")) {
-        szVAlign_ = tr("下对齐");
-    }
-}
-
 
 QDataStream &operator>>(QDataStream &in,ElementText &rect) {
     QString id;
@@ -385,8 +305,8 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
     rect.setElementWidth(width);
     rect.setElementHeight(height);
     rect.elementText = text;
-    rect.setHAlignString(hAlign);
-    rect.setVAlignString(vAlign);
+    rect.setHAlignString(hAlign, rect.szHAlign_);
+    rect.setVAlignString(vAlign, rect.szVAlign_);
     rect.backgroundColor_ = backgroundColor;
     rect.transparentBackground_ = transparentBackground;
     rect.textColor = textColor;
@@ -398,9 +318,6 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
     rect.setAngle(angle);
     rect.updateBoundingElement();
 
-    if(!rect.showOnInitial_) {
-        rect.hide();
-    }
     return in;
 }
 

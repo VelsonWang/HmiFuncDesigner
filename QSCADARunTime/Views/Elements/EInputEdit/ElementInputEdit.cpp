@@ -19,7 +19,7 @@ ElementInputEdit::ElementInputEdit() {
     elementWidth = 80;
     elementHeight = 26;
     elementText = trUtf8("输入编辑框");
-    inputLineEdit_ = new InputLineEdit();
+    inputLineEdit_ = nullptr;
 }
 
 ElementInputEdit::~ElementInputEdit() {
@@ -42,11 +42,8 @@ QPainterPath ElementInputEdit::shape() const {
 }
 
 void ElementInputEdit::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
-    setX(elementXPos);
-    setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
@@ -54,18 +51,18 @@ void ElementInputEdit::updateBoundingElement() {
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementInputEdit::paint(QPainter *painter,
-                             const QStyleOptionGraphicsItem *option,
-                             QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
+void ElementInputEdit::paint(QPainter *painter) {
     if(!showOnInitial_) {
         return;
     }
 
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
     drawInputEdit(painter);
+    painter->restore();
 }
 
 void ElementInputEdit::drawInputEdit(QPainter *painter) {
@@ -122,84 +119,63 @@ void ElementInputEdit::drawInputEdit(QPainter *painter) {
     painter->drawText(textRect, hFlags|vFlags, szDrawText);
 }
 
-void ElementInputEdit::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementInputEdit::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementInputEdit::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
+void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
+    if(!enableOnInitial_ || !enableEdit_) {
+        return;
+    }
 
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
+    QPointF mousePoint = event->pos();
+    if (mousePoint.x() <= (elementXPos + elementWidth) &&
+            mousePoint.x() >= (elementXPos) &&
+            mousePoint.y() <= (elementYPos + elementHeight) &&
+            mousePoint.y() >= (elementYPos)) {
+        if(enableEdit_) {
+            InputMethodAlphabet::instance()->setVisible(false);
+            InputMethodNumber::instance()->setVisible(false);
+            if(inputPassword_) {
+                InputMethodAlphabet::instance()->init("control", "silvery", font_.pixelSize(), font_.pixelSize());
+                InputMethodNumber::instance()->unInstallInputMethod();
+                InputMethodAlphabet::instance()->installInputMethod();
+            } else {
+                InputMethodNumber::instance()->init("silvery", font_.pixelSize());
+                InputMethodAlphabet::instance()->unInstallInputMethod();
+                InputMethodNumber::instance()->installInputMethod();
+            }
+        }
+
+        if(inputLineEdit_ == nullptr) {
+            QWidget *pOwner = getOwnerWidget();
+            if(pOwner != nullptr) {
+                inputLineEdit_ = new InputLineEdit(pOwner);
+                inputLineEdit_->move(elementXPos+borderWidth_/2, elementYPos+borderWidth_/2);
+                inputLineEdit_->resize(elementWidth-borderWidth_, elementHeight-borderWidth_);
+                inputLineEdit_->setFocus();
+                inputLineEdit_->show();
+            }
+        } else {
+            inputLineEdit_->setFocus();
+            inputLineEdit_->show();
+        }
     } else {
-        resizing = false;
-        rd = RdNone;
+        if(inputLineEdit_ != nullptr) {
+            inputLineEdit_->setFocus();
+            inputLineEdit_->hide();
+        }
     }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    //inputLineEdit_->move(x(), x());
-    //inputLineEdit_->resize(elementWidth, elementHeight);
-    //inputLineEdit_->show();
-
-    QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementInputEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
+void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
+    if(!enableOnInitial_) {
+        return;
     }
 
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
 }
-
-void ElementInputEdit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
-}
-
 
 
 void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
@@ -229,7 +205,7 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {
@@ -312,22 +288,6 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
-
-    if(enableOnInitial_) {
-        this->setEnabled(enableOnInitial_);
-    }
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
-
-    if(enableEdit_) {
-        if(inputPassword_) {
-            InputMethodAlphabet::instance()->init("control", "", font_.pixelSize(), font_.pixelSize());
-        } else {
-            InputMethodNumber::instance()->init("", font_.pixelSize());
-        }
-    }
 }
 
 
@@ -398,22 +358,6 @@ void ElementInputEdit::readData(QDataStream &in) {
     this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
-
-    if(enableOnInitial_) {
-        this->setEnabled(enableOnInitial_);
-    }
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
-
-    if(enableEdit_) {
-        if(inputPassword_) {
-            InputMethodAlphabet::instance()->init("control", "", font_.pixelSize(), font_.pixelSize());
-        } else {
-            InputMethodNumber::instance()->init("", font_.pixelSize());
-        }
-    }
 }
 
 
@@ -484,22 +428,6 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
     edit.showOnInitial_ = showOnInitial;
     edit.setAngle(angle);
     edit.updateBoundingElement();
-
-    if(edit.enableOnInitial_) {
-        edit.setEnabled(edit.enableOnInitial_);
-    }
-
-    if(!edit.showOnInitial_) {
-        edit.hide();
-    }
-
-    if(edit.enableEdit_) {
-        if(edit.inputPassword_) {
-            InputMethodAlphabet::instance()->init("control", "", edit.font_.pixelSize(), edit.font_.pixelSize());
-        } else {
-            InputMethodNumber::instance()->init("", edit.font_.pixelSize());
-        }
-    }
 
     return in;
 }

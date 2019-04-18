@@ -51,7 +51,7 @@ void InputMethodAlphabet::mouseReleaseEvent(QMouseEvent *) {
 
 void InputMethodAlphabet::initForm() {
     this->mousePressed_ = false;
-    this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint | Qt::FramelessWindowHint);
+    this->setWindowFlags(Qt::Tool | Qt::WindowStaysOnTopHint/* | Qt::FramelessWindowHint*/);
 
     QDesktopWidget w;
     deskWidth_ = w.availableGeometry().width();
@@ -108,11 +108,18 @@ void InputMethodAlphabet::initForm() {
     foreach (QPushButton * b, btn) {
         connect(b, SIGNAL(clicked()), this, SLOT(btn_clicked()));
     }
+}
 
+void InputMethodAlphabet::installInputMethod() {
     connect(qApp, SIGNAL(focusChanged(QWidget *, QWidget *)),
             this, SLOT(focusChanged(QWidget *, QWidget *)));
-
     qApp->installEventFilter(this);
+}
+
+void InputMethodAlphabet::unInstallInputMethod() {
+    disconnect(qApp, SIGNAL(focusChanged(QWidget *, QWidget *)),
+               this, SLOT(focusChanged(QWidget *, QWidget *)));
+    qApp->removeEventFilter(this);
 }
 
 void InputMethodAlphabet::initProperty() {

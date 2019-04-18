@@ -10,12 +10,16 @@ class ElementPolygon : public Element
 {
 public:
     ElementPolygon();
-    void setClickPosition(QPointF);
-    void updateBoundingElement();
+    void setClickPosition(QPointF) override;
+    void updateBoundingElement() override;
     void addNodePoint();
     void removeNodePoint();
-    void readFromXml(const QXmlStreamAttributes &);
-    void readData(QDataStream &in);
+    void readFromXml(const QXmlStreamAttributes &) override;
+    void readData(QDataStream &in) override;
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     enum {Type = PolygonItemType};
 
@@ -26,16 +30,11 @@ public:
     friend QDataStream &operator>>(QDataStream &in,ElementPolygon &rect);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
 private:
     void createPath();
-    bool hasClickedOn(QPointF pressPoint,QPointF point) const;
     void createPoints();
     QString createPointsXmlString() const;
 

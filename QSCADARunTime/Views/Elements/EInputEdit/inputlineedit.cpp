@@ -1,9 +1,8 @@
 #include "InputLineEdit.h"
 
 InputLineEdit::InputLineEdit(QWidget *parent) :
-    QLineEdit(parent)
-{
-
+    QLineEdit(parent) {
+    this->setStyleSheet("background: transparent;");
 }
 
 InputLineEdit::~InputLineEdit() {
@@ -11,6 +10,5 @@ InputLineEdit::~InputLineEdit() {
 }
 
 void InputLineEdit::paintEvent(QPaintEvent *event) {
-
     QLineEdit::paintEvent(event);
 }

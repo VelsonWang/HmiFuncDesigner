@@ -50,6 +50,8 @@ public:
               QString style,
               int btnFontSize,
               int labFontSize);
+    void installInputMethod();
+    void unInstallInputMethod();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

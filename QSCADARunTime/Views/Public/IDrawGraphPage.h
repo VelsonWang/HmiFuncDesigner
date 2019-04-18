@@ -2,7 +2,7 @@
 #ifndef IDRAWGRAPHPAGE_H
 #define IDRAWGRAPHPAGE_H
 
-
+#include <QWidget>
 #include <QStringList>
 #include <QIcon>
 #include "Public/Element.h"
@@ -25,7 +25,7 @@ public:
     // 获取元素ID String
     virtual QString getElementIDString() = 0;
     // 创建元素
-    virtual Element* createElement() = 0;
+    virtual Element* createElement(QWidget *owner=0) = 0;
 };
 
 typedef IDrawGraphPage* (*CreateObjFunc)();

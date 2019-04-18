@@ -6,10 +6,15 @@ static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 
 ElementArrow::ElementArrow()
-    : arrowSize(10) {
+    : Element(),
+      arrowSize(10) {
     elementId = trUtf8("Arrow");
     internalElementType = trUtf8("Arrow");
     init();
+}
+
+ElementArrow::~ElementArrow() {
+
 }
 
 QRectF ElementArrow::boundingRect() const {
@@ -23,13 +28,12 @@ QRectF ElementArrow::boundingRect() const {
     qreal ty = qMin(y1, y2);
     qreal by = qMax(y1, y2);
 
-    return QRectF(lx,ty,rx - lx, by - ty).normalized()
+    return QRectF(lx, ty, rx - lx, by - ty).normalized()
             .adjusted(-extra, -extra, extra, extra);
 }
 
 
 void ElementArrow::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     setElementXPos(position.x());
     setElementYPos(position.y());
     elementLine.setLine(0, 0, elementWidth, elementHeight);
@@ -39,13 +43,12 @@ void ElementArrow::updateBoundingElement() {
     elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
-void ElementArrow::paint(QPainter *painter,
-                         const QStyleOptionGraphicsItem *option,
-                         QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+void ElementArrow::paint(QPainter *painter) {
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
     painter->setPen(QPen(borderColor_, borderWidth_));
     painter->drawLine(elementLine);
 
@@ -61,58 +64,19 @@ void ElementArrow::paint(QPainter *painter,
                                                   cos(angle + Pi - Pi / 3) * arrowSize);
 
     painter->drawPolyline(QPolygonF() << sourceArrowP1 << elementLine.p1() << sourceArrowP2);
+    painter->restore();
 }
 
-void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementArrow::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF pp1 = elementLine.p1();
-    QPointF pp2 = elementLine.p2();
-
-    if (mousePoint.x() <= (pp1.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (pp1.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (pp1.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (pp1.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (pp2.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (pp2.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (pp2.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
+void ElementArrow::mousePressEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
-void ElementArrow::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
+void ElementArrow::mouseReleaseEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
 void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
@@ -129,7 +93,7 @@ void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {

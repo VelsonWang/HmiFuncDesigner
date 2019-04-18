@@ -55,7 +55,9 @@ QString EEllipse::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EEllipse::createElement()
+Element* EEllipse::createElement(QWidget *owner)
 {
-    return new ElementEllipse();
+    ElementEllipse *pEle = new ElementEllipse();
+    pEle->setOwnerWidget(owner);
+    return pEle;
 }

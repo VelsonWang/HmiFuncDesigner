@@ -44,6 +44,8 @@ public:
     }
 
     void init(QString style, int fontSize);
+    void installInputMethod();
+    void unInstallInputMethod();
 
 protected:
     bool eventFilter(QObject *obj, QEvent *event);

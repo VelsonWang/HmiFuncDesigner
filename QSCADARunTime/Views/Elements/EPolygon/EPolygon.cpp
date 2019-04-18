@@ -55,7 +55,9 @@ QString EPolygon::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EPolygon::createElement()
+Element* EPolygon::createElement(QWidget *owner)
 {
-    return new ElementPolygon();
+    ElementPolygon *pEle = new ElementPolygon();
+    pEle->setOwnerWidget(owner);
+    return pEle;
 }

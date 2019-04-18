@@ -5,7 +5,6 @@
 #include "Element.h"
 #include <QPainter>
 #include <QDataStream>
-#include <QGraphicsSceneMouseEvent>
 
 class ElementText : public Element
 {
@@ -13,15 +12,14 @@ class ElementText : public Element
 
 public:
     explicit ElementText();
-    void setClickPosition(QPointF);
-    void updateBoundingElement();
-    void readFromXml(const QXmlStreamAttributes &);
-    void readData(QDataStream &in);
-
-    QString getHAlignString() const;
-    void setHAlignString(const QString& szAlign);
-    QString getVAlignString() const;
-    void setVAlignString(const QString& szAlign);
+    void setClickPosition(QPointF) override;
+    void updateBoundingElement() override;
+    void readFromXml(const QXmlStreamAttributes &) override;
+    void readData(QDataStream &in) override;
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
     enum {Type = TextItemType};
 
@@ -32,11 +30,6 @@ public:
     friend QDataStream &operator>>(QDataStream &in, ElementText &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QRectF boundingRect() const;
     QPainterPath shape() const;
 
@@ -63,6 +56,8 @@ private:
     bool hideOnClick_;
     // 初始可见性
     bool showOnInitial_;
+    // 隐藏
+    bool bHide_;
 };
 
 #endif // TEXTITEM_HPP

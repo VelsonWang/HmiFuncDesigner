@@ -25,11 +25,8 @@ QPainterPath ElementEllipse::shape() const {
 }
 
 void ElementEllipse::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
-    setX(elementXPos);
-    setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
@@ -37,97 +34,36 @@ void ElementEllipse::updateBoundingElement() {
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementEllipse::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
+void ElementEllipse::paint(QPainter *painter) {
     if(!showOnInitial_) {
         return;
     }
 
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
     painter->setPen(QPen(borderColor_, borderWidth_));
     if(isFill_) {
         painter->setBrush(QBrush(fillColor_));
     } else {
         painter->setBrush(Qt::NoBrush);
     }
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
     painter->drawPath(shape());
+    painter->restore();
 }
 
-void ElementEllipse::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementEllipse::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementEllipse::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
+void ElementEllipse::mousePressEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
-void ElementEllipse::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
-}
-
-void ElementEllipse::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
+void ElementEllipse::mouseReleaseEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
 void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
@@ -144,7 +80,7 @@ void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {
@@ -197,10 +133,6 @@ void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 void ElementEllipse::readData(QDataStream &in) {
@@ -249,10 +181,6 @@ void ElementEllipse::readData(QDataStream &in) {
     this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse) {
@@ -301,10 +229,6 @@ QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse) {
     ellipse.showOnInitial_ = showOnInitial;
     ellipse.setAngle(angle);
     ellipse.updateBoundingElement();
-
-    if(!ellipse.showOnInitial_) {
-        ellipse.hide();
-    }
 
     return in;
 }

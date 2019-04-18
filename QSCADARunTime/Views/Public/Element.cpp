@@ -1,5 +1,10 @@
 ﻿#include "Element.h"
-#include <QtDebug>
+#include <QDebug>
+
+Element::Element(QObject *parent) :
+    QObject(parent) {
+
+}
 
 
 Element::~Element() {
@@ -37,7 +42,6 @@ int Element::getElementHeight() const {
 
 void Element::setElementXPos(int xpos) {
     elementXPos = xpos;
-    setX(elementXPos);
 }
 
 int Element::getElementXPos() const {
@@ -46,24 +50,15 @@ int Element::getElementXPos() const {
 
 void Element::setElementYPos(int ypos) {
     elementYPos = ypos;
-    setY(elementYPos);
 }
 
 int Element::getElementYPos() const {
     return elementYPos;
 }
 
-void Element::setGraphPageLink(const QString &link) {
-    graphPageLink = link;
-}
-
-QString Element::getGraphPageLink() const {
-    return graphPageLink;
-}
-
 void Element::setElementZValue(int zval) {
     elementZValue = zval;
-    setZValue(elementZValue);
+    //setZValue(elementZValue);
 }
 
 int Element::getElementZValue() const {
@@ -71,11 +66,8 @@ int Element::getElementZValue() const {
 }
 
 void Element::moveTo(int x, int y) {
-
     elementXPos = elementXPos + x;
     elementYPos = elementYPos + y;
-
-    setPos(elementXPos,elementYPos);
 }
 
 void Element::setAngle(qreal angle_) {
@@ -83,7 +75,7 @@ void Element::setAngle(qreal angle_) {
     QTransform transform;
     transform.rotate(angle_);
     elemAngle = angle_;
-    setTransform(transform);
+    //setTransform(transform);
 }
 
 qreal Element::angle() const {
@@ -91,36 +83,25 @@ qreal Element::angle() const {
 }
 
 void Element::init() {
-
+/*
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsFocusable);
     setAcceptHoverEvents(true);
-
-    resizing = false;
+*/
 
     elementWidth = 70;
     elementHeight = 70;
-    elementZValue = zValue();
+    elementZValue = 0;
     backgroundColor = QColor(Qt::blue);
     signBackgroundColor = QColor(Qt::black);
     borderWidth = 2;
     borderColor = QColor(Qt::black);
     elementText = trUtf8("文本");
     fontSize = 10;
-
     elemAngle = 0;
-    rotationCount = 0;
-
-    setSelected(true);
-
-    rd = RdNone;
 }
 
-void Element::setBlocked(bool blocked) {
-
-    setFlag(QGraphicsItem::ItemIsMovable,!blocked);
-}
 
 void Element::addNodePoint() {
 }
@@ -214,5 +195,26 @@ void Element::setVAlignString(const QString& szAlign, QString& szAlignSet) {
         szAlignSet = tr("下对齐");
     }
 }
+
+
+/**
+ * @brief Element::setOwnerWidget
+ * @details 设置元素所属窗口
+ * @param owner 所属窗口
+ */
+void Element::setOwnerWidget(QWidget *owner) {
+    this->ownerWidget_ = owner;
+}
+
+
+/**
+ * @brief Element::getOwnerWidget
+ * @details 获取元素所属窗口
+ * @return 所属窗口
+ */
+QWidget *Element::getOwnerWidget() {
+    return this->ownerWidget_;
+}
+
 
 

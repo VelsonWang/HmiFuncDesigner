@@ -29,11 +29,8 @@ QPainterPath ElementPicture::shape() const {
 
 
 void ElementPicture::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
-    setX(elementXPos);
-    setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
@@ -41,15 +38,16 @@ void ElementPicture::updateBoundingElement() {
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementPicture::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
+void ElementPicture::paint(QPainter *painter) {
     if(!showOnInitial_) {
         return;
     }
+
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
 
     if(filePicture_ != QString()) {
         QString picture = getProjectPath() + "/Pictures/" + filePicture_;
@@ -61,7 +59,6 @@ void ElementPicture::paint(QPainter *painter,
             } else {
                 scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
             }
-            painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
             painter->drawImage(elementRect, scaleImage);
         }
     }
@@ -72,84 +69,24 @@ void ElementPicture::paint(QPainter *painter,
     } else {
         painter->setPen(QPen(borderColor_, borderWidth_, Qt::SolidLine));
     }
+    painter->setBrush(Qt::NoBrush);
     painter->drawRect(elementRect);
+    painter->restore();
 }
 
-void ElementPicture::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPicture::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
+void ElementPicture::mousePressEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
-void ElementPicture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
-}
-
-void ElementPicture::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
+void ElementPicture::mouseReleaseEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
 void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes) {
-
     if (attributes.hasAttribute("elementId")) {
         setElementId(attributes.value("elementId").toString());
     }
@@ -163,7 +100,7 @@ void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {
@@ -207,10 +144,6 @@ void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 void ElementPicture::readData(QDataStream &in) {
@@ -252,10 +185,6 @@ void ElementPicture::readData(QDataStream &in) {
     this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 
@@ -299,10 +228,6 @@ QDataStream &operator>>(QDataStream &in,ElementPicture &picture) {
     picture.showOnInitial_ = showOnInitial;
     picture.setAngle(angle);
     picture.updateBoundingElement();
-
-    if(!picture.showOnInitial_) {
-        picture.hide();
-    }
 
     return in;
 }

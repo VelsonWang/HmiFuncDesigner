@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>590</width>
-    <height>185</height>
+    <width>635</width>
+    <height>251</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>中文输入法面板</string>
+   <string>中英文输入法</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>

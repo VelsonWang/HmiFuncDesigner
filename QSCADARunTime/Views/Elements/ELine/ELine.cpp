@@ -55,7 +55,9 @@ QString ELine::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ELine::createElement()
+Element* ELine::createElement(QWidget *owner)
 {
-    return new ElementLine();
+    ElementLine *pEle = new ElementLine();
+    pEle->setOwnerWidget(owner);
+    return pEle;
 }

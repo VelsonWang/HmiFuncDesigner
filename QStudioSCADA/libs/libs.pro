@@ -17,8 +17,7 @@ SUBDIRS   = \
     Lua \
     Ftp \
     PropertyEditor \
-    TagManager \
-	SoftKeyboard
+    TagManager
 
 
 

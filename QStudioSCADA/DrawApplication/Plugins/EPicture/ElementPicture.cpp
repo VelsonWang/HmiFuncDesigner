@@ -8,7 +8,7 @@ int ElementPicture::iLastIndex_ = 1;
 
 ElementPicture::ElementPicture(const QString &projPath) :
     Element(projPath) {
-    elementId = QString(tr("Ellipse_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    elementId = QString(tr("Picture_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Picture");
     elementIcon = QIcon(":/images/Picture.png");

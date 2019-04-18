@@ -24,7 +24,6 @@ QRectF ElementLine::boundingRect() const {
 
 
 void ElementLine::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     setElementXPos(position.x());
     setElementYPos(position.y());
     elementLine.setLine(0, 0, elementWidth, elementHeight);
@@ -34,68 +33,27 @@ void ElementLine::updateBoundingElement() {
     elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
-void ElementLine::paint(QPainter *painter,
-                        const QStyleOptionGraphicsItem *option,
-                        QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+void ElementLine::paint(QPainter *painter) {
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
     painter->setPen(QPen(borderColor_, borderWidth_));
     painter->drawLine(elementLine);
-
+    painter->restore();
 }
 
-void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementLine::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF pp1 = elementLine.p1();
-    QPointF pp2 = elementLine.p2();
-
-    if (mousePoint.x() <= (pp1.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (pp1.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (pp1.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (pp1.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (pp2.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (pp2.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (pp2.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
+void ElementLine::mousePressEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
-void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-    setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
+void ElementLine::mouseReleaseEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
 void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
@@ -112,7 +70,7 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {

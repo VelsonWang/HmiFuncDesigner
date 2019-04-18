@@ -55,7 +55,9 @@ QString ERect::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ERect::createElement()
+Element* ERect::createElement(QWidget *owner)
 {
-    return new ElementRect();
+    ElementRect *pEle = new ElementRect();
+    pEle->setOwnerWidget(owner);
+    return pEle;
 }

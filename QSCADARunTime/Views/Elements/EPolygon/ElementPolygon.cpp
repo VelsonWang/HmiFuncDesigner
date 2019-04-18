@@ -1,8 +1,7 @@
 ﻿#include "elementpolygon.h"
 #include <QtDebug>
 
-ElementPolygon::ElementPolygon()
-{
+ElementPolygon::ElementPolygon() {
     elementId = trUtf8("Polygon");
     internalElementType = trUtf8("Polygon");
     clickPoint = -1;
@@ -38,20 +37,20 @@ void ElementPolygon::removeNodePoint() {
         return;
     }
 
-    foreach (QPointF point,points) {
+    foreach (QPointF point, points) {
         if (first) {
             minXPoint.setX(point.x());
             first = false;
         }
         else {
-            if (point.x() < minXPoint.x()) {minXPoint = point;}
+            if (point.x() < minXPoint.x()) {
+                minXPoint = point;
+            }
         }
     }
 
     points.remove(points.indexOf(minXPoint));
     createPath();
-    update(boundingRect());
-    scene()->update();
 }
 
 void ElementPolygon::createPoints() {
@@ -100,29 +99,25 @@ QPainterPath ElementPolygon::shape() const {
 }
 
 void ElementPolygon::setClickPosition(QPointF position) {
-    prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
-    setX(elementXPos);
-    setY(elementYPos);
 }
 
 void ElementPolygon::updateBoundingElement() {
-    prepareGeometryChange();
     createPath();
 }
 
-void ElementPolygon::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget) {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
 
+void ElementPolygon::paint(QPainter *painter) {
     if(!showOnInitial_) {
         return;
     }
 
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::SmoothPixmapTransform);
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
 
     painter->setPen(QPen(borderColor_, borderWidth_));
     if(isFill_) {
@@ -131,69 +126,24 @@ void ElementPolygon::paint(QPainter *painter,
         painter->setBrush(Qt::NoBrush);
     }
     painter->drawPolygon(polygon);
+    painter->restore();
 }
 
-void ElementPolygon::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
+void ElementPolygon::mouseMoveEvent(QMouseEvent *event) {
     Q_UNUSED(event)
 }
 
-void ElementPolygon::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
-    QPointF mousePoint = event->pos();
-
-    if (event->button() & Qt::LeftButton) {
-
-        for (clickPoint = 0; clickPoint < points.count(); clickPoint++) {
-            if (hasClickedOn(mousePoint,points.at(clickPoint))) break;
-        }
-
-        if (clickPoint == points.count())  {
-            clickPoint = -1;
-            resizing = false;
-        }
-        else {
-            resizing = true;
-            event->accept();
-        }
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
+void ElementPolygon::mousePressEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
-bool ElementPolygon::hasClickedOn(QPointF pressPoint, QPointF point) const {
-    return (
-        pressPoint.x() >= point.x() - 3 &&
-        pressPoint.x() <  point.x() + 3 &&
-        pressPoint.y() >= point.y() - 3 &&
-        pressPoint.y() <  point.y() + 3
-    );
-}
 
-void ElementPolygon::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
-    setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
+void ElementPolygon::mouseReleaseEvent(QMouseEvent *event) {
+    Q_UNUSED(event)
 }
 
 
 QString ElementPolygon::createPointsXmlString() const {
-
     QString xmlString;
 
     foreach (QPointF point, points) {
@@ -222,7 +172,7 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("tag")) {
@@ -279,10 +229,6 @@ void ElementPolygon::readFromXml(const QXmlStreamAttributes &attributes) {
     }
 
     updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 
@@ -337,10 +283,6 @@ void ElementPolygon::readData(QDataStream &in) {
     this->points.clear();
     this->points = points;
     this->updateBoundingElement();
-
-    if(!showOnInitial_) {
-        this->hide();
-    }
 }
 
 
@@ -395,10 +337,6 @@ QDataStream &operator>>(QDataStream &in,ElementPolygon &polygon) {
     polygon.points.clear();
     polygon.points = points;
     polygon.updateBoundingElement();
-
-    if(!polygon.showOnInitial_) {
-        polygon.hide();
-    }
 
     return in;
 }
