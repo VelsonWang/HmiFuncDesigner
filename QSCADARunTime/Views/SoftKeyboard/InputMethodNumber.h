@@ -59,6 +59,10 @@ private slots:
                      QString textColor);
     void reClicked();
 
+signals:
+    void enterPressed();
+    void closePressed();
+
 private:
     void initForm();                //初始化窗体数据
     void initProperty();            //初始化属性

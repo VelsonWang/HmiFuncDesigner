@@ -271,6 +271,7 @@ bool InputMethodAlphabet::eventFilter(QObject *obj, QEvent *event) {
             insertValue(ui_->labPY->text());
             ui_->labPY->setText("");
             selectChinese();
+            emit enterPressed();
             return true;
         } else if (keyEvent->key() == Qt::Key_Shift) {
             ui_->btnType->click();
@@ -394,6 +395,7 @@ void InputMethodAlphabet::focusChanged(QWidget *oldWidget, QWidget *nowWidget) {
             currentType_ = "min";
             changeType(currentType_);
             this->setVisible(false);
+            emit closePressed();
         }
 
         if (currentPosition_ == "center") {
@@ -403,7 +405,7 @@ void InputMethodAlphabet::focusChanged(QWidget *oldWidget, QWidget *nowWidget) {
             this->setGeometry(0, deskHeight_ - frmHeight_, deskWidth_, frmHeight_);
         } else if (currentPosition_ == "control") {
             QRect rect = nowWidget->rect();
-            QPoint pos = QPoint(rect.left(), rect.bottom() + 2);
+            QPoint pos = QPoint(rect.left(), rect.bottom() + 26);
             pos = nowWidget->mapToGlobal(pos);
             this->setGeometry(pos.x(), pos.y(), frmWidth_, frmHeight_);
         }

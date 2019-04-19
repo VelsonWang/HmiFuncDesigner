@@ -1,6 +1,7 @@
 ﻿#include "ElementInputEdit.h"
 #include "InputMethodNumber.h"
 #include "InputMethodAlphabet.h"
+#include "RealTimeDB.h"
 #include <QDebug>
 
 ElementInputEdit::ElementInputEdit() {
@@ -20,6 +21,8 @@ ElementInputEdit::ElementInputEdit() {
     elementHeight = 26;
     elementText = trUtf8("输入编辑框");
     inputLineEdit_ = nullptr;
+    connect(&refreshTmr, SIGNAL(timeout()), this, SLOT(refreshTagValue()));
+    refreshTmr.start(20);
 }
 
 ElementInputEdit::~ElementInputEdit() {
@@ -55,7 +58,6 @@ void ElementInputEdit::paint(QPainter *painter) {
     if(!showOnInitial_) {
         return;
     }
-
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
@@ -63,6 +65,24 @@ void ElementInputEdit::paint(QPainter *painter) {
     painter->rotate(elemAngle);
     drawInputEdit(painter);
     painter->restore();
+}
+
+void ElementInputEdit::refreshTagValue() {
+    if(szTagSelected_ == "")
+        refreshTmr.stop();
+
+    qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
+    if(id != -1) {
+        elementText = RealTimeDB::GetDataString(id);
+    }else {
+        elementText = "#";
+    }
+
+    QWidget *pOwner = getOwnerWidget();
+    if(pOwner != nullptr) {
+        pOwner->update();
+        refreshTmr.start(200);
+    }
 }
 
 void ElementInputEdit::drawInputEdit(QPainter *painter) {
@@ -108,13 +128,18 @@ void ElementInputEdit::drawInputEdit(QPainter *painter) {
 
     QRectF rect1(elementRect.toRect());
     QRectF textRect = rect1.normalized().adjusted(borderWidth_, borderWidth_, -borderWidth_, -borderWidth_);
-    QString szDrawText = elementText;
+    QString szDrawText = "";
     if(inputPassword_) {
         int iLen = elementText.length();
         szDrawText = "";
         for(int i=0; i<iLen; i++) {
             szDrawText.append(QChar('*'));
         }
+    } else {
+        if(szTagSelected_ == "") {
+            elementText = "";
+        }
+        szDrawText = elementText;
     }
     painter->drawText(textRect, hFlags|vFlags, szDrawText);
 }
@@ -134,37 +159,61 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
             mousePoint.x() >= (elementXPos) &&
             mousePoint.y() <= (elementYPos + elementHeight) &&
             mousePoint.y() >= (elementYPos)) {
-        if(enableEdit_) {
+        QString szTmpElementText = elementText;
+        elementText = "";
+        QWidget *pOwner = getOwnerWidget();
+        if(pOwner != nullptr) {
+            pOwner->update();
+        }
+        refreshTmr.stop();
+        if(enableEdit_ && szTagSelected_ != "") {
             InputMethodAlphabet::instance()->setVisible(false);
             InputMethodNumber::instance()->setVisible(false);
+            connect(InputMethodAlphabet::instance(), SIGNAL(enterPressed()),
+                    this, SLOT(enterPressed()));
+            connect(InputMethodNumber::instance(), SIGNAL(enterPressed()),
+                    this, SLOT(enterPressed()));
             if(inputPassword_) {
-                InputMethodAlphabet::instance()->init("control", "silvery", font_.pixelSize(), font_.pixelSize());
+                InputMethodAlphabet::instance()->init("control", "silvery", 14, 14);
                 InputMethodNumber::instance()->unInstallInputMethod();
                 InputMethodAlphabet::instance()->installInputMethod();
             } else {
-                InputMethodNumber::instance()->init("silvery", font_.pixelSize());
+                InputMethodNumber::instance()->init("silvery", 14);
                 InputMethodAlphabet::instance()->unInstallInputMethod();
                 InputMethodNumber::instance()->installInputMethod();
             }
-        }
 
-        if(inputLineEdit_ == nullptr) {
-            QWidget *pOwner = getOwnerWidget();
-            if(pOwner != nullptr) {
-                inputLineEdit_ = new InputLineEdit(pOwner);
-                inputLineEdit_->move(elementXPos+borderWidth_/2, elementYPos+borderWidth_/2);
-                inputLineEdit_->resize(elementWidth-borderWidth_, elementHeight-borderWidth_);
+            if(inputLineEdit_ == nullptr) {
+                QWidget *pOwner = getOwnerWidget();
+                if(pOwner != nullptr) {
+                    inputLineEdit_ = new InputLineEdit(pOwner);
+                    inputLineEdit_->move(elementXPos+borderWidth_/2, elementYPos+borderWidth_/2);
+                    inputLineEdit_->resize(elementWidth-borderWidth_, elementHeight-borderWidth_);
+                    inputLineEdit_->setText(szTmpElementText);
+                    inputLineEdit_->setFocus();
+                    inputLineEdit_->show();
+                }
+            } else {
+                inputLineEdit_->setText(szTmpElementText);
                 inputLineEdit_->setFocus();
                 inputLineEdit_->show();
             }
-        } else {
-            inputLineEdit_->setFocus();
-            inputLineEdit_->show();
-        }
+        } 
     } else {
+        if(enableEdit_ && szTagSelected_ != "") {
+            disconnect(InputMethodAlphabet::instance(), SIGNAL(enterPressed()),
+                       this, SLOT(enterPressed()));
+            disconnect(InputMethodNumber::instance(), SIGNAL(enterPressed()),
+                       this, SLOT(enterPressed()));
+        }
+        refreshTmr.start(200);
         if(inputLineEdit_ != nullptr) {
-            inputLineEdit_->setFocus();
+            inputLineEdit_->setText("");
             inputLineEdit_->hide();
+        }
+        QWidget *pOwner = getOwnerWidget();
+        if(pOwner != nullptr) {
+            pOwner->setFocus();
         }
     }
 }
@@ -174,9 +223,26 @@ void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event) {
     if(!enableOnInitial_) {
         return;
     }
-
 }
 
+void ElementInputEdit::enterPressed() {
+    elementText = inputLineEdit_->text();
+    if(szTagSelected_ != "") {
+        qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
+        if(id != -1) {
+            RealTimeDB::SetDataString(id, elementText);
+        }
+    }
+    inputLineEdit_->setText("");
+    inputLineEdit_->hide();
+    refreshTmr.start(20);
+}
+
+void ElementInputEdit::closePressed() {
+    inputLineEdit_->setText("");
+    inputLineEdit_->hide();
+    refreshTmr.start(20);
+}
 
 void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
     if (attributes.hasAttribute("elementId")) {

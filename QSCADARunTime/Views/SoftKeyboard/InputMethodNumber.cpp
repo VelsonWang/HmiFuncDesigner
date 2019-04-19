@@ -131,7 +131,7 @@ void InputMethodNumber::focusChanged(QWidget *oldWidget, QWidget *nowWidget) {
         }
 
         QRect rect = nowWidget->rect();
-        QPoint pos = QPoint(rect.left(), rect.bottom() + 2);
+        QPoint pos = QPoint(rect.left(), rect.bottom() + 26);
         pos = nowWidget->mapToGlobal(pos);
         this->setGeometry(pos.x(), pos.y(), this->width(), this->height());
     }
@@ -188,8 +188,10 @@ void InputMethodNumber::btn_clicked() {
         deleteValue();
     } else if (objectName == "btnClose") {
         this->setVisible(false);
+        emit closePressed();
     } else if (objectName == "btnEnter") {
         this->setVisible(false);
+        emit enterPressed();
     } else if (objectName == "btnSpace") {
         insertValue(" ");
     } else {

@@ -68,6 +68,10 @@ private slots:
                      QString textColor);
     void reClicked();
 
+signals:
+    void enterPressed();
+    void closePressed();
+
 private:
     bool checkPress();              //校验当前长按的按钮
     void initForm();                //初始化窗体数据

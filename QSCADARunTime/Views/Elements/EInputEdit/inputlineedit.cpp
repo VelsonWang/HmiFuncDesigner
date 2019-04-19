@@ -2,7 +2,7 @@
 
 InputLineEdit::InputLineEdit(QWidget *parent) :
     QLineEdit(parent) {
-    this->setStyleSheet("background: transparent;");
+    this->setStyleSheet("border:0px; background: transparent;");
 }
 
 InputLineEdit::~InputLineEdit() {

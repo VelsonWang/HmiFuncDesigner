@@ -6,6 +6,7 @@
 #include "InputLineEdit.h"
 #include <QPainter>
 #include <QDataStream>
+#include <QTimer>
 
 class ElementInputEdit : public Element
 {
@@ -38,6 +39,11 @@ protected:
 private:
     void drawInputEdit(QPainter *painter);
 
+private slots:
+    void refreshTagValue();
+    void enterPressed();
+    void closePressed();
+
 private:
     QRectF elementRect;
     // 允许编辑输入
@@ -64,8 +70,10 @@ private:
     bool enableOnInitial_;
     // 初始可见性
     bool showOnInitial_;
-
+    // 输入编辑控件，用于触发键盘输入
     InputLineEdit *inputLineEdit_;
+    // 变量刷新定时器
+    QTimer refreshTmr;
 };
 
 #endif // INPUTEDITITEM_H
