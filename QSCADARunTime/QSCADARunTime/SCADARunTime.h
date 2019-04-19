@@ -9,12 +9,12 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QDir>
+#include <QScriptEngine>
+#include <QScriptValue>
 #include "IVendor.h"
 #include "RealTimeDB.h"
 #include "PortThread.h"
 #include "RunScript.h"
-
-class MainWindow;
 
 class SCADARunTime : public QObject
 {
@@ -39,13 +39,16 @@ public slots:
 protected:
     bool event(QEvent *e);
 
+public:
+    static QScriptEngine *scriptEngine_;
+
 private:
     static QString m_sProjectPath;
     QStringList m_listPortName;
     QList<IVendor *> m_VendorList;
     QList<PortThread *> m_listPortThread;
     static RunScript *m_pRunScript;
-    MainWindow *showViewWin_;
+
 };
 
 extern SCADARunTime *g_SCADARunTimePtr;

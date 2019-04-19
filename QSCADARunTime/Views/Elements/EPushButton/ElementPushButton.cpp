@@ -1,4 +1,6 @@
 ﻿#include "ElementPushButton.h"
+#include "SCADARunTime.h"
+#include "Log.h"
 #include "PubTool.h"
 #include <QFileInfo>
 #include <QFile>
@@ -144,6 +146,28 @@ void ElementPushButton::mousePressEvent(QMouseEvent *event) {
             mousePoint.y() <= (elementYPos + elementHeight) &&
             mousePoint.y() >= (elementYPos)) {
         isSelected_ = true;
+
+        // 处理"按下事件"功能
+        if(SCADARunTime::scriptEngine_ != nullptr) {
+            foreach (QString szFuncEv, funcs_) {
+                QStringList listFuncEv = szFuncEv.split(':');
+                if(listFuncEv.size() == 2) {
+                    QString szFunc = listFuncEv.at(0);
+                    QString szEv = listFuncEv.at(1);
+                    if(szEv == tr("按下事件")) {
+                        QScriptValue result = SCADARunTime::scriptEngine_->evaluate(szFunc);
+                        if (result.isError()) {
+                            QString err = QString::fromLatin1("File:%1 Function:%2 script syntax evaluate error: %3")
+                                    .arg(__FILE__)
+                                    .arg(__FUNCTION__)
+                                    .arg(result.toString());
+                            LogError(err);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     } else {
         isSelected_ = false;
     }
@@ -166,6 +190,28 @@ void ElementPushButton::mouseReleaseEvent(QMouseEvent *event) {
             mousePoint.y() <= (elementYPos + elementHeight) &&
             mousePoint.y() >= (elementYPos)) {
         isSelected_ = false;
+
+        // 处理"抬起事件"功能
+        if(SCADARunTime::scriptEngine_ != nullptr) {
+            foreach (QString szFuncEv, funcs_) {
+                QStringList listFuncEv = szFuncEv.split(':');
+                if(listFuncEv.size() == 2) {
+                    QString szFunc = listFuncEv.at(0);
+                    QString szEv = listFuncEv.at(1);
+                    if(szEv == tr("抬起事件")) {
+                        QScriptValue result = SCADARunTime::scriptEngine_->evaluate(szFunc);
+                        if (result.isError()) {
+                            QString err = QString::fromLatin1("File:%1 Function:%2 script syntax evaluate error: %3")
+                                    .arg(__FILE__)
+                                    .arg(__FUNCTION__)
+                                    .arg(result.toString());
+                            LogError(err);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     QWidget *pOwner = getOwnerWidget();

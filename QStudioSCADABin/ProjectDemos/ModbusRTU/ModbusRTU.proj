@@ -6,7 +6,7 @@
     "sProjectDescription": "demo1 project",
     "sProjectName": "ModbusRTU",
     "sProjectPath": "E:/JasonWang/QStudioSCADA/QStudioSCADABin/ProjectDemos/ModbusRTU",
-    "sStartPage": "draw2.drw",
+    "sStartPage": "draw1.drw",
     "sStationAddress": "127.0.0.1",
     "sStationNumber": "0"
 }

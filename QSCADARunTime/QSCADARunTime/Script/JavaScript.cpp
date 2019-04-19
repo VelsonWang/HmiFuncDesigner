@@ -1,5 +1,6 @@
 #include "JavaScript.h"
 #include "../DB/RealTimeDB.h"
+#include "MainWindow.h"
 
 #include <QMenu>
 #include <QJsonArray>
@@ -156,6 +157,47 @@ void ScriptFileManage::save(const QString &filename, SaveFormat saveFormat)
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////// 画面操作函数 //////////////////////////////////
+
+
+/**
+ * @brief SwitchGraphPage
+ * @details 切换至画面
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue SwitchGraphPage(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue page = context->argument(0);
+    QString szPageName = page.toString();
+    MainWindow::instance()->switchGraphPage(szPageName);
+    return 1;
+}
+
+
+/**
+ * @brief ReturnGraphPage
+ * @details 返回至上一画面
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue ReturnGraphPage(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+    Q_UNUSED(context)
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    MainWindow::instance()->returnGraphPage();
+    return 1;
+}
+
+
+
+
+
 /////////////////////////// 脚本函数 //////////////////////////////////
 
 /*
@@ -174,6 +216,7 @@ QScriptValue SetRealValue(QScriptContext *context, QScriptEngine *engine, void *
     }
     return dValue;
 }
+
 /*
 * 变量值自增
 */
@@ -371,9 +414,17 @@ QScriptValue WaitForMillisec(QScriptContext *context, QScriptEngine *engine, voi
 
 //////////////////////////////////////////////////////////////////////////////
 
-
 void addFuncToScriptEngine(QScriptEngine *engine)
 {
+    /////////////////////////// 画面操作函数 //////////////////////////////////
+    // 切换画面
+    QScriptValue funcSwitchGraphPage = engine->newFunction(SwitchGraphPage, nullptr);
+    engine->globalObject().setProperty("SwitchGraphPage", funcSwitchGraphPage);
+
+    // 返回至上一画面
+    QScriptValue funcReturnGraphPage = engine->newFunction(ReturnGraphPage, nullptr);
+    engine->globalObject().setProperty("ReturnGraphPage", funcReturnGraphPage);
+
     /////////////////////////// 脚本函数 //////////////////////////////////
     // 设置变量值
     QScriptValue funcSetRealValue = engine->newFunction(SetRealValue, nullptr);

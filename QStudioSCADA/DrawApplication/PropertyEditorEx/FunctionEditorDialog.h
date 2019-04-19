@@ -75,10 +75,19 @@ public:
         ret += "(";
         int count = argList_.count();
         for(int i=0; i<count; i++) {
+            if(argList_.at(i)->type == "GRAPHPAGELIST" ||
+                    argList_.at(i)->type == "TAGLIST") {
+                ret += "\"";
+            }
             ret += argList_.at(i)->value;
+            if(argList_.at(i)->type == "GRAPHPAGELIST" ||
+                    argList_.at(i)->type == "TAGLIST") {
+                ret += "\"";
+            }
             ret += ",";
         }
-        ret.chop(1);
+        if(count > 0)
+            ret.chop(1);
         ret += ")";
         return ret;
     }
@@ -99,7 +108,8 @@ public:
                 szList = szArgs.split(',');
                 for(int i=0; i<szList.count(); i++) {
                     TArgItem *pArgItem = new TArgItem();
-                    pArgItem->value = szList.at(i);
+                    QString szValue = szList.at(i);
+                    pArgItem->value = szValue.replace("\"", "");
                     argList_.append(pArgItem);
                 }
             }

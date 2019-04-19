@@ -8,7 +8,7 @@
 #include <QListWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
-
+#include <QDebug>
 
 
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events) :

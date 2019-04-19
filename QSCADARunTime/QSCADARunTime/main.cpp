@@ -189,6 +189,9 @@ int main(int argc, char *argv[])
 
     SCADARunTime runTime(projPath);
     runTime.Load(DATA_SAVE_FORMAT);
+    // 添加脚本函数至脚本引擎
+    SCADARunTime::scriptEngine_ = new QScriptEngine();
+    addFuncToScriptEngine(SCADARunTime::scriptEngine_);
     runTime.Start();
     g_SCADARunTimePtr = &runTime;
 

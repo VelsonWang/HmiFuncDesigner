@@ -19,6 +19,7 @@
 SCADARunTime *g_SCADARunTimePtr = nullptr;
 QString SCADARunTime::m_sProjectPath = QString("");
 RunScript *SCADARunTime::m_pRunScript = nullptr;
+QScriptEngine *SCADARunTime::scriptEngine_ = nullptr;
 
 SCADARunTime::SCADARunTime(QString projectPath, QObject *parent)
     : QObject(parent)
@@ -27,12 +28,14 @@ SCADARunTime::SCADARunTime(QString projectPath, QObject *parent)
     m_pRunScript = new RunScript(projectPath);
 }
 
-SCADARunTime::~SCADARunTime()
-{
-    if(m_pRunScript != nullptr)
-    {
+SCADARunTime::~SCADARunTime() {
+    if(m_pRunScript != nullptr) {
         delete m_pRunScript;
         m_pRunScript = nullptr;
+    }
+    if(scriptEngine_ != nullptr) {
+        delete scriptEngine_;
+        scriptEngine_ = nullptr;
     }
 }
 
@@ -224,10 +227,7 @@ bool SCADARunTime::Unload()
     qDeleteAll(m_listPortThread);
     m_listPortThread.clear();
 
-    if(showViewWin_ != nullptr) {
-        delete showViewWin_;
-        showViewWin_ = nullptr;
-    }
+    MainWindow::instance()->unLoadGraphPages();
 
     return true;
 }
@@ -287,9 +287,11 @@ void SCADARunTime::Start()
         projInfoMgr.loadFromFile(DATA_SAVE_FORMAT, m_sProjectPath + "/" + projInfoFile);
         QString startPageFile = projInfoMgr.getStartPage();
         if(startPageFile.toLower() != "none") {
-            showViewWin_ = new MainWindow(m_sProjectPath, startPageFile);
-            showViewWin_->openGraphPage(m_sProjectPath, startPageFile);
-            showViewWin_->show();
+            MainWindow::projpath_ = m_sProjectPath;
+            MainWindow::graphPageName_ = startPageFile;
+            MainWindow::instance()->loadGraphPages(m_sProjectPath);
+            MainWindow::instance()->openGraphPage(m_sProjectPath, startPageFile);
+            MainWindow::instance()->show();
         }
     }
 }

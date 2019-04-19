@@ -1,6 +1,6 @@
 ﻿#include "RunScript.h"
 #include "JavaScript.h"
-#include "log4qt/logger.h"
+#include "Log.h"
 #include "../DB/RealTimeDB.h"
 #include <QTextCodec>
 #include <QTextStream>
@@ -28,9 +28,7 @@ void RunScriptTask::run()
         QString err = QString::fromLatin1("script syntax evaluate error: %1 %2")
                 .arg(result.property("lineNumber").toInt32())
                 .arg(result.toString());
-        //qDebug() << err;
-        Log4Qt::Logger *log = Log4Qt::Logger::logger("Run_Logger");
-        log->error(err);
+        LogError(err);
         return;
     }
 }

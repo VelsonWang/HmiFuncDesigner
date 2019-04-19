@@ -9,14 +9,14 @@
 #include <QFileDialog>
 #include <QDebug>
 
+QMutex MainWindow::mutex_;
+MainWindow *MainWindow::instance_ = 0;
+QString MainWindow::projpath_ = "";
+QString MainWindow::graphPageName_ = "";
 
-MainWindow::MainWindow(const QString &projpath,
-                       const QString &graphPageName,
-                       QWidget *parent) :
+MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    currentGraphPage_(nullptr),
-    projpath_(projpath),
-    graphPageName_(graphPageName) {
+    currentGraphPage_(nullptr) {
 
     // 注册元素对象创建函数
     registerCreateObjectFunc();
@@ -24,6 +24,24 @@ MainWindow::MainWindow(const QString &projpath,
     // 方便调试移动窗口暂时移除
     //setWindowFlags(Qt::FramelessWindowHint);
 
+    showedGraphPageStack_.clear();
+
+    moveCenter();
+}
+
+
+MainWindow::~MainWindow() {
+    unLoadGraphPages();
+}
+
+
+/**
+ * @brief MainWindow::loadGraphPages
+ * @details 加载工程画面
+ * @param pagePath
+ */
+void MainWindow::loadGraphPages(const QString &pagePath) {
+    projpath_ = pagePath;
     DrawListUtils::loadDrawList(projpath_);
     foreach (QString pageName, DrawListUtils::drawList_) {
         QString fileName = projpath_ + "/" + pageName + ".drw";
@@ -37,14 +55,17 @@ MainWindow::MainWindow(const QString &projpath,
             graphPage->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(pageName + ".drw");
             graphPage->setGraphPageId(pageName);
+            graphPage->hide();
         }
     }
-
-    moveCenter();
 }
 
 
-MainWindow::~MainWindow() {
+/**
+ * @brief MainWindow::unLoadGraphPages
+ * @details 卸载工程画面
+ */
+void MainWindow::unLoadGraphPages() {
     GraphPageManager::releaseInstance();
     currentGraphPage_ = nullptr;
 }
@@ -64,12 +85,49 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
         GraphPage *graphPage = GraphPageManager::getInstance()->getGraphPageById(pageId);
         if(graphPage != nullptr) {
             currentGraphPage_ = graphPage;
+            graphPage->show();
             this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         }
         moveCenter();
     }
 }
 
+
+/**
+ * @brief MainWindow::switchGraphPage
+ * @details 切换至画面
+ * @param pageName 画面名称
+ */
+void MainWindow::switchGraphPage(const QString &pageName) {
+    QString pageId = pageName;
+    GraphPage *graphPage = GraphPageManager::getInstance()->getGraphPageById(pageId);
+    if(graphPage != nullptr) {
+        showedGraphPageStack_.push(currentGraphPage_);
+        currentGraphPage_ = graphPage;
+        graphPage->show();
+        this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+    }
+    moveCenter();
+}
+
+/**
+ * @brief MainWindow::returnGraphPage
+ * @details 返回功能切换画面
+ */
+void MainWindow::returnGraphPage() {
+    if(currentGraphPage_ != nullptr) {
+        if(showedGraphPageStack_.size() > 0) {
+            currentGraphPage_->hide();
+            GraphPage *graphPage = showedGraphPageStack_.pop();
+            if(graphPage != nullptr) {
+                graphPage->show();
+                currentGraphPage_ = graphPage;
+                graphPage->move(0, 0);
+                this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+            }
+        }
+    }
+}
 
 bool MainWindow::isGraphPageOpen(const QString &filename) {
     QListIterator <GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
