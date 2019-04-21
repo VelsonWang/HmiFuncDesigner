@@ -74,9 +74,8 @@ void ModbusASCIIDevice::AddIOTagToDeviceTagList(IOTag* pTag)
 */
 void ModbusASCIIDevice::AddIOTagToDeviceTagWriteQueue(IOTag* pTag)
 {
-    m_WriteMutex.lock();
+	QMutexLocker locker(&m_WriteMutex);
     mWriteQueue.enqueue(pTag);
-    m_WriteMutex.unlock();
 }
 
 static void ClearIOTagReadBuffer(IOTag* pTag)
@@ -288,7 +287,7 @@ bool ModbusASCIIDevice::WriteIOTags()
 */
 bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
 {
-    m_WriteMutex.lock();
+	QMutexLocker locker(&m_WriteMutex);
     if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == READ)
     {
         ClearReadBuffer();
@@ -313,7 +312,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -325,7 +323,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -337,7 +334,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -349,7 +345,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -362,7 +357,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -375,7 +369,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -388,7 +381,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -401,7 +393,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -429,7 +420,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -441,7 +431,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -453,7 +442,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -465,7 +453,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -478,7 +465,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -491,7 +477,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -504,7 +489,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -517,7 +501,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -545,7 +528,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<1; i++)
@@ -561,7 +543,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<1; i++)
@@ -577,7 +558,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -593,7 +573,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -609,7 +588,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -633,7 +611,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -657,7 +634,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -684,7 +660,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<1; i++)
@@ -700,7 +675,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<1; i++)
@@ -716,7 +690,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -732,7 +705,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -748,7 +720,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<2; i++)
@@ -772,7 +743,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     for(int i=0; i<4; i++)
@@ -796,7 +766,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                 {
                     if(mModbusAscii.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
-                        m_WriteMutex.unlock();
                         return false;
                     }
                     pTag->pReadBuf[0] = readBuf[0];
@@ -820,7 +789,6 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
 
         }
     }
-    m_WriteMutex.unlock();
     return true;
 }
 
