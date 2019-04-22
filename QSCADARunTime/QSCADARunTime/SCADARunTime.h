@@ -11,6 +11,7 @@
 #include <QDir>
 #include <QScriptEngine>
 #include <QScriptValue>
+#include <QMutex>
 #include "IVendor.h"
 #include "RealTimeDB.h"
 #include "PortThread.h"
@@ -41,6 +42,9 @@ protected:
 
 public:
     static QScriptEngine *scriptEngine_;
+    // 执行脚本功能
+    static void execScriptFunction(const QStringList &szFuncList,
+                                   const QString &szMatchEvent);
 
 private:
     static QString m_sProjectPath;
@@ -48,7 +52,6 @@ private:
     QList<IVendor *> m_VendorList;
     QList<PortThread *> m_listPortThread;
     static RunScript *m_pRunScript;
-
 };
 
 extern SCADARunTime *g_SCADARunTimePtr;

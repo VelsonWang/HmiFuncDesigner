@@ -33,6 +33,9 @@ public:
     void setGraphPageHeight(int);
     int getGraphPageHeight() const;
 
+    void setSelectedFunctions(QStringList funcs);
+    QStringList getSelectedFunctions();
+
     void setActive(bool);
     bool active();
 
@@ -98,6 +101,7 @@ private:
     QColor graphPageBackground;
     int graphPageWidth;
     int graphPageHeight;
+    QStringList funcs_;
     bool onActive;
     QList <Element *> copyList;
     QList <Element *> elementList_;

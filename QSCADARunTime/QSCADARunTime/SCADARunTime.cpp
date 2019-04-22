@@ -14,12 +14,14 @@
 #include "ProjectInfoManger.h"
 #include <QTextStream>
 #include <QTextCodec>
+#include <QMutexLocker>
 #include <QDebug>
 
 SCADARunTime *g_SCADARunTimePtr = nullptr;
 QString SCADARunTime::m_sProjectPath = QString("");
 RunScript *SCADARunTime::m_pRunScript = nullptr;
 QScriptEngine *SCADARunTime::scriptEngine_ = nullptr;
+
 
 SCADARunTime::SCADARunTime(QString projectPath, QObject *parent)
     : QObject(parent)
@@ -384,6 +386,34 @@ bool SCADARunTime::event(QEvent *event)
 }
 
 
-
+/**
+ * @brief SCADARunTime::execScriptFunction
+ * @details 执行脚本功能
+ * @param szFuncList 功能函数事件字符
+ * @param szMatchEvent 匹配执行的事件
+ */
+void SCADARunTime::execScriptFunction(const QStringList &szFuncList,
+                                      const QString &szMatchEvent) {
+    if(scriptEngine_ != nullptr) {
+        foreach (QString szFuncEv, szFuncList) {
+            QStringList listFuncEv = szFuncEv.split(':');
+            if(listFuncEv.size() == 2) {
+                QString szFunc = listFuncEv.at(0);
+                QString szEv = listFuncEv.at(1);
+                if(szEv == szMatchEvent) {
+                    QScriptValue result = scriptEngine_->evaluate(szFunc);
+                    if (result.isError()) {
+                        QString err = QString::fromLatin1("File:%1 Function:%2 script syntax evaluate error: %3")
+                                .arg(__FILE__)
+                                .arg(__FUNCTION__)
+                                .arg(result.toString());
+                        LogError(err);
+                        return;
+                    }
+                }
+            }
+        }
+    }
+}
 
 

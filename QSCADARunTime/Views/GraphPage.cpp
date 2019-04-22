@@ -7,7 +7,7 @@
 #include <QFileDialog>
 #include "ElementGroup.h"
 #include "IDrawGraphPage.h"
-
+#include "SCADARunTime.h"
 #include "EArrow/EArrow.h"
 #include "ELine/ELine.h"
 #include "EEllipse/EEllipse.h"
@@ -190,6 +190,24 @@ void GraphPage::setGraphPageHeight(int height) {
     this->setGeometry(0, 0, graphPageWidth, graphPageHeight);
 }
 
+/**
+ * @brief GraphPage::setSelectedFunctions
+ * @details 设置功能操作属性数据
+ * @param funcs
+ */
+void GraphPage::setSelectedFunctions(QStringList funcs) {
+    funcs_ = funcs;
+}
+
+
+/**
+ * @brief GraphPage::getSelectedFunctions
+ * @details 获取功能操作属性数据
+ * @param funcs
+ */
+QStringList GraphPage::getSelectedFunctions() {
+    return funcs_;
+}
 
 void GraphPage::createItems(const QString &typeId, QPointF position) {
     Element *last = 0;
@@ -305,20 +323,16 @@ void GraphPage::loadAsXML(const QString &filename) {
 }
 
 void GraphPage::readGraphPageConfig(QFile &file) {
-
     QXmlStreamReader reader;
     reader.setDevice(&file);
 
     while (!reader.atEnd() && !reader.hasError()) {
-
         QXmlStreamReader::TokenType token = reader.readNext();
-
         if (token == QXmlStreamReader::StartDocument) {
             continue;
         }
 
         if (token == QXmlStreamReader::StartElement) {
-
             if (reader.name() == "graphPage") {
                 readGraphPageTag(reader);
             }
@@ -327,17 +341,13 @@ void GraphPage::readGraphPageConfig(QFile &file) {
 }
 
 void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
-
     setGraphPageAttributes(xml);
     copyList.clear();
     xml.readNext();
 
     while (!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "graphPage")) {
-
         if (xml.tokenType() == QXmlStreamReader::StartElement) {
-
             if (xml.name() == "element") {
-
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
@@ -373,6 +383,11 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
 
     if (xml.attributes().hasAttribute("background")) {
         setGraphPageBackground(QColor(xml.attributes().value("background").toString()));
+    }
+
+    if (xml.attributes().hasAttribute("functions")) {
+        QString listString = xml.attributes().value("functions").toString();
+        setSelectedFunctions(listString.split('|'));
     }
 }
 
@@ -483,9 +498,8 @@ void GraphPage::refreshGraphPage() {
  */
 void GraphPage::openGraphPage() {
     refreshTmr_.start(100);
-    // 触发画面打开事件
-
-    // ...
+    // 处理"打开画面"功能
+    SCADARunTime::execScriptFunction(funcs_, tr("打开画面"));
 }
 
 
@@ -495,30 +509,31 @@ void GraphPage::openGraphPage() {
  */
 void GraphPage::closeGraphPage() {
     refreshTmr_.stop();
-    // 触发画面关闭事件
-
-    // ...
+    // 处理"关闭画面"功能
+    SCADARunTime::execScriptFunction(funcs_, tr("关闭画面"));
 }
 
 QDataStream &operator>>(QDataStream &in,GraphPage &page) {
     QString filename;
     QString id;
-
     QColor backColor;
     int height;
     int width;
+    QStringList funcs;
 
     in >> filename
        >> id
        >> backColor
        >> height
-       >> width;
+       >> width
+       >> funcs;
 
     page.setFileName(filename);
     page.setGraphPageId(id);
     page.setGraphPageWidth(width);
     page.setGraphPageHeight(height);
     page.setGraphPageBackground(backColor);
+    page.setSelectedFunctions(funcs);
 
     return in;
 }

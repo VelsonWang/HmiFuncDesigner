@@ -1208,11 +1208,11 @@ QDataStream &operator>>(QDataStream &in, GraphPage &page) {
     QStringList funcs;
 
     in >> filename
-            >> id
-            >> backColor
-            >> height
-            >> width
-            >> funcs;
+       >> id
+       >> backColor
+       >> height
+       >> width
+       >> funcs;
 
     page.setFileName(filename);
     page.setGraphPageId(id);
