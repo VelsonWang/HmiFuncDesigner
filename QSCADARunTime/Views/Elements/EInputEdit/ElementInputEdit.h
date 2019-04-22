@@ -72,7 +72,8 @@ private:
     bool showOnInitial_;
     // 输入编辑控件，用于触发键盘输入
     InputLineEdit *inputLineEdit_;
-
+    // 处于编辑模式
+    bool bInEditMode_;
 };
 
 #endif // INPUTEDITITEM_H

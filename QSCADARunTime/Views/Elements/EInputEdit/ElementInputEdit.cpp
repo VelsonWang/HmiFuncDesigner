@@ -21,7 +21,7 @@ ElementInputEdit::ElementInputEdit() {
     elementHeight = 26;
     elementText = trUtf8("输入编辑框");
     inputLineEdit_ = nullptr;
-
+    bInEditMode_ = false;
 }
 
 ElementInputEdit::~ElementInputEdit() {
@@ -136,7 +136,8 @@ void ElementInputEdit::drawInputEdit(QPainter *painter) {
         }
         szDrawText = elementText;
     }
-    painter->drawText(textRect, hFlags|vFlags, szDrawText);
+    if(!bInEditMode_)
+        painter->drawText(textRect, hFlags|vFlags, szDrawText);
 }
 
 void ElementInputEdit::mouseMoveEvent(QMouseEvent *event) {
@@ -149,14 +150,15 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
         return;
     }
 
+    QWidget *pOwner = getOwnerWidget();
     QPointF mousePoint = event->pos();
     if (mousePoint.x() <= (elementXPos + elementWidth) &&
             mousePoint.x() >= (elementXPos) &&
             mousePoint.y() <= (elementYPos + elementHeight) &&
             mousePoint.y() >= (elementYPos)) {
+        bInEditMode_ = true;
         QString szTmpElementText = elementText;
         elementText = "";
-        QWidget *pOwner = getOwnerWidget();
         if(pOwner != nullptr) {
             pOwner->update();
         }
@@ -179,7 +181,6 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
             }
 
             if(inputLineEdit_ == nullptr) {
-                QWidget *pOwner = getOwnerWidget();
                 if(pOwner != nullptr) {
                     inputLineEdit_ = new InputLineEdit(pOwner);
                     inputLineEdit_->move(elementXPos+borderWidth_/2, elementYPos+borderWidth_/2);
@@ -206,10 +207,12 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
             inputLineEdit_->setText("");
             inputLineEdit_->hide();
         }
-        QWidget *pOwner = getOwnerWidget();
-        if(pOwner != nullptr) {
+
+        if(pOwner != nullptr && bInEditMode_) {
             pOwner->setFocus();
         }
+
+        bInEditMode_ = false;
     }
 }
 
@@ -221,6 +224,7 @@ void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 void ElementInputEdit::enterPressed() {
+    bInEditMode_ = false;
     elementText = inputLineEdit_->text();
     if(szTagSelected_ != "") {
         qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
@@ -233,6 +237,7 @@ void ElementInputEdit::enterPressed() {
 }
 
 void ElementInputEdit::closePressed() {
+    bInEditMode_ = false;
     inputLineEdit_->setText("");
     inputLineEdit_->hide();
 }
