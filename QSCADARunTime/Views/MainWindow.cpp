@@ -85,6 +85,7 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
         GraphPage *graphPage = GraphPageManager::getInstance()->getGraphPageById(pageId);
         if(graphPage != nullptr) {
             currentGraphPage_ = graphPage;
+            graphPage->openGraphPage();
             graphPage->show();
             this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         }
@@ -103,7 +104,9 @@ void MainWindow::switchGraphPage(const QString &pageName) {
     GraphPage *graphPage = GraphPageManager::getInstance()->getGraphPageById(pageId);
     if(graphPage != nullptr) {
         showedGraphPageStack_.push(currentGraphPage_);
+        currentGraphPage_->closeGraphPage();
         currentGraphPage_ = graphPage;
+        graphPage->openGraphPage();
         graphPage->show();
         this->resize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
     }
@@ -118,8 +121,10 @@ void MainWindow::returnGraphPage() {
     if(currentGraphPage_ != nullptr) {
         if(showedGraphPageStack_.size() > 0) {
             currentGraphPage_->hide();
+            currentGraphPage_->closeGraphPage();
             GraphPage *graphPage = showedGraphPageStack_.pop();
             if(graphPage != nullptr) {
+                graphPage->openGraphPage();
                 graphPage->show();
                 currentGraphPage_ = graphPage;
                 graphPage->move(0, 0);

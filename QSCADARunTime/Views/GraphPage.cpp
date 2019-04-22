@@ -92,6 +92,9 @@ GraphPage::GraphPage(const QRectF &rect, QWidget *parent)
     graphPagePriority.clear();
     graphPagePriority.append(trUtf8("主要的"));
     graphPageBackground = QColor(Qt::white);
+
+    connect(&refreshTmr_, SIGNAL(timeout()), this, SLOT(refreshGraphPage()));
+    refreshTmr_.stop();
 }
 
 void GraphPage::setActive(bool active) {
@@ -463,6 +466,38 @@ QString GraphPage::getProjectPath() const {
  */
 void GraphPage::setProjectPath(const QString &path) {
     projpath_ = path;
+}
+
+/**
+ * @brief GraphPage::refreshGraphPage
+ * @details 画面刷新
+ */
+void GraphPage::refreshGraphPage() {
+    this->update();
+}
+
+
+/**
+ * @brief GraphPage::openGraphPage
+ * @details 画面打开
+ */
+void GraphPage::openGraphPage() {
+    refreshTmr_.start(100);
+    // 触发画面打开事件
+
+    // ...
+}
+
+
+/**
+ * @brief GraphPage::closeGraphPage
+ * @details 画面关闭
+ */
+void GraphPage::closeGraphPage() {
+    refreshTmr_.stop();
+    // 触发画面关闭事件
+
+    // ...
 }
 
 QDataStream &operator>>(QDataStream &in,GraphPage &page) {

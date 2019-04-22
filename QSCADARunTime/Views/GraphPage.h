@@ -8,9 +8,11 @@
 #include <QMessageBox>
 #include <QClipboard>
 #include <QApplication>
+#include <QFile>
+#include <QTimer>
 #include "IDrawGraphPage.h"
 #include "Element.h"
-#include <QFile>
+
 
 class GraphPage : public QWidget
 {
@@ -48,6 +50,11 @@ public:
 
     friend QDataStream &operator>>(QDataStream &in, GraphPage &GraphPage);
 
+    // 画面打开
+    void openGraphPage();
+    // 画面关闭
+    void closeGraphPage();
+
 protected:
     void paintEvent(QPaintEvent *event);
     void mousePressEvent(QMouseEvent *event);
@@ -78,6 +85,10 @@ signals:
     void elementIdChanged();
     void signalShowAddProperties();
 
+private slots:
+    // 画面刷新
+    void refreshGraphPage();
+
 private:
     QString projpath_;
     Element *currentItem;
@@ -90,6 +101,8 @@ private:
     bool onActive;
     QList <Element *> copyList;
     QList <Element *> elementList_;
+    // 刷新定时器
+    QTimer refreshTmr_;
 };
 
 // 注册元素对象创建函数
