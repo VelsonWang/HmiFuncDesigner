@@ -21,8 +21,7 @@ ElementInputEdit::ElementInputEdit() {
     elementHeight = 26;
     elementText = trUtf8("输入编辑框");
     inputLineEdit_ = nullptr;
-    connect(&refreshTmr, SIGNAL(timeout()), this, SLOT(refreshTagValue()));
-    refreshTmr.start(20);
+
 }
 
 ElementInputEdit::~ElementInputEdit() {
@@ -67,25 +66,21 @@ void ElementInputEdit::paint(QPainter *painter) {
     painter->restore();
 }
 
+/**
+ * @brief ElementInputEdit::refreshTagValue
+ * @details 刷新变量值
+ */
 void ElementInputEdit::refreshTagValue() {
-    if(szTagSelected_ == "")
-        refreshTmr.stop();
-
     qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
     if(id != -1) {
         elementText = RealTimeDB::GetDataString(id);
     }else {
         elementText = "#";
     }
-
-    QWidget *pOwner = getOwnerWidget();
-    if(pOwner != nullptr) {
-        pOwner->update();
-        refreshTmr.start(200);
-    }
 }
 
 void ElementInputEdit::drawInputEdit(QPainter *painter) {
+    refreshTagValue();
     // 绘制边框
     if(borderWidth_ > 0) {
         painter->setPen(QPen(borderColor_, borderWidth_, Qt::SolidLine));
@@ -165,7 +160,7 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
         if(pOwner != nullptr) {
             pOwner->update();
         }
-        refreshTmr.stop();
+
         if(enableEdit_ && szTagSelected_ != "") {
             InputMethodAlphabet::instance()->setVisible(false);
             InputMethodNumber::instance()->setVisible(false);
@@ -206,7 +201,7 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
             disconnect(InputMethodNumber::instance(), SIGNAL(enterPressed()),
                        this, SLOT(enterPressed()));
         }
-        refreshTmr.start(200);
+
         if(inputLineEdit_ != nullptr) {
             inputLineEdit_->setText("");
             inputLineEdit_->hide();
@@ -235,13 +230,11 @@ void ElementInputEdit::enterPressed() {
     }
     inputLineEdit_->setText("");
     inputLineEdit_->hide();
-    refreshTmr.start(20);
 }
 
 void ElementInputEdit::closePressed() {
     inputLineEdit_->setText("");
     inputLineEdit_->hide();
-    refreshTmr.start(20);
 }
 
 void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
