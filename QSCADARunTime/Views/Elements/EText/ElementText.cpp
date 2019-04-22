@@ -1,5 +1,6 @@
 ﻿#include "elementtext.h"
 #include "PubTool.h"
+#include "RealTimeDB.h"
 #include <QDebug>
 
 ElementText::ElementText() :
@@ -62,7 +63,23 @@ void ElementText::paint(QPainter *painter) {
     painter->restore();
 }
 
+void ElementText::refreshTagValue() {
+	if (szTagSelected_ == "")
+	{
+		return;
+	}
+
+	qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
+	if (id != -1) {
+		elementText = RealTimeDB::GetDataString(id);
+	}
+	else {
+		elementText = "#";
+	}
+}
+
 void ElementText::drawText(QPainter *painter) {
+    refreshTagValue();
     painter->setPen(textColor);
     painter->setBrush(Qt::NoBrush);
     painter->setFont(font_);
@@ -111,6 +128,10 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
     }
+
+	if (attributes.hasAttribute("tag")) {
+		szTagSelected_ = attributes.value("tag").toString();
+	}
 
     if (attributes.hasAttribute("x")) {
         setElementXPos(attributes.value("x").toString().toInt());
@@ -201,6 +222,7 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 
 void ElementText::readData(QDataStream &in) {
     QString id;
+	QString szTagSelected;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
@@ -220,6 +242,7 @@ void ElementText::readData(QDataStream &in) {
     qreal angle;
 
     in >> id
+	   >> szTagSelected
        >> xpos
        >> ypos
        >> zvalue
@@ -239,6 +262,7 @@ void ElementText::readData(QDataStream &in) {
        >> angle;
 
     this->setElementId(id);
+	this->szTagSelected_ = szTagSelected;
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
@@ -261,6 +285,7 @@ void ElementText::readData(QDataStream &in) {
 
 QDataStream &operator>>(QDataStream &in,ElementText &rect) {
     QString id;
+	QString szTagSelected;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
@@ -280,6 +305,7 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
     qreal angle;
 
     in >> id
+	   >> szTagSelected
        >> xpos
        >> ypos
        >> zvalue
@@ -299,6 +325,7 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
        >> angle;
 
     rect.setElementId(id);
+	rect.szTagSelected_ = szTagSelected;
     rect.setElementXPos(xpos);
     rect.setElementYPos(ypos);
     rect.setElementZValue(zvalue);

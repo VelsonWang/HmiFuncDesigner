@@ -1,4 +1,5 @@
 ﻿#include "elementtext.h"
+#include "TagManager.h"
 #include <QDebug>
 
 int ElementText::iLastIndex_ = 1;
@@ -18,7 +19,7 @@ ElementText::ElementText(const QString &projPath) :
     borderColor_ = Qt::black;
     hideOnClick_ = false;
     showOnInitial_ = true;
-
+	TagManager::setProjectPath(projPath);
     init();
     createPropertyList();
     updatePropertyModel();
@@ -49,6 +50,14 @@ void ElementText::createPropertyList() {
 
     titleProperty = new EmptyProperty(trUtf8("标题"));
     propList.insert(propList.end(), titleProperty);
+
+	// 选择变量
+	tagSelectProperty_ = new ListProperty(tr("选择变量"));
+	tagSelectProperty_->setId(EL_TAG);
+	QStringList varList;
+	TagManager::getAllTagName(TagManager::getProjectPath(), varList);
+	tagSelectProperty_->setList(varList);
+	propList.insert(propList.end(), tagSelectProperty_);
 
     xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
     xCoordProperty->setSettings(0, 5000);
@@ -163,6 +172,9 @@ void ElementText::updateElementProperty(uint id, const QVariant &value) {
     case EL_ID:
         elementId = value.toString();
         break;
+	case EL_TAG:
+		szTagSelected_ = value.toString();
+		break;
     case EL_X:
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
@@ -229,6 +241,7 @@ void ElementText::updateElementProperty(uint id, const QVariant &value) {
 void ElementText::updatePropertyModel() {
 
     idProperty->setValue(elementId);
+	tagSelectProperty_->setValue(szTagSelected_);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
     zValueProperty->setValue(elementZValue);
@@ -446,6 +459,7 @@ void ElementText::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeStartElement("element");
     writer.writeAttribute("internalType", internalElementType);
     writer.writeAttribute("elementId", elementId);
+	writer.writeAttribute("tag", szTagSelected_);
     writer.writeAttribute("x", QString::number(x()));
     writer.writeAttribute("y", QString::number(y()));
     writer.writeAttribute("z", QString::number(zValue()));
@@ -475,6 +489,10 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
             iLastIndex_ = index;
         }
     }
+
+	if (attributes.hasAttribute("tag")) {
+		szTagSelected_ = attributes.value("tag").toString();
+	}
 
     if (attributes.hasAttribute("x")) {
         setElementXPos(attributes.value("x").toString().toInt());
@@ -565,6 +583,7 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 
 void ElementText::writeData(QDataStream &out) {
     out << this->elementId
+		<< this->szTagSelected_
         << this->x()
         << this->y()
         << this->zValue()
@@ -586,6 +605,7 @@ void ElementText::writeData(QDataStream &out) {
 
 void ElementText::readData(QDataStream &in) {
     QString id;
+	QString szTagSelected;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
@@ -605,6 +625,7 @@ void ElementText::readData(QDataStream &in) {
     qreal angle;
 
     in >> id
+	   >> szTagSelected
        >> xpos
        >> ypos
        >> zvalue
@@ -628,6 +649,7 @@ void ElementText::readData(QDataStream &in) {
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
+	this->szTagSelected_ = szTagSelected;
     this->setElementXPos(xpos);
     this->setElementYPos(ypos);
     this->setElementZValue(zvalue);
@@ -651,6 +673,7 @@ void ElementText::readData(QDataStream &in) {
 
 QDataStream &operator<<(QDataStream &out,const ElementText &text) {
     out << text.elementId
+		<< text.szTagSelected_
         << text.x()
         << text.y()
         << text.zValue()
@@ -673,6 +696,7 @@ QDataStream &operator<<(QDataStream &out,const ElementText &text) {
 
 QDataStream &operator>>(QDataStream &in, ElementText &text) {
     QString id;
+	QString szTagSelected;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
@@ -692,6 +716,7 @@ QDataStream &operator>>(QDataStream &in, ElementText &text) {
     qreal angle;
 
     in >> id
+	   >> szTagSelected
        >> xpos
        >> ypos
        >> zvalue
@@ -715,6 +740,7 @@ QDataStream &operator>>(QDataStream &in, ElementText &text) {
     if(text.iLastIndex_ < index) {
         text.iLastIndex_ = index;
     }
+	text.szTagSelected_ = szTagSelected;
     text.setElementXPos(xpos);
     text.setElementYPos(ypos);
     text.setElementZValue(zvalue);

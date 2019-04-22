@@ -35,9 +35,12 @@ protected:
 
 private:
     void drawText(QPainter *painter);
+    void refreshTagValue();
 
 private:
     QRectF elementRect;
+	// 关联的变量
+	QString szTagSelected_;
     // 水平对齐
     QString szHAlign_;
     // 垂直对齐

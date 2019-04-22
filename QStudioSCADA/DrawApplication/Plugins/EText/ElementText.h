@@ -50,6 +50,8 @@ private:
     static int iLastIndex_;
     QRectF elementRect;
 
+	// 关联的变量
+	QString szTagSelected_;
     // 水平对齐
     QString szHAlign_;
     // 垂直对齐
@@ -73,6 +75,8 @@ private:
     TextProperty *idProperty;
     // 标题
     EmptyProperty *titleProperty;
+	// 选择变量
+	ListProperty *tagSelectProperty_;
     // X坐标
     IntegerProperty *xCoordProperty;
     // Y坐标

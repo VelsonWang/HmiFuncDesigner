@@ -53,7 +53,6 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
     LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lHelperd
-    LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
     LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
@@ -62,7 +61,6 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
     LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lHelper
-    LIBS += -L$$LINK_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawListUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils

@@ -38,17 +38,19 @@
 
 ### 4. QSCADARunTime软件编译
 
-1. **打开"Qt Creator 4.5.1 (Community)"软件，打开QSCADARunTime/QSCADARunTime.pro工程。**
+1. **必须先编译QStudioSCADA然后再编译QSCADARunTime工程。否则会出现找不到连接库。**
 
-2. **选择Release模式。**
+2. **打开"Qt Creator 4.5.1 (Community)"软件，打开QSCADARunTime/QSCADARunTime.pro工程。**
 
-3. **清除以前编译工程产生的数据文件。**
+3. **选择Release模式。**
 
-4. **重新编译工程。**
+4. **清除以前编译工程产生的数据文件。**
 
-5. **编译完成功后生成的软件位于RuntimeBin目录下。**
+5. **重新编译工程。**
 
-6. **拷贝所需要的运行库，打开命令窗口“Qt 5.10.1 for Desktop (MinGW 5.3.0 32 bit)”，RuntimeBin目录，执行windeployqt 软件名称.exe。**
+6. **编译完成功后生成的软件位于RuntimeBin目录下。**
+
+7. **拷贝所需要的运行库，打开命令窗口“Qt 5.10.1 for Desktop (MinGW 5.3.0 32 bit)”，RuntimeBin目录，执行windeployqt 软件名称.exe。**
 
    
 
