@@ -86,16 +86,13 @@ QList <Property*> Element::getPropertyList() const {
 }
 
 void Element::moveTo(int x, int y) {
-
     elementXPos = elementXPos + x;
     elementYPos = elementYPos + y;
-
-    setPos(elementXPos,elementYPos);
+    setPos(elementXPos, elementYPos);
     updatePropertyModel();
 }
 
 void Element::setAngle(qreal angle_) {
-
     QTransform transform;
     transform.rotate(angle_);
     elemAngle = angle_;
@@ -107,7 +104,6 @@ qreal Element::angle() const {
 }
 
 void Element::init() {
-
     setFlags(QGraphicsItem::ItemIsSelectable |
              QGraphicsItem::ItemIsMovable |
              QGraphicsItem::ItemIsFocusable);
@@ -251,3 +247,14 @@ void Element::setVAlignString(const QString& szAlign, QString& szAlignSet) {
     }
 }
 
+
+/**
+ * @brief Element::setGraphPageSize
+ * @details 设置所属画面大小
+ * @param width 画面宽度
+ * @param height 画面高度
+ */
+void Element::setGraphPageSize(int width, int height) {
+    this->iGraphPageWidth_ = width;
+    this->iGraphPageHeight_ = height;
+}

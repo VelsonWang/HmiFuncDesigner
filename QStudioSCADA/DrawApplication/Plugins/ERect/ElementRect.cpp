@@ -268,11 +268,25 @@ void ElementRect::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 
         scene()->update();
         return;
-    }
-    else {
+    } else {
+        QGraphicsObject::mouseMoveEvent(event);
+        QPointF pos_ = scenePos();
+
+        if(pos_.x() < 0) {
+            this->setX(0);
+        }
+        if(pos_.x() > iGraphPageWidth_ - getElementWidth()) {
+            this->setX(iGraphPageWidth_ - getElementWidth());
+        }
+
+        if(pos_.y() < 0) {
+            this->setY(0);
+        }
+        if(pos_.y() > iGraphPageHeight_ - getElementHeight()) {
+            this->setY(iGraphPageHeight_ - getElementHeight());
+        }
         setElementXPos(pos().x());
         setElementYPos(pos().y());
-        QGraphicsObject::mouseMoveEvent(event);
     }
 }
 

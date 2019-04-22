@@ -1,4 +1,2 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<graphPage fileName="draw3.drw" graphPageId="draw3" width="800" height="600" background="#ffffff" functions="">
-    <element internalType="PushButton" elementId="PushButton_0001" x="325" y="171" z="0" width="100" height="40" showContent="文本" picture="" elementtext="弹出按钮" halign="center" valign="center" backgroundColor="#f0f0f0" transparent="false" font="宋体,12,-1,5,50,0,0,0,0,0" textcolor="#000000" fontsize="10" elemAngle="0" enableOnInitial="true" showOnInitial="true" functions="ReturnGraphPage():抬起事件|SwitchGraphPage(&quot;draw2&quot;):按下事件|SwitchGraphPage(&quot;draw3&quot;):按下事件"/>
-</graphPage>
+<graphPage fileName="draw3.drw" graphPageId="draw3" width="800" height="600" background="#ffffff" functions=""/>

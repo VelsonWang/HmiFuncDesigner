@@ -8,6 +8,7 @@
 #include <QRect>
 #include <QGraphicsView>
 #include <QFileDialog>
+#include <QScrollArea>
 #include <QDebug>
 
 
@@ -15,8 +16,8 @@ MainWindow::MainWindow(const QString &projpath,
                        const QString &graphPageName,
                        QWidget *parent) :
     QMainWindow(parent),
-    currentGraphPage_(0),
-    currentView_(0),
+    currentGraphPage_(nullptr),
+    currentView_(nullptr),
     gridVisible_(true),
     currentGraphPageIndex_(0),
     projpath_(projpath),
@@ -56,9 +57,8 @@ MainWindow::~MainWindow() {
 
 
 void MainWindow::initView() {
-
     graphPageTabWidget_ = new QTabWidget(this);
-    this->setCentralWidget(graphPageTabWidget_);
+    this->scrollArea->setWidget(graphPageTabWidget_);
 
     elementWidget_ = new ElementLibraryWidget();
     this->ElemetsLayout->addWidget(elementWidget_);
@@ -69,6 +69,7 @@ void MainWindow::initView() {
 
     objTree_ = new ObjectsTreeView();
     this->ObjectTreeLayout->addWidget(objTree_);
+    slotShowTreeObj(false);
 }
 
 void MainWindow::createActions() {
@@ -80,7 +81,7 @@ void MainWindow::createActions() {
 
     actionShowTreeObj_ = new QAction(trUtf8("对象树"), this);
     actionShowTreeObj_->setCheckable(true);
-    actionShowTreeObj_->setChecked(true);
+    actionShowTreeObj_->setChecked(false);
     connect(actionShowTreeObj_, SIGNAL(triggered(bool)), SLOT(slotShowTreeObj(bool)));
 
     actionShowPropEditor_ = new QAction(trUtf8("属性编辑器"), this);
@@ -308,16 +309,14 @@ void MainWindow::addNewGraphPage() {
     graphPage->setGridVisible(gridVisible_);
     currentGraphPage_ = graphPage;
     view->setScene(graphPage);
-
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-
     currentView_ = view;
     QString title = fixedWindowTitle(view);
     graphPage->setFileName(title + ".drw");
     graphPage->setGraphPageId(title);
     graphPage->setPropertyModel(propertyModel_);
     graphPageTabWidget_->addTab(currentView_, title);
-    graphPageTabWidget_->setCurrentWidget(view);
+    graphPageTabWidget_->setCurrentWidget(currentView_);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
 
     undoGroup_->addStack(graphPage->undoStack());
@@ -687,14 +686,30 @@ void MainWindow::slotShowLinear(bool on) {
 }
 
 void MainWindow::slotZoomIn() {
-    if (currentView_) {
+    if(currentGraphPage_ != nullptr) {
+        int width = currentGraphPage_->getGraphPageWidth();
+        int height = currentGraphPage_->getGraphPageHeight();
+        currentGraphPage_->setGraphPageWidth(width * 1.25);
+        currentGraphPage_->setGraphPageHeight(height * 1.25);
+        currentGraphPage_->setGridVisible(currentGraphPage_->isGridVisible());
+    }
+    if (currentView_ != nullptr) {
         currentView_->scale(1.25, 1.25);
+        currentView_->setFixedSize(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
     }
 }
 
 void MainWindow::slotZoomOut() {
-    if (currentView_) {
+    if(currentGraphPage_ != nullptr) {
+        int width = currentGraphPage_->getGraphPageWidth();
+        int height = currentGraphPage_->getGraphPageHeight();
+        currentGraphPage_->setGraphPageWidth(width * 1/1.25);
+        currentGraphPage_->setGraphPageHeight(height * 1/1.25);
+        currentGraphPage_->setGridVisible(currentGraphPage_->isGridVisible());
+    }
+    if (currentView_ != nullptr) {
         currentView_->scale(1/1.25, 1/1.25);
+        currentView_->setFixedSize(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
     }
 }
 

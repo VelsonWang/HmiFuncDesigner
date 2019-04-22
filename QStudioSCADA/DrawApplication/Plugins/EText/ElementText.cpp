@@ -293,7 +293,8 @@ void ElementText::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
     // 绘制边框
     painter->setPen(QPen(borderColor_, borderWidth_));
     painter->setBrush(Qt::NoBrush);
-    painter->drawRect(elementRect);
+    if(borderWidth_ > 0)
+        painter->drawRect(elementRect);
 
     if (isSelected()) {
         painter->setPen(QPen(borderColor));
@@ -338,15 +339,12 @@ void ElementText::drawText(QPainter *painter) {
 }
 
 void ElementText::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
 
     if (resizing) {
-
         setCursor(Qt::SizeFDiagCursor);
 
         switch (rd) {
-
         case RdBottomRight:
             elementRect.setBottomRight(mousePoint);
             elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
@@ -367,9 +365,23 @@ void ElementText::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 
         scene()->update();
         return;
-    }
-    else {
+    } else {
         QGraphicsObject::mouseMoveEvent(event);
+        QPointF pos = scenePos();
+
+        if(pos.x() < 0) {
+            this->setX(0);
+        }
+        if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
+            this->setX(iGraphPageWidth_ - getElementWidth());
+        }
+
+        if(pos.y() < 0) {
+            this->setY(0);
+        }
+        if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
+            this->setY(iGraphPageHeight_ - getElementHeight());
+        }
     }
 }
 

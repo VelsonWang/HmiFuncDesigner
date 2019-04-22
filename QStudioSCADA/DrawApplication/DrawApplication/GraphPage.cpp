@@ -42,15 +42,13 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent)
       propertyModel(0),
       filename(QString()),
       unsavedFlag(false),
-      projpath_(QString())
-{
+      projpath_(QString()) {
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
     if (rect.width() == 0 || rect.height() == 0) {
         setSceneRect(0, 0, 800, 480);
-    }
-    else {
+    } else {
         setSceneRect(rect);
     }
 
@@ -500,6 +498,7 @@ void GraphPage::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
+
 void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsScene::mouseDoubleClickEvent(event);
 
@@ -534,6 +533,7 @@ void GraphPage::createItems(const QString &typeId, QPointF position) {
                 Element *ele = plugin->createElement(projpath_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
+                    ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                     last = ele;
                     connectItem(ele);
                 }
@@ -634,7 +634,7 @@ void GraphPage::slotBehindPlanElements() {
 }
 
 void GraphPage::slotEditDelete() {
-    m_undoStack->push(new RemoveCommand(selectedItems(),this));
+    m_undoStack->push(new RemoveCommand(selectedItems(), this));
     propertyModel->resetModel();
     emit elementsDeleted();
 }
@@ -649,46 +649,53 @@ void GraphPage::addElementEvent() {
 
 void GraphPage::keyPressEvent(QKeyEvent *event) {
     if (event->key() == Qt::Key_Delete) {
-
         if (!selectedItems().isEmpty()) {
             slotEditDelete();
         }
-    }
-    else if (event->matches(QKeySequence::Copy)) {
+    } else if (event->matches(QKeySequence::Copy)) {
         slotEditCopy();
-    }
-    else if (event->matches(QKeySequence::Paste)) {
+    } else if (event->matches(QKeySequence::Paste)) {
         slotEditPaste();
-    }
-    else if (event->matches(QKeySequence::SelectAll)) {
+    } else if (event->matches(QKeySequence::SelectAll)) {
         slotSelectAll();
-    }
-    else if (event->key() == Qt::Key_Up) {
-        moveSelectedElements(0,-10);
-    }
-    else if (event->key() == Qt::Key_Down) {
-        moveSelectedElements(0,10);
-    }
-    else if (event->key() == Qt::Key_Left) {
-        moveSelectedElements(-10,0);
-    }
-    else if (event->key() == Qt::Key_Right) {
-        moveSelectedElements(10,0);
+    } else if (event->key() == Qt::Key_Up) {
+        moveSelectedElements(0, -10);
+    } else if (event->key() == Qt::Key_Down) {
+        moveSelectedElements(0, 10);
+    } else if (event->key() == Qt::Key_Left) {
+        moveSelectedElements(-10, 0);
+    } else if (event->key() == Qt::Key_Right) {
+        moveSelectedElements(10, 0);
     }
 }
 
 void GraphPage::moveSelectedElements(int xOffset, int yOffset) {
-    foreach (QGraphicsItem *item,items()) {
+    foreach (QGraphicsItem *item, selectedItems()) {
         Element *ele = dynamic_cast<Element *>(item);
-
         if (ele) {
+            int x = ele->getElementXPos() + xOffset;
+            if(x < 0) {
+                xOffset = 0 - ele->getElementXPos();
+            }
+            if(x > this->getGraphPageWidth() - ele->getElementWidth()) {
+                xOffset = this->getGraphPageWidth() - ele->getElementWidth() - ele->getElementXPos();
+            }
+
+            int y = ele->getElementYPos() + yOffset;
+            if(y < 0) {
+                yOffset = 0 - ele->getElementYPos();
+            }
+            if(y > this->getGraphPageHeight() - ele->getElementHeight()) {
+                yOffset = this->getGraphPageHeight() - ele->getElementHeight() - ele->getElementYPos();
+            }
+
             ele->moveTo(xOffset, yOffset);
         }
     }
 }
 
 void GraphPage::slotSelectAll() {
-    foreach (QGraphicsItem *item,items()) {
+    foreach (QGraphicsItem *item, items()) {
         item->setSelected(true);
     }
 }
@@ -750,6 +757,7 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
 
                     Element *ele = plugin->createElement(projpath_);
                     if(ele != Q_NULLPTR) {
+                        ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
                         connectItem(ele);
                         copyList.insert(copyList.end(), ele);
@@ -1035,6 +1043,7 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readFromXml(xml.attributes());
                         connectItem(ele);
                         addItem(ele);

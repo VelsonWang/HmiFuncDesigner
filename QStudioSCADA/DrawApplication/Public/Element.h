@@ -66,9 +66,6 @@ public:
 
     QString getInternalElementType() const;
 
-    void setGraphPageLink(const QString &);
-    QString getGraphPageLink() const;
-
     void moveTo(int x,int y);
 
     // 设置工程路径
@@ -81,6 +78,9 @@ public:
     void setHAlignString(const QString& szAlign, QString& szAlignSet);
     QString getVAlignString(const QString& szAlign) const;
     void setVAlignString(const QString& szAlign, QString& szAlignSet);
+
+    // 设置所属画面大小
+    void setGraphPageSize(int width, int height);
 
 protected:
     QString elementId;
@@ -119,6 +119,8 @@ protected:
     ResizeDirection rd;
 
     QString strProjectPath_; // 工程路径
+    int iGraphPageWidth_; // 画面宽度
+    int iGraphPageHeight_; // 画面高度
 
 signals:
     void elementMoved(QPointF);

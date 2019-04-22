@@ -320,9 +320,23 @@ void ElementPolygon::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         update(boundingRect());
         scene()->update();
         return;
-    }
-    else {
+    } else {
         QGraphicsObject::mouseMoveEvent(event);
+        QPointF pos = scenePos();
+
+        if(pos.x() < 0) {
+            this->setX(0);
+        }
+        if(pos.x() > iGraphPageWidth_ - boundingRect().width()) {
+            this->setX(iGraphPageWidth_ - boundingRect().width());
+        }
+
+        if(pos.y() < 0) {
+            this->setY(0);
+        }
+        if(pos.y() > iGraphPageHeight_ - boundingRect().height()) {
+            this->setY(iGraphPageHeight_ - boundingRect().height());
+        }
     }
 }
 
