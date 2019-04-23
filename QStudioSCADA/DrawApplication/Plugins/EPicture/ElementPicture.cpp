@@ -22,6 +22,11 @@ ElementPicture::ElementPicture(const QString &projPath) :
     updatePropertyModel();
 }
 
+void ElementPicture::regenerateElementId() {
+    elementId = QString(tr("Picture_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
+    this->updatePropertyModel();
+}
+
 QRectF ElementPicture::boundingRect() const {
     qreal extra = 5;
     QRectF rect(elementRect.toRect());

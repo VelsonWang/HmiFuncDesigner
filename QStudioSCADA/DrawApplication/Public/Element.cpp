@@ -134,11 +134,6 @@ void Element::setBlocked(bool blocked) {
     setFlag(QGraphicsItem::ItemIsMovable,!blocked);
 }
 
-void Element::addNodePoint() {
-}
-
-void Element::removeNodePoint() {
-}
 
 /**
  * @brief Element::setProjectPath

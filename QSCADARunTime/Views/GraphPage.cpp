@@ -13,7 +13,6 @@
 #include "EEllipse/EEllipse.h"
 #include "ERect/ERect.h"
 #include "EText/EText.h"
-#include "EPolygon/EPolygon.h"
 #include "EPicture/EPicture.h"
 #include "EInputEdit/EInputEdit.h"
 #include "EPushButton/EPushButton.h"
@@ -67,7 +66,6 @@ void registerCreateObjectFunc() {
     REGISTER_CREATEOR(QObject::trUtf8("椭圆形"), EllipseItemType, "Ellipse", EEllipse);
     REGISTER_CREATEOR(QObject::trUtf8("矩形"), RectItemType, "Rect", ERect);
     REGISTER_CREATEOR(QObject::trUtf8("文本"), TextItemType, "Text", EText);
-    REGISTER_CREATEOR(QObject::trUtf8("多边形"), PolygonItemType, "Polygon", EPolygon);
     REGISTER_CREATEOR(QObject::trUtf8("图片"), PictureItemType, "Picture", EPicture);
     REGISTER_CREATEOR(QObject::trUtf8("输入编辑框"), InputEditItemType, "InputEdit", EInputEdit);
     REGISTER_CREATEOR(QObject::trUtf8("弹出按钮"), PushButtonItemType, "PushButton", EPushButton);

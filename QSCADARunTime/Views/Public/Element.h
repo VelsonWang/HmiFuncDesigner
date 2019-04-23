@@ -24,8 +24,6 @@ public:
     virtual void setClickPosition(QPointF) = 0;
     virtual void updateBoundingElement() = 0;
     virtual void readFromXml(const QXmlStreamAttributes &) = 0;  
-    virtual void addNodePoint();
-    virtual void removeNodePoint();
     virtual void readData(QDataStream &in) = 0;
     virtual void paint(QPainter *painter) = 0;
     virtual void mousePressEvent(QMouseEvent *event) = 0;

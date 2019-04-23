@@ -10,9 +10,8 @@ const int LineItemType = QGraphicsItem::UserType + 1;
 const int RectItemType = QGraphicsItem::UserType + 2;
 const int EllipseItemType = QGraphicsItem::UserType + 3;
 const int ArrowItemType = QGraphicsItem::UserType + 4;
-const int TextItemType = QGraphicsItem::UserType + 14;
-const int GroupItemType = QGraphicsItem::UserType + 16;
-const int PolygonItemType = QGraphicsItem::UserType + 17;
+const int TextItemType = QGraphicsItem::UserType + 5;
+const int GroupItemType = QGraphicsItem::UserType + 6;
 
 const int PushButtonItemType = QGraphicsItem::UserType + 40;
 const int InputEditItemType = QGraphicsItem::UserType + 41;

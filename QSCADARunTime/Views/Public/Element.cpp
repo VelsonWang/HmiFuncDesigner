@@ -103,12 +103,6 @@ void Element::init() {
 }
 
 
-void Element::addNodePoint() {
-}
-
-void Element::removeNodePoint() {
-}
-
 /**
  * @brief Element::setProjectPath
  * @details 设置工程路径

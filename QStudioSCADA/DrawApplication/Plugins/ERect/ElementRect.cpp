@@ -21,6 +21,11 @@ ElementRect::ElementRect(const QString &projPath) :
     updatePropertyModel();
 }
 
+void ElementRect::regenerateElementId() {
+    elementId = QString(tr("Rect_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
+    this->updatePropertyModel();
+}
+
 QRectF ElementRect::boundingRect() const {
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
@@ -483,7 +488,7 @@ void ElementRect::readData(QDataStream &in) {
     int height;
     QString szTagSelected;
     QStringList tagColorList;
-    QString fillColor;
+    QColor fillColor;
     bool isFill;
     int borderWidth;
     QColor borderColor;

@@ -9,7 +9,7 @@ int ElementArrow::iLastIndex_ = 1;
 ElementArrow::ElementArrow(const QString &projPath)
     : Element(projPath),
       arrowSize(10) {
-    elementId = QString(tr("Arrow_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    elementId = QString(tr("Arrow_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Arrow");
     elementIcon = QIcon(":/images/arrowitem.png");
@@ -18,6 +18,12 @@ ElementArrow::ElementArrow(const QString &projPath)
     init();
     createPropertyList();
     updatePropertyModel();
+}
+
+
+void ElementArrow::regenerateElementId() {
+    elementId = QString(tr("Arrow_%1").arg(iLastIndex_, 4, 10, QChar('0')));
+    this->updatePropertyModel();
 }
 
 QRectF ElementArrow::boundingRect() const {

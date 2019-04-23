@@ -21,6 +21,11 @@ ElementEllipse::ElementEllipse(const QString &projPath) :
     updatePropertyModel();
 }
 
+void ElementEllipse::regenerateElementId() {
+    elementId = QString(tr("Ellipse_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
+    this->updatePropertyModel();
+}
+
 QRectF ElementEllipse::boundingRect() const {
     qreal extra = 5;
     QRectF rect = elementRect.toRect();
@@ -483,7 +488,7 @@ void ElementEllipse::readData(QDataStream &in) {
     int height;
     QString szTagSelected;
     QStringList tagColorList;
-    QString fillColor;
+    QColor fillColor;
     bool isFill;
     int borderWidth;
     QColor borderColor;
@@ -517,7 +522,7 @@ void ElementEllipse::readData(QDataStream &in) {
     this->setElementHeight(height);
     this->szTagSelected_ = szTagSelected;
     this->tagColorList_ = tagColorList;
-    this->fillColor_ = fillColor;
+    this->fillColor_ = QColor(fillColor);
     this->isFill_ = isFill;
     this->borderWidth_ = borderWidth;
     this->borderColor_ = borderColor;

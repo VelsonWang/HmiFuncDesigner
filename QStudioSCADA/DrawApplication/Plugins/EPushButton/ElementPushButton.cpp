@@ -40,6 +40,11 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
     updatePropertyModel();
 }
 
+void ElementPushButton::regenerateElementId() {
+    elementId = QString(tr("PushButton_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
+    this->updatePropertyModel();
+}
+
 QRectF ElementPushButton::boundingRect() const {
     qreal extra = 5;
     QRectF rect(elementRect.toRect());

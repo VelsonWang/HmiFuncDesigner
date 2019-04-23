@@ -38,11 +38,9 @@ public:
     virtual void writeAsXml(QXmlStreamWriter &) = 0;
     virtual void readFromXml(const QXmlStreamAttributes &) = 0;
     virtual void setBlocked(bool);
-    virtual void addNodePoint();
-    virtual void removeNodePoint();
-
     virtual void writeData(QDataStream &out) = 0;
     virtual void readData(QDataStream &in) = 0;
+    virtual void regenerateElementId() = 0;
 
     void setElementId(const QString &);
     QString getElementId() const;

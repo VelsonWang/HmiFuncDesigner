@@ -250,12 +250,6 @@ void GraphPage::createContextMenuActions() {
     saveAsLibraryAction = new QAction(QIcon(":/images/library.png"),trUtf8("保存为库"),&contextMenu);
     connect(saveAsLibraryAction,SIGNAL(triggered()),SLOT(slotSaveAsLibrary()));
 
-    actionRemoveNodePoint = new QAction(QIcon(":/images/delete.png"),trUtf8("删除节点"),&contextNodePointMenu);
-    connect(actionRemoveNodePoint,SIGNAL(triggered()),SLOT(slotRemoveNodePoint()));
-
-    actionAddNodePoint = new QAction(QIcon(":/images/add.png"),trUtf8("添加节点"),&contextNodePointMenu);
-    connect(actionAddNodePoint,SIGNAL(triggered()),SLOT(slotAddNodePoint()));
-
     actionDelete = new QAction(QIcon(":/images/delete.png"),trUtf8("删除"),&contextMenu);
     actionDelete->setShortcut(QKeySequence::Delete);
     connect(actionDelete,SIGNAL(triggered()),SLOT(slotEditDelete()));
@@ -285,12 +279,7 @@ void GraphPage::createContextMenuActions() {
     contextServiceMenu.addSeparator();
     //contextServiceMenu.addAction(actionAdditional);
 
-    contextNodePointMenu.setTitle(trUtf8("节点"));
-    contextNodePointMenu.addAction(actionAddNodePoint);
-    contextNodePointMenu.addAction(actionRemoveNodePoint);
-
     contextMenu.addMenu(&contextServiceMenu);
-    contextMenu.addMenu(&contextNodePointMenu);
     contextMenu.addAction(saveAsLibraryAction);
     contextMenu.addAction(actionDelete);
     contextMenu.addAction(actionCopy);
@@ -310,28 +299,6 @@ void GraphPage::updateActions() {
     alignDownAction->setEnabled(selectedItems().count() < 2 ? false : true);
     alignRightAction->setEnabled(selectedItems().count() < 2 ? false : true);
     alignLeftAction->setEnabled(selectedItems().count() < 2 ? false : true);
-
-    if (selectedItems().isEmpty()) {
-        contextNodePointMenu.setEnabled(false);
-        return;
-    }
-
-    if (selectedItems().first()->type() == PolygonItemType) {
-        contextNodePointMenu.setEnabled(true);
-    }
-    else {
-        contextNodePointMenu.setEnabled(false);
-    }
-}
-
-void GraphPage::slotAddNodePoint() {
-    Element *ele = static_cast<Element *>(selectedItems().first());
-    ele->addNodePoint();
-}
-
-void GraphPage::slotRemoveNodePoint() {
-    Element *ele = static_cast<Element *>(selectedItems().first());
-    ele->removeNodePoint();
 }
 
 void GraphPage::slotShowAdditionalProperties() {
@@ -712,10 +679,10 @@ void GraphPage::slotEditCopy() {
 
 void GraphPage::copyItems(const QList<QGraphicsItem *> &items) {
     QByteArray copiedItems;
-    QDataStream out(&copiedItems,QIODevice::WriteOnly);
-    writeItems(out,items);
+    QDataStream out(&copiedItems, QIODevice::WriteOnly);
+    writeItems(out, items);
     QMimeData *mimeData = new QMimeData;
-    mimeData->setData(MimeType,copiedItems);
+    mimeData->setData(MimeType, copiedItems);
     QClipboard *clipboard = QApplication::clipboard();
     clipboard->setMimeData(mimeData);
 }
@@ -730,8 +697,8 @@ void GraphPage::slotEditPaste() {
 
     if (mimeData->hasFormat(MimeType)) {
         QByteArray copiedItems = mimeData->data(MimeType);
-        QDataStream in(&copiedItems,QIODevice::ReadOnly);
-        readItems(in,pasteOffset,true);
+        QDataStream in(&copiedItems, QIODevice::ReadOnly);
+        readItems(in, pasteOffset, true);
     }
 }
 
@@ -739,13 +706,10 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
     int objectType;
     int itemsCount;
     copyList.clear();
-
     in >> itemsCount;
 
     for (int i = 0; i < itemsCount; i++) {
-
         in >> objectType;
-
         QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*>> iter(PluginManager::getInstance()->plugins_);
         while(iter.hasNext()) {
             iter.next();
@@ -754,11 +718,13 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
-
                     Element *ele = plugin->createElement(projpath_);
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
+                        if(select) {
+                            ele->regenerateElementId();
+                        }
                         connectItem(ele);
                         copyList.insert(copyList.end(), ele);
                     }
@@ -767,25 +733,21 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
         }
     } //for
 
-    foreach (QGraphicsItem *item,copyList) {
+    foreach (QGraphicsItem *item, copyList) {
         Element *ele = (Element *)item;
         ele->setSelected(select);
-        ele->moveTo(offset,offset);
+        ele->moveTo(offset, offset);
     }
 
-    m_undoStack->push(new AddCommand(copyList,this));
+    m_undoStack->push(new AddCommand(copyList, this));
 }
 
 void GraphPage::writeItems(QDataStream &out, const QList<QGraphicsItem *> &items) {
     out << items.count();
-
     for (int j = 0; j < items.count(); j++) {
-
         int type = items[j]->type();
         items[j]->setSelected(false);
-
         out << type;
-
         QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
         while(iter.hasNext()) {
             iter.next();
@@ -820,11 +782,8 @@ void GraphPage::saveAsBinary(const QString &filename) {
     }
 
     QDataStream out(&file);
-
     out << *this;
-
     writeItems(out,items());
-
     m_undoStack->setClean();
     unsavedFlag = false;
     file.close();
@@ -843,11 +802,8 @@ void GraphPage::loadAsBinary(const QString &filename) {
     }
 
     QDataStream in(&file);
-
     in >> *this;
-
-    readItems(in,0,false);
-
+    readItems(in, 0, false);
     file.close();
 }
 
@@ -920,11 +876,8 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
     xml.readNext();
 
     while (!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "graphPage")) {
-
         if (xml.tokenType() == QXmlStreamReader::StartElement) {
-
             if (xml.name() == "element") {
-
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
@@ -1014,15 +967,12 @@ void GraphPage::readLibraryConfig(QFile &file) {
     reader.setDevice(&file);
 
     while (!reader.atEnd() && !reader.hasError()) {
-
         QXmlStreamReader::TokenType token = reader.readNext();
-
         if (token == QXmlStreamReader::StartDocument) {
             continue;
         }
 
         if (token == QXmlStreamReader::StartElement) {
-
             if (reader.name() == "Library") {
                 readLibraryTag(reader);
             }
@@ -1035,11 +985,8 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
     xml.readNext();
 
     while (!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "Library")) {
-
         if (xml.tokenType() == QXmlStreamReader::StartElement) {
-
             if (xml.name() == "element") {
-
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {

@@ -128,8 +128,6 @@ private slots:
     void slotEditPaste();
     void slotSelectAll();
     void slotShowAdditionalProperties();
-    void slotAddNodePoint();
-    void slotRemoveNodePoint();
 
 public slots:
     void slotSelectionChanged();
@@ -180,7 +178,6 @@ private:
 
     QMenu contextMenu;
     QMenu contextServiceMenu;
-    QMenu contextNodePointMenu;
 
     QAction *inGroupAction;
     QAction *outGroupAction;
@@ -191,8 +188,6 @@ private:
     QAction *frontPlanAction;
     QAction *behindPlanAction;
     QAction *saveAsLibraryAction;
-    QAction *actionAddNodePoint;
-    QAction *actionRemoveNodePoint;
     QAction *actionDelete;
     QAction *actionCopy;
     QAction *actionPaste;

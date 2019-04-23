@@ -12,16 +12,16 @@ class ElementRect : public Element
     Q_OBJECT
 public:
     ElementRect(const QString &projPath);
-    void setClickPosition(QPointF);
-    void updateBoundingElement();
-    void updateElementProperty(uint id, const QVariant &value);
-    void updatePropertyModel();
-    void createPropertyList();
-    void writeAsXml(QXmlStreamWriter &writer);
-    void readFromXml(const QXmlStreamAttributes &);
-
-    void writeData(QDataStream &out);
-    void readData(QDataStream &in);
+    void setClickPosition(QPointF) override;
+    void updateBoundingElement() override;
+    void updateElementProperty(uint id, const QVariant &value) override;
+    void updatePropertyModel() override;
+    void createPropertyList() override;
+    void writeAsXml(QXmlStreamWriter &writer) override;
+    void readFromXml(const QXmlStreamAttributes &) override;
+    void writeData(QDataStream &out) override;
+    void readData(QDataStream &in) override;
+    void regenerateElementId() override;
 
     enum {Type = RectItemType};
 

@@ -5,8 +5,7 @@
 int ElementText::iLastIndex_ = 1;
 
 ElementText::ElementText(const QString &projPath) :
-    Element(projPath)
-{
+    Element(projPath) {
     elementId = QString(tr("Text_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Text");
@@ -23,6 +22,11 @@ ElementText::ElementText(const QString &projPath) :
     init();
     createPropertyList();
     updatePropertyModel();
+}
+
+void ElementText::regenerateElementId() {
+    elementId = QString(tr("Text_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
+    this->updatePropertyModel();
 }
 
 QRectF ElementText::boundingRect() const {
