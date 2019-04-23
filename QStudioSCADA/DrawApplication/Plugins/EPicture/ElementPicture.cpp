@@ -14,10 +14,12 @@ ElementPicture::ElementPicture(const QString &projPath) :
     elementIcon = QIcon(":/images/Picture.png");
     filePicture_ = QString();
     showNoScale_ = false;
-    borderWidth_ = 1;
+    borderWidth_ = 0;
     borderColor_ = Qt::black;
     showOnInitial_ = true;
     init();
+    elementWidth = 80;
+    elementHeight = 80;
     createPropertyList();
     updatePropertyModel();
 }
@@ -238,7 +240,7 @@ void ElementPicture::paint(QPainter *painter,
 
     if(borderWidth_ < 1) {
         borderColor = Qt::gray;
-        painter->setPen(QPen(borderColor, 1, Qt::DotLine));
+        painter->setPen(QPen(borderColor, 1, Qt::DashDotLine));
     } else {
         painter->setPen(QPen(borderColor_, borderWidth_, Qt::SolidLine));
     }
