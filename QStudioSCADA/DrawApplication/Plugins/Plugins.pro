@@ -5,7 +5,6 @@ SUBDIRS += \
     ELine \
     EArrow \
     EEllipse \
-    EPolygon \
     ERect \
     EText \
 ###############<基本控件>##################

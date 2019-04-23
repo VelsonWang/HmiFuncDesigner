@@ -15,7 +15,6 @@ INCLUDEPATH += \
     $$PWD/Elements/EEllipse \
     $$PWD/Elements/ERect \
     $$PWD/Elements/EText \
-    $$PWD/Elements/EPolygon \
     $$PWD/Elements/EPicture \
     $$PWD/Elements/EInputEdit \
     $$PWD/Elements/EPushButton \
@@ -43,8 +42,6 @@ SOURCES += \
     $$PWD/Elements/ERect/ERect.cpp \
     $$PWD/Elements/EText/ElementText.cpp \
     $$PWD/Elements/EText/EText.cpp \
-    $$PWD/Elements/EPolygon/ElementPolygon.cpp \
-    $$PWD/Elements/EPolygon/EPolygon.cpp \
     $$PWD/Elements/EPicture/ElementPicture.cpp \
     $$PWD/Elements/EPicture/EPicture.cpp \
     $$PWD/Elements/EInputEdit/ElementInputEdit.cpp \
@@ -78,8 +75,6 @@ HEADERS += \
     $$PWD/Elements/ERect/ERect.h \
     $$PWD/Elements/EText/ElementText.h \
     $$PWD/Elements/EText/EText.h \
-    $$PWD/Elements/EPolygon/ElementPolygon.h \
-    $$PWD/Elements/EPolygon/EPolygon.h \
     $$PWD/Elements/EPicture/ElementPicture.h \
     $$PWD/Elements/EPicture/EPicture.h \
     $$PWD/Elements/EInputEdit/ElementInputEdit.h \
