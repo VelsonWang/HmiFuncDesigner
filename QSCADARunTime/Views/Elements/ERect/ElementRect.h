@@ -40,6 +40,8 @@ private:
     QStringList tagColorList_;
     // 填充颜色
     QColor fillColor_;
+    // 上一次填充颜色
+    QColor lastFillColor_;
     // 是否填充颜色
     bool isFill_;
     // 边框宽度

@@ -1,4 +1,5 @@
 ﻿#include "elementrect.h"
+#include "RealTimeDB.h"
 #include <QDebug>
 
 ElementRect::ElementRect() {
@@ -45,7 +46,30 @@ void ElementRect::paint(QPainter *painter) {
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
     painter->setPen(QPen(borderColor_, borderWidth_));
     if(isFill_) {
-        painter->setBrush(QBrush(fillColor_));
+        if(szTagSelected_ != "") {
+            QString szTagValue = "";
+            if(tagColorList_.size()) {
+                qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
+                if(id != -1) {
+                    szTagValue = RealTimeDB::GetDataString(id);
+                } else {
+                    szTagValue = "#";
+                }
+            }
+            foreach (QString szValueColor, tagColorList_) {
+                QStringList listValueColor = szValueColor.split(':');
+                if(listValueColor.size() == 2) {
+                    QString szValue = listValueColor.at(0);
+                    QString szColor = listValueColor.at(1);
+                    if(szValue == szTagValue) {
+                        lastFillColor_ = QColor(szColor);
+                    }
+                }
+            }
+            painter->setBrush(QBrush(lastFillColor_));
+        } else {
+            painter->setBrush(QBrush(fillColor_));
+        }
     } else {
         painter->setBrush(Qt::NoBrush);
     }
@@ -103,6 +127,7 @@ void ElementRect::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("fillColor")) {
         fillColor_ = QColor(attributes.value("fillColor").toString());
+        lastFillColor_ = fillColor_;
     }
 
     if (attributes.hasAttribute("isFill")) {
