@@ -49,7 +49,8 @@ SOURCES += \
     PluginManager.cpp \
     ../PropertyEditorEx/FunctionEditorDialog.cpp \
     ../PropertyEditorEx/functionproperty.cpp \
-    ../PropertyEditorEx/functionpropertyeditor.cpp
+    ../PropertyEditorEx/functionpropertyeditor.cpp \
+    ElementIDHelper.cpp
 
 HEADERS  += \
     GraphPage.h \
@@ -70,7 +71,8 @@ HEADERS  += \
     PluginManager.h \
     ../PropertyEditorEx/FunctionEditorDialog.h \
     ../PropertyEditorEx/functionproperty.h \
-    ../PropertyEditorEx/functionpropertyeditor.h
+    ../PropertyEditorEx/functionpropertyeditor.h \
+    ElementIDHelper.h
 
 FORMS    += \
     ElementLibraryWidget.ui \

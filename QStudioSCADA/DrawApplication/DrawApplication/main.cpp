@@ -5,6 +5,7 @@
 #include "DrawListUtils.h"
 #include "PluginManager.h"
 
+
 /**
  * @brief qMain
  * @param argc
