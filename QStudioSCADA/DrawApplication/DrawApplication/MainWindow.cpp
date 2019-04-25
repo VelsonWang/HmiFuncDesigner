@@ -9,6 +9,7 @@
 #include <QGraphicsView>
 #include <QFileDialog>
 #include <QScrollArea>
+#include <QToolBar>
 #include <QDebug>
 
 
@@ -173,7 +174,6 @@ void MainWindow::createToolbars() {
     toolBar->addAction(actionUndo_);
     toolBar->addAction(actionRedo_);
     toolBar->addSeparator();
-
 }
 
 void MainWindow::closeEvent(QCloseEvent *event) {

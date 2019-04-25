@@ -236,23 +236,26 @@ void GraphPage::createContextMenuActions() {
 
     alignLeftAction = new QAction(QIcon(":/images/align-left.png"), trUtf8("左对齐"), &contextServiceMenu);
     alignLeftAction->setData(Qt::AlignLeft);
-    connect(alignLeftAction,SIGNAL(triggered()),SLOT(slotAlignElements()));
+    connect(alignLeftAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
-    frontPlanAction = new QAction(QIcon(),trUtf8("正面图"),&contextServiceMenu);
-    connect(frontPlanAction,SIGNAL(triggered()),SLOT(slotFrontPlanElements()));
+    hUniformDistributeAction_ = new QAction(QIcon(":/images/align_hsame.png"), tr("水平均匀分布"), &contextServiceMenu);
+    connect(hUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotHUniformDistributeElements()));
 
-    behindPlanAction = new QAction(QIcon(),trUtf8("背面图"),&contextServiceMenu);
-    connect(behindPlanAction,SIGNAL(triggered()),SLOT(slotBehindPlanElements()));
+    vUniformDistributeAction_ = new QAction(QIcon(":/images/align_vsame.png"), tr("垂直均匀分布"), &contextServiceMenu);
+    connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
 
-    actionAdditional = new QAction(QIcon(":/images/additional.png"),trUtf8("额外"),&contextServiceMenu);
-    connect(actionAdditional,SIGNAL(triggered()),SLOT(slotShowAdditionalProperties()));
+    upLayerAction_ = new QAction(QIcon(), trUtf8("上移一层"), &contextServiceMenu);
+    connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
 
-    saveAsLibraryAction = new QAction(QIcon(":/images/library.png"),trUtf8("保存为库"),&contextMenu);
-    connect(saveAsLibraryAction,SIGNAL(triggered()),SLOT(slotSaveAsLibrary()));
+    downLayerAction_ = new QAction(QIcon(), trUtf8("下移一层"), &contextServiceMenu);
+    connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
 
-    actionDelete = new QAction(QIcon(":/images/delete.png"),trUtf8("删除"),&contextMenu);
+    saveAsLibraryAction = new QAction(QIcon(":/images/library.png"), trUtf8("保存为库"),&contextMenu);
+    connect(saveAsLibraryAction, SIGNAL(triggered()), SLOT(slotSaveAsLibrary()));
+
+    actionDelete = new QAction(QIcon(":/images/delete.png"), trUtf8("删除"),&contextMenu);
     actionDelete->setShortcut(QKeySequence::Delete);
-    connect(actionDelete,SIGNAL(triggered()),SLOT(slotEditDelete()));
+    connect(actionDelete, SIGNAL(triggered()), SLOT(slotEditDelete()));
 
     actionCopy = new QAction(QIcon(":/images/editcopy.png"),trUtf8("拷贝"),&contextMenu);
     actionCopy->setShortcut(QKeySequence::Copy);
@@ -262,9 +265,9 @@ void GraphPage::createContextMenuActions() {
     actionPaste->setShortcut(QKeySequence::Paste);
     connect(actionPaste,SIGNAL(triggered()),SLOT(slotEditPaste()));
 
-    actionSelectAll = new QAction(QIcon(),trUtf8("全选"),&contextMenu);
+    actionSelectAll = new QAction(QIcon(), trUtf8("全选"),&contextMenu);
     actionSelectAll->setShortcut(QKeySequence::SelectAll);
-    connect(actionSelectAll,SIGNAL(triggered()),SLOT(slotSelectAll()));
+    connect(actionSelectAll, SIGNAL(triggered()), SLOT(slotSelectAll()));
 
     contextServiceMenu.setTitle(trUtf8("工具"));
     contextServiceMenu.setIcon(QIcon(":/images/settings.png"));
@@ -273,11 +276,12 @@ void GraphPage::createContextMenuActions() {
     contextServiceMenu.addAction(alignDownAction);
     contextServiceMenu.addAction(alignRightAction);
     contextServiceMenu.addAction(alignLeftAction);
+    contextServiceMenu.addAction(hUniformDistributeAction_);
+    contextServiceMenu.addAction(vUniformDistributeAction_);
     contextServiceMenu.addSeparator();
-    contextServiceMenu.addAction(frontPlanAction);
-    contextServiceMenu.addAction(behindPlanAction);
+    contextServiceMenu.addAction(upLayerAction_);
+    contextServiceMenu.addAction(downLayerAction_);
     contextServiceMenu.addSeparator();
-    //contextServiceMenu.addAction(actionAdditional);
 
     contextMenu.addMenu(&contextServiceMenu);
     contextMenu.addAction(saveAsLibraryAction);
@@ -291,19 +295,14 @@ void GraphPage::updateActions() {
     actionCopy->setEnabled(selectedItems().count() == 0 ? false : true);
     actionDelete->setEnabled(selectedItems().count() == 0 ? false : true);
     saveAsLibraryAction->setEnabled(selectedItems().count() == 0 ? false : true);
-    actionAdditional->setEnabled(selectedItems().count() == 1 ? true : false);
-
-    behindPlanAction->setEnabled(selectedItems().count() == 0 ? false : true);
-    frontPlanAction->setEnabled(selectedItems().count() == 0 ? false : true);
+    downLayerAction_->setEnabled(selectedItems().count() == 0 ? false : true);
+    upLayerAction_->setEnabled(selectedItems().count() == 0 ? false : true);
     alignTopAction->setEnabled(selectedItems().count() < 2 ? false : true);
     alignDownAction->setEnabled(selectedItems().count() < 2 ? false : true);
     alignRightAction->setEnabled(selectedItems().count() < 2 ? false : true);
     alignLeftAction->setEnabled(selectedItems().count() < 2 ? false : true);
 }
 
-void GraphPage::slotShowAdditionalProperties() {
-    //emit signalShowAddProperties();
-}
 
 void GraphPage::slotElementPropertyChanged(Property *property) {
     if (selectedItems().isEmpty()) {
@@ -541,8 +540,7 @@ void GraphPage::slotAlignElements() {
     if (!action)
         return;
 
-    Qt::Alignment alignment = static_cast<Qt::Alignment>(
-            action->data().toInt());
+    Qt::Alignment alignment = static_cast<Qt::Alignment>(action->data().toInt());
 
     QList<QGraphicsItem*> items = selectedItems();
     QVector<double> coordinates;
@@ -551,25 +549,116 @@ void GraphPage::slotAlignElements() {
 
     if (alignment == Qt::AlignLeft || alignment == Qt::AlignTop) {
         offset = min(coordinates);
-    }
-    else
-    {
+    } else {
         offset = max(coordinates);
     }
 
     if (alignment == Qt::AlignLeft || alignment == Qt::AlignRight) {
         for (int i = 0; i < items.count(); ++i)
             ((Element *)items.at(i))->moveTo(offset - coordinates.at(i), 0);
-    }
-    else {
+    } else {
         for (int i = 0; i < items.count(); ++i)
             ((Element *)items.at(i))->moveTo(0, offset - coordinates.at(i));
     }
 }
 
+/**
+ * @brief GraphPage::horizontalSort
+ * @details 水平排序
+ * @param dat 待排序对象集
+ */
+void GraphPage::horizontalSort(QList<QGraphicsItem *> &dat) {
+    for(int i=0; i<dat.size()-1; i++){
+        for(int j=0; j<dat.size()-1-i; j++){
+            if(dat.at(j)->sceneBoundingRect().x()>dat.at(j+1)->sceneBoundingRect().x()){
+                dat.swap(j, j+1);
+            }
+        }
+    }
+}
+
+/**
+ * @brief GraphPage::slotHUniformDistributeElements
+ * @details 水平均匀分布
+ */
+void GraphPage::slotHUniformDistributeElements() {
+    QList<QGraphicsItem *> items = selectedItems();
+    if(items.count() < 2) {
+        return;
+    }
+
+    double totalWidth = 0;
+    horizontalSort(items);
+
+    QListIterator<QGraphicsItem *> iter(items);
+    while (iter.hasNext()) {
+        QRectF rect = iter.next()->sceneBoundingRect();
+        totalWidth += rect.width();
+    }
+
+    double minX = items.first()->sceneBoundingRect().x();
+    double maxX = items.last()->sceneBoundingRect().x() + items.last()->sceneBoundingRect().width();
+    int space = (maxX - minX - totalWidth) / (items.count() -1);
+    int x = items.at(0)->sceneBoundingRect().x()+ items.at(0)->sceneBoundingRect().width() + space;
+
+    for(int i=1; i<items.count()-1; i++) {
+        QGraphicsItem * pItem = items.at(i);
+        ((Element *)pItem)->setElementXPos(x);
+        x = x + pItem->sceneBoundingRect().width() + space;
+    }
+}
+
+
+/**
+ * @brief GraphPage::verticalSort
+ * @details 垂直排序
+ * @param dat 待排序对象集
+ */
+void GraphPage::verticalSort(QList<QGraphicsItem *> &dat) {
+    for(int i=0; i<dat.size()-1; i++){
+        for(int j=0; j<dat.size()-1-i; j++){
+            if(dat.at(j)->sceneBoundingRect().y()>dat.at(j+1)->sceneBoundingRect().y()){
+                dat.swap(j, j+1);
+            }
+        }
+    }
+}
+
+/**
+ * @brief GraphPage::slotVUniformDistributeElements
+ * @details 垂直均匀分布
+ */
+void GraphPage::slotVUniformDistributeElements() {
+    QList<QGraphicsItem *> items = selectedItems();
+    if(items.count() < 2) {
+        return;
+    }
+
+    double totalHeight = 0;
+    verticalSort(items);
+
+    QListIterator<QGraphicsItem *> iter(items);
+    while (iter.hasNext()) {
+        QRectF rect = iter.next()->sceneBoundingRect();
+        totalHeight += rect.height();
+    }
+
+    double minY = items.first()->sceneBoundingRect().y();
+    double maxY = items.last()->sceneBoundingRect().y() + items.last()->sceneBoundingRect().height();
+    int space = (maxY - minY - totalHeight) / (items.count() -1);
+    int y = items.at(0)->sceneBoundingRect().y()+ items.at(0)->sceneBoundingRect().height() + space;
+
+    for(int i=1; i<items.count()-1; i++) {
+        QGraphicsItem * pItem = items.at(i);
+        ((Element *)pItem)->setElementYPos(y);
+        y = y + pItem->sceneBoundingRect().height() + space;
+    }
+}
+
+
 void GraphPage::populateCoordinates(const Qt::Alignment &alignment,
-        QVector<double> *coordinates,
-        const QList<QGraphicsItem*> &items) {
+                                    QVector<double> *coordinates,
+                                    const QList<QGraphicsItem*> &items) {
     QListIterator<QGraphicsItem*> i(items);
     while (i.hasNext()) {
         QRectF rect = i.next()->sceneBoundingRect();
@@ -586,14 +675,14 @@ void GraphPage::populateCoordinates(const Qt::Alignment &alignment,
     }
 }
 
-void GraphPage::slotFrontPlanElements() {
+void GraphPage::slotUpLayerElements() {
     foreach (QGraphicsItem *item,selectedItems()) {
         Element *ele = (Element *)item;
         ele->setElementZValue(ele->getElementZValue() + 1);
     }
 }
 
-void GraphPage::slotBehindPlanElements() {
+void GraphPage::slotDownLayerElements() {
     foreach (QGraphicsItem *item,selectedItems()) {
         Element *ele = (Element*)item;
         ele->setElementZValue(ele->getElementZValue() - 1);

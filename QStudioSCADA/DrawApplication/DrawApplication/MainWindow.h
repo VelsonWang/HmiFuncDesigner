@@ -13,6 +13,7 @@
 #include "GraphPageManager.h"
 #include "ui_MainWindow.h"
 
+class QToolBar;
 
 class MainWindow : public QMainWindow, public Ui::MainWindow
 {

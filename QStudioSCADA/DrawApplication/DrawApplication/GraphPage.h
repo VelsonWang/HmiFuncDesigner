@@ -115,19 +115,22 @@ private:
 
     void writeGraphPage(QFile &file, GraphPage *graphPage);
     void writeLibrary(QFile &file, GraphPage *graphPage);
+    void horizontalSort(QList<QGraphicsItem *> &dat);
+    void verticalSort(QList<QGraphicsItem *> &dat);
 
 private slots:
     void slotGroupElements();
     void slotUngroupElements();
     void slotAlignElements();
-    void slotFrontPlanElements();
-    void slotBehindPlanElements();
+    void slotHUniformDistributeElements();
+    void slotVUniformDistributeElements();
+    void slotUpLayerElements();
+    void slotDownLayerElements();
     void slotSaveAsLibrary();
     void slotEditDelete();
     void slotEditCopy();
     void slotEditPaste();
     void slotSelectAll();
-    void slotShowAdditionalProperties();
 
 public slots:
     void slotSelectionChanged();
@@ -185,14 +188,16 @@ private:
     QAction *alignDownAction;
     QAction *alignRightAction;
     QAction *alignLeftAction;
-    QAction *frontPlanAction;
-    QAction *behindPlanAction;
+    QAction *hUniformDistributeAction_; // 水平均匀分布
+    QAction *vUniformDistributeAction_; // 垂直均匀分布
+    QAction *upLayerAction_;
+    QAction *downLayerAction_;
     QAction *saveAsLibraryAction;
     QAction *actionDelete;
     QAction *actionCopy;
     QAction *actionPaste;
     QAction *actionSelectAll;
-    QAction *actionAdditional;
+
 };
 
 #endif // GRAPHPAGE_H

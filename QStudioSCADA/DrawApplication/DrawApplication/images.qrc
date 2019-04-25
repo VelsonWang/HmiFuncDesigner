@@ -37,11 +37,12 @@
         <file>images/group.png</file>
         <file>images/library.png</file>
         <file>images/ungroup.png</file>
-        <file>images/polygon.png</file>
         <file>images/add.png</file>
         <file>images/additional.png</file>
         <file>images/deviceeditor.png</file>
         <file>images/export.png</file>
-		<file>images/saveproject.png</file>
+        <file>images/saveproject.png</file>
+        <file>images/align_hsame.png</file>
+        <file>images/align_vsame.png</file>
     </qresource>
 </RCC>
