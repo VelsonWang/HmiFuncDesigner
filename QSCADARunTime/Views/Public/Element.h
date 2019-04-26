@@ -8,6 +8,7 @@
 #include "PublicDefine.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
+#include <QTimer>
 
 class Element : public QObject
 {
@@ -71,6 +72,14 @@ public:
     void hideElement();
     // 显示控件
     void showElement();
+    // 生效控件
+    void enableElement();
+    // 失效控件
+    void disableElement();
+    // 闪烁控件
+    void startBlinkElement();
+    // 停止闪烁控件
+    void stopBlinkElement();
 
 protected:
     QString elementId;
@@ -90,11 +99,18 @@ protected:
     QString internalElementType;
     QString strProjectPath_; // 工程路径
     QWidget *ownerWidget_;
-    bool bShow_;
+    bool bShow_; // 显示
+    bool bEnable_; // 生效
+    bool bBlink_; // 闪烁
+    QTimer blinkTimer_;  // 闪烁定时器
 
 signals:
     void elementMoved(QPointF);
     void elementResized(int,int,QPointF);
+
+private slots:
+    virtual void blinkTimeOut() {}
+
 };
 
 #endif // ELEMENT_H

@@ -3,7 +3,9 @@
 
 Element::Element(QObject *parent)
     : QObject(parent),
-      bShow_(true) {
+      bShow_(true),
+      bEnable_(true),
+      bBlink_(true) {
 
 }
 
@@ -227,4 +229,39 @@ void Element::hideElement() {
  */
 void Element::showElement() {
     bShow_ = true;
+}
+
+/**
+ * @brief Element::enableElement
+ * @details 生效控件
+ */
+void Element::enableElement() {
+    bEnable_ = true;
+}
+
+
+/**
+ * @brief Element::disableElement
+ * @details 失效控件
+ */
+void Element::disableElement() {
+    bEnable_ = false;
+}
+
+
+/**
+ * @brief Element::startBlinkElement
+ * @details 闪烁控件
+ */
+void Element::startBlinkElement() {
+    bBlink_ = true;
+}
+
+
+/**
+ * @brief Element::stopBlinkElement
+ * @details 停止闪烁控件
+ */
+void Element::stopBlinkElement() {
+    bBlink_ = false;
 }
