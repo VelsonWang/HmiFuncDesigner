@@ -83,6 +83,8 @@ private:
     void loadLibrary(QByteArray &data);
     void readLibraryConfig(QFile &file);
     void readLibraryTag(QXmlStreamReader &xml);
+    // Z坐标由小到大排列元素
+    void zValueSort(QList<Element *> &dat);
 
 signals:
     void newElementAdded();

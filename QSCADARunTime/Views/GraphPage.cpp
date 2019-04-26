@@ -103,6 +103,21 @@ bool GraphPage::active() {
     return onActive;
 }
 
+/**
+ * @brief GraphPage::zValueSort
+ * @details Z坐标由小到大排列元素
+ * @param dat 待排序对象集
+ */
+void GraphPage::zValueSort(QList<Element *> &dat) {
+    for(int i=0; i<dat.size()-1; i++){
+        for(int j=0; j<dat.size()-1-i; j++){
+            if(dat.at(j)->getElementZValue()>dat.at(j+1)->getElementZValue()){
+                dat.swap(j, j+1);
+            }
+        }
+    }
+}
+
 void GraphPage::paintEvent(QPaintEvent *event) {
     Q_UNUSED(event)
     QPainter painter(this);
@@ -352,7 +367,6 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
                         ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         elementList_.append(ele);
-                        //ele->setSelected(false);
                     }
                 }
             }
@@ -360,6 +374,7 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
 
         xml.readNext();
     }
+    zValueSort(elementList_);
 }
 
 void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
@@ -440,7 +455,6 @@ void GraphPage::readLibraryConfig(QFile &file) {
 }
 
 void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
-
     copyList.clear();
     xml.readNext();
 
@@ -460,6 +474,7 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
 
         xml.readNext();
     }
+    zValueSort(elementList_);
 }
 
 /**
