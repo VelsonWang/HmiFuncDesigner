@@ -124,5 +124,48 @@
 			</args>
 			<demo>示例:_N_TShowControlElement("Text_0001")  // 将文本控件"Text_0001"显示为可见状态</demo>
 		</Func>
+		<Func name="DisableControlElement">
+			<name>函数原型:void DisableControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:失效控件元素sCtrlEleName变为不可用状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TDisableControlElement("Text_0001")  // 将输入编辑控件InputEdit_0001失效变为不可用状态</demo>
+		</Func>
+		<Func name="EnableControlElement">
+			<name>函数原型:void EnableControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:生效控件元素sCtrlEleName变为可用状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TEnableControlElement("Text_0001")  // 将输入编辑控件InputEdit_0001生效变为可用状态</demo>
+		</Func>
+		<Func name="MoveControlElement">
+			<name>函数原型:void MoveControlElement(string sCtrlEleName , int x, int y)</name>
+			<desc>函数描述:控件元素sCtrlEleName坐标移动(x, y)</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+				<arg name="x" type="Value">int x  // 控件元素X坐标</arg>
+				<arg name="y" type="Value">int y  // 控件元素y坐标</arg>
+			</args>
+			<demo>示例:_N_TMoveControlElement ("Text_0001", -5, -10)  // 将文本控件"Text_0001"坐标上移10，左移5</demo>
+		</Func>	
+		<Func name="BlinkControlElement">
+			<name>函数原型:void BlinkControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName闪烁显示</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TBlinkControlElement ("Text_0001")  // 将文本控件"Text_0001"闪烁显示</demo>
+		</Func>
+		<Func name="StopBlinkControlElement">
+			<name>函数原型:void StopBlinkControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName停止闪烁显示</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TStopBlinkControlElement("Text_0001")  // 将文本控件"Text_0001"停止闪烁显示</demo>
+		</Func>
+
 	</FuncSupport>
 </FuncSupportList>

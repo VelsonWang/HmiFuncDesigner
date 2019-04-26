@@ -297,8 +297,6 @@ void ElementPicture::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         if(pos_.y() > iGraphPageHeight_ - getElementHeight()) {
             this->setY(iGraphPageHeight_ - getElementHeight());
         }
-        setElementXPos(pos().x());
-        setElementYPos(pos().y());
     }
 }
 

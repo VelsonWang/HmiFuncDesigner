@@ -390,7 +390,6 @@ void ElementText::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementText::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -399,22 +398,18 @@ void ElementText::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         rd = RdTopLeft;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         rd = RdBottomRight;
         resizing = true;
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else {
+    } else {
         resizing = false;
         rd = RdNone;
     }
@@ -427,7 +422,6 @@ void ElementText::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementText::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
-
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -445,7 +439,6 @@ void ElementText::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementText::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -454,17 +447,12 @@ void ElementText::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
         mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
         mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y()))
-    {
-
+        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
-    }
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
              mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
              mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y()))
-    {
-
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
         setCursor(Qt::SizeFDiagCursor);
     }
 

@@ -34,6 +34,7 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
     elementText = trUtf8("弹出按钮");
     enableOnInitial_ = true;
     showOnInitial_ = true;
+    transparent_ = false;
     TagManager::setProjectPath(projPath);
     DrawListUtils::setProjectPath(projPath);
     ElementIDHelper::setProjectPath(projPath);

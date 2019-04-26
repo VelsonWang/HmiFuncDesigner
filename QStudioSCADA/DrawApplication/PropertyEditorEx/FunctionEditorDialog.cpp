@@ -482,35 +482,27 @@ void FunctionEditorDialog::createPropertyList() {
     }
 }
 
-void FunctionEditorDialog::updateElementProperty(uint id, const QVariant &value) {
-    TFuncObjectItem *pFuncObjItem;
-    pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
-
-    foreach (Property *prop, propList_) {
-        if(prop->getId() == id) {
-            QString szName = prop->getName();
-            foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
-                if(pArgItem->name == szName) {
-                    pArgItem->value = value.toString();
-                    break;
-                }
-            }
-            if(szName == tr("事件类型")) {
-                pFuncObjItem->szEvent_ = value.toString();
-            }
-
-            QString szFunc = pFuncObjItem->getFuncString();
-            ui->tableEventFunc->item(iSelectedCurRow_, 0)->setText(szFunc);
-            ui->tableEventFunc->item(iSelectedCurRow_, 1)->setText(pFuncObjItem->szEvent_);
-            break;
-        }
-    }
-}
 
 QList<Property *> FunctionEditorDialog::getPropertyList() const {
     return propList_;
 }
 
 void FunctionEditorDialog::propertyChanged(Property *property) {
-    updateElementProperty(property->getId(), property->getValue());
+    TFuncObjectItem *pFuncObjItem;
+    pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
+
+    QString szName = property->getName();
+    foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
+        if(pArgItem->name == szName) {
+            pArgItem->value = property->getValue().toString();
+            break;
+        }
+    }
+    if(szName == tr("事件类型")) {
+        pFuncObjItem->szEvent_ = property->getValue().toString();
+    }
+
+    QString szFunc = pFuncObjItem->getFuncString();
+    ui->tableEventFunc->item(iSelectedCurRow_, 0)->setText(szFunc);
+    ui->tableEventFunc->item(iSelectedCurRow_, 1)->setText(pFuncObjItem->szEvent_);
 }

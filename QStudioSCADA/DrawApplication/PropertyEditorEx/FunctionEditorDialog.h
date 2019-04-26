@@ -162,7 +162,6 @@ private:
     void initTableWidget();
     TFuncObjectItem *getFuncObjectItem(const QString &name);
     void clearProperty();
-    void updateElementProperty(uint id, const QVariant &value);
     void updatePropertyModel();
     void createPropertyList();
     QList<Property *> getPropertyList() const;

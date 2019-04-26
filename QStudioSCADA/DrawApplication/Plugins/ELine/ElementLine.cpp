@@ -222,7 +222,6 @@ void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF pp1 = elementLine.p1();

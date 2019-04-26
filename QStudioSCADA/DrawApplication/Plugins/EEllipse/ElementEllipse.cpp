@@ -295,7 +295,6 @@ void ElementEllipse::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 void ElementEllipse::mousePressEvent(QGraphicsSceneMouseEvent *event) {
-
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
