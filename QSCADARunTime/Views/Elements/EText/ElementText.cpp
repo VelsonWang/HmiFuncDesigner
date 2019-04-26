@@ -33,7 +33,7 @@ void ElementText::updateBoundingElement() {
 }
 
 void ElementText::paint(QPainter *painter) {
-    if(!showOnInitial_ || bHide_) {
+    if(!showOnInitial_ || bHide_ || !bShow_) {
         return;
     }
 

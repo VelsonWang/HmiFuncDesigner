@@ -7,7 +7,7 @@ LIBRARY_OUTPUT_PATH = ../../../build-QStudioSCADA/libs/lib
 
 DESTDIR = $$LIBRARY_OUTPUT_PATH
 
-CONFIG += debug_and_release
+
 
 
 

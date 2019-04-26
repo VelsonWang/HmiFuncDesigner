@@ -76,12 +76,14 @@ public:
         int count = argList_.count();
         for(int i=0; i<count; i++) {
             if(argList_.at(i)->type == "GRAPHPAGELIST" ||
-                    argList_.at(i)->type == "TAGLIST") {
+                    argList_.at(i)->type == "TAGLIST" ||
+                    argList_.at(i)->type == "ELEMENTIDLIST") {
                 ret += "\"";
             }
             ret += argList_.at(i)->value;
             if(argList_.at(i)->type == "GRAPHPAGELIST" ||
-                    argList_.at(i)->type == "TAGLIST") {
+                    argList_.at(i)->type == "TAGLIST" ||
+                    argList_.at(i)->type == "ELEMENTIDLIST") {
                 ret += "\"";
             }
             ret += ",";

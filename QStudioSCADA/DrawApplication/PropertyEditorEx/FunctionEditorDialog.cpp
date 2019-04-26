@@ -5,6 +5,7 @@
 #include "Element.h"
 #include "TagManager.h"
 #include "DrawListUtils.h"
+#include "ElementIDHelper.h"
 #include <QListWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
@@ -466,13 +467,22 @@ void FunctionEditorDialog::createPropertyList() {
                 if(pArgItem->value == "")
                     pArgItem->value = DrawListUtils::drawList_.at(0);
                 graphProp->setValue(pArgItem->value);
+            } else if(pArgItem->type == "ELEMENTIDLIST") {
+                ListProperty *idProp = new ListProperty(pArgItem->name);
+                idProp->setId(EL_ID);
+                QStringList idList;
+                ElementIDHelper::getAllElementIDName(ElementIDHelper::getProjectPath(), idList);
+                idProp->setList(idList);
+                propList_.insert(propList_.end(), idProp);
+                if(pArgItem->value == "")
+                    pArgItem->value = idList.at(0);
+                idProp->setValue(pArgItem->value);
             }
         }
     }
 }
 
 void FunctionEditorDialog::updateElementProperty(uint id, const QVariant &value) {
-
     TFuncObjectItem *pFuncObjItem;
     pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
 

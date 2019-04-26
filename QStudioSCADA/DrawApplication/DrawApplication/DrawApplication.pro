@@ -16,14 +16,14 @@ DESTDIR = $$IDE_BIN_PATH
 
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
+    LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
     LIBS += -L$$IDE_LIBRARY_PATH -lXmlUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
     LIBS += -L$$IDE_LIBRARY_PATH -lTagManagerd
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
-    LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
+    LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lHelper
     LIBS += -L$$IDE_LIBRARY_PATH -lXmlUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
@@ -49,8 +49,7 @@ SOURCES += \
     PluginManager.cpp \
     ../PropertyEditorEx/FunctionEditorDialog.cpp \
     ../PropertyEditorEx/functionproperty.cpp \
-    ../PropertyEditorEx/functionpropertyeditor.cpp \
-    ElementIDHelper.cpp
+    ../PropertyEditorEx/functionpropertyeditor.cpp
 
 HEADERS  += \
     GraphPage.h \
@@ -71,8 +70,7 @@ HEADERS  += \
     PluginManager.h \
     ../PropertyEditorEx/FunctionEditorDialog.h \
     ../PropertyEditorEx/functionproperty.h \
-    ../PropertyEditorEx/functionpropertyeditor.h \
-    ElementIDHelper.h
+    ../PropertyEditorEx/functionpropertyeditor.h
 
 FORMS    += \
     ElementLibraryWidget.ui \

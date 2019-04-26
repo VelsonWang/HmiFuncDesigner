@@ -206,6 +206,7 @@ QScriptValue ReturnGraphPage(QScriptContext *context, QScriptEngine *engine, voi
 QScriptValue SetRealValue(QScriptContext *context, QScriptEngine *engine, void *pargs)
 {
     Q_UNUSED(pargs)
+    Q_UNUSED(engine)
     QScriptValue sVar = context->argument(0);
     QScriptValue dValue = context->argument(1);
 
@@ -412,6 +413,45 @@ QScriptValue WaitForMillisec(QScriptContext *context, QScriptEngine *engine, voi
     return 1;
 }
 
+/////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////// 控件操作函数 //////////////////////////////////
+
+
+/**
+ * @brief HideControlElement
+ * @details 隐藏控件
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue HideControlElement(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue id = context->argument(0);
+    QString szId = id.toString();
+    MainWindow::instance()->hideControlElement(szId);
+    return 1;
+}
+
+/**
+ * @brief ShowControlElement
+ * @details 显示控件
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue ShowControlElement(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue id = context->argument(0);
+    QString szId = id.toString();
+    MainWindow::instance()->showControlElement(szId);
+    return 1;
+}
+
 //////////////////////////////////////////////////////////////////////////////
 
 void addFuncToScriptEngine(QScriptEngine *engine)
@@ -464,5 +504,13 @@ void addFuncToScriptEngine(QScriptEngine *engine)
     QScriptValue funcWaitForMillisec = engine->newFunction(WaitForMillisec, nullptr);
     engine->globalObject().setProperty("WaitForMillisec", funcWaitForMillisec);
 
+    /////////////////////////// 控件操作函数 //////////////////////////////////
 
+    // 隐藏控件
+    QScriptValue funcHideControlElement = engine->newFunction(HideControlElement, nullptr);
+    engine->globalObject().setProperty("HideControlElement", funcHideControlElement);
+
+    // 显示控件
+    QScriptValue funcShowControlElement = engine->newFunction(ShowControlElement, nullptr);
+    engine->globalObject().setProperty("ShowControlElement", funcShowControlElement);
 }

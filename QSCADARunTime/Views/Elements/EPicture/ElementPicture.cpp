@@ -39,7 +39,7 @@ void ElementPicture::updateBoundingElement() {
 }
 
 void ElementPicture::paint(QPainter *painter) {
-    if(!showOnInitial_) {
+    if(!showOnInitial_ || !bShow_) {
         return;
     }
 

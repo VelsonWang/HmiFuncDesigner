@@ -511,6 +511,22 @@ void GraphPage::closeGraphPage() {
     SCADARunTime::execScriptFunction(funcs_, tr("关闭画面"));
 }
 
+
+/**
+ * @brief GraphPage::getElement
+ * @details 通过控件ID取得控件
+ * @param eleId 控件ID
+ * @return 控件对象
+ */
+Element *GraphPage::getElement(const QString &eleId) {
+    foreach (Element *pEle, elementList_) {
+        if(pEle->getElementId() == eleId)
+            return pEle;
+    }
+    return nullptr;
+}
+
+
 QDataStream &operator>>(QDataStream &in,GraphPage &page) {
     QString filename;
     QString id;

@@ -50,7 +50,7 @@ void ElementPushButton::updateBoundingElement() {
 }
 
 void ElementPushButton::paint(QPainter *painter) {
-    if(!showOnInitial_) {
+    if(!showOnInitial_ || !bShow_) {
         return;
     }
 
@@ -136,7 +136,7 @@ void ElementPushButton::mouseMoveEvent(QMouseEvent *event) {
 
 void ElementPushButton::mousePressEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_) {
+    if(!enableOnInitial_ || !bShow_) {
         return;
     }
 
@@ -160,7 +160,7 @@ void ElementPushButton::mousePressEvent(QMouseEvent *event) {
 
 void ElementPushButton::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_) {
+    if(!enableOnInitial_ || !bShow_) {
         return;
     }
 

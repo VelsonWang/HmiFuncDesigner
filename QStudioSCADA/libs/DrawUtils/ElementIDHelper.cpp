@@ -17,6 +17,28 @@ ElementIDHelper::~ElementIDHelper() {
 
 
 /**
+ * @brief TagManager::setProjectPath
+ * @details 设置工程路径
+ * @param path 工程路径
+ */
+void ElementIDHelper::setProjectPath(const QString &path) {
+    if(szProjectPath_ != path) {
+        szProjectPath_ = path;
+    }
+}
+
+
+/**
+ * @brief TagManager::getProjectPath
+ * @details 取得工程路径
+ * @return 工程路径
+ */
+QString ElementIDHelper::getProjectPath() {
+    return szProjectPath_;
+}
+
+
+/**
  * @brief ElementIDHelper::getAllElementIDName
  * @details 获取工程所有控件的ID名称
  * @param proj_path

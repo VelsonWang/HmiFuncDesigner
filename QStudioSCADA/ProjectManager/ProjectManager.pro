@@ -24,14 +24,12 @@ include($$PWD/../common/register/register.pri)
 #CONFIG += release
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
-#Use the -Lpath command to add a path to the list of directories to search for libraries. 
-#Use -llibrary (dash, lower case L,library name) to add a reference to the actual library.
 
 #message(libout_path $$IDE_LIBRARY_PATH)
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$IDE_LIBRARY_PATH -ledncryptd
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtilsd
+    LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtilsd
     LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
     LIBS += -L$$IDE_LIBRARY_PATH -lCsvd
     LIBS += -L$$IDE_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
@@ -44,7 +42,7 @@ CONFIG(debug, debug|release) { #debug
 else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -ledncrypt
     LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
-    LIBS += -L$$IDE_LIBRARY_PATH -lDrawListUtils
+    LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lHelper
     LIBS += -L$$IDE_LIBRARY_PATH -lCsv
     LIBS += -L$$IDE_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
@@ -53,13 +51,6 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
 }
-
-# debug: The project is being built in debug mode.
-# release: The project is being built in release mode.
-# win32: The project is being built in a Windows environment.
-# macx: The project is being built in a Mac OS X environment.
-# unix (including Linux): The project is being built in a Unix environment.
-
 
 SOURCES += main.cpp\
         MainWindow.cpp \

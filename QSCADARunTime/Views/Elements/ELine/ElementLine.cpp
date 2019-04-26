@@ -34,6 +34,9 @@ void ElementLine::updateBoundingElement() {
 }
 
 void ElementLine::paint(QPainter *painter) {
+    if(!bShow_) {
+        return;
+    }
     painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
     painter->setRenderHint(QPainter::SmoothPixmapTransform);

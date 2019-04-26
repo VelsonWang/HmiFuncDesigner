@@ -2,6 +2,7 @@
 #include "PubTool.h"
 #include "TagManager.h"
 #include "DrawListUtils.h"
+#include "ElementIDHelper.h"
 #include "Helper.h"
 #include "xmlobject.h"
 #include <QMessageBox>
@@ -35,6 +36,7 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
     showOnInitial_ = true;
     TagManager::setProjectPath(projPath);
     DrawListUtils::setProjectPath(projPath);
+    ElementIDHelper::setProjectPath(projPath);
 
     createPropertyList();
     updatePropertyModel();

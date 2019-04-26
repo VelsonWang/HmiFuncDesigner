@@ -1,8 +1,9 @@
 ﻿#include "Element.h"
 #include <QDebug>
 
-Element::Element(QObject *parent) :
-    QObject(parent) {
+Element::Element(QObject *parent)
+    : QObject(parent),
+      bShow_(true) {
 
 }
 
@@ -211,4 +212,19 @@ QWidget *Element::getOwnerWidget() {
 }
 
 
+/**
+ * @brief Element::hideElement
+ * @details 隐藏控件
+ */
+void Element::hideElement() {
+    bShow_ = false;
+}
 
+
+/**
+ * @brief Element::showElement
+ * @details 显示控件
+ */
+void Element::showElement() {
+    bShow_ = true;
+}

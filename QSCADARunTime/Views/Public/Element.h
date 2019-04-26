@@ -67,6 +67,11 @@ public:
     // 获取元素所属窗口
     QWidget *getOwnerWidget();
 
+    // 隐藏控件
+    void hideElement();
+    // 显示控件
+    void showElement();
+
 protected:
     QString elementId;
     QColor backgroundColor;
@@ -85,6 +90,7 @@ protected:
     QString internalElementType;
     QString strProjectPath_; // 工程路径
     QWidget *ownerWidget_;
+    bool bShow_;
 
 signals:
     void elementMoved(QPointF);

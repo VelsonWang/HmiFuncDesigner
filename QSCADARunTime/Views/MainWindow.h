@@ -46,6 +46,11 @@ public:
     void loadGraphPages(const QString &pagePath);
     // 卸载工程画面
     void unLoadGraphPages();
+    // 隐藏控件
+    void hideControlElement(const QString &eleId);
+    // 显示控件
+    void showControlElement(const QString &eleId);
+
 
 private:
     void updateGraphPageViewInfo(const QString &);

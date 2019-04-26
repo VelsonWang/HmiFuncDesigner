@@ -7,6 +7,10 @@ class ElementIDHelper : public QObject
 {
     Q_OBJECT
 public:
+    // 设置工程路径
+    static void setProjectPath(const QString &path);
+    // 取得工程路径
+    static QString getProjectPath();
     //获取工程所有控件的ID名称
     static void getAllElementIDName(const QString &proj_path, QStringList &idList);
 

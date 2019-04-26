@@ -37,7 +37,7 @@ void ElementRect::updateBoundingElement() {
 }
 
 void ElementRect::paint(QPainter *painter) {
-    if(!showOnInitial_) {
+    if(!showOnInitial_ || !bShow_) {
         return;
     }
 

@@ -54,7 +54,7 @@ void ElementInputEdit::updateBoundingElement() {
 }
 
 void ElementInputEdit::paint(QPainter *painter) {
-    if(!showOnInitial_) {
+    if(!showOnInitial_ || !bShow_) {
         return;
     }
     painter->save();
@@ -146,7 +146,7 @@ void ElementInputEdit::mouseMoveEvent(QMouseEvent *event) {
 
 void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_ || !enableEdit_) {
+    if(!enableOnInitial_ || !enableEdit_ || !bShow_) {
         return;
     }
 
@@ -218,7 +218,7 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
 
 void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_) {
+    if(!enableOnInitial_ || !bShow_) {
         return;
     }
 }

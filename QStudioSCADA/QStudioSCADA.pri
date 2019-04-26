@@ -123,7 +123,7 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/Utils \
     $$IDE_SOURCE_TREE/libs/edncrypt \
     $$IDE_SOURCE_TREE/libs/ConfigUtils \
-    $$IDE_SOURCE_TREE/libs/DrawListUtils \
+    $$IDE_SOURCE_TREE/libs/DrawUtils \
     $$IDE_SOURCE_TREE/libs/Csv \
     $$IDE_SOURCE_TREE/libs/XmlUtils \
     $$IDE_SOURCE_TREE/libs/Helper \

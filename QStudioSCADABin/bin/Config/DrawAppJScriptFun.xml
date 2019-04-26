@@ -108,6 +108,21 @@
 		</Func>
 	</FuncSupport>
     <FuncSupport name="CtrlEleOptFun" funcName="控件操作">
-		
+		<Func name="HideControlElement">
+			<name>函数原型:void HideControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName将变为不可见状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_THideControlElement("Text_0001")  // 将文本控件"Text_0001"隐藏为不可见状态</demo>
+		</Func>
+		<Func name="ShowControlElement">
+			<name>函数原型:void ShowControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName将变为可见状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TShowControlElement("Text_0001")  // 将文本控件"Text_0001"显示为可见状态</demo>
+		</Func>
 	</FuncSupport>
 </FuncSupportList>

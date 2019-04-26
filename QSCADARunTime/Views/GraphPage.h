@@ -57,6 +57,9 @@ public:
     void openGraphPage();
     // 画面关闭
     void closeGraphPage();
+    // 取得控件
+    Element *getElement(const QString &eleId);
+
 
 protected:
     void paintEvent(QPaintEvent *event);

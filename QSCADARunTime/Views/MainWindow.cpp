@@ -172,6 +172,48 @@ void MainWindow::moveCenter() {
 }
 
 
+/**
+ * @brief MainWindow::hideControlElement
+ * @details 隐藏控件
+ * @param eleId 控件ID
+ */
+void MainWindow::hideControlElement(const QString &eleId) {
+    QStringList listPageIdEleId = eleId.split('.');
+    if(listPageIdEleId.size() == 2) {
+        QString szPageId = listPageIdEleId.at(0);
+        QString szEleId = listPageIdEleId.at(1);
+        if(currentGraphPage_ != nullptr) {
+            if(currentGraphPage_->getGraphPageId() == szPageId) {
+                Element *pEle = currentGraphPage_->getElement(szEleId);
+                if(pEle != nullptr) {
+                    pEle->hideElement();
+                }
+            }
+        }
+    }
+}
+
+
+/**
+ * @brief MainWindow::showControlElement
+ * @details 显示控件
+ * @param eleId 控件ID
+ */
+void MainWindow::showControlElement(const QString &eleId) {
+    QStringList listPageIdEleId = eleId.split('.');
+    if(listPageIdEleId.size() == 2) {
+        QString szPageId = listPageIdEleId.at(0);
+        QString szEleId = listPageIdEleId.at(1);
+        if(currentGraphPage_ != nullptr) {
+            if(currentGraphPage_->getGraphPageId() == szPageId) {
+                Element *pEle = currentGraphPage_->getElement(szEleId);
+                if(pEle != nullptr) {
+                    pEle->showElement();
+                }
+            }
+        }
+    }
+}
 
 
 
