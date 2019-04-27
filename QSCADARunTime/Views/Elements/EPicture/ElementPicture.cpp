@@ -1,4 +1,4 @@
-﻿#include "elementPicture.h"
+﻿#include "ElementPicture.h"
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>

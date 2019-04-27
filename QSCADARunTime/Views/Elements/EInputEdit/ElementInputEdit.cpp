@@ -146,7 +146,7 @@ void ElementInputEdit::mouseMoveEvent(QMouseEvent *event) {
 
 void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_ || !enableEdit_ || !bShow_) {
+    if(!enableOnInitial_ || !enableEdit_ || !bShow_ || !bEnable_) {
         return;
     }
 
@@ -218,7 +218,7 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
 
 void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_ || !bShow_) {
+    if(!enableOnInitial_ || !bShow_ || !bEnable_) {
         return;
     }
 }

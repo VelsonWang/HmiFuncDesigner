@@ -136,7 +136,7 @@ void ElementPushButton::mouseMoveEvent(QMouseEvent *event) {
 
 void ElementPushButton::mousePressEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_ || !bShow_) {
+    if(!enableOnInitial_ || !bShow_ || !bEnable_) {
         return;
     }
 
@@ -160,7 +160,7 @@ void ElementPushButton::mousePressEvent(QMouseEvent *event) {
 
 void ElementPushButton::mouseReleaseEvent(QMouseEvent *event) {
     Q_UNUSED(event)
-    if(!enableOnInitial_ || !bShow_) {
+    if(!enableOnInitial_ || !bShow_ || !bEnable_) {
         return;
     }
 
