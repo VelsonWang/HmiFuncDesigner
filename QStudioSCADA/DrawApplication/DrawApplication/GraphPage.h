@@ -86,6 +86,7 @@ protected:
     void dragMoveEvent(QGraphicsSceneDragDropEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     void keyPressEvent(QKeyEvent *event);
 

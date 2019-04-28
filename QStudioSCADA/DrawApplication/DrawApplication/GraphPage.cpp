@@ -473,6 +473,28 @@ void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
+void GraphPage::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+    QGraphicsScene::mouseMoveEvent(event);
+    foreach (QGraphicsItem *item, selectedItems()) {
+        Element *ele = dynamic_cast<Element *>(item);
+        if (ele != nullptr) {
+            if(ele->x() < 0) {
+                ele->setElementXPos(0);
+            }
+            if(ele->x() > this->getGraphPageWidth() - ele->getElementWidth()) {
+                ele->setElementXPos(this->getGraphPageWidth() - ele->getElementWidth());
+            }
+
+            if(ele->y() < 0) {
+                ele->setElementYPos(0);
+            }
+            if(ele->y() > this->getGraphPageHeight() - ele->getElementHeight()) {
+                ele->setElementYPos(this->getGraphPageHeight() - ele->getElementHeight());
+            }
+        }
+    }
+}
+
 void GraphPage::contextMenuEvent(QGraphicsSceneContextMenuEvent *event) {
     contextMenu.exec(event->screenPos());
 }
