@@ -91,10 +91,18 @@
 ![GraphPageEdit](md/GraphPageEdit.png)
 
 
+![GraphPageEdit](md/GraphPageEdit2.png)
+
+
+
 
 ### 9.画面解析运行
 
 ![RuntimeViewShow](md/RuntimeViewShow.png)
+
+
+![RuntimeViewShow](md/RuntimeViewShow2.png)
+
 
 
 

@@ -71,7 +71,8 @@ void ScriptFileManage::AddScriptInfo(ScriptObject * obj)
 }
 
 
-void ScriptFileManage::ModifyScriptInfo(ScriptObject * oldobj, ScriptObject * newobj)
+void ScriptFileManage::ModifyScriptInfo(ScriptObject * oldobj,
+                                        ScriptObject * newobj)
 {
     int pos = m_listScriptInfo.indexOf(oldobj);
     if(pos == -1)
@@ -168,7 +169,9 @@ void ScriptFileManage::save(const QString &filename, SaveFormat saveFormat)
  * @param pargs
  * @return
  */
-QScriptValue SwitchGraphPage(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+QScriptValue SwitchGraphPage(QScriptContext *context,
+                             QScriptEngine *engine,
+                             void *pargs) {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue page = context->argument(0);
@@ -186,7 +189,9 @@ QScriptValue SwitchGraphPage(QScriptContext *context, QScriptEngine *engine, voi
  * @param pargs
  * @return
  */
-QScriptValue ReturnGraphPage(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+QScriptValue ReturnGraphPage(QScriptContext *context,
+                             QScriptEngine *engine,
+                             void *pargs) {
     Q_UNUSED(context)
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -203,7 +208,9 @@ QScriptValue ReturnGraphPage(QScriptContext *context, QScriptEngine *engine, voi
 /*
 * 设置变量值
 */
-QScriptValue SetRealValue(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue SetRealValue(QScriptContext *context,
+                          QScriptEngine *engine,
+                          void *pargs)
 {
     Q_UNUSED(pargs)
     Q_UNUSED(engine)
@@ -221,7 +228,9 @@ QScriptValue SetRealValue(QScriptContext *context, QScriptEngine *engine, void *
 /*
 * 变量值自增
 */
-QScriptValue AddAIValue(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue AddAIValue(QScriptContext *context,
+                        QScriptEngine *engine,
+                        void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -242,7 +251,9 @@ QScriptValue AddAIValue(QScriptContext *context, QScriptEngine *engine, void *pa
 /*
 * 变量值自减
 */
-QScriptValue SubAIValue(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue SubAIValue(QScriptContext *context,
+                        QScriptEngine *engine,
+                        void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -264,7 +275,9 @@ QScriptValue SubAIValue(QScriptContext *context, QScriptEngine *engine, void *pa
 /*
 * 获取变量的值
 */
-QScriptValue GetRealValue(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue GetRealValue(QScriptContext *context,
+                          QScriptEngine *engine,
+                          void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -283,7 +296,9 @@ QScriptValue GetRealValue(QScriptContext *context, QScriptEngine *engine, void *
 /*
 * 变量0,1切换
 */
-QScriptValue StateChange(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue StateChange(QScriptContext *context,
+                         QScriptEngine *engine,
+                         void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -308,7 +323,9 @@ QScriptValue StateChange(QScriptContext *context, QScriptEngine *engine, void *p
 /*
 * 设置系统变量值
 */
-QScriptValue SetSysValue(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue SetSysValue(QScriptContext *context,
+                         QScriptEngine *engine,
+                         void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -329,7 +346,9 @@ QScriptValue SetSysValue(QScriptContext *context, QScriptEngine *engine, void *p
 /*
 * 获取系统变量值
 */
-QScriptValue GetSysValue(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue GetSysValue(QScriptContext *context,
+                         QScriptEngine *engine,
+                         void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -349,7 +368,9 @@ QScriptValue GetSysValue(QScriptContext *context, QScriptEngine *engine, void *p
 /*
 * 控制延时n秒
 */
-QScriptValue Sleep(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue Sleep(QScriptContext *context,
+                   QScriptEngine *engine,
+                   void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -363,16 +384,18 @@ QScriptValue Sleep(QScriptContext *context, QScriptEngine *engine, void *pargs)
 /*
 * 设置系统时间
 */
-QScriptValue SetDateTime(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue SetDateTime(QScriptContext *context,
+                         QScriptEngine *engine,
+                         void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     int ny = context->argument(0).toInteger();
-    int nm = context->argument(0).toInteger();
-    int nd = context->argument(0).toInteger();
-    int nh = context->argument(0).toInteger();
-    int nf = context->argument(0).toInteger();
-    int ns = context->argument(0).toInteger();
+    int nm = context->argument(1).toInteger();
+    int nd = context->argument(2).toInteger();
+    int nh = context->argument(3).toInteger();
+    int nf = context->argument(4).toInteger();
+    int ns = context->argument(5).toInteger();
 
 #ifdef Q_OS_WIN
     SYSTEMTIME st;
@@ -404,7 +427,9 @@ QScriptValue SetDateTime(QScriptContext *context, QScriptEngine *engine, void *p
 /*
 * 延时n毫秒
 */
-QScriptValue WaitForMillisec(QScriptContext *context, QScriptEngine *engine, void *pargs)
+QScriptValue WaitForMillisec(QScriptContext *context,
+                             QScriptEngine *engine,
+                             void *pargs)
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -426,7 +451,9 @@ QScriptValue WaitForMillisec(QScriptContext *context, QScriptEngine *engine, voi
  * @param pargs
  * @return
  */
-QScriptValue HideControlElement(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+QScriptValue HideControlElement(QScriptContext *context,
+                                QScriptEngine *engine,
+                                void *pargs) {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
@@ -443,12 +470,113 @@ QScriptValue HideControlElement(QScriptContext *context, QScriptEngine *engine, 
  * @param pargs
  * @return
  */
-QScriptValue ShowControlElement(QScriptContext *context, QScriptEngine *engine, void *pargs) {
+QScriptValue ShowControlElement(QScriptContext *context,
+                                QScriptEngine *engine,
+                                void *pargs) {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
     QString szId = id.toString();
     MainWindow::instance()->showControlElement(szId);
+    return 1;
+}
+
+/**
+ * @brief EnableControlElement
+ * @details 生效控件
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue EnableControlElement(QScriptContext *context,
+                                  QScriptEngine *engine,
+                                  void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue id = context->argument(0);
+    QString szId = id.toString();
+    MainWindow::instance()->enableElement(szId);
+    return 1;
+}
+
+/**
+ * @brief DisableControlElement
+ * @details 失效控件
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue DisableControlElement(QScriptContext *context,
+                                   QScriptEngine *engine,
+                                   void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue id = context->argument(0);
+    QString szId = id.toString();
+    MainWindow::instance()->disableElement(szId);
+    return 1;
+}
+
+/**
+ * @brief MoveControlElement
+ * @details 偏移控件
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue MoveControlElement(QScriptContext *context,
+                                QScriptEngine *engine,
+                                void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue id = context->argument(0);
+    QScriptValue nx = context->argument(1);
+    QScriptValue ny = context->argument(2);
+    QString szId = id.toString();
+    int x = nx.toInteger();
+    int y = ny.toInteger();
+    MainWindow::instance()->moveControlElement(szId, x, y);
+    return 1;
+}
+
+/**
+ * @brief BlinkControlElement
+ * @details 闪烁控件
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue BlinkControlElement(QScriptContext *context,
+                                 QScriptEngine *engine,
+                                 void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue id = context->argument(0);
+    QString szId = id.toString();
+    MainWindow::instance()->startBlinkElement(szId);
+    return 1;
+}
+
+/**
+ * @brief StopBlinkControlElement
+ * @details 停止闪烁控件
+ * @param context
+ * @param engine
+ * @param pargs
+ * @return
+ */
+QScriptValue StopBlinkControlElement(QScriptContext *context,
+                                     QScriptEngine *engine,
+                                     void *pargs) {
+    Q_UNUSED(engine)
+    Q_UNUSED(pargs)
+    QScriptValue id = context->argument(0);
+    QString szId = id.toString();
+    MainWindow::instance()->stopBlinkElement(szId);
     return 1;
 }
 
@@ -513,4 +641,24 @@ void addFuncToScriptEngine(QScriptEngine *engine)
     // 显示控件
     QScriptValue funcShowControlElement = engine->newFunction(ShowControlElement, nullptr);
     engine->globalObject().setProperty("ShowControlElement", funcShowControlElement);
+
+    // 生效控件
+    QScriptValue funcEnableControlElement = engine->newFunction(EnableControlElement, nullptr);
+    engine->globalObject().setProperty("EnableControlElement", funcEnableControlElement);
+
+    // 失效控件
+    QScriptValue funcDisableControlElement = engine->newFunction(DisableControlElement, nullptr);
+    engine->globalObject().setProperty("DisableControlElement", funcDisableControlElement);
+
+    // 偏移控件
+    QScriptValue funcMoveControlElement = engine->newFunction(MoveControlElement, nullptr);
+    engine->globalObject().setProperty("MoveControlElement", funcMoveControlElement);
+
+    // 闪烁控件
+    QScriptValue funcBlinkControlElement = engine->newFunction(BlinkControlElement, nullptr);
+    engine->globalObject().setProperty("BlinkControlElement", funcBlinkControlElement);
+
+    // 停止闪烁控件
+    QScriptValue funcStopBlinkControlElement = engine->newFunction(StopBlinkControlElement, nullptr);
+    engine->globalObject().setProperty("StopBlinkControlElement", funcStopBlinkControlElement);
 }

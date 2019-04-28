@@ -1,4 +1,4 @@
-﻿#include "elementtext.h"
+﻿#include "ElementText.h"
 #include "PubTool.h"
 #include "RealTimeDB.h"
 #include <QDebug>
@@ -64,16 +64,14 @@ void ElementText::paint(QPainter *painter) {
 }
 
 void ElementText::refreshTagValue() {
-	if (szTagSelected_ == "")
-	{
+    if (szTagSelected_ == "") {
 		return;
 	}
 
 	qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
 	if (id != -1) {
 		elementText = RealTimeDB::GetDataString(id);
-	}
-	else {
+    } else {
 		elementText = "#";
 	}
 }

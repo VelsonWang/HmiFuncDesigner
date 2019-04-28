@@ -4,8 +4,7 @@
 Element::Element(QObject *parent)
     : QObject(parent),
       bShow_(true),
-      bEnable_(true),
-      bBlink_(true) {
+      bEnable_(true) {
 
 }
 
@@ -254,7 +253,8 @@ void Element::disableElement() {
  * @details 闪烁控件
  */
 void Element::startBlinkElement() {
-    bBlink_ = true;
+    connect(&blinkTimer_, SIGNAL(timeout()), this, SLOT(blinkTimeOut()));
+    blinkTimer_.start(500);
 }
 
 
@@ -263,5 +263,10 @@ void Element::startBlinkElement() {
  * @details 停止闪烁控件
  */
 void Element::stopBlinkElement() {
-    bBlink_ = false;
+    disconnect(&blinkTimer_, SIGNAL(timeout()), this, SLOT(blinkTimeOut()));
+    blinkTimer_.stop();
+}
+
+void Element::blinkTimeOut() {
+    bShow_ = !bShow_;
 }

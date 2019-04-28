@@ -101,7 +101,6 @@ protected:
     QWidget *ownerWidget_;
     bool bShow_; // 显示
     bool bEnable_; // 生效
-    bool bBlink_; // 闪烁
     QTimer blinkTimer_;  // 闪烁定时器
 
 signals:
@@ -109,7 +108,7 @@ signals:
     void elementResized(int,int,QPointF);
 
 private slots:
-    virtual void blinkTimeOut() {}
+    virtual void blinkTimeOut();
 
 };
 

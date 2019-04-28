@@ -50,7 +50,16 @@ public:
     void hideControlElement(const QString &eleId);
     // 显示控件
     void showControlElement(const QString &eleId);
-
+    // 生效控件
+    void enableElement(const QString &eleId);
+    // 失效控件
+    void disableElement(const QString &eleId);
+    // 偏移控件
+    void moveControlElement(const QString &eleId, int x, int y);
+    // 闪烁控件
+    void startBlinkElement(const QString &eleId);
+    // 停止闪烁控件
+    void stopBlinkElement(const QString &eleId);
 
 private:
     void updateGraphPageViewInfo(const QString &);

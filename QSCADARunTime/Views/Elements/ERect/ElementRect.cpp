@@ -1,4 +1,4 @@
-﻿#include "elementrect.h"
+﻿#include "ElementRect.h"
 #include "RealTimeDB.h"
 #include <QDebug>
 
@@ -46,7 +46,7 @@ void ElementRect::paint(QPainter *painter) {
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
     painter->setPen(QPen(borderColor_, borderWidth_));
     if(isFill_) {
-        if(szTagSelected_ != "") {
+        if(szTagSelected_ != "" && bEnable_) {
             QString szTagValue = "";
             if(tagColorList_.size()) {
                 qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
