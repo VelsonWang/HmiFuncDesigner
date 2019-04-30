@@ -32,10 +32,10 @@ QStringList ModbusRTU::GetDeviceSupportProtocol()
 QStringList ModbusRTU::GetDeviceSupportRegisterArea()
 {
     QStringList list;
-    list<<"DO线圈";
-    list<<"DI离散输入寄存器";
-    list<<"AO保持寄存器";
-    list<<"AI输入寄存器";
+    list << tr("DO线圈")
+         << tr("DI离散输入寄存器")
+         << tr("AO保持寄存器")
+         << tr("AI输入寄存器");
     return list;
 }
 
@@ -45,21 +45,44 @@ QStringList ModbusRTU::GetDeviceSupportRegisterArea()
 QStringList ModbusRTU::GetDeviceSupportDataType()
 {
     QStringList list;
-    list<<"Bit1开关量";
-    list<<"Char8位有符号数";
-    list<<"Byte8位无符号数";
-    list<<"Short16位有符号数";
-    list<<"Word16位无符号数";
-    list<<"ASCII2个字符";
-    list<<"Long32位有符号数";
-    list<<"Dword32位无符号数";
-    list<<"Float单精度浮点数";
-    list<<"String字符串";
-    list<<"Double双精度浮点数";
-    list<<"BCD";
-	//list<<"LongLong64位有符号数";
-    //list<<"DwordDword64位无符号数";
+    list << tr("Bit1开关量")
+         << tr("Char8位有符号数")
+         << tr("Byte8位无符号数")
+         << tr("Short16位有符号数")
+         << tr("Word16位无符号数")
+         << tr("ASCII2个字符")
+         << tr("Long32位有符号数")
+         << tr("Dword32位无符号数")
+         << tr("Float单精度浮点数")
+         << tr("String字符串")
+         << tr("Double双精度浮点数")
+         << tr("BCD");
     return list;
 }
 
-
+/**
+ * @brief ModbusRTU::GetRegisterAreaLimit
+ * @details 获取寄存器区地址的下限和上限
+ * @param areaName 寄存器区名称
+ * @param lowerLimit 寄存器区地址下限
+ * @param upperLimit 寄存器区地址上限
+ */
+void ModbusRTU::GetRegisterAreaLimit(const QString &areaName,
+                                     quint32 &lowerLimit,
+                                     quint32 &upperLimit) {
+    lowerLimit = 0;
+    upperLimit = 0;
+    if(areaName == tr("DO线圈")) {
+        lowerLimit = 0x0000;
+        upperLimit = 0xFFFF;
+    } else if(areaName == tr("DI离散输入寄存器")) {
+        lowerLimit = 0x0000;
+        upperLimit = 0xFFFF;
+    } else if(areaName == tr("AO保持寄存器")) {
+        lowerLimit = 0x0000;
+        upperLimit = 0xFFFF;
+    } else if(areaName == tr("AI输入寄存器")) {
+        lowerLimit = 0x0000;
+        upperLimit = 0xFFFF;
+    }
+}

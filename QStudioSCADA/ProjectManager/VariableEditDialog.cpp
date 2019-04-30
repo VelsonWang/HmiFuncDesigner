@@ -14,7 +14,8 @@
 VariableEditDialog::VariableEditDialog(QString projName, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::VariableEditDialog),
-    m_strProjectName(projName)
+    m_strProjectName(projName),
+    devPlugin_(nullptr)
 {
     ui->setupUi(this);
     ui->tabWidget->setCurrentIndex(0);
@@ -99,6 +100,31 @@ QString VariableEditDialog::GetDataRegisterSpace()
 
 void VariableEditDialog::on_btnOk_clicked()
 {
+    bool ok = false;
+    int iRegAddr = ui->editRegisterAddress->text().toInt(&ok);
+    if(!ok)
+        iRegAddr = -1;
+
+    ok = false;
+    int iOffset = ui->editAddressOffset->text().toInt(&ok);
+    if(!ok)
+        iOffset = -1;
+
+    quint32 lowerLimit;
+    quint32 upperLimit;
+    QString area = ui->cboRegisterSection->currentText();
+    if(devPlugin_ != nullptr) {
+        devPlugin_->GetRegisterAreaLimit(area, lowerLimit, upperLimit);
+        if((iRegAddr + iOffset) < lowerLimit && (iRegAddr + iOffset) > upperLimit) {
+            QMessageBox::warning(this,
+                                 tr("提示"),
+                                 QString(tr("地址设置不在范围[%1,%2]"))
+                                 .arg(QString::number(lowerLimit))
+                                 .arg(QString::number(upperLimit)));
+            return;
+        }
+
+    }
     accept();
 }
 
@@ -580,6 +606,7 @@ void VariableEditDialog::on_cboDeviceName_currentTextChanged(const QString &arg1
         if (plugin)
         {
             IDevicePlugin *iDevPlugin = qobject_cast<IDevicePlugin *>(plugin);
+            devPlugin_ = iDevPlugin;
             if (iDevPlugin)
             {
                 // 获取设备支持的所有寄存器区

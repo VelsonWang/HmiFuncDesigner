@@ -1,13 +1,13 @@
-## 简介
+## 简介 Brief introduction
 
 ​	**QStudioSCADA是一款集HMI，数据采集于一体的软件，开源旨在技术分享、相互学习、提升技术。目前软件处于开发中，功能不完善，很多代码也需要重构，但是我相信在不久的将来本软件功能会更加完善！如果这份代码有幸被你看到了，而且对此也有兴趣，那么期待你的加入！！**
 
 
-### 1. 代码下载
+### 1. 代码下载 How to download QStudioSCADA code
   1. **打开Git Bash命令行工具， 执行 git clone https://github.com/VelsonWang/QStudioSCADA.git 克隆代码至本地目录。**
   2.  **同步远端更新代码至本地，执行 git pull origin。**
 
-### 2. 软件环境
+### 2. 软件环境 Software development environment
 
 ​	1.**Qt5.10.1 + MinGW530_32** 
 
@@ -16,7 +16,7 @@
 ​	3.**如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
 
 
-### 3. QStudioSCADA软件编译	
+### 3. QStudioSCADA软件编译 How the QStudioSCADA compiles
 
  1. **打开"Qt Creator 4.5.1 (Community)"软件，打开QStudioSCADA/QStudioSCADA.pro工程。**
 
@@ -36,7 +36,7 @@
 
 ​	
 
-### 4. QSCADARunTime软件编译
+### 4. QSCADARunTime软件编译 How the QSCADARunTime compiles
 
 1. **必须先编译QStudioSCADA然后再编译QSCADARunTime工程。否则会出现找不到连接库。**
 
@@ -54,7 +54,7 @@
 
    
 
-### 5.工程管理器QStudioSCADA
+### 5. QStudioSCADA工程管理器 ProjectManager QStudioSCADA
 
 ![ProjectManager](md/_projectman_1546500878_8823.png)
 
@@ -74,19 +74,19 @@
 
     
 
-### 6.系统变量管理器
+### 6.系统变量管理器 System variable manager
 
 ![SystemVariableManager](md/SystemVariableManager.png)
 
 
 
-### 7.实时数据库显示
+### 7.实时数据库显示 Real-time database data display
 
 ![RTDBView](md/RTDBView.png)
 
 
 
-### 8.画面编辑
+### 8.画面编辑 Graphic control editor
 
 ![GraphPageEdit](md/GraphPageEdit.png)
 
@@ -96,7 +96,7 @@
 
 
 
-### 9.画面解析运行
+### 9. 画面解析运行 Run the designed UI
 
 ![RuntimeViewShow](md/RuntimeViewShow.png)
 
@@ -106,7 +106,7 @@
 
 
 
-### 10.联系方式
+### 10. 联系方式  Contact
 
 **Email：VelsonWang@qq.com**
 

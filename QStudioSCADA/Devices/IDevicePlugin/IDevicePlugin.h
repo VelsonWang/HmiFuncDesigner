@@ -22,7 +22,10 @@ public:
     virtual QStringList GetDeviceSupportRegisterArea() = 0;
     // 获取设备支持的所有数据类型
     virtual QStringList GetDeviceSupportDataType() = 0;
-
+    // 获取寄存器区地址的下限和上限
+    virtual void GetRegisterAreaLimit(const QString &areaName,
+                                      quint32 &lowerLimit,
+                                      quint32 &upperLimit) = 0;
 };
 
 

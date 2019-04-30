@@ -5,6 +5,8 @@
 #include <QStringList>
 #include "LinkManager.h"
 
+class IDevicePlugin;
+
 namespace Ui {
 class VariableEditDialog;
 }
@@ -80,6 +82,7 @@ private:
     VAR_TYPE m_iVarType;  // 变量类型
     LinkManager *m_pLinkManager;
     int m_iRegAddrOffset;
+    IDevicePlugin *devPlugin_;
 };
 
 #endif // VARIABLEEDITDIALOG_H
