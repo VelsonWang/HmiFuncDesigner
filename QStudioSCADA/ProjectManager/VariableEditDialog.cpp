@@ -587,41 +587,41 @@ void VariableEditDialog::on_chkGlobal_clicked(bool checked)
 }
 
 
-/*
-* 设备名称改变
-*/
-void VariableEditDialog::on_cboDeviceName_currentTextChanged(const QString &arg1)
-{
-    QString pluginNmae = arg1;
+/**
+ * @brief VariableEditDialog::on_cboDeviceName_currentTextChanged
+ * @details 设备名称改变
+ * @param deviceName 设备名称
+ */
+void VariableEditDialog::on_cboDeviceName_currentTextChanged(const QString &deviceName) {
+    QString pluginNmae = deviceName;
     if(pluginNmae.indexOf("_") >= 0)
         pluginNmae = pluginNmae.left(pluginNmae.indexOf("_"));
 
     QDir pluginsDir(Helper::AppDir());
     pluginsDir.cdUp();
     pluginsDir.cd("deviceplugins");
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files))
-    {
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (plugin)
-        {
-            IDevicePlugin *iDevPlugin = qobject_cast<IDevicePlugin *>(plugin);
-            devPlugin_ = iDevPlugin;
-            if (iDevPlugin)
-            {
-                // 获取设备支持的所有寄存器区
-                QStringList listReg = iDevPlugin->GetDeviceSupportRegisterArea();
-                ui->cboRegisterSection->clear();
-                ui->cboRegisterSection->addItems(listReg);
+    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+        if(fileName.indexOf(pluginNmae) != -1 && fileName.endsWith(".dll")) {
+            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            QObject *plugin = pluginLoader.instance();
+            if (plugin) {
+                IDevicePlugin *iDevPlugin = qobject_cast<IDevicePlugin *>(plugin);
+                devPlugin_ = iDevPlugin;
+                if (iDevPlugin) {
+                    // 获取设备支持的所有寄存器区
+                    QStringList listReg = iDevPlugin->GetDeviceSupportRegisterArea();
+                    ui->cboRegisterSection->clear();
+                    ui->cboRegisterSection->addItems(listReg);
 
-                // 获取设备支持的所有数据类型
-                QStringList listType = iDevPlugin->GetDeviceSupportDataType();
-                ui->cboIODataType->clear();
-                ui->cboIODataType->addItems(listType);
-            }
-            else
-            {
-                QMessageBox::critical(this, tr("系统错误"), tr("插件加载失败！\n") + fileName);
+                    // 获取设备支持的所有数据类型
+                    QStringList listType = iDevPlugin->GetDeviceSupportDataType();
+                    ui->cboIODataType->clear();
+                    ui->cboIODataType->addItems(listType);
+                } else {
+                    QMessageBox::critical(this,
+                                          tr("系统错误"),
+                                          tr("插件加载失败！\n") + fileName);
+                }
             }
         }
     }
