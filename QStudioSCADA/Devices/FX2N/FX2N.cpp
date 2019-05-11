@@ -24,7 +24,7 @@ QString FX2N::GetDeviceTypeName() {
  */
 QStringList FX2N::GetDeviceSupportProtocol() {
     QStringList list;
-    list << "Fx Protocol";
+    list << "FxProtocol";
     return list;
 }
 

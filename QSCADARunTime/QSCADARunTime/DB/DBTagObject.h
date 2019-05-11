@@ -29,8 +29,11 @@ public:
     ~DBTagObject();
 
     void SetData(QVariant v, bool bReadFromDevice = true);
+    void SetData(unsigned char* buffer);
     QVariant GetData();
+    QByteArray GetDataBytes();
     QVariant GetWriteData();
+    QByteArray GetWriteDataBytes();
 
 signals:
 

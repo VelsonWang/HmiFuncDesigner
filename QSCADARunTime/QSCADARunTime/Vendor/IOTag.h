@@ -26,6 +26,7 @@ public:
     qint32 GetRegisterAddress();
     void SetRegisterAddress(qint32 add);
     TTagDataType GetDataType();
+    qint32 GetDataTypeLength();
     void SetDataType(TTagDataType t);
     qint32 GetOffset();
     void SetOffset(qint32 o);

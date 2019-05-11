@@ -36,6 +36,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Tag \
                Vendor \
                Vendor/Modbus \
+               Vendor/Mitsubishi \
                Event \
                Script \
                Log
@@ -97,7 +98,9 @@ SOURCES += \
     DB/MySQLDatabase.cpp \
     DB/SQLiteDatabase.cpp \
     DB/RunTimeMySQLDatabase.cpp \
-    Public/Global.cpp
+    Public/Global.cpp \
+    Vendor/Mitsubishi/MitsubishiDevice.cpp \
+    Vendor/Mitsubishi/Mitsubishi.cpp
 
 
 HEADERS  += \
@@ -136,7 +139,9 @@ HEADERS  += \
     DB/MySQLDatabase.h \
     DB/SQLiteDatabase.h \
     DB/RunTimeMySQLDatabase.h \
-    Public/Global.h
+    Public/Global.h \
+    Vendor/Mitsubishi/MitsubishiDevice.h \
+    Vendor/Mitsubishi/Mitsubishi.h
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp

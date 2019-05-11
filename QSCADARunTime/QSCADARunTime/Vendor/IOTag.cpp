@@ -89,6 +89,69 @@ TTagDataType IOTag::GetDataType()
     return m_sDataType;
 }
 
+qint32 IOTag::GetDataTypeLength()
+{
+    int ret = 0;
+    switch (m_sDataType) {
+        case TYPE_VARIANT:
+        {
+            ret = 0;
+            break;
+        }
+        case TYPE_BOOL:
+        {
+            ret = 1;
+            break;
+        }
+        case TYPE_INT8:
+        case TYPE_UINT8:
+        {
+            ret = 1;
+            break;
+        }
+        case TYPE_INT16:
+        case TYPE_UINT16:
+        {
+            ret = 2;
+            break;
+        }
+        case TYPE_INT32:
+        case TYPE_UINT32:
+        case TYPE_FLOAT:
+        {
+            ret = 4;
+            break;
+        }
+        case TYPE_INT64:
+        case TYPE_UINT64:
+        case TYPE_DOUBLE:
+        {
+            ret = 8;
+            break;
+        }
+        case TYPE_ASCII2CHAR:
+        {
+            ret = 2;
+            break;
+        }
+        case TYPE_STRING:
+        {
+            ret = mLength;
+            break;
+        }
+        case TYPE_BCD:
+        {
+            ret = mLength;
+            break;
+        }
+        default:
+        {
+            ret = mLength;
+            break;
+        }
+    }
+    return ret;
+}
 
 void IOTag::SetDataType(TTagDataType t)
 {

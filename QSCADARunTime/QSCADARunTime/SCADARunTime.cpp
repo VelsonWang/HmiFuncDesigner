@@ -3,6 +3,7 @@
 #include "ModbusRTUDevice.h"
 #include "ModbusASCIIDevice.h"
 #include "TCPIPModbusDevice.h"
+#include "MitsubishiDevice.h"
 #include "DBTagObject.h"
 #include "RealTimeDB.h"
 #include "Tag.h"
@@ -99,6 +100,13 @@ bool SCADARunTime::Load(SaveFormat saveFormat)
             QString cfgfile = m_sProjectPath + "/" + sDeviceName.trimmed() + ".odb";
             pMbTcpipDevice->LoadData(DATA_SAVE_FORMAT, cfgfile);
             m_VendorList.append(pMbTcpipDevice);
+        }
+        else if(sProtocol.toUpper() == QString("FXPROTOCOL"))
+        {
+            MitsubishiDevice *pMitsubishiDevice = new MitsubishiDevice();
+            QString cfgfile = m_sProjectPath + "/" + sDeviceName.trimmed() + ".odb";
+            pMitsubishiDevice->LoadData(DATA_SAVE_FORMAT, cfgfile);
+            m_VendorList.append(pMitsubishiDevice);
         }
     }
 
