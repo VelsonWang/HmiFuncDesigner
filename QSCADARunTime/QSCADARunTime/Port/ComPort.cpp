@@ -52,15 +52,15 @@ bool ComPort::open(QString port, QStringList args)
 
     //设置校验
     QString strParity = args.at(2);
-    if(strParity == "N")
+    if(strParity == "N" || strParity == "无校验")
     {
         serialPortPtr_->setParity(PAR_NONE);
     }
-    else if(strParity == "O")
+    else if(strParity == "O" || strParity == "奇校验")
     {
         serialPortPtr_->setParity(PAR_ODD);
     }
-    else if(strParity == "E")
+    else if(strParity == "E" || strParity == "偶校验")
     {
         serialPortPtr_->setParity(PAR_EVEN);
     }
@@ -71,16 +71,17 @@ bool ComPort::open(QString port, QStringList args)
 
     //设置停止位
     QString strStopBits = args.at(3);
-    switch(strStopBits.toInt()){
-    case 0:
+    int iStopBits = strStopBits.toFloat() * 10;
+    switch(iStopBits){
+    case 10:
         serialPortPtr_->setStopBits(STOP_1);
         break;
-    case 1:
+    case 15:
  #ifdef Q_OS_WIN
         serialPortPtr_->setStopBits(STOP_1_5);
  #endif
         break;
-    case 2:
+    case 20:
         serialPortPtr_->setStopBits(STOP_2);
         break;
     default:
@@ -127,11 +128,11 @@ int ComPort::read(unsigned char *buf, int len, int ms)
     {
         buf[i] = buf_[i];
     }
-    buf_.remove(0, len);
-
 #if 0
     qDebug()<< "read: " << hexToString(buf_.data(), len);
 #endif
+    buf_.remove(0, len);
+
     return len;
 }
 
@@ -139,7 +140,7 @@ int ComPort::write(unsigned char *buf, int len, int /*ms*/)
 {
     int count = 0;
 #if 0
-    qDebug()<< "write: " << hexToString((char *)buf, len);;
+    qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
     count = serialPortPtr_->write((char*)buf, len);
     serialPortPtr_->flush();

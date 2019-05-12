@@ -1,0 +1,13 @@
+{
+    "DeviceArray": [
+        {
+            "bstop": false,
+            "name": "FX2N",
+            "path": "",
+            "prog": "FxProtocol",
+            "ramid": 0,
+            "rdy": "主链路",
+            "type": "COM"
+        }
+    ]
+}

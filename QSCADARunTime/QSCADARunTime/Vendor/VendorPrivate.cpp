@@ -39,7 +39,7 @@ bool ComDevicePrivate::LoadData(SaveFormat saveFormat, QString fileName)
     m_sPortNumber = json["sPortNumber"].toString();
     m_iBaudrate = json["iBaudrate"].toString().toInt();
     m_iDatabit = json["iDatabit"].toString().toInt();
-    m_fStopbit = json["iStopbit"].toString().toFloat();
+    m_fStopbit = json["fStopbit"].toString().toFloat();
     m_sVerifybit = json["sVerifybit"].toString();
     m_iTimeout = json["iTimeout"].toString().toInt();
 

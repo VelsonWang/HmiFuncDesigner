@@ -20,8 +20,7 @@ enum _TCPUMEM
 typedef enum _TCPUMEM TCPUMEM;
 
 
-static quint16 getBeginAddrAsCpuMem(TCPUMEM cm, TTagDataType dataType)
-{
+static quint16 getBeginAddrAsCpuMem(TCPUMEM cm, TTagDataType dataType) {
     quint16 wRet = 0;
 
 	switch(cm)
@@ -68,22 +67,19 @@ static quint16 getBeginAddrAsCpuMem(TCPUMEM cm, TTagDataType dataType)
 }
 
 //4字节ASCII
-static void Mitsubishi_MakeAddress(quint16 wAddress, quint8 * pStore)
-{
+static void makeAddress(quint16 wAddress, quint8 * pStore) {
 	SetDataAsWord(pStore, wAddress);
 	RecoverSelfData(pStore, 2);
 	MakeCodeToAsii(pStore, pStore, 2);
 }
 
 //2字节ASCII
-static void Mitsubishi_MakeDatalen(quint16 wDataLen, quint8 * pStore)
-{
+static void makeDatalen(quint16 wDataLen, quint8 * pStore) {
     quint8 byDataLen = (quint8)wDataLen;
 	MakeCodeToAsii(&byDataLen, pStore, 1);
 }
 
-static quint16 Mitsubishi_GetboolBlockByte(quint32 dwDataPos, size_t RepeatLen)
-{
+static quint16 getboolBlockByte(quint32 dwDataPos, size_t RepeatLen) {
     int iTemp = (quint16)dwDataPos % 8;
     quint16 wDataLen = (iTemp > 0) ? 1 : 0;
 	
@@ -99,22 +95,14 @@ static quint16 Mitsubishi_GetboolBlockByte(quint32 dwDataPos, size_t RepeatLen)
 	return wDataLen;
 }
 
-static quint16 Mitsubishi_GetAddressOffset(TCPUMEM cm, quint16 wDataPos)
-{
+static quint16 Mitsubishi_GetAddressOffset(TCPUMEM cm, quint16 wDataPos) {
     quint16 wOffSet;
 
-	if((cm == CM_T) || (cm == CM_D)
-			|| (cm == CM_C16))
-	{
+    if((cm == CM_T) || (cm == CM_D) || (cm == CM_C16)) {
 		wOffSet = wDataPos * 2;
-	}
-	else if(cm == CM_C32)
-	{
+    } else if(cm == CM_C32) {
 		wOffSet = (wDataPos - 200) * 4;
-	}
-	else
-	{
-		//布尔块
+    } else {
 		wOffSet = wDataPos / 8;
 	}
 
@@ -196,6 +184,16 @@ int Mitsubishi::writeData(IOTag* pTag) {
     quint16 wAddress = getBeginAddrAsCpuMem(getCpuMem(pTag->GetRegisterArea()), pTag->GetDataType());
     size_t len = 0;
 
+    writeDataBuffer_[0] = 0x05;
+    if(getPort() != nullptr)
+        getPort()->write(writeDataBuffer_, 1, 1000);
+
+    int resultlen = 0;
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(readDataBuffer_, 1, 5000);
+    if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
+        return false;
+
     memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
     memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
 
@@ -205,71 +203,43 @@ int Mitsubishi::writeData(IOTag* pTag) {
             writeDataBuffer_[len++] = 0x37;
         else
             writeDataBuffer_[len++] = 0x38;
-
-        //生成地址
         wAddress = wAddress * 8 + pTag->GetRegisterAddress() + pTag->GetOffset();
-        /////////////////////////////
-        //强制位操作地址低字节在前(与非位操作相反)
         RecoverSelfData((quint8 *)&wAddress, 2);
-        /////////////////////////////
-        Mitsubishi_MakeAddress(wAddress, writeDataBuffer_ + len);
+        makeAddress(wAddress, writeDataBuffer_ + len);
         len += 4;
         writeDataBuffer_[len++] = 0x03;
-
-        //生成校验和
         *(quint8 *)(writeDataBuffer_ + len) = (quint8)AddCheckSum(writeDataBuffer_ + 1, len - 1);
         MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, 1);
         len += 2;
     } else {
-        //按字节写
         quint16 wDataLen;
-
         writeDataBuffer_[1] = 0x31;
-
-        //计算地址
         wAddress += Mitsubishi_GetAddressOffset(getCpuMem(pTag->GetRegisterArea()), (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()));
-
-        //生成地址数据
-        Mitsubishi_MakeAddress(wAddress, writeDataBuffer_ + 2);
+        makeAddress(wAddress, writeDataBuffer_ + 2);
         len = 8;
-
-        //获取数据长度
         wDataLen = (quint16)pTag->GetDataTypeLength();
-
-        //填写变量数据
         memcpy(writeDataBuffer_ + len, pDBTagObject->GetWriteDataBytes().data(), wDataLen);
-
-
-        //将变量数据修正成ASCII码
         MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, wDataLen);
+        makeDatalen(wDataLen, writeDataBuffer_ + 6);
 
-        //补充数据字节长度
-        Mitsubishi_MakeDatalen(wDataLen, writeDataBuffer_ + 6);
-
-        //填写结束符
         len += wDataLen * 2;
         writeDataBuffer_[len] = 0x03;
         len += 1;
 
-        //生成校验和
         *(quint8 *)(writeDataBuffer_ + len) = (quint8)AddCheckSum(writeDataBuffer_ + 1, len - 1);
         MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, 1);
         len += 2;
     }
 
-    //清空接收缓冲区
     memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
 
-    //发送写命令帧
     if(getPort() != nullptr)
         getPort()->write(writeDataBuffer_, len, 1000);
 
-    //等待plc应答
-    int resultlen = 0;
+    resultlen = 0;
     if(getPort() != nullptr)
         resultlen = getPort()->read(readDataBuffer_, 1, 1000);
 
-    //判断应答结果
     if(resultlen == 1 && readDataBuffer_[0] == 0x06)
         return 1;
 
@@ -301,8 +271,16 @@ int Mitsubishi::readData(IOTag* pTag) {
     quint16 wDataLen = 0;
     quint8 byCheckSum = 0;
     quint8 *pVailableData;
-	//DM特殊协议位置调整长度
-	size_t iDMAreaSpecPro = 0;
+
+    writeDataBuffer_[0] = 0x05;
+    if(getPort() != nullptr)
+        getPort()->write(writeDataBuffer_, 1, 1000);
+
+    int resultlen = 0;
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(readDataBuffer_, 1, 5000);
+    if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
+        return false;
 
     memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
     memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
@@ -311,68 +289,59 @@ int Mitsubishi::readData(IOTag* pTag) {
     writeDataBuffer_[len++] = 0x30;
 
     if(pTag->GetDataType() == TYPE_BOOL) {
-		//布尔块
         wAddress += (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()) / 8;
-        Mitsubishi_MakeAddress(wAddress, writeDataBuffer_ + len);
-		
-		//计算应读取数据字节长度
-        wDataLen = Mitsubishi_GetboolBlockByte((quint32)(pTag->GetRegisterAddress() + pTag->GetOffset()), pTag->GetDataTypeLength());
-	}
-	else
-	{
-		//计算地址
+        makeAddress(wAddress, writeDataBuffer_ + len);
+        wDataLen = getboolBlockByte((quint32)(pTag->GetRegisterAddress() + pTag->GetOffset()), pTag->GetDataTypeLength());
+    } else {
         wAddress += Mitsubishi_GetAddressOffset(getCpuMem(pTag->GetRegisterArea()), (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()));
-		
-		//生成地址数据
-        Mitsubishi_MakeAddress(wAddress, writeDataBuffer_ + len);
-		
-		//获取数据长度
+        makeAddress(wAddress, writeDataBuffer_ + len);
         wDataLen = (quint16)pTag->GetDataTypeLength();
 	}
 
 	len += 4;	
-    Mitsubishi_MakeDatalen(wDataLen, writeDataBuffer_ + len);
+    makeDatalen(wDataLen, writeDataBuffer_ + len);
 	len += 2;
 	
     writeDataBuffer_[len] = 0x03;
 	len += 1;
 
-	//生成校验和
     *(quint8 *)(writeDataBuffer_ + len) = (quint8)AddCheckSum(writeDataBuffer_ + 1, len - 1);
     MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, 1);
 	len += 2;
 
-	//清空接收缓冲区
     memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
-	
-	//发送读命令帧
+
     if(getPort() != nullptr)
         getPort()->write(writeDataBuffer_, len, 1000);
 
-	//等待plc应答
-    int resultlen = 0;
+    resultlen = 0;
     if(getPort() != nullptr)
         resultlen = getPort()->read(readDataBuffer_, 4 + wDataLen * 2, 1000);
     if(resultlen != (4 + wDataLen * 2))
 		return -2;
 
-	//检查帧中关键标志
     if((readDataBuffer_[0] != 0x02) || (readDataBuffer_[1 + wDataLen * 2] != 0x03))
 		return 0;
 
-	//检查校验和
     byCheckSum = (quint8)AddCheckSum(readDataBuffer_ + 1, wDataLen * 2 + 1);
     pVailableData = readDataBuffer_ + 2 + wDataLen * 2;
 	MakeAsiiToCode(pVailableData, pVailableData, 1);	
 	if(byCheckSum != *pVailableData)
 		return 0;
 
-	//将ASCII码修正成变量数据
     MakeAsiiToCode(readDataBuffer_ + 1, readDataBuffer_ + 1, wDataLen);
 
     pVailableData = readDataBuffer_ + 1;
-    len = pTag->GetDataTypeLength();
-    memcpy(pTag->pReadBuf, pVailableData, len);
+
+    if(pTag->GetDataType() == TYPE_BOOL) {
+        int byteAddr = (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()) / 8;
+        int bitAddr = (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()) % 8;
+        pTag->pReadBuf[0] = (pVailableData[byteAddr] >> bitAddr) & 0x01;
+    } else {
+        len = pTag->GetDataTypeLength();
+        memcpy(pTag->pReadBuf, pVailableData, len);
+    }
+
 	return 1;
 }
 
