@@ -25,7 +25,7 @@ SUBDIRS += \
     libs \
     Devices \
     ProjectManager \
-    SysVariableManager \
+    SysTagManager \
     RtdbView \
     DrawApplication \
 #    JsEditor

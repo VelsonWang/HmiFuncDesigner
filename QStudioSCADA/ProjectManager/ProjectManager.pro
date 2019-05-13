@@ -27,29 +27,25 @@ include($$PWD/../common/register/register.pri)
 
 #message(libout_path $$IDE_LIBRARY_PATH)
 CONFIG(debug, debug|release) { #debug
-    LIBS += -L$$IDE_LIBRARY_PATH -ledncryptd
-    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
-    LIBS += -L$$IDE_LIBRARY_PATH -lCsvd
-    LIBS += -L$$IDE_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
+    LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
+    LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lCsvd
+    LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
     LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowserd
     LIBS += -L$$LINK_LIBRARY_PATH -lLuad
-    LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
     #message(LIBS $$LIBS)
 }
 else { # release
-    LIBS += -L$$IDE_LIBRARY_PATH -ledncrypt
-    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
-    LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtils
-    LIBS += -L$$IDE_LIBRARY_PATH -lHelper
-    LIBS += -L$$IDE_LIBRARY_PATH -lCsv
-    LIBS += -L$$IDE_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
+    LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
+    LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lCsv
+    LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
     LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
     LIBS += -L$$LINK_LIBRARY_PATH -lLua
-    LIBS += -L$$LINK_LIBRARY_PATH -lXmlUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtils
 }
 
 SOURCES += main.cpp\

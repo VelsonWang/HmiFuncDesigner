@@ -1,7 +1,7 @@
 #include "FunctionEditorDialog.h"
 #include "ui_FunctionEditorDialog.h"
 #include "Helper.h"
-#include "xmlobject.h"
+#include "XMLObject.h"
 #include "Element.h"
 #include "TagManager.h"
 #include "DrawListUtils.h"

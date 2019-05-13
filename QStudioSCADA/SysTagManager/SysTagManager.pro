@@ -4,22 +4,22 @@ include(../QStudioSCADA.pri)
 QT += core gui
 QT += widgets
 
-TARGET = SysVariableManager
+TARGET = SysTagManager
 TEMPLATE = app
 
 
 DESTDIR = $$IDE_BIN_PATH
 
 SOURCES += main.cpp \
-    SysVariable.cpp
+    SysTag.cpp
 
 HEADERS  += \
-    SysVariable.h
+    SysTag.h
 
 FORMS    += \
-    SysVariable.ui
+    SysTag.ui
 
 RESOURCES += \
     images.qrc
 
-RC_FILE = SysVariableManager.rc
+RC_FILE = SysTagManager.rc

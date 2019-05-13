@@ -1,7 +1,7 @@
 ﻿#include "InsertFunctionDialog.h"
 #include "ui_InsertFunctionDialog.h"
 #include "configutils.h"
-#include "xmlobject.h"
+#include "XMLObject.h"
 #include "Helper.h"
 #include <QFile>
 #include <QList>

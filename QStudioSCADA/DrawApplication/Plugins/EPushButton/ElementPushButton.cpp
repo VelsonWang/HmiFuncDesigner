@@ -4,7 +4,7 @@
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
 #include "Helper.h"
-#include "xmlobject.h"
+#include "XMLObject.h"
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QFile>

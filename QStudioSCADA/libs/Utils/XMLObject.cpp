@@ -1,4 +1,4 @@
-﻿#include "xmlobject.h"
+﻿#include "XMLObject.h"
 
 #include <QDebug>
 

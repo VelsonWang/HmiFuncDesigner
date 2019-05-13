@@ -12,7 +12,7 @@
  * @brief PrintSystemInfo 获取系统信息
  * @return 系统信息
  */
-QString PrintSystemInfo()
+QString printSystemInfo()
 {
     QString s = "System Info: \r\n";
     QTextStream out(&s);
@@ -97,7 +97,7 @@ void delayMs(unsigned int msec)
 }
 
 
-QString TrimIPv6Address(const QString& addr)
+QString trimIPv6Address(const QString& addr)
 {
     if ( addr.indexOf("::ffff:") == 0 ) {
         return addr.mid( 7 );

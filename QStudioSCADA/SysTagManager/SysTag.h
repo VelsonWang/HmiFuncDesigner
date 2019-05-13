@@ -7,7 +7,7 @@
 #include <QAbstractTableModel>
 
 namespace Ui {
-class SysVariable;
+class SysTag;
 }
 
 #define SYSVARIABLE_BASE    (0)
@@ -91,13 +91,13 @@ private:
 //////////////////////////////////////////////////////////
 
 
-class SysVariable : public QWidget
+class SysTag : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit SysVariable(QWidget *parent = 0);
-    ~SysVariable();
+    explicit SysTag(QWidget *parent = 0);
+    ~SysTag();
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
@@ -108,7 +108,7 @@ private slots:
     void variableDelete();
 
 private:
-    Ui::SysVariable *ui;
+    Ui::SysTag *ui;
     TagSystemTableModel *pTableViewVarManagerModel;
 
 };

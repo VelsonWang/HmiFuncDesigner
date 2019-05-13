@@ -6,10 +6,7 @@ TEMPLATE  = subdirs
 SUBDIRS   = \
     Utils \
     edncrypt \
-    ConfigUtils \
-    XmlUtils \
     Csv \
-    Helper \
     PluginManager \
     DrawUtils \
     qtpropertybrowser \

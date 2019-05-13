@@ -9,7 +9,7 @@
 #include "IDrawApplicationPlugin.h"
 #include "PluginManager.h"
 #include "Helper.h"
-#include "xmlobject.h"
+#include "XMLObject.h"
 
 /** Template algorithms*/
 template<template<typename T> class S, typename T>

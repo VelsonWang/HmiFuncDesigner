@@ -21,12 +21,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 CONFIG(debug, debug|release) { #debug
-    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
 }
 else { # release
-    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
-    LIBS += -L$$IDE_LIBRARY_PATH -lHelper
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtils
 }
 
 SOURCES += main.cpp\

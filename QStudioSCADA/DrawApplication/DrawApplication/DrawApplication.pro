@@ -15,19 +15,15 @@ TEMPLATE = app
 DESTDIR = $$IDE_BIN_PATH
 
 CONFIG(debug, debug|release) { #debug
-    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lHelperd
-    LIBS += -L$$IDE_LIBRARY_PATH -lXmlUtilsd
-    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
-    LIBS += -L$$IDE_LIBRARY_PATH -lTagManagerd
+    LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
 } else { # release
-    LIBS += -L$$IDE_LIBRARY_PATH -lConfigUtils
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtils
-    LIBS += -L$$IDE_LIBRARY_PATH -lHelper
-    LIBS += -L$$IDE_LIBRARY_PATH -lXmlUtils
-    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
-    LIBS += -L$$IDE_LIBRARY_PATH -lTagManager
+    LIBS += -L$$LINK_LIBRARY_PATH -lUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
+    LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
 }
 
 
