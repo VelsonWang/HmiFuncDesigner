@@ -23,6 +23,8 @@ QStudioSCADABin/plugins/
 QStudioSCADABin/tools/
 QStudioSCADABin/update/
 QStudioSCADABin/wave/
+QStudioSCADABin/bin/sqldrivers/
+QStudioSCADABin/bin/log/
 
 RuntimeBin/log/
 RuntimeBin/Project/

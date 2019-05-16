@@ -1,0 +1,7 @@
+﻿
+gitignore考虑不全面，发现有不该提交的文件已经提交后，仅仅在.gitignore中加入忽略是不行的。
+
+这个时候需要执行:
+git rm -r --cached filename
+
+去掉已经托管的文件，然后提交即可。

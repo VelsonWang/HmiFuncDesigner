@@ -105,8 +105,19 @@
 
 
 
+### 10. 支持的通信协议  Supported communication protocol
 
-### 10. 联系方式  Contact
+1.**Modbus RTU**
+
+2.**Modbus ASCII**
+
+3.**Modbus TCPIP**
+
+4.**Mitsubishi Fx**
+
+
+
+### 11. 联系方式  Contact
 
 **Email：VelsonWang@qq.com**
 
