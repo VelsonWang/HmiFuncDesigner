@@ -5,7 +5,7 @@ QT += core gui xml
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += script
-
+QT += sql
 
 TARGET = project
 TEMPLATE = app
@@ -35,7 +35,7 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -lLuad
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
     LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
-    #message(LIBS $$LIBS)
+    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
 }
 else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
@@ -46,6 +46,7 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lLua
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }
 
 SOURCES += main.cpp\
@@ -82,8 +83,7 @@ SOURCES += main.cpp\
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
     ChildForm.cpp \
-    ProjectMgrUtils.cpp \
-    ProjectInfoManger.cpp
+    ProjectMgrUtils.cpp
 
 HEADERS  += MainWindow.h \
     NewProjectDialog.h \
@@ -120,8 +120,7 @@ HEADERS  += MainWindow.h \
     ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
     ChildForm.h \
-    ProjectMgrUtils.h \
-    ProjectInfoManger.h
+    ProjectMgrUtils.h
 
 FORMS    += MainWindow.ui \
     NewProjectDialog.ui \

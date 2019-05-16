@@ -13,6 +13,7 @@
 #include "Log.h"
 #include "MainWindow.h"
 #include "ProjectInfoManger.h"
+#include "ProjectData.h"
 #include <QTextStream>
 #include <QTextCodec>
 #include <QMutexLocker>
@@ -277,15 +278,15 @@ void SCADARunTime::Start()
     // find project infomation file
     QFileInfo srcFileInfo(m_sProjectPath);
     QString projInfoFile = "";
-    QString projInfoFileName = "";
+    QString projName = "";
     if (srcFileInfo.isDir()) {
         QDir sourceDir(m_sProjectPath);
         QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
         foreach (const QString &fileName, fileNames) {
-            if(fileName.endsWith("proj")) {
+            if(fileName.endsWith("pdt")) {
                 projInfoFile = fileName;
                 QFileInfo info(projInfoFile);
-                projInfoFileName = info.fileName();
+                projName = info.baseName();
             }
 
         }
@@ -293,8 +294,9 @@ void SCADARunTime::Start()
     if(projInfoFile == "") {
         LogError("project information file not found!");
     } else {
-        ProjectInfoManger projInfoMgr;
-        projInfoMgr.loadFromFile(DATA_SAVE_FORMAT, m_sProjectPath + "/" + projInfoFile);
+        ProjectData::getInstance()->createOrOpenProjectData(m_sProjectPath, projName);
+        ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+        projInfoMgr.load(ProjectData::getInstance()->dbData_);
         QString startPageFile = projInfoMgr.getStartPage();
         if(startPageFile.toLower() != "none") {
             MainWindow::projpath_ = m_sProjectPath;

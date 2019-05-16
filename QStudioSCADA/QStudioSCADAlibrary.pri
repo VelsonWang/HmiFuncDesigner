@@ -3,8 +3,6 @@ TARGET = $$QTC_LIB_NAME
 
 include(QStudioSCADA.pri)
 
-# use precompiled header for libraries by default
-#isEmpty(PRECOMPILED_HEADER):PRECOMPILED_HEADER = $$PWD/shared/qtcreator_pch.h
 
 win32 {
     DLLDESTDIR = $$IDE_APP_PATH

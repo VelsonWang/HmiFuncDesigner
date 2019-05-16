@@ -1,6 +1,8 @@
 ﻿#include "Database.h"
 #include "uLog.h"
-
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
 
 Database::Database(const QString &dbname,
                    const QString &user,
@@ -28,7 +30,7 @@ bool Database::getRecord(const QString &table,
                          const QString &expr)
 {
     int i,count;
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString key,sql;
 
     if(keyList.isEmpty())
@@ -70,7 +72,7 @@ bool Database::getRecord(const QString &table,
                          QStringList &valueList,
                          const QString &expr)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString sql;
 
     if(key.isEmpty())
@@ -106,7 +108,7 @@ bool Database::getRecord(const QString &table,
                          QString &value,
                          const QString &expr)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString sql;
 
     if(key.isEmpty())
@@ -143,7 +145,7 @@ bool Database::getRecord(const QString &table,
                          const QString &expr)
 {
     int i,count;
-	QSqlQuery query;
+    QSqlQuery query(db_);
     QString key,sql;
 	QStringList valueList;
 
@@ -193,7 +195,7 @@ bool Database::setRecord(const QString &table,
                          const QString &value,
                          const QString &expr)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString sql;
 
     if(expr.isEmpty())
@@ -223,7 +225,7 @@ bool Database::setRecord(const QString &table,
                          const QString &expr)
 {
 	int i,count;
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString key,sql;
 
     count = keyList.count();
@@ -263,7 +265,7 @@ bool Database::insertRecord(const QString &table,
                             const QString &expr)
 {
 	int i,count;
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString key,value,sql;
 
     count = keyList.count();
@@ -305,7 +307,7 @@ bool Database::insertRecord(const QString &table,
                             const QStringList &valueList,
                             const QString &expr)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString value,sql;
     if(key.isEmpty() || !valueList.count()) {
         LogError(QString("insert record: %1 failed! keylist.count != valuelist.count").arg(table));
@@ -344,7 +346,7 @@ bool Database::copyRecord(const QString &tableFrom,
                           const QString &tableTo,
                           const QString &expr)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString sql;
     if(tableFrom.isEmpty() || tableTo.isEmpty()) {
         LogError(QString("copy record: form %1 to %2 failed!").arg(tableFrom).arg(tableTo));
@@ -377,7 +379,7 @@ bool Database::copyRecord(const QString &tableFrom,
 
 bool Database::deleteRecord(const QString &table, const QString &expr)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString sql;
 
     if(expr.isEmpty())
@@ -410,7 +412,7 @@ void Database::excSQL(const QString& sql)
 
 void Database::excSQL(const QString& sql, QList<QStringList>& result)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
 
     result.clear();
 

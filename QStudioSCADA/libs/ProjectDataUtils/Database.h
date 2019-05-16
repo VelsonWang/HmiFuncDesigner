@@ -1,7 +1,10 @@
 ﻿#ifndef DATABASE_H
 #define DATABASE_H
 
-#include <QtSql/QtSql>
+#include <QSqlDatabase>
+#include <QStringList>
+#include <QVariant>
+#include <QObject>
 
 
 class Database : public QObject

@@ -134,6 +134,7 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
     $$IDE_SOURCE_TREE/libs/PropertyEditor \
     $$IDE_SOURCE_TREE/libs/TagManager \
+    $$IDE_SOURCE_TREE/libs/ProjectDataUtils \
     $$IDE_SOURCE_TREE/Devices/IDevicePlugin \
     $$IDE_SOURCE_TREE/DrawApplication/IDrawApplicationPlugin \
     $$IDE_SOURCE_TREE/DrawApplication/DrawApplication \

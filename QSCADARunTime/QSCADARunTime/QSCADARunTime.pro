@@ -46,19 +46,22 @@ INCLUDEPATH += \
     $$LIBRARY_SRC_PATH/libs/edncrypt \
     $$LIBRARY_SRC_PATH/libs/PropertyEditor \
     $$LIBRARY_SRC_PATH/libs/DrawUtils \
-    $$LIBRARY_SRC_PATH/libs/Utils
+    $$LIBRARY_SRC_PATH/libs/Utils \
+    $$LIBRARY_SRC_PATH/libs/ProjectDataUtils
 
 CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
     LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
+    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
 }
 else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }
 
 

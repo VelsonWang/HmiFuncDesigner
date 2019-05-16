@@ -1,6 +1,8 @@
 ﻿#include "SQLiteDatabase.h"
 #include "uLog.h"
-
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
 
 SQLiteDatabase::SQLiteDatabase(const QString &dbname,
                                const QString &user,
@@ -40,7 +42,7 @@ bool SQLiteDatabase::closeDatabase()
 
 bool SQLiteDatabase::isOpenDatabase()
 {
-	QSqlQuery query;
+    QSqlQuery query(db_);
 	bool ret = false;
     try {
         ret = query.exec("select CURRENT_TIMESTAMP");
@@ -54,7 +56,7 @@ bool SQLiteDatabase::isOpenDatabase()
 
 bool SQLiteDatabase::createDatabase()
 {
-	QSqlQuery query;
+    QSqlQuery query(db_);
     try {
         query.exec(QString("show databases like '%1'").arg(name_));
         if(!query.next()) {
@@ -77,7 +79,7 @@ int SQLiteDatabase::createTable(const QString &table,
                                 const QString &index)
 {
     QString key = QString();
-    QSqlQuery query;
+    QSqlQuery query(db_);
     int pos = 0, ret = 0;
     int count = fieldList.count();
     
@@ -135,7 +137,7 @@ bool SQLiteDatabase::insertOrUpdateRecord(const QString &table,
                                           const QStringList &keyList,
                                           const QStringList &valueList)
 {
-    QSqlQuery query;
+    QSqlQuery query(db_);
     QString key,value,update,sql;
     int count = keyList.count();
 
@@ -178,7 +180,7 @@ bool SQLiteDatabase::insertOrUpdateRecord(const QString &table,
 bool SQLiteDatabase::isContain(const QString& table)
 {
     bool ret = false;
-    QSqlQuery query;
+    QSqlQuery query(db_);
 
     query.exec(QString("select count(*) from sqlite_master where type='table' and name='%1'").arg(table));
 

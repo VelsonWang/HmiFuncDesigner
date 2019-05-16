@@ -1,9 +1,0 @@
-{
-    "DevVarTabArray": [
-        {
-            "name": "IO设备[缺省]",
-            "pageid": 0,
-            "type": "WorkNode"
-        }
-    ]
-}

@@ -14,7 +14,8 @@ SUBDIRS   = \
     Lua \
     Ftp \
     PropertyEditor \
-    TagManager
+    TagManager \
+    ProjectDataUtils
 
 
 

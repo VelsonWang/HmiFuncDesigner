@@ -11,8 +11,6 @@
 #include <QDir>
 #include <QPluginLoader>
 
-#include <QDebug>
-
 SystemParametersWin::SystemParametersWin(QWidget *parent,
                                          const QString &itemName,
                                          const QString &projName) :
@@ -66,9 +64,9 @@ void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &in
     QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
     if(item->text() == tr("运行系统")) {
         NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this, strProjectPath);
-        pNewProjectDlg->loadFromFile(DATA_SAVE_FORMAT, m_strProjectName);
+        pNewProjectDlg->load();
         if(pNewProjectDlg->exec() == QDialog::Accepted) {
-
+            pNewProjectDlg->save();
         }
     } else if(item->text() == tr("组网设置")) {
         NetSettingDialog *pNetSettingDialog = new NetSettingDialog(this, strProjectPath);

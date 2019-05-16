@@ -19,7 +19,6 @@ public:
     explicit ProjectDownloadDialog(QWidget *parent = 0, QString projName = "");
     ~ProjectDownloadDialog();
     void setProjFileName(QString name);
-    void setConfigProjPath(QString name);
 
 private:
     QString getRuntimeIp();
@@ -35,7 +34,6 @@ private:
     QTcpSocket *tcpSocket;
     bool status;
     QString projFileName;
-    QString configProjPath;
     int transferState_;
     TDataPackage dataPackage_;
     QByteArray fileBuf_;

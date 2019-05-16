@@ -1,8 +1,11 @@
 #include "ProjectInfoManger.h"
+#include "ProjectDataSQLiteDatabase.h"
+#include "ulog.h"
 #include <QFile>
 #include <QDir>
-#include <QJsonDocument>
-#include <QJsonObject>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QSqlError>
 
 class ProjectInfoManger;
 
@@ -15,12 +18,12 @@ public:
     QString projectDescription_;
     QString projectPath_;
     QString deviceType_;
-    QString stationNumber_;
+    int stationNumber_;
     QString startPage_;
     QString stationAddress_;
     bool projectEncrypt_;
-    QString pageScanPeriod_;
-    QString dataScanPeriod_;
+    int pageScanPeriod_;
+    int dataScanPeriod_;
 };
 
 
@@ -34,81 +37,77 @@ ProjectInfoManger::~ProjectInfoManger() {
     delete dPtr_;
 }
 
-void ProjectInfoManger::load(const QJsonObject &json)
-{
-    dPtr_->projectName_ = json["sProjectName"].toString();
-    dPtr_->projectDescription_ = json["sProjectDescription"].toString();
-    dPtr_->projectPath_ = json["sProjectPath"].toString();
-    dPtr_->deviceType_ = json["sDeviceType"].toString();
-    dPtr_->stationNumber_ = json["sStationNumber"].toString();
-    dPtr_->startPage_ = json["sStartPage"].toString();
-    dPtr_->stationAddress_ = json["sStationAddress"].toString();
-    dPtr_->projectEncrypt_ = json["bProjectEncrypt"].toBool();
-    dPtr_->pageScanPeriod_ = json["sPageScanPeriod"].toString();
-    dPtr_->dataScanPeriod_ = json["sDataScanPeriod"].toString();
-}
-
-void ProjectInfoManger::save(QJsonObject &json)
-{
-    json["sProjectName"] = dPtr_->projectName_;
-    json["sProjectDescription"] = dPtr_->projectDescription_;
-    json["sProjectPath"] = dPtr_->projectPath_;
-    json["sDeviceType"] = dPtr_->deviceType_;
-    json["sStationNumber"] = dPtr_->stationNumber_;
-    json["sStartPage"] = dPtr_->startPage_;
-    json["sStationAddress"] = dPtr_->stationAddress_;
-    json["bProjectEncrypt"] = dPtr_->projectEncrypt_;
-    json["sPageScanPeriod"] = dPtr_->pageScanPeriod_;
-    json["sDataScanPeriod"] = dPtr_->dataScanPeriod_;
-}
-
 /**
- * @brief ProjectInfoManger::loadFromFile
+ * @brief ProjectInfoManger::load
  * @details 读取工程信息
- * @param saveFormat 保存格式
- * @param file 工程路径
+ * @param pDB 数据库对象
  * @return true-成功, false-失败
  */
-bool ProjectInfoManger::loadFromFile(SaveFormat saveFormat, const QString &file)
-{
-    QFile loadFile(file);
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open load file.");
+bool ProjectInfoManger::load(ProjectDataSQLiteDatabase *pDB) {
+    QSqlQuery query(pDB->db_);
+    QSqlRecord rec;
+
+    bool ret = query.exec("select * from t_system_parameters");
+    if(!ret) {
+        LogError(QString("get record: %1 failed! %2 ,error: %3!")
+                 .arg("t_system_parameters")
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
         return false;
     }
-    QByteArray saveData = loadFile.readAll();
-    QJsonDocument loadDoc(saveFormat == Json ? QJsonDocument::fromJson(saveData) : QJsonDocument::fromBinaryData(saveData));
-    load(loadDoc.object());
-    loadFile.close();
-    return true;
+
+    while (query.next()) {
+        rec = query.record();
+        dPtr_->projectName_ = rec.value("project_name").toString();
+        dPtr_->projectDescription_ = rec.value("project_description").toString();
+        dPtr_->projectPath_ = rec.value("project_path").toString();
+        dPtr_->deviceType_ = rec.value("device_type").toString();
+        dPtr_->stationNumber_ = rec.value("station_number").toInt();
+        dPtr_->startPage_ = rec.value("start_page").toString();
+        dPtr_->stationAddress_ = rec.value("station_address").toString();
+        dPtr_->projectEncrypt_ = rec.value("project_encrypt").toInt() > 0 ? true : false;
+        dPtr_->pageScanPeriod_ = rec.value("page_scan_period").toInt();
+        dPtr_->dataScanPeriod_ = rec.value("data_scan_period").toInt();
+    }
+
+    return ret;
 }
 
 /**
- * @brief ProjectInfoManger::saveToFile
+ * @brief ProjectInfoManger::save
  * @details 保存工程信息
- * @param projPath 工程保存路径
- * @param projName 工程名称
- * @param saveFormat 保存格式
+ * @param pDB 数据库对象
  * @return true-成功, false-失败
  */
-bool ProjectInfoManger::saveToFile(const QString &projPath,
-                                   const QString &projName,
-                                   SaveFormat saveFormat)
-{
-    QString file = projPath + "/" + projName + ".proj";
-    QFile saveFile(file);
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
-        return false;
-    }
-    QJsonObject obj;
-    save(obj);
-    QJsonDocument saveDoc(obj);
-    saveFile.write(saveFormat == Json ? saveDoc.toJson() : saveDoc.toBinaryData());
-    saveFile.close();
-    return true;
-}
+bool ProjectInfoManger::save(ProjectDataSQLiteDatabase *pDB) {
+    QSqlQuery query(pDB->db_);
+    query.prepare("update t_system_parameters set project_encrypt = :encrypt, "
+                  "data_scan_period = :data_scan, device_type = :device, "
+                  "page_scan_period = :page_scan, project_description = :desc, "
+                  "project_name = :name, project_path = :path, start_page = :start, "
+                  "station_address = :address, station_number = :number where id = 1");
 
+    query.bindValue(":encrypt", dPtr_->projectEncrypt_ ? 1 : 0);
+    query.bindValue(":data_scan", dPtr_->dataScanPeriod_);
+    query.bindValue(":device", dPtr_->deviceType_);
+    query.bindValue(":page_scan", dPtr_->pageScanPeriod_);
+    query.bindValue(":desc", dPtr_->projectDescription_);
+    query.bindValue(":name", dPtr_->projectName_);
+    query.bindValue(":path", dPtr_->projectPath_);
+    query.bindValue(":start", dPtr_->startPage_);
+    query.bindValue(":address", dPtr_->stationAddress_);
+    query.bindValue(":number", dPtr_->stationNumber_);
+
+    bool ret = query.exec();
+    if(!ret) {
+        LogError(QString("update record: %1 failed! %2 ,error: %3!")
+                 .arg("t_system_parameters")
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
+    }
+
+    return ret;
+}
 
 QString ProjectInfoManger::getProjectName() const {
     return dPtr_->projectName_;
@@ -145,11 +144,11 @@ void ProjectInfoManger::setDeviceType(const QString &type){
     dPtr_->deviceType_ = type;
 }
 
-QString ProjectInfoManger::getStationNumber() const {
+int ProjectInfoManger::getStationNumber() const {
     return dPtr_->stationNumber_;
 }
 
-void ProjectInfoManger::setStationNumber(const QString &number) {
+void ProjectInfoManger::setStationNumber(int number) {
     dPtr_->stationNumber_ = number;
 }
 
@@ -177,19 +176,19 @@ void ProjectInfoManger::setProjectEncrypt(bool encrypt) {
     dPtr_->projectEncrypt_ = encrypt;
 }
 
-QString ProjectInfoManger::getPageScanPeriod() const {
+int ProjectInfoManger::getPageScanPeriod() const {
     return dPtr_->pageScanPeriod_;
 }
 
-void ProjectInfoManger::setPageScanPeriod(const QString &period){
+void ProjectInfoManger::setPageScanPeriod(int period){
     dPtr_->pageScanPeriod_ = period;
 }
 
-QString ProjectInfoManger::getDataScanPeriod() const {
+int ProjectInfoManger::getDataScanPeriod() const {
     return dPtr_->dataScanPeriod_;
 }
 
-void ProjectInfoManger::setDataScanPeriod(const QString &period) {
+void ProjectInfoManger::setDataScanPeriod(int period) {
     dPtr_->dataScanPeriod_ = period;
 }
 

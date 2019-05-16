@@ -27,7 +27,6 @@ SOURCES += \
     $$PWD/Public/PubTool.cpp \
     $$PWD/Public/Element.cpp \
     $$PWD/Public/ElementGroup.cpp \
-    $$PWD/ProjectInfoManger.cpp \
     $$PWD/SoftKeyboard/InputMethodAlphabet.cpp \
     $$PWD/SoftKeyboard/InputMethodNumber.cpp
 
@@ -59,7 +58,6 @@ HEADERS += \
     $$PWD/IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     $$PWD/Public/Element.h \
     $$PWD/Public/ElementGroup.h \
-    $$PWD/ProjectInfoManger.h \
     $$PWD/SoftKeyboard/InputMethodAlphabet.h \
     $$PWD/SoftKeyboard/InputMethodNumber.h
 

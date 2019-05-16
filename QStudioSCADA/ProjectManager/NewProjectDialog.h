@@ -18,7 +18,8 @@ public:
     ~NewProjectDialog();
 
     QString GetProjectName();
-    bool loadFromFile(SaveFormat saveFormat, const QString &file);
+    bool load();
+    bool save();
 
 private:
     bool check_data();

@@ -1,5 +1,4 @@
-﻿
-#include <QFile>
+﻿#include <QFile>
 #include <QFileInfo>
 #include <QJsonObject>
 #include <QJsonDocument>
@@ -7,6 +6,7 @@
 #include "../Public/Public.h"
 #include "ProjectDownloadDialog.h"
 #include "ui_ProjectDownloadDialog.h"
+#include "ProjectData.h"
 
 #include <QDebug>
 
@@ -20,7 +20,6 @@ ProjectDownloadDialog::ProjectDownloadDialog(QWidget *parent, QString projName) 
 {
     ui->setupUi(this);
     fileBuf_.clear();
-    this->configProjPath = projName;
     ui->progressBar->setValue(0);
     ui->labelAddress->setText(getRuntimeIp());
     tcpSocket = new QTcpSocket(this);
@@ -57,31 +56,15 @@ ProjectDownloadDialog::~ProjectDownloadDialog()
 QString ProjectDownloadDialog::getRuntimeIp()
 {
     QString sIp = "127.0.0.1";
-
-    QFile loadFile(this->configProjPath);
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open load file.");
-        return sIp;
-    }
-
-    QByteArray saveData = loadFile.readAll();
-    QJsonDocument loadDoc(DATA_SAVE_FORMAT == Json ? QJsonDocument::fromJson(saveData) : QJsonDocument::fromBinaryData(saveData));
-
-    sIp = loadDoc.object()["sStationAddress"].toString();
-
-    loadFile.close();
-
+    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    projInfoMgr.load(ProjectData::getInstance()->dbData_);
+    sIp = projInfoMgr.getStationAddress();
     return sIp;
 }
 
 void ProjectDownloadDialog::setProjFileName(QString name)
 {
     this->projFileName = name;
-}
-
-void ProjectDownloadDialog::setConfigProjPath(QString name)
-{
-    this->configProjPath = name;
 }
 
 void ProjectDownloadDialog::on_btnOk_clicked()

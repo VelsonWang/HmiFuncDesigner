@@ -14,6 +14,7 @@
 #include "AboutDialog.h"
 #include "ProjectMgrUtils.h"
 #include "TagManager.h"
+#include "ProjectData.h"
 #include <QDialog>
 #include <QCloseEvent>
 #include <QSettings>
@@ -479,8 +480,14 @@ void MainWindow::on_actionNewPoject_triggered()
     NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
     if(pNewProjectDlg->exec() == QDialog::Accepted) {
         UpdateProjectName(pNewProjectDlg->GetProjectName());
+
+        QString szPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+        QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
+        ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
+        pNewProjectDlg->save();
+
         updateRecentProjectList(pNewProjectDlg->GetProjectName());
-        TagManager::ioDBVarGroups_.setProjectPath(ProjectMgrUtils::getProjectPath(m_strProjectName));
+        TagManager::ioDBVarGroups_.setProjectPath(szPath);
         CreateDefaultIOTagGroup();
         TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
         UpdateDeviceVariableTableGroup();
@@ -498,8 +505,19 @@ void MainWindow::doOpenProject(QString proj)
     UpdateProjectName(proj);
     QString strFile = Helper::AppDir() + "/lastpath.ini";
     ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
+    QString szPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+    QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
+    ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
+
+    // 更新工程名称和工程目录(目录和名称可能人为修改)
+    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    projInfoMgr.load(ProjectData::getInstance()->dbData_);
+    projInfoMgr.setProjectPath(szPath);
+    projInfoMgr.setProjectName(szName);
+    projInfoMgr.save(ProjectData::getInstance()->dbData_);
+
     // 加载设备变量组信息
-    TagManager::ioDBVarGroups_.setProjectPath(ProjectMgrUtils::getProjectPath(m_strProjectName));
+    TagManager::ioDBVarGroups_.setProjectPath(szPath);
     TagManager::ioDBVarGroups_.loadFromFile(DATA_SAVE_FORMAT);
     UpdateDeviceVariableTableGroup();
     updateRecentProjectList(proj);
@@ -512,7 +530,7 @@ void MainWindow::on_actionOpenProject_triggered()
     QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
     QString fileName = QFileDialog::getOpenFileName(this, tr("选择工程文件"),
                                                     path,
-                                                    tr("project file (*.proj)"));
+                                                    tr("project file (*.pdt)"));
     if(fileName != NULL) {
         doOpenProject(fileName);
     }

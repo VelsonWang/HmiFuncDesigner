@@ -4,6 +4,7 @@
 #include "Helper.h"
 #include "DrawListUtils.h"
 #include "ProjectMgrUtils.h"
+#include "ProjectData.h"
 #include <QMenu>
 #include <QAction>
 #include <QFile>
@@ -119,10 +120,10 @@ void DrawPageWin::NewDrawPage()
     int last = DrawListUtils::getMaxDrawPageNum("draw");
     QString szGraphPageName = QString("draw%1").arg(last);
 
-    ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
-    projMgr.loadFromFile(DATA_SAVE_FORMAT, m_strProjectName);
-    int width = projMgr.getGraphPageWidth();
-    int height = projMgr.getGraphPageHeight();
+    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    projInfoMgr.load(ProjectData::getInstance()->dbData_);
+    int width = projInfoMgr.getGraphPageWidth();
+    int height = projInfoMgr.getGraphPageHeight();
 
     createEmptyGraphpage(m_ProjPath, szGraphPageName, width, height);
     DrawListUtils::drawList_.append(szGraphPageName);

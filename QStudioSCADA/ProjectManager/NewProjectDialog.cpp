@@ -3,6 +3,7 @@
 #include "configutils.h"
 #include "Singleton.h"
 #include "ProjectInfoManger.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include <QDir>
 #include <QDialog>
@@ -130,23 +131,10 @@ void NewProjectDialog::on_btnOk_clicked()
 {
     if(check_data())
     {
-        ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
-        projMgr.setProjectName(ui->editProjectName->text());
-        projMgr.setProjectDescription(ui->editProjectDescription->toPlainText());
-        projMgr.setProjectPath(ui->editProjectPath->text());
-        projMgr.setDeviceType(ui->cboDevType->currentText());
-        projMgr.setStationNumber(ui->editStationNumber->text());
-        projMgr.setStartPage(ui->cboStartPage->currentText());
-        projMgr.setStationAddress(ui->editStationAddress->text());
-        projMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
-        projMgr.setPageScanPeriod(ui->editPageScanPeriod->text());
-        projMgr.setDataScanPeriod(ui->editDataScanPeriod->text());
-
         QString strProjPath =  ui->editProjectPath->text();
         QString strProjName = ui->editProjectName->text();
-        QString file = strProjPath + "/" + strProjName + ".proj";
+        QString file = strProjPath + "/" + strProjName + ".pdt";
         projectName_ = file;
-        projMgr.saveToFile(strProjPath, strProjName, DATA_SAVE_FORMAT);
         QDialog::accept();
     }
 }
@@ -162,22 +150,35 @@ QString NewProjectDialog::GetProjectName()
     return projectName_;
 }
 
-bool NewProjectDialog::loadFromFile(SaveFormat saveFormat, const QString &file) {
-    ProjectInfoManger &projMgr = Singleton<ProjectInfoManger>::instance();
-    projMgr.loadFromFile(saveFormat, file);
-    ui->editProjectName->setText(projMgr.getProjectName());
-    ui->editProjectDescription->setPlainText(projMgr.getProjectDescription());
-    ui->cboDevType->setCurrentText(projMgr.getDeviceType());
-    ui->editStationNumber->setText(projMgr.getStationNumber());
-    ui->cboStartPage->setCurrentText(projMgr.getStartPage());
-    ui->editStationAddress->setText(projMgr.getStationAddress());
-    ui->chkProjectEncrypt->setChecked(projMgr.getProjectEncrypt());
-    ui->editPageScanPeriod->setText(projMgr.getPageScanPeriod());
-    ui->editDataScanPeriod->setText(projMgr.getDataScanPeriod());
-
+bool NewProjectDialog::load() {
+    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    projInfoMgr.load(ProjectData::getInstance()->dbData_);
+    ui->editProjectName->setText(projInfoMgr.getProjectName());
+    ui->editProjectDescription->setPlainText(projInfoMgr.getProjectDescription());
+    ui->cboDevType->setCurrentText(projInfoMgr.getDeviceType());
+    ui->editStationNumber->setText(QString::number(projInfoMgr.getStationNumber()));
+    ui->cboStartPage->setCurrentText(projInfoMgr.getStartPage());
+    ui->editStationAddress->setText(projInfoMgr.getStationAddress());
+    ui->chkProjectEncrypt->setChecked(projInfoMgr.getProjectEncrypt());
+    ui->editPageScanPeriod->setText(QString::number(projInfoMgr.getPageScanPeriod()));
+    ui->editDataScanPeriod->setText(QString::number(projInfoMgr.getDataScanPeriod()));
     ui->editProjectPath->setText(projectPath_);
-
     return true;
+}
+
+bool NewProjectDialog::save() {
+    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    projInfoMgr.setProjectName(ui->editProjectName->text());
+    projInfoMgr.setProjectDescription(ui->editProjectDescription->toPlainText());
+    projInfoMgr.setProjectPath(ui->editProjectPath->text());
+    projInfoMgr.setDeviceType(ui->cboDevType->currentText());
+    projInfoMgr.setStationNumber(ui->editStationNumber->text().toInt());
+    projInfoMgr.setStartPage(ui->cboStartPage->currentText());
+    projInfoMgr.setStationAddress(ui->editStationAddress->text());
+    projInfoMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
+    projInfoMgr.setPageScanPeriod(ui->editPageScanPeriod->text().toInt());
+    projInfoMgr.setDataScanPeriod(ui->editDataScanPeriod->text().toInt());
+    projInfoMgr.save(ProjectData::getInstance()->dbData_);
 }
 
 
