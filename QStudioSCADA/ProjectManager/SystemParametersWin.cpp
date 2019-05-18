@@ -70,8 +70,9 @@ void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &in
         }
     } else if(item->text() == tr("组网设置")) {
         NetSettingDialog *pNetSettingDialog = new NetSettingDialog(this, strProjectPath);
+        pNetSettingDialog->load();
         if(pNetSettingDialog->exec() == QDialog::Accepted) {
-
+            pNetSettingDialog->save();
         }
     } else if(item->text() == tr("数据库设置")) {
         DatabaseSettingDialog *pDatabaseSettingDialog = new DatabaseSettingDialog(this, strProjectPath);

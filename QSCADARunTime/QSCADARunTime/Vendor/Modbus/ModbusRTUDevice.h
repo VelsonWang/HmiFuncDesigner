@@ -63,8 +63,8 @@ public:
 
 private:
     ComPort * comPort_;
-    ComDevicePrivate *pComDevicePrivate;
-    ModbusRTU mModbusRTU;
+    ComDevicePrivate *pComDevicePrivate_;
+    ModbusRTU modbusRTU_;
 
 };
 

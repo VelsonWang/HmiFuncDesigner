@@ -18,7 +18,12 @@ ProjectDataSQLiteDatabase::~ProjectDataSQLiteDatabase()
 
 }
 
-// 创建系统参数表
+
+/**
+ * @brief ProjectDataSQLiteDatabase::createTableSystemParameters
+ * @details 创建系统参数表
+ * @return true-成功, false-失败
+ */
 bool ProjectDataSQLiteDatabase::createTableSystemParameters()
 {
     QString autoincrement = "integer not null primary key autoincrement";
@@ -46,15 +51,51 @@ bool ProjectDataSQLiteDatabase::createTableSystemParameters()
 }
 
 
+/**
+ * @brief ProjectDataSQLiteDatabase::createTableNetSetting
+ * @details 创建组网设置表
+ * @return true-成功, false-失败
+ */
+bool ProjectDataSQLiteDatabase::createTableNetSetting()
+{
+    QString autoincrement = "integer not null primary key autoincrement";
+    QStringList keyList,valueList;
+    int ret = 0;
+
+    keyList.clear();
+    valueList.clear();
+
+    keyList << "id" << "hot_standby_mode" << "client_mode" << "server_station"
+            << "client_station" << "client_address" << "server_address"
+            << "heartbeat_time" << "database_sync_time";
+
+    valueList << autoincrement << "int" << "int" << "int"
+              << "int" << "varchar(32)" << "varchar(32)"
+              << "int" << "int";
+
+    ret = createTable("t_net_setting", keyList, valueList, "");
+    if(ret == 1) {
+        excSQL("delete from t_net_setting");
+        excSQL("insert into t_net_setting values(1, 0, 0, 0, 0, '', '', 0, 0);");
+    }
+
+    return ret;
+}
+
+
 bool ProjectDataSQLiteDatabase::createTables()
 {
-    bool ret1 = false;
+    bool ret1 = false, ret2 = false;
 
     // 创建系统参数表
     ret1 = createTableSystemParameters();
+    // 创建组网设置表
+    ret2 = createTableNetSetting();
 
 
-    return ret1;
+
+
+    return ret1 && ret2;
 }
 
 

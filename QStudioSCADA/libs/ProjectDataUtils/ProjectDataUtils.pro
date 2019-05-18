@@ -13,7 +13,8 @@ SOURCES += \
     $$PWD/ulog.cpp \
     $$PWD/ProjectData.cpp \
     $$PWD/ProjectDataSQLiteDatabase.cpp \
-    ProjectInfoManger.cpp
+    $$PWD/ProjectInfoManger.cpp \
+    $$PWD/NetSetting.cpp
 
 
 HEADERS += \ 
@@ -22,6 +23,7 @@ HEADERS += \
     $$PWD/ulog.h \
     $$PWD/ProjectData.h \
     $$PWD/ProjectDataSQLiteDatabase.h \
-    ProjectInfoManger.h
+    $$PWD/ProjectInfoManger.h \
+    $$PWD/NetSetting.h
 
 

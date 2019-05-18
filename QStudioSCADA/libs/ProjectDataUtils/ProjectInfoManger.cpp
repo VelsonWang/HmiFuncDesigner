@@ -12,7 +12,7 @@ class ProjectInfoManger;
 class ProjectInfoPrivate
 {
 public:
-    ProjectInfoPrivate(ProjectInfoManger *parent) { }
+    ProjectInfoPrivate() { }
 
     QString projectName_;
     QString projectDescription_;
@@ -29,7 +29,7 @@ public:
 
 
 ProjectInfoManger::ProjectInfoManger()
-    : dPtr_(new ProjectInfoPrivate(this)) {
+    : dPtr_(new ProjectInfoPrivate()) {
 
 }
 

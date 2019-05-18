@@ -16,6 +16,9 @@ public:
 
     // 创建系统参数表
     bool createTableSystemParameters();
+    // 创建组网设置表
+    bool createTableNetSetting();
+
     // 创建数据库表
     bool createTables() override;
 };

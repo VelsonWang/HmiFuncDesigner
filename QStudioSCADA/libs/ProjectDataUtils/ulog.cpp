@@ -260,7 +260,7 @@ QString ULog::getSystemInfo() {
 /////////////////////////////////////////////////////////////////////////////////////
 
 
-LogHelper::LogHelper(const char *fileName, int lineNumber, const char *functionName)
+QLogHelper::QLogHelper(const char *fileName, int lineNumber, const char *functionName)
        : version_(1)
        , line_(lineNumber)
        , file_(fileName)
@@ -268,7 +268,7 @@ LogHelper::LogHelper(const char *fileName, int lineNumber, const char *functionN
 {
 }
 
-void LogHelper::writelogToLocal(ELogLevel logtype, const QString &log)
+void QLogHelper::writelogToLocal(ELogLevel logtype, const QString &log)
 {
     QString threadText = QStringLiteral("0x%1").arg(quintptr(QThread::currentThreadId()));
     QString filter = QString("[file(%1)] [func(%2) line(%3) pid(%4)] ")

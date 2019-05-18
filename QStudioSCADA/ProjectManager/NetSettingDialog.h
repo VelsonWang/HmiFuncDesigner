@@ -17,13 +17,10 @@ public:
     explicit NetSettingDialog(QWidget *parent = 0, QString ProjectPath = "");
     ~NetSettingDialog();
 
-public:
-    bool loadFromFile(SaveFormat saveFormat);
-    bool saveToFile(SaveFormat saveFormat);
+    void load();
+    void save();
 
 private:
-    void load(const QJsonObject &json);
-    void save(QJsonObject &json);
     bool check_data();
 
 private slots:

@@ -14,6 +14,7 @@ DESTDIR = $$IDE_BIN_PATH
 
 
 INCLUDEPATH += .
+INCLUDEPATH += ./widget
 INCLUDEPATH += $$PWD/../common/qtsingleapplication
 INCLUDEPATH += $$PWD/../common/register
 
@@ -83,7 +84,10 @@ SOURCES += main.cpp\
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
     ChildForm.cpp \
-    ProjectMgrUtils.cpp
+    ProjectMgrUtils.cpp \
+    widget/QFramelessDockWidget.cpp \
+    widget/QIPAddressEdit.cpp \
+    widget/QQuickInputLineEdit.cpp
 
 HEADERS  += MainWindow.h \
     NewProjectDialog.h \
@@ -120,7 +124,10 @@ HEADERS  += MainWindow.h \
     ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
     ChildForm.h \
-    ProjectMgrUtils.h
+    ProjectMgrUtils.h \
+    widget/QFramelessDockWidget.h \
+    widget/QIPAddressEdit.h \
+    widget/QQuickInputLineEdit.h
 
 FORMS    += MainWindow.ui \
     NewProjectDialog.ui \
@@ -147,7 +154,8 @@ FORMS    += MainWindow.ui \
     InsertFunctionDialog.ui \
     InsertTagDialog.ui \
     ScriptRunConditionEditorDlg.ui \
-    ChildForm.ui
+    ChildForm.ui \
+    widget/QIPAddressEdit.ui
 
 RESOURCES += \
     images.qrc \

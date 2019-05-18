@@ -10,25 +10,23 @@
 
 
 ModbusRTUDevice::ModbusRTUDevice()
-    : pComDevicePrivate(0)
+    : pComDevicePrivate_(nullptr)
 {
     comPort_ = new ComPort();
     iFacePort = comPort_;
-    mModbusRTU.SetPort(iFacePort);
+    modbusRTU_.SetPort(iFacePort);
 }
 
 ModbusRTUDevice::~ModbusRTUDevice()
 {
-    if(comPort_ != nullptr)
-    {
+    if(comPort_ != nullptr) {
         delete comPort_;
         comPort_ = nullptr;
     }
 
-    if(pComDevicePrivate !=0 )
-    {
-        delete pComDevicePrivate;
-        pComDevicePrivate = 0;
+    if(pComDevicePrivate_ != nullptr) {
+        delete pComDevicePrivate_;
+        pComDevicePrivate_ = nullptr;
     }
 }
 
@@ -39,8 +37,8 @@ ModbusRTUDevice::~ModbusRTUDevice()
 */
 QString ModbusRTUDevice::GetDeviceName()
 {
-    if(pComDevicePrivate !=0 )
-        return pComDevicePrivate->m_sDeviceName;
+    if(pComDevicePrivate_ != nullptr)
+        return pComDevicePrivate_->m_sDeviceName;
     return "";
 }
 
@@ -138,33 +136,33 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
                 case TYPE_BOOL:
                 {
                     uint val = pDBTagObject->GetWriteData().toUInt();
-                    mModbusRTU.WriteCoil(iDevAddress, iRegisterAddress + iOffset, val);
+                    modbusRTU_.WriteCoil(iDevAddress, iRegisterAddress + iOffset, val);
                 }break;
                 case TYPE_INT8:
                 {
                     int val = pDBTagObject->GetWriteData().toInt();
                     writeBuf[0] = val & 0x01;
-                    mModbusRTU.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 8, 1, writeBuf);
+                    modbusRTU_.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 8, 1, writeBuf);
                 }break;
                 case TYPE_UINT8:
                 {
                     uint val = pDBTagObject->GetWriteData().toUInt();
                     writeBuf[0] = val & 0x01;
-                    mModbusRTU.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 8, 1, writeBuf);
+                    modbusRTU_.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 8, 1, writeBuf);
                 }break;
                 case TYPE_INT16:
                 {
                     int val = pDBTagObject->GetWriteData().toInt();
                     writeBuf[0] = val & 0x01;
                     writeBuf[1] = (val>>8) & 0x01;
-                    mModbusRTU.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 16, 2, writeBuf);
+                    modbusRTU_.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 16, 2, writeBuf);
                 }break;
                 case TYPE_UINT16:
                 {
                     uint val = pDBTagObject->GetWriteData().toUInt();
                     writeBuf[0] = val & 0x01;
                     writeBuf[1] = (val>>8) & 0x01;
-                    mModbusRTU.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 16, 2, writeBuf);
+                    modbusRTU_.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 16, 2, writeBuf);
                 }break;
                 case TYPE_INT32:
                 {
@@ -173,7 +171,7 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
                     writeBuf[1] = (val>>8) & 0x01;
                     writeBuf[2] = (val>>16) & 0x01;
                     writeBuf[3] = (val>>24) & 0x01;
-                    mModbusRTU.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
+                    modbusRTU_.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
                 }break;
                 case TYPE_UINT32:
                 {
@@ -182,7 +180,7 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
                     writeBuf[1] = (val>>8) & 0x01;
                     writeBuf[2] = (val>>16) & 0x01;
                     writeBuf[3] = (val>>24) & 0x01;
-                    mModbusRTU.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
+                    modbusRTU_.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
                 }break;
                 case TYPE_FLOAT:
                 {
@@ -195,7 +193,7 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
                     uFloat.ufloat = pDBTagObject->GetWriteData().toFloat();
                     for(int i=0; i<4; i++)
                         writeBuf[i] = uFloat.ubytes[i];
-                    mModbusRTU.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
+                    modbusRTU_.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
                 }break;
             }
         }
@@ -209,27 +207,27 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
                 case TYPE_INT16:
                 {
                     int val = pDBTagObject->GetWriteData().toInt();
-                    mModbusRTU.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
+                    modbusRTU_.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
                 }break;
                 case TYPE_UINT16:
                 {
                     uint val = pDBTagObject->GetWriteData().toUInt();
-                    mModbusRTU.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
+                    modbusRTU_.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
                 }break;
                 case TYPE_INT32:
                 {
                     int val = pDBTagObject->GetWriteData().toInt();
-                    mModbusRTU.WriteUIntToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
+                    modbusRTU_.WriteUIntToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
                 }break;
                 case TYPE_UINT32:
                 {
                     uint val = pDBTagObject->GetWriteData().toUInt();
-                    mModbusRTU.WriteUIntToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
+                    modbusRTU_.WriteUIntToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
                 }break;
                 case TYPE_FLOAT:
                 {
                     float val = pDBTagObject->GetWriteData().toFloat();
-                    mModbusRTU.WriteFloatToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
+                    modbusRTU_.WriteFloatToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
                 }break;
                 case TYPE_DOUBLE:
                 {
@@ -243,12 +241,12 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
                     uDouble.udouble = val;
                     for(int i=0; i<8; i++)
                         writeBuf[i] = uDouble.ubytes[i];
-                    mModbusRTU.WriteMultipleHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 4, writeBuf);
+                    modbusRTU_.WriteMultipleHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 4, writeBuf);
                 }break;
                 case TYPE_ASCII2CHAR:
                 {
                     uint val = pDBTagObject->GetWriteData().toUInt();
-                    mModbusRTU.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
+                    modbusRTU_.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
                 }break;
                 case TYPE_STRING:
                 {
@@ -312,7 +310,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
             {
                 case TYPE_BOOL:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -323,7 +321,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT8:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -334,7 +332,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT8:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -345,7 +343,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT16:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -357,7 +355,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT16:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -369,7 +367,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT32:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -381,7 +379,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT32:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -393,7 +391,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_FLOAT:
                 {
-                    if(mModbusRTU.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
+                    if(modbusRTU_.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -420,7 +418,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
             {
                 case TYPE_BOOL:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -431,7 +429,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT8:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -442,7 +440,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT8:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -453,7 +451,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT16:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -465,7 +463,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT16:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -477,7 +475,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT32:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -489,7 +487,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT32:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -501,7 +499,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_FLOAT:
                 {
-                    if(mModbusRTU.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
+                    if(modbusRTU_.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -528,7 +526,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
             {
                 case TYPE_INT16:
                 {
-                    if(mModbusRTU.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -543,7 +541,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT16:
                 {
-                    if(mModbusRTU.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -558,7 +556,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT32:
                 {
-                    if(mModbusRTU.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
+                    if(modbusRTU_.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -573,7 +571,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT32:
                 {
-                    if(mModbusRTU.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
+                    if(modbusRTU_.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -588,7 +586,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_FLOAT:
                 {
-                    if(mModbusRTU.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
+                    if(modbusRTU_.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -611,7 +609,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_DOUBLE:
                 {
-                    if(mModbusRTU.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
+                    if(modbusRTU_.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -634,7 +632,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_ASCII2CHAR:
                 {
-                    if(mModbusRTU.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -660,7 +658,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
             {
                 case TYPE_INT16:
                 {
-                    if(mModbusRTU.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -675,7 +673,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT16:
                 {
-                    if(mModbusRTU.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -690,7 +688,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_INT32:
                 {
-                    if(mModbusRTU.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
+                    if(modbusRTU_.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -705,7 +703,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_UINT32:
                 {
-                    if(mModbusRTU.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
+                    if(modbusRTU_.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -720,7 +718,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_FLOAT:
                 {
-                    if(mModbusRTU.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
+                    if(modbusRTU_.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -743,7 +741,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_DOUBLE:
                 {
-                    if(mModbusRTU.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
+                    if(modbusRTU_.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -766,7 +764,7 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                 }break;
                 case TYPE_ASCII2CHAR:
                 {
-                    if(mModbusRTU.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
+                    if(modbusRTU_.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
                     {
                         return false;
                     }
@@ -816,10 +814,10 @@ bool ModbusRTUDevice::ReadIOTags()
             miFailCnt++;
         }
 
-        if(pComDevicePrivate !=0 )
+        if(pComDevicePrivate_ !=0 )
         {
-            if(pComDevicePrivate->m_iFrameTimePeriod > 0)
-                QThread::msleep(pComDevicePrivate->m_iFrameTimePeriod);
+            if(pComDevicePrivate_->m_iFrameTimePeriod > 0)
+                QThread::msleep(pComDevicePrivate_->m_iFrameTimePeriod);
         }
     }
     return true;
@@ -898,7 +896,7 @@ bool ModbusRTUDevice::Close()
 */
 QString ModbusRTUDevice::GetPortName()
 {
-    return pComDevicePrivate->m_sPortNumber;
+    return pComDevicePrivate_->m_sPortNumber;
 }
 
 
@@ -907,16 +905,16 @@ QString ModbusRTUDevice::GetPortName()
 */
 bool ModbusRTUDevice::LoadData(SaveFormat saveFormat, QString fileName)
 {
-    pComDevicePrivate = new ComDevicePrivate();
-    if (pComDevicePrivate->LoadData(saveFormat, fileName))
+    pComDevicePrivate_ = new ComDevicePrivate();
+    if (pComDevicePrivate_->LoadData(saveFormat, fileName))
     {
         QStringList comArgs;
-        comArgs << QString().number(pComDevicePrivate->m_iBaudrate);
-        comArgs << QString().number(pComDevicePrivate->m_iDatabit);
-        comArgs << pComDevicePrivate->m_sVerifybit;
-        comArgs << QString().number(pComDevicePrivate->m_fStopbit);
+        comArgs << QString().number(pComDevicePrivate_->m_iBaudrate);
+        comArgs << QString().number(pComDevicePrivate_->m_iDatabit);
+        comArgs << pComDevicePrivate_->m_sVerifybit;
+        comArgs << QString().number(pComDevicePrivate_->m_fStopbit);
 
-        if(!iFacePort->open(pComDevicePrivate->m_sPortNumber, comArgs))
+        if(!iFacePort->open(pComDevicePrivate_->m_sPortNumber, comArgs))
         {
             qWarning("ComPort open fail!");
             return false;

@@ -69,11 +69,11 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class LogHelper
+class QLogHelper
 {
 
 public:
-    Q_DECL_CONSTEXPR LogHelper() :
+    Q_DECL_CONSTEXPR QLogHelper() :
         version_(1),
         line_(0),
         file_(0),
@@ -81,7 +81,7 @@ public:
 
     }
 
-    LogHelper(const char *fileName, int lineNumber, const char *functionName);
+    QLogHelper(const char *fileName, int lineNumber, const char *functionName);
 
     QString TemplateParameter () {
         return "";
@@ -123,7 +123,7 @@ public:
     }
 
     template <typename T>
-    inline LogHelper &operator<<(T logmsg) {
+    inline QLogHelper &operator<<(T logmsg) {
         writelogToLocal(LOG_INFO, QString("%1").arg(logmsg));
         return *this;
     }
@@ -131,7 +131,7 @@ public:
 private:
     virtual void writelogToLocal(ELogLevel logtype, const QString& logmsg);
 
-    virtual void copy(const LogHelper &logContext){
+    virtual void copy(const QLogHelper &logContext){
         Q_UNUSED(logContext)
     }
 
@@ -141,18 +141,18 @@ private:
     const char *file_;
     const char *function_;
 
-    Q_DISABLE_COPY(LogHelper)
+    Q_DISABLE_COPY(QLogHelper)
 };
 
 
 ////////////////////////////////////////////////////////////////////////////////
 
 
-#define LogDebug LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).debug
-#define LogInfo  LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).info
-#define LogWarn  LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).warn
-#define LogError LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).error
-#define LogFatal LogHelper(__FILE__, __LINE__, Q_FUNC_INFO).fatal
-#define Logqt    LogHelper(__FILE__, __LINE__, Q_FUNC_INFO)
+#define LogDebug QLogHelper(__FILE__, __LINE__, Q_FUNC_INFO).debug
+#define LogInfo  QLogHelper(__FILE__, __LINE__, Q_FUNC_INFO).info
+#define LogWarn  QLogHelper(__FILE__, __LINE__, Q_FUNC_INFO).warn
+#define LogError QLogHelper(__FILE__, __LINE__, Q_FUNC_INFO).error
+#define LogFatal QLogHelper(__FILE__, __LINE__, Q_FUNC_INFO).fatal
+#define Logqt    QLogHelper(__FILE__, __LINE__, Q_FUNC_INFO)
 
 #endif // ULOG_H

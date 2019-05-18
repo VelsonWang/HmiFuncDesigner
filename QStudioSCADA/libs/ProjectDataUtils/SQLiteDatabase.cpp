@@ -12,6 +12,15 @@ SQLiteDatabase::SQLiteDatabase(const QString &dbname,
                                QObject *parent)
     : Database(dbname, user, pwd, hostname, port, parent)
 {
+    try {
+        if(QSqlDatabase::contains("sqlite_connection")) {
+            db_ = QSqlDatabase::database("sqlite_connection");
+        } else {
+            db_ = QSqlDatabase::addDatabase("QSQLITE", "sqlite_connection");
+        }
+    } catch(...) {
+        LogError(QString("Add Database Failed Exception!"));
+    }
 }
 
 SQLiteDatabase::~SQLiteDatabase()
@@ -21,8 +30,8 @@ SQLiteDatabase::~SQLiteDatabase()
 
 bool SQLiteDatabase::openDatabase()
 {
+    closeDatabase();
     try {
-        db_ = QSqlDatabase::addDatabase("QSQLITE");
         db_.setDatabaseName(name_);
         if(!db_.open()) {
             LogError(QString("Open Database Failed!"));
@@ -37,6 +46,9 @@ bool SQLiteDatabase::openDatabase()
 
 bool SQLiteDatabase::closeDatabase()
 {
+    if(db_.isOpen()) {
+        db_.close();
+    }
     return false;
 }
 

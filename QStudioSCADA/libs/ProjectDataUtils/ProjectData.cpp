@@ -56,7 +56,7 @@ bool ProjectData::createOrOpenProjectData(const QString &projPath,
 
     fileName = fileName + "/" + projName + ".pdt";
 
-    if(fileName != dbPath_ && dbPath_ != "") {
+    if(dbPath_ != "") {
         if(dbData_ != nullptr) {
             delete dbData_;
             dbData_ = nullptr;
