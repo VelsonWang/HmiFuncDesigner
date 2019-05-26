@@ -66,7 +66,6 @@ bool ProjectData::createOrOpenProjectData(const QString &projPath,
     dbPath_ = fileName;
     dbData_ = new ProjectDataSQLiteDatabase(fileName);
     if(dbData_->openDatabase()) {
-        dbData_->createDatabase();
         dbData_->createTables();
         return true;
     }

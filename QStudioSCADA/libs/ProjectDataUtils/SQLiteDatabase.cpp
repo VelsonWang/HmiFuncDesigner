@@ -68,20 +68,6 @@ bool SQLiteDatabase::isOpenDatabase()
 
 bool SQLiteDatabase::createDatabase()
 {
-    QSqlQuery query(db_);
-    try {
-        query.exec(QString("show databases like '%1'").arg(name_));
-        if(!query.next()) {
-            if(!query.exec(QString("create database %1").arg(name_))) {
-                LogError(QString("Create Database: %1 Failed!").arg(name_));
-				return false;
-			}
-		}
-        query.exec(QString("use %1").arg(name_));
-    } catch (...) {
-        LogError(QString("Create Database: %1 Failed Exception!").arg(name_));
-		return false;
-	}
 	return true;
 }
 

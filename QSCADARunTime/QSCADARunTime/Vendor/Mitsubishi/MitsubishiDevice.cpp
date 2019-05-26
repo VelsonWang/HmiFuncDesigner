@@ -97,6 +97,17 @@ IOTag* MitsubishiDevice::FindIOTagByID(qint32 id) {
 }
 
 
+/**
+ * @brief MitsubishiDevice::BeforeWriteIOTag
+ * @details 写变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool MitsubishiDevice::BeforeWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
+
 /*
 * 写变量
 */
@@ -108,11 +119,28 @@ bool MitsubishiDevice::WriteIOTag(IOTag* pTag) {
         if(!mitsubishi_.isCanWrite(pTag))
             return false;
 
+        BeforeWriteIOTag(pTag);
+
         if(mitsubishi_.writeData(pTag) != 1)
             return false;
+
+        AfterWriteIOTag(pTag);
     }
     return true;
 }
+
+
+/**
+ * @brief MitsubishiDevice::AfterWriteIOTag
+ * @details 写变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool MitsubishiDevice::AfterWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
+
 
 /*
 * 写变量列表
@@ -122,6 +150,18 @@ bool MitsubishiDevice::WriteIOTags() {
         IOTag* pTag = mWriteQueue.dequeue();
         WriteIOTag(pTag);
     }
+    return true;
+}
+
+
+/**
+ * @brief MitsubishiDevice::BeforeReadIOTag
+ * @details 读变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool MitsubishiDevice::BeforeReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
     return true;
 }
 
@@ -140,11 +180,27 @@ bool MitsubishiDevice::ReadIOTag(IOTag* pTag) {
         if(!mitsubishi_.isCanRead(pTag))
             return false;
 
+        BeforeReadIOTag(pTag);
+
         if(mitsubishi_.readData(pTag) != 1)
             return false;
 
         pDBTagObject->SetData(pTag->pReadBuf);
+
+        AfterReadIOTag(pTag);
     }
+    return true;
+}
+
+
+/**
+ * @brief MitsubishiDevice::AfterReadIOTag
+ * @details 读变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool MitsubishiDevice::AfterReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
     return true;
 }
 

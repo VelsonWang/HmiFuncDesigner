@@ -50,12 +50,20 @@ public:
     virtual void AddIOTagToDeviceTagWriteQueue(IOTag* pTag) = 0;
     // 查找设备变量
     virtual IOTag* FindIOTagByID(qint32 id) = 0;
+    // 写变量前处理
+    virtual bool BeforeWriteIOTag(IOTag* pTag) = 0;
     // 写变量
     virtual bool WriteIOTag(IOTag* pTag) = 0;
+    // 写变量后处理
+    virtual bool AfterWriteIOTag(IOTag* pTag) = 0;
     // 写变量列表
     virtual bool WriteIOTags() = 0;
+    // 读变量前处理
+    virtual bool BeforeReadIOTag(IOTag* pTag) = 0;
     // 读变量
     virtual bool ReadIOTag(IOTag* pTag) = 0;
+    // 读变量后处理
+    virtual bool AfterReadIOTag(IOTag* pTag) = 0;
     // 读变量列表
     virtual bool ReadIOTags() = 0;
     // 是否运行

@@ -9,7 +9,15 @@ MySQLDatabase::MySQLDatabase(const QString &dbname,
                              QObject *parent)
     : Database(dbname, user, pwd, hostname, port, parent)
 {
-
+    try {
+        if(QSqlDatabase::contains("mysql_connection")) {
+            db_ = QSqlDatabase::database("mysql_connection");
+        } else {
+            db_ = QSqlDatabase::addDatabase("QMYSQL", "mysql_connection");
+        }
+    } catch(...) {
+        LogError(QString("Add Database Failed Exception!"));
+    }
 }
 
 MySQLDatabase::~MySQLDatabase()
@@ -20,14 +28,13 @@ MySQLDatabase::~MySQLDatabase()
 bool MySQLDatabase::openDatabase()
 {
     try {
-        QSqlDatabase db = QSqlDatabase::addDatabase("QMYSQL");
-        db.setHostName(hostName_);
-        db.setPort(port_);
-        if(!db.open(user_, pwd_)) {
+        db_.setHostName(hostName_);
+        db_.setPort(port_);
+        if(!db_.open(user_, pwd_)) {
             LogError(QString("Open Database Failed!"));
             return false;
         }
-        db.exec("set names 'utf-8'");
+        db_.exec("set names 'utf-8'");
     } catch(...) {
         LogError(QString("Open Database Failed Exception!"));
         return false;

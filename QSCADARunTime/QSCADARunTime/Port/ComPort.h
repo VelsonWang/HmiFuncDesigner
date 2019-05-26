@@ -5,7 +5,7 @@
 #include <QTimer>
 
 #include "qextserial/qextserialport.h"
-#include "iport.h"
+#include "IPort.h"
 
 
 class ComPort : public QObject, public IPort

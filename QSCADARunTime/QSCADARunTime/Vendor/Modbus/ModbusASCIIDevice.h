@@ -30,12 +30,20 @@ public:
     virtual void AddIOTagToDeviceTagWriteQueue(IOTag* pTag);
     // 查找设备变量
     virtual IOTag* FindIOTagByID(qint32 id);
+    // 写变量前处理
+    virtual bool BeforeWriteIOTag(IOTag* pTag);
     // 写变量
     virtual bool WriteIOTag(IOTag* pTag);
+    // 写变量后处理
+    virtual bool AfterWriteIOTag(IOTag* pTag);
     // 写变量列表
     virtual bool WriteIOTags();
+    // 读变量前处理
+    virtual bool BeforeReadIOTag(IOTag* pTag);
     // 读变量
     virtual bool ReadIOTag(IOTag* pTag);
+    // 读变量后处理
+    virtual bool AfterReadIOTag(IOTag* pTag);
     // 读变量列表
     virtual bool ReadIOTags();
     // 是否运行
@@ -57,7 +65,7 @@ public:
 
 private:    
     ComPort *comPort_;
-    ComDevicePrivate *pComDevicePrivate;    
+    ComDevicePrivate *pComDevicePrivate;
     ModbusASCII mModbusAscii;
 
 };

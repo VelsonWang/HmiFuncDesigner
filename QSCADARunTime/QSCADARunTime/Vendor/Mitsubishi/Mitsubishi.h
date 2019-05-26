@@ -39,8 +39,6 @@ public:
     int readData(IOTag* pTag);
 
 private:
-
-private:
     IPort *iFacePort_;
     quint8 readDataBuffer_[512] = {0};
     quint8 writeDataBuffer_[512] = {0};

@@ -39,7 +39,8 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor/Mitsubishi \
                Event \
                Script \
-               Log
+               Log \
+               Socket
 
 LIBRARY_SRC_PATH = $$_PRO_FILE_PWD_/../../QStudioSCADA
 INCLUDEPATH += \
@@ -64,6 +65,11 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }
 
+win32 {
+    LIBS += -lpthread -lwsock32 -lws2_32
+} else {
+
+}
 
 SOURCES += \
     qextserial/qextserialport.cpp \
@@ -138,7 +144,8 @@ HEADERS  += \
     DB/RunTimeMySQLDatabase.h \
     Public/Global.h \
     Vendor/Mitsubishi/MitsubishiDevice.h \
-    Vendor/Mitsubishi/Mitsubishi.h
+    Vendor/Mitsubishi/Mitsubishi.h \
+    Socket/xsocket.hpp
 
 win32 {
      SOURCES += qextserial/qextserialport_win.cpp

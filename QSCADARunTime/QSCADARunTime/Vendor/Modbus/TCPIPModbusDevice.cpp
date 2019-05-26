@@ -15,7 +15,7 @@ TCPIPModbusDevice::TCPIPModbusDevice()
 {
     netPort_ = new NetPort();
     iFacePort = netPort_;
-    mTCPIPModbus.SetPort(iFacePort);
+    TCPIPModbus_.setPort(iFacePort);
 }
 
 TCPIPModbusDevice::~TCPIPModbusDevice()
@@ -109,170 +109,52 @@ IOTag* TCPIPModbusDevice::FindIOTagByID(qint32 id)
     return NULL;
 }
 
+/**
+ * @brief TCPIPModbusDevice::BeforeWriteIOTag
+ * @details 写变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool TCPIPModbusDevice::BeforeWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
+
 
 /*
 * 写变量
 */
 bool TCPIPModbusDevice::WriteIOTag(IOTag* pTag)
 {
-    if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == WRIE)
-    {
+    if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == WRIE) {
         ClearWriteBuffer();
         ClearIOTagWriteBuffer(pTag);
 
-        QString strRegisterArea = pTag->GetRegisterArea();
-        int iDevAddress = pTag->GetDeviceAddress();
-        int iRegisterAddress = pTag->GetRegisterAddress();
-        int iOffset = pTag->GetOffset();
-        int iMaxValue = pTag->GetMaxValue();
-        int iMinValue = pTag->GetMinValue();
-        int iInitializeValue = pTag->GetInitializeValue();
-        float fScale = pTag->GetScale();
-        int iInFrameAddress = pTag->GetInFrameAddress();
-        DBTagObject *pDBTagObject = pTag->GetDBTagObject();
+        if(!TCPIPModbus_.isCanWrite(pTag))
+            return false;
 
-        if(strRegisterArea == "DO线圈")
-        {
-            switch(pTag->GetDataType())
-            {
-                case TYPE_VARIANT:
-                {
+        BeforeWriteIOTag(pTag);
 
-                }break;
-                case TYPE_BOOL:
-                {
-                    uint val = pDBTagObject->GetWriteData().toUInt();
-                    mTCPIPModbus.WriteCoil(iDevAddress, iRegisterAddress + iOffset, val);
-                }break;
-                case TYPE_INT8:
-                {
-                    int val = pDBTagObject->GetWriteData().toInt();
-                    writeBuf[0] = val & 0x01;
-                    mTCPIPModbus.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 8, 1, writeBuf);
-                }break;
-                case TYPE_UINT8:
-                {
-                    uint val = pDBTagObject->GetWriteData().toUInt();
-                    writeBuf[0] = val & 0x01;
-                    mTCPIPModbus.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 8, 1, writeBuf);
-                }break;
-                case TYPE_INT16:
-                {
-                    int val = pDBTagObject->GetWriteData().toInt();
-                    writeBuf[0] = val & 0x01;
-                    writeBuf[1] = (val>>8) & 0x01;
-                    mTCPIPModbus.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 16, 2, writeBuf);
-                }break;
-                case TYPE_UINT16:
-                {
-                    uint val = pDBTagObject->GetWriteData().toUInt();
-                    writeBuf[0] = val & 0x01;
-                    writeBuf[1] = (val>>8) & 0x01;
-                    mTCPIPModbus.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 16, 2, writeBuf);
-                }break;
-                case TYPE_INT32:
-                {
-                    int val = pDBTagObject->GetWriteData().toInt();
-                    writeBuf[0] = val & 0x01;
-                    writeBuf[1] = (val>>8) & 0x01;
-                    writeBuf[2] = (val>>16) & 0x01;
-                    writeBuf[3] = (val>>24) & 0x01;
-                    mTCPIPModbus.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
-                }break;
-                case TYPE_UINT32:
-                {
-                    uint val = pDBTagObject->GetWriteData().toUInt();
-                    writeBuf[0] = val & 0x01;
-                    writeBuf[1] = (val>>8) & 0x01;
-                    writeBuf[2] = (val>>16) & 0x01;
-                    writeBuf[3] = (val>>24) & 0x01;
-                    mTCPIPModbus.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
-                }break;
-                case TYPE_FLOAT:
-                {
-                    union unionFloat
-                    {
-                        float ufloat;
-                        unsigned char ubytes[4];
-                    };
-                    unionFloat uFloat;
-                    uFloat.ufloat = pDBTagObject->GetWriteData().toFloat();
-                    for(int i=0; i<4; i++)
-                        writeBuf[i] = uFloat.ubytes[i];
-                    mTCPIPModbus.WriteMultipleCoils(iDevAddress, iRegisterAddress + iOffset, 32, 4, writeBuf);
-                }break;
-            }
-        }
-        else if(strRegisterArea == "DI离散输入寄存器")
-        {
-        }
-        else if(strRegisterArea == "AO保持寄存器")
-        {
-            switch(pTag->GetDataType())
-            {
-                case TYPE_INT16:
-                {
-                    int val = pDBTagObject->GetWriteData().toInt();
-                    mTCPIPModbus.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
-                }break;
-                case TYPE_UINT16:
-                {
-                    uint val = pDBTagObject->GetWriteData().toUInt();
-                    mTCPIPModbus.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
-                }break;
-                case TYPE_INT32:
-                {
-                    int val = pDBTagObject->GetWriteData().toInt();
-                    mTCPIPModbus.WriteUIntToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
-                }break;
-                case TYPE_UINT32:
-                {
-                    uint val = pDBTagObject->GetWriteData().toUInt();
-                    mTCPIPModbus.WriteUIntToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
-                }break;
-                case TYPE_FLOAT:
-                {
-                    float val = pDBTagObject->GetWriteData().toFloat();
-                    mTCPIPModbus.WriteFloatToHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
-                }break;
-                case TYPE_DOUBLE:
-                {
-                    double val = pDBTagObject->GetWriteData().toDouble();
-                    union unionDouble
-                    {
-                        double udouble;
-                        unsigned char ubytes[8];
-                    };
-                    unionDouble uDouble;
-                    uDouble.udouble = val;
-                    for(int i=0; i<8; i++)
-                        writeBuf[i] = uDouble.ubytes[i];
-                    mTCPIPModbus.WriteMultipleHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 4, writeBuf);
-                }break;
-                case TYPE_ASCII2CHAR:
-                {
-                    uint val = pDBTagObject->GetWriteData().toUInt();
-                    mTCPIPModbus.WriteHoldingRegister(iDevAddress, iRegisterAddress + iOffset, val);
-                }break;
-                case TYPE_STRING:
-                {
+        if(TCPIPModbus_.writeData(pTag) != 1)
+            return false;
 
-                }break;
-                case TYPE_BCD:
-                {
-
-                }break;
-            }
-        }
-        else if(strRegisterArea == "AI输入寄存器")
-        {
-        }
-        else
-        {
-        }
+        AfterWriteIOTag(pTag);
     }
     return true;
 }
+
+
+/**
+ * @brief TCPIPModbusDevice::AfterWriteIOTag
+ * @details 写变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool TCPIPModbusDevice::AfterWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
+
 
 /*
 * 写变量列表
@@ -288,513 +170,53 @@ bool TCPIPModbusDevice::WriteIOTags()
 }
 
 
+/**
+ * @brief TCPIPModbusDevice::BeforeReadIOTag
+ * @details 读变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool TCPIPModbusDevice::BeforeReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
+
+
 /*
 * 读变量
 */
-bool TCPIPModbusDevice::ReadIOTag(IOTag* pTag)
-{
+bool TCPIPModbusDevice::ReadIOTag(IOTag* pTag) {
 	QMutexLocker locker(&m_WriteMutex);
-    if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == READ)
-    {
+    if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == READ) {
         ClearReadBuffer();
         ClearIOTagReadBuffer(pTag);
 
-        QString strRegisterArea = pTag->GetRegisterArea();
-        int iDevAddress = pTag->GetDeviceAddress();
-        int iRegisterAddress = pTag->GetRegisterAddress();
-        int iOffset = pTag->GetOffset();
-        int iMaxValue = pTag->GetMaxValue();
-        int iMinValue = pTag->GetMinValue();
-        int iInitializeValue = pTag->GetInitializeValue();
-        float fScale = pTag->GetScale();
-        int iInFrameAddress = pTag->GetInFrameAddress();
         DBTagObject *pDBTagObject = pTag->GetDBTagObject();
 
-        if(strRegisterArea == "DO线圈")
-        {
-            switch(pTag->GetDataType())
-            {
-                case TYPE_BOOL:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    QVariant value((uint)pTag->pReadBuf[0]);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT8:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    QVariant value((int)pTag->pReadBuf[0]);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT8:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    QVariant value((uint)pTag->pReadBuf[0]);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT16:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((int)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT16:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((uint)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT32:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((int)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT32:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((uint)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_FLOAT:
-                {
-                    if(mTCPIPModbus.ReadCoils(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
+        if(!TCPIPModbus_.isCanRead(pTag))
+            return false;
 
-                    union unionFloat
-                    {
-                        float ufloat;
-                        unsigned char ubytes[4];
-                    };
-                    unionFloat uFloat;
-                    for(int i=0; i<4; i++)
-                        uFloat.ubytes[i] = pTag->pReadBuf[i];
-                    QVariant value(uFloat.ufloat);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-            }
-        }
-        else if(strRegisterArea == "DI离散输入寄存器")
-        {
-            switch(pTag->GetDataType())
-            {
-                case TYPE_BOOL:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    QVariant value((uint)pTag->pReadBuf[0]);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT8:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    QVariant value((int)pTag->pReadBuf[0]);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT8:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 8, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    QVariant value((uint)pTag->pReadBuf[0]);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT16:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((int)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT16:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 16, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((uint)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT32:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((int)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT32:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
-                    QVariant value((uint)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_FLOAT:
-                {
-                    if(mTCPIPModbus.ReadDiscreteInputs(iDevAddress, iRegisterAddress + iOffset, 32, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                        pTag->pReadBuf[i] = readBuf[i];
+        BeforeReadIOTag(pTag);
 
-                    union unionFloat
-                    {
-                        float ufloat;
-                        unsigned char ubytes[4];
-                    };
-                    unionFloat uFloat;
-                    for(int i=0; i<4; i++)
-                        uFloat.ubytes[i] = pTag->pReadBuf[i];
-                    QVariant value(uFloat.ufloat);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-            }     
-        }
-        else if(strRegisterArea == "AO保持寄存器")
-        {
-            switch(pTag->GetDataType())
-            {
-                case TYPE_INT16:
-                {
-                    if(mTCPIPModbus.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<1; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((int)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT16:
-                {
-                    if(mTCPIPModbus.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<1; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((uint)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT32:
-                {
-                    if(mTCPIPModbus.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((int)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT32:
-                {
-                    if(mTCPIPModbus.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((uint)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_FLOAT:
-                {
-                    if(mTCPIPModbus.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    union unionFloat
-                    {
-                        float ufloat;
-                        unsigned char ubytes[4];
-                    };
-                    unionFloat uFloat;
-                    for(int i=0; i<4; i++)
-                        uFloat.ubytes[i] = pTag->pReadBuf[i];
-                    QVariant value(uFloat.ufloat);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_DOUBLE:
-                {
-                    if(mTCPIPModbus.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    union unionDouble
-                    {
-                        double udouble;
-                        unsigned char ubytes[8];
-                    };
-                    unionDouble uDouble;
-                    for(int i=0; i<8; i++)
-                        uDouble.ubytes[i] = pTag->pReadBuf[i];
-                    QVariant value(uDouble.udouble);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_ASCII2CHAR:
-                {
-                    if(mTCPIPModbus.ReadHoldingRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    pTag->pReadBuf[1] = readBuf[1];
-                    QVariant value((uint)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_STRING:
-                {
+        if(TCPIPModbus_.readData(pTag) != 1)
+            return false;
 
-                }break;
-                case TYPE_BCD:
-                {
+        pDBTagObject->SetData(pTag->pReadBuf);
 
-                }break;
-            }
-        }
-        else if(strRegisterArea == "AI输入寄存器")
-        {
-            switch(pTag->GetDataType())
-            {
-                case TYPE_INT16:
-                {
-                    if(mTCPIPModbus.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<1; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((int)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT16:
-                {
-                    if(mTCPIPModbus.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<1; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((uint)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_INT32:
-                {
-                    if(mTCPIPModbus.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((int)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_UINT32:
-                {
-                    if(mTCPIPModbus.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    QVariant value((uint)(pTag->pReadBuf[3]<<24|pTag->pReadBuf[2]<<16|pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_FLOAT:
-                {
-                    if(mTCPIPModbus.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 2, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<2; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    union unionFloat
-                    {
-                        float ufloat;
-                        unsigned char ubytes[4];
-                    };
-                    unionFloat uFloat;
-                    for(int i=0; i<4; i++)
-                        uFloat.ubytes[i] = pTag->pReadBuf[i];
-                    QVariant value(uFloat.ufloat);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_DOUBLE:
-                {
-                    if(mTCPIPModbus.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 4, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    for(int i=0; i<4; i++)
-                    {
-                        pTag->pReadBuf[i*2] = readBuf[i*2+1];
-                        pTag->pReadBuf[i*2+1] = readBuf[i*2];
-                    }
-                    union unionFloat
-                    {
-                        double udouble;
-                        unsigned char ubytes[8];
-                    };
-                    unionFloat uFloat;
-                    for(int i=0; i<8; i++)
-                        uFloat.ubytes[i] = pTag->pReadBuf[i];
-                    QVariant value(uFloat.udouble);
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_ASCII2CHAR:
-                {
-                    if(mTCPIPModbus.ReadReadInputRegister(iDevAddress, iRegisterAddress + iOffset, 1, readBuf) == FAIL)
-                    {
-                        return false;
-                    }
-                    pTag->pReadBuf[0] = readBuf[0];
-                    pTag->pReadBuf[1] = readBuf[1];
-                    QVariant value((uint)(pTag->pReadBuf[1]<<8|pTag->pReadBuf[0]));
-                    if(mWriteQueue.indexOf(pTag) == -1)
-                        pDBTagObject->SetData(value);
-                }break;
-                case TYPE_STRING:
-                {
-
-                }break;
-                case TYPE_BCD:
-                {
-
-                }break;
-            }
-        }
-        else
-        {
-
-        }
+        AfterReadIOTag(pTag);
     }
+    return true;
+}
+
+
+/**
+ * @brief TCPIPModbusDevice::AfterReadIOTag
+ * @details 读变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool TCPIPModbusDevice::AfterReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
     return true;
 }
 

@@ -7,36 +7,31 @@
 #include "../../Public/public.h"
 #include "IVendor.h"
 #include "ComPort.h"
-#include "iport.h"
+#include "IPort.h"
 #include "Modbus.h"
 
 
 class TCPIPModbus : public Modbus
 {
 public:
-    TCPIPModbus();
+    TCPIPModbus(QObject *parent = nullptr);
     ~TCPIPModbus();
 
 public:
-    // 0x00
-    ResultType ReadCoils(int addDev, int addCol, int num, unsigned char *pbuf=0);
-    ResultType WriteCoil(int addDev, int addCol, int value);
-    ResultType WriteMultipleCoils(int addDev, int addCol, int num, int cntByte, unsigned char *pbuf=0);
+    bool isCanWrite(IOTag* pTag);
+    int writeData(IOTag* pTag);
+    bool isCanRead(IOTag* pTag);
+    int readData(IOTag* pTag);
 
-    // 0x10001
-    ResultType ReadDiscreteInputs(int addDev, int addinput, int num, unsigned char *pbuf=0);
+private:
+    // 生成modbus报文
+    quint16 makeMessagePackage(quint8 *pSendData,
+                               IOTag* pTag,
+                               TModbus_ReadWrite RW_flag,
+                               quint16 *retVarLen);
 
-    // 0x30001
-    ResultType ReadReadInputRegister(int addDev, int addReg, int num, unsigned char *pbuf=0);
-
-    // 0x40001
-    ResultType ReadHoldingRegister(int addDev, int addReg, int num, unsigned char *pbuf=0);
-    ResultType WriteHoldingRegister(int addDev, int addReg, unsigned short data);
-    ResultType WriteMultipleHoldingRegister(int addDev, int addReg, int num, unsigned char *pbuf=0);
-    ResultType WriteIntToHoldingRegister(int addDev, int addReg, int data);
-    ResultType WriteUIntToHoldingRegister(int addDev, int addReg, unsigned int data);
-    ResultType WriteFloatToHoldingRegister(int addDev, int addReg, float data);
-
+private:
+    quint8 tempBuffer_[512] = {0};
 };
 
 #endif // TCPIPModbus_H

@@ -120,8 +120,8 @@ ResultType ModbusRTU::ReadCoils(int addDev, int addCol, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num/8;
     if(num%8)databuflen++;
@@ -129,8 +129,8 @@ ResultType ModbusRTU::ReadCoils(int addDev, int addCol, int num,
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -180,12 +180,12 @@ ResultType ModbusRTU::WriteCoil(int addDev, int addCol, int value)
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, len, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, len, 1000);
 
     if(resultlen == len && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -224,12 +224,12 @@ ResultType ModbusRTU::WriteMultipleCoils(int addDev, int addCol,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, 8, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, 8, 1000);
 
     if(resultlen == 8 && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -268,8 +268,8 @@ ResultType ModbusRTU::ReadDiscreteInputs(int addDev, int addinput, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num/8;
     if(num%8)databuflen++;
@@ -277,8 +277,8 @@ ResultType ModbusRTU::ReadDiscreteInputs(int addDev, int addinput, int num,
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -323,16 +323,16 @@ ResultType ModbusRTU::ReadReadInputRegister(int addDev, int addReg, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num*2;
 
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -377,16 +377,16 @@ ResultType ModbusRTU::ReadHoldingRegister(int addDev, int addReg, int num,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num*2;
 
     int iWaitLen = 5 + databuflen;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -437,12 +437,12 @@ ResultType ModbusRTU::WriteHoldingRegister(int addDev, int addReg, unsigned shor
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, 8, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, 8, 1000);
 
     if(resultlen == 8 && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -485,12 +485,12 @@ ResultType ModbusRTU::WriteMultipleHoldingRegister(int addDev, int addReg,
     m_pWriteBuf[len++] = tmpCRC16;
     m_pWriteBuf[len++] = tmpCRC16 >> 8;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, 8, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, 8, 1000);
 
     if(resultlen == 8 && MessageCheck(m_pReadBuf, resultlen))
     {

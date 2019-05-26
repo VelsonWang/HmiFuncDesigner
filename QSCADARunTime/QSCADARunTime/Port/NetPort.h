@@ -7,43 +7,9 @@
 #include <QTcpSocket>
 #include <QHostAddress>
 #include <QDataStream>
-#include "iport.h"
+#include "IPort.h"
+#include "xsocket.hpp"
 
-// 单独线程 因为QTcpSocket跨线程操作
-// QSocketNotifier: Socket notifiers cannot be enabled or disabled from another thread
-class NetPortThread : public QThread
-{
-    Q_OBJECT
-public:
-    NetPortThread();
-    ~NetPortThread();
-    bool open(QString port, QStringList args);
-    int read(unsigned char *buf, int len, int ms);
-    int write(unsigned char *buf, int len, int ms);
-private:
-    void ConnectToHost();
-
-signals:
-    int SignalSockWrite(unsigned char *buf, int len);
-
-private slots:
-    void SlotConnected();
-    void SlotDisconnected();
-    void DataReceived();
-    int SlotSockWrite(unsigned char *buf, int len);
-
-private:
-    int port_;
-    QHostAddress *serverIPPtr_;
-    QTcpSocket *tcpSocketPtr_;
-    bool status_;
-    QByteArray buf_;
-    bool bConnected_;
-
-protected:
-    void run();
-
-};
 
 class NetPort : public QObject, public IPort
 {
@@ -59,9 +25,11 @@ public:
     int write(unsigned char *buf, int len, int ms);
     bool close();
 
-private:    
-    NetPortThread netPortThread_;
-
+private:
+    net::socket sock_;
+    net::endpoint endpoint_;
+    int port_;
+    QString ip_;
 };
 
 #endif // NetPort_H

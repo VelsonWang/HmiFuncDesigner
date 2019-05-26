@@ -79,8 +79,8 @@ ResultType ModbusASCII::ReadCoils(int addDev, int addCol, int num,
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num/8;
     if(num%8)databuflen++;
@@ -88,8 +88,8 @@ ResultType ModbusASCII::ReadCoils(int addDev, int addCol, int num,
     int iWaitLen = 3 + (4 + databuflen) * 2;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -143,12 +143,12 @@ ResultType ModbusASCII::WriteCoil(int addDev, int addCol, int value)
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, len, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, len, 1000);
 
     if(resultlen == len && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -194,13 +194,13 @@ ResultType ModbusASCII::WriteMultipleCoils(int addDev, int addCol,
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int iWaitLen = 3 + 7 * 2;
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -242,8 +242,8 @@ ResultType ModbusASCII::ReadDiscreteInputs(int addDev, int addinput, int num,
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num/8;
     if(num%8)databuflen++;
@@ -251,8 +251,8 @@ ResultType ModbusASCII::ReadDiscreteInputs(int addDev, int addinput, int num,
     int iWaitLen = 3 + (4 + databuflen) * 2;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -300,16 +300,16 @@ ResultType ModbusASCII::ReadReadInputRegister(int addDev, int addReg, int num,
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num * 2;
 
     int iWaitLen = 3 + (4 + databuflen) * 2;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -357,16 +357,16 @@ ResultType ModbusASCII::ReadHoldingRegister(int addDev, int addReg, int num,
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int databuflen = num*2;
 
     int iWaitLen = 3 + (4 + databuflen) * 2;
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, iWaitLen, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
 
     if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -420,12 +420,12 @@ ResultType ModbusASCII::WriteHoldingRegister(int addDev, int addReg, unsigned sh
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, 14, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, 14, 1000);
 
     if(resultlen == 14 && MessageCheck(m_pReadBuf, resultlen))
     {
@@ -471,12 +471,12 @@ ResultType ModbusASCII::WriteMultipleHoldingRegister(int addDev, int addReg,
     m_pWriteBuf[pos++] = 0x0A;
     len = pos;
 
-    if(GetPort() != nullptr)
-        GetPort()->write(m_pWriteBuf, len, 1000);
+    if(getPort() != nullptr)
+        getPort()->write(m_pWriteBuf, len, 1000);
 
     int resultlen = 0;
-    if(GetPort() != nullptr)
-        resultlen = GetPort()->read(m_pReadBuf, 14, 1000);
+    if(getPort() != nullptr)
+        resultlen = getPort()->read(m_pReadBuf, 14, 1000);
 
     if(resultlen == 14 && MessageCheck(m_pReadBuf, resultlen))
     {

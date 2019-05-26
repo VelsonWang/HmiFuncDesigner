@@ -12,7 +12,7 @@ ModbusASCIIDevice::ModbusASCIIDevice()
 {
     comPort_ = new ComPort();
     iFacePort = comPort_;
-    mModbusAscii.SetPort(iFacePort); 
+    mModbusAscii.setPort(iFacePort);
 }
 
 ModbusASCIIDevice::~ModbusASCIIDevice()
@@ -107,6 +107,16 @@ IOTag* ModbusASCIIDevice::FindIOTagByID(qint32 id)
     return NULL;
 }
 
+/**
+ * @brief ModbusASCIIDevice::BeforeWriteIOTag
+ * @details 写变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusASCIIDevice::BeforeWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
 
 /*
 * 写变量
@@ -128,6 +138,8 @@ bool ModbusASCIIDevice::WriteIOTag(IOTag* pTag)
         float fScale = pTag->GetScale();
         int iInFrameAddress = pTag->GetInFrameAddress();
         DBTagObject *pDBTagObject = pTag->GetDBTagObject();
+
+        BeforeWriteIOTag(pTag);
 
         if(strRegisterArea == "DO线圈")
         {
@@ -264,7 +276,20 @@ bool ModbusASCIIDevice::WriteIOTag(IOTag* pTag)
         else
         {
         }
+
+        AfterWriteIOTag(pTag);
     }
+    return true;
+}
+
+/**
+ * @brief ModbusASCIIDevice::AfterWriteIOTag
+ * @details 写变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusASCIIDevice::AfterWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
     return true;
 }
 
@@ -281,6 +306,16 @@ bool ModbusASCIIDevice::WriteIOTags()
     return true;
 }
 
+/**
+ * @brief ModbusASCIIDevice::BeforeReadIOTag
+ * @details 读变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusASCIIDevice::BeforeReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
 
 /*
 * 读变量
@@ -303,6 +338,8 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
         float fScale = pTag->GetScale();
         int iInFrameAddress = pTag->GetInFrameAddress();
         DBTagObject *pDBTagObject = pTag->GetDBTagObject();
+
+        BeforeReadIOTag(pTag);
 
         if(strRegisterArea == "DO线圈")
         {
@@ -788,10 +825,21 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
         {
 
         }
+        AfterReadIOTag(pTag);
     }
     return true;
 }
 
+/**
+ * @brief ModbusASCIIDevice::AfterReadIOTag
+ * @details 读变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusASCIIDevice::AfterReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
 
 /*
 * 读变量列表

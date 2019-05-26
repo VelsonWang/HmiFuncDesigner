@@ -97,7 +97,7 @@ public:
     QString pwd_;
     QString hostName_;
     int port_;
-
+    QSqlDatabase db_;
 };
 
 #endif // Database_H

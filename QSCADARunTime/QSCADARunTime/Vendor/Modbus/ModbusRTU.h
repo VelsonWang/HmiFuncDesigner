@@ -42,6 +42,9 @@ public:
 
 };
 
+
+
+
 #endif // MODBUSRTU_H
 
 

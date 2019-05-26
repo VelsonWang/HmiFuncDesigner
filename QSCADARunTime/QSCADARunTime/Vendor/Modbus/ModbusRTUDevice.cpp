@@ -14,7 +14,7 @@ ModbusRTUDevice::ModbusRTUDevice()
 {
     comPort_ = new ComPort();
     iFacePort = comPort_;
-    modbusRTU_.SetPort(iFacePort);
+    modbusRTU_.setPort(iFacePort);
 }
 
 ModbusRTUDevice::~ModbusRTUDevice()
@@ -107,6 +107,16 @@ IOTag* ModbusRTUDevice::FindIOTagByID(qint32 id)
     return NULL;
 }
 
+/**
+ * @brief ModbusRTUDevice::BeforeWriteIOTag
+ * @details 写变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusRTUDevice::BeforeWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
 
 /*
 * 写变量
@@ -128,6 +138,8 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
         float fScale = pTag->GetScale();
         int iInFrameAddress = pTag->GetInFrameAddress();
         DBTagObject *pDBTagObject = pTag->GetDBTagObject();
+
+        BeforeWriteIOTag(pTag);
 
         if(strRegisterArea == "DO线圈")
         {
@@ -264,7 +276,20 @@ bool ModbusRTUDevice::WriteIOTag(IOTag* pTag)
         else
         {
         }
+
+        AfterWriteIOTag(pTag);
     }
+    return true;
+}
+
+/**
+ * @brief ModbusRTUDevice::AfterWriteIOTag
+ * @details 写变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusRTUDevice::AfterWriteIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
     return true;
 }
 
@@ -281,6 +306,17 @@ bool ModbusRTUDevice::WriteIOTags()
     return true;
 }
 
+
+/**
+ * @brief ModbusRTUDevice::BeforeReadIOTag
+ * @details 读变量前处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusRTUDevice::BeforeReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
 
 /*
 * 读变量
@@ -303,6 +339,8 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
         float fScale = pTag->GetScale();
         int iInFrameAddress = pTag->GetInFrameAddress();
         DBTagObject *pDBTagObject = pTag->GetDBTagObject();
+
+        BeforeReadIOTag(pTag);
 
         if(strRegisterArea == "DO线圈")
         {
@@ -788,7 +826,19 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
         {
 
         }
+        AfterReadIOTag(pTag);
     }
+    return true;
+}
+
+/**
+ * @brief ModbusRTUDevice::AfterReadIOTag
+ * @details 读变量后处理
+ * @param pTag 变量
+ * @return
+ */
+bool ModbusRTUDevice::AfterReadIOTag(IOTag* pTag) {
+    Q_UNUSED(pTag)
     return true;
 }
 
