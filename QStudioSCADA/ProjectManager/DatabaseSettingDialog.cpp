@@ -1,8 +1,8 @@
 #include "DatabaseSettingDialog.h"
 #include "ui_DatabaseSettingDialog.h"
+#include "ProjectData.h"
 #include <QMessageBox>
-#include <QFile>
-#include <QJsonDocument>
+
 
 DatabaseSettingDialog::DatabaseSettingDialog(QWidget *parent, QString ProjectPath) :
     QDialog(parent),
@@ -10,7 +10,6 @@ DatabaseSettingDialog::DatabaseSettingDialog(QWidget *parent, QString ProjectPat
     m_ProjectPath(ProjectPath)
 {
     ui->setupUi(this);
-    loadFromFile(DATA_SAVE_FORMAT);
 }
 
 DatabaseSettingDialog::~DatabaseSettingDialog()
@@ -25,17 +24,14 @@ void DatabaseSettingDialog::on_btnHelp_clicked()
 
 void DatabaseSettingDialog::on_btnCheck_clicked()
 {
-    if(check_data())
-    {
+    if(check_data()) {
         QMessageBox::information(this, tr("系统提示"), tr("设置正确！"));
     }
 }
 
 void DatabaseSettingDialog::on_btnOk_clicked()
 {
-    if(check_data())
-    {
-        saveToFile(DATA_SAVE_FORMAT);
+    if(check_data()) {
         QDialog::accept();
     }
 }
@@ -52,8 +48,7 @@ bool DatabaseSettingDialog::check_data()
     bool ok = false;
     int iAlarmSize = ui->editAlarmSize->text().toInt(&ok);
     iAlarmSize = iAlarmSize;  // avoid warning!
-    if(ui->editAlarmSize->text().isEmpty() || !ok)
-    {
+    if(ui->editAlarmSize->text().isEmpty() || !ok) {
         QMessageBox::information(this, tr("系统提示"), tr("数据库警告设置错误！"));
         ret = false;
     }
@@ -61,8 +56,7 @@ bool DatabaseSettingDialog::check_data()
     ok = false;
     int iDataKeepDays = ui->editDataKeepDays->text().toInt(&ok);
     iDataKeepDays = iDataKeepDays;
-    if(ui->editDataKeepDays->text().isEmpty() || !ok)
-    {
+    if(ui->editDataKeepDays->text().isEmpty() || !ok) {
         QMessageBox::information(this, tr("系统提示"), tr("数据保留设置错误！"));
         ret = false;
     }
@@ -70,8 +64,7 @@ bool DatabaseSettingDialog::check_data()
     ok = false;
     int iSavePeriod = ui->editSavePeriod->text().toInt(&ok);
     iSavePeriod = iSavePeriod;
-    if(ui->editSavePeriod->text().isEmpty() || !ok)
-    {
+    if(ui->editSavePeriod->text().isEmpty() || !ok) {
         QMessageBox::information(this, tr("系统提示"), tr("存盘周期设置错误！"));
         ret = false;
     }
@@ -79,8 +72,7 @@ bool DatabaseSettingDialog::check_data()
     ok = false;
     int iSendPeriod = ui->editSendPeriod->text().toInt(&ok);
     iSendPeriod = iSendPeriod;
-    if(ui->editSendPeriod->text().isEmpty() || !ok)
-    {
+    if(ui->editSendPeriod->text().isEmpty() || !ok) {
         QMessageBox::information(this, tr("系统提示"), tr("指令周期设置错误！"));
         ret = false;
     }
@@ -88,8 +80,7 @@ bool DatabaseSettingDialog::check_data()
     ok = false;
     int iStartTime = ui->editStartTime->text().toInt(&ok);
     iStartTime = iStartTime;
-    if(ui->editStartTime->text().isEmpty() || !ok)
-    {
+    if(ui->editStartTime->text().isEmpty() || !ok) {
         QMessageBox::information(this, tr("系统提示"), tr("存盘启动设置错误！"));
         ret = false;
     }
@@ -97,8 +88,7 @@ bool DatabaseSettingDialog::check_data()
     ok = false;
     int iPort = ui->editPort->text().toInt(&ok);
     iPort = iPort;
-    if(ui->editPort->text().isEmpty() || !ok)
-    {
+    if(ui->editPort->text().isEmpty() || !ok) {
         QMessageBox::information(this, tr("系统提示"), tr("端口设置错误！"));
         ret = false;
     }
@@ -106,74 +96,45 @@ bool DatabaseSettingDialog::check_data()
 }
 
 
-void DatabaseSettingDialog::load(const QJsonObject &json)
+void DatabaseSettingDialog::load()
 {
-    ui->editAlarmSize->setText(json["iAlarmSize"].toString());
-    ui->checkSpecialDB->setChecked(json["bSpecialDB"].toBool());
-    ui->checkAutoDelete->setChecked(json["bAutoDelete"].toBool());
-    ui->cboDBType->setCurrentText(json["sDBType"].toString());
-    ui->editDataKeepDays->setText(json["iDataKeepDays"].toString());
-    ui->editIPAddress->setText(json["sIPAddress"].toString());
-    ui->checkUseSD->setChecked(json["bUseSD"].toBool());
-    ui->editUser->setText(json["sUser"].toString());
-    ui->editSavePeriod->setText(json["iSavePeriod"].toString());
-    ui->editPassword->setText(json["sPassword"].toString());
-    ui->editSendPeriod->setText(json["iSendPeriod"].toString());
-    ui->editDBName->setText(json["sDBName"].toString());
-    ui->editStartTime->setText(json["iStartTime"].toString());
-    ui->editPort->setText(json["iPort"].toString());
+    DatabaseSetting &dbSetting = ProjectData::getInstance()->dbSetting_;
+    dbSetting.load(ProjectData::getInstance()->dbData_);
+    ui->editAlarmSize->setText(QString::number(dbSetting.getAlarmSize()));
+    ui->checkSpecialDB->setChecked(dbSetting.isSpecialDB());
+    ui->checkAutoDelete->setChecked(dbSetting.isAutoDelete());
+    ui->cboDBType->setCurrentText(dbSetting.getDBType());
+    ui->editDataKeepDays->setText(QString::number(dbSetting.getDataKeepDays()));
+    ui->editIPAddress->setText(dbSetting.getIPAddress());
+    ui->checkUseSD->setChecked(dbSetting.isUseSD());
+    ui->editUser->setText(dbSetting.getUserName());
+    ui->editSavePeriod->setText(QString::number(dbSetting.getSavePeriod()));
+    ui->editPassword->setText(dbSetting.getPassword());
+    ui->editSendPeriod->setText(QString::number(dbSetting.getSendPeriod()));
+    ui->editDBName->setText(dbSetting.getDBName());
+    ui->editStartTime->setText(QString::number(dbSetting.getStartTime()));
+    ui->editPort->setText(QString::number(dbSetting.getPort()));
 }
 
-void DatabaseSettingDialog::save(QJsonObject &json)
+void DatabaseSettingDialog::save()
 {
-    json["iAlarmSize"] = ui->editAlarmSize->text();
-    json["bSpecialDB"] = ui->checkSpecialDB->isChecked();
-    json["bAutoDelete"] = ui->checkAutoDelete->isChecked();
-    json["sDBType"] = ui->cboDBType->currentText();
-    json["iDataKeepDays"] = ui->editDataKeepDays->text();
-    json["sIPAddress"] = ui->editIPAddress->text();
-    json["bUseSD"] = ui->checkUseSD->isChecked();
-    json["sUser"] = ui->editUser->text();
-    json["iSavePeriod"] = ui->editSavePeriod->text();
-    json["sPassword"] = ui->editPassword->text();
-    json["iSendPeriod"] = ui->editSendPeriod->text();
-    json["sDBName"] = ui->editDBName->text();
-    json["iStartTime"] = ui->editStartTime->text();
-    json["iPort"] = ui->editPort->text();
+    DatabaseSetting &dbSetting = ProjectData::getInstance()->dbSetting_;
+    dbSetting.setAlarmSize(ui->editAlarmSize->text().toInt());
+    dbSetting.setSpecialDB(ui->checkSpecialDB->isChecked());
+    dbSetting.setAutoDelete(ui->checkAutoDelete->isChecked());
+    dbSetting.setDBType(ui->cboDBType->currentText());
+    dbSetting.setDataKeepDays(ui->editDataKeepDays->text().toInt());
+    dbSetting.setIPAddress(ui->editIPAddress->text());
+    dbSetting.setUseSD(ui->checkUseSD->isChecked());
+    dbSetting.setUserName(ui->editUser->text());
+    dbSetting.setSavePeriod(ui->editSavePeriod->text().toInt());
+    dbSetting.setPassword(ui->editPassword->text());
+    dbSetting.setSendPeriod(ui->editSendPeriod->text().toInt());
+    dbSetting.setDBName(ui->editDBName->text());
+    dbSetting.setStartTime(ui->editStartTime->text().toInt());
+    dbSetting.setPort(ui->editPort->text().toInt());
+    dbSetting.save(ProjectData::getInstance()->dbData_);
 }
-
-bool DatabaseSettingDialog::loadFromFile(SaveFormat saveFormat)
-{
-    QString file = m_ProjectPath + "/db.odb";
-    QFile loadFile(file);
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open load file.");
-        return false;
-    }
-    QByteArray saveData = loadFile.readAll();
-    QJsonDocument loadDoc(saveFormat == Json ? QJsonDocument::fromJson(saveData) : QJsonDocument::fromBinaryData(saveData));
-    load(loadDoc.object());
-    loadFile.close();
-    return true;
-}
-
-bool DatabaseSettingDialog::saveToFile(SaveFormat saveFormat)
-{
-    QString file = m_ProjectPath + "/bd.odb";
-    QFile saveFile(file);
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
-        return false;
-    }
-    QJsonObject obj;
-    save(obj);
-    QJsonDocument saveDoc(obj);
-    saveFile.write(saveFormat == Json ? saveDoc.toJson() : saveDoc.toBinaryData());
-    saveFile.close();
-    return true;
-}
-
-
 
 
 

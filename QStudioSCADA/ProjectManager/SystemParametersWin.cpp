@@ -76,8 +76,9 @@ void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &in
         }
     } else if(item->text() == tr("数据库设置")) {
         DatabaseSettingDialog *pDatabaseSettingDialog = new DatabaseSettingDialog(this, strProjectPath);
+        pDatabaseSettingDialog->load();
         if(pDatabaseSettingDialog->exec() == QDialog::Accepted) {
-
+            pDatabaseSettingDialog->save();
         }
     } else if(item->text() == tr("用户权限")) {
         UserAuthorityDialog *pUserAuthorityDialog = new UserAuthorityDialog(this, strProjectPath);

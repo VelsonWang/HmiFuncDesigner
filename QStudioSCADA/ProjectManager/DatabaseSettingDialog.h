@@ -3,7 +3,6 @@
 
 #include "../Public/Public.h"
 #include <QDialog>
-#include <QJsonObject>
 
 namespace Ui {
 class DatabaseSettingDialog;
@@ -18,12 +17,10 @@ public:
     ~DatabaseSettingDialog();
 
 public:
-    bool loadFromFile(SaveFormat saveFormat);
-    bool saveToFile(SaveFormat saveFormat);
+    void load();
+    void save();
 
 private:
-    void load(const QJsonObject &json);
-    void save(QJsonObject &json);
     bool check_data();
 
 private slots:

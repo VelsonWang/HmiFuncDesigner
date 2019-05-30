@@ -18,6 +18,8 @@ public:
     bool createTableSystemParameters();
     // 创建组网设置表
     bool createTableNetSetting();
+    // 创建数据库设置表
+    bool createTableDatabaseSetting();
 
     // 创建数据库表
     bool createTables() override;

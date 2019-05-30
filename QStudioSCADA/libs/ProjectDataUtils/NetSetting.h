@@ -1,5 +1,5 @@
-#ifndef NetSetting_H
-#define NetSetting_H
+#ifndef NETSETTING_H
+#define NETSETTING_H
 
 #include <QString>
 
@@ -44,4 +44,4 @@ private:
     NetSettingPrivate *const dPtr_;
 };
 
-#endif // NetSetting_H
+#endif // NETSETTING_H

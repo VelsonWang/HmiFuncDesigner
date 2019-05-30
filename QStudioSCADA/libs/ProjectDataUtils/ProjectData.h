@@ -6,6 +6,7 @@
 #include <QString>
 #include "ProjectInfoManger.h"
 #include "NetSetting.h"
+#include "DatabaseSetting.h"
 
 class ProjectDataSQLiteDatabase;
 
@@ -22,6 +23,7 @@ public:
     static ProjectDataSQLiteDatabase *dbData_;
     ProjectInfoManger projInfoMgr_; // 工程信息管理
     NetSetting netSetting_; // 网络配置
+    DatabaseSetting dbSetting_; // 数据库配置
 
 private:
     explicit ProjectData();

@@ -83,19 +83,62 @@ bool ProjectDataSQLiteDatabase::createTableNetSetting()
 }
 
 
+/**
+ * @brief ProjectDataSQLiteDatabase::createTableDatabaseSetting
+ * @details 创建数据库设置表
+ * @return true-成功, false-失败
+ */
+bool ProjectDataSQLiteDatabase::createTableDatabaseSetting()
+{
+    QString autoincrement = "integer not null primary key autoincrement";
+    QStringList keyList,valueList;
+    int ret = 0;
+
+    keyList.clear();
+    valueList.clear();
+
+    keyList << "id" << "alarm_size" << "special_db" << "auto_delete"
+            << "db_type" << "data_keep_days" << "ip_address" << "use_sd"
+            << "user" << "save_period" << "password" << "send_period"
+            << "db_name" << "start_time" << "port";
+
+    valueList << autoincrement << "int" << "int" << "int"
+              << "varchar(32)" << "int" << "varchar(32)" << "int"
+              << "varchar(32)" << "int" << "varchar(32)" << "int"
+              << "varchar(32)" << "int" << "int";
+
+    ret = createTable("t_database_setting", keyList, valueList, "");
+    if(ret == 1) {
+        excSQL("delete from t_database_setting");
+        excSQL("insert into t_database_setting values(1, 50, 0, 0, 'MYSQL', 10, 'localhost', 0, 'root', 60, '123456', 500, 'hisdb', 1, 3306)");
+    }
+
+    return ret;
+}
+
+
 bool ProjectDataSQLiteDatabase::createTables()
 {
-    bool ret1 = false, ret2 = false;
+#define RET_MAX    (16)
+    int i = 0;
+    bool ret[RET_MAX];
+    for(i=0; i<RET_MAX; i++)
+        ret[i] = true;
 
     // 创建系统参数表
-    ret1 = createTableSystemParameters();
+    ret[0] = createTableSystemParameters();
     // 创建组网设置表
-    ret2 = createTableNetSetting();
+    ret[1] = createTableNetSetting();
+    // 创建数据库设置表
+    ret[2] = createTableDatabaseSetting();
 
+    for(i=0; i<RET_MAX; i++)
+    {
+        if(!ret[i])
+            return false;
+    }
 
-
-
-    return ret1 && ret2;
+    return true;
 }
 
 
