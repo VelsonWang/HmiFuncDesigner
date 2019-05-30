@@ -97,10 +97,6 @@ SOURCES += \
     Vendor/Modbus/Modbus.cpp \
     Log/Log.cpp \
     MessageQueue/MessageQueue.cpp \
-    DB/Database.cpp \
-    DB/MySQLDatabase.cpp \
-    DB/SQLiteDatabase.cpp \
-    DB/RunTimeMySQLDatabase.cpp \
     Public/Global.cpp \
     Vendor/Mitsubishi/MitsubishiDevice.cpp \
     Vendor/Mitsubishi/Mitsubishi.cpp
@@ -138,10 +134,6 @@ HEADERS  += \
     Log/Log.h \
     VersionInfo.h \
     MessageQueue/MessageQueue.h \
-    DB/Database.h \
-    DB/MySQLDatabase.h \
-    DB/SQLiteDatabase.h \
-    DB/RunTimeMySQLDatabase.h \
     Public/Global.h \
     Vendor/Mitsubishi/MitsubishiDevice.h \
     Vendor/Mitsubishi/Mitsubishi.h \

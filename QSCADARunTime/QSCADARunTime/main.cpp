@@ -8,8 +8,7 @@
 #include "Log.h"
 #include "ftpserver.h"
 #include "Global.h"
-#include "RunTimeMySQLDatabase.h"
-#include "configutils.h"
+#include "ConfigUtils.h"
 #include "edncrypt.h"
 
 #include <QApplication>
@@ -124,10 +123,12 @@ int main(int argc, char *argv[])
 #endif
     QApplication  app(argc, argv);
 
+    QString strInput = "";
+    QString configPath = "";
+#if 0
     //////////////////////////////////////////////////////////////////////////////
     /// connect database
-    QString configPath = QApplication::applicationDirPath() + "/setting.ini";
-    QString strInput = "";
+    configPath = QApplication::applicationDirPath() + "/setting.ini";
     QString databaseName = ConfigUtils::getCfgStr(configPath, "Database", "DatabaseName", "runtimedb");
     strInput = ConfigUtils::getCfgStr(configPath, "Database", "UserName", "");
     QString mysqlUserName = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
@@ -136,20 +137,8 @@ int main(int argc, char *argv[])
     QString hostname = ConfigUtils::getCfgStr(configPath, "Database", "HostName", "127.0.0.1");
     int mysqlPort = ConfigUtils::getCfgInt(configPath, "Database", "Port", 3306);
 
-    // connect database, create database, tables if necessary
-    g_database = new RunTimeMySQLDatabase(databaseName, mysqlUserName, mysqlPassword, hostname, mysqlPort);
-    if(g_database->openDatabase()) {
-        g_database->createDatabase();
-        g_database->createTables();
-    }
-
-    if(g_database->openDatabase()) {
-        g_database->createDatabase();
-        g_database->createTables();
-    }
-
     //////////////////////////////////////////////////////////////////////////////
-
+#endif
     LogInfo(getSystemInfo());
     LogInfo("start SCADARunTime!");
 
