@@ -7,18 +7,15 @@
 
 #define TIME_OUT 10
 
-ComPort::ComPort()
-{
+ComPort::ComPort() {
     serialPortPtr_ = nullptr;
     buf_.clear();
 }
 
 
-ComPort::~ComPort()
-{
+ComPort::~ComPort() {
     close();
-    if(serialPortPtr_ != nullptr)
-    {
+    if(serialPortPtr_ != nullptr) {
         delete serialPortPtr_;
         serialPortPtr_ = nullptr;
     }
@@ -31,8 +28,7 @@ ComPort::~ComPort()
  * @param args ["9600","N","8","1"]
  * @return
  */
-bool ComPort::open(QString port, QStringList args)
-{
+bool ComPort::open(QString port, QStringList args) {
     if(port == "" || args.length() != 4)
         return false;
 
@@ -52,27 +48,20 @@ bool ComPort::open(QString port, QStringList args)
 
     //设置校验
     QString strParity = args.at(2);
-    if(strParity == "N" || strParity == "无校验")
-    {
+    if(strParity == "N" || strParity == "无校验") {
         serialPortPtr_->setParity(PAR_NONE);
-    }
-    else if(strParity == "O" || strParity == "奇校验")
-    {
+    } else if(strParity == "O" || strParity == "奇校验") {
         serialPortPtr_->setParity(PAR_ODD);
-    }
-    else if(strParity == "E" || strParity == "偶校验")
-    {
+    } else if(strParity == "E" || strParity == "偶校验") {
         serialPortPtr_->setParity(PAR_EVEN);
-    }
-    else
-    {
+    } else {
         serialPortPtr_->setParity(PAR_NONE);
     }
 
     //设置停止位
     QString strStopBits = args.at(3);
     int iStopBits = strStopBits.toFloat() * 10;
-    switch(iStopBits){
+    switch(iStopBits) {
     case 10:
         serialPortPtr_->setStopBits(STOP_1);
         break;
@@ -95,40 +84,33 @@ bool ComPort::open(QString port, QStringList args)
     serialPortPtr_->setTimeout(TIME_OUT);
 
     if(!serialPortPtr_->open(QIODevice::ReadWrite))
-    {
         return false;
-    }
 
     return true;
 }
 
 
-int ComPort::read(unsigned char *buf, int len, int ms)
-{
+int ComPort::read(unsigned char *buf, int len, int ms) {
     long start;
 
     QTime time;
     time.start();
     start = time.elapsed();
 
-    while(buf_.size() < len)
-    {
-        if(serialPortPtr_->bytesAvailable())
-        {
+    while(buf_.size() < len) {
+        if(serialPortPtr_->bytesAvailable()) {
             buf_.append(serialPortPtr_->readAll());
         }
 
-        if((time.elapsed() - start) > ms)
-        {
+        if((time.elapsed() - start) > ms) {
             if(len > buf_.size()) len = buf_.size();
         }
     }
 
-    for(int i=0; i<len; i++)
-    {
+    for(int i=0; i<len; i++) {
         buf[i] = buf_[i];
     }
-#if 0
+#if 1
     qDebug()<< "read: " << hexToString(buf_.data(), len);
 #endif
     buf_.remove(0, len);
@@ -136,10 +118,9 @@ int ComPort::read(unsigned char *buf, int len, int ms)
     return len;
 }
 
-int ComPort::write(unsigned char *buf, int len, int /*ms*/)
-{
+int ComPort::write(unsigned char *buf, int len, int /*ms*/) {
     int count = 0;
-#if 0
+#if 1
     qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
     count = serialPortPtr_->write((char*)buf, len);
@@ -148,23 +129,15 @@ int ComPort::write(unsigned char *buf, int len, int /*ms*/)
 }
 
 
-bool ComPort::close()
-{
+bool ComPort::close() {
     buf_.clear();
-    if(serialPortPtr_ != nullptr)
-    {
-        if(serialPortPtr_->isOpen())
-        {
+    if(serialPortPtr_ != nullptr) {
+        if(serialPortPtr_->isOpen()) {
             serialPortPtr_->close();
             return true;
         }
     }
     return false;
 }
-
-
-
-
-
 
 

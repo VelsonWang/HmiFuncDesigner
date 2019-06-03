@@ -30,8 +30,6 @@ private:
                                TModbus_ReadWrite RW_flag,
                                quint16 *retVarLen);
 
-private:
-    quint8 tempBuffer_[512] = {0};
 };
 
 #endif // TCPIPModbus_H

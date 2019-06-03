@@ -43,6 +43,16 @@ public:
     quint8 getFuncode(IOTag* pTag, TModbus_ReadWrite rw_flag);
     // 获得寄存器个数
     quint16 getRegNum(IOTag* pTag);
+    // 生成modbus报文
+    virtual quint16 makeMessagePackage(quint8 */* pSendData */,
+                                       IOTag* /* pTag */,
+                                       TModbus_ReadWrite /* RW_flag */,
+                                       quint16 */* retVarLen */){return 0;}
+
+    virtual bool isCanWrite(IOTag* /* pTag */){return false;}
+    virtual int writeData(IOTag* /* pTag */){return 0;}
+    virtual bool isCanRead(IOTag* /* pTag */){return false;}
+    virtual int readData(IOTag* /* pTag */){return 0;}
 
     void set2BytesOrder(const QString &s);
     QString get2BytesOrder();
@@ -76,6 +86,7 @@ public slots:
 public:
     quint8 readDataBuffer_[512] = {0};
     quint8 writeDataBuffer_[512] = {0};
+    quint8 tempBuffer_[512] = {0};
 
     quint8 m_pReadBuf[512] = {0};
     quint8 m_pWriteBuf[512] = {0};
@@ -94,42 +105,6 @@ private:
 
 
 };
-
-
-
-#if 0
-#ifndef __MODICON_QUANTUM_H__
-#define __MODICON_QUANTUM_H__
-
-#include "PlcCommIntface.h"
-#include "MODICON_Pub.h"
-#include "../../ItemData/Device.h"
-
-//PLC设备参数数据结构
-typedef struct _TModicon_Quantum_PlcArg
-{
-    TPubPlcArg					PubPlcArg;		//通用PLC参数部分
-    //下面为扩展部分
-    TModiconVerifyMode 			VerifyMode;      //校验方式
-}TModicon_Quantum_PlcArg, *PModicon_Quantum_PlcArg;
-
-//本协议调用接口扩展参数数据结构
-typedef struct _TModicon_Quantum_ExtArg
-{
-    TModiconVerifyMode    		VerifyMode;        //校验方式
-}TModicon_Quantum_ExtArg, *PModicon_Quantum_ExtArg;
-
-///////////////////////////////////////////////////////////////////////
-//向控制层提供的操作定义接口
-extern int Modicon_Quantum_ProcessVarConnPlc(int CmdCode, PPubVarPlcCommArg pVarPlcArg, PVOID pExtArg, int iExt);
-//向控制层提供扩展参数生成接口
-extern void Modicon_Quantum_MakeExtArg(PVOID pPlcArg, PVOID pVarArg, PVOID pExtArg);
-///////////////////////////////////////////////////////////////////////
-
-#endif
-
-
-#endif
 
 
 #endif // MODBUS_H

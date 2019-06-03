@@ -2,15 +2,13 @@
 #include "NetPort.h"
 #include "Public/PublicFunction.h"
 
-NetPort::NetPort()
-{
+NetPort::NetPort() {
     //init only required for windows, no-op on *nix
     net::init();
 }
 
 
-NetPort::~NetPort()
-{
+NetPort::~NetPort() {
 
 }
 
@@ -18,8 +16,7 @@ NetPort::~NetPort()
 /*
 *
 */
-bool NetPort::open(QString port, QStringList args)
-{
+bool NetPort::open(QString port, QStringList args) {
     if(port == "" || args.length() != 2)
         return false;
 
@@ -43,8 +40,7 @@ bool NetPort::open(QString port, QStringList args)
 }
 
 
-int NetPort::read(unsigned char *buf, int len, int ms)
-{
+int NetPort::read(unsigned char *buf, int len, int ms) {
     long start;
 
     QTime time;
@@ -55,22 +51,19 @@ int NetPort::read(unsigned char *buf, int len, int ms)
     int readLen = 0;
     int iLen = 0;
 
-    while(byteArray.size() < len)
-    {
+    while(byteArray.size() < len) {
         iLen = (int)sock_.recv(tmpBuf, (std::size_t)len);
         byteArray.append((const char *)tmpBuf, iLen);
         readLen += iLen;
 
-        if((time.elapsed() - start) > ms)
-        {
+        if((time.elapsed() - start) > ms) {
             if(len > byteArray.size())
                 len = byteArray.size();
             break;
         }
     }
 
-    for(int i=0; i<len; i++)
-    {
+    for(int i=0; i<len; i++) {
         buf[i] = byteArray[i];
     }
 
@@ -81,8 +74,7 @@ int NetPort::read(unsigned char *buf, int len, int ms)
     return len;
 }
 
-int NetPort::write(unsigned char *buf, int len, int ms)
-{
+int NetPort::write(unsigned char *buf, int len, int ms) {
 #if 0
     qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
@@ -91,8 +83,7 @@ int NetPort::write(unsigned char *buf, int len, int ms)
 }
 
 
-bool NetPort::close()
-{
+bool NetPort::close() {
     return true;
 }
 
