@@ -1,5 +1,4 @@
-﻿
-#include "ModbusRTU.h"
+﻿#include "ModbusRTU.h"
 #include "DataPack.h"
 #include "../../Public/PublicFunction.h"
 
@@ -47,13 +46,11 @@ const quint8 auchCRCLo[] = {
     0x41, 0x81, 0x80, 0x40
 } ;
 
-ModbusRTU::ModbusRTU()
-{
+ModbusRTU::ModbusRTU() {
 
 }
 
-ModbusRTU::~ModbusRTU()
-{
+ModbusRTU::~ModbusRTU() {
 
 }
 
@@ -61,8 +58,7 @@ ModbusRTU::~ModbusRTU()
 quint16 ModbusRTU::makeMessagePackage(quint8 *pSendData,
                                       IOTag* pTag,
                                       TModbus_ReadWrite RW_flag,
-                                      quint16 *retVarLen)
-{
+                                      quint16 *retVarLen) {
     quint16 mesPi = 0;
     quint32 tmpDataPos = 0;
     quint32 tmpUnit = 0;
@@ -91,20 +87,16 @@ quint16 ModbusRTU::makeMessagePackage(quint8 *pSendData,
     tmpUnit = getRegNum(pTag);
 
     //根据读/写方式构造报文
-    if(RW_flag == FLAG_READ)
-    {
+    if(RW_flag == FLAG_READ) {
         //计算返回报文长度
         tmpLen = pTag->GetDataTypeLength() + 3; // 3 = 一个设备地址 + 一个功能码 + 一个计数
         tempBuffer_[mesPi++] = tmpUnit >> 8;
         tempBuffer_[mesPi++] = tmpUnit;
-    }
-    else if(RW_flag == FLAG_WRITE)
-    {
+    } else if(RW_flag == FLAG_WRITE) {
         tmpLen = 6; // 6 = 返回从机地址1， 功能代码1， 起始地址2以及强制线圈数2
         byteCount = pTag->GetDataTypeLength();
 
-        if(tempBuffer_[1] != 0x06 && tempBuffer_[1] != 0x05) //功能码为10
-        {
+        if(tempBuffer_[1] != 0x06 && tempBuffer_[1] != 0x05) { //功能码为10
             tempBuffer_[mesPi++] = tmpUnit >> 8;
             tempBuffer_[mesPi++] = tmpUnit;
             tempBuffer_[mesPi++] = byteCount;
@@ -113,40 +105,33 @@ quint16 ModbusRTU::makeMessagePackage(quint8 *pSendData,
         DBTagObject *pDBTagObject = pTag->GetDBTagObject();
         TTagDataType type = pTag->GetDataType();
 
-        if(cm == CM_3x || cm == CM_4x)
-        {
-            switch(pTag->GetDataType())
-            {
-            case TYPE_INT16:
-            {
+        if(cm == CM_3x || cm == CM_4x) {
+            switch(pTag->GetDataType()) {
+            case TYPE_INT16: {
                 int val = pDBTagObject->GetWriteData().toInt();
                 tempBuffer_[mesPi++] = val >> 8;
                 tempBuffer_[mesPi++] = val;
             }break;
-            case TYPE_UINT16:
-            {
+            case TYPE_UINT16: {
                 uint val = pDBTagObject->GetWriteData().toUInt();
                 tempBuffer_[mesPi++] = val >> 8;
                 tempBuffer_[mesPi++] = val;
             }break;
-            case TYPE_INT32:
-            {
+            case TYPE_INT32: {
                 int val = pDBTagObject->GetWriteData().toInt();
                 tempBuffer_[mesPi++] = val >> 8;
                 tempBuffer_[mesPi++] = val;
                 tempBuffer_[mesPi++] = val >> 24;
                 tempBuffer_[mesPi++] = val >> 16;
             }break;
-            case TYPE_UINT32:
-            {
+            case TYPE_UINT32: {
                 uint val = pDBTagObject->GetWriteData().toUInt();
                 tempBuffer_[mesPi++] = val >> 8;
                 tempBuffer_[mesPi++] = val;
                 tempBuffer_[mesPi++] = val >> 24;
                 tempBuffer_[mesPi++] = val >> 16;
             }break;
-            case TYPE_FLOAT:
-            {
+            case TYPE_FLOAT: {
                 union unionFloat
                 {
                     float ufloat;
@@ -159,11 +144,9 @@ quint16 ModbusRTU::makeMessagePackage(quint8 *pSendData,
                 tempBuffer_[mesPi++] = uFloat.ubytes[3];
                 tempBuffer_[mesPi++] = uFloat.ubytes[2];
             }break;
-            case TYPE_DOUBLE:
-            {
+            case TYPE_DOUBLE: {
                 double val = pDBTagObject->GetWriteData().toDouble();
-                union unionDouble
-                {
+                union unionDouble {
                     double udouble;
                     quint8 ubytes[8];
                 };
@@ -178,71 +161,58 @@ quint16 ModbusRTU::makeMessagePackage(quint8 *pSendData,
                 tempBuffer_[mesPi++] = uDouble.ubytes[7];
                 tempBuffer_[mesPi++] = uDouble.ubytes[6];
             }break;
-            case TYPE_ASCII2CHAR:
-            {
+            case TYPE_ASCII2CHAR: {
                 uint val = pDBTagObject->GetWriteData().toUInt();
                 tempBuffer_[mesPi++] = val >> 8;
                 tempBuffer_[mesPi++] = val;
             }break;
-            case TYPE_STRING:
-            {
+            case TYPE_STRING: {
 
             }break;
-            case TYPE_BCD:
-            {
+            case TYPE_BCD: {
 
             }break;
             }
         } else {
-            switch(pTag->GetDataType())
-            {
-            case TYPE_BOOL:
-            {
+            switch(pTag->GetDataType()) {
+            case TYPE_BOOL: {
                 uint val = pDBTagObject->GetWriteData().toUInt();
                 tempBuffer_[mesPi++] = val;
             }break;
-            case TYPE_INT8:
-            {
+            case TYPE_INT8: {
                 int val = pDBTagObject->GetWriteData().toInt();
                 tempBuffer_[mesPi++] = val & 0x01;
             }break;
-            case TYPE_UINT8:
-            {
+            case TYPE_UINT8: {
                 uint val = pDBTagObject->GetWriteData().toUInt();
                 tempBuffer_[mesPi++] = val & 0x01;
             }break;
-            case TYPE_INT16:
-            {
+            case TYPE_INT16: {
                 int val = pDBTagObject->GetWriteData().toInt();
                 tempBuffer_[mesPi++] = val & 0x01;
                 tempBuffer_[mesPi++] = (val>>8) & 0x01;
             }break;
-            case TYPE_UINT16:
-            {
+            case TYPE_UINT16: {
                 uint val = pDBTagObject->GetWriteData().toUInt();
                 tempBuffer_[mesPi++] = val & 0x01;
                 tempBuffer_[mesPi++] = (val>>8) & 0x01;
             }break;
-            case TYPE_INT32:
-            {
+            case TYPE_INT32: {
                 int val = pDBTagObject->GetWriteData().toInt();
                 tempBuffer_[mesPi++] = val & 0x01;
                 tempBuffer_[mesPi++] = (val>>8) & 0x01;
                 tempBuffer_[mesPi++] = (val>>16) & 0x01;
                 tempBuffer_[mesPi++] = (val>>24) & 0x01;
             }break;
-            case TYPE_UINT32:
-            {
+            case TYPE_UINT32: {
                 uint val = pDBTagObject->GetWriteData().toUInt();
                 tempBuffer_[mesPi++] = val & 0x01;
                 tempBuffer_[mesPi++] = (val>>8) & 0x01;
                 tempBuffer_[mesPi++] = (val>>16) & 0x01;
                 tempBuffer_[mesPi++] = (val>>24) & 0x01;
             }break;
-            case TYPE_FLOAT:
-            {
-                union unionFloat
-                {
+            case TYPE_FLOAT: {
+                union unionFloat {
                     float ufloat;
                     quint8 ubytes[4];
                 };
@@ -253,17 +223,12 @@ quint16 ModbusRTU::makeMessagePackage(quint8 *pSendData,
             }break;
             }
 
-            if(pTag->GetDataTypeLength() <= 1)
-            {
+            if(pTag->GetDataTypeLength() <= 1) {
                 // 增加功能码为05写BOOL的操作
-                if(tempBuffer_[1] == 0x05)
-                {
-                    if(tempBuffer_[4] == 0x01)
-                    {
+                if(tempBuffer_[1] == 0x05) {
+                    if(tempBuffer_[4] == 0x01) {
                         tempBuffer_[4] = 0xFF;
-                    }
-                    else
-                    {
+                    } else {
                         tempBuffer_[4] = 0x00;
                     }
                     tempBuffer_[5] = 0x00;
@@ -284,8 +249,7 @@ quint16 ModbusRTU::makeMessagePackage(quint8 *pSendData,
 }
 
 
-quint16 ModbusRTU::crc16(quint8 *pbuf, qint32 len)
-{
+quint16 ModbusRTU::crc16(quint8 *pbuf, qint32 len) {
     quint8 uchCRCHi = 0xFF;
     quint8 uchCRCLo = 0xFF;
     qint32 uIndex = 0;
@@ -300,8 +264,7 @@ quint16 ModbusRTU::crc16(quint8 *pbuf, qint32 len)
 }
 
 
-bool ModbusRTU::messageCheck(quint8 *inBuf, qint16 bufLen)
-{
+bool ModbusRTU::messageCheck(quint8 *inBuf, qint16 bufLen) {
     quint16 revCRC16 = 0, calCRC16 = 0;
 
     calCRC16 = crc16(inBuf, bufLen-2);

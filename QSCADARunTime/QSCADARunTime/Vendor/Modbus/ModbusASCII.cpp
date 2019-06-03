@@ -1,42 +1,238 @@
-﻿
-#include <QDebug>
-
-#include "ModbusASCII.h"
+﻿#include "ModbusASCII.h"
 #include "../../Public/PublicFunction.h"
 
+#include "Log.h"
+#include <QDebug>
 
-ModbusASCII::ModbusASCII()
-{
+
+ModbusASCII::ModbusASCII() {
+
+}
+
+
+ModbusASCII::~ModbusASCII() {
 
 }
 
 
-ModbusASCII::~ModbusASCII()
-{
 
+quint16 ModbusASCII::makeMessagePackage(quint8 *pSendData,
+                                        IOTag* pTag,
+                                        TModbus_ReadWrite RW_flag,
+                                        quint16 *retVarLen) {
+    quint16 mesPi = 0;
+    quint32 tmpDataPos = 0;
+    quint32 tmpUnit = 0;
+    quint8 byteCount = 0, tmpLen = 0;
+
+    TModbus_CPUMEM cm = getCpuMem(pTag->GetRegisterArea());
+
+    memset(tempBuffer_, 0, sizeof(tempBuffer_)/sizeof(quint8 ));
+
+    mesPi=0;
+
+    //设备地址
+    tempBuffer_[mesPi++] = pTag->GetDeviceAddress();
+    //功能代码
+    tempBuffer_[mesPi++] = getFuncode(pTag, RW_flag);
+
+    int iRegisterAddress = pTag->GetRegisterAddress();
+    int iOffset = pTag->GetOffset();
+    tmpDataPos = iRegisterAddress + iOffset;
+
+    //开始地址
+    tempBuffer_[mesPi++] = tmpDataPos >> 8;
+    tempBuffer_[mesPi++] = tmpDataPos;
+
+    //读取个数
+    tmpUnit = getRegNum(pTag);
+
+    //根据读/写方式构造报文
+    if(RW_flag == FLAG_READ) {
+        //计算返回报文长度
+        tmpLen = pTag->GetDataTypeLength() + 3; // 3 = 一个设备地址 + 一个功能码 + 一个计数
+        tempBuffer_[mesPi++] = tmpUnit >> 8;
+        tempBuffer_[mesPi++] = tmpUnit;
+    } else if(RW_flag == FLAG_WRITE) {
+        tmpLen = 6; // 6 = 返回从机地址1，功能代码1，起始地址2以及强制线圈数2
+        byteCount = pTag->GetDataTypeLength();
+
+        if(tempBuffer_[1] != 0x06 && tempBuffer_[1] != 0x05) { //功能码为10
+            tempBuffer_[mesPi++] = tmpUnit >> 8;
+            tempBuffer_[mesPi++] = tmpUnit;
+            tempBuffer_[mesPi++] = byteCount;
+        }
+
+        DBTagObject *pDBTagObject = pTag->GetDBTagObject();
+        TTagDataType type = pTag->GetDataType();
+
+        if(cm == CM_3x || cm == CM_4x) {
+            switch(pTag->GetDataType()) {
+            case TYPE_INT16: {
+                int val = pDBTagObject->GetWriteData().toInt();
+                tempBuffer_[mesPi++] = val >> 8;
+                tempBuffer_[mesPi++] = val;
+            }break;
+            case TYPE_UINT16: {
+                uint val = pDBTagObject->GetWriteData().toUInt();
+                tempBuffer_[mesPi++] = val >> 8;
+                tempBuffer_[mesPi++] = val;
+            }break;
+            case TYPE_INT32: {
+                int val = pDBTagObject->GetWriteData().toInt();
+                tempBuffer_[mesPi++] = val >> 8;
+                tempBuffer_[mesPi++] = val;
+                tempBuffer_[mesPi++] = val >> 24;
+                tempBuffer_[mesPi++] = val >> 16;
+            }break;
+            case TYPE_UINT32: {
+                uint val = pDBTagObject->GetWriteData().toUInt();
+                tempBuffer_[mesPi++] = val >> 8;
+                tempBuffer_[mesPi++] = val;
+                tempBuffer_[mesPi++] = val >> 24;
+                tempBuffer_[mesPi++] = val >> 16;
+            }break;
+            case TYPE_FLOAT: {
+                union unionFloat {
+                    float ufloat;
+                    quint8 ubytes[4];
+                };
+                unionFloat uFloat;
+                uFloat.ufloat = pDBTagObject->GetWriteData().toFloat();
+                tempBuffer_[mesPi++] = uFloat.ubytes[1];
+                tempBuffer_[mesPi++] = uFloat.ubytes[0];
+                tempBuffer_[mesPi++] = uFloat.ubytes[3];
+                tempBuffer_[mesPi++] = uFloat.ubytes[2];
+            }break;
+            case TYPE_DOUBLE: {
+                double val = pDBTagObject->GetWriteData().toDouble();
+                union unionDouble {
+                    double udouble;
+                    quint8 ubytes[8];
+                };
+                unionDouble uDouble;
+                uDouble.udouble = val;
+                tempBuffer_[mesPi++] = uDouble.ubytes[1];
+                tempBuffer_[mesPi++] = uDouble.ubytes[0];
+                tempBuffer_[mesPi++] = uDouble.ubytes[3];
+                tempBuffer_[mesPi++] = uDouble.ubytes[2];
+                tempBuffer_[mesPi++] = uDouble.ubytes[5];
+                tempBuffer_[mesPi++] = uDouble.ubytes[4];
+                tempBuffer_[mesPi++] = uDouble.ubytes[7];
+                tempBuffer_[mesPi++] = uDouble.ubytes[6];
+            }break;
+            case TYPE_ASCII2CHAR: {
+                uint val = pDBTagObject->GetWriteData().toUInt();
+                tempBuffer_[mesPi++] = val >> 8;
+                tempBuffer_[mesPi++] = val;
+            }break;
+            case TYPE_STRING: {
+
+            }break;
+            case TYPE_BCD: {
+
+            }break;
+            }
+        } else {
+            switch(pTag->GetDataType()) {
+            case TYPE_BOOL: {
+                uint val = pDBTagObject->GetWriteData().toUInt();
+                tempBuffer_[mesPi++] = val;
+            }break;
+            case TYPE_INT8: {
+                int val = pDBTagObject->GetWriteData().toInt();
+                tempBuffer_[mesPi++] = val & 0x01;
+            }break;
+            case TYPE_UINT8: {
+                uint val = pDBTagObject->GetWriteData().toUInt();
+                tempBuffer_[mesPi++] = val & 0x01;
+            }break;
+            case TYPE_INT16: {
+                int val = pDBTagObject->GetWriteData().toInt();
+                tempBuffer_[mesPi++] = val & 0x01;
+                tempBuffer_[mesPi++] = (val>>8) & 0x01;
+            }break;
+            case TYPE_UINT16: {
+                uint val = pDBTagObject->GetWriteData().toUInt();
+                tempBuffer_[mesPi++] = val & 0x01;
+                tempBuffer_[mesPi++] = (val>>8) & 0x01;
+            }break;
+            case TYPE_INT32: {
+                int val = pDBTagObject->GetWriteData().toInt();
+                tempBuffer_[mesPi++] = val & 0x01;
+                tempBuffer_[mesPi++] = (val>>8) & 0x01;
+                tempBuffer_[mesPi++] = (val>>16) & 0x01;
+                tempBuffer_[mesPi++] = (val>>24) & 0x01;
+            }break;
+            case TYPE_UINT32: {
+                uint val = pDBTagObject->GetWriteData().toUInt();
+                tempBuffer_[mesPi++] = val & 0x01;
+                tempBuffer_[mesPi++] = (val>>8) & 0x01;
+                tempBuffer_[mesPi++] = (val>>16) & 0x01;
+                tempBuffer_[mesPi++] = (val>>24) & 0x01;
+            }break;
+            case TYPE_FLOAT: {
+                union unionFloat {
+                    float ufloat;
+                    quint8 ubytes[4];
+                };
+                unionFloat uFloat;
+                uFloat.ufloat = pDBTagObject->GetWriteData().toFloat();
+                for(int i=0; i<4; i++)
+                    tempBuffer_[mesPi++] = uFloat.ubytes[i];
+            }break;
+            }
+
+            if(pTag->GetDataTypeLength() <= 1) {
+                // 增加功能码为05写BOOL的操作
+                if(tempBuffer_[1] == 0x05) {
+                    if(tempBuffer_[4] == 0x01) {
+                        tempBuffer_[4] = 0xFF;
+                    } else {
+                        tempBuffer_[4] = 0x00;
+                    }
+                    tempBuffer_[5] = 0x00;
+                    mesPi++;
+                }
+            }
+        }
+    }
+
+    quint8 tmpLRC = getLRC(tempBuffer_, mesPi);
+    tempBuffer_[mesPi++] = tmpLRC;
+
+    quint16 spi = 0;
+
+    pSendData[spi++] = 0x3A;
+
+    MakeCodeToAsii(tempBuffer_, pSendData+spi, mesPi);
+    spi = spi + 2 * mesPi;
+
+    pSendData[spi++] = 0x0D;
+    pSendData[spi++] = 0x0A;
+    mesPi = spi;
+
+    *retVarLen = tmpLen * 2 + 1 + 2 + 2; // 一个头'0x3a'，两个校验，两个结束'0x0d 0x0a'
+
+    return mesPi;
 }
 
-unsigned char ModbusASCII::GetLRC(unsigned char *pdat, short len)
-{
-    unsigned char uchLrc = 0;
+
+
+quint8 ModbusASCII::getLRC(quint8 *pdat, qint16 len) {
+    quint8 uchLrc = 0;
 
     while (len--)
         uchLrc += *pdat++ ;
 
-    return ((unsigned char)(-((char)uchLrc)));
+    return ((quint8)(-((char)uchLrc)));
 }
 
-bool ModbusASCII::MessageCheck(unsigned char *inBuf, short bufLen)
-{
-    unsigned char cLRC = 0, sLRC = 0;
-    int len = 0;
+bool ModbusASCII::messageCheck(quint8 *inBuf, qint16 bufLen) {
+    quint8 cLRC = 0, sLRC = 0;
 
-    BytesSetZero(m_pTmpBuf, sizeof(m_pTmpBuf)/sizeof(unsigned char));
-    MakeAsiiToCode(inBuf+1, m_pTmpBuf, bufLen - 3);
-    len = (bufLen - 3) / 2;
-
-    sLRC = m_pTmpBuf[len - 1];
-    cLRC = GetLRC(m_pTmpBuf, len - 1);
+    sLRC = inBuf[bufLen - 1];
+    cLRC = getLRC(inBuf, bufLen - 1);
 
     if(cLRC == sLRC)
         return true;
@@ -48,671 +244,179 @@ bool ModbusASCII::MessageCheck(unsigned char *inBuf, short bufLen)
 
 
 
-/*
-* 读线圈状态
-*/
-ResultType ModbusASCII::ReadCoils(int addDev, int addCol, int num,
-                            unsigned char *pbuf)
-{
-    unsigned char len = 0, pos = 0;
+/**
+ * @brief ModbusASCII::isCanWrite
+ * @details 判断该变量定义属性是否可以写
+ * @param pTag 设备变量
+ * @return false-不可写，true-可写
+ */
+bool ModbusASCII::isCanWrite(IOTag* pTag) {
+    if(getCpuMem(pTag->GetRegisterArea()) == CM_1x)
+        return false;
+    else if(getCpuMem(pTag->GetRegisterArea()) == CM_3x) {
+        return false;
+    }
+    return true;
+}
 
-    ClearBuffer();
 
-    m_iCurReadAddress = addCol;
+/**
+ * @brief ModbusASCII::writeData
+ * @details 写一个变量值到plc设备
+ * @param pTag 设备变量
+ * @return 0-失败,1-成功
+ */
+int ModbusASCII::writeData(IOTag* pTag) {
+    quint16 msgLen = 0, revLen = 0;
 
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x01;
-    m_pTmpBuf[len++] = addCol >> 8;
-    m_pTmpBuf[len++] = addCol;
-    m_pTmpBuf[len++] = num >> 8;
-    m_pTmpBuf[len++] = num;
+    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_) / sizeof(quint8));
+    memset(readDataBuffer_, 0, sizeof(readDataBuffer_) / sizeof(quint8));
 
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
+    msgLen = makeMessagePackage(writeDataBuffer_, pTag, FLAG_WRITE, &revLen);
 
     if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int databuflen = num/8;
-    if(num%8)databuflen++;
-
-    int iWaitLen = 3 + (4 + databuflen) * 2;
+        getPort()->write(writeDataBuffer_, msgLen, 1000);
 
     int resultlen = 0;
     if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
+        resultlen = getPort()->read(readDataBuffer_, revLen, 1000);
 
-    if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
-    {
-        for(int idx=0; idx<databuflen; idx++)
-        {
-            if(pbuf != 0)
-                pbuf[idx] = m_pTmpBuf[3+idx];
-            m_pDataBuf[idx] = m_pTmpBuf[3+idx];
+    memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8 ));
+    memcpy(tempBuffer_, readDataBuffer_, revLen);
+    MakeAsiiToCode(tempBuffer_ + 1, readDataBuffer_, revLen);
+    revLen = (revLen - 3) / 2;
+
+    if(resultlen == revLen && messageCheck(readDataBuffer_, revLen))
+        return 1;
+
+    return 0;
+}
+
+
+/**
+ * @brief ModbusASCII::isCanRead
+ * @details 判断该变量定义属性是否可以读
+ * @param pTag 设备变量
+ * @return false-不可读，true-可读
+ */
+bool ModbusASCII::isCanRead(IOTag* pTag) {
+    Q_UNUSED(pTag)
+    return true;
+}
+
+
+/**
+ * @brief ModbusASCII::readData
+ * @details 从plc设备读一个变量
+ * @param pTag 设备变量
+ * @return 0-失败,1-成功
+ */
+int ModbusASCII::readData(IOTag* pTag) {
+    quint16 retSize = 0, msgLen = 0, revLen = 0;
+    qint16 i = 0, j = 0;
+    quint32 wDataLen = 0;
+
+    TModbus_CPUMEM cm = getCpuMem(pTag->GetRegisterArea());
+
+    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
+    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+
+    msgLen = makeMessagePackage(writeDataBuffer_, pTag, FLAG_READ, &revLen);
+
+    if(getPort() != nullptr)
+        getPort()->write(writeDataBuffer_, msgLen, 1000);
+
+    int resultlen = 0;
+
+    if(cm == CM_0x || cm == CM_1x) {
+        if(getPort() != nullptr)
+            resultlen = getPort()->read(readDataBuffer_, 7, 1000);
+
+        if(resultlen != 7)
+            return -2;
+
+        quint8 len = 0;
+        if(getPort() != nullptr) {
+            MakeAsiiToCode(&readDataBuffer_[5], &len, 1);
+            // len * 2 + 4 --> len * 2 + (1byte lrc) * 2 + 0x0d + 0x0a
+            resultlen = getPort()->read(&readDataBuffer_[7], len * 2 + 4, 1000);
         }
-        return SUCCESS;
-    }
-
-    return FAIL;
-}
 
 
-/*
-* 强制单个线圈    0xFF00--on, 0x0000--Off
-*/
-ResultType ModbusASCII::WriteCoil(int addDev, int addCol, int value)
-{
-    unsigned char len = 0, pos = 0;
+        if(resultlen != len * 2 + 4)
+            return -2;
 
-    ClearBuffer();
-
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x05;
-    m_pTmpBuf[len++] = addCol >> 8;
-    m_pTmpBuf[len++] = addCol;
-
-    if(value)
-    {
-        m_pTmpBuf[len++] = 0xFF;
-        m_pTmpBuf[len++] = 0x00;
-    }
-    else
-    {
-        m_pTmpBuf[len++] = 0x00;
-        m_pTmpBuf[len++] = 0x00;
-    }
-
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
-
-    if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, len, 1000);
-
-    if(resultlen == len && MessageCheck(m_pReadBuf, resultlen))
-    {
-        return SUCCESS;
-    }
-
-    return FAIL;
-}
-
-
-/*
-* 强制多个线圈
-*/
-ResultType ModbusASCII::WriteMultipleCoils(int addDev, int addCol,
-                                     int num, int cntByte, unsigned char *pbuf)
-{
-    unsigned char len = 0, pos = 0;
-
-    ClearBuffer();
-
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x0F;
-    m_pTmpBuf[len++] = addCol >> 8;
-    m_pTmpBuf[len++] = addCol;
-    m_pTmpBuf[len++] = num >> 8;
-    m_pTmpBuf[len++] = num;
-    m_pTmpBuf[len++] = cntByte;
-
-    for(int i = 0; i < cntByte; i++)
-    {
-        m_pTmpBuf[len++] = pbuf[i];  // array[0] coil0--7, array[1]--coil8-15
-    }
-
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
-
-    if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int iWaitLen = 3 + 7 * 2;
-    int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
-
-    if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
-    {
-        return SUCCESS;
-    }
-
-    return FAIL;
-}
-
-
-/*
-* read input bit status
-*/
-ResultType ModbusASCII::ReadDiscreteInputs(int addDev, int addinput, int num,
-                              unsigned char *pbuf)
-{
-    unsigned char len = 0, pos = 0;
-
-    ClearBuffer();
-
-    m_iCurReadAddress = addinput;
-
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x02;
-    m_pTmpBuf[len++] = addinput >> 8;
-    m_pTmpBuf[len++] = addinput;
-    m_pTmpBuf[len++] = num >> 8;
-    m_pTmpBuf[len++] = num;
-
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
-
-    if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int databuflen = num/8;
-    if(num%8)databuflen++;
-
-    int iWaitLen = 3 + (4 + databuflen) * 2;
-
-    int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
-
-    if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
-    {
-        for(int idx=0; idx<databuflen; idx++)
-        {
-            if(pbuf != 0)
-                pbuf[idx] = m_pTmpBuf[3+idx];
-            m_pDataBuf[idx] = m_pTmpBuf[3+idx];
+        if(pTag->GetDataType() == TYPE_BOOL) {
+            if(len > 1) {
+                revLen = revLen + readDataBuffer_[2] - 1;
+            }
         }
-        return SUCCESS;
+    } else {
+        if(getPort() != nullptr)
+            resultlen = getPort()->read(readDataBuffer_, revLen, 1000);
+
+        if(resultlen != revLen)
+            return -2;
     }
 
-    return FAIL;
-}
+    memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8 ));
+    memcpy(tempBuffer_, readDataBuffer_, revLen);
 
+    MakeAsiiToCode(tempBuffer_ + 1, readDataBuffer_, revLen);
+    revLen = (revLen - 3) / 2;
 
-/*
-* 读输入寄存器
-*/
-ResultType ModbusASCII::ReadReadInputRegister(int addDev, int addReg, int num,
-                                            unsigned char *pbuf)
-{
-    unsigned char len = 0, pos = 0;
+    if(!messageCheck(readDataBuffer_, revLen))
+        return 0;
 
-    ClearBuffer();
+    memset(tempBuffer_, 0, sizeof(tempBuffer_)/sizeof(quint8 ));
 
-    m_iCurReadAddress = addReg;
-
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x04;
-    m_pTmpBuf[len++] = addReg >> 8;
-    m_pTmpBuf[len++] = addReg;
-    m_pTmpBuf[len++] = num >> 8;
-    m_pTmpBuf[len++] = num;
-
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
-
-    if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int databuflen = num * 2;
-
-    int iWaitLen = 3 + (4 + databuflen) * 2;
-
-    int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
-
-    if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
-    {
-        for(int idx=0; idx<databuflen; idx++)
-        {
-            if(pbuf != 0)
-                pbuf[idx] = m_pTmpBuf[3+idx];
-            m_pDataBuf[idx] = m_pTmpBuf[3+idx];
+    // 返回数据的处理
+    if(pTag->GetDataType() == TYPE_BOOL) {
+        retSize = 1;
+        pTag->pReadBuf[0] = readDataBuffer_[3] & 0x01;
+        wDataLen = retSize;
+    } else if(pTag->GetDataType() == TYPE_INT16 || pTag->GetDataType() == TYPE_UINT16) {
+        if(getFuncode(pTag, FLAG_READ) == 0x03 || getFuncode(pTag, FLAG_READ) == 0x04) {
+            pTag->pReadBuf[0] = readDataBuffer_[4];
+            pTag->pReadBuf[1] = readDataBuffer_[3];
+        } else {
+            pTag->pReadBuf[0] = readDataBuffer_[3];
+            pTag->pReadBuf[1] = readDataBuffer_[4];
         }
-        return SUCCESS;
-    }
 
-    return FAIL;
-}
-
-
-/*
-* 读保持寄存器
-*/
-ResultType ModbusASCII::ReadHoldingRegister(int addDev, int addReg, int num,
-                                          unsigned char *pbuf)
-{
-    unsigned char len = 0, pos = 0;
-
-    ClearBuffer();
-
-    m_iCurReadAddress = addReg;
-
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x03;
-    m_pTmpBuf[len++] = addReg >> 8;
-    m_pTmpBuf[len++] = addReg;
-    m_pTmpBuf[len++] = num >> 8;
-    m_pTmpBuf[len++] = num;
-
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
-
-    if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int databuflen = num*2;
-
-    int iWaitLen = 3 + (4 + databuflen) * 2;
-
-    int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, iWaitLen, 1000);
-
-    if(resultlen == iWaitLen && MessageCheck(m_pReadBuf, resultlen))
-    {
-        for(int idx=0; idx<databuflen; idx++)
-        {
-            if(pbuf != 0)
-                pbuf[idx] = m_pTmpBuf[3+idx];
-            m_pDataBuf[idx] = m_pTmpBuf[3+idx];
+        wDataLen=2;
+    } else if(pTag->GetDataType() == TYPE_UINT32 || pTag->GetDataType() == TYPE_INT32 ||
+              pTag->GetDataType() == TYPE_FLOAT) {
+        if(getFuncode(pTag, FLAG_READ) == 0x03 || getFuncode(pTag, FLAG_READ) == 0x04) {
+            pTag->pReadBuf[0] = readDataBuffer_[4];
+            pTag->pReadBuf[1] = readDataBuffer_[3];
+            pTag->pReadBuf[2] = readDataBuffer_[6];
+            pTag->pReadBuf[3] = readDataBuffer_[5];
+        } else {
+            pTag->pReadBuf[0] = readDataBuffer_[3];
+            pTag->pReadBuf[1] = readDataBuffer_[4];
+            pTag->pReadBuf[2] = readDataBuffer_[5];
+            pTag->pReadBuf[3] = readDataBuffer_[6];
         }
-        return SUCCESS;
+        wDataLen = 4;
+    } else if(pTag->GetDataType() == TYPE_UINT8 || pTag->GetDataType() == TYPE_INT8) {
+        retSize = readDataBuffer_[2];
+
+        if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
+            j = retSize-1;
+            for(i=0; i<retSize; i++)
+                *(pTag->pReadBuf + (j--)) = readDataBuffer_[3+i];
+        } else {
+            j = retSize/2-1;
+            for(i=0;i<retSize;i++,j--) {
+                *(pTag->pReadBuf + 2 * j) = readDataBuffer_[3+i];
+                i++;
+                *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[3+i];
+            }
+        }
+
+        wDataLen = retSize;
     }
 
-    return FAIL;
+    return 1;
 }
-
-
-/*
-* 预置单个寄存器
-*/
-ResultType ModbusASCII::WriteHoldingRegister(int addDev, int addReg, unsigned short data)
-{
-    unsigned char len = 0, pos = 0;
-
-    ClearBuffer();
-
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x06;
-    m_pTmpBuf[len++] = addReg >> 8;
-    m_pTmpBuf[len++] = addReg;
-
-    if(get2BytesOrder() == "21")
-    {
-        m_pTmpBuf[len++] = data >> 8;
-        m_pTmpBuf[len++] = data;
-    }
-    else if(get2BytesOrder() == "12")
-    {
-        m_pTmpBuf[len++] = data;
-        m_pTmpBuf[len++] = data >> 8;
-    }
-
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
-
-    if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, 14, 1000);
-
-    if(resultlen == 14 && MessageCheck(m_pReadBuf, resultlen))
-    {
-        return SUCCESS;
-    }
-
-    return FAIL;
-}
-
-
-/*
-* 强制多个寄存器
-*/
-ResultType ModbusASCII::WriteMultipleHoldingRegister(int addDev, int addReg,
-                                                   int num, unsigned char *pbuf)
-{
-    unsigned char len = 0, pos = 0;
-
-    ClearBuffer();
-
-    m_pTmpBuf[len++] = addDev;
-    m_pTmpBuf[len++] = 0x10;
-    m_pTmpBuf[len++] = addReg >> 8;
-    m_pTmpBuf[len++] = addReg;
-    m_pTmpBuf[len++] = num >> 8;
-    m_pTmpBuf[len++] = num;
-    m_pTmpBuf[len++] = num*2;
-
-    for(int i = 0; i < num*2; i++)
-    {
-        m_pTmpBuf[len++] = pbuf[i];
-    }
-
-    m_pTmpBuf[len] = GetLRC(m_pTmpBuf, len);
-    len++;
-
-    pos = 0;
-    m_pWriteBuf[pos++] = 0x3A;
-    MakeCodeToAsii(m_pTmpBuf, m_pWriteBuf + pos, len);
-    pos = pos + 2 * len;
-
-    m_pWriteBuf[pos++] = 0x0D;
-    m_pWriteBuf[pos++] = 0x0A;
-    len = pos;
-
-    if(getPort() != nullptr)
-        getPort()->write(m_pWriteBuf, len, 1000);
-
-    int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(m_pReadBuf, 14, 1000);
-
-    if(resultlen == 14 && MessageCheck(m_pReadBuf, resultlen))
-    {
-        return SUCCESS;
-    }
-
-    return FAIL;
-}
-
-
-ResultType ModbusASCII::WriteIntToHoldingRegister(int addDev, int addReg,
-                                                int data)
-{
-    unsigned char *pbuf = new unsigned char[4];
-    union unionInt
-    {
-        int uInt;
-        unsigned char ubytes[4];
-    };
-    unionInt uInt;
-
-    uInt.uInt = data;
-
-    if(get4BytesOrder() == "4321")
-    {
-        pbuf[0] = uInt.ubytes[3];
-        pbuf[1] = uInt.ubytes[2];
-        pbuf[2] = uInt.ubytes[1];
-        pbuf[3] = uInt.ubytes[0];
-    }
-    else if(get4BytesOrder() == "4312")
-    {
-        pbuf[0] = uInt.ubytes[3];
-        pbuf[1] = uInt.ubytes[2];
-        pbuf[2] = uInt.ubytes[0];
-        pbuf[3] = uInt.ubytes[1];
-    }
-    else if(get4BytesOrder() == "3421")
-    {
-        pbuf[0] = uInt.ubytes[2];
-        pbuf[1] = uInt.ubytes[3];
-        pbuf[2] = uInt.ubytes[1];
-        pbuf[3] = uInt.ubytes[0];
-    }
-    else if(get4BytesOrder() == "3412")
-    {
-        pbuf[0] = uInt.ubytes[2];
-        pbuf[1] = uInt.ubytes[3];
-        pbuf[2] = uInt.ubytes[0];
-        pbuf[3] = uInt.ubytes[1];
-    }
-    else if(get4BytesOrder() == "2143")
-    {
-        pbuf[0] = uInt.ubytes[1];
-        pbuf[1] = uInt.ubytes[0];
-        pbuf[2] = uInt.ubytes[3];
-        pbuf[3] = uInt.ubytes[2];
-    }
-    else if(get4BytesOrder() == "2134")
-    {
-        pbuf[0] = uInt.ubytes[1];
-        pbuf[1] = uInt.ubytes[0];
-        pbuf[2] = uInt.ubytes[2];
-        pbuf[3] = uInt.ubytes[3];
-    }
-    else if(get4BytesOrder() == "1243")
-    {
-        pbuf[0] = uInt.ubytes[0];
-        pbuf[1] = uInt.ubytes[1];
-        pbuf[2] = uInt.ubytes[3];
-        pbuf[3] = uInt.ubytes[2];
-    }
-    else if(get4BytesOrder() == "1234")
-    {
-        pbuf[0] = uInt.ubytes[0];
-        pbuf[1] = uInt.ubytes[1];
-        pbuf[2] = uInt.ubytes[2];
-        pbuf[3] = uInt.ubytes[3];
-    }
-    ResultType result = WriteMultipleHoldingRegister(addDev, addReg, 2, pbuf);
-    delete[] pbuf;
-    return result;
-}
-
-
-ResultType ModbusASCII::WriteUIntToHoldingRegister(int addDev, int addReg,
-                                                 unsigned int data)
-{
-    unsigned char *pbuf = new unsigned char[4];
-    union unionInt
-    {
-        unsigned int uUInt;
-        unsigned char ubytes[4];
-    };
-    unionInt uInt;
-
-    uInt.uUInt = data;
-
-    if(get4BytesOrder() == "4321")
-    {
-        pbuf[0] = uInt.ubytes[3];
-        pbuf[1] = uInt.ubytes[2];
-        pbuf[2] = uInt.ubytes[1];
-        pbuf[3] = uInt.ubytes[0];
-    }
-    else if(get4BytesOrder() == "4312")
-    {
-        pbuf[0] = uInt.ubytes[3];
-        pbuf[1] = uInt.ubytes[2];
-        pbuf[2] = uInt.ubytes[0];
-        pbuf[3] = uInt.ubytes[1];
-    }
-    else if(get4BytesOrder() == "3421")
-    {
-        pbuf[0] = uInt.ubytes[2];
-        pbuf[1] = uInt.ubytes[3];
-        pbuf[2] = uInt.ubytes[1];
-        pbuf[3] = uInt.ubytes[0];
-    }
-    else if(get4BytesOrder() == "3412")
-    {
-        pbuf[0] = uInt.ubytes[2];
-        pbuf[1] = uInt.ubytes[3];
-        pbuf[2] = uInt.ubytes[0];
-        pbuf[3] = uInt.ubytes[1];
-    }
-    else if(get4BytesOrder() == "2143")
-    {
-        pbuf[0] = uInt.ubytes[1];
-        pbuf[1] = uInt.ubytes[0];
-        pbuf[2] = uInt.ubytes[3];
-        pbuf[3] = uInt.ubytes[2];
-    }
-    else if(get4BytesOrder() == "2134")
-    {
-        pbuf[0] = uInt.ubytes[1];
-        pbuf[1] = uInt.ubytes[0];
-        pbuf[2] = uInt.ubytes[2];
-        pbuf[3] = uInt.ubytes[3];
-    }
-    else if(get4BytesOrder() == "1243")
-    {
-        pbuf[0] = uInt.ubytes[0];
-        pbuf[1] = uInt.ubytes[1];
-        pbuf[2] = uInt.ubytes[3];
-        pbuf[3] = uInt.ubytes[2];
-    }
-    else if(get4BytesOrder() == "1234")
-    {
-        pbuf[0] = uInt.ubytes[0];
-        pbuf[1] = uInt.ubytes[1];
-        pbuf[2] = uInt.ubytes[2];
-        pbuf[3] = uInt.ubytes[3];
-    }
-    ResultType result = WriteMultipleHoldingRegister(addDev, addReg, 2, pbuf);
-    delete[] pbuf;
-    return result;
-}
-
-
-ResultType ModbusASCII::WriteFloatToHoldingRegister(int addDev, int addReg,
-                                                  float data)
-{
-    unsigned char *pbuf = new unsigned char[4];
-    union unionFloat
-    {
-        float ufloat;
-        unsigned char ubytes[4];
-    };
-    unionFloat uFloat;
-
-    uFloat.ufloat = data;
-
-    if(get4BytesOrder() == "4321")
-    {
-        pbuf[0] = uFloat.ubytes[3];
-        pbuf[1] = uFloat.ubytes[2];
-        pbuf[2] = uFloat.ubytes[1];
-        pbuf[3] = uFloat.ubytes[0];
-    }
-    else if(get4BytesOrder() == "4312")
-    {
-        pbuf[0] = uFloat.ubytes[3];
-        pbuf[1] = uFloat.ubytes[2];
-        pbuf[2] = uFloat.ubytes[0];
-        pbuf[3] = uFloat.ubytes[1];
-    }
-    else if(get4BytesOrder() == "3421")
-    {
-        pbuf[0] = uFloat.ubytes[2];
-        pbuf[1] = uFloat.ubytes[3];
-        pbuf[2] = uFloat.ubytes[1];
-        pbuf[3] = uFloat.ubytes[0];
-    }
-    else if(get4BytesOrder() == "3412")
-    {
-        pbuf[0] = uFloat.ubytes[2];
-        pbuf[1] = uFloat.ubytes[3];
-        pbuf[2] = uFloat.ubytes[0];
-        pbuf[3] = uFloat.ubytes[1];
-    }
-    else if(get4BytesOrder() == "2143")
-    {
-        pbuf[0] = uFloat.ubytes[1];
-        pbuf[1] = uFloat.ubytes[0];
-        pbuf[2] = uFloat.ubytes[3];
-        pbuf[3] = uFloat.ubytes[2];
-    }
-    else if(get4BytesOrder() == "2134")
-    {
-        pbuf[0] = uFloat.ubytes[1];
-        pbuf[1] = uFloat.ubytes[0];
-        pbuf[2] = uFloat.ubytes[2];
-        pbuf[3] = uFloat.ubytes[3];
-    }
-    else if(get4BytesOrder() == "1243")
-    {
-        pbuf[0] = uFloat.ubytes[0];
-        pbuf[1] = uFloat.ubytes[1];
-        pbuf[2] = uFloat.ubytes[3];
-        pbuf[3] = uFloat.ubytes[2];
-    }
-    else if(get4BytesOrder() == "1234")
-    {
-        pbuf[0] = uFloat.ubytes[0];
-        pbuf[1] = uFloat.ubytes[1];
-        pbuf[2] = uFloat.ubytes[2];
-        pbuf[3] = uFloat.ubytes[3];
-    }
-    ResultType result = WriteMultipleHoldingRegister(addDev, addReg, 2, pbuf);
-    delete[] pbuf;
-    return result;
-}
-
-
-
-
-
-

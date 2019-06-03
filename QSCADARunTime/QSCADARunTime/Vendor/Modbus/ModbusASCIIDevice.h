@@ -66,7 +66,7 @@ public:
 private:    
     ComPort *comPort_;
     ComDevicePrivate *pComDevicePrivate;
-    ModbusASCII mModbusAscii;
+    ModbusASCII modbusAscii_;
 
 };
 

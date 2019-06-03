@@ -110,7 +110,7 @@ int ComPort::read(unsigned char *buf, int len, int ms) {
     for(int i=0; i<len; i++) {
         buf[i] = buf_[i];
     }
-#if 1
+#if 0
     qDebug()<< "read: " << hexToString(buf_.data(), len);
 #endif
     buf_.remove(0, len);
@@ -120,7 +120,7 @@ int ComPort::read(unsigned char *buf, int len, int ms) {
 
 int ComPort::write(unsigned char *buf, int len, int /*ms*/) {
     int count = 0;
-#if 1
+#if 0
     qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
     count = serialPortPtr_->write((char*)buf, len);
