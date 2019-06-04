@@ -2,7 +2,6 @@
 #define COMMUNICATIONDEVICEWIN_H
 
 #include "ChildBase.h"
-#include "./LinkManager.h"
 #include <QWidget>
 #include <QStandardItemModel>
 
@@ -51,11 +50,8 @@ public slots:
     void DeleteDevice();
 
 private:
-    LinkManager *m_pLinkManager;
-
-private:
     Ui::CommunicationDeviceWin *ui;
-    QStandardItemModel *pListViewCommDevModel;
+    QStandardItemModel *pCommDevModel_;
 
 };
 

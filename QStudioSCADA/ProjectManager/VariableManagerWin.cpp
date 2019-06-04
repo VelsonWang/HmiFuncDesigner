@@ -4,7 +4,6 @@
 #include "CommunicationDeviceWin.h"
 #include "ui_CommunicationDeviceWin.h"
 #include "NewComDeviceDialog.h"
-#include "DeviceBase.h"
 #include "VariableEditDialog.h"
 #include "CommentsDialog.h"
 #include "stringdata.h"

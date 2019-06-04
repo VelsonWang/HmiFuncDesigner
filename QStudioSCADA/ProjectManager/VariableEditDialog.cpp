@@ -1,9 +1,10 @@
 ﻿#include "VariableEditDialog.h"
 #include "ui_VariableEditDialog.h"
-#include "configutils.h"
+#include "ConfigUtils.h"
 #include "Helper.h"
 #include "IDevicePlugin.h"
 #include "ProjectMgrUtils.h"
+#include "ProjectData.h"
 #include <QStringList>
 #include <QMessageBox>
 #include <QDir>
@@ -25,13 +26,10 @@ VariableEditDialog::VariableEditDialog(QString projName, QWidget *parent) :
     on_cboDataType_currentIndexChanged(ui->cboDataType->currentText());
 
     // 已经建立设备列表
-    m_pLinkManager = new LinkManager(ProjectMgrUtils::getProjectPath(projName));
-    m_pLinkManager->loadFromFile(DATA_SAVE_FORMAT);
-    for(int i=0; i<m_pLinkManager->devList.count(); i++)
-    {
-        DeviceBase *dev = m_pLinkManager->devList.at(i);
-        //qDebug()<<dev->m_sDeviceName;
-        ui->cboDeviceName->addItem(dev->m_sDeviceName);
+    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+        ui->cboDeviceName->addItem(pObj->szDeviceName_);
     }
     if(ui->cboDeviceName->count()>0)
         ui->cboDeviceName->setCurrentIndex(0);
@@ -47,7 +45,6 @@ VariableEditDialog::VariableEditDialog(QString projName, QWidget *parent) :
 
 VariableEditDialog::~VariableEditDialog()
 {
-    delete m_pLinkManager;
     delete ui;
 }
 

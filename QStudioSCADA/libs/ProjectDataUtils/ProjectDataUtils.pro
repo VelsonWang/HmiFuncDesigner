@@ -16,7 +16,8 @@ SOURCES += \
     $$PWD/ProjectInfoManger.cpp \
     $$PWD/NetSetting.cpp \
     $$PWD/DatabaseSetting.cpp \
-    $$PWD/UserAuthority.cpp
+    $$PWD/UserAuthority.cpp \
+    DeviceInfo.cpp
 
 
 HEADERS += \ 
@@ -28,6 +29,7 @@ HEADERS += \
     $$PWD/ProjectInfoManger.h \
     $$PWD/NetSetting.h \
     $$PWD/DatabaseSetting.h \
-    $$PWD/UserAuthority.h
+    $$PWD/UserAuthority.h \
+    DeviceInfo.h
 
 

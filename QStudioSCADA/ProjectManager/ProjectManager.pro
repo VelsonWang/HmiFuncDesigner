@@ -60,8 +60,6 @@ SOURCES += main.cpp\
     CommunicationDeviceWin.cpp \
     NewComDeviceDialog.cpp \
     ChildBase.cpp \
-    LinkManager.cpp \
-    DeviceBase.cpp \
     VariableManagerWin.cpp \
     VariableEditDialog.cpp \
     CommentsDialog.cpp \
@@ -99,8 +97,6 @@ HEADERS  += MainWindow.h \
     CommunicationDeviceWin.h \
     NewComDeviceDialog.h \
     ChildBase.h \
-    LinkManager.h \
-    DeviceBase.h \
     VariableManagerWin.h \
     VariableEditDialog.h \
     CommentsDialog.h \

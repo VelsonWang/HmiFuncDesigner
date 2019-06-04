@@ -22,6 +22,8 @@ public:
     bool createTableDatabaseSetting();
     // 创建用户权限表
     bool createTableUserAuthority();
+    // 创建设备信息表
+    bool createTableDeviceInfo();
 
     // 创建数据库表
     bool createTables() override;

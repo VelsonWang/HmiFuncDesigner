@@ -141,6 +141,41 @@ bool ProjectDataSQLiteDatabase::createTableUserAuthority() {
     return ret;
 }
 
+
+/**
+ * @brief ProjectDataSQLiteDatabase::createTableDeviceInfo
+ * @details 创建设备信息表
+ * @return true-成功, false-失败
+ */
+bool ProjectDataSQLiteDatabase::createTableDeviceInfo() {
+    QString autoincrement = "integer not null primary key autoincrement";
+    QStringList keyList,valueList;
+    int ret = 0;
+
+    keyList.clear();
+    valueList.clear();
+
+    keyList << "id" << "type" << "name" << "frame_length"
+            << "protocol" << "link" << "state_var" << "frame_time_period"
+            << "ctrl_var" << "dynamic_optimization" << "remote_port" << "port_parameters";
+
+    valueList << autoincrement << "varchar(8)" << "varchar(64)" << "int"
+              << "varchar(64)" << "varchar(32)" << "int" << "int"
+              << "int" << "int" << "int" << "varchar(512)";
+
+    ret = createTable("t_device_info", keyList, valueList, "");
+    if(ret == 1) {
+
+    }
+
+    return ret;
+}
+
+/**
+ * @brief ProjectDataSQLiteDatabase::createTables
+ * @details 创建工程参数表
+ * @return true-成功, false-失败
+ */
 bool ProjectDataSQLiteDatabase::createTables() {
 #define RET_MAX    (16)
     int i = 0;
@@ -156,6 +191,8 @@ bool ProjectDataSQLiteDatabase::createTables() {
     ret[2] = createTableDatabaseSetting();
     // 创建用户权限表
     ret[3] = createTableUserAuthority();
+    // 创建设备信息表
+    ret[4] = createTableDeviceInfo();
 
     for(i=0; i<RET_MAX; i++) {
         if(!ret[i])

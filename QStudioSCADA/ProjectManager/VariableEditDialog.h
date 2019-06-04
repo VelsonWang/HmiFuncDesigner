@@ -3,7 +3,6 @@
 
 #include <QDialog>
 #include <QStringList>
-#include "LinkManager.h"
 
 class IDevicePlugin;
 
@@ -80,7 +79,6 @@ private:
     Ui::VariableEditDialog *ui;
     QString m_strProjectName;
     VAR_TYPE m_iVarType;  // 变量类型
-    LinkManager *m_pLinkManager;
     int m_iRegAddrOffset;
     IDevicePlugin *devPlugin_;
 };

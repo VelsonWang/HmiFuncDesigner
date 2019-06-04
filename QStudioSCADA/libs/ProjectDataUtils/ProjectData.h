@@ -8,6 +8,7 @@
 #include "NetSetting.h"
 #include "DatabaseSetting.h"
 #include "UserAuthority.h"
+#include "DeviceInfo.h"
 
 class ProjectDataSQLiteDatabase;
 
@@ -26,6 +27,7 @@ public:
     NetSetting netSetting_; // 网络配置
     DatabaseSetting dbSetting_; // 数据库配置
     UserAuthority userAuthority_; // 用户权限
+    DeviceInfo deviceInfo_; // 设备配置信息
 
 private:
     explicit ProjectData();
