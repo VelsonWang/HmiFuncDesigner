@@ -29,7 +29,19 @@ public:
 class ComDevicePrivate : public VendorPrivate
 {
 public:
-    bool LoadData(SaveFormat saveFormat, QString fileName);
+    bool LoadData(const QString &devName);
+
+    void fromString(const QString &param) {
+        QStringList listParam = param.split('|');
+        if(listParam.count() == 6) {
+            m_sPortNumber = listParam.at(0);
+            m_iBaudrate = listParam.at(1).toInt();
+            m_iDatabit = listParam.at(2).toInt();
+            m_fStopbit = listParam.at(3).toFloat();
+            m_sVerifybit = listParam.at(4);
+            m_iTimeout = listParam.at(5).toInt();
+        }
+    }
 
 public:
     QString m_sPortNumber;
@@ -43,7 +55,17 @@ public:
 class NetDevicePrivate : public VendorPrivate
 {
 public:
-    bool LoadData(SaveFormat saveFormat, QString fileName);
+    bool LoadData(const QString &devName);
+
+    void fromString(const QString &param) {
+        QStringList listParam = param.split('|');
+        if(listParam.count() == 4) {
+            m_sIpAddress = listParam.at(0);
+            m_iPort = listParam.at(1).toInt();
+            m_sIpAddress1 = listParam.at(2).toInt();
+            m_iPort1 = listParam.at(3).toFloat();
+        }
+    }
 
 public:
     QString m_sIpAddress;

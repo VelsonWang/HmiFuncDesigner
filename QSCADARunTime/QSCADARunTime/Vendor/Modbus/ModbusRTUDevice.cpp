@@ -325,10 +325,10 @@ QString ModbusRTUDevice::GetPortName()
 /*
 * 从文件读取配置数据
 */
-bool ModbusRTUDevice::LoadData(SaveFormat saveFormat, QString fileName)
+bool ModbusRTUDevice::LoadData(const QString &devName)
 {
     pComDevicePrivate_ = new ComDevicePrivate();
-    if (pComDevicePrivate_->LoadData(saveFormat, fileName))
+    if (pComDevicePrivate_->LoadData(devName))
     {
         QStringList comArgs;
         comArgs << QString().number(pComDevicePrivate_->m_iBaudrate);

@@ -20,7 +20,7 @@ class ModbusRTUDevice : public IVendor
 public:
     explicit ModbusRTUDevice();
     ~ModbusRTUDevice();
-    bool LoadData(SaveFormat saveFormat, QString fileName);
+    bool LoadData(const QString &devName);
 
 public:
     // 获取设备名称

@@ -327,10 +327,10 @@ QString TCPIPModbusDevice::GetPortName()
 /*
 * 从文件读取配置数据
 */
-bool TCPIPModbusDevice::LoadData(SaveFormat saveFormat, QString fileName)
+bool TCPIPModbusDevice::LoadData(const QString &devName)
 {
     pNetDevicePrivate = new NetDevicePrivate();
-    if (pNetDevicePrivate->LoadData(saveFormat, fileName))
+    if (pNetDevicePrivate->LoadData(devName))
     {
         QStringList netArgs;
         netArgs << pNetDevicePrivate->m_sIpAddress;

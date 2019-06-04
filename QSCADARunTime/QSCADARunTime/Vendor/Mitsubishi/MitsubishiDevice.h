@@ -22,7 +22,7 @@ class MitsubishiDevice : public IVendor
 public:
     explicit MitsubishiDevice();
     ~MitsubishiDevice();
-    bool LoadData(SaveFormat saveFormat, QString fileName);
+    bool LoadData(const QString &devName);
 
 public:
     // 获取设备名称

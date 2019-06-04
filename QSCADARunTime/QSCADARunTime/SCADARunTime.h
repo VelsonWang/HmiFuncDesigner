@@ -45,6 +45,9 @@ public:
     // 执行脚本功能
     static void execScriptFunction(const QStringList &szFuncList,
                                    const QString &szMatchEvent);
+private:
+    // 获取工程名称
+    QString getProjectName(const QString &szProjectPath);
 
 private:
     static QString m_sProjectPath;

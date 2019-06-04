@@ -322,10 +322,10 @@ QString ModbusASCIIDevice::GetPortName()
 /*
 * 从文件读取配置数据
 */
-bool ModbusASCIIDevice::LoadData(SaveFormat saveFormat, QString fileName)
+bool ModbusASCIIDevice::LoadData(const QString &devName)
 {
     pComDevicePrivate = new ComDevicePrivate();
-    if (pComDevicePrivate->LoadData(saveFormat, fileName))
+    if (pComDevicePrivate->LoadData(devName))
     {
         QStringList comArgs;
         comArgs << QString().number(pComDevicePrivate->m_iBaudrate);

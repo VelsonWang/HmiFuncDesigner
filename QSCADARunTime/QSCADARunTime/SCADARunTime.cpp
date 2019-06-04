@@ -67,46 +67,46 @@ bool SCADARunTime::Load(SaveFormat saveFormat)
 
     // load devices
     m_VendorList.clear();
-    QJsonObject jsonDevices = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/LinkList.odb");
-    if(jsonDevices == QJsonObject())
+
+    QString szProjName = getProjectName(m_sProjectPath);
+
+    if(szProjName == "") {
+        LogError("project information file not found!");
         return false;
-    QJsonArray DeviceArray = jsonDevices["DeviceArray"].toArray();
-    for (int i = 0; i < DeviceArray.size(); ++i)
-    {
-        QJsonObject jsonObj = DeviceArray[i].toObject();
-        QString sProtocol = jsonObj["prog"].toString();
-        QString sPortType = jsonObj["type"].toString();
-        QString sDeviceName = jsonObj["name"].toString();
-        //jsonObj["bstop"] = false;
-        //jsonObj["rdy"] = DevList.at(i)->m_sLink;
+    }
+
+    ProjectData::getInstance()->createOrOpenProjectData(m_sProjectPath, szProjName);
+    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    deviceInfo.load(ProjectData::getInstance()->dbData_);
+    for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+        QString sProtocol = pObj->szProtocol_;
+        QString sPortType = pObj->szDeviceType_;
+        QString sDeviceName = pObj->szDeviceName_;
 
         qDebug()<< "Protocol is" <<sProtocol.toUpper();
         if(sProtocol.toUpper() == QString("MODBUSRTU"))
         {
             ModbusRTUDevice *pMbRTUDevice = new ModbusRTUDevice();
-            QString cfgfile = m_sProjectPath + "/" + sDeviceName.trimmed() + ".odb";
-            pMbRTUDevice->LoadData(DATA_SAVE_FORMAT, cfgfile);
+            pMbRTUDevice->LoadData(sDeviceName);
             m_VendorList.append(pMbRTUDevice);
         }
         else if(sProtocol.toUpper() == QString("MODBUSASCII"))
         {
             ModbusASCIIDevice *pMbAsciiDevice = new ModbusASCIIDevice();
-            QString cfgfile = m_sProjectPath + "/" + sDeviceName.trimmed() + ".odb";
-            pMbAsciiDevice->LoadData(DATA_SAVE_FORMAT, cfgfile);
+            pMbAsciiDevice->LoadData(sDeviceName);
             m_VendorList.append(pMbAsciiDevice);           
         }
         else if(sProtocol.toUpper() == QString("TCPIPMODBUS"))
         {
             TCPIPModbusDevice *pMbTcpipDevice = new TCPIPModbusDevice();
-            QString cfgfile = m_sProjectPath + "/" + sDeviceName.trimmed() + ".odb";
-            pMbTcpipDevice->LoadData(DATA_SAVE_FORMAT, cfgfile);
+            pMbTcpipDevice->LoadData(sDeviceName);
             m_VendorList.append(pMbTcpipDevice);
         }
         else if(sProtocol.toUpper() == QString("FXPROTOCOL"))
         {
             MitsubishiDevice *pMitsubishiDevice = new MitsubishiDevice();
-            QString cfgfile = m_sProjectPath + "/" + sDeviceName.trimmed() + ".odb";
-            pMitsubishiDevice->LoadData(DATA_SAVE_FORMAT, cfgfile);
+            pMitsubishiDevice->LoadData(sDeviceName);
             m_VendorList.append(pMitsubishiDevice);
         }
     }
@@ -120,8 +120,6 @@ bool SCADARunTime::Load(SaveFormat saveFormat)
     }
 
     /////////////////////////////////////////////
-
-    //qDebug() << "load tags and create rtdb!";
 
     // load tags and create rtdb
     //-----------------系统变量------------------//
@@ -276,25 +274,11 @@ void SCADARunTime::Start()
     // start graph page show
 
     // find project infomation file
-    QFileInfo srcFileInfo(m_sProjectPath);
-    QString projInfoFile = "";
-    QString projName = "";
-    if (srcFileInfo.isDir()) {
-        QDir sourceDir(m_sProjectPath);
-        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-        foreach (const QString &fileName, fileNames) {
-            if(fileName.endsWith("pdt")) {
-                projInfoFile = fileName;
-                QFileInfo info(projInfoFile);
-                projName = info.baseName();
-            }
+    QString szProjName = getProjectName(m_sProjectPath);
 
-        }
-    }
-    if(projInfoFile == "") {
+    if(szProjName == "") {
         LogError("project information file not found!");
     } else {
-        ProjectData::getInstance()->createOrOpenProjectData(m_sProjectPath, projName);
         ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
         projInfoMgr.load(ProjectData::getInstance()->dbData_);
         QString startPageFile = projInfoMgr.getStartPage();
@@ -427,3 +411,26 @@ void SCADARunTime::execScriptFunction(const QStringList &szFuncList,
 }
 
 
+/**
+ * @brief SCADARunTime::getProjectName
+ * @details 获取工程名称
+ * @param szProjectPath
+ * @return
+ */
+QString SCADARunTime::getProjectName(const QString &szProjectPath) {
+    QFileInfo srcFileInfo(szProjectPath);
+    QString szProjName = "";
+    if (srcFileInfo.isDir()) {
+        QDir sourceDir(szProjectPath);
+        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
+        foreach (const QString &fileName, fileNames) {
+            if(fileName.endsWith("pdt")) {
+                QFileInfo info(fileName);
+                szProjName = info.baseName();
+            }
+
+        }
+    }
+
+    return szProjName;
+}

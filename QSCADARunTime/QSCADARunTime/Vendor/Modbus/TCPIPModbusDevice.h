@@ -20,7 +20,7 @@ class TCPIPModbusDevice : public IVendor
 public:
     explicit TCPIPModbusDevice();
     ~TCPIPModbusDevice();
-    bool LoadData(SaveFormat saveFormat, QString fileName);
+    bool LoadData(const QString &devName);
 
 public:
     // 获取设备名称

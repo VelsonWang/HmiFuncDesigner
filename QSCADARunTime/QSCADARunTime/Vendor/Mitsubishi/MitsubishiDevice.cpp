@@ -301,9 +301,9 @@ QString MitsubishiDevice::GetPortName() {
 /*
 * 从文件读取配置数据
 */
-bool MitsubishiDevice::LoadData(SaveFormat saveFormat, QString fileName) {
+bool MitsubishiDevice::LoadData(const QString &devName) {
     pComDevicePrivate = new ComDevicePrivate();
-    if (pComDevicePrivate->LoadData(saveFormat, fileName)) {
+    if (pComDevicePrivate->LoadData(devName)) {
         QStringList comArgs;
         comArgs << QString().number(pComDevicePrivate->m_iBaudrate);
         comArgs << QString().number(pComDevicePrivate->m_iDatabit);
