@@ -94,6 +94,10 @@ public:
     void excSQL(const QString& sql, QList<QStringList>& result);
     void excSQL(const QString& sql );
 
+    int getLastInsertId(const QString &tableName);
+    int getMaxId(const QString &tableName);
+    int getRowCount(const QString &tableName, const QString &expr);
+
 public:
     QString name_;
     QString user_;

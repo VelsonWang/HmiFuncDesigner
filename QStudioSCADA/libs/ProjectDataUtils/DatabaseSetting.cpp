@@ -38,7 +38,9 @@ DatabaseSetting::DatabaseSetting()
 }
 
 DatabaseSetting::~DatabaseSetting() {
-    delete dPtr_;
+    if(dPtr_ != nullptr) {
+        delete dPtr_;
+    }
 }
 
 /**

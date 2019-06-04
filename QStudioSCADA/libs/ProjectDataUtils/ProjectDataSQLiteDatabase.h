@@ -20,6 +20,8 @@ public:
     bool createTableNetSetting();
     // 创建数据库设置表
     bool createTableDatabaseSetting();
+    // 创建用户权限表
+    bool createTableUserAuthority();
 
     // 创建数据库表
     bool createTables() override;

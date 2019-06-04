@@ -7,6 +7,7 @@
 #include "ProjectInfoManger.h"
 #include "NetSetting.h"
 #include "DatabaseSetting.h"
+#include "UserAuthority.h"
 
 class ProjectDataSQLiteDatabase;
 
@@ -24,6 +25,7 @@ public:
     ProjectInfoManger projInfoMgr_; // 工程信息管理
     NetSetting netSetting_; // 网络配置
     DatabaseSetting dbSetting_; // 数据库配置
+    UserAuthority userAuthority_; // 用户权限
 
 private:
     explicit ProjectData();

@@ -34,7 +34,9 @@ ProjectInfoManger::ProjectInfoManger()
 }
 
 ProjectInfoManger::~ProjectInfoManger() {
-    delete dPtr_;
+    if(dPtr_ != nullptr) {
+        delete dPtr_;
+    }
 }
 
 /**

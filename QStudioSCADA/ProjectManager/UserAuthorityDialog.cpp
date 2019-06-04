@@ -1,12 +1,10 @@
 ﻿#include "UserAuthorityDialog.h"
 #include "ui_UserAuthorityDialog.h"
+#include "ProjectData.h"
 #include <QStandardItem>
 #include <QModelIndex>
 #include <QMessageBox>
 #include <QFile>
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QApplication>
 #include <QDataStream>
 #include <QFile>
@@ -161,67 +159,17 @@ bool TagUserTableModel::removeRows(int row, int count, const QModelIndex&)
 }
 
 
-void TagUserTableModel::load(const QJsonObject &json)
-{
-    QJsonObject jsonObj;
-
-    m_tagUserItems.clear();
-    QJsonArray userArray = json["UserArray"].toArray();
-    for (int i = 0; i < userArray.size(); ++i)
-    {
-        TagUserItem item;
-        jsonObj = userArray[i].toObject();
-        item.m_sIndex = jsonObj["sIndex"].toString();
-        item.m_sName = jsonObj["sName"].toString();
-        item.m_sPassWord = jsonObj["sPassWord"].toString();
-        item.m_sAuthority = jsonObj["sAuthority"].toString();
-        item.m_sComments = jsonObj["sComments"].toString();
-        item.m_sName2 = jsonObj["sName2"].toString();
-        item.m_sName3 = jsonObj["sName3"].toString();
-        item.m_sName4 = jsonObj["sName4"].toString();
-        item.m_sName5 = jsonObj["sName5"].toString();
-        m_tagUserItems.append(item);
-    }
-}
-
-
-void TagUserTableModel::save(QJsonObject &json)
-{
-    QJsonArray userArray;
-    QJsonObject jsonObj;
-    TagUserItem item;
-
-    for(int i = 0; i < m_tagUserItems.size(); i++)
-    {
-        item = m_tagUserItems.at(i);
-        jsonObj["sIndex"] = item.m_sIndex;
-        jsonObj["sName"] = item.m_sName;
-        jsonObj["sPassWord"] = item.m_sPassWord;
-        jsonObj["sAuthority"] = item.m_sAuthority;
-        jsonObj["sComments"] = item.m_sComments;
-        jsonObj["sName2"] = item.m_sName2;
-        jsonObj["sName3"] = item.m_sName3;
-        jsonObj["sName4"] = item.m_sName4;
-        jsonObj["sName5"] = item.m_sName5;
-        userArray.append(jsonObj);
-    }
-    json["UserArray"] = userArray;
-}
-
-
 /////////////////////////////////////////////////////////
 
 
-UserAuthorityDialog::UserAuthorityDialog(QWidget *parent, QString ProjectPath) :
+UserAuthorityDialog::UserAuthorityDialog(QWidget *parent, const QString &ProjectPath) :
     QDialog(parent),
     ui(new Ui::UserAuthorityDialog),
-    m_ProjectPath(ProjectPath)
+    szProjectPath_(ProjectPath)
 {
     ui->setupUi(this);
 
-    pTableViewUserModel = new TagUserTableModel(this);
-    loadFromFile(DATA_SAVE_FORMAT);
-    ui->tableViewUser->setModel(pTableViewUserModel);
+    pUserModel_ = new TagUserTableModel(this);
     ui->tableViewUser->verticalHeader()->hide();
 }
 
@@ -247,7 +195,6 @@ void UserAuthorityDialog::on_btnOk_clicked()
 {
     if(check_data())
     {
-        saveToFile(DATA_SAVE_FORMAT);
         QDialog::accept();
     }
 }
@@ -260,15 +207,15 @@ void UserAuthorityDialog::on_btnExit_clicked()
 void UserAuthorityDialog::on_brnAddUser_clicked()
 {
     QModelIndex index;
-    pTableViewUserModel->insertRows(pTableViewUserModel->rowCount(), 1);
-    index = pTableViewUserModel->index(pTableViewUserModel->rowCount()-1, 0);
-    pTableViewUserModel->setData(index, QString("%1").arg(pTableViewUserModel->rowCount()));
+    pUserModel_->insertRows(pUserModel_->rowCount(), 1);
+    index = pUserModel_->index(pUserModel_->rowCount()-1, 0);
+    pUserModel_->setData(index, QString("%1").arg(pUserModel_->rowCount()));
 }
 
 void UserAuthorityDialog::on_brnDelUser_clicked()
 {
     QModelIndex ModelIndex = ui->tableViewUser->selectionModel()->currentIndex();
-    pTableViewUserModel->removeRow(ModelIndex.row(), ModelIndex.parent());
+    pUserModel_->removeRow(ModelIndex.row(), ModelIndex.parent());
     check_data();
 }
 
@@ -282,58 +229,71 @@ bool UserAuthorityDialog::check_data()
 {
     bool ret = true;
 
-    for(int i = 0; i < pTableViewUserModel->rowCount(); i++)
+    for(int i = 0; i < pUserModel_->rowCount(); i++)
     {
-        QModelIndex index = pTableViewUserModel->index(i, 0);
-        pTableViewUserModel->setData(index, i+1);
+        QModelIndex index = pUserModel_->index(i, 0);
+        pUserModel_->setData(index, i+1);
     }
     return ret;
 }
 
-void UserAuthorityDialog::load(const QJsonObject &json)
+void UserAuthorityDialog::load()
 {
-    pTableViewUserModel->load(json);
-    ui->checkLogIn->setChecked(json["bLogIn"].toBool());
-    ui->checkLogOut->setChecked(json["bLogOut"].toBool());
-}
+    UserAuthority &userAuthority = ProjectData::getInstance()->userAuthority_;
+    userAuthority.load(ProjectData::getInstance()->dbData_);
 
-void UserAuthorityDialog::save(QJsonObject &json)
-{
-    pTableViewUserModel->save(json);
-    json["bLogIn"] = ui->checkLogIn->isChecked();
-    json["bLogOut"] = ui->checkLogOut->isChecked();
-}
-
-bool UserAuthorityDialog::loadFromFile(SaveFormat saveFormat)
-{
-    QString file = m_ProjectPath + "/user.odb";
-    QFile loadFile(file);
-    if (!loadFile.open(QIODevice::ReadOnly)) {
-        qWarning("Couldn't open load file.");
-        return false;
+    pUserModel_->m_tagUserItems.clear();
+    for (int i = 0; i < userAuthority.getCount(); ++i) {
+        TagUserItem item;
+        item.m_sIndex = userAuthority.getIndex(i);
+        item.m_sName = userAuthority.getName(i);
+        item.m_sPassWord = userAuthority.getPassword(i);
+        item.m_sAuthority = userAuthority.getAuthority(i);
+        item.m_sComments = userAuthority.getComments(i);
+        item.m_sName2 = userAuthority.getName2(i);
+        item.m_sName3 = userAuthority.getName3(i);
+        item.m_sName4 = userAuthority.getName4(i);
+        item.m_sName5 = userAuthority.getName5(i);
+        pUserModel_->m_tagUserItems.append(item);
     }
-    QByteArray saveData = loadFile.readAll();
-    QJsonDocument loadDoc(saveFormat == Json ? QJsonDocument::fromJson(saveData) : QJsonDocument::fromBinaryData(saveData));
-    load(loadDoc.object());
-    loadFile.close();
-    return true;
+
+    if(userAuthority.getCount()) {
+        ui->checkLogIn->setChecked(userAuthority.isLogin(0));
+        ui->checkLogOut->setChecked(userAuthority.isLogout(0));
+    }
+
+    ui->tableViewUser->setModel(pUserModel_);
 }
 
-bool UserAuthorityDialog::saveToFile(SaveFormat saveFormat)
+void UserAuthorityDialog::save()
 {
-    QString file = m_ProjectPath + "/user.odb";
-    QFile saveFile(file);
-    if (!saveFile.open(QIODevice::WriteOnly)) {
-        qWarning("Couldn't open save file.");
-        return false;
+    UserAuthority &userAuthority = ProjectData::getInstance()->userAuthority_;
+    userAuthority.delAll(ProjectData::getInstance()->dbData_);
+    TagUserItem item;
+
+    for(int i = 0; i < pUserModel_->m_tagUserItems.size(); i++)
+    {
+        UserAuthorityPrivate *pObj = new UserAuthorityPrivate();
+        item = pUserModel_->m_tagUserItems.at(i);
+        pObj->szIndex_ = item.m_sIndex;
+        pObj->szName_ = item.m_sName;
+        pObj->szPassword_ = item.m_sPassWord;
+        pObj->szAuthority_ = item.m_sAuthority;
+        pObj->szComments_ = item.m_sComments;
+        pObj->szName2_ = item.m_sName2;
+        pObj->szName3_ = item.m_sName3;
+        pObj->szName4_ = item.m_sName4;
+        pObj->szName5_ = item.m_sName5;
+        pObj->bLogin_ = ui->checkLogIn->isChecked();
+        pObj->bLogout_ = ui->checkLogOut->isChecked();
+        userAuthority.insert(ProjectData::getInstance()->dbData_, pObj);
     }
-    QJsonObject obj;
-    save(obj);
-    QJsonDocument saveDoc(obj);
-    saveFile.write(saveFormat == Json ? saveDoc.toJson() : saveDoc.toBinaryData());
-    saveFile.close();
-    return true;
 }
+
+
+
+
+
 
 
 

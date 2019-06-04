@@ -8,13 +8,11 @@ ProjectDataSQLiteDatabase::ProjectDataSQLiteDatabase(const QString &dbname,
                                      const QString &hostname,
                                      int port,
                                      QObject *parent)
-    : SQLiteDatabase(dbname, user, pwd, hostname, port, parent)
-{
+    : SQLiteDatabase(dbname, user, pwd, hostname, port, parent) {
 
 }
 
-ProjectDataSQLiteDatabase::~ProjectDataSQLiteDatabase()
-{
+ProjectDataSQLiteDatabase::~ProjectDataSQLiteDatabase() {
 
 }
 
@@ -24,8 +22,7 @@ ProjectDataSQLiteDatabase::~ProjectDataSQLiteDatabase()
  * @details 创建系统参数表
  * @return true-成功, false-失败
  */
-bool ProjectDataSQLiteDatabase::createTableSystemParameters()
-{
+bool ProjectDataSQLiteDatabase::createTableSystemParameters() {
     QString autoincrement = "integer not null primary key autoincrement";
     QStringList keyList,valueList;
     int ret = 0;
@@ -56,8 +53,7 @@ bool ProjectDataSQLiteDatabase::createTableSystemParameters()
  * @details 创建组网设置表
  * @return true-成功, false-失败
  */
-bool ProjectDataSQLiteDatabase::createTableNetSetting()
-{
+bool ProjectDataSQLiteDatabase::createTableNetSetting() {
     QString autoincrement = "integer not null primary key autoincrement";
     QStringList keyList,valueList;
     int ret = 0;
@@ -88,8 +84,7 @@ bool ProjectDataSQLiteDatabase::createTableNetSetting()
  * @details 创建数据库设置表
  * @return true-成功, false-失败
  */
-bool ProjectDataSQLiteDatabase::createTableDatabaseSetting()
-{
+bool ProjectDataSQLiteDatabase::createTableDatabaseSetting() {
     QString autoincrement = "integer not null primary key autoincrement";
     QStringList keyList,valueList;
     int ret = 0;
@@ -117,8 +112,36 @@ bool ProjectDataSQLiteDatabase::createTableDatabaseSetting()
 }
 
 
-bool ProjectDataSQLiteDatabase::createTables()
-{
+/**
+ * @brief ProjectDataSQLiteDatabase::createTableUserAuthority
+ * @details 创建用户权限表
+ * @return true-成功, false-失败
+ */
+bool ProjectDataSQLiteDatabase::createTableUserAuthority() {
+    QString autoincrement = "integer not null primary key autoincrement";
+    QStringList keyList,valueList;
+    int ret = 0;
+
+    keyList.clear();
+    valueList.clear();
+
+    keyList << "id" << "number" << "name" << "password"
+            << "authority" << "comments" << "name2" << "name3"
+            << "name4" << "name5" << "login" << "logout";
+
+    valueList << autoincrement << "varchar(4)" << "varchar(32)" << "varchar(16)"
+              << "varchar(2)" << "varchar(512)" << "varchar(32)" << "varchar(32)"
+              << "varchar(32)" << "varchar(32)" << "int" << "int";
+
+    ret = createTable("t_user_authority", keyList, valueList, "");
+    if(ret == 1) {
+
+    }
+
+    return ret;
+}
+
+bool ProjectDataSQLiteDatabase::createTables() {
 #define RET_MAX    (16)
     int i = 0;
     bool ret[RET_MAX];
@@ -131,9 +154,10 @@ bool ProjectDataSQLiteDatabase::createTables()
     ret[1] = createTableNetSetting();
     // 创建数据库设置表
     ret[2] = createTableDatabaseSetting();
+    // 创建用户权限表
+    ret[3] = createTableUserAuthority();
 
-    for(i=0; i<RET_MAX; i++)
-    {
+    for(i=0; i<RET_MAX; i++) {
         if(!ret[i])
             return false;
     }

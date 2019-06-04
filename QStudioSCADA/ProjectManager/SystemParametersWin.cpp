@@ -82,8 +82,9 @@ void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &in
         }
     } else if(item->text() == tr("用户权限")) {
         UserAuthorityDialog *pUserAuthorityDialog = new UserAuthorityDialog(this, strProjectPath);
+        pUserAuthorityDialog->load();
         if(pUserAuthorityDialog->exec() == QDialog::Accepted) {
-
+            pUserAuthorityDialog->save();
         }
     }
 

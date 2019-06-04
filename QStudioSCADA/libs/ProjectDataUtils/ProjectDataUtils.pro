@@ -15,7 +15,8 @@ SOURCES += \
     $$PWD/ProjectDataSQLiteDatabase.cpp \
     $$PWD/ProjectInfoManger.cpp \
     $$PWD/NetSetting.cpp \
-    $$PWD/DatabaseSetting.cpp
+    $$PWD/DatabaseSetting.cpp \
+    $$PWD/UserAuthority.cpp
 
 
 HEADERS += \ 
@@ -26,6 +27,7 @@ HEADERS += \
     $$PWD/ProjectDataSQLiteDatabase.h \
     $$PWD/ProjectInfoManger.h \
     $$PWD/NetSetting.h \
-    $$PWD/DatabaseSetting.h
+    $$PWD/DatabaseSetting.h \
+    $$PWD/UserAuthority.h
 
 

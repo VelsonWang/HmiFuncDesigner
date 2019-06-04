@@ -2,6 +2,7 @@
 #define NETSETTING_H
 
 #include <QString>
+#include <QObject>
 
 class NetSettingPrivate;
 class ProjectDataSQLiteDatabase;
@@ -42,6 +43,8 @@ public:
 
 private:
     NetSettingPrivate *const dPtr_;
+
+    Q_DISABLE_COPY(NetSetting)
 };
 
 #endif // NETSETTING_H

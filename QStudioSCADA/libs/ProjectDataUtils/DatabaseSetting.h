@@ -2,6 +2,7 @@
 #define DATABASESETTING_H
 
 #include <QString>
+#include <QObject>
 
 class DatabaseSettingPrivate;
 class ProjectDataSQLiteDatabase;
@@ -60,6 +61,8 @@ public:
 
 private:
     DatabaseSettingPrivate *const dPtr_;
+
+    Q_DISABLE_COPY(DatabaseSetting)
 };
 
 #endif // DATABASESETTING_H

@@ -32,7 +32,9 @@ NetSetting::NetSetting()
 }
 
 NetSetting::~NetSetting() {
-    delete dPtr_;
+    if(dPtr_ != nullptr) {
+        delete dPtr_;
+    }
 }
 
 /**

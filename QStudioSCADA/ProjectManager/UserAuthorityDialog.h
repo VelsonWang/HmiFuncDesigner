@@ -3,7 +3,6 @@
 
 #include "../Public/Public.h"
 #include <QDialog>
-#include <QJsonObject>
 #include <QStandardItemModel>
 
 
@@ -68,10 +67,7 @@ public:
     bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
     bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
 
-    void load(const QJsonObject &json);
-    void save(QJsonObject &json);
-
-private:
+public:
     QList<TagUserItem> m_tagUserItems;
 };
 
@@ -88,17 +84,15 @@ class UserAuthorityDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit UserAuthorityDialog(QWidget *parent = 0, QString ProjectPath = "");
+    explicit UserAuthorityDialog(QWidget *parent = 0, const QString &ProjectPath = "");
     ~UserAuthorityDialog();
 
 
 public:
-    bool loadFromFile(SaveFormat saveFormat);
-    bool saveToFile(SaveFormat saveFormat);
+    void load();
+    void save();
 
 private:
-    void load(const QJsonObject &json);
-    void save(QJsonObject &json);
     bool check_data();
 
 private slots:
@@ -113,8 +107,8 @@ private slots:
 
 private:
     Ui::UserAuthorityDialog *ui;
-    QString m_ProjectPath;
-    TagUserTableModel *pTableViewUserModel;
+    QString szProjectPath_;
+    TagUserTableModel *pUserModel_;
 };
 
 #endif // USERAUTHORITYDIALOG_H

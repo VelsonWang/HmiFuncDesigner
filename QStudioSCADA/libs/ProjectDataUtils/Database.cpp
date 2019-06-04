@@ -443,3 +443,84 @@ void Database::excSQL(const QString& sql, QList<QStringList>& result)
 
 }
 
+
+
+int Database::getLastInsertId(const QString &tableName)
+{
+    int id = 0;
+    QSqlQuery query(db_);
+    QSqlRecord rec;
+
+    QString szSql = QString("SELECT DISTINCT last_insert_rowid() as id FROM %1").arg(tableName);
+    bool ret = query.exec(szSql);
+    if(!ret) {
+        LogError(QString("getLastInsertId: %1 failed! %2 ,error: %3!")
+                 .arg(tableName)
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
+        return false;
+    }
+
+    while (query.next()) {
+        rec = query.record();
+        id = rec.value("id").toInt();
+    }
+
+    return id;
+}
+
+int Database::getMaxId(const QString &tableName)
+{
+    int id = 0;
+    QSqlQuery query(db_);
+    QSqlRecord rec;
+
+    QString szSql = QString("select MAX(id) as id from %1").arg(tableName);
+    bool ret = query.exec(szSql);
+    if(!ret) {
+        LogError(QString("getMaxId: %1 failed! %2 ,error: %3!")
+                 .arg(tableName)
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
+        return false;
+    }
+
+    while (query.next()) {
+        rec = query.record();
+        id = rec.value("id").toInt();
+    }
+
+    return id;
+}
+
+int Database::getRowCount(const QString &tableName, const QString &expr)
+{
+    int iCount = 0;
+    QString szSql = "";
+    QSqlQuery query(db_);
+    QSqlRecord rec;
+
+    if (expr.isEmpty()) {
+        szSql = QString("SELECT COUNT(*) as nums FROM %1;").arg(tableName);
+    } else {
+        szSql = QString("SELECT COUNT(*) as nums FROM %1 WHERE %2").arg(tableName).arg(expr);
+    }
+
+    bool ret = query.exec(szSql);
+    if(!ret) {
+        LogError(QString("getRowCount: %1 failed! %2 ,error: %3!")
+                 .arg(tableName)
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
+        return false;
+    }
+
+    while (query.next()) {
+        rec = query.record();
+        iCount = rec.value("nums").toInt();
+    }
+
+    return iCount;
+}
+
+
