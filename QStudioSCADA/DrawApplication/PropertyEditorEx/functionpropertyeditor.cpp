@@ -4,7 +4,7 @@
 #include <QFileDialog>
 #include <QKeyEvent>
 #include <QApplication>
-#include <QDebug>
+
 
 FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
     QWidget(parent),
@@ -15,8 +15,6 @@ FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
     toolButton_->setText(tr("..."));
     toolButton_->setFixedWidth(20);
     toolButton_->installEventFilter(this);
-    setFocusProxy(toolButton_);
-    setFocusPolicy(toolButton_->focusPolicy());
     connect(toolButton_, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
 
     textLabel_ = new QLabel(this);
@@ -33,9 +31,7 @@ FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
 }
 
 void FunctionPropertyEditor::setFunctions(const QStringList &funcs) {
-    if (funcs_ != funcs) {
-        funcs_ = funcs;
-    }
+    funcs_ = funcs;
 }
 
 void FunctionPropertyEditor::onToolButtonClicked() {
@@ -43,10 +39,7 @@ void FunctionPropertyEditor::onToolButtonClicked() {
     dlg.setFunctions(funcs_);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList funcs = dlg.getFunctions();
-        if (funcs != funcs_) {
-            setFunctions(funcs);
-            emit dataChangedByUser(funcs, this);
-        }
+        setFunctions(funcs);
     }
 }
 
@@ -71,6 +64,7 @@ QStringList FunctionPropertyEditor::getFunctions() const
  * @details 设置支持的事件列表
  * @param events 事件列表
  */
-void FunctionPropertyEditor::setSupportEvents(QStringList events) {
+void FunctionPropertyEditor::setSupportEvents(QStringList events)
+{
     supportEvents_ = events;
 }

@@ -17,9 +17,6 @@ public:
     bool eventFilter(QObject *obj, QEvent *ev);
     void setSupportEvents(QStringList events);
 
-signals:
-    void dataChangedByUser(const QStringList &funcs, FunctionPropertyEditor* editor);
-
 public slots:
     void setFunctions(const QStringList &funcs);
 

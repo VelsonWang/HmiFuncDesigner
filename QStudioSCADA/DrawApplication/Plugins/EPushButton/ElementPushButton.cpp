@@ -654,6 +654,10 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("showContent")) {
         showContent_ = attributes.value("showContent").toString();
+        bShowContentText_ = true;
+        if(showContent_ == tr("图片")) {
+            bShowContentText_ = false;
+        }
     }
 
     if (attributes.hasAttribute("picture")) {
@@ -726,6 +730,8 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
 
     updateBoundingElement();
     updatePropertyModel();
+
+    reloadPropertyList();
 }
 
 void ElementPushButton::writeData(QDataStream &out) {

@@ -4,49 +4,40 @@
 #include <QKeyEvent>
 #include <QApplication>
 #include <QColorDialog>
-#include <QtDebug>
 
 ColorPropertyEditor::ColorPropertyEditor(QWidget *parent) :
     QWidget(parent)
 {
-    // Create the tool button
-    ToolButton = new QToolButton(this);
-    ToolButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
-    ToolButton->setText(tr("..."));
-    ToolButton->setFixedWidth(20);
-    ToolButton->installEventFilter(this);
-    setFocusProxy(ToolButton);	// Make the ToolButton the focus proxy
-    setFocusPolicy(ToolButton->focusPolicy());
-    connect(ToolButton, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
+    toolButton_ = new QToolButton(this);
+    toolButton_->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    toolButton_->setText(tr("..."));
+    toolButton_->setFixedWidth(20);
+    toolButton_->installEventFilter(this);
+    connect(toolButton_, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
 
-    // Create the text label
-    TextLabel = new QLabel(this);
-    TextLabel->setText(getColorString(Color));
+    textLabel_ = new QLabel(this);
+    textLabel_->setText(getColorString(color_));
 
-    // Create the label for the pixmap
-    ColorLabel = new QLabel(this);
-    ColorLabel->setPixmap(getColorPixmap(Color));
+    colorLabel_ = new QLabel(this);
+    colorLabel_->setPixmap(getColorPixmap(color_));
 
-    // Spacer (this is needed for proper display of the label and button)
-    Spacer = new QSpacerItem(1, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
+    spacer_ = new QSpacerItem(1, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
 
-    // The layout (a horizontal layout)
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setSpacing(0);
     layout->setMargin(0);
-    layout->addItem(Spacer);
-    layout->addWidget(ToolButton);
-    TextLabel->hide();
-    ColorLabel->hide();	// for now, we just use the standard display and only add the button
+    layout->addItem(spacer_);
+    layout->addWidget(toolButton_);
+    textLabel_->hide();
+    colorLabel_->hide();
 }
 
-void ColorPropertyEditor::setColor(const QColor& color_)
+void ColorPropertyEditor::setColor(const QColor& color)
 {
-    if (Color != color_)
-    {
-        Color = color_;
-        ColorLabel->setPixmap(getColorPixmap(Color));
-        TextLabel->setText(getColorString(Color));
+    if (color_ != color) {
+        color_ = color;
+        colorLabel_->setPixmap(getColorPixmap(color_));
+        textLabel_->setText(getColorString(color_));
     }
 }
 
@@ -71,17 +62,17 @@ QString ColorPropertyEditor::getColorString(const QColor& color)
 void ColorPropertyEditor::onToolButtonClicked()
 {
     bool ok = false;
-    QRgb oldRgba = Color.rgba();
+    QRgb oldRgba = color_.rgba();
     QRgb newRgba = QColorDialog::getRgba(oldRgba, &ok, this);
     if (ok && newRgba != oldRgba) {
         setColor(QColor::fromRgba(newRgba));
-        emit dataChangedByUser(Color, this);
+        emit dataChangedByUser(color_, this);
     }
 }
 
 bool ColorPropertyEditor::eventFilter(QObject *obj, QEvent *ev)
 {
-    if(obj == ToolButton && (ev->type() == QEvent::KeyPress || ev->type() == QEvent::KeyPress))
+    if(obj == toolButton_ && (ev->type() == QEvent::KeyPress || ev->type() == QEvent::KeyPress))
     {
         ev->ignore();
         return true;
@@ -92,6 +83,6 @@ bool ColorPropertyEditor::eventFilter(QObject *obj, QEvent *ev)
 
 QColor ColorPropertyEditor::getColor() const
 {
-    return Color;
+    return color_;
 }
 

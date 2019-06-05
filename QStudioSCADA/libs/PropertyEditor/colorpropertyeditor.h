@@ -29,12 +29,11 @@ private slots:
     void onToolButtonClicked();
 
 private:
-    QColor Color;
-    QToolButton* ToolButton;
-    QLineEdit* Lineedit;
-    QLabel* TextLabel;
-    QLabel* ColorLabel;
-    QSpacerItem* Spacer;
+    QColor color_;
+    QToolButton* toolButton_;
+    QLabel* textLabel_;
+    QLabel* colorLabel_;
+    QSpacerItem* spacer_;
 };
 
 #endif // COLORPROPERTYEDITOR_H

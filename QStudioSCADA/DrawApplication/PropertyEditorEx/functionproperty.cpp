@@ -1,6 +1,5 @@
 #include "functionproperty.h"
 
-
 FunctionProperty::FunctionProperty(const QString &pname)
     : Property(pname)
 {
@@ -8,11 +7,15 @@ FunctionProperty::FunctionProperty(const QString &pname)
     value.convert(QVariant::StringList);
 }
 
-QVariant FunctionProperty::data(int column, int role) {
-    if(Qt::EditRole == role)
+QVariant FunctionProperty::data(int column, int role)
+{
+    if (column == ColumnData && (Qt::DisplayRole == role)) {
+        return value.toStringList().join("|");
+    } else if(Qt::EditRole == role) {
         return QVariant();
-    else
+    } else {
         return Property::data(column, role);
+    }
 }
 
 QWidget* FunctionProperty::createEditor(QWidget *parent, const QStyleOptionViewItem &options, const QAbstractItemDelegate *delegate) {

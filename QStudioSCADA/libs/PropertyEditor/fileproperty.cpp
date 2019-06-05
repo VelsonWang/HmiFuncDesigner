@@ -3,9 +3,12 @@
 FileProperty::FileProperty(const QString &pname)
     : Property(pname)
 {
+    value.setValue(QString(""));
+    value.convert(QVariant::String);
 }
 
-QVariant FileProperty::data(int column, int role) {
+QVariant FileProperty::data(int column, int role)
+{
 
     if (column == ColumnData && (Qt::DisplayRole == role)) {
         return value;
@@ -16,7 +19,10 @@ QVariant FileProperty::data(int column, int role) {
         return Property::data(column, role);
 }
 
-QWidget* FileProperty::createEditor(QWidget *parent, const QStyleOptionViewItem &options, const QAbstractItemDelegate *delegate) {
+QWidget* FileProperty::createEditor(QWidget *parent,
+                                    const QStyleOptionViewItem &options,
+                                    const QAbstractItemDelegate *delegate)
+{
 
     Q_UNUSED(options)
     Q_UNUSED(delegate)

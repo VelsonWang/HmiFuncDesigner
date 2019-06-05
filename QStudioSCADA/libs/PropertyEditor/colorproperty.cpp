@@ -5,7 +5,8 @@ ColorProperty::ColorProperty(const QString &pname)
 {
 }
 
-QVariant ColorProperty::data(int column, int role) {
+QVariant ColorProperty::data(int column, int role)
+{
 
     if (column == ColumnData && (Qt::DisplayRole == role)) {
         return ColorPropertyEditor::getColorString(value.value<QColor>());
@@ -18,7 +19,10 @@ QVariant ColorProperty::data(int column, int role) {
         return Property::data(column, role);
 }
 
-QWidget* ColorProperty::createEditor(QWidget *parent, const QStyleOptionViewItem &options, const QAbstractItemDelegate *delegate) {
+QWidget* ColorProperty::createEditor(QWidget *parent,
+                                     const QStyleOptionViewItem &options,
+                                     const QAbstractItemDelegate *delegate)
+{
 
     Q_UNUSED(options)
     Q_UNUSED(delegate)

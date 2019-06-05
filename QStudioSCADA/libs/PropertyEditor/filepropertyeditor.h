@@ -25,7 +25,7 @@ private slots:
     void onToolButtonClicked();
 
 private:
-    QString file_;
+    QString szFileName_;
     QToolButton* toolButton_;
     QLabel* textLabel_;
     QSpacerItem* spacer_;
