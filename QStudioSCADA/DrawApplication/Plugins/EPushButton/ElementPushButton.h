@@ -48,6 +48,9 @@ private:
     void drawPushButton(QPainter *painter);
     void getSupportEvents(QStringList &listValue);
 
+    void reloadPropertyList();
+    void updatePropertyTableView();
+
 private:
     static int iLastIndex_;
     QRectF elementRect;

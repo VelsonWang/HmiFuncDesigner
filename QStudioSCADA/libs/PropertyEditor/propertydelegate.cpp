@@ -21,6 +21,7 @@ QWidget *PropertyDelegate::createEditor(QWidget *parent,
     if (index.isValid()) {
         const PropertyModel *pModel = dynamic_cast<const PropertyModel*>(index.model());
         Property *tmpProperty = pModel->getProperty(index.row());
+        tmpProperty->setPropertyModel(const_cast<PropertyModel *>(pModel));
         tmpWidget = tmpProperty->createEditor(parent,option,this);
     }
 

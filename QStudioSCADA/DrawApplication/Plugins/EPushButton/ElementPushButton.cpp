@@ -66,7 +66,8 @@ QPainterPath ElementPushButton::shape() const {
     return path;
 }
 
-void ElementPushButton::createPropertyList() {
+void ElementPushButton::createPropertyList()
+{
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
@@ -115,7 +116,8 @@ void ElementPushButton::createPropertyList() {
     elementTextProperty = new TextProperty(trUtf8("文本"));
     elementTextProperty->setId(EL_TEXT);
     elementTextProperty->setValue(elementText);
-    propList.insert(propList.end(), elementTextProperty);
+    if(bShowContentText_)
+        propList.insert(propList.end(), elementTextProperty);
 
     // 水平对齐
     hAlignProperty_ = new ListProperty(tr("水平对齐"));
@@ -123,7 +125,8 @@ void ElementPushButton::createPropertyList() {
     QStringList hAlignList;
     hAlignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
     hAlignProperty_->setList(hAlignList);
-    propList.insert(propList.end(), hAlignProperty_);
+    if(bShowContentText_)
+        propList.insert(propList.end(), hAlignProperty_);
 
     // 垂直对齐
     vAlignProperty_ = new ListProperty(tr("水平对齐"));
@@ -131,19 +134,22 @@ void ElementPushButton::createPropertyList() {
     QStringList vAlignList;
     vAlignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
     vAlignProperty_->setList(vAlignList);
-    propList.insert(propList.end(), vAlignProperty_);
+    if(bShowContentText_)
+        propList.insert(propList.end(), vAlignProperty_);
 
     // 图片
     fileProperty = new FileProperty(trUtf8("选择图片"));
     fileProperty->setId(EL_FILE);
     fileProperty->setValue(filePicture_);
-    propList.insert(propList.end(), fileProperty);
+    if(!bShowContentText_)
+        propList.insert(propList.end(), fileProperty);
 
     // 按钮背景颜色
     backgroundColorProperty_ = new ColorProperty(tr("背景颜色"));
     backgroundColorProperty_->setId(EL_BACKGROUND);
     backgroundColorProperty_->setValue(backgroundColor_);
-    propList.insert(propList.end(), backgroundColorProperty_);
+    if(bShowContentText_)
+        propList.insert(propList.end(), backgroundColorProperty_);
 
     // 透明
     transparentProperty_ = new BoolProperty(tr("透明显示"));
@@ -227,6 +233,8 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
             bShowContentText_ = false;
         }
         updateBoundingElement();
+        // 属性集发生改变需要更新属性表
+        updatePropertyTableView();
         break;
     case EL_FONT:
         font_ = value.value<QFont>();
@@ -305,6 +313,75 @@ void ElementPushButton::updatePropertyModel() {
     enableOnInitialProperty_->setValue(enableOnInitial_);
     showOnInitialProperty_->setValue(showOnInitial_);
     funcProperty->setValue(funcs_);
+}
+
+void ElementPushButton::reloadPropertyList()
+{
+    propList.clear();
+
+    // ID
+    propList.insert(propList.end(), idProperty);
+    // 标题
+    propList.insert(propList.end(), titleProperty);
+    // 坐标 X
+    propList.insert(propList.end(), xCoordProperty);
+    //坐标 Y
+    propList.insert(propList.end(), yCoordProperty);
+    // Z 值
+    propList.insert(propList.end(), zValueProperty);
+    // 宽度
+    propList.insert(propList.end(), widthProperty_);
+    // 高度
+    propList.insert(propList.end(), heightProperty_);
+    // 显示内容
+    propList.insert(propList.end(), showContentProperty_);
+
+    if(bShowContentText_) {
+        // 文本
+        propList.insert(propList.end(), elementTextProperty);
+        // 水平对齐
+        propList.insert(propList.end(), hAlignProperty_);
+        // 垂直对齐
+        propList.insert(propList.end(), vAlignProperty_);
+    }
+    // 图片
+    if(!bShowContentText_)
+        propList.insert(propList.end(), fileProperty);
+    // 按钮背景颜色
+    if(bShowContentText_)
+        propList.insert(propList.end(), backgroundColorProperty_);
+    // 透明
+    propList.insert(propList.end(), transparentProperty_);
+    // 字体
+    propList.insert(propList.end(), fontProperty_);
+    // 文本颜色
+    propList.insert(propList.end(), textColorProperty);
+    // 旋转角度
+    propList.insert(propList.end(), angleProperty);
+    // 初始有效性
+    propList.insert(propList.end(), enableOnInitialProperty_);
+    // 初始可见性
+    propList.insert(propList.end(), showOnInitialProperty_);
+    // 选择功能
+    propList.insert(propList.end(), funcProperty);
+}
+
+/**
+ * @brief ElementPushButton::updatePropertyTableView
+ * @details 更新属性表
+ */
+void ElementPushButton::updatePropertyTableView()
+{
+    PropertyModel *pModel = showContentProperty_->getPropertyModel();
+    if(pModel != nullptr) {
+        pModel->resetModel();
+        updatePropertyModel();
+        reloadPropertyList();
+        QListIterator<Property*> iter(getPropertyList());
+        while (iter.hasNext()) {
+            pModel->addProperty(iter.next());
+        }
+    }
 }
 
 void ElementPushButton::setClickPosition(QPointF position) {

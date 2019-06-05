@@ -1,4 +1,5 @@
 #include "property.h"
+#include "propertymodel.h"
 
 Property::Property(const QString &pname)
     : name(pname)
@@ -99,4 +100,14 @@ void Property::setId(uint id) {
 
 uint Property::getId() const {
     return id;
+}
+
+void Property::setPropertyModel(PropertyModel *pModel)
+{
+    pPropertyModel_ = pModel;
+}
+
+PropertyModel *Property::getPropertyModel()
+{
+    return pPropertyModel_;
 }

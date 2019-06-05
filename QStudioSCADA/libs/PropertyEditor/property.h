@@ -6,6 +6,8 @@
 #include <QStyleOptionViewItem>
 #include <QAbstractItemDelegate>
 
+class PropertyModel;
+
 class Property
 {
 public:
@@ -16,6 +18,9 @@ public:
 
     Property(const QString &);
     virtual ~Property();
+
+    void setPropertyModel(PropertyModel *pModel);
+    PropertyModel *getPropertyModel();
 
     virtual QVariant data(int column = ColumnProperty,int role = Qt::DisplayRole);
     virtual bool setData(const QVariant &data,int role = Qt::EditRole);
@@ -35,6 +40,7 @@ protected:
     QVariant value;
     QString name;
     uint id;
+    PropertyModel *pPropertyModel_;
 };
 
 #endif // PROPERTY_H

@@ -59,6 +59,7 @@ MainWindow::~MainWindow() {
 
 void MainWindow::initView() {
     graphPageTabWidget_ = new QTabWidget(this);
+    graphPageTabWidget_->installEventFilter(this);
     this->scrollArea->setWidget(graphPageTabWidget_);
 
     elementWidget_ = new ElementLibraryWidget();
