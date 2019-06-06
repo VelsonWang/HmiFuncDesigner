@@ -21,6 +21,7 @@ QWidget* IntegerProperty::createEditor(QWidget * parent, const QStyleOptionViewI
     tmpEditor->setMaximum(max);
     tmpEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     tmpEditor->setValue(value.toInt());
+    setPropertyEditor(tmpEditor);
 
     return tmpEditor;
 }

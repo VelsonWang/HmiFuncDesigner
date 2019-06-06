@@ -1,9 +1,12 @@
 #include "filepropertyeditor.h"
+#include "property.h"
+#include "propertydelegate.h"
 #include <QHBoxLayout>
 #include <QFileDialog>
 #include <QKeyEvent>
 #include <QApplication>
 #include <QFileDialog>
+
 
 FilePropertyEditor::FilePropertyEditor(QWidget *parent) :
     QWidget(parent),
@@ -14,25 +17,25 @@ FilePropertyEditor::FilePropertyEditor(QWidget *parent) :
     toolButton_->setText(tr("..."));
     toolButton_->setFixedWidth(20);
     toolButton_->installEventFilter(this);
+    setFocusProxy(toolButton_);
+    setFocusPolicy(toolButton_->focusPolicy());
     connect(toolButton_, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
-
-    textLabel_ = new QLabel(this);
-    textLabel_->setText(szFileName_);
 
     spacer_ = new QSpacerItem(1, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
 
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setSpacing(0);
     layout->setMargin(0);
-    layout->addWidget(textLabel_);
     layout->addItem(spacer_);
     layout->addWidget(toolButton_);
 }
 
+
 void FilePropertyEditor::setFile(const QString& file)
 {
-    this->szFileName_ = file;
-    textLabel_->setText(szFileName_);
+    if(this->szFileName_ != file) {
+        this->szFileName_ = file;
+    }
 }
 
 void FilePropertyEditor::onToolButtonClicked()
@@ -40,7 +43,10 @@ void FilePropertyEditor::onToolButtonClicked()
     QString fileName = QFileDialog::getOpenFileName(Q_NULLPTR,
                                                     tr("选择图片"),
                                                     QApplication::applicationDirPath(),
-                                                    tr("Images (*.png *.xpm *.jpg *.bmp)"));
+                                                    tr("Images (*.png *.xpm *.jpg *.bmp)"),
+                                                    Q_NULLPTR,
+                                                    QFileDialog::Options());
+
     setFile(fileName);
 }
 

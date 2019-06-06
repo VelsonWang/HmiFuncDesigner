@@ -7,6 +7,7 @@
 #include <QAbstractItemDelegate>
 
 class PropertyModel;
+class PropertyDelegate;
 
 class Property
 {
@@ -21,6 +22,9 @@ public:
 
     void setPropertyModel(PropertyModel *pModel);
     PropertyModel *getPropertyModel();
+
+    void setPropertyEditor(QWidget *editor);
+    QWidget *getPropertyEditor();
 
     virtual QVariant data(int column = ColumnProperty,int role = Qt::DisplayRole);
     virtual bool setData(const QVariant &data,int role = Qt::EditRole);
@@ -41,6 +45,7 @@ protected:
     QString name;
     uint id;
     PropertyModel *pPropertyModel_;
+    QWidget *pPropertyEditor_;
 };
 
 #endif // PROPERTY_H

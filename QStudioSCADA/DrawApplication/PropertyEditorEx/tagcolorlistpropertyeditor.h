@@ -28,7 +28,6 @@ private slots:
 private:
     QStringList valueColorList_;
     QToolButton* toolButton_;
-    QLabel* textLabel_;
     QSpacerItem* spacer_;
 };
 

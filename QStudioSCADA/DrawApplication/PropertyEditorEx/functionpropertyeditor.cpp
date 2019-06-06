@@ -15,17 +15,15 @@ FunctionPropertyEditor::FunctionPropertyEditor(QWidget *parent) :
     toolButton_->setText(tr("..."));
     toolButton_->setFixedWidth(20);
     toolButton_->installEventFilter(this);
+    setFocusProxy(toolButton_);
+    setFocusPolicy(toolButton_->focusPolicy());
     connect(toolButton_, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
-
-    textLabel_ = new QLabel(this);
-    textLabel_->setText(tr(""));
 
     spacer_ = new QSpacerItem(1, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
 
     QHBoxLayout* layout = new QHBoxLayout(this);
     layout->setSpacing(0);
     layout->setMargin(0);
-    layout->addWidget(textLabel_);
     layout->addItem(spacer_);
     layout->addWidget(toolButton_);
 }

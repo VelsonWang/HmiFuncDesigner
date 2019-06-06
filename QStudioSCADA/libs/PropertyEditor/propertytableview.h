@@ -4,6 +4,7 @@
 #include <QTableView>
 #include <QHeaderView>
 #include <QFocusEvent>
+#include <QEvent>
 #include "propertymodel.h"
 #include "propertydelegate.h"
 
@@ -17,7 +18,14 @@ public:
     void setPropertyValueColumnWidth(int width);
 
 private:
-    PropertyDelegate *delegate;
+    void setPropertyValue();
+
+protected:
+    void focusOutEvent(QFocusEvent *event);
+    void leaveEvent(QEvent *event);
+
+private:
+    PropertyDelegate *delegate_;
 };
 
 #endif // PROPERTYTABLEVIEW_H

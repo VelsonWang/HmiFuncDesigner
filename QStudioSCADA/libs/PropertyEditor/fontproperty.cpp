@@ -21,6 +21,8 @@ QWidget* FontProperty::createEditor(QWidget *parent, const QStyleOptionViewItem 
 
     FontPropertyEditor *tmpWidget = new FontPropertyEditor(parent);
     tmpWidget->setFont(value.value<QFont>());
+    setPropertyEditor(tmpWidget);
+
     return tmpWidget;
 }
 

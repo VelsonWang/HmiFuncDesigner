@@ -16,9 +16,6 @@ FontPropertyEditor::FontPropertyEditor(QWidget *parent) :
     toolButton_->installEventFilter(this);
     connect(toolButton_, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
 
-    textLabel_ = new QLabel(this);
-    textLabel_->setText(getFontString(font_));
-
     spacer_ = new QSpacerItem(1, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
 
     QHBoxLayout* layout = new QHBoxLayout(this);
@@ -26,14 +23,12 @@ FontPropertyEditor::FontPropertyEditor(QWidget *parent) :
     layout->setMargin(0);
     layout->addItem(spacer_);
     layout->addWidget(toolButton_);
-    textLabel_->hide();
 }
 
 void FontPropertyEditor::setFont(const QFont& font)
 {
     if (font_ != font) {
         font_ = font;
-        textLabel_->setText(getFontString(font_));
     }
 }
 

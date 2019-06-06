@@ -1,5 +1,4 @@
 ﻿#include "propertymodel.h"
-#include <QtDebug>
 
 PropertyModel::PropertyModel(QObject *parent) :
     QAbstractTableModel(parent)

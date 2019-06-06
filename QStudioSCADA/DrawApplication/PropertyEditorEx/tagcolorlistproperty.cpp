@@ -20,6 +20,8 @@ QWidget* TagColorListProperty::createEditor(QWidget *parent, const QStyleOptionV
 
     TagColorListPropertyEditor *tmpWidget = new TagColorListPropertyEditor(parent);
     tmpWidget->setValueColorList(value.toStringList());
+    setPropertyEditor(tmpWidget);
+
     return tmpWidget;
 }
 

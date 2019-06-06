@@ -1,4 +1,4 @@
-#include "functionproperty.h"
+﻿#include "functionproperty.h"
 
 FunctionProperty::FunctionProperty(const QString &pname)
     : Property(pname)
@@ -26,6 +26,8 @@ QWidget* FunctionProperty::createEditor(QWidget *parent, const QStyleOptionViewI
     FunctionPropertyEditor *tmpWidget = new FunctionPropertyEditor(parent);
     tmpWidget->setSupportEvents(supportEvents_);
     tmpWidget->setFunctions(value.toStringList());
+    setPropertyEditor(tmpWidget);
+
     return tmpWidget;
 }
 

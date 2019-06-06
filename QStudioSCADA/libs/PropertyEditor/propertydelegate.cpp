@@ -1,7 +1,6 @@
 #include "propertydelegate.h"
 #include <QApplication>
 #include <QPainter>
-#include <QtDebug>
 #include "property.h"
 #include "propertymodel.h"
 
@@ -91,3 +90,4 @@ QSize PropertyDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
     else
         return tmpStandardSizeHint;
 }
+

@@ -15,12 +15,6 @@ ColorPropertyEditor::ColorPropertyEditor(QWidget *parent) :
     toolButton_->installEventFilter(this);
     connect(toolButton_, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
 
-    textLabel_ = new QLabel(this);
-    textLabel_->setText(getColorString(color_));
-
-    colorLabel_ = new QLabel(this);
-    colorLabel_->setPixmap(getColorPixmap(color_));
-
     spacer_ = new QSpacerItem(1, 0, QSizePolicy::Expanding, QSizePolicy::Ignored);
 
     QHBoxLayout* layout = new QHBoxLayout(this);
@@ -28,16 +22,12 @@ ColorPropertyEditor::ColorPropertyEditor(QWidget *parent) :
     layout->setMargin(0);
     layout->addItem(spacer_);
     layout->addWidget(toolButton_);
-    textLabel_->hide();
-    colorLabel_->hide();
 }
 
 void ColorPropertyEditor::setColor(const QColor& color)
 {
     if (color_ != color) {
         color_ = color;
-        colorLabel_->setPixmap(getColorPixmap(color_));
-        textLabel_->setText(getColorString(color_));
     }
 }
 

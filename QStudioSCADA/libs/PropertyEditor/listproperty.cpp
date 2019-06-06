@@ -23,6 +23,7 @@ QWidget *ListProperty::createEditor(QWidget *parent,
     tmpEditor->setView(pListView);
     tmpEditor->addItems(szList_);
     tmpEditor->setCurrentText(value.toString());
+    setPropertyEditor(tmpEditor);
 
     return tmpEditor;
 }

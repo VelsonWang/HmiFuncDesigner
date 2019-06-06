@@ -1,8 +1,11 @@
 #include "property.h"
 #include "propertymodel.h"
+#include "propertydelegate.h"
 
 Property::Property(const QString &pname)
-    : name(pname)
+    : name(pname),
+      pPropertyModel_(nullptr),
+      pPropertyEditor_(nullptr)
 {
 }
 
@@ -111,3 +114,14 @@ PropertyModel *Property::getPropertyModel()
 {
     return pPropertyModel_;
 }
+
+void Property::setPropertyEditor(QWidget *editor)
+{
+    pPropertyEditor_ = editor;
+}
+
+QWidget *Property::getPropertyEditor()
+{
+    return pPropertyEditor_;
+}
+

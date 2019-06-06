@@ -22,6 +22,7 @@ QWidget* EmptyProperty::createEditor(QWidget * parent, const QStyleOptionViewIte
     Q_UNUSED(options);
     Q_UNUSED(parent);
     Q_UNUSED(delegate);
+    setPropertyEditor(nullptr);
 
     return NULL;
 }

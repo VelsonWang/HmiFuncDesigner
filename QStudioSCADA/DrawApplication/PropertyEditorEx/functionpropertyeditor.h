@@ -26,7 +26,6 @@ private slots:
 private:
     QStringList funcs_;
     QToolButton* toolButton_;
-    QLabel* textLabel_;
     QSpacerItem* spacer_;
     QStringList supportEvents_;
 };

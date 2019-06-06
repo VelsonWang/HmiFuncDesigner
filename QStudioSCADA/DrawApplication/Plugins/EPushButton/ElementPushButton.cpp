@@ -163,12 +163,14 @@ void ElementPushButton::createPropertyList()
     fontProperty_ = new FontProperty(tr("字体"));
     fontProperty_->setId(EL_FONT);
     fontProperty_->setValue(QFont("Arial Black", 12));
-    propList.insert(propList.end(), fontProperty_);
+    if(bShowContentText_)
+        propList.insert(propList.end(), fontProperty_);
 
     // 文本颜色
     textColorProperty = new ColorProperty(trUtf8("颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
-    propList.insert(propList.end(), textColorProperty);
+    if(bShowContentText_)
+        propList.insert(propList.end(), textColorProperty);
 
     // 旋转角度
     angleProperty = new IntegerProperty(trUtf8("角度"));
@@ -352,10 +354,14 @@ void ElementPushButton::reloadPropertyList()
         propList.insert(propList.end(), backgroundColorProperty_);
     // 透明
     propList.insert(propList.end(), transparentProperty_);
-    // 字体
-    propList.insert(propList.end(), fontProperty_);
-    // 文本颜色
-    propList.insert(propList.end(), textColorProperty);
+
+    if(bShowContentText_) {
+        // 字体
+        propList.insert(propList.end(), fontProperty_);
+        // 文本颜色
+        propList.insert(propList.end(), textColorProperty);
+    }
+
     // 旋转角度
     propList.insert(propList.end(), angleProperty);
     // 初始有效性

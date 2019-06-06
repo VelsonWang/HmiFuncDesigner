@@ -1,5 +1,5 @@
 #include "propertytableview.h"
-#include <QDebug>
+
 
 PropertyTableView::PropertyTableView(PropertyModel *model, QWidget *parent)
     : QTableView(parent)
@@ -11,10 +11,10 @@ PropertyTableView::PropertyTableView(PropertyModel *model, QWidget *parent)
     init();
 }
 
-void PropertyTableView::init() {
-
+void PropertyTableView::init()
+{
     resizeColumnsToContents();
-    setColumnWidth(0,150);
+    setColumnWidth(0, 150);
     setAlternatingRowColors(true);
     setSelectionMode(QTableView::SingleSelection);
     setSelectionBehavior(QTableView::SelectRows);
@@ -23,15 +23,54 @@ void PropertyTableView::init() {
     verticalHeader()->setDefaultSectionSize(25);
     horizontalHeader()->setStretchLastSection(true);
 
-    delegate = new PropertyDelegate(this);
-    setItemDelegate(delegate);
+    delegate_ = new PropertyDelegate(this);
+    setItemDelegate(delegate_);
 }
 
-void PropertyTableView::setPropertyKeyColumnWidth(int width) {
+void PropertyTableView::setPropertyKeyColumnWidth(int width)
+{
     setColumnWidth(0, width);
 }
 
 
-void PropertyTableView::setPropertyValueColumnWidth(int width) {
+void PropertyTableView::setPropertyValueColumnWidth(int width)
+{
     setColumnWidth(1, width);
 }
+
+
+void PropertyTableView::focusOutEvent(QFocusEvent *event)
+{
+    Q_UNUSED(event)
+    setPropertyValue();
+    QTableView::focusOutEvent(event);
+}
+
+void PropertyTableView::leaveEvent(QEvent *event)
+{
+    Q_UNUSED(event)
+    setPropertyValue();
+    QTableView::leaveEvent(event);
+}
+
+
+void PropertyTableView::setPropertyValue()
+{
+    QModelIndex index = this->currentIndex();
+    if(index.isValid()) {
+        const PropertyModel *pModel = dynamic_cast<const PropertyModel*>(index.model());
+        Property *tmpProperty = pModel->getProperty(index.row());
+        if(index.column() == 1) {
+            PropertyModel *pPropModel = tmpProperty->getPropertyModel();
+            if(pModel != nullptr) {
+                QWidget *pEditor = tmpProperty->getPropertyEditor();
+                if(pEditor != nullptr) {
+                    QVariant tmpData = tmpProperty->getEditorData(pEditor);
+                    pPropModel->setData(index, tmpData);
+                }
+            }
+        }
+    }
+}
+
+

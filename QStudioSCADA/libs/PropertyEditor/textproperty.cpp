@@ -22,6 +22,7 @@ QWidget *TextProperty::createEditor(QWidget *parent, const QStyleOptionViewItem 
         tmpEditor->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Expanding);
         tmpEditor->setText(value.toString());
         tmpEditor->setReadOnly(readOnly_);
+        setPropertyEditor(tmpEditor);
         return tmpEditor;
     }
 }

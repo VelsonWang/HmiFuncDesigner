@@ -35,6 +35,7 @@ QWidget* EnumProperty::createEditor(QWidget * parent, const QStyleOptionViewItem
     tmpEditor->clear();
     tmpEditor->addItems(enumerationLiterals);
     tmpEditor->setCurrentIndex(value.toInt());
+    setPropertyEditor(tmpEditor);
 
     return tmpEditor;
 }

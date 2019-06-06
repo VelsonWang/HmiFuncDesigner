@@ -7,11 +7,14 @@
 #include <QLabel>
 #include <QSpacerItem>
 
+class Property;
+
 class FilePropertyEditor : public QWidget
 {
     Q_OBJECT
 public:
     explicit FilePropertyEditor(QWidget *parent = 0);
+
     QString getFile() const;
     bool eventFilter(QObject *obj, QEvent *ev);
 
@@ -27,7 +30,6 @@ private slots:
 private:
     QString szFileName_;
     QToolButton* toolButton_;
-    QLabel* textLabel_;
     QSpacerItem* spacer_;
 };
 

@@ -31,8 +31,6 @@ private slots:
 private:
     QFont font_;
     QToolButton* toolButton_;
-    QLineEdit* lineEdit_;
-    QLabel* textLabel_;
     QSpacerItem* spacer_;
 };
 

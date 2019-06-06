@@ -20,6 +20,7 @@ QWidget* DoubleProperty::createEditor(QWidget * parent, const QStyleOptionViewIt
     tmpEditor->setDecimals(precision);
     tmpEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     tmpEditor->setValue(value.toDouble());
+    setPropertyEditor(tmpEditor);
 
     return tmpEditor;
 }
