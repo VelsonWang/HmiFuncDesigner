@@ -12,7 +12,7 @@
 #include "log4qt/logger.h"
 #include "Log.h"
 #include "MainWindow.h"
-#include "ProjectInfoManger.h"
+#include "ProjectInfoManager.h"
 #include "ProjectData.h"
 #include <QTextStream>
 #include <QTextCodec>
@@ -279,7 +279,7 @@ void SCADARunTime::Start()
     if(szProjName == "") {
         LogError("project information file not found!");
     } else {
-        ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+        ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
         projInfoMgr.load(ProjectData::getInstance()->dbData_);
         QString startPageFile = projInfoMgr.getStartPage();
         if(startPageFile.toLower() != "none") {

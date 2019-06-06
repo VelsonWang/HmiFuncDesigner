@@ -13,11 +13,12 @@ SOURCES += \
     $$PWD/ulog.cpp \
     $$PWD/ProjectData.cpp \
     $$PWD/ProjectDataSQLiteDatabase.cpp \
-    $$PWD/ProjectInfoManger.cpp \
+    $$PWD/ProjectInfoManager.cpp \
     $$PWD/NetSetting.cpp \
     $$PWD/DatabaseSetting.cpp \
     $$PWD/UserAuthority.cpp \
-    DeviceInfo.cpp
+    $$PWD/DeviceInfo.cpp \
+    $$PWD/PictureResourceManager.cpp
 
 
 HEADERS += \ 
@@ -26,10 +27,11 @@ HEADERS += \
     $$PWD/ulog.h \
     $$PWD/ProjectData.h \
     $$PWD/ProjectDataSQLiteDatabase.h \
-    $$PWD/ProjectInfoManger.h \
+    $$PWD/ProjectInfoManager.h \
     $$PWD/NetSetting.h \
     $$PWD/DatabaseSetting.h \
     $$PWD/UserAuthority.h \
-    DeviceInfo.h
+    $$PWD/DeviceInfo.h \
+    $$PWD/PictureResourceManager.h
 
 

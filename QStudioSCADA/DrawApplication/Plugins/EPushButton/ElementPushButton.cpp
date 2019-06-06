@@ -48,6 +48,15 @@ void ElementPushButton::regenerateElementId() {
     this->updatePropertyModel();
 }
 
+/**
+ * @brief ElementPushButton::release
+ * @details 释放占用的资源
+ */
+void ElementPushButton::release()
+{
+    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__;
+}
+
 QRectF ElementPushButton::boundingRect() const {
     qreal extra = 5;
     QRectF rect(elementRect.toRect());

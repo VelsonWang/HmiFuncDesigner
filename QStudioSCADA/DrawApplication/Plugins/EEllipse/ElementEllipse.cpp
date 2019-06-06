@@ -26,6 +26,15 @@ void ElementEllipse::regenerateElementId() {
     this->updatePropertyModel();
 }
 
+/**
+ * @brief ElementEllipse::release
+ * @details 释放占用的资源
+ */
+void ElementEllipse::release()
+{
+
+}
+
 QRectF ElementEllipse::boundingRect() const {
     qreal extra = 5;
     QRectF rect = elementRect.toRect();

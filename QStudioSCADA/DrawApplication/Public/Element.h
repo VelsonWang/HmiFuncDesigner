@@ -41,6 +41,7 @@ public:
     virtual void writeData(QDataStream &out) = 0;
     virtual void readData(QDataStream &in) = 0;
     virtual void regenerateElementId() = 0;
+    virtual void release() = 0; // 释放占用的资源
 
     void setElementId(const QString &);
     QString getElementId() const;

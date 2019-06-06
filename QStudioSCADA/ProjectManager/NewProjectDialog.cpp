@@ -2,7 +2,7 @@
 #include "ui_NewProjectDialog.h"
 #include "configutils.h"
 #include "Singleton.h"
-#include "ProjectInfoManger.h"
+#include "ProjectInfoManager.h"
 #include "ProjectData.h"
 #include "DrawListUtils.h"
 #include <QDir>
@@ -151,7 +151,7 @@ QString NewProjectDialog::GetProjectName()
 }
 
 bool NewProjectDialog::load() {
-    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
     projInfoMgr.load(ProjectData::getInstance()->dbData_);
     ui->editProjectName->setText(projInfoMgr.getProjectName());
     ui->editProjectDescription->setPlainText(projInfoMgr.getProjectDescription());
@@ -167,7 +167,7 @@ bool NewProjectDialog::load() {
 }
 
 bool NewProjectDialog::save() {
-    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
     projInfoMgr.setProjectName(ui->editProjectName->text());
     projInfoMgr.setProjectDescription(ui->editProjectDescription->toPlainText());
     projInfoMgr.setProjectPath(ui->editProjectPath->text());

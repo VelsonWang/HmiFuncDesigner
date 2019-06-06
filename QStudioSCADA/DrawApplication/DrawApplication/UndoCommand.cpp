@@ -50,6 +50,10 @@ void RemoveCommand::undo() {
 void RemoveCommand::redo() {
 
     foreach (QGraphicsItem *item, items) {
+        Element *pEle = dynamic_cast<Element *>(item);
+        if(pEle != nullptr) {
+            pEle->release(); // 释放占用的资源
+        }
         graphPage->removeItem(item);
     }
     graphPage->removeElementEvent();

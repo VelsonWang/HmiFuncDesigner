@@ -24,6 +24,8 @@ public:
     bool createTableUserAuthority();
     // 创建设备信息表
     bool createTableDeviceInfo();
+    // 图片资源信息表
+    bool createTablePictureResourceInfo();
 
     // 创建数据库表
     bool createTables() override;

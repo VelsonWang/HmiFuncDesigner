@@ -26,6 +26,16 @@ void ElementRect::regenerateElementId() {
     this->updatePropertyModel();
 }
 
+
+/**
+ * @brief ElementRect::release
+ * @details 释放占用的资源
+ */
+void ElementRect::release()
+{
+
+}
+
 QRectF ElementRect::boundingRect() const {
     qreal extra = 5;
     QRectF rect(elementRect.toRect());

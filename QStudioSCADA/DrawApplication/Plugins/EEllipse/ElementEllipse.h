@@ -22,6 +22,7 @@ public:
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
+    void release() override; // 释放占用的资源
 
     enum {Type = EllipseItemType};
 

@@ -1,16 +1,16 @@
-#ifndef PROJECTINFOMANGER_H
-#define PROJECTINFOMANGER_H
+#ifndef PROJECTINFOMANAGER_H
+#define PROJECTINFOMANAGER_H
 
 #include <QString>
 
 class ProjectInfoPrivate;
 class ProjectDataSQLiteDatabase;
 
-class ProjectInfoManger
+class ProjectInfoManager
 {
 public:
-    ProjectInfoManger();
-    ~ProjectInfoManger();
+    ProjectInfoManager();
+    ~ProjectInfoManager();
 
     bool load(ProjectDataSQLiteDatabase *pDB);
     bool save(ProjectDataSQLiteDatabase *pDB);
@@ -55,4 +55,4 @@ private:
     ProjectInfoPrivate *const dPtr_;
 };
 
-#endif // PROJECTINFOMANGER_H
+#endif // PROJECTINFOMANAGER_H

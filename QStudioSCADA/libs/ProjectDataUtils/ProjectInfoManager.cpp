@@ -1,4 +1,4 @@
-#include "ProjectInfoManger.h"
+#include "ProjectInfoManager.h"
 #include "ProjectDataSQLiteDatabase.h"
 #include "ulog.h"
 #include <QFile>
@@ -7,7 +7,7 @@
 #include <QSqlRecord>
 #include <QSqlError>
 
-class ProjectInfoManger;
+class ProjectInfoManager;
 
 class ProjectInfoPrivate
 {
@@ -28,24 +28,24 @@ public:
 
 
 
-ProjectInfoManger::ProjectInfoManger()
+ProjectInfoManager::ProjectInfoManager()
     : dPtr_(new ProjectInfoPrivate()) {
 
 }
 
-ProjectInfoManger::~ProjectInfoManger() {
+ProjectInfoManager::~ProjectInfoManager() {
     if(dPtr_ != nullptr) {
         delete dPtr_;
     }
 }
 
 /**
- * @brief ProjectInfoManger::load
+ * @brief ProjectInfoManager::load
  * @details 读取工程信息
  * @param pDB 数据库对象
  * @return true-成功, false-失败
  */
-bool ProjectInfoManger::load(ProjectDataSQLiteDatabase *pDB) {
+bool ProjectInfoManager::load(ProjectDataSQLiteDatabase *pDB) {
     QSqlQuery query(pDB->db_);
     QSqlRecord rec;
 
@@ -76,12 +76,12 @@ bool ProjectInfoManger::load(ProjectDataSQLiteDatabase *pDB) {
 }
 
 /**
- * @brief ProjectInfoManger::save
+ * @brief ProjectInfoManager::save
  * @details 保存工程信息
  * @param pDB 数据库对象
  * @return true-成功, false-失败
  */
-bool ProjectInfoManger::save(ProjectDataSQLiteDatabase *pDB) {
+bool ProjectInfoManager::save(ProjectDataSQLiteDatabase *pDB) {
     QSqlQuery query(pDB->db_);
     query.prepare("update t_system_parameters set project_encrypt = :encrypt, "
                   "data_scan_period = :data_scan, device_type = :device, "
@@ -111,86 +111,86 @@ bool ProjectInfoManger::save(ProjectDataSQLiteDatabase *pDB) {
     return ret;
 }
 
-QString ProjectInfoManger::getProjectName() const {
+QString ProjectInfoManager::getProjectName() const {
     return dPtr_->projectName_;
 }
 
 
-void ProjectInfoManger::setProjectName(const QString &name) {
+void ProjectInfoManager::setProjectName(const QString &name) {
     dPtr_->projectName_ = name;
 }
 
-QString ProjectInfoManger::getProjectDescription() const {
+QString ProjectInfoManager::getProjectDescription() const {
     return dPtr_->projectDescription_;
 }
 
 
-void ProjectInfoManger::setProjectDescription(const QString &desc) {
+void ProjectInfoManager::setProjectDescription(const QString &desc) {
     dPtr_->projectDescription_ = desc;
 }
 
 
-QString ProjectInfoManger::getProjectPath() const {
+QString ProjectInfoManager::getProjectPath() const {
     return dPtr_->projectPath_;
 }
 
-void ProjectInfoManger::setProjectPath(const QString &path) {
+void ProjectInfoManager::setProjectPath(const QString &path) {
     dPtr_->projectPath_ = path;
 }
 
-QString ProjectInfoManger::getDeviceType() const {
+QString ProjectInfoManager::getDeviceType() const {
     return dPtr_->deviceType_;
 }
 
-void ProjectInfoManger::setDeviceType(const QString &type){
+void ProjectInfoManager::setDeviceType(const QString &type){
     dPtr_->deviceType_ = type;
 }
 
-int ProjectInfoManger::getStationNumber() const {
+int ProjectInfoManager::getStationNumber() const {
     return dPtr_->stationNumber_;
 }
 
-void ProjectInfoManger::setStationNumber(int number) {
+void ProjectInfoManager::setStationNumber(int number) {
     dPtr_->stationNumber_ = number;
 }
 
-QString ProjectInfoManger::getStartPage() const {
+QString ProjectInfoManager::getStartPage() const {
     return dPtr_->startPage_;
 }
 
-void ProjectInfoManger::setStartPage(const QString &page){
+void ProjectInfoManager::setStartPage(const QString &page){
     dPtr_->startPage_ = page;
 }
 
-QString ProjectInfoManger::getStationAddress() const {
+QString ProjectInfoManager::getStationAddress() const {
     return dPtr_->stationAddress_;
 }
 
-void ProjectInfoManger::setStationAddress(const QString &address){
+void ProjectInfoManager::setStationAddress(const QString &address){
     dPtr_->stationAddress_ = address;
 }
 
-bool ProjectInfoManger::getProjectEncrypt() {
+bool ProjectInfoManager::getProjectEncrypt() {
     return dPtr_->projectEncrypt_;
 }
 
-void ProjectInfoManger::setProjectEncrypt(bool encrypt) {
+void ProjectInfoManager::setProjectEncrypt(bool encrypt) {
     dPtr_->projectEncrypt_ = encrypt;
 }
 
-int ProjectInfoManger::getPageScanPeriod() const {
+int ProjectInfoManager::getPageScanPeriod() const {
     return dPtr_->pageScanPeriod_;
 }
 
-void ProjectInfoManger::setPageScanPeriod(int period){
+void ProjectInfoManager::setPageScanPeriod(int period){
     dPtr_->pageScanPeriod_ = period;
 }
 
-int ProjectInfoManger::getDataScanPeriod() const {
+int ProjectInfoManager::getDataScanPeriod() const {
     return dPtr_->dataScanPeriod_;
 }
 
-void ProjectInfoManger::setDataScanPeriod(int period) {
+void ProjectInfoManager::setDataScanPeriod(int period) {
     dPtr_->dataScanPeriod_ = period;
 }
 
@@ -217,10 +217,10 @@ bool getWidthHeight(const QString &input, int &width, int &height) {
 }
 
 /**
- * @brief ProjectInfoManger::getGraphPageWidth
+ * @brief ProjectInfoManager::getGraphPageWidth
  * @return 画面宽度
  */
-int ProjectInfoManger::getGraphPageWidth() {
+int ProjectInfoManager::getGraphPageWidth() {
     QString devType = dPtr_->deviceType_;
     int width = 0;
     int height = 0;
@@ -230,10 +230,10 @@ int ProjectInfoManger::getGraphPageWidth() {
 }
 
 /**
- * @brief ProjectInfoManger::getGraphPageHeight
+ * @brief ProjectInfoManager::getGraphPageHeight
  * @return 画面高度
  */
-int ProjectInfoManger::getGraphPageHeight() {
+int ProjectInfoManager::getGraphPageHeight() {
     QString devType = dPtr_->deviceType_;
     int width = 0;
     int height = 0;

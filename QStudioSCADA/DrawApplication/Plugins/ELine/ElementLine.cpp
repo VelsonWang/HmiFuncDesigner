@@ -21,6 +21,15 @@ void ElementLine::regenerateElementId() {
     this->updatePropertyModel();
 }
 
+/**
+ * @brief ElementLine::release
+ * @details 释放占用的资源
+ */
+void ElementLine::release()
+{
+
+}
+
 QRectF ElementLine::boundingRect() const {
     qreal extra = 5;
     const qreal x1 = elementLine.p1().x();

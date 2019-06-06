@@ -510,7 +510,7 @@ void MainWindow::doOpenProject(QString proj)
     ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
 
     // 更新工程名称和工程目录(目录和名称可能人为修改)
-    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
     projInfoMgr.load(ProjectData::getInstance()->dbData_);
     projInfoMgr.setProjectPath(szPath);
     projInfoMgr.setProjectName(szName);

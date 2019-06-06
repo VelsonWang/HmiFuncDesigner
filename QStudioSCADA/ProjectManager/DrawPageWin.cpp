@@ -14,7 +14,7 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "../Public/Public.h"
-#include "ProjectInfoManger.h"
+#include "ProjectInfoManager.h"
 #include "Singleton.h"
 
 
@@ -120,7 +120,7 @@ void DrawPageWin::NewDrawPage()
     int last = DrawListUtils::getMaxDrawPageNum("draw");
     QString szGraphPageName = QString("draw%1").arg(last);
 
-    ProjectInfoManger &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
     projInfoMgr.load(ProjectData::getInstance()->dbData_);
     int width = projInfoMgr.getGraphPageWidth();
     int height = projInfoMgr.getGraphPageHeight();

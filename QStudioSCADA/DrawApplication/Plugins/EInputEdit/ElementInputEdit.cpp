@@ -34,6 +34,15 @@ void ElementInputEdit::regenerateElementId() {
     this->updatePropertyModel();
 }
 
+/**
+ * @brief ElementInputEdit::release
+ * @details 释放占用的资源
+ */
+void ElementInputEdit::release()
+{
+
+}
+
 QRectF ElementInputEdit::boundingRect() const {
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
