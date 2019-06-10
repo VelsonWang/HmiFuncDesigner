@@ -11,7 +11,7 @@ class ElementRect : public Element
 {
     Q_OBJECT
 public:
-    ElementRect(const QString &projPath);
+    ElementRect(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;

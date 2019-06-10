@@ -4,8 +4,9 @@
 
 int ElementEllipse::iLastIndex_ = 1;
 
-ElementEllipse::ElementEllipse(const QString &projPath) :
-    Element(projPath) {
+ElementEllipse::ElementEllipse(const QString &szProjPath, const QString &szProjName) :
+    Element(szProjPath, szProjName)
+{
     elementId = QString(tr("Ellipse_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Ellipse");
@@ -15,7 +16,7 @@ ElementEllipse::ElementEllipse(const QString &projPath) :
     borderWidth_ = 1;
     borderColor_ = Qt::black;
     showOnInitial_ = true;
-    TagManager::setProjectPath(projPath);
+    TagManager::setProjectPath(szProjectPath_);
     init();
     createPropertyList();
     updatePropertyModel();

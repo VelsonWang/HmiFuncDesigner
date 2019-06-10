@@ -27,7 +27,8 @@ DrawPageWin::DrawPageWin(QWidget *parent,
     ui->setupUi(this);
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
-    m_ProjPath = ProjectMgrUtils::getProjectPath(projName);
+    szProjPath_ = ProjectMgrUtils::getProjectPath(projName);
+    szProjName_ = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
     setContextMenuPolicy(Qt::DefaultContextMenu);
     pListDrawPageModel = new QStandardItemModel();
     ui->listViewDrawPage->setModel(pListDrawPageModel);
@@ -46,7 +47,7 @@ DrawPageWin::~DrawPageWin()
 void DrawPageWin::init()
 {
     if(!m_strProjectName.isEmpty()) {
-        m_ProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+        szProjPath_ = ProjectMgrUtils::getProjectPath(m_strProjectName);
         open();
         ListViewUpdate();
     }
@@ -57,7 +58,7 @@ void DrawPageWin::init()
 */
 void DrawPageWin::open()
 {
-    DrawListUtils::loadDrawList(m_ProjPath);
+    DrawListUtils::loadDrawList(szProjPath_);
 }
 
 /*
@@ -68,7 +69,7 @@ void DrawPageWin::save()
     if(getModifiedFlag())
     {
         setModifiedFlag(true);
-        DrawListUtils::saveDrawList(m_ProjPath);
+        DrawListUtils::saveDrawList(szProjPath_);
     }
 }
 
@@ -125,7 +126,7 @@ void DrawPageWin::NewDrawPage()
     int width = projInfoMgr.getGraphPageWidth();
     int height = projInfoMgr.getGraphPageHeight();
 
-    createEmptyGraphpage(m_ProjPath, szGraphPageName, width, height);
+    createEmptyGraphpage(szProjPath_, szGraphPageName, width, height);
     DrawListUtils::drawList_.append(szGraphPageName);
     setModifiedFlag(true);
     save();
@@ -160,8 +161,8 @@ reinput:
             if(strOldName == DrawListUtils::drawList_.at(i)) {
                 DrawListUtils::drawList_.replace(i, strNewName);
                 // rename file
-                QString oldName = m_ProjPath + "/" + strOldName + ".drw";
-                QString newName = m_ProjPath + "/" + strNewName + ".drw";
+                QString oldName = szProjPath_ + "/" + strOldName + ".drw";
+                QString newName = szProjPath_ + "/" + strNewName + ".drw";
                 QFile::rename(oldName, newName);
                 ListViewUpdate();
                 break;
@@ -187,7 +188,7 @@ void DrawPageWin::DeleteDrawPage()
         if(strName == DrawListUtils::drawList_.at(i)) {
             DrawListUtils::drawList_.removeAt(i);
             // delete file
-            QString fileName = m_ProjPath + "/" + strName + ".drw";
+            QString fileName = szProjPath_ + "/" + strName + ".drw";
             QFile file(fileName);
             if(file.exists())
                 file.remove();
@@ -207,7 +208,7 @@ void DrawPageWin::CopyDrawPage()
 {
     QModelIndex idx = ui->listViewDrawPage->selectionModel()->currentIndex();
     QStandardItem *item = this->pListDrawPageModel->itemFromIndex(idx);
-    m_CopyDrawPageFileName = item->text();
+    szCopyDrawPageFileName_ = item->text();
 }
 
 
@@ -219,21 +220,21 @@ void DrawPageWin::PasteDrawPage()
     int last = 0;
 
 regetnum:
-    last = DrawListUtils::getMaxDrawPageNum(m_CopyDrawPageFileName);
-    QString strDrawPageName = m_CopyDrawPageFileName + QString("-%1").arg(last);
+    last = DrawListUtils::getMaxDrawPageNum(szCopyDrawPageFileName_);
+    QString strDrawPageName = szCopyDrawPageFileName_ + QString("-%1").arg(last);
     if(DrawListUtils::drawList_.contains(strDrawPageName))
     {
-        m_CopyDrawPageFileName = strDrawPageName;
+        szCopyDrawPageFileName_ = strDrawPageName;
         goto regetnum;
     }
 
     DrawListUtils::drawList_.append(strDrawPageName);
 
     // copy file
-    QString fileName = m_ProjPath + "/" + m_CopyDrawPageFileName + ".drw";
+    QString fileName = szProjPath_ + "/" + szCopyDrawPageFileName_ + ".drw";
     QFile file(fileName);
 
-    QString pasteFileName = m_ProjPath + "/" + strDrawPageName + ".drw";
+    QString pasteFileName = szProjPath_ + "/" + strDrawPageName + ".drw";
     file.copy(pasteFileName);
     ListViewUpdate();
     setModifiedFlag(true);
@@ -347,7 +348,8 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
     if(file.exists()) {
         QProcess *process = new QProcess();
         QStringList argv;
-        argv << m_ProjPath
+        argv << szProjPath_
+             << szProjName_
              << item->text();
         process->start(fileDrawApplication, argv);
     }

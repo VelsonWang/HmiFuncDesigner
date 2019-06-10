@@ -89,7 +89,7 @@ QString PushButtonPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* PushButtonPlugin::createElement(const QString &projPath)
+Element* PushButtonPlugin::createElement(const QString &szProjPath, const QString &szProjName)
 {
-    return new ElementPushButton(projPath);
+    return new ElementPushButton(szProjPath, szProjName);
 }

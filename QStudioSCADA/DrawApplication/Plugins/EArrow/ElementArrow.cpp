@@ -6,9 +6,10 @@ static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 int ElementArrow::iLastIndex_ = 1;
 
-ElementArrow::ElementArrow(const QString &projPath)
-    : Element(projPath),
-      arrowSize(10) {
+ElementArrow::ElementArrow(const QString &szProjPath, const QString &szProjName)
+    : Element(szProjPath, szProjName),
+      arrowSize(10)
+{
     elementId = QString(tr("Arrow_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Arrow");
@@ -21,7 +22,8 @@ ElementArrow::ElementArrow(const QString &projPath)
 }
 
 
-void ElementArrow::regenerateElementId() {
+void ElementArrow::regenerateElementId()
+{
     elementId = QString(tr("Arrow_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     this->updatePropertyModel();
 }
@@ -35,7 +37,8 @@ void ElementArrow::release()
 
 }
 
-QRectF ElementArrow::boundingRect() const {
+QRectF ElementArrow::boundingRect() const
+{
     qreal extra = 5;
     const qreal x1 = elementLine.p1().x();
     const qreal x2 = elementLine.p2().x();
@@ -50,7 +53,8 @@ QRectF ElementArrow::boundingRect() const {
             .adjusted(-extra, -extra, extra, extra);
 }
 
-void ElementArrow::createPropertyList() {
+void ElementArrow::createPropertyList()
+{
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
@@ -106,7 +110,8 @@ void ElementArrow::createPropertyList() {
     propList.insert(propList.end(),angleProperty);
 }
 
-void ElementArrow::updateElementProperty(uint id, const QVariant &value) {
+void ElementArrow::updateElementProperty(uint id, const QVariant &value)
+{
     switch (id) {
     case EL_ID:
         elementId = value.toString();
@@ -147,7 +152,8 @@ void ElementArrow::updateElementProperty(uint id, const QVariant &value) {
     update();
 }
 
-void ElementArrow::updatePropertyModel() {
+void ElementArrow::updatePropertyModel()
+{
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
@@ -159,7 +165,8 @@ void ElementArrow::updatePropertyModel() {
     angleProperty->setValue(elemAngle);
 }
 
-void ElementArrow::setClickPosition(QPointF position) {
+void ElementArrow::setClickPosition(QPointF position)
+{
     prepareGeometryChange();
     setElementXPos(position.x());
     setElementYPos(position.y());
@@ -167,13 +174,15 @@ void ElementArrow::setClickPosition(QPointF position) {
     updatePropertyModel();
 }
 
-void ElementArrow::updateBoundingElement() {
+void ElementArrow::updateBoundingElement()
+{
     elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
 void ElementArrow::paint(QPainter *painter,
                          const QStyleOptionGraphicsItem *option,
-                         QWidget *widget) {
+                         QWidget *widget)
+{
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -203,7 +212,8 @@ void ElementArrow::paint(QPainter *painter,
     }
 }
 
-void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     if (resizing) {
         setCursor(Qt::SizeFDiagCursor);
         QPointF mousePoint = event->pos();
@@ -249,7 +259,8 @@ void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF pp1 = elementLine.p1();
@@ -281,7 +292,8 @@ void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementArrow::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementArrow::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -298,7 +310,8 @@ void ElementArrow::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementArrow::writeAsXml(QXmlStreamWriter &writer) {
+void ElementArrow::writeAsXml(QXmlStreamWriter &writer)
+{
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
     writer.writeAttribute("elementId",elementId);
@@ -313,7 +326,8 @@ void ElementArrow::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeEndElement();
 }
 
-void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
@@ -359,7 +373,8 @@ void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes) {
     updatePropertyModel();
 }
 
-void ElementArrow::writeData(QDataStream &out) {
+void ElementArrow::writeData(QDataStream &out)
+{
     out << this->elementId
         << this->x()
         << this->y()
@@ -371,7 +386,8 @@ void ElementArrow::writeData(QDataStream &out) {
         << this->elemAngle;
 }
 
-void ElementArrow::readData(QDataStream &in) {
+void ElementArrow::readData(QDataStream &in)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -409,7 +425,8 @@ void ElementArrow::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementArrow &arrow) {
+QDataStream &operator<<(QDataStream &out,const ElementArrow &arrow)
+{
     out << arrow.elementId
         << arrow.x()
         << arrow.y()
@@ -423,7 +440,8 @@ QDataStream &operator<<(QDataStream &out,const ElementArrow &arrow) {
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in, ElementArrow &arrow) {
+QDataStream &operator>>(QDataStream &in, ElementArrow &arrow)
+{
     QString id;
     qreal xpos;
     qreal ypos;

@@ -19,11 +19,13 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
+    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lDrawUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
+    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }
 
 

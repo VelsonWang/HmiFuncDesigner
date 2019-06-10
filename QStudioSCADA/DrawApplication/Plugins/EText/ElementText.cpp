@@ -4,8 +4,9 @@
 
 int ElementText::iLastIndex_ = 1;
 
-ElementText::ElementText(const QString &projPath) :
-    Element(projPath) {
+ElementText::ElementText(const QString &szProjPath, const QString &szProjName) :
+    Element(szProjPath, szProjName)
+{
     elementId = QString(tr("Text_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Text");
@@ -18,7 +19,7 @@ ElementText::ElementText(const QString &projPath) :
     borderColor_ = Qt::black;
     hideOnClick_ = false;
     showOnInitial_ = true;
-	TagManager::setProjectPath(projPath);
+    TagManager::setProjectPath(szProjectPath_);
     init();
     createPropertyList();
     updatePropertyModel();

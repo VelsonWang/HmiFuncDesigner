@@ -11,7 +11,7 @@ class ElementLine : public Element
 {
     Q_OBJECT
 public:
-    ElementLine(const QString &projPath);
+    ElementLine(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;

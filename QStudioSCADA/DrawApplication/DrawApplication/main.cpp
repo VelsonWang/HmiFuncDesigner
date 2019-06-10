@@ -4,6 +4,7 @@
 #include "configutils.h"
 #include "DrawListUtils.h"
 #include "PluginManager.h"
+#include "ProjectData.h"
 
 
 /**
@@ -11,7 +12,8 @@
  * @param argc
  * @param argv argv[0]--application name,
  *             argv[1]--project path,
- *             argv[2]--graph page name,
+ *             argv[2]--project name,
+ *             argv[3]--graph page name,
  * @return
  */
 int main(int argc, char *argv[])
@@ -19,11 +21,13 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QString szProjPath = "";
+    QString szProjName = "";
     QString szGraphPageName = "";
 
-    if(argc == 3) {
+    if(argc == 4) {
         szProjPath = argv[1];
-        szGraphPageName = argv[2];
+        szProjName = argv[2];
+        szGraphPageName = argv[3];
     } else {
         QMessageBox::information(Q_NULLPTR, "提示", "画面编辑程序只能由工程管理器调用！");
         return 0;
@@ -32,8 +36,8 @@ int main(int argc, char *argv[])
     // 加载元素插件
     PluginManager::getInstance()->loadPlugin();
 
-    MainWindow mainWin(szProjPath, szGraphPageName);
-    mainWin.openGraphPage(szProjPath, szGraphPageName);
+    MainWindow mainWin(szProjPath, szProjName, szGraphPageName);
+    mainWin.openGraphPage(szProjPath, szProjName, szGraphPageName);
     mainWin.show();
 
     int ret = a.exec();

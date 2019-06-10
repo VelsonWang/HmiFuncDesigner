@@ -20,14 +20,17 @@ class MainWindow : public QMainWindow, public Ui::MainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(const QString &projpath,
-                        const QString &graphPageName,
+    explicit MainWindow(const QString &szProjPath,
+                        const QString &szProjName,
+                        const QString &szGraphPageName,
                         QWidget *parent = 0);
     ~MainWindow();
 
     bool isGridVisible() const;
     // 打开画面
-    void openGraphPage(const QString &pagePath, const QString &pageName);
+    void openGraphPage(const QString &szProjPath,
+                       const QString &szProjName,
+                       const QString &szPageName);
 
 protected:
     void closeEvent(QCloseEvent *);
@@ -80,7 +83,8 @@ private slots:
     void slotCloseAll();
 
 private:
-    QString projpath_;
+    QString szProjPath_;
+    QString szProjName_;
     QString graphPageName_;
 
     QAction *actionShowGraphObj_;

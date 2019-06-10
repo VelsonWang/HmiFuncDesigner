@@ -13,7 +13,7 @@ class ElementInputEdit : public Element
     Q_OBJECT
 
 public:
-    explicit ElementInputEdit(const QString &projPath);
+    explicit ElementInputEdit(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;

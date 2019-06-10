@@ -89,7 +89,7 @@ QString InputEditPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* InputEditPlugin::createElement(const QString &projPath)
+Element* InputEditPlugin::createElement(const QString &szProjPath, const QString &szProjName)
 {
-    return new ElementInputEdit(projPath);
+    return new ElementInputEdit(szProjPath, szProjName);
 }

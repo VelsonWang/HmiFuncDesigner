@@ -3,8 +3,9 @@
 
 int ElementLine::iLastIndex_ = 1;
 
-ElementLine::ElementLine(const QString &projPath) :
-    Element(projPath) {
+ElementLine::ElementLine(const QString &szProjPath, const QString &szProjName) :
+    Element(szProjPath, szProjName)
+{
     elementId = QString(tr("Line_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Line");

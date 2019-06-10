@@ -31,7 +31,7 @@ public:
     // 获取元素ID String
     virtual QString getElementIDString() = 0;
     // 创建元素
-    virtual Element* createElement(const QString &projPath) = 0;
+    virtual Element* createElement(const QString &szProjPath, const QString &szProjName) = 0;
 };
 
 

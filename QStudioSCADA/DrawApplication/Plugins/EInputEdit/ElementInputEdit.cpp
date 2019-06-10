@@ -1,11 +1,11 @@
 ﻿#include "ElementInputEdit.h"
 #include "TagManager.h"
-#include <QDebug>
 
 int ElementInputEdit::iLastIndex_ = 1;
 
-ElementInputEdit::ElementInputEdit(const QString &projPath) :
-    Element(projPath) {
+ElementInputEdit::ElementInputEdit(const QString &szProjPath, const QString &szProjName) :
+    Element(szProjPath, szProjName)
+{
     elementId = QString(tr("InputEdit_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("InputEdit");
@@ -20,7 +20,7 @@ ElementInputEdit::ElementInputEdit(const QString &projPath) :
     enableOnInitial_ = true;
     inputPassword_ = false;
     showOnInitial_ = true;
-    TagManager::setProjectPath(projPath);
+    TagManager::setProjectPath(szProjectPath_);
     init();
     elementWidth = 80;
     elementHeight = 26;

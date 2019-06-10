@@ -37,12 +37,14 @@ T max(const S<T> &sequence)
 const QString MimeType = "rti/designer";
 
 
-GraphPage::GraphPage(const QRectF &rect, QObject *parent)
-    : QGraphicsScene(parent),
-      propertyModel(0),
-      filename(QString()),
-      unsavedFlag(false),
-      projpath_(QString()) {
+GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
+    QGraphicsScene(parent),
+    propertyModel(0),
+    filename(QString()),
+    unsavedFlag(false),
+    szProjPath_(""),
+    szProjName_("")
+{
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
@@ -504,7 +506,8 @@ void GraphPage::connectItem(Element *item) {
     connect(item, SIGNAL(elementResized(int,int,QPointF)), SLOT(slotElementResized(int,int,QPointF)));
 }
 
-void GraphPage::createItems(const QString &typeId, QPointF position) {
+void GraphPage::createItems(const QString &typeId, QPointF position)
+{
     Element *last = 0;
 
     QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
@@ -518,7 +521,7 @@ void GraphPage::createItems(const QString &typeId, QPointF position) {
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementName() == typeId) {
 
-                Element *ele = plugin->createElement(projpath_);
+                Element *ele = plugin->createElement(szProjPath_, szProjName_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
                     ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
@@ -772,13 +775,15 @@ void GraphPage::moveSelectedElements(int xOffset, int yOffset) {
     }
 }
 
-void GraphPage::slotSelectAll() {
+void GraphPage::slotSelectAll()
+{
     foreach (QGraphicsItem *item, items()) {
         item->setSelected(true);
     }
 }
 
-void GraphPage::slotEditCopy() {
+void GraphPage::slotEditCopy()
+{
     QList <QGraphicsItem*> selItems = selectedItems();
 
     if (selItems.isEmpty()) {
@@ -788,7 +793,8 @@ void GraphPage::slotEditCopy() {
     copyItems(selItems);
 }
 
-void GraphPage::copyItems(const QList<QGraphicsItem *> &items) {
+void GraphPage::copyItems(const QList<QGraphicsItem *> &items)
+{
     QByteArray copiedItems;
     QDataStream out(&copiedItems, QIODevice::WriteOnly);
     writeItems(out, items);
@@ -798,7 +804,8 @@ void GraphPage::copyItems(const QList<QGraphicsItem *> &items) {
     clipboard->setMimeData(mimeData);
 }
 
-void GraphPage::slotEditPaste() {
+void GraphPage::slotEditPaste()
+{
     QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
 
@@ -813,7 +820,8 @@ void GraphPage::slotEditPaste() {
     }
 }
 
-void GraphPage::readItems(QDataStream &in, int offset, bool select) {
+void GraphPage::readItems(QDataStream &in, int offset, bool select)
+{
     int objectType;
     int itemsCount;
     copyList.clear();
@@ -829,7 +837,7 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select) {
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
-                    Element *ele = plugin->createElement(projpath_);
+                    Element *ele = plugin->createElement(szProjPath_, szProjName_);
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
@@ -992,6 +1000,7 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        ele->setProjectName(szProjName_);
                         ele->readFromXml(xml.attributes());
                         ele->setSelected(false);
                         connectItem(ele);
@@ -1043,7 +1052,7 @@ Element *GraphPage::createElement(const QString &internalType) {
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementIDString() == internalType) {
-                return plugin->createElement(projpath_);
+                return plugin->createElement(szProjPath_, szProjName_);
             }
         }
     }
@@ -1101,6 +1110,7 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        ele->setProjectName(szProjName_);
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readFromXml(xml.attributes());
                         connectItem(ele);
@@ -1139,7 +1149,7 @@ void GraphPage::slotSaveAsLibrary() {
  * @return 工程路径
  */
 QString GraphPage::getProjectPath() const {
-    return projpath_;
+    return szProjPath_;
 }
 
 
@@ -1149,9 +1159,19 @@ QString GraphPage::getProjectPath() const {
  * @param path 工程路径
  */
 void GraphPage::setProjectPath(const QString &path) {
-    projpath_ = path;
+    szProjPath_ = path;
 }
 
+
+QString GraphPage::getProjectName() const
+{
+    return szProjName_;
+}
+
+void GraphPage::setProjectName(const QString &name)
+{
+    szProjName_ = name;
+}
 
 /**
  * @brief GraphPage::setSelectedFunctions

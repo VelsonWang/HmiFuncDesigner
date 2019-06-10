@@ -12,7 +12,7 @@ class ElementText : public Element
     Q_OBJECT
 
 public:
-    explicit ElementText(const QString &projPath);
+    explicit ElementText(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;

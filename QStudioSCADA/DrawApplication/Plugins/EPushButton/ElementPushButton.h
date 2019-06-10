@@ -14,7 +14,7 @@ class ElementPushButton : public Element
     Q_OBJECT
 
 public:
-    explicit ElementPushButton(const QString &projPath);
+    explicit ElementPushButton(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;

@@ -5,16 +5,18 @@
 #include "ElementIDHelper.h"
 #include "Helper.h"
 #include "XMLObject.h"
+#include "ProjectData.h"
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-#include <QDebug>
+
 
 int ElementPushButton::iLastIndex_ = 1;
 
-ElementPushButton::ElementPushButton(const QString &projPath) :
-    Element(projPath) {
+ElementPushButton::ElementPushButton(const QString &szProjPath, const QString &szProjName) :
+    Element(szProjPath, szProjName)
+{
     elementId = QString(tr("PushButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("PushButton");
@@ -35,15 +37,19 @@ ElementPushButton::ElementPushButton(const QString &projPath) :
     enableOnInitial_ = true;
     showOnInitial_ = true;
     transparent_ = false;
-    TagManager::setProjectPath(projPath);
-    DrawListUtils::setProjectPath(projPath);
-    ElementIDHelper::setProjectPath(projPath);
+    TagManager::setProjectPath(szProjectPath_);
+    DrawListUtils::setProjectPath(szProjectPath_);
+    ElementIDHelper::setProjectPath(szProjectPath_);
 
     createPropertyList();
     updatePropertyModel();
+
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
 }
 
-void ElementPushButton::regenerateElementId() {
+void ElementPushButton::regenerateElementId()
+{
     elementId = QString(tr("PushButton_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
     this->updatePropertyModel();
 }
@@ -54,16 +60,21 @@ void ElementPushButton::regenerateElementId() {
  */
 void ElementPushButton::release()
 {
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__;
+    if(filePicture_ != "") {
+        PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+        picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
+    }
 }
 
-QRectF ElementPushButton::boundingRect() const {
+QRectF ElementPushButton::boundingRect() const
+{
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
-QPainterPath ElementPushButton::shape() const {
+QPainterPath ElementPushButton::shape() const
+{
     QPainterPath path;
     path.addRect(elementRect);
 
@@ -212,7 +223,8 @@ void ElementPushButton::createPropertyList()
     propList.insert(propList.end(), funcProperty);
 }
 
-void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
+void ElementPushButton::updateElementProperty(uint id, const QVariant &value)
+{
     switch (id) {
     case EL_ID:
         elementId = value.toString();
@@ -261,8 +273,8 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
         break;
     case EL_FILE:
     {
-        filePicture_ = value.toString();
-        QFileInfo infoSrc(filePicture_);
+        QString szTmpName = value.toString();
+        QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
             QString picturePath = getProjectPath() + "/Pictures";
             QDir dir(picturePath);
@@ -270,9 +282,15 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
                 dir.mkpath(picturePath);
             QString fileDes = picturePath + "/" + infoSrc.fileName();
             QFileInfo infoDes(fileDes);
-            if(!infoDes.exists())
-                QFile::copy(filePicture_, fileDes);
+            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+            if(filePicture_ != "" && filePicture_ != infoSrc.fileName()) {
+                picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
+            }
+            if(!infoDes.exists()) {
+                QFile::copy(szTmpName, fileDes);
+            }
             filePicture_ = infoSrc.fileName();
+            picResMgr_.add(ProjectData::getInstance()->dbData_, filePicture_);
             updatePropertyModel();
         }
     }break;
@@ -304,7 +322,8 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value) {
     scene()->update();
 }
 
-void ElementPushButton::updatePropertyModel() {
+void ElementPushButton::updatePropertyModel()
+{
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
@@ -435,7 +454,8 @@ void ElementPushButton::paint(QPainter *painter,
     }
 }
 
-void ElementPushButton::drawPushButton(QPainter *painter) {
+void ElementPushButton::drawPushButton(QPainter *painter)
+{
     QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
 
     if(transparent_) {
@@ -495,7 +515,8 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
     }
 }
 
-void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
 
     if (resizing) {
@@ -541,7 +562,8 @@ void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -573,7 +595,8 @@ void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -590,7 +613,8 @@ void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -611,7 +635,8 @@ void ElementPushButton::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
 }
 
-void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
+void ElementPushButton::writeAsXml(QXmlStreamWriter &writer)
+{
     writer.writeStartElement("element");
     writer.writeAttribute("internalType", internalElementType);
     writer.writeAttribute("elementId", elementId);
@@ -637,7 +662,8 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeEndElement();
 }
 
-void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
@@ -749,7 +775,8 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
     reloadPropertyList();
 }
 
-void ElementPushButton::writeData(QDataStream &out) {
+void ElementPushButton::writeData(QDataStream &out)
+{
     out << this->elementId
         << this->x()
         << this->y()
@@ -772,7 +799,8 @@ void ElementPushButton::writeData(QDataStream &out) {
         << this->funcs_;
 }
 
-void ElementPushButton::readData(QDataStream &in) {
+void ElementPushButton::readData(QDataStream &in)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -842,7 +870,8 @@ void ElementPushButton::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-void ElementPushButton::getSupportEvents(QStringList &listValue) {
+void ElementPushButton::getSupportEvents(QStringList &listValue)
+{
     QString xmlFileName = Helper::AppDir() + "/Config/ElementSupportEvents.xml";
 
     QFile fileCfg(xmlFileName);
@@ -884,7 +913,8 @@ void ElementPushButton::getSupportEvents(QStringList &listValue) {
     }
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
+QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele)
+{
     out << ele.elementId
         << ele.x()
         << ele.y()
@@ -908,7 +938,8 @@ QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele) {
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
+QDataStream &operator>>(QDataStream &in,ElementPushButton &ele)
+{
     QString id;
     qreal xpos;
     qreal ypos;

@@ -11,7 +11,7 @@ class ElementEllipse : public Element
 {
     Q_OBJECT
 public:
-    ElementEllipse(const QString &projPath);
+    ElementEllipse(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;

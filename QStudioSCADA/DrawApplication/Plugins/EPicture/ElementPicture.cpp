@@ -1,18 +1,19 @@
 ﻿#include "elementPicture.h"
+#include "ProjectData.h"
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-#include <QDebug>
 
 int ElementPicture::iLastIndex_ = 1;
 
-ElementPicture::ElementPicture(const QString &projPath) :
-    Element(projPath) {
+ElementPicture::ElementPicture(const QString &szProjPath, const QString &szProjName) :
+    Element(szProjPath, szProjName)
+{
     elementId = QString(tr("Picture_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Picture");
     elementIcon = QIcon(":/images/Picture.png");
-    filePicture_ = QString();
+    filePicture_ = "";
     showNoScale_ = false;
     borderWidth_ = 0;
     borderColor_ = Qt::black;
@@ -22,9 +23,13 @@ ElementPicture::ElementPicture(const QString &projPath) :
     elementHeight = 80;
     createPropertyList();
     updatePropertyModel();
+
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
 }
 
-void ElementPicture::regenerateElementId() {
+void ElementPicture::regenerateElementId()
+{
     elementId = QString(tr("Picture_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
     this->updatePropertyModel();
 }
@@ -35,16 +40,21 @@ void ElementPicture::regenerateElementId() {
  */
 void ElementPicture::release()
 {
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__;
+    if(filePicture_ != "") {
+        PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+        picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
+    }
 }
 
-QRectF ElementPicture::boundingRect() const {
+QRectF ElementPicture::boundingRect() const
+{
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra,-extra,extra,extra);
 }
 
-QPainterPath ElementPicture::shape() const {
+QPainterPath ElementPicture::shape() const
+{
     QPainterPath path;
     path.addRect(elementRect);
 
@@ -56,8 +66,8 @@ QPainterPath ElementPicture::shape() const {
     return path;
 }
 
-void ElementPicture::createPropertyList() {
-
+void ElementPicture::createPropertyList()
+{
     idProperty = new TextProperty(trUtf8("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
@@ -73,7 +83,7 @@ void ElementPicture::createPropertyList() {
 
     yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
     yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
+    yCoordProperty->setSettings(0, 5000);
     propList.insert(propList.end(), yCoordProperty);
 
     zValueProperty = new IntegerProperty(trUtf8("Z 值"));
@@ -133,7 +143,8 @@ void ElementPicture::createPropertyList() {
     propList.insert(propList.end(),angleProperty);
 }
 
-void ElementPicture::updateElementProperty(uint id, const QVariant &value) {
+void ElementPicture::updateElementProperty(uint id, const QVariant &value)
+{
     switch (id) {
     case EL_ID:
         elementId = value.toString();
@@ -160,8 +171,8 @@ void ElementPicture::updateElementProperty(uint id, const QVariant &value) {
         break;
     case EL_FILE:
     {
-        filePicture_ = value.toString();
-        QFileInfo infoSrc(filePicture_);
+        QString szTmpName = value.toString();
+        QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
             QString picturePath = getProjectPath() + "/Pictures";
             QDir dir(picturePath);
@@ -169,9 +180,15 @@ void ElementPicture::updateElementProperty(uint id, const QVariant &value) {
                 dir.mkpath(picturePath);
             QString fileDes = picturePath + "/" + infoSrc.fileName();
             QFileInfo infoDes(fileDes);
-            if(!infoDes.exists())
-                QFile::copy(filePicture_, fileDes);
+            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+            if(filePicture_ != "" && filePicture_ != infoSrc.fileName()) {
+                picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
+            }
+            if(!infoDes.exists()) {
+                QFile::copy(szTmpName, fileDes);
+            }
             filePicture_ = infoSrc.fileName();
+            picResMgr_.add(ProjectData::getInstance()->dbData_, filePicture_);
             updatePropertyModel();
         }
     }break;
@@ -197,7 +214,8 @@ void ElementPicture::updateElementProperty(uint id, const QVariant &value) {
     update();
 }
 
-void ElementPicture::updatePropertyModel() {
+void ElementPicture::updatePropertyModel()
+{
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
@@ -212,7 +230,8 @@ void ElementPicture::updatePropertyModel() {
     angleProperty->setValue(elemAngle);
 }
 
-void ElementPicture::setClickPosition(QPointF position) {
+void ElementPicture::setClickPosition(QPointF position)
+{
     prepareGeometryChange();
     elementXPos = position.x();
     elementYPos = position.y();
@@ -222,13 +241,15 @@ void ElementPicture::setClickPosition(QPointF position) {
     updatePropertyModel();
 }
 
-void ElementPicture::updateBoundingElement() {
+void ElementPicture::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementPicture::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
-                           QWidget *widget) {
+                           QWidget *widget)
+{
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -264,7 +285,8 @@ void ElementPicture::paint(QPainter *painter,
     }
 }
 
-void ElementPicture::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPicture::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
     if (resizing) {
         setCursor(Qt::SizeFDiagCursor);
@@ -309,7 +331,8 @@ void ElementPicture::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -341,7 +364,8 @@ void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementPicture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementPicture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
     setCursor(Qt::ArrowCursor);
     elementXPos = pos().x();
     elementYPos = pos().y();
@@ -358,7 +382,8 @@ void ElementPicture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementPicture::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+void ElementPicture::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -379,7 +404,8 @@ void ElementPicture::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
 }
 
-void ElementPicture::writeAsXml(QXmlStreamWriter &writer) {
+void ElementPicture::writeAsXml(QXmlStreamWriter &writer)
+{
     writer.writeStartElement("element");
     writer.writeAttribute("internalType", internalElementType);
     writer.writeAttribute("elementId", elementId);
@@ -397,7 +423,8 @@ void ElementPicture::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeEndElement();
 }
 
-void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
@@ -463,7 +490,8 @@ void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes) {
     updatePropertyModel();
 }
 
-void ElementPicture::writeData(QDataStream &out) {
+void ElementPicture::writeData(QDataStream &out)
+{
     out << this->elementId
         << this->x()
         << this->y()
@@ -478,7 +506,8 @@ void ElementPicture::writeData(QDataStream &out) {
         << this->elemAngle;
 }
 
-void ElementPicture::readData(QDataStream &in) {
+void ElementPicture::readData(QDataStream &in)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -525,7 +554,8 @@ void ElementPicture::readData(QDataStream &in) {
 }
 
 
-QDataStream &operator<<(QDataStream &out,const ElementPicture &picture) {
+QDataStream &operator<<(QDataStream &out,const ElementPicture &picture)
+{
     out << picture.elementId
         << picture.x()
         << picture.y()
@@ -542,7 +572,8 @@ QDataStream &operator<<(QDataStream &out,const ElementPicture &picture) {
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementPicture &picture) {
+QDataStream &operator>>(QDataStream &in,ElementPicture &picture)
+{
     QString id;
     qreal xpos;
     qreal ypos;

@@ -60,6 +60,9 @@ public:
     QString getProjectPath() const;
     void setProjectPath(const QString &);
 
+    QString getProjectName() const;
+    void setProjectName(const QString &);
+
     void fillGraphPagePropertyModel();
 
     void saveAsXML(const QString &filename);
@@ -151,7 +154,8 @@ signals:
     void GraphPageSaved();
 
 private:
-    QString projpath_;
+    QString szProjPath_;
+    QString szProjName_;
     bool gridVisible;
     Element *currentItem;
     static const int gridSize = 20;

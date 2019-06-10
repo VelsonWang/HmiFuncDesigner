@@ -89,7 +89,7 @@ QString EArrowPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EArrowPlugin::createElement(const QString &projPath)
+Element* EArrowPlugin::createElement(const QString &szProjPath, const QString &szProjName)
 {
-    return new ElementArrow(projPath);
+    return new ElementArrow(szProjPath, szProjName);
 }

@@ -188,6 +188,7 @@ qt {
     contains(QT, core): QT += concurrent
     contains(QT, gui): QT += widgets
     QT += xml
+    QT += sql
 }
 
 QBSFILE = $$replace(_PRO_FILE_, \\.pro$, .qbs)

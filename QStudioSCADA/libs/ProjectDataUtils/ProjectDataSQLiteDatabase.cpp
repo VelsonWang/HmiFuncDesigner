@@ -193,9 +193,9 @@ bool ProjectDataSQLiteDatabase::createTablePictureResourceInfo()
     keyList.clear();
     valueList.clear();
 
-    keyList << "id" << "name" << "path" << "ref_count ";
+    keyList << "id" << "name" << "ref_count";
 
-    valueList << autoincrement << "varchar(64)" << "varchar(128)" << "int";
+    valueList << autoincrement << "varchar(64)" << "int";
 
     ret = createTable("t_picture_resource_info", keyList, valueList, "");
     if(ret == 1) {

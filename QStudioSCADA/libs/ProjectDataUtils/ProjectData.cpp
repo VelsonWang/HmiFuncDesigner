@@ -9,6 +9,9 @@
 ProjectData* ProjectData::instance_ = nullptr;
 ProjectDataSQLiteDatabase *ProjectData::dbData_ = nullptr;
 QMutex ProjectData::mutex_;
+QString ProjectData::szProjPath_ = "";
+QString ProjectData::szProjName_ = "";
+
 
 ProjectData::ProjectData() :
     dbPath_("")
@@ -59,6 +62,9 @@ bool ProjectData::createOrOpenProjectData(const QString &projPath,
     if(fileName.endsWith('/'))
         fileName.chop(1);
 
+    szProjPath_ = fileName;
+    szProjName_ = projName;
+
     fileName = fileName + "/" + projName + ".pdt";
 
     if(dbPath_ != "") {
@@ -76,5 +82,16 @@ bool ProjectData::createOrOpenProjectData(const QString &projPath,
     }
 
     return false;
+}
+
+
+/**
+ * @brief ProjectData::getDBPath
+ * @details 获取工程数据文件路径
+ * @return 工程数据文件路径
+ */
+QString ProjectData::getDBPath() const
+{
+    return dbPath_;
 }
 

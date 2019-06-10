@@ -4,8 +4,9 @@
 
 int ElementRect::iLastIndex_ = 1;
 
-ElementRect::ElementRect(const QString &projPath) :
-    Element(projPath) {
+ElementRect::ElementRect(const QString &szProjPath, const QString &szProjName) :
+    Element(szProjPath, szProjName)
+{
     elementId = QString(tr("Rect_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
     internalElementType = trUtf8("Rect");
@@ -15,7 +16,7 @@ ElementRect::ElementRect(const QString &projPath) :
     borderWidth_ = 1;
     borderColor_ = Qt::black;
     showOnInitial_ = true;
-    TagManager::setProjectPath(projPath);
+    TagManager::setProjectPath(szProjectPath_);
     init();
     createPropertyList();
     updatePropertyModel();

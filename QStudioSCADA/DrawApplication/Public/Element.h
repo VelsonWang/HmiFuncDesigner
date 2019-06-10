@@ -21,7 +21,7 @@ class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    Element(const QString &projPath);
+    Element(const QString &szProjPath, const QString &szProjName);
     virtual ~Element();
 
     void init();
@@ -71,6 +71,12 @@ public:
     void setProjectPath(const QString &path);
     // 获取工程路径
     QString getProjectPath() const;
+
+    // 设置工程名称
+    void setProjectName(const QString &name);
+    // 获取工程名称
+    QString getProjectName() const;
+
     // 获取分配的索引值
     int getIndexFromIDString(const QString &szID);
     QString getHAlignString(const QString& szAlign) const;
@@ -109,7 +115,8 @@ protected:
     QRectF handleBottom;
     QList <Property*> propList;
 
-    enum ResizeDirection{
+    enum ResizeDirection
+    {
         RdBottomRight,
         RdTopLeft,
         RdNone
@@ -117,7 +124,8 @@ protected:
 
     ResizeDirection rd;
 
-    QString strProjectPath_; // 工程路径
+    QString szProjectPath_; // 工程路径
+    QString szProjectName_; // 工程名称
     int iGraphPageWidth_; // 画面宽度
     int iGraphPageHeight_; // 画面高度
 

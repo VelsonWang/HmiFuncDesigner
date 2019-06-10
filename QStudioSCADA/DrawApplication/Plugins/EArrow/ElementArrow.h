@@ -10,7 +10,7 @@ class ElementArrow : public Element
 {
     Q_OBJECT
 public:
-    ElementArrow(const QString &projPath);
+    ElementArrow(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;
