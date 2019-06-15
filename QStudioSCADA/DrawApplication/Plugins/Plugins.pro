@@ -10,5 +10,6 @@ SUBDIRS += \
 ###############<基本控件>##################
     EPushButton \
     EInputEdit \
-    EPicture
+    EPicture \
+	EIndicationLamp
 

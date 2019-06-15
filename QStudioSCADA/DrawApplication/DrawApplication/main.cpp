@@ -1,7 +1,7 @@
 ﻿#include <QApplication>
 #include <QMessageBox>
 #include "MainWindow.h"
-#include "configutils.h"
+#include "ConfigUtils.h"
 #include "DrawListUtils.h"
 #include "PluginManager.h"
 #include "ProjectData.h"

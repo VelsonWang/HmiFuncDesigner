@@ -16,7 +16,7 @@ const int GroupItemType = QGraphicsItem::UserType + 6;
 const int PushButtonItemType = QGraphicsItem::UserType + 40;
 const int InputEditItemType = QGraphicsItem::UserType + 41;
 const int PictureItemType = QGraphicsItem::UserType + 42;
-
+const int IndicationLampItemType = QGraphicsItem::UserType + 43;
 
 enum {
     EL_X = 0, //coord X
@@ -57,8 +57,9 @@ enum {
     EL_ENABLE_ON_INITIAL = 35,
     EL_INPUT_PASSWORD = 36,
     EL_ENABLE_EDIT = 37,
-
-
+    EL_STATE_ON_INITIAL = 38,
+    EL_PICTURE1 = 39,
+    EL_PICTURE2 = 40,
 
     EL_PROPERTY_EMPTY = 255
 };
