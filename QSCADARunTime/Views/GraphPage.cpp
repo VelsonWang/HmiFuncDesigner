@@ -16,6 +16,7 @@
 #include "EPicture/EPicture.h"
 #include "EInputEdit/EInputEdit.h"
 #include "EPushButton/EPushButton.h"
+#include "EIndicationLamp/EIndicationLamp.h"
 
 
 template<template<typename T> class S, typename T>
@@ -56,7 +57,8 @@ do{ \
  * @brief registerCreateObjectFunc
  * @details 注册元素对象创建函数
  */
-void registerCreateObjectFunc() {
+void registerCreateObjectFunc()
+{
     mapNameFuncData_.clear();
     mapIDFuncData_.clear();
     mapIDStringFuncData_.clear();
@@ -69,6 +71,7 @@ void registerCreateObjectFunc() {
     REGISTER_CREATEOR(QObject::trUtf8("图片"), PictureItemType, "Picture", EPicture);
     REGISTER_CREATEOR(QObject::trUtf8("输入编辑框"), InputEditItemType, "InputEdit", EInputEdit);
     REGISTER_CREATEOR(QObject::trUtf8("弹出按钮"), PushButtonItemType, "PushButton", EPushButton);
+    REGISTER_CREATEOR(QObject::trUtf8("指示灯"), IndicationLampItemType, "IndicationLamp", EIndicationLamp);
 
 }
 

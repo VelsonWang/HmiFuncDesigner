@@ -17,7 +17,7 @@ const int PolygonItemType = QGraphicsItem::UserType + 17;
 const int PushButtonItemType = QGraphicsItem::UserType + 40;
 const int InputEditItemType = QGraphicsItem::UserType + 41;
 const int PictureItemType = QGraphicsItem::UserType + 42;
-
+const int IndicationLampItemType = QGraphicsItem::UserType + 43;
 
 enum {
     EL_X = 0, //coord X

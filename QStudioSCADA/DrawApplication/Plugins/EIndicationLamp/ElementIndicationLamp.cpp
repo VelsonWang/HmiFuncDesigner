@@ -169,7 +169,7 @@ void ElementIndicationLamp::updateElementProperty(uint id, const QVariant &value
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
-            QString picturePath = getProjectPath() + "/IndicationLamps";
+            QString picturePath = getProjectPath() + "/Pictures";
             QDir dir(picturePath);
             if(!dir.exists())
                 dir.mkpath(picturePath);
@@ -192,7 +192,7 @@ void ElementIndicationLamp::updateElementProperty(uint id, const QVariant &value
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
-            QString picturePath = getProjectPath() + "/IndicationLamps";
+            QString picturePath = getProjectPath() + "/Pictures";
             QDir dir(picturePath);
             if(!dir.exists())
                 dir.mkpath(picturePath);
@@ -283,15 +283,15 @@ void ElementIndicationLamp::paint(QPainter *painter,
 
     QString szFileIndicationLamp_ = QString();
     if(stateOnInitial_) {
-        szFileIndicationLamp_ = resetFileIndicationLamp_;
-    } else {
         szFileIndicationLamp_ = setFileIndicationLamp_;
+    } else {
+        szFileIndicationLamp_ = resetFileIndicationLamp_;
     }
 
     if(szFileIndicationLamp_ != QString()) {
-        QString picture = getProjectPath() + "/IndicationLamps/" + szFileIndicationLamp_;
+        QString picture = getProjectPath() + "/Pictures/" + szFileIndicationLamp_;
         if(QFile::exists(picture)) {
-            QImage image(getProjectPath() + "/IndicationLamps/" + szFileIndicationLamp_);
+            QImage image(getProjectPath() + "/Pictures/" + szFileIndicationLamp_);
             QImage scaleImage;
             if(showNoScale_) {
                 scaleImage = image;
