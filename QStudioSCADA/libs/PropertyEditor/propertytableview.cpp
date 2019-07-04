@@ -1,8 +1,9 @@
 #include "propertytableview.h"
 
 
-PropertyTableView::PropertyTableView(PropertyModel *model, QWidget *parent)
-    : QTableView(parent)
+PropertyTableView::PropertyTableView(PropertyModel *model, bool bLeaveEvent, QWidget *parent)
+    : QTableView(parent),
+      bLeaveEvent_(bLeaveEvent)
 {
     if (model) {
         setModel(model);
@@ -42,14 +43,18 @@ void PropertyTableView::setPropertyValueColumnWidth(int width)
 void PropertyTableView::focusOutEvent(QFocusEvent *event)
 {
     Q_UNUSED(event)
-    setPropertyValue();
+    if(bLeaveEvent_) {
+        setPropertyValue();
+    }
     QTableView::focusOutEvent(event);
 }
 
 void PropertyTableView::leaveEvent(QEvent *event)
 {
     Q_UNUSED(event)
-    setPropertyValue();
+    if(bLeaveEvent_) {
+        setPropertyValue();
+    }
     QTableView::leaveEvent(event);
 }
 

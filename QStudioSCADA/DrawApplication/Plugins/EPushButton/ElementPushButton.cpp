@@ -250,14 +250,16 @@ void ElementPushButton::updateElementProperty(uint id, const QVariant &value)
         updateBoundingElement();
         break;
     case EL_SHOW_CONTENT:
-        showContent_ = value.toString();
-        bShowContentText_ = true;
-        if(showContent_ == tr("图片")) {
-            bShowContentText_ = false;
+        if(showContent_ != value.toString()) {
+            showContent_ = value.toString();
+            bShowContentText_ = true;
+            if(showContent_ == tr("图片")) {
+                bShowContentText_ = false;
+            }
+            updateBoundingElement();
+            // 属性集发生改变需要更新属性表
+            updatePropertyTableView();
         }
-        updateBoundingElement();
-        // 属性集发生改变需要更新属性表
-        updatePropertyTableView();
         break;
     case EL_FONT:
         font_ = value.value<QFont>();

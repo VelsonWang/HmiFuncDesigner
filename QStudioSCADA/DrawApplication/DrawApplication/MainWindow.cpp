@@ -70,7 +70,7 @@ void MainWindow::initView()
     this->ElemetsLayout->addWidget(elementWidget_);
 
     propertyModel_ = new PropertyModel();
-    propertyView_ = new PropertyTableView(propertyModel_);
+    propertyView_ = new PropertyTableView(propertyModel_, true);
     this->PropertyLayout->addWidget(propertyView_);
 
     objTree_ = new ObjectsTreeView();

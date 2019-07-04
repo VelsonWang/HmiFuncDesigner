@@ -11,5 +11,5 @@ SUBDIRS += \
     EPushButton \
     EInputEdit \
     EPicture \
-	EIndicationLamp
+    EIndicationLamp
 

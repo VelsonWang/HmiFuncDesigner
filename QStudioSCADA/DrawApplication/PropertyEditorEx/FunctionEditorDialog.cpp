@@ -24,7 +24,7 @@ FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events) 
     funcObjItemList_.clear();
     propertyModel_ = new PropertyModel();
     connect(propertyModel_, SIGNAL(onDataChangedByEditor(Property* )), SLOT(propertyChanged(Property* )));
-    propertyView_ = new PropertyTableView(propertyModel_);
+    propertyView_ = new PropertyTableView(propertyModel_, false);
     propertyView_->setPropertyKeyColumnWidth(160);
     propertyView_->setPropertyValueColumnWidth(200);
     propertyView_->resize(370, propertyView_->size().height());

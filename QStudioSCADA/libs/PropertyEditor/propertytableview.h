@@ -11,7 +11,7 @@
 class PropertyTableView : public QTableView
 {
 public:
-    PropertyTableView(PropertyModel *model,QWidget *parent = 0);
+    PropertyTableView(PropertyModel *model, bool bLeaveEvent = false, QWidget *parent = 0);
 
     void init();
     void setPropertyKeyColumnWidth(int width);
@@ -26,6 +26,7 @@ protected:
 
 private:
     PropertyDelegate *delegate_;
+    bool bLeaveEvent_ = false;
 };
 
 #endif // PROPERTYTABLEVIEW_H
