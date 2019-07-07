@@ -3,8 +3,8 @@
 #include <QDebug>
 
 ElementRect::ElementRect() {
-    elementId = trUtf8("Rect");
-    internalElementType = trUtf8("Rect");
+    elementId = tr("Rect");
+    internalElementType = tr("Rect");
     fillColor_ = Qt::white;
     isFill_ = true;
     borderWidth_ = 1;

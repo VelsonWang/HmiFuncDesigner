@@ -25,7 +25,7 @@ void EArrowPlugin::initialize()
  */
 QString EArrowPlugin::getPluginTypeName()
 {
-    return trUtf8("基本图元");
+    return tr("基本图元");
 }
 
 
@@ -36,7 +36,7 @@ QString EArrowPlugin::getPluginTypeName()
  */
 QString EArrowPlugin::getPluginName()
 {
-    return trUtf8("箭头");
+    return tr("箭头");
 }
 
 
@@ -60,7 +60,7 @@ QIcon EArrowPlugin::getElementIcon()
  */
 QString EArrowPlugin::getElementName()
 {
-    return trUtf8("箭头");
+    return tr("箭头");
 }
 
 /**

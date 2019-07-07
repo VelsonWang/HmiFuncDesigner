@@ -25,7 +25,7 @@ void TextPlugin::initialize()
  */
 QString TextPlugin::getPluginTypeName()
 {
-    return trUtf8("基本图元");
+    return tr("基本图元");
 }
 
 
@@ -36,7 +36,7 @@ QString TextPlugin::getPluginTypeName()
  */
 QString TextPlugin::getPluginName()
 {
-    return trUtf8("文本");
+    return tr("文本");
 }
 
 
@@ -60,7 +60,7 @@ QIcon TextPlugin::getElementIcon()
  */
 QString TextPlugin::getElementName()
 {
-    return trUtf8("文本");
+    return tr("文本");
 }
 
 /**

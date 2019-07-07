@@ -25,7 +25,7 @@ void IndicationLampPlugin::initialize()
  */
 QString IndicationLampPlugin::getPluginTypeName()
 {
-    return trUtf8("基本控件");
+    return tr("基本控件");
 }
 
 
@@ -36,7 +36,7 @@ QString IndicationLampPlugin::getPluginTypeName()
  */
 QString IndicationLampPlugin::getPluginName()
 {
-    return trUtf8("指示灯");
+    return tr("指示灯");
 }
 
 
@@ -60,7 +60,7 @@ QIcon IndicationLampPlugin::getElementIcon()
  */
 QString IndicationLampPlugin::getElementName()
 {
-    return trUtf8("指示灯");
+    return tr("指示灯");
 }
 
 /**

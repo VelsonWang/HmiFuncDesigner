@@ -24,7 +24,7 @@ void EArrow::initialize()
  */
 QString EArrow::getElementName()
 {
-    return trUtf8("箭头");
+    return tr("箭头");
 }
 
 /**

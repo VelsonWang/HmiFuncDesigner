@@ -65,7 +65,6 @@ private:
     EmptyProperty *titleProperty;
     // 选择变量
     ListProperty *tagSelectProperty_;
-
     // 初始状态
     BoolProperty *stateOnInitialProperty_;
     // 选择复位图片

@@ -25,7 +25,7 @@ void RectPlugin::initialize()
  */
 QString RectPlugin::getPluginTypeName()
 {
-    return trUtf8("基本图元");
+    return tr("基本图元");
 }
 
 
@@ -36,7 +36,7 @@ QString RectPlugin::getPluginTypeName()
  */
 QString RectPlugin::getPluginName()
 {
-    return trUtf8("矩形");
+    return tr("矩形");
 }
 
 
@@ -60,7 +60,7 @@ QIcon RectPlugin::getElementIcon()
  */
 QString RectPlugin::getElementName()
 {
-    return trUtf8("矩形");
+    return tr("矩形");
 }
 
 /**

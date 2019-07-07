@@ -8,8 +8,8 @@ static double TwoPi = 2.0 * Pi;
 ElementArrow::ElementArrow()
     : Element(),
       arrowSize(10) {
-    elementId = trUtf8("Arrow");
-    internalElementType = trUtf8("Arrow");
+    elementId = tr("Arrow");
+    internalElementType = tr("Arrow");
     init();
 }
 

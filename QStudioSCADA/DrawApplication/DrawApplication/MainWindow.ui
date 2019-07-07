@@ -67,7 +67,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>879</width>
+         <width>781</width>
          <height>642</height>
         </rect>
        </property>
@@ -105,6 +105,12 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockElemets">
+   <property name="minimumSize">
+    <size>
+     <width>160</width>
+     <height>44</height>
+    </size>
+   </property>
    <property name="windowTitle">
     <string>图形元素</string>
    </property>
@@ -136,10 +142,16 @@
   </widget>
   <widget class="QDockWidget" name="dockProperty">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>44</width>
+     <height>44</height>
+    </size>
    </property>
    <property name="windowTitle">
     <string>属性编辑</string>

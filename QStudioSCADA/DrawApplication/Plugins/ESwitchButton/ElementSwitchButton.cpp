@@ -19,7 +19,7 @@ ElementSwitchButton::ElementSwitchButton(const QString &szProjPath, const QStrin
 {
     elementId = QString(tr("SwitchButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
-    internalElementType = trUtf8("SwitchButton");
+    internalElementType = tr("SwitchButton");
     elementIcon = QIcon(":/images/SwitchButton.png");
     showContent_ = tr("文本");
     bShowContentText_ = true;
@@ -29,14 +29,19 @@ ElementSwitchButton::ElementSwitchButton(const QString &szProjPath, const QStrin
     init();
     elementWidth = 100;
     elementHeight = 40;
-    backgroundColor_ = QColor(240, 240, 240);
+    resetBackgroundColor_ = QColor(240, 240, 240);
+    setBackgroundColor_ = QColor(240, 240, 240);
     signBackgroundColor = QColor(Qt::black);
     borderWidth = 4;
     borderColor = QColor(112, 112, 112);
-    elementText = trUtf8("弹出按钮");
     enableOnInitial_ = true;
     showOnInitial_ = true;
     transparent_ = false;
+    showNoScale_ = false;
+    resetPictureFile_ = "";
+    setPictureFile_ = "";
+    resetText_ = tr("关");
+    setText_ = tr("开");
     TagManager::setProjectPath(szProjectPath_);
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
@@ -60,9 +65,13 @@ void ElementSwitchButton::regenerateElementId()
  */
 void ElementSwitchButton::release()
 {
-    if(filePicture_ != "") {
+    if(resetPictureFile_ != "") {
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-        picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
+        picResMgr_.del(ProjectData::getInstance()->dbData_, resetPictureFile_);
+    }
+    if(setPictureFile_ != "") {
+        PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+        picResMgr_.del(ProjectData::getInstance()->dbData_, setPictureFile_);
     }
 }
 
@@ -88,40 +97,37 @@ QPainterPath ElementSwitchButton::shape() const
 
 void ElementSwitchButton::createPropertyList()
 {
-    idProperty = new TextProperty(trUtf8("ID"));
+    idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
     propList.insert(propList.end(), idProperty);
 
-    titleProperty = new EmptyProperty(trUtf8("标题"));
+    titleProperty = new EmptyProperty(tr("标题"));
     propList.insert(propList.end(), titleProperty);
 
-    xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
+    // 选择变量
+    tagSelectProperty_ = new ListProperty(tr("选择变量"));
+    tagSelectProperty_->setId(EL_TAG);
+    QStringList varList;
+    TagManager::getAllTagName(TagManager::getProjectPath(), varList);
+    tagSelectProperty_->setList(varList);
+    propList.insert(propList.end(), tagSelectProperty_);
 
-    yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
+    // 选择功能
+    QStringList listEvents;
+    getSupportEvents(listEvents);
+    funcProperty = new FunctionProperty(tr("功能操作"));
+    funcProperty->setId(EL_FUNCTION);
+    funcProperty->setSupportEvents(listEvents);
+    propList.insert(propList.end(), funcProperty);
 
-    zValueProperty = new IntegerProperty(trUtf8("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
-
-    // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
-
-    // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    // 初始状态
+    stateOnInitialProperty_ = new BoolProperty(tr("初始状态"));
+    stateOnInitialProperty_->setId(EL_STATE_ON_INITIAL);
+    stateOnInitialProperty_->setTrueText(tr("置位状态"));
+    stateOnInitialProperty_->setFalseText(tr("复位状态"));
+    stateOnInitialProperty_->setValue(stateOnInitial_);
+    propList.insert(propList.end(), stateOnInitialProperty_);
 
     // 显示内容
     showContentProperty_ = new ListProperty(tr("显示内容"));
@@ -132,12 +138,53 @@ void ElementSwitchButton::createPropertyList()
     showContentProperty_->setValue(showContent_);
     propList.insert(propList.end(), showContentProperty_);
 
-    // 文本
-    elementTextProperty = new TextProperty(trUtf8("文本"));
-    elementTextProperty->setId(EL_TEXT);
-    elementTextProperty->setValue(elementText);
+    // 复位图片
+    resetFileProperty_ = new FileProperty(tr("选择复位图片"));
+    resetFileProperty_->setId(EL_PICTURE1);
+    if(!bShowContentText_)
+        propList.insert(propList.end(), resetFileProperty_);
+
+    // 置位图片
+    setFileProperty_ = new FileProperty(tr("选择置位图片"));
+    setFileProperty_->setId(EL_PICTURE2);
+    if(!bShowContentText_)
+        propList.insert(propList.end(), setFileProperty_);
+
+    // 原尺寸显示
+    showNoScaleProperty_ = new BoolProperty(tr("原尺寸显示"));
+    showNoScaleProperty_->setId(EL_SHOW_SCALE);
+    showNoScaleProperty_->setTrueText(tr("是"));
+    showNoScaleProperty_->setFalseText(tr("否"));
+    showNoScaleProperty_->setValue(showNoScale_);
+    if(!bShowContentText_)
+        propList.insert(propList.end(), showNoScaleProperty_);
+
+    // 复位显示文本
+    resetTextProperty_ = new TextProperty(tr("关时文本"));
+    resetTextProperty_->setId(EL_TEXT1);
+    resetTextProperty_->setValue(resetText_);
     if(bShowContentText_)
-        propList.insert(propList.end(), elementTextProperty);
+        propList.insert(propList.end(), resetTextProperty_);
+
+    // 置位显示文本
+    setTextProperty_ = new TextProperty(tr("开时文本"));
+    setTextProperty_->setId(EL_TEXT2);
+    setTextProperty_->setValue(setText_);
+    if(bShowContentText_)
+        propList.insert(propList.end(), setTextProperty_);
+
+    // 字体
+    fontProperty_ = new FontProperty(tr("字体"));
+    fontProperty_->setId(EL_FONT);
+    fontProperty_->setValue(QFont("Arial Black", 12));
+    if(bShowContentText_)
+        propList.insert(propList.end(), fontProperty_);
+
+    // 文本颜色
+    textColorProperty = new ColorProperty(tr("颜色"));
+    textColorProperty->setId(EL_FONT_COLOR);
+    if(bShowContentText_)
+        propList.insert(propList.end(), textColorProperty);
 
     // 水平对齐
     hAlignProperty_ = new ListProperty(tr("水平对齐"));
@@ -157,19 +204,19 @@ void ElementSwitchButton::createPropertyList()
     if(bShowContentText_)
         propList.insert(propList.end(), vAlignProperty_);
 
-    // 图片
-    fileProperty = new FileProperty(trUtf8("选择图片"));
-    fileProperty->setId(EL_FILE);
-    fileProperty->setValue(filePicture_);
-    if(!bShowContentText_)
-        propList.insert(propList.end(), fileProperty);
-
-    // 按钮背景颜色
-    backgroundColorProperty_ = new ColorProperty(tr("背景颜色"));
-    backgroundColorProperty_->setId(EL_BACKGROUND);
-    backgroundColorProperty_->setValue(backgroundColor_);
+    // 复位按钮背景颜色
+    resetBackgroundColorProperty_ = new ColorProperty(tr("关背景颜色"));
+    resetBackgroundColorProperty_->setId(EL_BACKGROUND1);
+    resetBackgroundColorProperty_->setValue(resetBackgroundColor_);
     if(bShowContentText_)
-        propList.insert(propList.end(), backgroundColorProperty_);
+        propList.insert(propList.end(), resetBackgroundColorProperty_);
+
+    // 置位按钮背景颜色
+    setBackgroundColorProperty_ = new ColorProperty(tr("开背景颜色"));
+    setBackgroundColorProperty_->setId(EL_BACKGROUND2);
+    setBackgroundColorProperty_->setValue(setBackgroundColor_);
+    if(bShowContentText_)
+        propList.insert(propList.end(), setBackgroundColorProperty_);
 
     // 透明
     transparentProperty_ = new BoolProperty(tr("透明显示"));
@@ -178,25 +225,6 @@ void ElementSwitchButton::createPropertyList()
     transparentProperty_->setFalseText(tr("不透明"));
     transparentProperty_->setValue(transparent_);
     propList.insert(propList.end(), transparentProperty_);
-
-    // 字体
-    fontProperty_ = new FontProperty(tr("字体"));
-    fontProperty_->setId(EL_FONT);
-    fontProperty_->setValue(QFont("Arial Black", 12));
-    if(bShowContentText_)
-        propList.insert(propList.end(), fontProperty_);
-
-    // 文本颜色
-    textColorProperty = new ColorProperty(trUtf8("颜色"));
-    textColorProperty->setId(EL_FONT_COLOR);
-    if(bShowContentText_)
-        propList.insert(propList.end(), textColorProperty);
-
-    // 旋转角度
-    angleProperty = new IntegerProperty(trUtf8("角度"));
-    angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0, 360);
-    propList.insert(propList.end(), angleProperty);
 
     // 初始有效性
     enableOnInitialProperty_ = new BoolProperty(tr("初始有效性"));
@@ -214,13 +242,38 @@ void ElementSwitchButton::createPropertyList()
     showOnInitialProperty_->setValue(showOnInitial_);
     propList.insert(propList.end(), showOnInitialProperty_);
 
-    // 选择功能
-    QStringList listEvents;
-    getSupportEvents(listEvents);
-    funcProperty = new FunctionProperty(trUtf8("功能操作"));
-    funcProperty->setId(EL_FUNCTION);
-    funcProperty->setSupportEvents(listEvents);
-    propList.insert(propList.end(), funcProperty);
+    xCoordProperty = new IntegerProperty(tr("坐标 X"));
+    xCoordProperty->setSettings(0, 5000);
+    xCoordProperty->setId(EL_X);
+    propList.insert(propList.end(), xCoordProperty);
+
+    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
+    yCoordProperty->setId(EL_Y);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
+
+    zValueProperty = new IntegerProperty(tr("Z 值"));
+    zValueProperty->setId(EL_Z_VALUE);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
+
+    // 宽度
+    widthProperty_ = new IntegerProperty(tr("宽度"));
+    widthProperty_->setId(EL_WIDTH);
+    widthProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty_);
+
+    // 高度
+    heightProperty_ = new IntegerProperty(tr("高度"));
+    heightProperty_->setId(EL_HEIGHT);
+    heightProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty_);
+
+    // 旋转角度
+    angleProperty = new IntegerProperty(tr("角度"));
+    angleProperty->setId(EL_ANGLE);
+    angleProperty->setSettings(0, 360);
+    propList.insert(propList.end(), angleProperty);
 }
 
 void ElementSwitchButton::updateElementProperty(uint id, const QVariant &value)
@@ -228,6 +281,67 @@ void ElementSwitchButton::updateElementProperty(uint id, const QVariant &value)
     switch (id) {
     case EL_ID:
         elementId = value.toString();
+        break;
+    case EL_TAG:
+        szTagSelected_ = value.toString();
+        break;
+    case EL_STATE_ON_INITIAL:
+        stateOnInitial_ = value.toBool();
+        break;
+    case EL_PICTURE1:
+    {
+        QString szTmpName = value.toString();
+        QFileInfo infoSrc(szTmpName);
+        if(infoSrc.exists()) {
+            QString picturePath = getProjectPath() + "/Pictures";
+            QDir dir(picturePath);
+            if(!dir.exists())
+                dir.mkpath(picturePath);
+            QString fileDes = picturePath + "/" + infoSrc.fileName();
+            QFileInfo infoDes(fileDes);
+            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+            if(resetPictureFile_ != "" && resetPictureFile_ != infoSrc.fileName()) {
+                picResMgr_.del(ProjectData::getInstance()->dbData_, resetPictureFile_);
+            }
+            if(!infoDes.exists()) {
+                QFile::copy(szTmpName, fileDes);
+            }
+            resetPictureFile_ = infoSrc.fileName();
+            picResMgr_.add(ProjectData::getInstance()->dbData_, resetPictureFile_);
+            updatePropertyModel();
+        }
+    }break;
+    case EL_PICTURE2:
+    {
+        QString szTmpName = value.toString();
+        QFileInfo infoSrc(szTmpName);
+        if(infoSrc.exists()) {
+            QString picturePath = getProjectPath() + "/Pictures";
+            QDir dir(picturePath);
+            if(!dir.exists())
+                dir.mkpath(picturePath);
+            QString fileDes = picturePath + "/" + infoSrc.fileName();
+            QFileInfo infoDes(fileDes);
+            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+            if(setPictureFile_ != "" && setPictureFile_ != infoSrc.fileName()) {
+                picResMgr_.del(ProjectData::getInstance()->dbData_, setPictureFile_);
+            }
+            if(!infoDes.exists()) {
+                QFile::copy(szTmpName, fileDes);
+            }
+            setPictureFile_ = infoSrc.fileName();
+            picResMgr_.add(ProjectData::getInstance()->dbData_, setPictureFile_);
+            updatePropertyModel();
+        }
+    }break;
+    case EL_SHOW_SCALE:
+        showNoScale_ = value.toBool();
+        break;
+    case EL_TEXT1:
+        resetText_ = value.toString();
+        break;
+    case EL_TEXT2:
+        setText_ = value.toString();
         break;
     case EL_X:
         elementXPos = value.toInt();
@@ -264,40 +378,17 @@ void ElementSwitchButton::updateElementProperty(uint id, const QVariant &value)
     case EL_FONT:
         font_ = value.value<QFont>();
         break;
-    case EL_TEXT:
-        elementText = value.toString();
-        break;
     case EL_H_ALIGN:
         szHAlign_ = value.toString();
         break;
     case EL_V_ALIGN:
         szVAlign_ = value.toString();
         break;
-    case EL_FILE:
-    {
-        QString szTmpName = value.toString();
-        QFileInfo infoSrc(szTmpName);
-        if(infoSrc.exists()) {
-            QString picturePath = getProjectPath() + "/Pictures";
-            QDir dir(picturePath);
-            if(!dir.exists())
-                dir.mkpath(picturePath);
-            QString fileDes = picturePath + "/" + infoSrc.fileName();
-            QFileInfo infoDes(fileDes);
-            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-            if(filePicture_ != "" && filePicture_ != infoSrc.fileName()) {
-                picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
-            }
-            if(!infoDes.exists()) {
-                QFile::copy(szTmpName, fileDes);
-            }
-            filePicture_ = infoSrc.fileName();
-            picResMgr_.add(ProjectData::getInstance()->dbData_, filePicture_);
-            updatePropertyModel();
-        }
-    }break;
-    case EL_BACKGROUND:
-        backgroundColor_ = value.value<QColor>();
+    case EL_BACKGROUND1:
+        resetBackgroundColor_ = value.value<QColor>();
+        break;
+    case EL_BACKGROUND2:
+        setBackgroundColor_ = value.value<QColor>();
         break;
     case EL_TRANSPARENT_BACKGROUND:
         transparent_ = value.toBool();
@@ -327,24 +418,35 @@ void ElementSwitchButton::updateElementProperty(uint id, const QVariant &value)
 void ElementSwitchButton::updatePropertyModel()
 {
     idProperty->setValue(elementId);
+    tagSelectProperty_->setValue(szTagSelected_);
+    funcProperty->setValue(funcs_);
+    stateOnInitialProperty_->setValue(stateOnInitial_);
+    showContentProperty_->setValue(showContent_);
+
+    resetFileProperty_->setValue(resetPictureFile_);
+    setFileProperty_->setValue(setPictureFile_);
+    showNoScaleProperty_->setValue(showNoScale_);
+
+    resetTextProperty_->setValue(resetText_);
+    setTextProperty_->setValue(setText_);
+    fontProperty_->setValue(font_);
+    textColorProperty->setValue(textColor);
+    hAlignProperty_->setValue(szHAlign_);
+    vAlignProperty_->setValue(szVAlign_);
+
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
     zValueProperty->setValue(elementZValue);
     widthProperty_->setValue(elementWidth);
     heightProperty_->setValue(elementHeight);
-    showContentProperty_->setValue(showContent_);
-    elementTextProperty->setValue(elementText);
-    hAlignProperty_->setValue(szHAlign_);
-    vAlignProperty_->setValue(szVAlign_);
-    fileProperty->setValue(filePicture_);
-    backgroundColorProperty_->setValue(backgroundColor_);
+
+    resetBackgroundColorProperty_->setValue(resetBackgroundColor_);
+    setBackgroundColorProperty_->setValue(setBackgroundColor_);
     transparentProperty_->setValue(transparent_);
-    fontProperty_->setValue(font_);
-    textColorProperty->setValue(textColor);
     angleProperty->setValue(elemAngle);
     enableOnInitialProperty_->setValue(enableOnInitial_);
     showOnInitialProperty_->setValue(showOnInitial_);
-    funcProperty->setValue(funcs_);
+
 }
 
 void ElementSwitchButton::reloadPropertyList()
@@ -355,6 +457,48 @@ void ElementSwitchButton::reloadPropertyList()
     propList.insert(propList.end(), idProperty);
     // 标题
     propList.insert(propList.end(), titleProperty);
+    // 选择变量
+    propList.insert(propList.end(), tagSelectProperty_);
+    // 选择功能
+    propList.insert(propList.end(), funcProperty);
+    // 初始状态
+    propList.insert(propList.end(), stateOnInitialProperty_);
+    // 显示内容
+    propList.insert(propList.end(), showContentProperty_);
+
+
+    if(!bShowContentText_) { // 显示内容图片
+        // 复位图片
+        propList.insert(propList.end(), resetFileProperty_);
+        // 置位图片
+        propList.insert(propList.end(), setFileProperty_);
+        // 原尺寸显示
+        propList.insert(propList.end(), showNoScaleProperty_);
+    } else { // 显示内容文本
+        // 复位显示文本
+        propList.insert(propList.end(), resetTextProperty_);
+        // 置位显示文本
+        propList.insert(propList.end(), setTextProperty_);
+        // 字体
+        propList.insert(propList.end(), fontProperty_);
+        // 文本颜色
+        propList.insert(propList.end(), textColorProperty);
+        // 水平对齐
+        propList.insert(propList.end(), hAlignProperty_);
+        // 垂直对齐
+        propList.insert(propList.end(), vAlignProperty_);
+        // 关背景颜色
+        propList.insert(propList.end(), resetBackgroundColorProperty_);
+        // 开背景颜色
+        propList.insert(propList.end(), setBackgroundColorProperty_);
+    }
+
+    // 透明
+    propList.insert(propList.end(), transparentProperty_);
+    // 初始有效性
+    propList.insert(propList.end(), enableOnInitialProperty_);
+    // 初始可见性
+    propList.insert(propList.end(), showOnInitialProperty_);
     // 坐标 X
     propList.insert(propList.end(), xCoordProperty);
     //坐标 Y
@@ -365,41 +509,8 @@ void ElementSwitchButton::reloadPropertyList()
     propList.insert(propList.end(), widthProperty_);
     // 高度
     propList.insert(propList.end(), heightProperty_);
-    // 显示内容
-    propList.insert(propList.end(), showContentProperty_);
-
-    if(bShowContentText_) {
-        // 文本
-        propList.insert(propList.end(), elementTextProperty);
-        // 水平对齐
-        propList.insert(propList.end(), hAlignProperty_);
-        // 垂直对齐
-        propList.insert(propList.end(), vAlignProperty_);
-    }
-    // 图片
-    if(!bShowContentText_)
-        propList.insert(propList.end(), fileProperty);
-    // 按钮背景颜色
-    if(bShowContentText_)
-        propList.insert(propList.end(), backgroundColorProperty_);
-    // 透明
-    propList.insert(propList.end(), transparentProperty_);
-
-    if(bShowContentText_) {
-        // 字体
-        propList.insert(propList.end(), fontProperty_);
-        // 文本颜色
-        propList.insert(propList.end(), textColorProperty);
-    }
-
     // 旋转角度
     propList.insert(propList.end(), angleProperty);
-    // 初始有效性
-    propList.insert(propList.end(), enableOnInitialProperty_);
-    // 初始可见性
-    propList.insert(propList.end(), showOnInitialProperty_);
-    // 选择功能
-    propList.insert(propList.end(), funcProperty);
 }
 
 /**
@@ -464,19 +575,30 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
         painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(rect);
-    } else {
-        for(int i=0; i<borderWidth; i++) {
-            PubTool::DrawFrameRect(painter, rect, borderColor);
-            if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
-            else rect.adjust(1, 1, 0, 0);
-        }
-
-        PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
-        rect.adjust(1, 1, -1, -1);
-        rect.adjust(-1, -1, 0, 0);
-
+    } else { 
         if(bShowContentText_) { // 文本+背景
-            PubTool::FillFullRect(painter, rect, backgroundColor_);
+            for(int i=0; i<borderWidth; i++) {
+                PubTool::DrawFrameRect(painter, rect, borderColor);
+                if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
+                else rect.adjust(1, 1, 0, 0);
+            }
+
+            PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
+            rect.adjust(1, 1, -1, -1);
+            rect.adjust(-1, -1, 0, 0);
+
+            QString szElementText = QString();
+            QColor backgroundColor = QColor();
+
+            if(stateOnInitial_) {
+                szElementText = setText_;
+                backgroundColor = setBackgroundColor_;
+            } else {
+                szElementText = resetText_;
+                backgroundColor = resetBackgroundColor_;
+            }
+
+            PubTool::FillFullRect(painter, rect, backgroundColor);
             painter->setPen(textColor);
             painter->setBrush(Qt::NoBrush);
             painter->setFont(font_);
@@ -501,18 +623,32 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
 
             QRectF rect(elementRect.toRect());
             QRectF textRect = rect.normalized().adjusted(borderWidth, borderWidth, -borderWidth, -borderWidth);
-            painter->drawText(textRect, hFlags|vFlags, elementText);
+            painter->drawText(textRect, hFlags|vFlags, szElementText);
+        } else { // 图片
+            QString szPictureFile = QString();
+            if(stateOnInitial_) {
+                szPictureFile = setPictureFile_;
+            } else {
+                szPictureFile = resetPictureFile_;
+            }
 
-        } else { // 图片按钮
-            if(filePicture_ != QString()) {
-                QString picture = getProjectPath() + "/Pictures/" + filePicture_;
+            if(szPictureFile != QString()) {
+                QString picture = getProjectPath() + "/Pictures/" + szPictureFile;
                 if(QFile::exists(picture)) {
-                    QImage image(getProjectPath() + "/Pictures/" + filePicture_);
-                    QImage scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                    QImage image(getProjectPath() + "/Pictures/" + szPictureFile);
+                    QImage scaleImage;
+                    if(showNoScale_) {
+                        scaleImage = image;
+                    } else {
+                        scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                    }
                     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
                     painter->drawImage(elementRect, scaleImage);
                 }
             }
+
+            painter->setPen(QPen(Qt::gray, 1, Qt::DashDotLine));
+            painter->drawRect(elementRect);
         }
     }
 }
@@ -642,17 +778,26 @@ void ElementSwitchButton::writeAsXml(QXmlStreamWriter &writer)
     writer.writeStartElement("element");
     writer.writeAttribute("internalType", internalElementType);
     writer.writeAttribute("elementId", elementId);
+    writer.writeAttribute("tag", szTagSelected_);
+    writer.writeAttribute("stateOnInitial", stateOnInitial_?"true":"false");
+
+    writer.writeAttribute("resetPicture", resetPictureFile_);
+    writer.writeAttribute("setPicture", setPictureFile_);
+    writer.writeAttribute("showNoScale", showNoScale_?"true":"false");
+
+    writer.writeAttribute("resettext", resetText_);
+    writer.writeAttribute("settext", setText_);
+
     writer.writeAttribute("x", QString::number(x()));
     writer.writeAttribute("y", QString::number(y()));
     writer.writeAttribute("z", QString::number(zValue()));
     writer.writeAttribute("width", QString::number(elementWidth));
     writer.writeAttribute("height", QString::number(elementHeight));
     writer.writeAttribute("showContent", showContent_);
-    writer.writeAttribute("picture", filePicture_);
-    writer.writeAttribute("elementtext", elementText);
     writer.writeAttribute("halign", getHAlignString(szHAlign_));
     writer.writeAttribute("valign", getVAlignString(szVAlign_));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
+    writer.writeAttribute("resetBackgroundColor", resetBackgroundColor_.name());
+    writer.writeAttribute("setBackgroundColor", setBackgroundColor_.name());
     writer.writeAttribute("transparent", transparent_?"true":"false");
     writer.writeAttribute("font", font_.toString());
     writer.writeAttribute("textcolor", textColor.name());
@@ -673,6 +818,42 @@ void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
         if(iLastIndex_ < index) {
             iLastIndex_ = index;
         }
+    }
+
+    if (attributes.hasAttribute("tag")) {
+        szTagSelected_ = attributes.value("tag").toString();
+    }
+
+    if (attributes.hasAttribute("stateOnInitial")) {
+        QString value = attributes.value("stateOnInitial").toString();
+        stateOnInitial_ = false;
+        if(value == "true") {
+            stateOnInitial_ = true;
+        }
+    }
+
+    if (attributes.hasAttribute("resetPicture")) {
+        resetPictureFile_ = attributes.value("resetPicture").toString();
+    }
+
+    if (attributes.hasAttribute("setPicture")) {
+        setPictureFile_ = attributes.value("setPicture").toString();
+    }
+
+    if (attributes.hasAttribute("showNoScale")) {
+        QString value = attributes.value("showNoScale").toString();
+        showNoScale_ = false;
+        if(value == "true") {
+            showNoScale_ = true;
+        }
+    }
+
+    if (attributes.hasAttribute("resettext")) {
+        resetText_ = attributes.value("resettext").toString();
+    }
+
+    if (attributes.hasAttribute("settext")) {
+        setText_ = attributes.value("settext").toString();
     }
 
     if (attributes.hasAttribute("x")) {
@@ -703,14 +884,6 @@ void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
         }
     }
 
-    if (attributes.hasAttribute("picture")) {
-        filePicture_ = attributes.value("picture").toString();
-    }
-
-    if (attributes.hasAttribute("elementtext")) {
-        elementText = attributes.value("elementtext").toString();
-    }
-
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
         this->setHAlignString(align, szHAlign_);
@@ -721,8 +894,12 @@ void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
         this->setVAlignString(align, szVAlign_);
     }
 
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
+    if (attributes.hasAttribute("resetBackgroundColor")) {
+        resetBackgroundColor_ = QColor(attributes.value("resetBackgroundColor").toString());
+    }
+
+    if (attributes.hasAttribute("setBackgroundColor")) {
+        setBackgroundColor_ = QColor(attributes.value("setBackgroundColor").toString());
     }
 
     if (attributes.hasAttribute("transparent")) {
@@ -780,17 +957,23 @@ void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
 void ElementSwitchButton::writeData(QDataStream &out)
 {
     out << this->elementId
+        << this->szTagSelected_
+        << this->stateOnInitial_
+        << this->resetPictureFile_
+        << this->setPictureFile_
+        << this->showNoScale_
+        << this->resetText_
+        << this->setText_
         << this->x()
         << this->y()
         << this->zValue()
         << this->elementWidth
         << this->elementHeight
         << this->showContent_
-        << this->filePicture_
-        << this->elementText
         << this->getHAlignString(szHAlign_)
         << this->getVAlignString(szVAlign_)
-        << this->backgroundColor_
+        << this->resetBackgroundColor_
+        << this->setBackgroundColor_
         << this->transparent_
         << this->font_.toString()
         << this->textColor
@@ -804,17 +987,24 @@ void ElementSwitchButton::writeData(QDataStream &out)
 void ElementSwitchButton::readData(QDataStream &in)
 {
     QString id;
+    QString szTagSelected;
+    bool stateOnInitial;
+    QString resetPic;
+    QString setPic;
+    bool showNoScale;
+    QString szResetText;
+    QString szSetText;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
     QString showContent;
-    QString pic;
     QString text;
     QString hAlign;
     QString vAlign;
-    QColor backgroundColor;
+    QColor resetBackgroundColor;
+    QColor setBackgroundColor;
     bool transparent;
     QString font;
     QColor textColor;
@@ -825,17 +1015,24 @@ void ElementSwitchButton::readData(QDataStream &in)
     QStringList funcs;
 
     in >> id
+       >> szTagSelected
+       >> stateOnInitial
+       >> resetPic
+       >> setPic
+       >> showNoScale
+       >> szResetText
+       >> szSetText
        >> xpos
        >> ypos
        >> zvalue
        >> width
        >> height
        >> showContent
-       >> pic
        >> text
        >> hAlign
        >> vAlign
-       >> backgroundColor
+       >> resetBackgroundColor
+       >> setBackgroundColor
        >> transparent
        >> font
        >> textColor
@@ -846,6 +1043,13 @@ void ElementSwitchButton::readData(QDataStream &in)
        >> funcs;
 
     this->setElementId(id);
+    this->szTagSelected_ = szTagSelected;
+    this->stateOnInitial_ = stateOnInitial;
+    this->resetPictureFile_ = resetPic;
+    this->setPictureFile_ = setPic;
+    this->showNoScale_ = showNoScale;
+    this->resetText_ = szResetText;
+    this->setText_ = szSetText;
     int index = getIndexFromIDString(id);
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
@@ -856,11 +1060,10 @@ void ElementSwitchButton::readData(QDataStream &in)
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->showContent_ = showContent;
-    this->filePicture_ = pic;
-    this->elementText = text;
     this->setHAlignString(hAlign, szHAlign_);
     this->setVAlignString(vAlign, szVAlign_);
-    this->backgroundColor_ = backgroundColor;
+    this->resetBackgroundColor_ = resetBackgroundColor;
+    this->setBackgroundColor_ = setBackgroundColor;
     this->transparent_ = transparent;
     this->textColor = textColor;
     this->fontSize = fontSize;
@@ -878,7 +1081,7 @@ void ElementSwitchButton::getSupportEvents(QStringList &listValue)
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists()) {
-        QMessageBox::critical(0, tr("提示"), tr("事件配置列表文件不存在！"));
+        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
         return;
     }
     if(!fileCfg.open(QFile::ReadOnly)) {
@@ -887,7 +1090,7 @@ void ElementSwitchButton::getSupportEvents(QStringList &listValue)
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, 0)) {
+    if(!xmlFuncSupportList.load(buffer, nullptr)) {
         return;
     }
 
@@ -918,17 +1121,21 @@ void ElementSwitchButton::getSupportEvents(QStringList &listValue)
 QDataStream &operator<<(QDataStream &out,const ElementSwitchButton &ele)
 {
     out << ele.elementId
+        << ele.szTagSelected_
+        << ele.stateOnInitial_
+        << ele.showNoScale_
+        << ele.resetText_
+        << ele.setText_
         << ele.x()
         << ele.y()
         << ele.zValue()
         << ele.elementWidth
         << ele.elementHeight
         << ele.showContent_
-        << ele.filePicture_
-        << ele.elementText
         << ele.getHAlignString(ele.szHAlign_)
         << ele.getVAlignString(ele.szVAlign_)
-        << ele.backgroundColor_
+        << ele.resetBackgroundColor_
+        << ele.setBackgroundColor_
         << ele.transparent_
         << ele.font_
         << ele.textColor
@@ -943,14 +1150,19 @@ QDataStream &operator<<(QDataStream &out,const ElementSwitchButton &ele)
 QDataStream &operator>>(QDataStream &in,ElementSwitchButton &ele)
 {
     QString id;
+    QString szTagSelected;
+    bool stateOnInitial;
+    bool showNoScale;
+    QString szResetText;
+    QString szSetText;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
     int width;
     int height;
     QString showContent;
-    QString pic;
-    QColor backgroundColor;
+    QColor resetBackgroundColor;
+    QColor setBackgroundColor;
     bool transparent;
     QString text;
     QString hAlign;
@@ -964,17 +1176,22 @@ QDataStream &operator>>(QDataStream &in,ElementSwitchButton &ele)
     QStringList funcs;
 
     in >> id
+       >> szTagSelected
+       >> stateOnInitial
+       >> showNoScale
+       >> szResetText
+       >> szSetText
        >> xpos
        >> ypos
        >> zvalue
        >> width
        >> height
        >> showContent
-       >> pic
        >> text
        >> hAlign
        >> vAlign
-       >> backgroundColor
+       >> resetBackgroundColor
+       >> setBackgroundColor
        >> transparent
        >> font
        >> textColor
@@ -989,17 +1206,21 @@ QDataStream &operator>>(QDataStream &in,ElementSwitchButton &ele)
     if(ele.iLastIndex_ < index) {
         ele.iLastIndex_ = index;
     }
+    ele.szTagSelected_ = szTagSelected;
+    ele.stateOnInitial_ = stateOnInitial;
+    ele.showNoScale_ = showNoScale;
+    ele.resetText_ = szResetText;
+    ele.setText_ = szSetText;
     ele.setElementXPos(xpos);
     ele.setElementYPos(ypos);
     ele.setElementZValue(zvalue);
     ele.setElementWidth(width);
     ele.setElementHeight(height);
     ele.showContent_ = showContent;
-    ele.filePicture_ = pic;
-    ele.elementText = text;
     ele.setHAlignString(hAlign, ele.szHAlign_);
     ele.setVAlignString(vAlign, ele.szVAlign_);
-    ele.backgroundColor_ = backgroundColor;
+    ele.resetBackgroundColor_ = resetBackgroundColor;
+    ele.setBackgroundColor_ = setBackgroundColor;
     ele.transparent_ = transparent;
     ele.font_ = font;
     ele.textColor = textColor;

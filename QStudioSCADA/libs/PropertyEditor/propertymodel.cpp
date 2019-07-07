@@ -3,8 +3,8 @@
 PropertyModel::PropertyModel(QObject *parent) :
     QAbstractTableModel(parent)
 {
-    headlineProperty.append(trUtf8("属性"));
-    headlineValue.append(trUtf8("值"));
+    headlineProperty.append(tr("属性"));
+    headlineValue.append(tr("值"));
 }
 
 void PropertyModel::addProperty(Property *prop) {

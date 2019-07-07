@@ -25,7 +25,7 @@ void EllipsePlugin::initialize()
  */
 QString EllipsePlugin::getPluginTypeName()
 {
-    return trUtf8("基本图元");
+    return tr("基本图元");
 }
 
 
@@ -36,7 +36,7 @@ QString EllipsePlugin::getPluginTypeName()
  */
 QString EllipsePlugin::getPluginName()
 {
-    return trUtf8("椭圆形");
+    return tr("椭圆形");
 }
 
 
@@ -60,7 +60,7 @@ QIcon EllipsePlugin::getElementIcon()
  */
 QString EllipsePlugin::getElementName()
 {
-    return trUtf8("椭圆形");
+    return tr("椭圆形");
 }
 
 /**

@@ -25,7 +25,7 @@ void InputEditPlugin::initialize()
  */
 QString InputEditPlugin::getPluginTypeName()
 {
-    return trUtf8("基本控件");
+    return tr("基本控件");
 }
 
 
@@ -36,7 +36,7 @@ QString InputEditPlugin::getPluginTypeName()
  */
 QString InputEditPlugin::getPluginName()
 {
-    return trUtf8("输入编辑框");
+    return tr("输入编辑框");
 }
 
 
@@ -60,7 +60,7 @@ QIcon InputEditPlugin::getElementIcon()
  */
 QString InputEditPlugin::getElementName()
 {
-    return trUtf8("输入编辑框");
+    return tr("输入编辑框");
 }
 
 /**

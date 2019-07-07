@@ -25,7 +25,7 @@ void ELinePlugin::initialize()
  */
 QString ELinePlugin::getPluginTypeName()
 {
-    return trUtf8("基本图元");
+    return tr("基本图元");
 }
 
 
@@ -36,7 +36,7 @@ QString ELinePlugin::getPluginTypeName()
  */
 QString ELinePlugin::getPluginName()
 {
-    return trUtf8("直线");
+    return tr("直线");
 }
 
 
@@ -60,7 +60,7 @@ QIcon ELinePlugin::getElementIcon()
  */
 QString ELinePlugin::getElementName()
 {
-    return trUtf8("直线");
+    return tr("直线");
 }
 
 /**

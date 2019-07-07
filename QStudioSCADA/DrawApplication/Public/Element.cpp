@@ -134,7 +134,7 @@ void Element::init()
     signBackgroundColor = QColor(Qt::black);
     borderWidth = 2;
     borderColor = QColor(Qt::black);
-    elementText = trUtf8("文本");
+    elementText = tr("文本");
     fontSize = 10;
 
     elemAngle = 0;

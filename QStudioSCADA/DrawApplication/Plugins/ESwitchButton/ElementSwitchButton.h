@@ -56,17 +56,34 @@ private:
     static int iLastIndex_;
     QRectF elementRect;
     QStringList funcs_;
+    // 关联的变量
+    QString szTagSelected_;
+    // 初始状态
+    bool stateOnInitial_;
     // 显示内容
     QString showContent_;
     bool bShowContentText_;
-    // 图片名
-    QString filePicture_;
+
+    // 复位图片
+    QString resetPictureFile_;
+    // 置位图片
+    QString setPictureFile_;
+    // 原尺寸显示
+    bool showNoScale_;
+
+    // 复位显示文本
+    QString resetText_;
+    // 置位显示文本
+    QString setText_;
+
     // 水平对齐
     QString szHAlign_;
     // 垂直对齐
     QString szVAlign_;
-    // 按钮背景颜色
-    QColor backgroundColor_;
+    // 复位按钮背景颜色
+    QColor resetBackgroundColor_;
+    // 置位按钮背景颜色
+    QColor setBackgroundColor_;
     // 透明背景颜色
     bool transparent_;
     // 字体
@@ -80,6 +97,45 @@ private:
     TextProperty *idProperty;
     // 标题
     EmptyProperty *titleProperty;
+    // 选择变量
+    ListProperty *tagSelectProperty_;
+    // 选择功能
+    FunctionProperty *funcProperty;
+    // 初始状态
+    BoolProperty *stateOnInitialProperty_;
+    // 显示内容
+    ListProperty *showContentProperty_;
+
+    // 选择复位图片
+    FileProperty *resetFileProperty_;
+    // 选择置位图片
+    FileProperty *setFileProperty_;
+    // 原尺寸显示
+    BoolProperty *showNoScaleProperty_;
+
+    // 复位显示文本
+    TextProperty *resetTextProperty_;
+    // 置位显示文本
+    TextProperty *setTextProperty_;
+    // 字体
+    FontProperty *fontProperty_;
+    // 文本颜色
+    ColorProperty *textColorProperty;
+    // 水平对齐
+    ListProperty *hAlignProperty_;
+    // 垂直对齐
+    ListProperty *vAlignProperty_;
+
+    // 复位按钮背景颜色
+    ColorProperty *resetBackgroundColorProperty_;
+    // 置位按钮背景颜色
+    ColorProperty *setBackgroundColorProperty_;
+    // 透明
+    BoolProperty *transparentProperty_;
+    // 初始有效性
+    BoolProperty *enableOnInitialProperty_;
+    // 初始可见性
+    BoolProperty *showOnInitialProperty_;
     // X坐标
     IntegerProperty *xCoordProperty;
     // Y坐标
@@ -90,32 +146,8 @@ private:
     IntegerProperty *widthProperty_;
     // 高度
     IntegerProperty *heightProperty_;
-    // 显示内容
-    ListProperty *showContentProperty_;
-    // 选择图片
-    FileProperty *fileProperty;
-    // 显示文本
-    TextProperty *elementTextProperty;
-    // 水平对齐
-    ListProperty *hAlignProperty_;
-    // 垂直对齐
-    ListProperty *vAlignProperty_;
-    // 按钮背景颜色
-    ColorProperty *backgroundColorProperty_;
-    // 透明
-    BoolProperty *transparentProperty_;
-    // 字体
-    FontProperty *fontProperty_;
-    // 文本颜色
-    ColorProperty *textColorProperty;
     // 旋转角度
     IntegerProperty *angleProperty;
-    // 初始有效性
-    BoolProperty *enableOnInitialProperty_;
-    // 初始可见性
-    BoolProperty *showOnInitialProperty_;
-    // 选择功能
-    FunctionProperty *funcProperty;
 };
 
 #endif // SWITCHBUTTONITEM_H

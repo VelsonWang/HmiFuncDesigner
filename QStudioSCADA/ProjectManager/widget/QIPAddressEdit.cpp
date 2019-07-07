@@ -1,6 +1,7 @@
 #include "QIPAddressEdit.h"
 #include "ui_QIPAddressEdit.h"
 #include <QRegExp>
+#include <QIntValidator>
 
 QIPAddressEdit::QIPAddressEdit(QWidget *parent) :
     QWidget(parent),

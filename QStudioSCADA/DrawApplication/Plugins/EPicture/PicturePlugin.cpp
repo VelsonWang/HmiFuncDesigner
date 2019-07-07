@@ -25,7 +25,7 @@ void PicturePlugin::initialize()
  */
 QString PicturePlugin::getPluginTypeName()
 {
-    return trUtf8("基本控件");
+    return tr("基本控件");
 }
 
 
@@ -36,7 +36,7 @@ QString PicturePlugin::getPluginTypeName()
  */
 QString PicturePlugin::getPluginName()
 {
-    return trUtf8("图片");
+    return tr("图片");
 }
 
 
@@ -60,7 +60,7 @@ QIcon PicturePlugin::getElementIcon()
  */
 QString PicturePlugin::getElementName()
 {
-    return trUtf8("图片");
+    return tr("图片");
 }
 
 /**

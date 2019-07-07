@@ -8,7 +8,7 @@ ElementInputEdit::ElementInputEdit(const QString &szProjPath, const QString &szP
 {
     elementId = QString(tr("InputEdit_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
-    internalElementType = trUtf8("InputEdit");
+    internalElementType = tr("InputEdit");
     elementIcon = QIcon(":/images/InputEdit.png");
     szHAlign_ = tr("左对齐");
     szVAlign_ = tr("居中对齐");
@@ -24,7 +24,7 @@ ElementInputEdit::ElementInputEdit(const QString &szProjPath, const QString &szP
     init();
     elementWidth = 80;
     elementHeight = 26;
-    elementText = trUtf8("输入编辑框");
+    elementText = tr("输入编辑框");
     createPropertyList();
     updatePropertyModel();
 }
@@ -63,13 +63,13 @@ QPainterPath ElementInputEdit::shape() const {
 
 void ElementInputEdit::createPropertyList() {
     // ID
-    idProperty = new TextProperty(trUtf8("ID"));
+    idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
     propList.insert(propList.end(),idProperty);
 
     // 标题
-    titleProperty = new EmptyProperty(trUtf8("标题"));
+    titleProperty = new EmptyProperty(tr("标题"));
     propList.insert(propList.end(),titleProperty);
 
     // 允许编辑输入
@@ -88,38 +88,8 @@ void ElementInputEdit::createPropertyList() {
     tagSelectProperty_->setList(varList);
     propList.insert(propList.end(), tagSelectProperty_);
 
-    // X坐标
-    xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0,5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(),xCoordProperty);
-
-    // Y坐标
-    yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0,5000);
-    propList.insert(propList.end(),yCoordProperty);
-
-    // Z坐标
-    zValueProperty = new IntegerProperty(trUtf8("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000,1000);
-    propList.insert(propList.end(),zValueProperty);
-
-    // 宽度
-    widthProperty = new IntegerProperty(trUtf8("宽度"));
-    widthProperty->setId(EL_WIDTH);
-    widthProperty->setSettings(0,5000);
-    propList.insert(propList.end(),widthProperty);
-
-    // 高度
-    heightProperty = new IntegerProperty(trUtf8("高度"));
-    heightProperty->setId(EL_HEIGHT);
-    heightProperty->setSettings(0,5000);
-    propList.insert(propList.end(),heightProperty);
-
     // 文本
-    elementTextProperty = new TextProperty(trUtf8("文本"));
+    elementTextProperty = new TextProperty(tr("文本"));
     elementTextProperty->setId(EL_TEXT);
     propList.insert(propList.end(),elementTextProperty);
 
@@ -160,7 +130,7 @@ void ElementInputEdit::createPropertyList() {
     propList.insert(propList.end(), fontProperty_);
 
     // 文本颜色
-    textColorProperty = new ColorProperty(trUtf8("文本颜色"));
+    textColorProperty = new ColorProperty(tr("文本颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
     propList.insert(propList.end(),textColorProperty);
 
@@ -201,8 +171,38 @@ void ElementInputEdit::createPropertyList() {
     showOnInitialProperty_->setValue(showOnInitial_);
     propList.insert(propList.end(), showOnInitialProperty_);
 
+    // X坐标
+    xCoordProperty = new IntegerProperty(tr("坐标 X"));
+    xCoordProperty->setSettings(0,5000);
+    xCoordProperty->setId(EL_X);
+    propList.insert(propList.end(),xCoordProperty);
+
+    // Y坐标
+    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
+    yCoordProperty->setId(EL_Y);
+    yCoordProperty->setSettings(0,5000);
+    propList.insert(propList.end(),yCoordProperty);
+
+    // Z坐标
+    zValueProperty = new IntegerProperty(tr("Z 值"));
+    zValueProperty->setId(EL_Z_VALUE);
+    zValueProperty->setSettings(-1000,1000);
+    propList.insert(propList.end(),zValueProperty);
+
+    // 宽度
+    widthProperty = new IntegerProperty(tr("宽度"));
+    widthProperty->setId(EL_WIDTH);
+    widthProperty->setSettings(0,5000);
+    propList.insert(propList.end(),widthProperty);
+
+    // 高度
+    heightProperty = new IntegerProperty(tr("高度"));
+    heightProperty->setId(EL_HEIGHT);
+    heightProperty->setSettings(0,5000);
+    propList.insert(propList.end(),heightProperty);
+
     // 旋转角度
-    angleProperty = new IntegerProperty(trUtf8("角度"));
+    angleProperty = new IntegerProperty(tr("角度"));
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0, 360);
     propList.insert(propList.end(), angleProperty);

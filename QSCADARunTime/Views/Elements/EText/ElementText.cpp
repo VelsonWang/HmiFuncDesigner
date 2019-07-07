@@ -5,8 +5,8 @@
 
 ElementText::ElementText() :
     bHide_(false) {
-    elementId = trUtf8("Text");
-    internalElementType = trUtf8("Text");
+    elementId = tr("Text");
+    internalElementType = tr("Text");
     init();
 }
 

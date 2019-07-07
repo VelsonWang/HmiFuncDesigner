@@ -3,8 +3,8 @@
 #include <QDebug>
 
 ElementEllipse::ElementEllipse() {
-    elementId = trUtf8("Ellipse");
-    internalElementType = trUtf8("Ellipse");
+    elementId = tr("Ellipse");
+    internalElementType = tr("Ellipse");
     fillColor_ = Qt::white;
     isFill_ = true;
     borderWidth_ = 1;

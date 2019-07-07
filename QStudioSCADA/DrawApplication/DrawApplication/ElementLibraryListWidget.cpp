@@ -51,9 +51,9 @@ void ElementLibraryListWidget::startDrag() {
 void ElementLibraryListWidget::loadLibrary() {
 
     const QString &filename = QFileDialog::getOpenFileName(this,
-                                                           trUtf8("Open"),
+                                                           tr("Open"),
                                                            ".",
-                                                           trUtf8("graph library (*.drwlib)"));
+                                                           tr("graph library (*.drwlib)"));
     QFileInfo fi(filename);
 
     if (filename.isEmpty()) {

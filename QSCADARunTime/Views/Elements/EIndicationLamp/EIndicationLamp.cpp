@@ -26,7 +26,7 @@ void EIndicationLamp::initialize()
  */
 QString EIndicationLamp::getElementName()
 {
-    return trUtf8("指示灯");
+    return tr("指示灯");
 }
 
 /**

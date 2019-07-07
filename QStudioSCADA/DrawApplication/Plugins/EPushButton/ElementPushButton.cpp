@@ -19,7 +19,7 @@ ElementPushButton::ElementPushButton(const QString &szProjPath, const QString &s
 {
     elementId = QString(tr("PushButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
-    internalElementType = trUtf8("PushButton");
+    internalElementType = tr("PushButton");
     elementIcon = QIcon(":/images/PushButton.png");
     showContent_ = tr("文本");
     bShowContentText_ = true;
@@ -33,7 +33,7 @@ ElementPushButton::ElementPushButton(const QString &szProjPath, const QString &s
     signBackgroundColor = QColor(Qt::black);
     borderWidth = 4;
     borderColor = QColor(112, 112, 112);
-    elementText = trUtf8("弹出按钮");
+    elementText = tr("弹出按钮");
     enableOnInitial_ = true;
     showOnInitial_ = true;
     transparent_ = false;
@@ -88,40 +88,21 @@ QPainterPath ElementPushButton::shape() const
 
 void ElementPushButton::createPropertyList()
 {
-    idProperty = new TextProperty(trUtf8("ID"));
+    idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
     propList.insert(propList.end(), idProperty);
 
-    titleProperty = new EmptyProperty(trUtf8("标题"));
+    titleProperty = new EmptyProperty(tr("标题"));
     propList.insert(propList.end(), titleProperty);
 
-    xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
-
-    yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
-
-    zValueProperty = new IntegerProperty(trUtf8("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
-
-    // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
-
-    // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    // 选择功能
+    QStringList listEvents;
+    getSupportEvents(listEvents);
+    funcProperty = new FunctionProperty(tr("功能操作"));
+    funcProperty->setId(EL_FUNCTION);
+    funcProperty->setSupportEvents(listEvents);
+    propList.insert(propList.end(), funcProperty);
 
     // 显示内容
     showContentProperty_ = new ListProperty(tr("显示内容"));
@@ -133,7 +114,7 @@ void ElementPushButton::createPropertyList()
     propList.insert(propList.end(), showContentProperty_);
 
     // 文本
-    elementTextProperty = new TextProperty(trUtf8("文本"));
+    elementTextProperty = new TextProperty(tr("文本"));
     elementTextProperty->setId(EL_TEXT);
     elementTextProperty->setValue(elementText);
     if(bShowContentText_)
@@ -158,7 +139,7 @@ void ElementPushButton::createPropertyList()
         propList.insert(propList.end(), vAlignProperty_);
 
     // 图片
-    fileProperty = new FileProperty(trUtf8("选择图片"));
+    fileProperty = new FileProperty(tr("选择图片"));
     fileProperty->setId(EL_FILE);
     fileProperty->setValue(filePicture_);
     if(!bShowContentText_)
@@ -187,13 +168,13 @@ void ElementPushButton::createPropertyList()
         propList.insert(propList.end(), fontProperty_);
 
     // 文本颜色
-    textColorProperty = new ColorProperty(trUtf8("颜色"));
+    textColorProperty = new ColorProperty(tr("颜色"));
     textColorProperty->setId(EL_FONT_COLOR);
     if(bShowContentText_)
         propList.insert(propList.end(), textColorProperty);
 
     // 旋转角度
-    angleProperty = new IntegerProperty(trUtf8("角度"));
+    angleProperty = new IntegerProperty(tr("角度"));
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0, 360);
     propList.insert(propList.end(), angleProperty);
@@ -214,13 +195,33 @@ void ElementPushButton::createPropertyList()
     showOnInitialProperty_->setValue(showOnInitial_);
     propList.insert(propList.end(), showOnInitialProperty_);
 
-    // 选择功能
-    QStringList listEvents;
-    getSupportEvents(listEvents);
-    funcProperty = new FunctionProperty(trUtf8("功能操作"));
-    funcProperty->setId(EL_FUNCTION);
-    funcProperty->setSupportEvents(listEvents);
-    propList.insert(propList.end(), funcProperty);
+    xCoordProperty = new IntegerProperty(tr("坐标 X"));
+    xCoordProperty->setSettings(0, 5000);
+    xCoordProperty->setId(EL_X);
+    propList.insert(propList.end(), xCoordProperty);
+
+    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
+    yCoordProperty->setId(EL_Y);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
+
+    zValueProperty = new IntegerProperty(tr("Z 值"));
+    zValueProperty->setId(EL_Z_VALUE);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
+
+    // 宽度
+    widthProperty_ = new IntegerProperty(tr("宽度"));
+    widthProperty_->setId(EL_WIDTH);
+    widthProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty_);
+
+    // 高度
+    heightProperty_ = new IntegerProperty(tr("高度"));
+    heightProperty_->setId(EL_HEIGHT);
+    heightProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty_);
+
 }
 
 void ElementPushButton::updateElementProperty(uint id, const QVariant &value)
@@ -355,16 +356,8 @@ void ElementPushButton::reloadPropertyList()
     propList.insert(propList.end(), idProperty);
     // 标题
     propList.insert(propList.end(), titleProperty);
-    // 坐标 X
-    propList.insert(propList.end(), xCoordProperty);
-    //坐标 Y
-    propList.insert(propList.end(), yCoordProperty);
-    // Z 值
-    propList.insert(propList.end(), zValueProperty);
-    // 宽度
-    propList.insert(propList.end(), widthProperty_);
-    // 高度
-    propList.insert(propList.end(), heightProperty_);
+    // 选择功能
+    propList.insert(propList.end(), funcProperty);
     // 显示内容
     propList.insert(propList.end(), showContentProperty_);
 
@@ -398,8 +391,17 @@ void ElementPushButton::reloadPropertyList()
     propList.insert(propList.end(), enableOnInitialProperty_);
     // 初始可见性
     propList.insert(propList.end(), showOnInitialProperty_);
-    // 选择功能
-    propList.insert(propList.end(), funcProperty);
+    // 坐标 X
+    propList.insert(propList.end(), xCoordProperty);
+    //坐标 Y
+    propList.insert(propList.end(), yCoordProperty);
+    // Z 值
+    propList.insert(propList.end(), zValueProperty);
+    // 宽度
+    propList.insert(propList.end(), widthProperty_);
+    // 高度
+    propList.insert(propList.end(), heightProperty_);
+
 }
 
 /**

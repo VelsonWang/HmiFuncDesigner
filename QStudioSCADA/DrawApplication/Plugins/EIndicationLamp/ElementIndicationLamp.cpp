@@ -12,7 +12,7 @@ ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath, const QS
 {
     elementId = QString(tr("IndicationLamp_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
-    internalElementType = trUtf8("IndicationLamp");
+    internalElementType = tr("IndicationLamp");
     elementIcon = QIcon(":/images/IndicationLamp.png");
     resetFileIndicationLamp_ = "";
     setFileIndicationLamp_ = "";
@@ -74,12 +74,12 @@ QPainterPath ElementIndicationLamp::shape() const
 
 void ElementIndicationLamp::createPropertyList()
 {
-    idProperty = new TextProperty(trUtf8("ID"));
+    idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
     propList.insert(propList.end(), idProperty);
 
-    titleProperty = new EmptyProperty(trUtf8("标题"));
+    titleProperty = new EmptyProperty(tr("标题"));
     propList.insert(propList.end(), titleProperty);
 
     // 选择变量
@@ -99,41 +99,14 @@ void ElementIndicationLamp::createPropertyList()
     propList.insert(propList.end(), stateOnInitialProperty_);
 
     // 复位图片
-    resetFileProperty_ = new FileProperty(trUtf8("选择复位图片"));
+    resetFileProperty_ = new FileProperty(tr("选择复位图片"));
     resetFileProperty_->setId(EL_PICTURE1);
     propList.insert(propList.end(), resetFileProperty_);
 
     // 置位图片
-    setFileProperty_ = new FileProperty(trUtf8("选择置位图片"));
+    setFileProperty_ = new FileProperty(tr("选择置位图片"));
     setFileProperty_->setId(EL_PICTURE2);
     propList.insert(propList.end(), setFileProperty_);
-
-    xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
-
-    yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
-
-    zValueProperty = new IntegerProperty(trUtf8("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
-
-    // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
-
-    // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
 
     // 原尺寸显示
     showNoScaleProperty_ = new BoolProperty(tr("原尺寸显示"));
@@ -150,6 +123,34 @@ void ElementIndicationLamp::createPropertyList()
     showOnInitialProperty_->setFalseText(tr("不显示"));
     showOnInitialProperty_->setValue(showOnInitial_);
     propList.insert(propList.end(), showOnInitialProperty_);
+
+    xCoordProperty = new IntegerProperty(tr("坐标 X"));
+    xCoordProperty->setSettings(0, 5000);
+    xCoordProperty->setId(EL_X);
+    propList.insert(propList.end(), xCoordProperty);
+
+    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
+    yCoordProperty->setId(EL_Y);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
+
+    zValueProperty = new IntegerProperty(tr("Z 值"));
+    zValueProperty->setId(EL_Z_VALUE);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
+
+    // 宽度
+    widthProperty_ = new IntegerProperty(tr("宽度"));
+    widthProperty_->setId(EL_WIDTH);
+    widthProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty_);
+
+    // 高度
+    heightProperty_ = new IntegerProperty(tr("高度"));
+    heightProperty_->setId(EL_HEIGHT);
+    heightProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty_);
+
 }
 
 void ElementIndicationLamp::updateElementProperty(uint id, const QVariant &value)

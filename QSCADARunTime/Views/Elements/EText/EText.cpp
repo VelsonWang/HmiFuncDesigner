@@ -26,7 +26,7 @@ void EText::initialize()
  */
 QString EText::getElementName()
 {
-    return trUtf8("文本");
+    return tr("文本");
 }
 
 /**

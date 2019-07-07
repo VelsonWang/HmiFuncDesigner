@@ -6,7 +6,7 @@
 
 ElementInputEdit::ElementInputEdit() {
     elementId = QString(tr("InputEdit"));
-    internalElementType = trUtf8("InputEdit");
+    internalElementType = tr("InputEdit");
     szHAlign_ = tr("左对齐");
     szVAlign_ = tr("居中对齐");
     backgroundColor_ = Qt::white;
@@ -19,7 +19,7 @@ ElementInputEdit::ElementInputEdit() {
     showOnInitial_ = true;
     elementWidth = 80;
     elementHeight = 26;
-    elementText = trUtf8("输入编辑框");
+    elementText = tr("输入编辑框");
     inputLineEdit_ = nullptr;
     bInEditMode_ = false;
 }

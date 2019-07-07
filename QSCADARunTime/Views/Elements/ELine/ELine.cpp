@@ -26,7 +26,7 @@ void ELine::initialize()
  */
 QString ELine::getElementName()
 {
-    return trUtf8("直线");
+    return tr("直线");
 }
 
 /**

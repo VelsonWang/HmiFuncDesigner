@@ -26,7 +26,7 @@ void EInputEdit::initialize()
  */
 QString EInputEdit::getElementName()
 {
-    return trUtf8("输入编辑框");
+    return tr("输入编辑框");
 }
 
 /**

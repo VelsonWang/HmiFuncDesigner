@@ -5,8 +5,8 @@
 #include <QDebug>
 
 ElementPicture::ElementPicture() {
-    elementId = trUtf8("图片");
-    internalElementType = trUtf8("Picture");
+    elementId = tr("图片");
+    internalElementType = tr("Picture");
     filePicture_ = QString();
     showNoScale_ = false;
     borderWidth_ = 1;

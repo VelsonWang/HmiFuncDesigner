@@ -25,7 +25,7 @@ void PushButtonPlugin::initialize()
  */
 QString PushButtonPlugin::getPluginTypeName()
 {
-    return trUtf8("基本控件");
+    return tr("基本控件");
 }
 
 
@@ -36,7 +36,7 @@ QString PushButtonPlugin::getPluginTypeName()
  */
 QString PushButtonPlugin::getPluginName()
 {
-    return trUtf8("弹出按钮");
+    return tr("弹出按钮");
 }
 
 
@@ -60,7 +60,7 @@ QIcon PushButtonPlugin::getElementIcon()
  */
 QString PushButtonPlugin::getElementName()
 {
-    return trUtf8("弹出按钮");
+    return tr("弹出按钮");
 }
 
 /**

@@ -59,7 +59,7 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
     graphPageWidth = sceneRect().width();
     graphPageHeight = sceneRect().height();
     graphPagePriority.clear();
-    graphPagePriority.append(trUtf8("主要的"));
+    graphPagePriority.append(tr("主要的"));
     graphPageBackground = QColor(Qt::white);
 
     m_undoStack = new QUndoStack(this);
@@ -188,55 +188,55 @@ void GraphPage::fillGraphPagePropertyModel() {
 }
 
 void GraphPage::createPropertyList() {
-    idProperty = new TextProperty(trUtf8("ID"));
+    idProperty = new TextProperty(tr("ID"));
     idProperty->setId(GRAPHPAGE_ID);
     idProperty->setReadOnly(true);
     propList.insert(propList.end(),idProperty);
 
-    titleProperty = new EmptyProperty(trUtf8("基本属性"));
+    titleProperty = new EmptyProperty(tr("基本属性"));
     propList.insert(propList.end(),titleProperty);
 
-    backgroundProperty = new ColorProperty(trUtf8("背景颜色"));
+    backgroundProperty = new ColorProperty(tr("背景颜色"));
     backgroundProperty->setId(GRAPHPAGE_BACKGROUND);
     propList.insert(propList.end(),backgroundProperty);
 
-    widthProperty = new IntegerProperty(trUtf8("宽度"));
+    widthProperty = new IntegerProperty(tr("宽度"));
     widthProperty->setId(GRAPHPAGE_WIDTH);
     widthProperty->setSettings(0, 5000);
     propList.insert(propList.end(),widthProperty);
 
-    heightProperty = new IntegerProperty(trUtf8("高度"));
+    heightProperty = new IntegerProperty(tr("高度"));
     heightProperty->setId(GRAPHPAGE_HEIGHT);
     heightProperty->setSettings(0, 5000);
     propList.insert(propList.end(), heightProperty);
 
     QStringList listEvents;
     getSupportEvents(listEvents);
-    funcProperty = new FunctionProperty(trUtf8("功能操作"));
+    funcProperty = new FunctionProperty(tr("功能操作"));
     funcProperty->setId(EL_FUNCTION);
     funcProperty->setSupportEvents(listEvents);
     propList.insert(propList.end(), funcProperty);
 }
 
 void GraphPage::createContextMenuActions() {
-    inGroupAction = new QAction(QIcon(":/images/group.png"), trUtf8("分组"), &contextServiceMenu);
+    inGroupAction = new QAction(QIcon(":/images/group.png"), tr("分组"), &contextServiceMenu);
     connect(inGroupAction, SIGNAL(triggered()), SLOT(slotGroupElements()));
 
-    outGroupAction = new QAction(QIcon(":/images/ungroup.png"), trUtf8("分类"), &contextServiceMenu);
+    outGroupAction = new QAction(QIcon(":/images/ungroup.png"), tr("分类"), &contextServiceMenu);
 
-    alignTopAction = new QAction(QIcon(":/images/align-top.png"), trUtf8("顶部对齐"), &contextServiceMenu);
+    alignTopAction = new QAction(QIcon(":/images/align-top.png"), tr("顶部对齐"), &contextServiceMenu);
     alignTopAction->setData(Qt::AlignTop);
     connect(alignTopAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
-    alignDownAction = new QAction(QIcon(":/images/align-bottom.png"), trUtf8("底部对齐"), &contextServiceMenu);
+    alignDownAction = new QAction(QIcon(":/images/align-bottom.png"), tr("底部对齐"), &contextServiceMenu);
     alignDownAction->setData(Qt::AlignBottom);
     connect(alignDownAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
-    alignRightAction = new QAction(QIcon(":/images/align-right.png"), trUtf8("右对齐"), &contextServiceMenu);
+    alignRightAction = new QAction(QIcon(":/images/align-right.png"), tr("右对齐"), &contextServiceMenu);
     alignRightAction->setData(Qt::AlignRight);
     connect(alignRightAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
-    alignLeftAction = new QAction(QIcon(":/images/align-left.png"), trUtf8("左对齐"), &contextServiceMenu);
+    alignLeftAction = new QAction(QIcon(":/images/align-left.png"), tr("左对齐"), &contextServiceMenu);
     alignLeftAction->setData(Qt::AlignLeft);
     connect(alignLeftAction, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
@@ -246,32 +246,32 @@ void GraphPage::createContextMenuActions() {
     vUniformDistributeAction_ = new QAction(QIcon(":/images/align_vsame.png"), tr("垂直均匀分布"), &contextServiceMenu);
     connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
 
-    upLayerAction_ = new QAction(QIcon(), trUtf8("上移一层"), &contextServiceMenu);
+    upLayerAction_ = new QAction(QIcon(), tr("上移一层"), &contextServiceMenu);
     connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
 
-    downLayerAction_ = new QAction(QIcon(), trUtf8("下移一层"), &contextServiceMenu);
+    downLayerAction_ = new QAction(QIcon(), tr("下移一层"), &contextServiceMenu);
     connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
 
-    saveAsLibraryAction = new QAction(QIcon(":/images/library.png"), trUtf8("保存为库"),&contextMenu);
+    saveAsLibraryAction = new QAction(QIcon(":/images/library.png"), tr("保存为库"),&contextMenu);
     connect(saveAsLibraryAction, SIGNAL(triggered()), SLOT(slotSaveAsLibrary()));
 
-    actionDelete = new QAction(QIcon(":/images/delete.png"), trUtf8("删除"),&contextMenu);
+    actionDelete = new QAction(QIcon(":/images/delete.png"), tr("删除"),&contextMenu);
     actionDelete->setShortcut(QKeySequence::Delete);
     connect(actionDelete, SIGNAL(triggered()), SLOT(slotEditDelete()));
 
-    actionCopy = new QAction(QIcon(":/images/editcopy.png"),trUtf8("拷贝"),&contextMenu);
+    actionCopy = new QAction(QIcon(":/images/editcopy.png"),tr("拷贝"),&contextMenu);
     actionCopy->setShortcut(QKeySequence::Copy);
     connect(actionCopy,SIGNAL(triggered()),SLOT(slotEditCopy()));
 
-    actionPaste = new QAction(QIcon(":/images/editpaste.png"),trUtf8("粘贴"),&contextMenu);
+    actionPaste = new QAction(QIcon(":/images/editpaste.png"),tr("粘贴"),&contextMenu);
     actionPaste->setShortcut(QKeySequence::Paste);
     connect(actionPaste,SIGNAL(triggered()),SLOT(slotEditPaste()));
 
-    actionSelectAll = new QAction(QIcon(), trUtf8("全选"),&contextMenu);
+    actionSelectAll = new QAction(QIcon(), tr("全选"),&contextMenu);
     actionSelectAll->setShortcut(QKeySequence::SelectAll);
     connect(actionSelectAll, SIGNAL(triggered()), SLOT(slotSelectAll()));
 
-    contextServiceMenu.setTitle(trUtf8("工具"));
+    contextServiceMenu.setTitle(tr("工具"));
     contextServiceMenu.setIcon(QIcon(":/images/settings.png"));
     contextServiceMenu.addSeparator();
     contextServiceMenu.addAction(alignTopAction);
@@ -894,8 +894,8 @@ void GraphPage::saveAsBinary(const QString &filename) {
 
     if (!file.open(QIODevice::WriteOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("文件无法保存"),
+                                 tr("错误"),
+                                 tr("文件无法保存"),
                                  QMessageBox::Ok);
         return;
     }
@@ -914,8 +914,8 @@ void GraphPage::loadAsBinary(const QString &filename) {
 
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("文件无法保存"),
+                                 tr("错误"),
+                                 tr("文件无法保存"),
                                  QMessageBox::Ok);
         return;
     }
@@ -937,8 +937,8 @@ void GraphPage::saveAsXML(const QString &filename) {
 
     if (!file.open(QIODevice::WriteOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("文件无法保存"),
+                                 tr("错误"),
+                                 tr("文件无法保存"),
                                  QMessageBox::Ok);
         return;
     }
@@ -957,8 +957,8 @@ void GraphPage::loadAsXML(const QString &filename) {
 
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("无法打开文件"),
+                                 tr("错误"),
+                                 tr("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }
@@ -1070,8 +1070,8 @@ void GraphPage::loadLibrary(QByteArray &data) {
 
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("无法打开文件"),
+                                 tr("错误"),
+                                 tr("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }
@@ -1126,14 +1126,14 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
 
 void GraphPage::slotSaveAsLibrary() {
     QString filename = QFileDialog::getSaveFileName(0,
-                                                    trUtf8("Save graph library"),
+                                                    tr("Save graph library"),
                                                     QString("."),
-                                                    trUtf8("Library (*.drwlib)"));
+                                                    tr("Library (*.drwlib)"));
 
     QFile file(filename);
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(0,trUtf8("错误"),trUtf8("无法打开文件"),
+        QMessageBox::information(0,tr("错误"),tr("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }

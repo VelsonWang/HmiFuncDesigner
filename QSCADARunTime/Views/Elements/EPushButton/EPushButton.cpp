@@ -26,7 +26,7 @@ void EPushButton::initialize()
  */
 QString EPushButton::getElementName()
 {
-    return trUtf8("弹出按钮");
+    return tr("弹出按钮");
 }
 
 /**

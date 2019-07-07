@@ -25,7 +25,7 @@ void SwitchButtonPlugin::initialize()
  */
 QString SwitchButtonPlugin::getPluginTypeName()
 {
-    return trUtf8("基本控件");
+    return tr("基本控件");
 }
 
 
@@ -36,7 +36,7 @@ QString SwitchButtonPlugin::getPluginTypeName()
  */
 QString SwitchButtonPlugin::getPluginName()
 {
-    return trUtf8("切换按钮");
+    return tr("切换按钮");
 }
 
 
@@ -60,7 +60,7 @@ QIcon SwitchButtonPlugin::getElementIcon()
  */
 QString SwitchButtonPlugin::getElementName()
 {
-    return trUtf8("切换按钮");
+    return tr("切换按钮");
 }
 
 /**

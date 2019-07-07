@@ -26,7 +26,7 @@ void ERect::initialize()
  */
 QString ERect::getElementName()
 {
-    return trUtf8("矩形");
+    return tr("矩形");
 }
 
 /**

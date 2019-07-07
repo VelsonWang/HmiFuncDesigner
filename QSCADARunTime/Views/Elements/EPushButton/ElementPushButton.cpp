@@ -8,7 +8,7 @@
 #include <QDebug>
 
 ElementPushButton::ElementPushButton() {
-    internalElementType = trUtf8("PushButton");
+    internalElementType = tr("PushButton");
     showContent_ = tr("文本");
     bShowContentText_ = true;
     szHAlign_ = tr("居中对齐");
@@ -21,7 +21,7 @@ ElementPushButton::ElementPushButton() {
     signBackgroundColor = QColor(Qt::black);
     borderWidth = 4;
     borderColor = QColor(112, 112, 112);
-    elementText = trUtf8("弹出按钮");
+    elementText = tr("弹出按钮");
     enableOnInitial_ = true;
     showOnInitial_ = true;
     isSelected_ = false;

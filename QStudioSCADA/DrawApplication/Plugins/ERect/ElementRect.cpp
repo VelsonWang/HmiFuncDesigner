@@ -9,7 +9,7 @@ ElementRect::ElementRect(const QString &szProjPath, const QString &szProjName) :
 {
     elementId = QString(tr("Rect_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
-    internalElementType = trUtf8("Rect");
+    internalElementType = tr("Rect");
     elementIcon = QIcon(":/images/rectitem.png");
     fillColor_ = Qt::white;
     isFill_ = true;
@@ -56,40 +56,13 @@ QPainterPath ElementRect::shape() const {
 }
 
 void ElementRect::createPropertyList() {
-    idProperty = new TextProperty(trUtf8("ID"));
+    idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
     propList.insert(propList.end(), idProperty);
 
-    titleProperty = new EmptyProperty(trUtf8("标题"));
+    titleProperty = new EmptyProperty(tr("标题"));
     propList.insert(propList.end(), titleProperty);
-
-    xCoordProperty = new IntegerProperty(trUtf8("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
-
-    yCoordProperty = new IntegerProperty(trUtf8("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
-
-    zValueProperty = new IntegerProperty(trUtf8("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
-
-    // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
-
-    // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
 
     // 选择变量
     tagSelectProperty_ = new ListProperty(tr("选择变量"));
@@ -140,8 +113,35 @@ void ElementRect::createPropertyList() {
     showOnInitialProperty_->setValue(showOnInitial_);
     propList.insert(propList.end(), showOnInitialProperty_);
 
+    xCoordProperty = new IntegerProperty(tr("坐标 X"));
+    xCoordProperty->setSettings(0, 5000);
+    xCoordProperty->setId(EL_X);
+    propList.insert(propList.end(), xCoordProperty);
+
+    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
+    yCoordProperty->setId(EL_Y);
+    yCoordProperty->setSettings(0, 5000);
+    propList.insert(propList.end(), yCoordProperty);
+
+    zValueProperty = new IntegerProperty(tr("Z 值"));
+    zValueProperty->setId(EL_Z_VALUE);
+    zValueProperty->setSettings(-1000, 1000);
+    propList.insert(propList.end(), zValueProperty);
+
+    // 宽度
+    widthProperty_ = new IntegerProperty(tr("宽度"));
+    widthProperty_->setId(EL_WIDTH);
+    widthProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), widthProperty_);
+
+    // 高度
+    heightProperty_ = new IntegerProperty(tr("高度"));
+    heightProperty_->setId(EL_HEIGHT);
+    heightProperty_->setSettings(0, 5000);
+    propList.insert(propList.end(), heightProperty_);
+
     // 旋转角度
-    angleProperty = new IntegerProperty(trUtf8("角度"));
+    angleProperty = new IntegerProperty(tr("角度"));
     angleProperty->setId(EL_ANGLE);
     angleProperty->setSettings(0,360);
     propList.insert(propList.end(),angleProperty);

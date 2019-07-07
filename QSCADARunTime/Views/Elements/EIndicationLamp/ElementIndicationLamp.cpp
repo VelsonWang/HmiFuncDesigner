@@ -7,8 +7,8 @@
 
 ElementIndicationLamp::ElementIndicationLamp()
 {
-    elementId = trUtf8("指示灯");
-    internalElementType = trUtf8("IndicationLamp");
+    elementId = tr("指示灯");
+    internalElementType = tr("IndicationLamp");
     resetFileIndicationLamp_ = "";
     setFileIndicationLamp_ = "";
     stateOnInitial_ = false;

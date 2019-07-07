@@ -8,11 +8,11 @@ ObjectsTreeView::ObjectsTreeView(QWidget *parent)
     setColumnCount(2);
     QStringList headers;
 
-    headers << trUtf8("对象") << trUtf8("类型");
+    headers << tr("对象") << tr("类型");
     setHeaderLabels(headers);
 
     setWindowFlags(Qt::Tool);
-    setWindowTitle(trUtf8("对象树"));
+    setWindowTitle(tr("对象树"));
 
     connect(this, SIGNAL(itemClicked(QTreeWidgetItem*,int)), SLOT(slotItemChanged(QTreeWidgetItem*,int)));
 }

@@ -148,8 +148,8 @@ bool MainWindow::createDocument(GraphPage *graphPage,
                                 const QString &filename) {
     if (isGraphPageOpen(filename)) {
         QMessageBox::information(this,
-                                 trUtf8("打开文件错误"),
-                                 trUtf8("文件已打开"),
+                                 tr("打开文件错误"),
+                                 tr("文件已打开"),
                                  QMessageBox::Ok);
         delete graphPage;
         return false;

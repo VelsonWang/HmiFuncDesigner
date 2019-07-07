@@ -26,7 +26,7 @@ void EPicture::initialize()
  */
 QString EPicture::getElementName()
 {
-    return trUtf8("图片");
+    return tr("图片");
 }
 
 /**

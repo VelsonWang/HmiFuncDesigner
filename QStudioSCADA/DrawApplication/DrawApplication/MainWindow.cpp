@@ -36,7 +36,7 @@ MainWindow::MainWindow(const QString &szProjPath,
     slotUpdateActions();
 
     setWindowState(Qt::WindowMaximized);
-    setWindowTitle(trUtf8("画面编辑器"));
+    setWindowTitle(tr("画面编辑器"));
     setWindowIcon(QIcon(":/images/application.png"));
 
     connect(graphPageTabWidget_, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
@@ -70,7 +70,7 @@ void MainWindow::initView()
     this->ElemetsLayout->addWidget(elementWidget_);
 
     propertyModel_ = new PropertyModel();
-    propertyView_ = new PropertyTableView(propertyModel_, true);
+    propertyView_ = new PropertyTableView(propertyModel_, false);
     this->PropertyLayout->addWidget(propertyView_);
 
     objTree_ = new ObjectsTreeView();
@@ -81,73 +81,73 @@ void MainWindow::initView()
 void MainWindow::createActions()
 {
 
-    actionShowGraphObj_ = new QAction(trUtf8("图形元素"), this);
+    actionShowGraphObj_ = new QAction(tr("图形元素"), this);
     actionShowGraphObj_->setCheckable(true);
     actionShowGraphObj_->setChecked(true);
     connect(actionShowGraphObj_, SIGNAL(triggered(bool)), SLOT(slotShowGraphObj(bool)));
 
-    actionShowTreeObj_ = new QAction(trUtf8("对象树"), this);
+    actionShowTreeObj_ = new QAction(tr("对象树"), this);
     actionShowTreeObj_->setCheckable(true);
     actionShowTreeObj_->setChecked(false);
     connect(actionShowTreeObj_, SIGNAL(triggered(bool)), SLOT(slotShowTreeObj(bool)));
 
-    actionShowPropEditor_ = new QAction(trUtf8("属性编辑器"), this);
+    actionShowPropEditor_ = new QAction(tr("属性编辑器"), this);
     actionShowPropEditor_->setCheckable(true);
     actionShowPropEditor_->setChecked(true);
     connect(actionShowPropEditor_, SIGNAL(triggered(bool)), SLOT(slotShowPropEditor(bool)));
 
-    actionNew = new QAction(QIcon(":/images/filenew.png"), trUtf8("新建"), this);
+    actionNew = new QAction(QIcon(":/images/filenew.png"), tr("新建"), this);
     actionNew->setShortcut(QString("Ctrl+N"));
     connect(actionNew, SIGNAL(triggered()), SLOT(slotEditNew()));
 
-    actionOpen = new QAction(QIcon(":/images/fileopen.png"), trUtf8("打开"), this);
+    actionOpen = new QAction(QIcon(":/images/fileopen.png"), tr("打开"), this);
     actionOpen->setShortcut(QString("Ctrl+O"));
     connect(actionOpen, SIGNAL(triggered()), SLOT(slotEditOpen()));
 
-    actionSaveGraphPage_ = new QAction(QIcon(":/images/saveproject.png"), trUtf8("保存"), this);
+    actionSaveGraphPage_ = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), this);
     actionSaveGraphPage_->setShortcut(QKeySequence::Save);
     connect(actionSaveGraphPage_, SIGNAL(triggered()), SLOT(slotSaveGraphPage()));
 
-    actionCloseGraphPage_ = new QAction(trUtf8("关闭"), this);
+    actionCloseGraphPage_ = new QAction(tr("关闭"), this);
     connect(actionCloseGraphPage_, SIGNAL(triggered()), SLOT(slotCloseGraphPage()));
 
-    actionCloseAll_ = new QAction(trUtf8("关闭所有"), this);
+    actionCloseAll_ = new QAction(tr("关闭所有"), this);
     connect(actionCloseAll_, SIGNAL(triggered()), SLOT(slotCloseAll()));
 
-    actionExit_ = new QAction(trUtf8("退出"),this);
+    actionExit_ = new QAction(tr("退出"),this);
     actionExit_->setShortcut(QKeySequence::Quit);
     connect(actionExit_,SIGNAL(triggered()),SLOT(slotExit()));
 
-    actionShowGrid = new QAction(QIcon(":/images/showgrid.png"), trUtf8("显示栅格"), this);
+    actionShowGrid = new QAction(QIcon(":/images/showgrid.png"), tr("显示栅格"), this);
     actionShowGrid->setCheckable(true);
     actionShowGrid->setChecked(false);
     connect(actionShowGrid, SIGNAL(triggered(bool)), SLOT(slotShowGrid(bool)));
 
-    actionShowLinear_ = new QAction(QIcon(":/images/ruler.png"), trUtf8("显示线条"), this);
+    actionShowLinear_ = new QAction(QIcon(":/images/ruler.png"), tr("显示线条"), this);
     actionShowLinear_->setCheckable(true);
     actionShowLinear_->setChecked(false);
     connect(actionShowLinear_, SIGNAL(triggered(bool)), SLOT(slotShowLinear(bool)));
 
-    actionZoomIn_ = new QAction(QIcon(":/images/zoom-in.png"), trUtf8("放大"), this);
+    actionZoomIn_ = new QAction(QIcon(":/images/zoom-in.png"), tr("放大"), this);
     connect(actionZoomIn_, SIGNAL(triggered()), SLOT(slotZoomIn()));
 
-    actionZoomOut_ = new QAction(QIcon(":/images/zoom-out.png"), trUtf8("缩小"), this);
+    actionZoomOut_ = new QAction(QIcon(":/images/zoom-out.png"), tr("缩小"), this);
     connect(actionZoomOut_, SIGNAL(triggered()), SLOT(slotZoomOut()));
 
     actionUndo_ = undoGroup_->createUndoAction(this);
     actionUndo_->setIcon(QIcon(":/images/undo.png"));
-    actionUndo_->setText(trUtf8("撤销"));
+    actionUndo_->setText(tr("撤销"));
     actionUndo_->setShortcut(QKeySequence::Undo);
 
     actionRedo_ = undoGroup_->createRedoAction(this);
-    actionRedo_->setText(trUtf8("重做"));
+    actionRedo_->setText(tr("重做"));
     actionRedo_->setIcon(QIcon(":/images/redo.png"));
     actionRedo_->setShortcut(QKeySequence::Redo);
 }
 
 void MainWindow::createMenus()
 {
-    QMenu *filemenu = new QMenu(trUtf8("文件"), this);
+    QMenu *filemenu = new QMenu(tr("文件"), this);
 #if 0  // for test we need this
     filemenu->addAction(actionNew);
     filemenu->addAction(actionOpen);
@@ -159,7 +159,7 @@ void MainWindow::createMenus()
     filemenu->addSeparator();
     filemenu->addAction(actionExit_);
 
-    QMenu *windowMenu = new QMenu(trUtf8("窗口"), this);
+    QMenu *windowMenu = new QMenu(tr("窗口"), this);
     windowMenu->addAction(actionShowGraphObj_);
     windowMenu->addAction(actionShowTreeObj_);
     windowMenu->addAction(actionShowPropEditor_);
@@ -555,9 +555,9 @@ void MainWindow::slotCloseGraphPage()
 void MainWindow::slotEditOpen()
 {
     const QString &filename = QFileDialog::getOpenFileName(this,
-                                                           trUtf8("Open"),
+                                                           tr("Open"),
                                                            ".",
-                                                           trUtf8("GraphPage (*.drw)"));
+                                                           tr("GraphPage (*.drw)"));
     if (filename.isEmpty())
         return;
 #if 0
@@ -610,8 +610,8 @@ bool MainWindow::createDocument(GraphPage *graphPage,
 {
     if (isGraphPageOpen(filename)) {
         QMessageBox::information(this,
-                                 trUtf8("打开文件错误"),
-                                 trUtf8("文件已打开"),
+                                 tr("打开文件错误"),
+                                 tr("文件已打开"),
                                  QMessageBox::Ok);
         delete graphPage;
         delete view;
@@ -642,9 +642,9 @@ bool MainWindow::createDocument(GraphPage *graphPage,
 QString MainWindow::getFileName()
 {
     QString filename = QFileDialog::getSaveFileName(this,
-                                                    trUtf8("Save as"),
+                                                    tr("Save as"),
                                                     QString("./%1").arg(currentGraphPage_->getGraphPageId()),
-                                                    trUtf8("GraphPage(*.drw)"));
+                                                    tr("GraphPage(*.drw)"));
     return filename;
 }
 
@@ -719,8 +719,8 @@ void MainWindow::slotExit()
 int MainWindow::exitResponse()
 {
     int ret = QMessageBox::information(this,
-                                       trUtf8("退出程序"),
-                                       trUtf8("文件已修改。是否保存?"),
+                                       tr("退出程序"),
+                                       tr("文件已修改。是否保存?"),
                                        QMessageBox::Yes | QMessageBox::No);
     return ret;
 }

@@ -2,8 +2,8 @@
 #include <QtDebug>
 
 ElementLine::ElementLine() {
-    elementId = trUtf8("Line");
-    internalElementType = trUtf8("Line");
+    elementId = tr("Line");
+    internalElementType = tr("Line");
     init();
 }
 

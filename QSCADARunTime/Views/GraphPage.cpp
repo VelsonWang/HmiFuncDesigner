@@ -63,15 +63,15 @@ void registerCreateObjectFunc()
     mapIDFuncData_.clear();
     mapIDStringFuncData_.clear();
 
-    REGISTER_CREATEOR(QObject::trUtf8("箭头"), ArrowItemType, "Arrow", EArrow);
-    REGISTER_CREATEOR(QObject::trUtf8("直线"), LineItemType, "Line", ELine);
-    REGISTER_CREATEOR(QObject::trUtf8("椭圆形"), EllipseItemType, "Ellipse", EEllipse);
-    REGISTER_CREATEOR(QObject::trUtf8("矩形"), RectItemType, "Rect", ERect);
-    REGISTER_CREATEOR(QObject::trUtf8("文本"), TextItemType, "Text", EText);
-    REGISTER_CREATEOR(QObject::trUtf8("图片"), PictureItemType, "Picture", EPicture);
-    REGISTER_CREATEOR(QObject::trUtf8("输入编辑框"), InputEditItemType, "InputEdit", EInputEdit);
-    REGISTER_CREATEOR(QObject::trUtf8("弹出按钮"), PushButtonItemType, "PushButton", EPushButton);
-    REGISTER_CREATEOR(QObject::trUtf8("指示灯"), IndicationLampItemType, "IndicationLamp", EIndicationLamp);
+    REGISTER_CREATEOR(QObject::tr("箭头"), ArrowItemType, "Arrow", EArrow);
+    REGISTER_CREATEOR(QObject::tr("直线"), LineItemType, "Line", ELine);
+    REGISTER_CREATEOR(QObject::tr("椭圆形"), EllipseItemType, "Ellipse", EEllipse);
+    REGISTER_CREATEOR(QObject::tr("矩形"), RectItemType, "Rect", ERect);
+    REGISTER_CREATEOR(QObject::tr("文本"), TextItemType, "Text", EText);
+    REGISTER_CREATEOR(QObject::tr("图片"), PictureItemType, "Picture", EPicture);
+    REGISTER_CREATEOR(QObject::tr("输入编辑框"), InputEditItemType, "InputEdit", EInputEdit);
+    REGISTER_CREATEOR(QObject::tr("弹出按钮"), PushButtonItemType, "PushButton", EPushButton);
+    REGISTER_CREATEOR(QObject::tr("指示灯"), IndicationLampItemType, "IndicationLamp", EIndicationLamp);
 
 }
 
@@ -91,7 +91,7 @@ GraphPage::GraphPage(const QRectF &rect, QWidget *parent)
     graphPageWidth = width();
     graphPageHeight = height();
     graphPagePriority.clear();
-    graphPagePriority.append(trUtf8("主要的"));
+    graphPagePriority.append(tr("主要的"));
     graphPageBackground = QColor(Qt::white);
 
     connect(&refreshTmr_, SIGNAL(timeout()), this, SLOT(refreshGraphPage()));
@@ -305,8 +305,8 @@ void GraphPage::loadAsBinary(const QString &filename) {
 
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("文件无法保存"),
+                                 tr("错误"),
+                                 tr("文件无法保存"),
                                  QMessageBox::Ok);
         return;
     }
@@ -326,8 +326,8 @@ void GraphPage::loadAsXML(const QString &filename) {
 
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("无法打开文件"),
+                                 tr("错误"),
+                                 tr("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }
@@ -426,8 +426,8 @@ void GraphPage::loadLibrary(QByteArray &data) {
 
     if (!file.open(QIODevice::ReadOnly)) {
         QMessageBox::information(0,
-                                 trUtf8("错误"),
-                                 trUtf8("无法打开文件"),
+                                 tr("错误"),
+                                 tr("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }

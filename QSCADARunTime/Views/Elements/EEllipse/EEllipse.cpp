@@ -26,7 +26,7 @@ void EEllipse::initialize()
  */
 QString EEllipse::getElementName()
 {
-    return trUtf8("椭圆形");
+    return tr("椭圆形");
 }
 
 /**

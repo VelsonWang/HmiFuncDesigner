@@ -62,6 +62,10 @@ enum {
     EL_STATE_ON_INITIAL = 38,
     EL_PICTURE1 = 39,
     EL_PICTURE2 = 40,
+    EL_TEXT1 = 41,
+    EL_TEXT2 = 42,
+    EL_BACKGROUND1 = 43,
+    EL_BACKGROUND2 = 44,
 
     EL_PROPERTY_EMPTY = 255
 };
