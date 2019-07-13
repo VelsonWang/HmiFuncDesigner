@@ -19,7 +19,8 @@ INCLUDEPATH += \
     $$PWD/Elements/EInputEdit \
     $$PWD/Elements/EPushButton \
     $$PWD/SoftKeyboard \
-    $$PWD/EIndicationLamp
+    $$PWD/Elements/EIndicationLamp \
+    $$PWD/Elements/ESwitchButton
 
 SOURCES += \
     $$PWD/GraphPage.cpp \
@@ -50,7 +51,9 @@ SOURCES += \
     $$PWD/Elements/EPushButton/ElementPushButton.cpp \
     $$PWD/Elements/EPushButton/EPushButton.cpp \
     $$PWD/Elements/EIndicationLamp/ElementIndicationLamp.cpp \
-    $$PWD/Elements/EIndicationLamp/EIndicationLamp.cpp
+    $$PWD/Elements/EIndicationLamp/EIndicationLamp.cpp \
+    $$PWD/Elements/ESwitchButton/ElementSwitchButton.cpp \
+    $$PWD/Elements/ESwitchButton/ESwitchButton.cpp
 
 HEADERS += \
     $$PWD/GraphPage.h \
@@ -84,7 +87,9 @@ HEADERS += \
     $$PWD/Elements/EPushButton/ElementPushButton.h \
     $$PWD/Elements/EPushButton/EPushButton.h \
     $$PWD/Elements/EIndicationLamp/ElementIndicationLamp.h \
-    $$PWD/Elements/EIndicationLamp/EIndicationLamp.h
+    $$PWD/Elements/EIndicationLamp/EIndicationLamp.h \
+    $$PWD/Elements/ESwitchButton/ElementSwitchButton.h \
+    $$PWD/Elements/ESwitchButton/ESwitchButton.h
 
 FORMS += \
     $$PWD/SoftKeyboard/InputMethodAlphabet.ui \

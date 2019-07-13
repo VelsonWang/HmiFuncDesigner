@@ -38,7 +38,7 @@ GraphPage *GraphPageManager::getGraphPageById(const QString &id) const {
         }
     }
 
-    return 0;
+    return nullptr;
 }
 
 int GraphPageManager::getIndexByGraphPage(GraphPage *graphPage) {

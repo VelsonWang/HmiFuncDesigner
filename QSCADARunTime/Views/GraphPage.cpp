@@ -17,6 +17,7 @@
 #include "EInputEdit/EInputEdit.h"
 #include "EPushButton/EPushButton.h"
 #include "EIndicationLamp/EIndicationLamp.h"
+#include "ESwitchButton/ESwitchButton.h"
 
 
 template<template<typename T> class S, typename T>
@@ -72,7 +73,7 @@ void registerCreateObjectFunc()
     REGISTER_CREATEOR(QObject::tr("输入编辑框"), InputEditItemType, "InputEdit", EInputEdit);
     REGISTER_CREATEOR(QObject::tr("弹出按钮"), PushButtonItemType, "PushButton", EPushButton);
     REGISTER_CREATEOR(QObject::tr("指示灯"), IndicationLampItemType, "IndicationLamp", EIndicationLamp);
-
+    REGISTER_CREATEOR(QObject::tr("切换按钮"), SwitchButtonItemType, "SwitchButton", ESwitchButton);
 }
 
 GraphPage::GraphPage(const QRectF &rect, QWidget *parent)
@@ -226,7 +227,7 @@ QStringList GraphPage::getSelectedFunctions() {
 }
 
 void GraphPage::createItems(const QString &typeId, QPointF position) {
-    Element *last = 0;
+    Element *last = nullptr;
 
     CreateObjFunc func = mapNameFuncData_[typeId];
     IDrawGraphPage *pEleObj = dynamic_cast<IDrawGraphPage *>(func());

@@ -18,6 +18,7 @@ const int PushButtonItemType = QGraphicsItem::UserType + 40;
 const int InputEditItemType = QGraphicsItem::UserType + 41;
 const int PictureItemType = QGraphicsItem::UserType + 42;
 const int IndicationLampItemType = QGraphicsItem::UserType + 43;
+const int SwitchButtonItemType = QGraphicsItem::UserType + 44;
 
 enum {
     EL_X = 0, //coord X
