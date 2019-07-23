@@ -86,6 +86,8 @@ public:
 
     // 设置所属画面大小
     void setGraphPageSize(int width, int height);
+    // 限制矩形区域
+    void RestrictedRectangularRegion();
 
 protected:
     QString elementId;

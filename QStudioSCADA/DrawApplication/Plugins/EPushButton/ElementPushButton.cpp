@@ -424,8 +424,8 @@ void ElementPushButton::updatePropertyTableView()
 
 void ElementPushButton::setClickPosition(QPointF position) {
     prepareGeometryChange();
-    elementXPos = position.x();
-    elementYPos = position.y();
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     setX(elementXPos);
     setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
@@ -460,7 +460,9 @@ void ElementPushButton::paint(QPainter *painter,
 
 void ElementPushButton::drawPushButton(QPainter *painter)
 {
-    QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+    QRect rect(static_cast<int>(elementRect.x()),
+               static_cast<int>(elementRect.y()), static_cast<int>(elementRect.width()),
+               static_cast<int>(elementRect.height()));
 
     if(transparent_) {
         painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
@@ -510,7 +512,9 @@ void ElementPushButton::drawPushButton(QPainter *painter)
                 QString picture = getProjectPath() + "/Pictures/" + filePicture_;
                 if(QFile::exists(picture)) {
                     QImage image(getProjectPath() + "/Pictures/" + filePicture_);
-                    QImage scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                    QImage scaleImage = image.scaled(static_cast<int>(elementRect.width()),
+                                                     static_cast<int>(elementRect.height()),
+                                                     Qt::IgnoreAspectRatio);
                     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
                     painter->drawImage(elementRect, scaleImage);
                 }
@@ -528,15 +532,15 @@ void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         switch (rd) {
         case RdBottomRight:
             elementRect.setBottomRight(mousePoint);
-            elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
-            elementHeight = qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y());
+            elementWidth = static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x()));
+            elementHeight = static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y()));
             break;
         case RdTopLeft:
             elementRect.setTopLeft(mousePoint);
-            setElementXPos(mapToScene(elementRect.topLeft()).x());
-            setElementYPos(mapToScene(elementRect.topLeft()).y());
-            setElementWidth(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x()));
-            setElementHeight(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y()));
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
             updateBoundingElement();
             break;
         case RdNone:
@@ -548,21 +552,8 @@ void ElementPushButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-        QPointF pos = scenePos();
-
-        if(pos.x() < 0) {
-            this->setX(0);
-        }
-        if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
-            this->setX(iGraphPageWidth_ - getElementWidth());
-        }
-
-        if(pos.y() < 0) {
-            this->setY(0);
-        }
-        if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
-            this->setY(iGraphPageHeight_ - getElementHeight());
-        }
+        // 限制矩形区域
+        RestrictedRectangularRegion();
     }
 }
 
@@ -602,8 +593,8 @@ void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
     updatePropertyModel();
 
     if (oldPos != pos()) {
@@ -852,9 +843,9 @@ void ElementPushButton::readData(QDataStream &in)
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->showContent_ = showContent;
@@ -880,7 +871,7 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists()) {
-        QMessageBox::critical(0, tr("提示"), tr("事件配置列表文件不存在！"));
+        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
         return;
     }
     if(!fileCfg.open(QFile::ReadOnly)) {
@@ -889,7 +880,7 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, 0)) {
+    if(!xmlFuncSupportList.load(buffer, nullptr)) {
         return;
     }
 
@@ -991,9 +982,9 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele)
     if(ele.iLastIndex_ < index) {
         ele.iLastIndex_ = index;
     }
-    ele.setElementXPos(xpos);
-    ele.setElementYPos(ypos);
-    ele.setElementZValue(zvalue);
+    ele.setElementXPos(static_cast<int>(xpos));
+    ele.setElementYPos(static_cast<int>(ypos));
+    ele.setElementZValue(static_cast<int>(zvalue));
     ele.setElementWidth(width);
     ele.setElementHeight(height);
     ele.showContent_ = showContent;

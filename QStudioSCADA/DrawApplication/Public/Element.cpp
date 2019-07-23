@@ -1,5 +1,5 @@
 ﻿#include "Element.h"
-#include <QtDebug>
+#include <QDebug>
 
 
 Element::Element(const QString &szProjPath, const QString &szProjName) :
@@ -302,3 +302,32 @@ void Element::setGraphPageSize(int width, int height)
     this->iGraphPageWidth_ = width;
     this->iGraphPageHeight_ = height;
 }
+
+
+/**
+ * @brief Element::RestrictedRectangularRegion
+ * @details 限制矩形区域
+ */
+void Element::RestrictedRectangularRegion()
+{
+    QPointF pos = scenePos();
+
+    if(pos.x() < 0) {
+        this->setX(0);
+    }
+    else if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
+        this->setX(iGraphPageWidth_ - getElementWidth());
+    }
+
+    if(pos.y() < 0) {
+        this->setY(0);
+    }
+    else if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
+        this->setY(iGraphPageHeight_ - getElementHeight());
+    }
+
+    scene()->update();
+}
+
+
+

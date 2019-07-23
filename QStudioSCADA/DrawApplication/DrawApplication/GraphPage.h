@@ -28,7 +28,7 @@ class GraphPage : public QGraphicsScene
     Q_OBJECT
 
 public:
-    GraphPage(const QRectF &rect,QObject *parent = 0);
+    GraphPage(const QRectF &rect,QObject *parent = nullptr);
 
     void setGridVisible(bool);
     bool isGridVisible() const;

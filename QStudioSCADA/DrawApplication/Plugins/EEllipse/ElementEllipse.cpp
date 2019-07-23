@@ -22,7 +22,8 @@ ElementEllipse::ElementEllipse(const QString &szProjPath, const QString &szProjN
     updatePropertyModel();
 }
 
-void ElementEllipse::regenerateElementId() {
+void ElementEllipse::regenerateElementId()
+{
     elementId = QString(tr("Ellipse_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
     this->updatePropertyModel();
 }
@@ -36,13 +37,15 @@ void ElementEllipse::release()
 
 }
 
-QRectF ElementEllipse::boundingRect() const {
+QRectF ElementEllipse::boundingRect() const
+{
     qreal extra = 5;
     QRectF rect = elementRect.toRect();
     return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
-QPainterPath ElementEllipse::shape() const {
+QPainterPath ElementEllipse::shape() const
+{
     QPainterPath path;
     path.addEllipse(elementRect);
 
@@ -54,7 +57,8 @@ QPainterPath ElementEllipse::shape() const {
     return path;
 }
 
-void ElementEllipse::createPropertyList() {
+void ElementEllipse::createPropertyList()
+{
     idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
@@ -146,7 +150,8 @@ void ElementEllipse::createPropertyList() {
     propList.insert(propList.end(),angleProperty);
 }
 
-void ElementEllipse::updateElementProperty(uint id, const QVariant &value) {
+void ElementEllipse::updateElementProperty(uint id, const QVariant &value)
+{
     switch (id) {
     case EL_ID:
         elementId = value.toString();
@@ -202,7 +207,8 @@ void ElementEllipse::updateElementProperty(uint id, const QVariant &value) {
     update();
 }
 
-void ElementEllipse::updatePropertyModel() {
+void ElementEllipse::updatePropertyModel()
+{
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
@@ -219,23 +225,26 @@ void ElementEllipse::updatePropertyModel() {
     angleProperty->setValue(elemAngle);
 }
 
-void ElementEllipse::setClickPosition(QPointF position) {
+void ElementEllipse::setClickPosition(QPointF position)
+{
     prepareGeometryChange();
-    elementXPos = position.x();
-    elementYPos = position.y();
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     setX(elementXPos);
     setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
-void ElementEllipse::updateBoundingElement() {
+void ElementEllipse::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementEllipse::paint(QPainter *painter,
                            const QStyleOptionGraphicsItem *option,
-                           QWidget *widget) {
+                           QWidget *widget)
+{
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -258,7 +267,8 @@ void ElementEllipse::paint(QPainter *painter,
     }
 }
 
-void ElementEllipse::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementEllipse::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
 
     if (resizing) {
@@ -266,15 +276,15 @@ void ElementEllipse::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         switch (rd) {
         case RdBottomRight:
             elementRect.setBottomRight(mousePoint);
-            elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
-            elementHeight = qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y());
+            elementWidth = static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x()));
+            elementHeight = static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y()));
             break;
         case RdTopLeft:
             elementRect.setTopLeft(mousePoint);
-            setElementXPos(mapToScene(elementRect.topLeft()).x());
-            setElementYPos(mapToScene(elementRect.topLeft()).y());
-            setElementWidth(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x()));
-            setElementHeight(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y()));
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
             updateBoundingElement();
             break;
         case RdNone:
@@ -286,25 +296,13 @@ void ElementEllipse::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         return;
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-        QPointF pos = scenePos();
-
-        if(pos.x() < 0) {
-            this->setX(0);
-        }
-        if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
-            this->setX(iGraphPageWidth_ - getElementWidth());
-        }
-
-        if(pos.y() < 0) {
-            this->setY(0);
-        }
-        if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
-            this->setY(iGraphPageHeight_ - getElementHeight());
-        }
+        // 限制矩形区域
+        RestrictedRectangularRegion();
     }
 }
 
-void ElementEllipse::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementEllipse::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -336,11 +334,12 @@ void ElementEllipse::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementEllipse::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementEllipse::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
 
     setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
     updatePropertyModel();
 
     if (oldPos != pos()) {
@@ -354,7 +353,8 @@ void ElementEllipse::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementEllipse::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+void ElementEllipse::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
 
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
@@ -376,7 +376,8 @@ void ElementEllipse::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
 }
 
-void ElementEllipse::writeAsXml(QXmlStreamWriter &writer) {
+void ElementEllipse::writeAsXml(QXmlStreamWriter &writer)
+{
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
     writer.writeAttribute("elementId",elementId);
@@ -396,7 +397,8 @@ void ElementEllipse::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeEndElement();
 }
 
-void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
@@ -471,7 +473,8 @@ void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
     updatePropertyModel();
 }
 
-void ElementEllipse::writeData(QDataStream &out) {
+void ElementEllipse::writeData(QDataStream &out)
+{
     out << this->elementId
         << this->x()
         << this->y()
@@ -488,7 +491,8 @@ void ElementEllipse::writeData(QDataStream &out) {
         << this->elemAngle;
 }
 
-void ElementEllipse::readData(QDataStream &in) {
+void ElementEllipse::readData(QDataStream &in)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -524,9 +528,9 @@ void ElementEllipse::readData(QDataStream &in) {
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->szTagSelected_ = szTagSelected;
@@ -542,7 +546,8 @@ void ElementEllipse::readData(QDataStream &in) {
 }
 
 
-QDataStream &operator<<(QDataStream &out,const ElementEllipse &ellipse) {
+QDataStream &operator<<(QDataStream &out,const ElementEllipse &ellipse)
+{
     out << ellipse.elementId
         << ellipse.x()
         << ellipse.y()
@@ -562,7 +567,8 @@ QDataStream &operator<<(QDataStream &out,const ElementEllipse &ellipse) {
 }
 
 
-QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse) {
+QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -598,9 +604,9 @@ QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse) {
     if(ellipse.iLastIndex_ < index) {
         ellipse.iLastIndex_ = index;
     }
-    ellipse.setElementXPos(xpos);
-    ellipse.setElementYPos(ypos);
-    ellipse.setElementZValue(zvalue);
+    ellipse.setElementXPos(static_cast<int>(xpos));
+    ellipse.setElementYPos(static_cast<int>(ypos));
+    ellipse.setElementZValue(static_cast<int>(zvalue));
     ellipse.setElementWidth(width);
     ellipse.setElementHeight(height);
     ellipse.szTagSelected_ = szTagSelected;

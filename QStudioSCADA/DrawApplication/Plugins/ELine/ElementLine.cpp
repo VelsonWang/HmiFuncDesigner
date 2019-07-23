@@ -17,7 +17,8 @@ ElementLine::ElementLine(const QString &szProjPath, const QString &szProjName) :
     updatePropertyModel();
 }
 
-void ElementLine::regenerateElementId() {
+void ElementLine::regenerateElementId()
+{
     elementId = QString(tr("Line_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
     this->updatePropertyModel();
 }
@@ -31,7 +32,8 @@ void ElementLine::release()
 
 }
 
-QRectF ElementLine::boundingRect() const {
+QRectF ElementLine::boundingRect() const
+{
     qreal extra = 5;
     const qreal x1 = elementLine.p1().x();
     const qreal x2 = elementLine.p2().x();
@@ -46,7 +48,8 @@ QRectF ElementLine::boundingRect() const {
             .adjusted(-extra, -extra, extra, extra);;
 }
 
-void ElementLine::createPropertyList() {
+void ElementLine::createPropertyList()
+{
     idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
     idProperty->setReadOnly(true);
@@ -102,7 +105,8 @@ void ElementLine::createPropertyList() {
     propList.insert(propList.end(),angleProperty);
 }
 
-void ElementLine::updateElementProperty(uint id, const QVariant &value) {
+void ElementLine::updateElementProperty(uint id, const QVariant &value)
+{
     switch (id) {
     case EL_ID:
         elementId = value.toString();
@@ -143,7 +147,8 @@ void ElementLine::updateElementProperty(uint id, const QVariant &value) {
     update();
 }
 
-void ElementLine::updatePropertyModel() {
+void ElementLine::updatePropertyModel()
+{
     idProperty->setValue(elementId);
     xCoordProperty->setValue(elementXPos);
     yCoordProperty->setValue(elementYPos);
@@ -155,21 +160,24 @@ void ElementLine::updatePropertyModel() {
     angleProperty->setValue(elemAngle);
 }
 
-void ElementLine::setClickPosition(QPointF position) {
+void ElementLine::setClickPosition(QPointF position)
+{
     prepareGeometryChange();
-    setElementXPos(position.x());
-    setElementYPos(position.y());
+    setElementXPos(static_cast<int>(position.x()));
+    setElementYPos(static_cast<int>(position.y()));
     elementLine.setLine(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
-void ElementLine::updateBoundingElement() {
+void ElementLine::updateBoundingElement()
+{
     elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
 void ElementLine::paint(QPainter *painter,
                         const QStyleOptionGraphicsItem *option,
-                        QWidget *widget) {
+                        QWidget *widget)
+{
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -186,22 +194,23 @@ void ElementLine::paint(QPainter *painter,
     }
 }
 
-void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     if (resizing) {
         setCursor(Qt::SizeFDiagCursor);
         QPointF mousePoint = event->pos();
         switch (rd) {
         case RdBottomRight:
             elementLine.setP2(mousePoint);
-            elementWidth = qAbs(elementLine.p1().x() - elementLine.p2().x());
-            elementHeight = qAbs(elementLine.p1().y() - elementLine.p2().y());
+            elementWidth = static_cast<int>(qAbs(elementLine.p1().x() - elementLine.p2().x()));
+            elementHeight = static_cast<int>(qAbs(elementLine.p1().y() - elementLine.p2().y()));
             break;
         case RdTopLeft:
             elementLine.setP1(mousePoint);
-            setElementXPos(mapToScene(elementLine.p1()).x());
-            setElementYPos(mapToScene(elementLine.p1()).y());
-            setElementWidth(qAbs(mapToScene(elementLine.p1()).x() - mapToScene(elementLine.p2()).x()));
-            setElementHeight(qAbs(mapToScene(elementLine.p1()).y() - mapToScene(elementLine.p2()).y()));
+            setElementXPos(static_cast<int>(mapToScene(elementLine.p1()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementLine.p1()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementLine.p1()).x() - mapToScene(elementLine.p2()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementLine.p1()).y() - mapToScene(elementLine.p2()).y())));
             updateBoundingElement();
             break;
         case RdNone:
@@ -213,25 +222,13 @@ void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         return;
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-        QPointF pos = scenePos();
-
-        if(pos.x() < 0) {
-            this->setX(0);
-        }
-        if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
-            this->setX(iGraphPageWidth_ - getElementWidth());
-        }
-
-        if(pos.y() < 0) {
-            this->setY(0);
-        }
-        if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
-            this->setY(iGraphPageHeight_ - getElementHeight());
-        }
+        // 限制矩形区域
+        RestrictedRectangularRegion();
     }
 }
 
-void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF pp1 = elementLine.p1();
@@ -263,10 +260,11 @@ void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
     setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
     updatePropertyModel();
 
     if (oldPos != pos()) {
@@ -280,7 +278,8 @@ void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementLine::writeAsXml(QXmlStreamWriter &writer) {
+void ElementLine::writeAsXml(QXmlStreamWriter &writer)
+{
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
     writer.writeAttribute("elementId",elementId);
@@ -295,7 +294,8 @@ void ElementLine::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeEndElement();
 }
 
-void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementLine::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
@@ -341,7 +341,8 @@ void ElementLine::readFromXml(const QXmlStreamAttributes &attributes) {
     updatePropertyModel();
 }
 
-void ElementLine::writeData(QDataStream &out) {
+void ElementLine::writeData(QDataStream &out)
+{
     out << this->elementId
         << this->x()
         << this->y()
@@ -353,7 +354,8 @@ void ElementLine::writeData(QDataStream &out) {
         << this->elemAngle;
 }
 
-void ElementLine::readData(QDataStream &in) {
+void ElementLine::readData(QDataStream &in)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -379,9 +381,9 @@ void ElementLine::readData(QDataStream &in) {
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->borderWidth_ = borderWidth;
@@ -391,7 +393,8 @@ void ElementLine::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementLine &line) {
+QDataStream &operator<<(QDataStream &out,const ElementLine &line)
+{
     out << line.elementId
         << line.x()
         << line.y()
@@ -405,7 +408,8 @@ QDataStream &operator<<(QDataStream &out,const ElementLine &line) {
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in,ElementLine &line) {
+QDataStream &operator>>(QDataStream &in,ElementLine &line)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -431,9 +435,9 @@ QDataStream &operator>>(QDataStream &in,ElementLine &line) {
     if(line.iLastIndex_ < index) {
         line.iLastIndex_ = index;
     }
-    line.setElementXPos(xpos);
-    line.setElementYPos(ypos);
-    line.setElementZValue(zvalue);
+    line.setElementXPos(static_cast<int>(xpos));
+    line.setElementYPos(static_cast<int>(ypos));
+    line.setElementZValue(static_cast<int>(zvalue));
     line.setElementWidth(width);
     line.setElementHeight(height);
     line.borderWidth_ = borderWidth;

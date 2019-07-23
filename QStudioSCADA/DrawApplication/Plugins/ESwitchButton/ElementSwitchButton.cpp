@@ -531,23 +531,26 @@ void ElementSwitchButton::updatePropertyTableView()
     }
 }
 
-void ElementSwitchButton::setClickPosition(QPointF position) {
+void ElementSwitchButton::setClickPosition(QPointF position)
+{
     prepareGeometryChange();
-    elementXPos = position.x();
-    elementYPos = position.y();
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     setX(elementXPos);
     setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
-void ElementSwitchButton::updateBoundingElement() {
+void ElementSwitchButton::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementSwitchButton::paint(QPainter *painter,
                               const QStyleOptionGraphicsItem *option,
-                              QWidget *widget) {
+                              QWidget *widget)
+{
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -569,7 +572,10 @@ void ElementSwitchButton::paint(QPainter *painter,
 
 void ElementSwitchButton::drawSwitchButton(QPainter *painter)
 {
-    QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+    QRect rect(static_cast<int>(elementRect.x()),
+               static_cast<int>(elementRect.y()),
+               static_cast<int>(elementRect.width()),
+               static_cast<int>(elementRect.height()));
 
     if(transparent_) {
         painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
@@ -640,7 +646,9 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
                     if(showNoScale_) {
                         scaleImage = image;
                     } else {
-                        scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                        scaleImage = image.scaled(static_cast<int>(elementRect.width()),
+                                                  static_cast<int>(elementRect.height()),
+                                                  Qt::IgnoreAspectRatio);
                     }
                     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
                     painter->drawImage(elementRect, scaleImage);
@@ -662,15 +670,15 @@ void ElementSwitchButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         switch (rd) {
         case RdBottomRight:
             elementRect.setBottomRight(mousePoint);
-            elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
-            elementHeight = qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y());
+            elementWidth = static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x()));
+            elementHeight = static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y()));
             break;
         case RdTopLeft:
             elementRect.setTopLeft(mousePoint);
-            setElementXPos(mapToScene(elementRect.topLeft()).x());
-            setElementYPos(mapToScene(elementRect.topLeft()).y());
-            setElementWidth(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x()));
-            setElementHeight(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y()));
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
             updateBoundingElement();
             break;
         case RdNone:
@@ -682,21 +690,8 @@ void ElementSwitchButton::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-        QPointF pos = scenePos();
-
-        if(pos.x() < 0) {
-            this->setX(0);
-        }
-        if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
-            this->setX(iGraphPageWidth_ - getElementWidth());
-        }
-
-        if(pos.y() < 0) {
-            this->setY(0);
-        }
-        if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
-            this->setY(iGraphPageHeight_ - getElementHeight());
-        }
+        // 限制矩形区域
+        RestrictedRectangularRegion();
     }
 }
 
@@ -736,8 +731,8 @@ void ElementSwitchButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void ElementSwitchButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
     updatePropertyModel();
 
     if (oldPos != pos()) {
@@ -1054,9 +1049,9 @@ void ElementSwitchButton::readData(QDataStream &in)
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->showContent_ = showContent;
@@ -1211,9 +1206,9 @@ QDataStream &operator>>(QDataStream &in,ElementSwitchButton &ele)
     ele.showNoScale_ = showNoScale;
     ele.resetText_ = szResetText;
     ele.setText_ = szSetText;
-    ele.setElementXPos(xpos);
-    ele.setElementYPos(ypos);
-    ele.setElementZValue(zvalue);
+    ele.setElementXPos(static_cast<int>(xpos));
+    ele.setElementYPos(static_cast<int>(ypos));
+    ele.setElementZValue(static_cast<int>(zvalue));
     ele.setElementWidth(width);
     ele.setElementHeight(height);
     ele.showContent_ = showContent;

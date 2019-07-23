@@ -1,5 +1,6 @@
 ﻿#include "ElementInputEdit.h"
 #include "TagManager.h"
+#include <QDebug>
 
 int ElementInputEdit::iLastIndex_ = 1;
 
@@ -29,7 +30,8 @@ ElementInputEdit::ElementInputEdit(const QString &szProjPath, const QString &szP
     updatePropertyModel();
 }
 
-void ElementInputEdit::regenerateElementId() {
+void ElementInputEdit::regenerateElementId()
+{
     elementId = QString(tr("InputEdit_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
     this->updatePropertyModel();
 }
@@ -43,13 +45,15 @@ void ElementInputEdit::release()
 
 }
 
-QRectF ElementInputEdit::boundingRect() const {
+QRectF ElementInputEdit::boundingRect() const
+{
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
-QPainterPath ElementInputEdit::shape() const {
+QPainterPath ElementInputEdit::shape() const
+{
     QPainterPath path;
     path.addRect(elementRect);
 
@@ -61,7 +65,8 @@ QPainterPath ElementInputEdit::shape() const {
     return path;
 }
 
-void ElementInputEdit::createPropertyList() {
+void ElementInputEdit::createPropertyList()
+{
     // ID
     idProperty = new TextProperty(tr("ID"));
     idProperty->setId(EL_ID);
@@ -208,7 +213,8 @@ void ElementInputEdit::createPropertyList() {
     propList.insert(propList.end(), angleProperty);
 }
 
-void ElementInputEdit::updateElementProperty(uint id, const QVariant &value) {
+void ElementInputEdit::updateElementProperty(uint id, const QVariant &value)
+{
     switch (id) {
     case EL_ID:
         elementId = value.toString();
@@ -285,7 +291,8 @@ void ElementInputEdit::updateElementProperty(uint id, const QVariant &value) {
     scene()->update();
 }
 
-void ElementInputEdit::updatePropertyModel() {
+void ElementInputEdit::updatePropertyModel()
+{
     idProperty->setValue(elementId);
     enableEditProperty_->setValue(enableEdit_);
     tagSelectProperty_->setValue(szTagSelected_);
@@ -309,23 +316,26 @@ void ElementInputEdit::updatePropertyModel() {
     angleProperty->setValue(elemAngle);
 }
 
-void ElementInputEdit::setClickPosition(QPointF position) {
+void ElementInputEdit::setClickPosition(QPointF position)
+{
     prepareGeometryChange();
-    elementXPos = position.x();
-    elementYPos = position.y();
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     setX(elementXPos);
     setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
-void ElementInputEdit::updateBoundingElement() {
+void ElementInputEdit::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementInputEdit::paint(QPainter *painter,
                              const QStyleOptionGraphicsItem *option,
-                             QWidget *widget) {
+                             QWidget *widget)
+{
     Q_UNUSED(option)
     Q_UNUSED(widget)
 
@@ -346,7 +356,8 @@ void ElementInputEdit::paint(QPainter *painter,
     }
 }
 
-void ElementInputEdit::drawInputEdit(QPainter *painter) {
+void ElementInputEdit::drawInputEdit(QPainter *painter)
+{
     // 绘制边框
     if(borderWidth_ > 0) {
         painter->setPen(QPen(borderColor_, borderWidth_, Qt::SolidLine));
@@ -400,7 +411,8 @@ void ElementInputEdit::drawInputEdit(QPainter *painter) {
     painter->drawText(textRect, hFlags|vFlags, szDrawText);
 }
 
-void ElementInputEdit::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void ElementInputEdit::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
 
     if (resizing) {
@@ -408,45 +420,32 @@ void ElementInputEdit::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         switch (rd) {
         case RdBottomRight:
             elementRect.setBottomRight(mousePoint);
-            elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
-            elementHeight = qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y());
+            elementWidth = static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x()));
+            elementHeight = static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y()));
             break;
         case RdTopLeft:
             elementRect.setTopLeft(mousePoint);
-            setElementXPos(mapToScene(elementRect.topLeft()).x());
-            setElementYPos(mapToScene(elementRect.topLeft()).y());
-            setElementWidth(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x()));
-            setElementHeight(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y()));
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
             updateBoundingElement();
             break;
         case RdNone:
             QGraphicsObject::mouseMoveEvent(event);
             break;
         }
-
-        scene()->update();
-        return;
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-        QPointF pos = scenePos();
-
-        if(pos.x() < 0) {
-            this->setX(0);
-        }
-        if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
-            this->setX(iGraphPageWidth_ - getElementWidth());
-        }
-
-        if(pos.y() < 0) {
-            this->setY(0);
-        }
-        if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
-            this->setY(iGraphPageHeight_ - getElementHeight());
-        }
+        // 限制矩形区域
+        RestrictedRectangularRegion();
     }
+
+    scene()->update();
 }
 
-void ElementInputEdit::mousePressEvent(QGraphicsSceneMouseEvent *event) {
+void ElementInputEdit::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -478,10 +477,11 @@ void ElementInputEdit::mousePressEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mousePressEvent(event);
 }
 
-void ElementInputEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
+void ElementInputEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
     setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
     updatePropertyModel();
 
     if (oldPos != pos()) {
@@ -495,7 +495,8 @@ void ElementInputEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event) {
     QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementInputEdit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
+void ElementInputEdit::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
     QPointF mousePoint = event->pos();
     QPointF mouseHandler = QPointF(3,3);
     QPointF topLeft = elementRect.topLeft();
@@ -516,7 +517,8 @@ void ElementInputEdit::hoverEnterEvent(QGraphicsSceneHoverEvent *event) {
     QGraphicsObject::hoverEnterEvent(event);
 }
 
-void ElementInputEdit::writeAsXml(QXmlStreamWriter &writer) {
+void ElementInputEdit::writeAsXml(QXmlStreamWriter &writer)
+{
     writer.writeStartElement("element");
     writer.writeAttribute("internalType",internalElementType);
     writer.writeAttribute("elementId",elementId);
@@ -543,7 +545,8 @@ void ElementInputEdit::writeAsXml(QXmlStreamWriter &writer) {
     writer.writeEndElement();
 }
 
-void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szID = attributes.value("elementId").toString();
         setElementId(szID);
@@ -660,7 +663,8 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
     updatePropertyModel();
 }
 
-void ElementInputEdit::writeData(QDataStream &out) {
+void ElementInputEdit::writeData(QDataStream &out)
+{
     out << this->elementId
         << this->enableEdit_
         << this->szTagSelected_
@@ -684,7 +688,8 @@ void ElementInputEdit::writeData(QDataStream &out) {
         << this->elemAngle;
 }
 
-void ElementInputEdit::readData(QDataStream &in) {
+void ElementInputEdit::readData(QDataStream &in)
+{
     QString id;
     bool enableEdit;
     QString szTagSelected;
@@ -736,9 +741,9 @@ void ElementInputEdit::readData(QDataStream &in) {
     }
     this->enableEdit_ = enableEdit;
     this->szTagSelected_ = szTagSelected;
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->elementText = text;
@@ -758,7 +763,8 @@ void ElementInputEdit::readData(QDataStream &in) {
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out, const ElementInputEdit &edit) {
+QDataStream &operator<<(QDataStream &out, const ElementInputEdit &edit)
+{
     out << edit.elementId
         << edit.enableEdit_
         << edit.szTagSelected_
@@ -783,7 +789,8 @@ QDataStream &operator<<(QDataStream &out, const ElementInputEdit &edit) {
     return out;
 }
 
-QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
+QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit)
+{
     QString id;
     bool enableEdit;
     QString szTagSelected;
@@ -835,9 +842,9 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
     }
     edit.enableEdit_ = enableEdit;
     edit.szTagSelected_ = szTagSelected;
-    edit.setElementXPos(xpos);
-    edit.setElementYPos(ypos);
-    edit.setElementZValue(zvalue);
+    edit.setElementXPos(static_cast<int>(xpos));
+    edit.setElementYPos(static_cast<int>(ypos));
+    edit.setElementZValue(static_cast<int>(zvalue));
     edit.setElementWidth(width);
     edit.setElementHeight(height);
     edit.elementText = text;

@@ -467,7 +467,8 @@ void GraphPage::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 }
 
 
-void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
+void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
     QGraphicsScene::mouseDoubleClickEvent(event);
 
     if (!itemAt(event->scenePos(), QTransform())) {
@@ -475,24 +476,13 @@ void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) {
     }
 }
 
-void GraphPage::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
+void GraphPage::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
     QGraphicsScene::mouseMoveEvent(event);
     foreach (QGraphicsItem *item, selectedItems()) {
         Element *ele = dynamic_cast<Element *>(item);
         if (ele != nullptr) {
-            if(ele->x() < 0) {
-                ele->setElementXPos(0);
-            }
-            if(ele->x() > this->getGraphPageWidth() - ele->getElementWidth()) {
-                ele->setElementXPos(this->getGraphPageWidth() - ele->getElementWidth());
-            }
-
-            if(ele->y() < 0) {
-                ele->setElementYPos(0);
-            }
-            if(ele->y() > this->getGraphPageHeight() - ele->getElementHeight()) {
-                ele->setElementYPos(this->getGraphPageHeight() - ele->getElementHeight());
-            }
+            ele->RestrictedRectangularRegion();
         }
     }
 }
@@ -1000,6 +990,7 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->setProjectName(szProjName_);
                         ele->readFromXml(xml.attributes());
                         ele->setSelected(false);

@@ -1,4 +1,4 @@
-﻿#include "elementarrow.h"
+﻿#include "ElementArrow.h"
 #include "math.h"
 #include <QDebug>
 
@@ -169,8 +169,8 @@ void ElementArrow::updatePropertyModel()
 void ElementArrow::setClickPosition(QPointF position)
 {
     prepareGeometryChange();
-    setElementXPos(position.x());
-    setElementYPos(position.y());
+    setElementXPos(static_cast<int>(position.x()));
+    setElementYPos(static_cast<int>(position.y()));
     elementLine.setLine(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
@@ -222,15 +222,15 @@ void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         switch (rd) {
         case RdBottomRight:
             elementLine.setP2(mousePoint);
-            elementWidth = qAbs(elementLine.p1().x() - elementLine.p2().x());
-            elementHeight = qAbs(elementLine.p1().y() - elementLine.p2().y());
+            elementWidth = static_cast<int>(qAbs(elementLine.p1().x() - elementLine.p2().x()));
+            elementHeight = static_cast<int>(qAbs(elementLine.p1().y() - elementLine.p2().y()));
             break;
         case RdTopLeft:
             elementLine.setP1(mousePoint);
-            setElementXPos(mapToScene(elementLine.p1()).x());
-            setElementYPos(mapToScene(elementLine.p1()).y());
-            setElementWidth(qAbs(mapToScene(elementLine.p1()).x() - mapToScene(elementLine.p2()).x()));
-            setElementHeight(qAbs(mapToScene(elementLine.p1()).y() - mapToScene(elementLine.p2()).y()));
+            setElementXPos(static_cast<int>(mapToScene(elementLine.p1()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementLine.p1()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementLine.p1()).x() - mapToScene(elementLine.p2()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementLine.p1()).y() - mapToScene(elementLine.p2()).y())));
             updateBoundingElement();
             break;
         case RdNone:
@@ -242,21 +242,8 @@ void ElementArrow::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-        QPointF pos = scenePos();
-
-        if(pos.x() < 0) {
-            this->setX(0);
-        }
-        if(pos.x() > iGraphPageWidth_ - getElementWidth()) {
-            this->setX(iGraphPageWidth_ - getElementWidth());
-        }
-
-        if(pos.y() < 0) {
-            this->setY(0);
-        }
-        if(pos.y() > iGraphPageHeight_ - getElementHeight()) {
-            this->setY(iGraphPageHeight_ - getElementHeight());
-        }
+        // 限制矩形区域
+        RestrictedRectangularRegion();
     }
 }
 
@@ -296,8 +283,8 @@ void ElementArrow::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void ElementArrow::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
     updatePropertyModel();
 
     if (oldPos != pos()) {
@@ -414,9 +401,9 @@ void ElementArrow::readData(QDataStream &in)
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->borderWidth_ = borderWidth;
@@ -468,9 +455,9 @@ QDataStream &operator>>(QDataStream &in, ElementArrow &arrow)
     if(arrow.iLastIndex_ < index) {
         arrow.iLastIndex_ = index;
     }
-    arrow.setElementXPos(xpos);
-    arrow.setElementYPos(ypos);
-    arrow.setElementZValue(zvalue);
+    arrow.setElementXPos(static_cast<int>(xpos));
+    arrow.setElementYPos(static_cast<int>(ypos));
+    arrow.setElementZValue(static_cast<int>(zvalue));
     arrow.setElementWidth(width);
     arrow.setElementHeight(height);
     arrow.borderWidth_ = borderWidth;

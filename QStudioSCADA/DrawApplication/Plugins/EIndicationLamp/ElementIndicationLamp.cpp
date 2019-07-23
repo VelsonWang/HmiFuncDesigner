@@ -1,4 +1,4 @@
-﻿#include "elementIndicationLamp.h"
+﻿#include "ElementIndicationLamp.h"
 #include "ProjectData.h"
 #include "TagManager.h"
 #include <QFileInfo>
@@ -262,8 +262,8 @@ void ElementIndicationLamp::updatePropertyModel()
 void ElementIndicationLamp::setClickPosition(QPointF position)
 {
     prepareGeometryChange();
-    elementXPos = position.x();
-    elementYPos = position.y();
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     setX(elementXPos);
     setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
@@ -297,7 +297,9 @@ void ElementIndicationLamp::paint(QPainter *painter,
             if(showNoScale_) {
                 scaleImage = image;
             } else {
-                scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                scaleImage = image.scaled(static_cast<int>(elementRect.width()),
+                                          static_cast<int>(elementRect.height()),
+                                          Qt::IgnoreAspectRatio);
             }
             painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
             painter->drawImage(elementRect, scaleImage);
@@ -324,15 +326,15 @@ void ElementIndicationLamp::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         switch (rd) {
         case RdBottomRight:
             elementRect.setBottomRight(mousePoint);
-            elementWidth = qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x());
-            elementHeight = qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y());
+            elementWidth = static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x()));
+            elementHeight = static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y()));
             break;
         case RdTopLeft:
             elementRect.setTopLeft(mousePoint);
-            setElementXPos(mapToScene(elementRect.topLeft()).x());
-            setElementYPos(mapToScene(elementRect.topLeft()).y());
-            setElementWidth(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x()));
-            setElementHeight(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y()));
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
             updateBoundingElement();
             break;
         case RdNone:
@@ -344,21 +346,8 @@ void ElementIndicationLamp::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         return;
     } else {
         QGraphicsObject::mouseMoveEvent(event);
-        QPointF pos_ = scenePos();
-
-        if(pos_.x() < 0) {
-            this->setX(0);
-        }
-        if(pos_.x() > iGraphPageWidth_ - getElementWidth()) {
-            this->setX(iGraphPageWidth_ - getElementWidth());
-        }
-
-        if(pos_.y() < 0) {
-            this->setY(0);
-        }
-        if(pos_.y() > iGraphPageHeight_ - getElementHeight()) {
-            this->setY(iGraphPageHeight_ - getElementHeight());
-        }
+        // 限制矩形区域
+        RestrictedRectangularRegion();
     }
 }
 
@@ -398,8 +387,8 @@ void ElementIndicationLamp::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void ElementIndicationLamp::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     setCursor(Qt::ArrowCursor);
-    elementXPos = pos().x();
-    elementYPos = pos().y();
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
     updatePropertyModel();
 
     if (oldPos != pos()) {
@@ -578,9 +567,9 @@ void ElementIndicationLamp::readData(QDataStream &in)
     this->stateOnInitial_ = stateOnInitial;
     this->resetFileIndicationLamp_ = resetPic;
     this->setFileIndicationLamp_ = setPic;
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->showNoScale_ = showNoScale;
@@ -645,9 +634,9 @@ QDataStream &operator>>(QDataStream &in, ElementIndicationLamp &lamp)
     lamp.stateOnInitial_ = stateOnInitial;
     lamp.resetFileIndicationLamp_ = resetPic;
     lamp.setFileIndicationLamp_ = setPic;
-    lamp.setElementXPos(xpos);
-    lamp.setElementYPos(ypos);
-    lamp.setElementZValue(zvalue);
+    lamp.setElementXPos(static_cast<int>(xpos));
+    lamp.setElementYPos(static_cast<int>(ypos));
+    lamp.setElementZValue(static_cast<int>(zvalue));
     lamp.setElementWidth(width);
     lamp.setElementHeight(height);
     lamp.showNoScale_ = showNoScale;

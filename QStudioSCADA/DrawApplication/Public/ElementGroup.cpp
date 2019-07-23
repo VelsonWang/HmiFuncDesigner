@@ -27,6 +27,6 @@ void ElementGroup::paint(QPainter *painter, const QStyleOptionGraphicsItem *opti
 void ElementGroup::setClickPosition(QPointF position) {
 
     prepareGeometryChange();
-    setX(position.x());
-    setY(position.y());
+    setX(static_cast<int>(position.x()));
+    setY(static_cast<int>(position.y()));
 }
