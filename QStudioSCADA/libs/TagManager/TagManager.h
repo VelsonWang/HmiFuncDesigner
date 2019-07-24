@@ -20,21 +20,21 @@ typedef TAG_TYPE TTag;
 
 struct TagSysItem
 {
-    explicit TagSysItem(int varid=0,
+    explicit TagSysItem(const QString &sVarid=QString(),
             TTag tagtype=TAG_SYS,
             const QString &sName=QString(),
             const QString &sDescription=QString(),
             const QString &sUnit=QString(),
             const QString &sProjectConverter=QString(),
             const QString &sComments=QString())
-        : m_TagID(varid),m_iTagType(tagtype), m_sName(sName), m_sDescription(sDescription),
-          m_sUnit(sUnit),m_sProjectConverter(sProjectConverter),m_sComments(sComments)
+        : m_sTagID(sVarid), m_iTagType(tagtype), m_sName(sName), m_sDescription(sDescription),
+          m_sUnit(sUnit), m_sProjectConverter(sProjectConverter), m_sComments(sComments)
     {
 
     }
 
     TagSysItem(const TagSysItem &rh) {
-        m_TagID = rh.m_TagID;
+        m_sTagID = rh.m_sTagID;
         m_iTagType = rh.m_iTagType;
         m_sName = rh.m_sName;
         m_sDescription = rh.m_sDescription;
@@ -44,7 +44,7 @@ struct TagSysItem
     }
 
     TagSysItem &operator=(const TagSysItem &rh) {
-        m_TagID = rh.m_TagID;
+        m_sTagID = rh.m_sTagID;
         m_iTagType = rh.m_iTagType;
         m_sName = rh.m_sName;
         m_sDescription = rh.m_sDescription;
@@ -55,7 +55,7 @@ struct TagSysItem
     }
 
     void load(const QJsonObject &json) {
-            m_TagID = json["iID"].toInt();
+            m_sTagID = json["sID"].toString();
             m_sName = json["sName"].toString();
             m_sDescription = json["sDescription"].toString();
             m_sUnit = json["sUnit"].toString();
@@ -64,7 +64,7 @@ struct TagSysItem
     }
 
     void save(QJsonObject &json) {
-        json["iID"] = m_TagID;
+        json["sID"] = m_sTagID;
         json["sName"] = m_sName;
         json["sDescription"] = m_sDescription;
         json["sUnit"] = m_sUnit;
@@ -72,7 +72,7 @@ struct TagSysItem
         json["sComments"]= m_sComments;
     }
 
-    int m_TagID; // 变量ID
+    QString m_sTagID; // 变量ID
     TTag m_iTagType;  // 变量类型
     QString m_sName;  //名称
     QString m_sDescription;  //描述
@@ -86,7 +86,7 @@ struct TagSysItem
 
 struct TagTmpItem
 {
-    explicit TagTmpItem(int varid=0,
+    explicit TagTmpItem(const QString &sVarid=QString(),
             TTag tagtype=TAG_TMP,
             const QString &sDataType=QString(),
             const QString &sName=QString(),
@@ -98,7 +98,7 @@ struct TagTmpItem
             const QString &sArchiveFile=QString(),
             const QString &sProjectConverter=QString(),
             const QString &sComments=QString())
-        : m_TagID(varid),m_iTagType(tagtype), m_sDataType(sDataType),
+        : m_sTagID(sVarid),m_iTagType(tagtype), m_sDataType(sDataType),
           m_sName(sName), m_sDescription(sDescription),m_sUnit(sUnit),
           m_sActionScope(sActionScope), m_sDataAttribute(sDataAttribute),m_sAlarm(sAlarm),
           m_sArchiveFile(sArchiveFile),m_sProjectConverter(sProjectConverter),m_sComments(sComments)
@@ -107,7 +107,7 @@ struct TagTmpItem
     }
 
     TagTmpItem(const TagTmpItem &rh) {
-        m_TagID = rh.m_TagID;
+        m_sTagID = rh.m_sTagID;
         m_sDataType = rh.m_sDataType;
         m_iTagType = rh.m_iTagType;
         m_sName = rh.m_sName;
@@ -122,7 +122,7 @@ struct TagTmpItem
     }
 
     TagTmpItem &operator=(const TagTmpItem &rh) {
-        m_TagID = rh.m_TagID;
+        m_sTagID = rh.m_sTagID;
         m_sDataType = rh.m_sDataType;
         m_iTagType = rh.m_iTagType;
         m_sName = rh.m_sName;
@@ -138,7 +138,7 @@ struct TagTmpItem
     }
 
     void load(const QJsonObject &json) {
-        m_TagID = json["iID"].toInt();
+        m_sTagID = json["sID"].toString();
         m_sName = json["sName"].toString();
         m_sDescription = json["sDescription"].toString();
         m_sUnit = json["sUnit"].toString();
@@ -152,7 +152,7 @@ struct TagTmpItem
     }
 
     void save(QJsonObject &json) {
-        json["iID"] = m_TagID;
+        json["sID"] = m_sTagID;
         json["sDataType"] = m_sDataType;
         json["sName"] = m_sName;
         json["sDescription"] = m_sDescription;
@@ -165,7 +165,7 @@ struct TagTmpItem
         json["sComments"] = m_sComments;
     }
 
-    int m_TagID; // 变量ID
+    QString m_sTagID; // 变量ID
     QString m_sDataType;  //数据类型
     TTag m_iTagType;  // 变量类型
     QString m_sName;  //名称
@@ -183,7 +183,7 @@ struct TagTmpItem
 
 struct TagIOItem
 {
-    explicit TagIOItem(int varid=0,
+    explicit TagIOItem(const QString &sVarid=QString(),
             TTag tagtype=TAG_IO,
             const QString &sDataType=QString(),
             const QString &sName=QString(),
@@ -194,16 +194,16 @@ struct TagIOItem
             const QString &sArchiveFile=QString(),
             const QString &sProjectConverter=QString(),
             const QString &sComments=QString())
-        : m_TagID(varid),m_iTagType(tagtype), m_sDataType(sDataType),
-          m_sName(sName), m_sDescription(sDescription),m_sUnit(sUnit),
-          m_sIOConnect(sIOConnect),m_sAlarm(sAlarm),
-          m_sArchiveFile(sArchiveFile),m_sProjectConverter(sProjectConverter),m_sComments(sComments)
+        : m_sTagID(sVarid), m_iTagType(tagtype), m_sDataType(sDataType),
+          m_sName(sName), m_sDescription(sDescription), m_sUnit(sUnit),
+          m_sIOConnect(sIOConnect), m_sAlarm(sAlarm),
+          m_sArchiveFile(sArchiveFile), m_sProjectConverter(sProjectConverter), m_sComments(sComments)
     {
         m_iTagType = TAG_IO;
     }
 
     TagIOItem(const TagIOItem &rh) {
-        m_TagID = rh.m_TagID;
+        m_sTagID = rh.m_sTagID;
         m_sDataType = rh.m_sDataType;
         m_iTagType = rh.m_iTagType;
         m_sName = rh.m_sName;
@@ -217,7 +217,7 @@ struct TagIOItem
     }
 
     TagIOItem &operator=(const TagIOItem &rh) {
-        m_TagID = rh.m_TagID;
+        m_sTagID = rh.m_sTagID;
         m_sDataType = rh.m_sDataType;
         m_iTagType = rh.m_iTagType;
         m_sName = rh.m_sName;
@@ -232,7 +232,7 @@ struct TagIOItem
     }
 
     void load(const QJsonObject &json) {
-        m_TagID = json["iID"].toInt();
+        m_sTagID = json["sID"].toString();
         m_sName = json["sName"].toString();
         m_sDescription = json["sDescription"].toString();
         m_sUnit = json["sUnit"].toString();
@@ -245,7 +245,7 @@ struct TagIOItem
     }
 
     void save(QJsonObject &json) {
-        json["iID"] = m_TagID;
+        json["sID"] = m_sTagID;
         json["sDataType"] = m_sDataType;
         json["sName"] = m_sName;
         json["sDescription"] = m_sDescription;
@@ -257,7 +257,7 @@ struct TagIOItem
         json["sComments"] = m_sComments;
     }
 
-    int m_TagID; // 变量ID
+    QString m_sTagID; // 变量ID
     QString m_sDataType;  //数据类型
     TTag m_iTagType;  // 变量类型
     QString m_sName;  //名称

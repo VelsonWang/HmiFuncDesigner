@@ -68,9 +68,9 @@ void ElementText::refreshTagValue() {
 		return;
 	}
 
-	qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
-	if (id != -1) {
-		elementText = RealTimeDB::GetDataString(id);
+    QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+    if (szTagID != "") {
+        elementText = RealTimeDB::GetDataString(szTagID);
     } else {
 		elementText = "#";
 	}
@@ -123,8 +123,8 @@ void ElementText::mouseReleaseEvent(QMouseEvent *event) {
 
 void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
     if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
+        QString szTagID = attributes.value("elementId").toString();
+        setElementId(szTagID);
     }
 
 	if (attributes.hasAttribute("tag")) {

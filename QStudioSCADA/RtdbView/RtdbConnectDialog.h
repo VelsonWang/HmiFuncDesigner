@@ -15,7 +15,7 @@ class RtdbConnectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit RtdbConnectDialog(QWidget *parent = 0);
+    explicit RtdbConnectDialog(QWidget *parent = nullptr);
     ~RtdbConnectDialog();
     QString GetIPAddress();
     int GetOption();

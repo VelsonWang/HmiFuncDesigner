@@ -179,7 +179,7 @@ bool SCADARunTime::Load(SaveFormat saveFormat)
             {
                 QJsonObject jsonObj = IOVarArray[i].toObject();
                 IoDataTag *pIoDataTag = new IoDataTag();
-                pIoDataTag->LoadData(jsonObj, jsonObj["pageid"].toInt());
+                pIoDataTag->LoadData(jsonObj);
                 DBTagObject* pDBIoTagObject = new DBTagObject(pIoDataTag->mId, pIoDataTag->mType, READ_WRIE, pIoDataTag->mLength,
                                                                     QVariant(), TYPE_IO, pIoDataTag);
                 RealTimeDB::rtdb.insert(pIoDataTag->mId, pDBIoTagObject);

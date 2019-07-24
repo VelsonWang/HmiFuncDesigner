@@ -25,17 +25,17 @@ typedef TAG_TYPE TTag;
 
 struct TagSysItem
 {
-    explicit TagSysItem(int varid=0,
+    explicit TagSysItem(const QString &sVarid=QString(),
             TTag tagtype=TAG_SYS,
             const QString &sName=QString(),
             const QString &sDescription=QString(),
             const QString &sUnit=QString(),
             const QString &sProjectConverter=QString(),
             const QString &sComments=QString())
-        : m_TagID(varid),m_iTagType(tagtype), m_sName(sName), m_sDescription(sDescription),
-          m_sUnit(sUnit),m_sProjectConverter(sProjectConverter),m_sComments(sComments) {}
+        : m_sTagID(sVarid), m_iTagType(tagtype), m_sName(sName), m_sDescription(sDescription),
+          m_sUnit(sUnit), m_sProjectConverter(sProjectConverter), m_sComments(sComments) {}
 
-    int m_TagID; // 变量ID
+    QString m_sTagID; // 变量ID
     TTag m_iTagType;  // 变量类型
     QString m_sName;  //名称
     QString m_sDescription;  //描述
@@ -61,7 +61,7 @@ public:
     Q_OBJECT
 
 public:
-    explicit TagSystemTableModel(QObject *parent=0)
+    explicit TagSystemTableModel(QObject *parent = nullptr)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -96,7 +96,7 @@ class SysTag : public QWidget
     Q_OBJECT
 
 public:
-    explicit SysTag(QWidget *parent = 0);
+    explicit SysTag(QWidget *parent = nullptr);
     ~SysTag();
 
 protected:

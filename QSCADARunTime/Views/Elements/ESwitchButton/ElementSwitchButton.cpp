@@ -111,9 +111,9 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
     } else {
 
         QString szFileIndicationLamp_ = QString();
-        qint32 id = -1;
+        QString szTagID = "";
         if (szTagSelected_ != "") {
-            id = RealTimeDB::getIdByTagName(szTagSelected_);
+            szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
         }
 
         if(bShowContentText_) { // 文本+背景
@@ -131,8 +131,8 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
             QColor backgroundColor = QColor();
 
             bool bVal = false;
-            if(id != -1) {
-                bVal = RealTimeDB::GetDataString(id).toInt() > 0 ? true : false;
+            if(szTagID != -1) {
+                bVal = RealTimeDB::GetDataString(szTagID).toInt() > 0 ? true : false;
                 // 执行功能脚本
                 execScriptFunction(bVal);
                 if(bVal) {
@@ -173,8 +173,8 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
         } else { // 图片
             QString szPictureFile = QString();
             bool bVal = false;
-            if(id != -1) {
-                bVal = RealTimeDB::GetDataString(id).toInt() > 0 ? true : false;
+            if(szTagID != -1) {
+                bVal = RealTimeDB::GetDataString(szTagID).toInt() > 0 ? true : false;
                 // 执行功能脚本
                 execScriptFunction(bVal);
                 if(bVal) {
@@ -219,11 +219,11 @@ void ElementSwitchButton::mousePressEvent(QMouseEvent *event)
             mousePoint.x() >= (elementXPos) &&
             mousePoint.y() <= (elementYPos + elementHeight) &&
             mousePoint.y() >= (elementYPos)) {
-        qint32 iTagId = -1;
+        QString szTagID = "";
         if (!isSelected_ && szTagSelected_ != "") {
-            iTagId = RealTimeDB::getIdByTagName(szTagSelected_);
-            if (iTagId != -1) {
-                RealTimeDB::SetDataString(iTagId, bLastTagVal_ ? "0" : "1");
+            szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+            if (szTagID != -1) {
+                RealTimeDB::SetDataString(szTagID, bLastTagVal_ ? "0" : "1");
             }
         }
         isSelected_ = true;
@@ -262,8 +262,8 @@ void ElementSwitchButton::mouseReleaseEvent(QMouseEvent *event)
 void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
 {
     if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
+        QString szTagID = attributes.value("elementId").toString();
+        setElementId(szTagID);
     }
 
     if (attributes.hasAttribute("tag")) {
@@ -396,15 +396,15 @@ void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
 
     updateBoundingElement();
 
-    qint32 iTagId = -1;
+    QString szTagID = "";
     if (szTagSelected_ != "") {
-        iTagId = RealTimeDB::getIdByTagName(szTagSelected_);
-        if (iTagId != -1) {
+        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        if (szTagID != -1) {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(iTagId, "1");
+                RealTimeDB::SetDataString(szTagID, "1");
                 bLastTagVal_ = true;
             } else {
-                RealTimeDB::SetDataString(iTagId, "0");
+                RealTimeDB::SetDataString(szTagID, "0");
                 bLastTagVal_ = false;
             }
         }
@@ -496,15 +496,15 @@ void ElementSwitchButton::readData(QDataStream &in)
     this->funcs_ = funcs;
     this->updateBoundingElement();
 
-    qint32 iTagId = -1;
+    QString szTagID = "";
     if (szTagSelected_ != "") {
-        iTagId = RealTimeDB::getIdByTagName(szTagSelected_);
-        if (iTagId != -1) {
+        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        if (szTagID != -1) {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(iTagId, "1");
+                RealTimeDB::SetDataString(szTagID, "1");
                 bLastTagVal_ = true;
             } else {
-                RealTimeDB::SetDataString(iTagId, "0");
+                RealTimeDB::SetDataString(szTagID, "0");
                 bLastTagVal_ = false;
             }
         }
@@ -592,15 +592,15 @@ QDataStream &operator>>(QDataStream &in,ElementSwitchButton &ele)
     ele.funcs_ = funcs;
     ele.updateBoundingElement();
 
-    qint32 iTagId = -1;
+    QString szTagID = "";
     if (ele.szTagSelected_ != "") {
-        iTagId = RealTimeDB::getIdByTagName(ele.szTagSelected_);
-        if (iTagId != -1) {
+        szTagID = RealTimeDB::getIdByTagName(ele.szTagSelected_);
+        if (szTagID != -1) {
             if(ele.stateOnInitial_) {
-                RealTimeDB::SetDataString(iTagId, "1");
+                RealTimeDB::SetDataString(szTagID, "1");
                 ele.bLastTagVal_ = true;
             } else {
-                RealTimeDB::SetDataString(iTagId, "0");
+                RealTimeDB::SetDataString(szTagID, "0");
                 ele.bLastTagVal_ = false;
             }
         }

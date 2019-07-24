@@ -56,13 +56,13 @@ void ElementIndicationLamp::paint(QPainter *painter)
     painter->translate(QPoint(elementXPos, elementYPos));
 
     QString szFileIndicationLamp_ = QString();
-    qint32 id = -1;
+    QString szTagID = "";
     if (szTagSelected_ != "") {
-        id = RealTimeDB::getIdByTagName(szTagSelected_);
+        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
     }
     bool bVal = false;
-    if(id != -1) {
-        bVal = RealTimeDB::GetDataString(id).toInt() > 0 ? true : false;
+    if(szTagID != "") {
+        bVal = RealTimeDB::GetDataString(szTagID).toInt() > 0 ? true : false;
         szFileIndicationLamp_ = bVal ? setFileIndicationLamp_ : resetFileIndicationLamp_;
     }
 
@@ -107,8 +107,8 @@ void ElementIndicationLamp::mouseReleaseEvent(QMouseEvent *event)
 void ElementIndicationLamp::readFromXml(const QXmlStreamAttributes &attributes)
 {
     if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
+        QString szTagID = attributes.value("elementId").toString();
+        setElementId(szTagID);
     }
 
     if (attributes.hasAttribute("tag")) {
@@ -169,14 +169,14 @@ void ElementIndicationLamp::readFromXml(const QXmlStreamAttributes &attributes)
 
     updateBoundingElement();
 
-    qint32 iTagId = -1;
+    QString szTagID = "";
     if (szTagSelected_ != "") {
-        iTagId = RealTimeDB::getIdByTagName(szTagSelected_);
-        if (iTagId != -1) {
+        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        if (szTagID != "") {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(iTagId, "1");
+                RealTimeDB::SetDataString(szTagID, "1");
             } else {
-                RealTimeDB::SetDataString(iTagId, "0");
+                RealTimeDB::SetDataString(szTagID, "0");
             }
         }
     }
@@ -224,14 +224,14 @@ void ElementIndicationLamp::readData(QDataStream &in)
     this->showOnInitial_ = showOnInitial;
     this->updateBoundingElement();
 
-    qint32 iTagId = -1;
+    QString szTagID = "";
     if (szTagSelected_ != "") {
-        iTagId = RealTimeDB::getIdByTagName(szTagSelected_);
-        if (iTagId != -1) {
+        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        if (szTagID != -1) {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(iTagId, "1");
+                RealTimeDB::SetDataString(szTagID, "1");
             } else {
-                RealTimeDB::SetDataString(iTagId, "0");
+                RealTimeDB::SetDataString(szTagID, "0");
             }
         }
     }
@@ -280,14 +280,14 @@ QDataStream &operator>>(QDataStream &in,ElementIndicationLamp &lamp)
     lamp.showOnInitial_ = showOnInitial;
     lamp.updateBoundingElement();
 
-    qint32 iTagId = -1;
+    QString szTagID = "";
     if (lamp.szTagSelected_ != "") {
-        iTagId = RealTimeDB::getIdByTagName(lamp.szTagSelected_);
-        if (iTagId != -1) {
+        szTagID = RealTimeDB::getIdByTagName(lamp.szTagSelected_);
+        if (szTagID != "") {
             if(lamp.stateOnInitial_) {
-                RealTimeDB::SetDataString(iTagId, "1");
+                RealTimeDB::SetDataString(szTagID, "1");
             } else {
-                RealTimeDB::SetDataString(iTagId, "0");
+                RealTimeDB::SetDataString(szTagID, "0");
             }
         }
     }

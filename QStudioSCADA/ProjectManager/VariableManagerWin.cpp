@@ -12,6 +12,7 @@
 #include "variantdata.h"
 #include "Helper.h"
 #include "ProjectMgrUtils.h"
+#include "TagManager.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
@@ -62,7 +63,7 @@ QVariant TagSystemTableModel::data(const QModelIndex &index, int role) const
         QStyleOptionComboBox option;
         switch (index.column())
         {
-            case TagID: option.currentText = item.m_TagID; break;
+            case TagID: option.currentText = item.m_sTagID; break;
             case Name: option.currentText = item.m_sName; break;
             case Description: option.currentText = item.m_sDescription; break;
             case Unit: option.currentText = item.m_sUnit; break;
@@ -82,7 +83,7 @@ QVariant TagSystemTableModel::data(const QModelIndex &index, int role) const
     {
         switch (index.column())
         {
-            case TagID: return item.m_TagID;
+            case TagID: return item.m_sTagID;
             case Name: return item.m_sName;
             case Description: return item.m_sDescription;
             case Unit: return item.m_sUnit;
@@ -140,7 +141,7 @@ bool TagSystemTableModel::setData(const QModelIndex &index,
     TagSysItem &item = m_tagSysItems[index.row()];
     switch (index.column())
     {
-        case TagID: item.m_TagID = value.toInt(); break;;
+        case TagID: item.m_sTagID = value.toString(); break;;
         case Name: item.m_sName = value.toString(); break;
         case Description: item.m_sDescription = value.toString(); break;
         case Unit: item.m_sUnit = value.toString(); break;
@@ -232,7 +233,7 @@ QVariant TagTmpTableModel::data(const QModelIndex &index, int role) const
         QStyleOptionComboBox option;
         switch (index.column())
         {
-            case TagID: option.currentText = item.m_TagID;break;
+            case TagID: option.currentText = item.m_sTagID;break;
             case DataType: option.currentText = item.m_sDataType;break;
             case Name: option.currentText = item.m_sName; break;
             case Description: option.currentText = item.m_sDescription; break;
@@ -257,7 +258,7 @@ QVariant TagTmpTableModel::data(const QModelIndex &index, int role) const
     {
         switch (index.column())
         {
-            case TagID: return item.m_TagID;
+            case TagID: return item.m_sTagID;
             case DataType: return item.m_sDataType;
             case Name: return item.m_sName;
             case Description: return item.m_sDescription;
@@ -326,7 +327,7 @@ bool TagTmpTableModel::setData(const QModelIndex &index,
     TagTmpItem &item = m_tagTmpItems[index.row()];
     switch (index.column())
     {
-        case TagID: item.m_TagID = value.toInt(); break;
+        case TagID: item.m_sTagID = value.toString(); break;
         case DataType: item.m_sDataType = value.toString(); break;
         case Name: item.m_sName = value.toString(); break;
         case Description: item.m_sDescription = value.toString(); break;
@@ -398,7 +399,7 @@ void TagTmpTableModel::exportToCsv(QString path, QString /*group*/)
     {
         TagTmpItem item =  m_tagTmpItems.at(i);
         QStringList varRow;
-        varRow << QString("%1").arg(item.m_TagID) << item.m_sDataType << item.m_sName
+        varRow << item.m_sTagID << item.m_sDataType << item.m_sName
                << item.m_sDescription << item.m_sUnit << item.m_sActionScope
                << item.m_sDataAttribute << item.m_sAlarm << item.m_sArchiveFile
                << item.m_sProjectConverter << item.m_sComments;
@@ -417,9 +418,16 @@ void TagTmpTableModel::importFromCsv(QString path)
     QString filepath = path;
 
     QList<QStringList> data = QtCSV::Reader::readToList(filepath, QString(","),  QString("\""), QTextCodec::codecForName("GB18030"));
-    int lastID = m_tagTmpItems.last().m_TagID;
+    int lastID = 1;
+    QString szVarTmp = m_tagTmpItems.last().m_sTagID;
+    QString szStartText = "tmp.";
+    QString szTmp = "0";
+    if(szVarTmp.startsWith(szStartText)) {
+        szTmp = szVarTmp.remove(0, szStartText.length());
+        lastID = szTmp.toInt();
+    }
+
     int lastNextRow = m_tagTmpItems.size();
-    //qDebug()<<"lastID: "<<lastID;
     beginInsertRows(QModelIndex(), lastNextRow, lastNextRow + data.size() - 2);
     for(int i=0; i<data.size(); i++)
     {
@@ -427,7 +435,16 @@ void TagTmpTableModel::importFromCsv(QString path)
         if(row.at(0) == "ID")
             continue;
         TagTmpItem item;
-        item.m_TagID = lastID + row.at(0).toInt();
+
+        int id = 1;
+        szVarTmp = row.at(0);
+        szTmp = "0";
+        if(szVarTmp.startsWith(szStartText)) {
+            szTmp = szVarTmp.remove(0, szStartText.length());
+            id = szTmp.toInt();
+        }
+
+        item.m_sTagID = QString("tmp.%1").arg(QString::number(lastID + id));
         item.m_sDataType = row.at(1);
         item.m_sName = row.at(2);
         item.m_sDescription = row.at(3);
@@ -516,7 +533,7 @@ QVariant TagIOTableModel::data(const QModelIndex &index, int role) const
         QStyleOptionComboBox option;
         switch (index.column())
         {
-            case TagID: option.currentText = item.m_TagID;break;
+            case TagID: option.currentText = item.m_sTagID;break;
             case DataType: option.currentText = item.m_sDataType;break;
             case Name: option.currentText = item.m_sName; break;
             case Description: option.currentText = item.m_sDescription; break;
@@ -540,7 +557,7 @@ QVariant TagIOTableModel::data(const QModelIndex &index, int role) const
     {
         switch (index.column())
         {
-            case TagID: return item.m_TagID;
+            case TagID: return item.m_sTagID;
             case DataType: return item.m_sDataType;
             case Name: return item.m_sName;
             case Description: return item.m_sDescription;
@@ -607,7 +624,7 @@ bool TagIOTableModel::setData(const QModelIndex &index,
     TagIOItem &item = m_tagIOItems[index.row()];
     switch (index.column())
     {
-        case TagID: item.m_TagID = value.toInt(); break;
+        case TagID: item.m_sTagID = value.toString(); break;
         case DataType: item.m_sDataType = value.toString(); break;
         case Name: item.m_sName = value.toString(); break;
         case Description: item.m_sDescription = value.toString(); break;
@@ -676,7 +693,7 @@ void TagIOTableModel::exportToCsv(QString path, QString group)
     {
         TagIOItem item =  m_tagIOItems.at(i);
         QStringList varRow;
-        varRow << QString("%1").arg(item.m_TagID) << item.m_sDataType << item.m_sName
+        varRow << item.m_sTagID << item.m_sDataType << item.m_sName
                << item.m_sDescription << item.m_sUnit << item.m_sIOConnect
                << item.m_sAlarm << item.m_sArchiveFile << item.m_sProjectConverter
                << item.m_sComments;
@@ -697,11 +714,19 @@ void TagIOTableModel::importFromCsv(QString path)
 
     QList<QStringList> data = QtCSV::Reader::readToList(filepath, QString(","),  QString("\""), QTextCodec::codecForName("GB18030"));
     int lastNextRow = m_tagIOItems.size();
-    int lastID = 0;
-    if(lastNextRow != 0)
-        lastID = m_tagIOItems.last().m_TagID;
+    int lastID = 1;
+    QString szVarTmp = "";
+    QString szStartText = "io.";
+    QString szTmp = "0";
+    if(lastNextRow != 0) {
+        szVarTmp = m_tagIOItems.last().m_sTagID;
+        if(szVarTmp.startsWith(szStartText)) {
+            int iPos = szVarTmp.lastIndexOf(".");
+            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
+            lastID = szTmp.toInt();
+        }
+    }
 
-    //qDebug()<<"lastID: "<<lastID;
     beginInsertRows(QModelIndex(), lastNextRow, lastNextRow + data.size() - 2);
     for(int i=0; i<data.size(); i++)
     {
@@ -709,7 +734,20 @@ void TagIOTableModel::importFromCsv(QString path)
         if(row.at(0) == "ID")
             continue;
         TagIOItem item;
-        item.m_TagID = lastID + row.at(0).toInt();
+
+        int id = 1;
+        int iPos = -1;
+        szVarTmp = row.at(0);
+        if(szVarTmp.startsWith(szStartText)) {
+            iPos = szVarTmp.lastIndexOf(".");
+            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
+            id = szTmp.toInt();
+        }
+
+        item.m_sTagID = QString("%1%2")
+                .arg(szVarTmp.left(iPos + 1))
+                .arg(QString::number(lastID + id));
+
         item.m_sDataType = row.at(1);
         item.m_sName = row.at(2);
         item.m_sDescription = row.at(3);
@@ -872,15 +910,15 @@ VariableManagerWin::~VariableManagerWin()
     delete ui;   
     if(pTagSystemTableModel) {
         delete pTagSystemTableModel;
-        pTagSystemTableModel = 0;
+        pTagSystemTableModel = nullptr;
     }
     if(pTagTmpTableModel) {
         delete pTagTmpTableModel;
-        pTagTmpTableModel = 0;
+        pTagTmpTableModel = nullptr;
     }
     if(pTagIOTableModel) {
         delete pTagIOTableModel;
-        pTagIOTableModel = 0;
+        pTagIOTableModel = nullptr;
     }
 }
 
@@ -1257,16 +1295,46 @@ void VariableManagerWin::VariableAdd()
         pDlg->RemoveTab(1); // 隐藏数据属性页
         if(pDlg->exec() == QDialog::Accepted) {
             num = pDlg->GetBatchNum().toInt(&ok, 10);
-            if(ok)
+            if(ok) {
+                int iPageID = 0;
+                QString szProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+                TagManager::clearData();
+                TagManager::loadProjectTags(szProjectPath);
+                foreach(DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
+                    if(m_IOVariableListWhat == var->m_name) {
+                        iPageID = static_cast<int>(var->m_iPageID);
+                        break;
+                    }
+                }
+
                 for(i=0; i<num; i++) {
                     TagIOItem prevItem;
                     TagIOItem newItem;
+
+                    int id = 1;
+                    int iPos = -1;
+                    QString szVarTmp = "";
+                    QString szTmp = "0";
                     if(pTagIOTableModel->rowCount() > 0) {
                         prevItem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
-                        newItem.m_TagID = prevItem.m_TagID + 1;
-                    } else {
-                        newItem.m_TagID = IOVARIABLE_BASE + 1;
+                        szVarTmp = prevItem.m_sTagID;
+                        if(szVarTmp.startsWith("io.")) {
+                            iPos = szVarTmp.lastIndexOf(".");
+                            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
+                            id = szTmp.toInt() + 1;
+                        }
                     }
+
+                    if(iPos == -1) {
+                        newItem.m_sTagID =  QString("io.group%1.%2")
+                                .arg(QString::number(iPageID))
+                                .arg(QString::number(id));
+                    } else {
+                        newItem.m_sTagID =  QString("%1%2")
+                                .arg(szVarTmp.left(iPos + 1))
+                                .arg(QString::number(id));
+                    }
+
                     newItem.m_sDataType = pDlg->GetDataType();
                     newItem.m_sName = pDlg->GetName() + QString("%1").arg(i+1);
                     newItem.m_sDescription = pDlg->GetDescription();
@@ -1280,6 +1348,7 @@ void VariableManagerWin::VariableAdd()
                     newItem.m_sArchiveFile = pDlg->GetSaveDiskString();
                     pTagIOTableModel->AppendRow(newItem);
                 }
+            }
         }
         delete pDlg;
     } else if(m_strItemName == tr("中间变量")) {
@@ -1289,14 +1358,21 @@ void VariableManagerWin::VariableAdd()
             num = pDlg->GetBatchNum().toInt(&ok, 10);
             if(ok)
                 for(i=0; i<num; i++) {
-                    TagTmpItem  prevItem;
-                    TagTmpItem  newItem;
+                    TagTmpItem prevItem;
+                    TagTmpItem newItem;
+                    int id = 1;
                     if(pTagTmpTableModel->rowCount() > 0) {
                         prevItem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
-                        newItem.m_TagID = prevItem.m_TagID + 1;
-                    } else {
-                        newItem.m_TagID = TMPVARIABLE_BASE + 1;
+                        QString szVarTmp = prevItem.m_sTagID;
+                        QString szStartText = "tmp.";
+                        QString szTmp = "0";
+                        if(szVarTmp.startsWith(szStartText)) {
+                            szTmp = szVarTmp.remove(0, szStartText.length());
+                            id = szTmp.toInt() + 1;
+                        }
                     }
+                    newItem.m_sTagID = QString("tmp.%1").arg(QString::number(id));
+
                     newItem.m_sDataType = pDlg->GetDataType();
                     newItem.m_sName = pDlg->GetName() + QString("%1").arg(i+1);
                     newItem.m_sDescription = pDlg->GetDescription();
@@ -1324,10 +1400,24 @@ void VariableManagerWin::VariableAppend()
 
         TagIOItem prevItem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
         TagIOItem newItem;
-        if(pTagIOTableModel->rowCount()>0)
-            newItem.m_TagID = prevItem.m_TagID + 1;
-        else
-            newItem.m_TagID = IOVARIABLE_BASE + 1;
+
+        int id = 1;
+        int iPos = 0;
+        QString szVarTmp = "";
+        QString szTmp = "0";
+
+        prevItem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
+        szVarTmp = prevItem.m_sTagID;
+        if(szVarTmp.startsWith("io.")) {
+            iPos = szVarTmp.lastIndexOf(".");
+            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
+            id = szTmp.toInt() + 1;
+        }
+
+        newItem.m_sTagID =  QString("%1%2")
+                .arg(szVarTmp.left(iPos + 1))
+                .arg(QString::number(id));
+
         newItem.m_sDataType = tr("模拟量");
         // 获取前一行的Name
         QString lastVarName = prevItem.m_sName;
@@ -1346,12 +1436,19 @@ void VariableManagerWin::VariableAppend()
         if(pTagTmpTableModel->rowCount() < 1)
             return;
 
-        TagTmpItem  prevItem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
-        TagTmpItem  newItem;
-        if(pTagTmpTableModel->rowCount()>0)
-            newItem.m_TagID = prevItem.m_TagID + 1;
-        else
-            newItem.m_TagID = TMPVARIABLE_BASE + 1;
+        TagTmpItem prevItem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
+        TagTmpItem newItem;
+
+        QString szVarTmp = prevItem.m_sTagID;
+        QString szStartText = "tmp.";
+        QString szTmp = "0";
+        int id = 1;
+        if(szVarTmp.startsWith(szStartText)) {
+            szTmp = szVarTmp.remove(0, szStartText.length());
+            id = szTmp.toInt() + 1;
+        }
+        newItem.m_sTagID = QString("tmp.%1").arg(QString::number(id));
+
         newItem.m_sDataType = tr("模拟量");
         // 获取前一行的Name
         QString lastVarName = prevItem.m_sName;
@@ -1386,12 +1483,36 @@ void VariableManagerWin::VariableRowCopy()
     if(m_strItemName == tr("设备变量")) {
         TagIOItem curitem = pTagIOTableModel->GetRow(row);
         TagIOItem lastitem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
-        curitem.m_TagID = lastitem.m_TagID + 1;
+
+        int id = 1;
+        int iPos = 0;
+        QString szVarTmp = "";
+        QString szTmp = "0";
+
+        szVarTmp = lastitem.m_sTagID;
+        if(szVarTmp.startsWith("io.")) {
+            iPos = szVarTmp.lastIndexOf(".");
+            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
+            id = szTmp.toInt() + 1;
+        }
+
+        curitem.m_sTagID =  QString("%1%2").arg(szVarTmp.left(iPos + 1)).arg(QString::number(id));
+
         pTagIOTableModel->AppendRow(curitem);
     } else if(m_strItemName == tr("中间变量")) {
         TagTmpItem curitem = pTagTmpTableModel->GetRow(row);
         TagTmpItem lastitem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
-        curitem.m_TagID = lastitem.m_TagID + 1;
+
+        QString szVarTmp = lastitem.m_sTagID;
+        QString szStartText = "tmp.";
+        QString szTmp = "0";
+        int id = 1;
+        if(szVarTmp.startsWith(szStartText)) {
+            szTmp = szVarTmp.remove(0, szStartText.length());
+            id = szTmp.toInt() + 1;
+        }
+        curitem.m_sTagID = QString("tmp.%1").arg(QString::number(id));
+
         pTagTmpTableModel->AppendRow(curitem);
     }
 

@@ -15,7 +15,7 @@ class RealTimeDB : public QObject
 {
     Q_OBJECT
 public:
-    explicit RealTimeDB(QObject *parent = 0);
+    explicit RealTimeDB(QObject *parent = nullptr);
     ~RealTimeDB();
 
 
@@ -25,15 +25,15 @@ public slots:
 
 public:
     //       map<id, DBTagObject*>
-    static QMap<qint32, DBTagObject* > rtdb;
-    static QMap<QString, qint32> varNameMapId;
-    static QVariant GetData(qint32 id);
-    static QString GetDataString(qint32 id);
-    static void SetData(qint32 id, QVariant dat);
-    static void SetTypeAndData(qint32 id, TTagDataType type, QVariant dat);
-    static void SetDataString(qint32 id, QString dat);
-    static void SetDataStringInner(qint32 id, QString dat);
-    static int getIdByTagName(const QString name);
+    static QMap<QString, DBTagObject* > rtdb;
+    static QMap<QString, QString> varNameMapId;
+    static QVariant GetData(const QString &id);
+    static QString GetDataString(const QString &id);
+    static void SetData(const QString &id, QVariant dat);
+    static void SetTypeAndData(const QString &id, TTagDataType type, QVariant dat);
+    static void SetDataString(const QString &id, const QString &dat);
+    static void SetDataStringInner(const QString &id, const QString &dat);
+    static QString getIdByTagName(const QString &name);
     static void debug();
     static void debugShowNameMapId();
 

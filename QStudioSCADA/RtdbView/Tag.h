@@ -11,13 +11,13 @@
 
 struct TagItem
 {
-    explicit TagItem(qint32 varid=0,
+    explicit TagItem(const QString &sVarid=QString(),
             const QString &sName=QString(),
             const QString &sDescription=QString(),
             const QString &sDeviceInfo=QString(),
             const QString &sLogicValue=QString(),
             const QString &sStatus=QString())
-        : mId(varid),
+        : mId(sVarid),
           mName(sName),
           mDescription(sDescription),
           mDeviceInfo(sDeviceInfo),
@@ -27,7 +27,7 @@ struct TagItem
 
     }
 
-    qint32 mId; // 变量ID
+    QString mId; // 变量ID
     QString mName;  //名称
     QString mDescription;  //描述
     QString mDeviceInfo;  //设备信息
@@ -46,7 +46,7 @@ public:
     enum Column {TagID, Name, Description, DeviceInfo, LogicValue, Status};
 
 public:
-    explicit TagTableModel(QObject *parent=0)
+    explicit TagTableModel(QObject *parent=nullptr)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -71,7 +71,7 @@ public:
     void InsertRow(int i, TagItem * item);
     TagItem *GetRow(int i);
     void UpdateRow(int i, TagItem * item);
-    void UpdateLogicValueAndStatus(int id, QString logicValue, QString status);
+    void UpdateLogicValueAndStatus(QString id, QString logicValue, QString status);
 
 private:
     QList<TagItem *> m_tagItems;

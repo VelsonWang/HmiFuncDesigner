@@ -93,7 +93,7 @@ static void ClearIOTagWriteBuffer(IOTag* pTag)
 /*
 * 查找设备变量
 */
-IOTag* ModbusASCIIDevice::FindIOTagByID(qint32 id)
+IOTag* ModbusASCIIDevice::FindIOTagByID(const QString &id)
 {
     for (int i = 0; i < mReadList.size(); ++i)
     {
@@ -103,7 +103,7 @@ IOTag* ModbusASCIIDevice::FindIOTagByID(qint32 id)
             return pTag;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /**

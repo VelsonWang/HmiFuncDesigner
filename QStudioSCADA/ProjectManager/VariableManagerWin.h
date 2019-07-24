@@ -15,9 +15,6 @@
 #include <QTableView>
 #include <QVBoxLayout>
 
-
-#define SYSVARIABLE_BASE    (0)
-#define TMPVARIABLE_BASE    (0)
 #define IOVARIABLE_BASE     (0)
 
 class TagSystemTableModel : public QAbstractTableModel
@@ -36,7 +33,7 @@ public:
     };
 
 public:
-    explicit TagSystemTableModel(QObject *parent=0)
+    explicit TagSystemTableModel(QObject *parent=nullptr)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -83,7 +80,7 @@ public:
     };
 
 public:
-    explicit TagTmpTableModel(QObject *parent=0)
+    explicit TagTmpTableModel(QObject *parent=nullptr)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -138,7 +135,7 @@ public:
     };
 
 public:
-    explicit TagIOTableModel(QObject *parent=0)
+    explicit TagIOTableModel(QObject *parent=nullptr)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -180,7 +177,7 @@ class ComboBoxDelegate : public QItemDelegate
 {
     Q_OBJECT
 public:
-    ComboBoxDelegate( QStringList list, QObject *parent = 0 );
+    ComboBoxDelegate( QStringList list, QObject *parent = nullptr);
 
     QWidget *createEditor( QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index ) const;
     void setEditorData( QWidget *editor, const QModelIndex &index ) const;
@@ -198,7 +195,7 @@ class VariableTableView : public QTableView
 {
     Q_OBJECT
 public:
-    explicit VariableTableView(QWidget *parent = 0);
+    explicit VariableTableView(QWidget *parent = nullptr);
     ~VariableTableView();
 
 private:
@@ -231,7 +228,7 @@ class VariableManagerWin : public ChildBase
     Q_OBJECT
 
 public:
-    explicit VariableManagerWin(QWidget *parent = 0,
+    explicit VariableManagerWin(QWidget *parent = nullptr,
                                 const QString &itemName = "",
                                 const QString &projName = "");
     ~VariableManagerWin();

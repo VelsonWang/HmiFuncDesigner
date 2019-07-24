@@ -1,6 +1,6 @@
 ﻿#include "RtdbConnectDialog.h"
 #include "ui_RtdbConnectDialog.h"
-#include "configutils.h"
+#include "ConfigUtils.h"
 #include "Helper.h"
 #include <QDebug>
 
@@ -25,7 +25,7 @@ RtdbConnectDialog::~RtdbConnectDialog()
 
 void RtdbConnectDialog::on_editAddress_textChanged(const QString &arg1)
 {
-
+    Q_UNUSED(arg1)
 }
 
 void RtdbConnectDialog::on_btnConnect_clicked()

@@ -10,11 +10,11 @@ class Tag : public QObject
 {
     Q_OBJECT
 public:
-    explicit Tag(QObject *parent = 0);
+    explicit Tag(QObject *parent = nullptr);
 
 public:
     qint32 mLength; // 长度
-    qint32 mId; // 变量ID
+    QString mId; // 变量ID
     TTagDataType mType;  // 变量数据类型
     QString mName;  //名称
     QString mDescription;  //描述
@@ -70,7 +70,7 @@ public:
     double mLowLimit; // 存盘数据范围下限
 
 public:
-    void LoadData(const QJsonObject &json, qint32 pageid);
+    void LoadData(const QJsonObject &json);
 
 };
 

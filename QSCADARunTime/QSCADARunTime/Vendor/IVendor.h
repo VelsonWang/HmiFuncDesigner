@@ -49,7 +49,7 @@ public:
     // 添加设备变量至变量写队列
     virtual void AddIOTagToDeviceTagWriteQueue(IOTag* pTag) = 0;
     // 查找设备变量
-    virtual IOTag* FindIOTagByID(qint32 id) = 0;
+    virtual IOTag* FindIOTagByID(const QString &id) = 0;
     // 写变量前处理
     virtual bool BeforeWriteIOTag(IOTag* pTag) = 0;
     // 写变量

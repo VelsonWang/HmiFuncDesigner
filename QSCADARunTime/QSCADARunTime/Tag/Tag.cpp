@@ -7,30 +7,6 @@
 
 #include "Tag.h"
 
-/*
-* ownPage IO变量分组对应的组号
-*/
-qint32 make_id(TTagType type, qint32 cfgid, qint32 ownPage)
-{
-    qint32 ret = cfgid;
-    switch(type)
-    {
-        case TYPE_IO:
-        {
-            ret += 0 + ownPage * 1000;
-        }break;
-        case TYPE_TMP:
-        {
-            ret += 1000000;
-        }break;
-        case TYPE_SYSTEM:
-        {
-            ret += 2000000;
-        }break;
-    }
-    return ret;
-}
-
 
 Tag::Tag(QObject *parent) : QObject(parent)
 {
@@ -38,9 +14,9 @@ Tag::Tag(QObject *parent) : QObject(parent)
 }
 
 
-void IoDataTag::LoadData(const QJsonObject &json, qint32 pageid)
+void IoDataTag::LoadData(const QJsonObject &json)
 {
-    mId = make_id(TYPE_IO, json["iID"].toInt(), pageid);
+    mId = json["sID"].toString();
     mName = json["sName"].toString();
     mDescription = json["sDescription"].toString();
     mUnit = json["sUnit"].toString();
@@ -278,7 +254,7 @@ void IoDataTag::LoadData(const QJsonObject &json, qint32 pageid)
 
 void TmpDataTag::LoadData(const QJsonObject &json)
 {
-    mId = make_id(TYPE_TMP, json["iID"].toInt(), 0);
+    mId = json["sID"].toString();
     mType = TYPE_VARIANT;
     mName = json["sName"].toString();
     mDescription = json["sDescription"].toString();
@@ -418,7 +394,7 @@ void TmpDataTag::LoadData(const QJsonObject &json)
 
 void SysDataTag::LoadData(const QJsonObject &json)
 {
-    mId = make_id(TYPE_SYSTEM, json["iID"].toInt(), 0);
+    mId = json["sID"].toString();
     mType = TYPE_VARIANT;
     mName = json["sName"].toString();
     mDescription = json["sDescription"].toString();

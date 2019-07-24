@@ -76,7 +76,7 @@ QVariant TagTableModel::headerData(int section,
     {
         switch (section)
         {
-            case TagID: return tr("内存编号");
+            case TagID: return tr("变量ID");
             case Name: return tr("名称");
             case Description: return tr("描述");
             case DeviceInfo: return tr("设备信息");
@@ -112,7 +112,7 @@ bool TagTableModel::setData(const QModelIndex &index,
     TagItem *item = m_tagItems[index.row()];
     switch (index.column())
     {
-        case TagID: item->mId = value.toInt(); break;
+        case TagID: item->mId = value.toString(); break;
         case Name: item->mName = value.toString(); break;
         case Description: item->mDescription = value.toString(); break;
         case DeviceInfo: item->mDeviceInfo = value.toString(); break;
@@ -180,7 +180,7 @@ TagItem *TagTableModel::GetRow(int i)
 {
     if(i < m_tagItems.size())
         return m_tagItems.at(i);
-    return NULL;
+    return nullptr;
 }
 
 
@@ -195,7 +195,7 @@ void TagTableModel::UpdateRow(int i, TagItem * item)
 }
 
 
-void TagTableModel::UpdateLogicValueAndStatus(int id, QString logicValue, QString status)
+void TagTableModel::UpdateLogicValueAndStatus(QString id, QString logicValue, QString status)
 {
     for(int i=0; i<m_tagItems.size(); i++)
     {

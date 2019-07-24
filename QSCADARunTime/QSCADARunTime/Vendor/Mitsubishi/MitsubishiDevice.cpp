@@ -85,7 +85,7 @@ static void ClearIOTagWriteBuffer(IOTag* pTag) {
 /*
 * 查找设备变量
 */
-IOTag* MitsubishiDevice::FindIOTagByID(qint32 id) {
+IOTag* MitsubishiDevice::FindIOTagByID(const QString &id) {
     for (int i = 0; i < mReadList.size(); ++i) {
         IOTag* pTag = mReadList.at(i);
         if(pTag->GetTagID() == id)
@@ -93,7 +93,7 @@ IOTag* MitsubishiDevice::FindIOTagByID(qint32 id) {
             return pTag;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 

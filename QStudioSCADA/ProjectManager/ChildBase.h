@@ -7,7 +7,7 @@ class ChildBase : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ChildBase(QWidget *parent = 0,
+    explicit ChildBase(QWidget *parent = nullptr,
                        const QString &itemName = "",
                        const QString &projName = "");
     virtual ~ChildBase();

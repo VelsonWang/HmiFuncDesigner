@@ -423,6 +423,7 @@ namespace Log4Qt
 #else
     void LogManager::qtMessageHandler(QtMsgType type, const QMessageLogContext &context, const QString &message)
     {
+        Q_UNUSED(context)
         Level level;
         switch (type)
         {

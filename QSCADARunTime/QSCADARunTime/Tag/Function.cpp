@@ -56,10 +56,10 @@ void Function::LoadFuncObjects(const QString projectConverter)
 bool Function::SetValueToVariable(RuntimeEvent e, QString var1, QString value)
 {
     Q_UNUSED(e)
-    qint32 id = RealTimeDB::getIdByTagName(var1);
-    if(id != -1)
+    QString szTagID = RealTimeDB::getIdByTagName(var1);
+    if(szTagID != "")
     {
-        RealTimeDB::SetDataString(id, value);
+        RealTimeDB::SetDataString(szTagID, value);
     }
     return true;
 }
@@ -70,11 +70,11 @@ bool Function::SetValueToVariable(RuntimeEvent e, QString var1, QString value)
 bool Function::SetVariableToVariable(RuntimeEvent e, QString var1, QString var2)
 {
     Q_UNUSED(e)
-    qint32 id1 = RealTimeDB::getIdByTagName(var1);
-    qint32 id2 = RealTimeDB::getIdByTagName(var2);
-    if(id1 != -1 && id2 != -1 )
+    QString szTagID1 = RealTimeDB::getIdByTagName(var1);
+    QString szTagID2 = RealTimeDB::getIdByTagName(var2);
+    if(szTagID1 != "" && szTagID2 != "")
     {
-        RealTimeDB::SetDataString(id1, RealTimeDB::GetDataString(id2));
+        RealTimeDB::SetDataString(szTagID1, RealTimeDB::GetDataString(szTagID2));
     }
     return true;
 }
@@ -84,13 +84,13 @@ bool Function::SetVariableToVariable(RuntimeEvent e, QString var1, QString var2)
 */
 bool Function::GetVariableValue(RuntimeEvent e, QString var1)
 {
-    qint32 id = RealTimeDB::getIdByTagName(var1);
-    if(id != -1)
+    QString szTagID = RealTimeDB::getIdByTagName(var1);
+    if(szTagID != "")
     {
         DBTagObject* pThisTag = (DBTagObject*)e.getObj();
-        if(pThisTag != NULL)
+        if(pThisTag != nullptr)
         {
-            RealTimeDB::SetDataStringInner(pThisTag->mId, RealTimeDB::GetDataString(id));
+            RealTimeDB::SetDataStringInner(pThisTag->mId, RealTimeDB::GetDataString(szTagID));
         }
     }
     return true;

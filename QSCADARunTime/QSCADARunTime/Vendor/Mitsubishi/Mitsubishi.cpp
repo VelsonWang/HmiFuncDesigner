@@ -20,7 +20,8 @@ enum _TCPUMEM
 typedef enum _TCPUMEM TCPUMEM;
 
 
-static quint16 getBeginAddrAsCpuMem(TCPUMEM cm, TTagDataType dataType) {
+static quint16 getBeginAddrAsCpuMem(TCPUMEM cm, TTagDataType dataType)
+{
     quint16 wRet = 0;
 
 	switch(cm)
@@ -67,14 +68,16 @@ static quint16 getBeginAddrAsCpuMem(TCPUMEM cm, TTagDataType dataType) {
 }
 
 //4字节ASCII
-static void makeAddress(quint16 wAddress, quint8 * pStore) {
+static void makeAddress(quint16 wAddress, quint8 * pStore)
+{
 	SetDataAsWord(pStore, wAddress);
 	RecoverSelfData(pStore, 2);
 	MakeCodeToAsii(pStore, pStore, 2);
 }
 
 //2字节ASCII
-static void makeDatalen(quint16 wDataLen, quint8 * pStore) {
+static void makeDatalen(quint16 wDataLen, quint8 * pStore)
+{
     quint8 byDataLen = (quint8)wDataLen;
 	MakeCodeToAsii(&byDataLen, pStore, 1);
 }
@@ -95,7 +98,8 @@ static quint16 getboolBlockByte(quint32 dwDataPos, size_t RepeatLen) {
 	return wDataLen;
 }
 
-static quint16 Mitsubishi_GetAddressOffset(TCPUMEM cm, quint16 wDataPos) {
+static quint16 Mitsubishi_GetAddressOffset(TCPUMEM cm, quint16 wDataPos)
+{
     quint16 wOffSet;
 
     if((cm == CM_T) || (cm == CM_D) || (cm == CM_C16)) {
@@ -109,7 +113,8 @@ static quint16 Mitsubishi_GetAddressOffset(TCPUMEM cm, quint16 wDataPos) {
 	return wOffSet;
 }
 
-static TCPUMEM getCpuMem(const QString &szRegisterArea) {
+static TCPUMEM getCpuMem(const QString &szRegisterArea)
+{
     if(szRegisterArea == QObject::tr("X"))
         return CM_X;
     else if(szRegisterArea == QObject::tr("Y"))
@@ -133,24 +138,28 @@ static TCPUMEM getCpuMem(const QString &szRegisterArea) {
 
 Mitsubishi::Mitsubishi(QObject *parent)
     : QObject(parent),
-      iFacePort_(nullptr) {
+      iFacePort_(nullptr)
+{
     memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
     memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
 }
 
 
-Mitsubishi::~Mitsubishi() {
+Mitsubishi::~Mitsubishi()
+{
 
 }
 
 
-void Mitsubishi::setPort(IPort *pPort) {
+void Mitsubishi::setPort(IPort *pPort)
+{
     if(pPort != nullptr)
         iFacePort_ = pPort;
 }
 
 
-IPort *Mitsubishi::getPort() {
+IPort *Mitsubishi::getPort()
+{
     return iFacePort_;
 }
 
@@ -161,7 +170,8 @@ IPort *Mitsubishi::getPort() {
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
-bool Mitsubishi::isCanWrite(IOTag* pTag) {
+bool Mitsubishi::isCanWrite(IOTag* pTag)
+{
     if(getCpuMem(pTag->GetRegisterArea()) == CM_X)
         return false;
     else if(getCpuMem(pTag->GetRegisterArea()) == CM_C32) {
@@ -179,20 +189,26 @@ bool Mitsubishi::isCanWrite(IOTag* pTag) {
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int Mitsubishi::writeData(IOTag* pTag) {
+int Mitsubishi::writeData(IOTag* pTag)
+{
+    static int iFirstFlag = 1;
     DBTagObject *pDBTagObject = pTag->GetDBTagObject();
     quint16 wAddress = getBeginAddrAsCpuMem(getCpuMem(pTag->GetRegisterArea()), pTag->GetDataType());
     size_t len = 0;
-
-    writeDataBuffer_[0] = 0x05;
-    if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, 1, 1000);
-
     int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(readDataBuffer_, 1, 5000);
-    if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
-        return false;
+
+    if(iFirstFlag) {
+        iFirstFlag = 0;
+        writeDataBuffer_[0] = 0x05;
+        if(getPort() != nullptr)
+            getPort()->write(writeDataBuffer_, 1, 1000);
+
+        resultlen = 0;
+        if(getPort() != nullptr)
+            resultlen = getPort()->read(readDataBuffer_, 1, 5000);
+        if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
+            return false;
+    }
 
     memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
     memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
@@ -266,21 +282,26 @@ bool Mitsubishi::isCanRead(IOTag* pTag) {
  * @return 0-失败,1-成功
  */
 int Mitsubishi::readData(IOTag* pTag) {
+    static int iFirstFlag = 1;
     quint16 wAddress = getBeginAddrAsCpuMem(getCpuMem(pTag->GetRegisterArea()), pTag->GetDataType());
 	size_t len = 0;
     quint16 wDataLen = 0;
     quint8 byCheckSum = 0;
     quint8 *pVailableData;
-
-    writeDataBuffer_[0] = 0x05;
-    if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, 1, 1000);
-
     int resultlen = 0;
-    if(getPort() != nullptr)
-        resultlen = getPort()->read(readDataBuffer_, 1, 5000);
-    if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
-        return false;
+
+    if(iFirstFlag) {
+        iFirstFlag = 0;
+        writeDataBuffer_[0] = 0x05;
+        if(getPort() != nullptr)
+            getPort()->write(writeDataBuffer_, 1, 1000);
+
+        resultlen = 0;
+        if(getPort() != nullptr)
+            resultlen = getPort()->read(readDataBuffer_, 1, 5000);
+        if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
+            return false;
+    }
 
     memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
     memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));

@@ -6,8 +6,8 @@
 #include <QDebug>
 
 
-QMap<qint32, DBTagObject* > RealTimeDB::rtdb = QMap<qint32, DBTagObject* >();
-QMap<QString, qint32> RealTimeDB::varNameMapId = QMap<QString, qint32>();
+QMap<QString, DBTagObject* > RealTimeDB::rtdb = QMap<QString, DBTagObject* >();
+QMap<QString, QString> RealTimeDB::varNameMapId = QMap<QString, QString>();
 
 RealTimeDB::RealTimeDB(QObject *parent) :
     QObject(parent)
@@ -27,24 +27,24 @@ RealTimeDB::~RealTimeDB()
 /*
 * 获取DBTagObject数据
 */
-QVariant RealTimeDB::GetData(qint32 id)
+QVariant RealTimeDB::GetData(const QString &id)
 {
     DBTagObject* pTag = rtdb[id];
-    if(pTag != NULL)
+    if(pTag != nullptr)
         return pTag->GetData();
-    return NULL;
+    return QVariant();
 }
 
 
 /*
 * 获取DBTagObject数据
 */
-QString RealTimeDB::GetDataString(qint32 id)
+QString RealTimeDB::GetDataString(const QString &id)
 {
     QString ret = "";
 
     DBTagObject* pTag = rtdb[id];
-    if(pTag == NULL)
+    if(pTag == nullptr)
         return QString("");
 
     TTagDataType type = pTag->mType;
@@ -103,15 +103,15 @@ QString RealTimeDB::GetDataString(qint32 id)
 /*
 * 设置DBTagObject数据
 */
-void RealTimeDB::SetData(qint32 id, QVariant dat)
+void RealTimeDB::SetData(const QString &id, QVariant dat)
 {
     DBTagObject* pTag = rtdb[id];
-    if(pTag == NULL)
+    if(pTag == nullptr)
         return;
 
     pTag->SetData(dat, false);
 
-    if(pTag->pVendor != NULL)
+    if(pTag->pVendor != nullptr)
     {
         IOTag *pIOTag = pTag->pVendor->FindIOTagByID(id);
         pTag->pVendor->AddIOTagToDeviceTagWriteQueue(pIOTag);
@@ -122,14 +122,14 @@ void RealTimeDB::SetData(qint32 id, QVariant dat)
 /*
 * 设置DBTagObject类型和数据
 */
-void RealTimeDB::SetTypeAndData(qint32 id, TTagDataType type, QVariant dat)
+void RealTimeDB::SetTypeAndData(const QString &id, TTagDataType type, QVariant dat)
 {
     DBTagObject* pTag = rtdb[id];
-    if(pTag != NULL)
+    if(pTag != nullptr)
     {
         pTag->SetData(dat, false);
         pTag->mType = type;
-        if(pTag->pVendor != NULL)
+        if(pTag->pVendor != nullptr)
         {
             IOTag *pIOTag = pTag->pVendor->FindIOTagByID(id);
             pTag->pVendor->AddIOTagToDeviceTagWriteQueue(pIOTag);
@@ -141,10 +141,10 @@ void RealTimeDB::SetTypeAndData(qint32 id, TTagDataType type, QVariant dat)
 /*
 * 设置DBTagObject数据
 */
-void RealTimeDB::SetDataString(qint32 id, QString dat)
+void RealTimeDB::SetDataString(const QString &id, const QString &dat)
 {
     DBTagObject* pTag = rtdb[id];
-    if(pTag == NULL || dat == "")
+    if(pTag == nullptr || dat == "")
         return;
 
     TTagDataType type = pTag->mType;
@@ -199,7 +199,7 @@ void RealTimeDB::SetDataString(qint32 id, QString dat)
     }
     pTag->SetData(val, false);
 
-    if(pTag->pVendor != NULL)
+    if(pTag->pVendor != nullptr)
     {
         IOTag *pIOTag = pTag->pVendor->FindIOTagByID(id);
         pTag->pVendor->AddIOTagToDeviceTagWriteQueue(pIOTag);
@@ -210,10 +210,10 @@ void RealTimeDB::SetDataString(qint32 id, QString dat)
 /*
 * 内部设置DBTagObject数据
 */
-void RealTimeDB::SetDataStringInner(qint32 id, QString dat)
+void RealTimeDB::SetDataStringInner(const QString &id, const QString &dat)
 {
     DBTagObject* pTag = rtdb[id];
-    if(pTag == NULL || dat == "")
+    if(pTag == nullptr || dat == "")
         return;
 
     TTagDataType type = pTag->mType;
@@ -269,17 +269,17 @@ void RealTimeDB::SetDataStringInner(qint32 id, QString dat)
     pTag->SetData(val, false);
 }
 
-int RealTimeDB::getIdByTagName(const QString name)
+QString RealTimeDB::getIdByTagName(const QString &name)
 {
-    int ret = -1;
-    ret = varNameMapId.value(name, -1);
+    QString ret = "";
+    ret = varNameMapId.value(name, "");
     return ret;
 }
 
 void RealTimeDB::debug()
 {
     qDebug() << "RealTimeDB: ";
-    QMap<qint32, DBTagObject* >::iterator iter = rtdb.begin();
+    QMap<QString, DBTagObject* >::iterator iter = rtdb.begin();
     for(iter=rtdb.begin(); iter!=rtdb.end(); ++iter)
     {
         qDebug() << iter.key() << ' ' << RealTimeDB::GetDataString(iter.key());
@@ -289,7 +289,7 @@ void RealTimeDB::debug()
 void RealTimeDB::debugShowNameMapId()
 {
     qDebug() << "Tag Name Map Id: ";
-    QMap<QString, qint32>::iterator iter = varNameMapId.begin();
+    QMap<QString, QString>::iterator iter = varNameMapId.begin();
     for(iter=varNameMapId.begin(); iter!=varNameMapId.end(); ++iter)
     {
         qDebug() << iter.key() << ' ' << iter.value();

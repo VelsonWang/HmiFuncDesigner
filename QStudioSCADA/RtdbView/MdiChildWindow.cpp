@@ -55,7 +55,7 @@ MdiChildWindow::~MdiChildWindow()
 }
 
 
-void MdiChildWindow::SetTagLogicValueAndStatus(int id, QString logicValue, QString status)
+void MdiChildWindow::SetTagLogicValueAndStatus(QString id, QString logicValue, QString status)
 {
     pTagTableModel->UpdateLogicValueAndStatus(id, logicValue, status);
 }

@@ -96,7 +96,7 @@ static void ClearIOTagWriteBuffer(IOTag* pTag)
 /*
 * 查找设备变量
 */
-IOTag* TCPIPModbusDevice::FindIOTagByID(qint32 id)
+IOTag* TCPIPModbusDevice::FindIOTagByID(const QString &id)
 {
     for (int i = 0; i < mReadList.size(); ++i)
     {
@@ -106,7 +106,7 @@ IOTag* TCPIPModbusDevice::FindIOTagByID(qint32 id)
             return pTag;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 /**

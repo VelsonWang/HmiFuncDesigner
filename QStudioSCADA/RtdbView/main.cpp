@@ -1,5 +1,5 @@
 ﻿#include "MainWindow.h"
-#include "configutils.h"
+#include "ConfigUtils.h"
 
 #include <QApplication>
 #include <QString>
