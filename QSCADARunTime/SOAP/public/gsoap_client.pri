@@ -1,4 +1,5 @@
 
+QT += network
 
 win32 {
     LIBS += -lpthread -lwsock32 -lws2_32
@@ -13,9 +14,6 @@ INCLUDEPATH += \
 SOURCES += \
     $$PWD/soapC.cpp \
     $$PWD/soapClient.cpp \
-    $$PWD/soapClientLib.cpp \
-    $$PWD/soapServer.cpp \
-    $$PWD/soapServerLib.cpp \
     $$PWD/stdsoap2.cpp 
 
 

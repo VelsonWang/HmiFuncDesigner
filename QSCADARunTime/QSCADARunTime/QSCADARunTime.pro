@@ -26,6 +26,7 @@ include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
 include(../QFtpServer/QFtpServer.pri)
 include(../Views/Views.pri)
+include(../SOAP/server/SOAPServer.pri)
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor \

@@ -10,6 +10,7 @@
 #include "Global.h"
 #include "ConfigUtils.h"
 #include "edncrypt.h"
+#include "gSOAPServer.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -142,10 +143,12 @@ int main(int argc, char *argv[])
     LogInfo(getSystemInfo());
     LogInfo("start SCADARunTime!");
 
+
     //////////////////////////////////////////////////////////////////////////////
     /// start http server
     HttpServer httpServer;
     httpServer.init(60000);
+
 
     //////////////////////////////////////////////////////////////////////////////
     /// start ftp server
@@ -167,7 +170,9 @@ int main(int argc, char *argv[])
         LogInfo("Failed to start FtpServer.");
     }
 
+
     //////////////////////////////////////////////////////////////////////////////
+
 
     QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
     QDir dir(projPath);
@@ -189,13 +194,24 @@ int main(int argc, char *argv[])
     if(!projSaveDir.exists()) {
         projSaveDir.mkpath(projSavePath);
     }
+
+
     TcpServer ser(&runTime);
     ser.listen(QHostAddress::Any, 6000);
 
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// 启动SOAP服务
+    SOAPServer gSOAPServer("0.0.0.0", 60002);
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// 启动定时任务
     TimerTask *pTimerTask = new TimerTask();
 
     ret = app.exec();
 
+    gSOAPServer.exitService();
     delete pTimerTask;
 
     return ret;
