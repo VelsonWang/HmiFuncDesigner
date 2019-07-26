@@ -1,19 +1,20 @@
-﻿#ifndef INPUTEDITITEM_H
-#define INPUTEDITITEM_H
+﻿#ifndef ELEMENTMOVINGTEXT_H
+#define ELEMENTMOVINGTEXT_H
 
 #include "PublicDefine.h"
 #include "Element.h"
+#include "functionproperty.h"
+#include "tagtextlistproperty.h"
 #include <QPainter>
 #include <QDataStream>
 #include <QGraphicsSceneMouseEvent>
-#include "tagcolorlistproperty.h"
 
-class ElementInputEdit : public Element
+class ElementMovingText : public Element
 {
     Q_OBJECT
 
 public:
-    explicit ElementInputEdit(const QString &szProjPath, const QString &szProjName);
+    explicit ElementMovingText(const QString &szProjPath, const QString &szProjName);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(uint id, const QVariant &value) override;
@@ -26,14 +27,19 @@ public:
     void regenerateElementId() override;
     void release() override; // 释放占用的资源
 
-    enum {Type = InputEditItemType};
+    QString getMoveDirString(const QString& szAlign) const;
+    void setMoveDirString(const QString& szAlign, QString& szAlignSet);
+
+    enum {
+        Type = MovingTextItemType
+    };
 
     int type() const {
         return Type;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementInputEdit &textItem);
-    friend QDataStream &operator>>(QDataStream &in, ElementInputEdit &textItem);
+    friend QDataStream &operator<<(QDataStream &out, const ElementMovingText &textItem);
+    friend QDataStream &operator>>(QDataStream &in, ElementMovingText &textItem);
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -45,19 +51,23 @@ protected:
     QPainterPath shape() const override;
 
 private:
-    void drawInputEdit(QPainter *painter);
+    void drawMovingText(QPainter *painter);
+    void getSupportEvents(QStringList &listValue);
+
 
 private:
     static int iLastIndex_;
-    QRectF elementRect;
-    // 允许编辑输入
-    bool enableEdit_;
+    QRectF elementRect_;
     // 关联的变量
     QString szTagSelected_;
-    // 水平对齐
-    QString szHAlign_;
-    // 垂直对齐
-    QString szVAlign_;
+    // 填充颜色列表
+    QStringList tagTextList_;
+    // 移动方向
+    QString szMoveDir_;
+    // 移动字符数
+    int iMoveCharNum_;
+    // 移动间隔
+    double period_;
     // 背景颜色
     QColor backgroundColor_;
     // 透明背景颜色
@@ -68,39 +78,25 @@ private:
     int borderWidth_;
     // 边框颜色
     QColor borderColor_;
-    // 密码输入
-    bool inputPassword_;
-    // 初始有效性
-    bool enableOnInitial_;
     // 初始可见性
     bool showOnInitial_;
 
-
-
     // ID
-    TextProperty *idProperty;
+    TextProperty *idProperty_;
     // 标题
-    EmptyProperty *titleProperty;
-    // 允许编辑输入
-    BoolProperty *enableEditProperty_;
+    EmptyProperty *titleProperty_;
     // 选择变量
     ListProperty *tagSelectProperty_;
-    // X坐标
-    IntegerProperty *xCoordProperty;
-    // Y坐标
-    IntegerProperty *yCoordProperty;
-    // Z坐标
-    IntegerProperty *zValueProperty;
-    // 宽度
-    IntegerProperty *widthProperty;
-    // 高度
-    IntegerProperty *heightProperty;
+    // 变量文本列表
+    TagTextListProperty *tagTextListProperty_;
     // 文本
-    TextProperty *elementTextProperty;
-    // 水平对齐
-    ListProperty *hAlignProperty_;
-    // 垂直对齐
-    ListProperty *vAlignProperty_;
+    TextProperty *elementTextProperty_;
+    // 移动方向
+    ListProperty *moveDirProperty_;
+    // 移动字符数
+    IntegerProperty *moveCharNumProperty_;
+    // 移动间隔
+    DoubleProperty *periodProperty_;
     // 背景颜色
     ColorProperty *backgroundColorProperty_;
     // 透明背景颜色
@@ -113,15 +109,19 @@ private:
     IntegerProperty *borderWidthProperty_;
     // 边框颜色
     ColorProperty *borderColorProperty_;
-    // 密码输入
-    BoolProperty *inputPasswordProperty_;
-    // 初始有效性
-    BoolProperty *enableOnInitialProperty_;
     // 初始可见性
     BoolProperty *showOnInitialProperty_;
-    // 旋转角度
-    IntegerProperty *angleProperty;
-
+    // X坐标
+    IntegerProperty *xCoordProperty_;
+    // Y坐标
+    IntegerProperty *yCoordProperty_;
+    // Z坐标
+    IntegerProperty *zValueProperty_;
+    // 宽度
+    IntegerProperty *widthProperty_;
+    // 高度
+    IntegerProperty *heightProperty_;
 };
 
-#endif // INPUTEDITITEM_H
+
+#endif // ELEMENTMOVINGTEXT_H

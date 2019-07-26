@@ -189,6 +189,8 @@ int main(int argc, char *argv[])
     runTime.Start();
     g_SCADARunTimePtr = &runTime;
 
+    QApplication::processEvents();
+
     QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
     QDir projSaveDir(projSavePath);
     if(!projSaveDir.exists()) {
@@ -201,7 +203,10 @@ int main(int argc, char *argv[])
 
     ///////////////////////////////////////////////////////////////////////////
     /// 启动SOAP服务
+#ifdef USE_SOAP_SERVICE
     SOAPServer gSOAPServer("0.0.0.0", 60002);
+#endif
+
 
     ///////////////////////////////////////////////////////////////////////////
     /// 启动定时任务
@@ -209,7 +214,10 @@ int main(int argc, char *argv[])
 
     ret = app.exec();
 
+#ifdef USE_SOAP_SERVICE
     gSOAPServer.exitService();
+#endif
+
     delete pTimerTask;
 
     return ret;

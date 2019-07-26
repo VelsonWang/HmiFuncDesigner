@@ -22,6 +22,9 @@ CONFIG(debug, debug|release) { #debug
 CONFIG -= app_bundle
 CONFIG += C++11
 
+# 开启SOAP服务
+DEFINES += USE_SOAP_SERVICE
+
 include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
 include(../QFtpServer/QFtpServer.pri)
