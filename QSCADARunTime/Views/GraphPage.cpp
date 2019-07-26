@@ -19,6 +19,7 @@
 #include "EIndicationLamp/EIndicationLamp.h"
 #include "ESwitchButton/ESwitchButton.h"
 #include "EClock/EClock.h"
+#include "EMovingText/EMovingText.h"
 
 
 template<template<typename T> class S, typename T>
@@ -76,6 +77,7 @@ void registerCreateObjectFunc()
     REGISTER_CREATEOR(QObject::tr("指示灯"), IndicationLampItemType, "IndicationLamp", EIndicationLamp);
     REGISTER_CREATEOR(QObject::tr("切换按钮"), SwitchButtonItemType, "SwitchButton", ESwitchButton);
     REGISTER_CREATEOR(QObject::tr("时钟"), ClockItemType, "Clock", EClock);
+    REGISTER_CREATEOR(QObject::tr("移动文本"), MovingTextItemType, "MovingText", EMovingText);
 }
 
 GraphPage::GraphPage(const QRectF &rect, QWidget *parent)

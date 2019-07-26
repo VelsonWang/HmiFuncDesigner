@@ -20,6 +20,7 @@ const int PictureItemType = QGraphicsItem::UserType + 42;
 const int IndicationLampItemType = QGraphicsItem::UserType + 43;
 const int SwitchButtonItemType = QGraphicsItem::UserType + 44;
 const int ClockItemType = QGraphicsItem::UserType + 45;
+const int MovingTextItemType = QGraphicsItem::UserType + 46;
 
 enum {
     EL_X = 0, //coord X

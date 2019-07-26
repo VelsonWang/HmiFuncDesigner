@@ -52,8 +52,6 @@ protected:
 
 private:
     void drawMovingText(QPainter *painter);
-    void getSupportEvents(QStringList &listValue);
-
 
 private:
     static int iLastIndex_;

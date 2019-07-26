@@ -106,7 +106,7 @@ void ElementMovingText::createPropertyList()
     moveDirProperty_ = new ListProperty(tr("移动方向"));
     moveDirProperty_->setId(EL_TEXT_MOVE_DIR);
     QStringList moveDirList;
-    moveDirList << tr("从左到右") << tr("从右到左") << tr("从上到下") << tr("从下到上");
+    moveDirList << tr("从左到右") << tr("从右到左");
     moveDirProperty_->setList(moveDirList);
     moveDirProperty_->setValue(szMoveDir_);
     propList.insert(propList.end(), moveDirProperty_);
@@ -474,10 +474,6 @@ QString ElementMovingText::getMoveDirString(const QString& szAlign) const
         return QString("LeftToRight");
     } else if(szAlign == tr("从右到左")) {
         return QString("RightToLeft");
-    } else if(szAlign == tr("从上到下")) {
-        return QString("TopToBottom");
-    } else if(szAlign == tr("从下到上")) {
-        return QString("BottomToTop");
     }
     return QString("");
 }
@@ -495,10 +491,6 @@ void ElementMovingText::setMoveDirString(const QString& szAlign, QString& szAlig
         szAlignSet = tr("从左到右");
     } else if(szAlign == QString("RightToLeft")) {
         szAlignSet = tr("从右到左");
-    } else if(szAlign == QString("TopToBottom")) {
-        szAlignSet = tr("从上到下");
-    } else if(szAlign == QString("BottomToTop")) {
-        szAlignSet = tr("从下到上");
     }
 }
 
