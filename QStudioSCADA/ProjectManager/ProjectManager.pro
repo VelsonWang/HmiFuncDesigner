@@ -17,6 +17,7 @@ INCLUDEPATH += .
 INCLUDEPATH += ./widget
 INCLUDEPATH += $$PWD/../common/qtsingleapplication
 INCLUDEPATH += $$PWD/../common/register
+INCLUDEPATH += $$PWD/../libs/qscintilla
 
 include($$PWD/../common/qtsingleapplication/qtsingleapplication.pri)
 include($$PWD/../common/register/register.pri)
@@ -31,7 +32,7 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
     LIBS += -L$$LINK_LIBRARY_PATH -lCsvd
-    LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
+    LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
     LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowserd
     LIBS += -L$$LINK_LIBRARY_PATH -lLuad
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd

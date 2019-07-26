@@ -265,8 +265,8 @@ SOURCES = \
 	qsciprinter.cpp \
 	qscistyle.cpp \
 	qscistyledtext.cpp \
-    MacPasteboardMime.cpp \
-    InputMethod.cpp \
+        MacPasteboardMime.cpp \
+        InputMethod.cpp \
 	SciClasses.cpp \
 	ListBoxQt.cpp \
 	PlatQt.cpp \
@@ -400,19 +400,19 @@ SOURCES = \
         ./src/EditView.cpp \
         ./src/ExternalLexer.cpp \
         ./src/Indicator.cpp \
-    ./src/KeyMap.cpp \
+        ./src/KeyMap.cpp \
         ./src/LineMarker.cpp \
         ./src/MarginView.cpp \
         ./src/PerLine.cpp \
         ./src/PositionCache.cpp \
-    ./src/RESearch.cpp \
+        ./src/RESearch.cpp \
         ./src/RunStyles.cpp \
-    ./src/ScintillaBase.cpp \
-    ./src/Selection.cpp \
+        ./src/ScintillaBase.cpp \
+        ./src/Selection.cpp \
         ./src/Style.cpp \
         ./src/UniConversion.cpp \
         ./src/ViewStyle.cpp \
-        ./src/XPM.cpp
+        ./src/XPM.cpp \
 
 TRANSLATIONS = \
 	qscintilla_cs.ts \
