@@ -1,4 +1,4 @@
-﻿#include "pluginmanager.h"
+﻿#include "PluginManager.h"
 #include "Helper.h"
 #include <QApplication>
 #include <QPluginLoader>

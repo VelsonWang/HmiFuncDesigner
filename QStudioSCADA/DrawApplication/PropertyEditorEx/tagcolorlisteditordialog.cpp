@@ -6,7 +6,7 @@
 #include <QHBoxLayout>
 #include <QKeyEvent>
 #include <QLineEdit>
-#include "ui_TagColorListEditorDialog.h"
+#include "ui_tagcolorlisteditordialog.h"
 
 ColorEditor::ColorEditor(QWidget *parent) : QWidget(parent), color_(Qt::white) {
   toolButton_ = new QToolButton(this);

@@ -1,5 +1,5 @@
 ﻿#include "ElementLibraryWidget.h"
-#include "configutils.h"
+#include "ConfigUtils.h"
 #include "Helper.h"
 #include <QToolBox>
 
