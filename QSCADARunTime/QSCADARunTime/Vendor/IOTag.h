@@ -66,12 +66,12 @@ private:
     DBTagObject *m_pDBTagObject;
 
 private:
-    qint32 mId; // 变量ID
+    QString mId; // 变量ID
 
 public:
     void SetTagBufferLength(qint32 i);
-    void SetTagID(qint32 id);
-    qint32 GetTagID();
+    void SetTagID(const QString &id);
+    QString GetTagID();
 
     IOTag &operator=(const IOTag &);
 

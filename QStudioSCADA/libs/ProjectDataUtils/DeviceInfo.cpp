@@ -33,7 +33,6 @@ bool DeviceInfo::load(ProjectDataSQLiteDatabase *pDB) {
         return false;
     }
 
-    qDeleteAll(listDeviceInfoObject_);
     listDeviceInfoObject_.clear();
 
     while (query.next()) {
@@ -136,9 +135,12 @@ bool DeviceInfo::insert(ProjectDataSQLiteDatabase *pDB,
                  .arg("t_device_info")
                  .arg(query.lastQuery())
                  .arg(query.lastError().text()));
+        return false;
     }
 
     this->load(pDB);
+
+    return ret;
 }
 
 bool DeviceInfo::del(ProjectDataSQLiteDatabase *pDB,

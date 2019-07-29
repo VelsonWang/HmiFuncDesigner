@@ -27,6 +27,7 @@ VariableEditDialog::VariableEditDialog(QString projName, QWidget *parent) :
 
     // 已经建立设备列表
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    deviceInfo.load(ProjectData::getInstance()->dbData_);
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         ui->cboDeviceName->addItem(pObj->szDeviceName_);
@@ -425,7 +426,7 @@ void VariableEditDialog::on_checkIsSaveDisk_clicked(bool checked)
  */
 int VariableEditDialog::GetVariableType()
 {
-    return (int)m_iVarType;
+    return static_cast<int>(m_iVarType);
 }
 
 /*
@@ -575,12 +576,12 @@ void VariableEditDialog::on_chkIsIOConnect_clicked(bool checked)
 
 void VariableEditDialog::on_chkIsSelfVariable_clicked(bool checked)
 {
-
+    Q_UNUSED(checked)
 }
 
 void VariableEditDialog::on_chkGlobal_clicked(bool checked)
 {
-
+    Q_UNUSED(checked)
 }
 
 

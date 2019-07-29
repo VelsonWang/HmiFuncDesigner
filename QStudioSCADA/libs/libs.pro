@@ -2,6 +2,7 @@
 include(../QStudioSCADA.pri)
 
 TEMPLATE  = subdirs
+CONFIG += ordered
 
 SUBDIRS   = \
     Utils \
@@ -10,7 +11,7 @@ SUBDIRS   = \
     PluginManager \
     DrawUtils \
     qtpropertybrowser \
-    qscintilla \
+    QScintilla \
     Lua \
     Ftp \
     PropertyEditor \

@@ -18,6 +18,8 @@
 #include "EPushButton/EPushButton.h"
 #include "EIndicationLamp/EIndicationLamp.h"
 #include "ESwitchButton/ESwitchButton.h"
+#include "EClock/EClock.h"
+#include "EMovingText/EMovingText.h"
 
 
 template<template<typename T> class S, typename T>
@@ -74,12 +76,15 @@ void registerCreateObjectFunc()
     REGISTER_CREATEOR(QObject::tr("弹出按钮"), PushButtonItemType, "PushButton", EPushButton);
     REGISTER_CREATEOR(QObject::tr("指示灯"), IndicationLampItemType, "IndicationLamp", EIndicationLamp);
     REGISTER_CREATEOR(QObject::tr("切换按钮"), SwitchButtonItemType, "SwitchButton", ESwitchButton);
+    REGISTER_CREATEOR(QObject::tr("时钟"), ClockItemType, "Clock", EClock);
+    REGISTER_CREATEOR(QObject::tr("移动文本"), MovingTextItemType, "MovingText", EMovingText);
 }
 
 GraphPage::GraphPage(const QRectF &rect, QWidget *parent)
     : QWidget(parent),
       filename(QString()),
-      projpath_(QString()) {
+      projpath_(QString())
+{
     //setItemIndexMethod(QGraphicsScene::NoIndex);
 
     if (rect.width() == 0 || rect.height() == 0) {
@@ -99,11 +104,13 @@ GraphPage::GraphPage(const QRectF &rect, QWidget *parent)
     refreshTmr_.stop();
 }
 
-void GraphPage::setActive(bool active) {
+void GraphPage::setActive(bool active)
+{
     onActive = active;
 }
 
-bool GraphPage::active() {
+bool GraphPage::active()
+{
     return onActive;
 }
 
@@ -112,7 +119,8 @@ bool GraphPage::active() {
  * @details Z坐标由小到大排列元素
  * @param dat 待排序对象集
  */
-void GraphPage::zValueSort(QList<Element *> &dat) {
+void GraphPage::zValueSort(QList<Element *> &dat)
+{
     for(int i=0; i<dat.size()-1; i++){
         for(int j=0; j<dat.size()-1-i; j++){
             if(dat.at(j)->getElementZValue()>dat.at(j+1)->getElementZValue()){
@@ -122,7 +130,8 @@ void GraphPage::zValueSort(QList<Element *> &dat) {
     }
 }
 
-void GraphPage::paintEvent(QPaintEvent *event) {
+void GraphPage::paintEvent(QPaintEvent *event)
+{
     Q_UNUSED(event)
     QPainter painter(this);
     painter.setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
@@ -135,21 +144,24 @@ void GraphPage::paintEvent(QPaintEvent *event) {
     }
 }
 
-void GraphPage::mousePressEvent(QMouseEvent *event) {
+void GraphPage::mousePressEvent(QMouseEvent *event)
+{
     foreach (Element *pEle, elementList_) {
         pEle->mousePressEvent(event);
     }
     QWidget::mousePressEvent(event);
 }
 
-void GraphPage::mouseMoveEvent(QMouseEvent *event) {
+void GraphPage::mouseMoveEvent(QMouseEvent *event)
+{
     foreach (Element *pEle, elementList_) {
         pEle->mouseMoveEvent(event);
     }
     QWidget::mouseMoveEvent(event);
 }
 
-void GraphPage::mouseReleaseEvent(QMouseEvent *event) {
+void GraphPage::mouseReleaseEvent(QMouseEvent *event)
+{
     foreach (Element *pEle, elementList_) {
         pEle->mouseReleaseEvent(event);
     }
@@ -157,52 +169,63 @@ void GraphPage::mouseReleaseEvent(QMouseEvent *event) {
 }
 
 
-void GraphPage::mouseDoubleClickEvent(QMouseEvent *event) {
+void GraphPage::mouseDoubleClickEvent(QMouseEvent *event)
+{
     QWidget::mouseDoubleClickEvent(event);
     //if (!itemAt(event->scenePos(), QTransform())) {
     //}
 }
 
-void GraphPage::setFileName(const QString &file) {
+void GraphPage::setFileName(const QString &file)
+{
     filename = file;
 }
 
-QString GraphPage::getFileName() const {
+QString GraphPage::getFileName() const
+{
     return filename;
 }
 
-void GraphPage::setGraphPageId(const QString &id) {
+void GraphPage::setGraphPageId(const QString &id)
+{
     graphPageId = id;
     emit changeGraphPageName();
 }
 
-QString GraphPage::getGraphPageId() const {
+QString GraphPage::getGraphPageId() const
+{
     return graphPageId;
 }
 
-void GraphPage::setGraphPageBackground(const QColor &color) {
+void GraphPage::setGraphPageBackground(const QColor &color)
+{
     graphPageBackground = color;
     //setBackgroundBrush(GraphPageBackground);
 }
 
-QColor GraphPage::getGraphPageBackground() const {
+QColor GraphPage::getGraphPageBackground() const
+{
     return graphPageBackground;
 }
 
-int GraphPage::getGraphPageWidth() const {
+int GraphPage::getGraphPageWidth() const
+{
     return graphPageWidth;
 }
 
-void GraphPage::setGraphPageWidth(int width) {
+void GraphPage::setGraphPageWidth(int width)
+{
     graphPageWidth = width;
     this->setGeometry(0, 0, graphPageWidth, graphPageHeight);
 }
 
-int GraphPage::getGraphPageHeight() const {
+int GraphPage::getGraphPageHeight() const
+{
     return graphPageHeight;
 }
 
-void GraphPage::setGraphPageHeight(int height) {
+void GraphPage::setGraphPageHeight(int height)
+{
     graphPageHeight = height;
     this->setGeometry(0, 0, graphPageWidth, graphPageHeight);
 }
@@ -212,7 +235,8 @@ void GraphPage::setGraphPageHeight(int height) {
  * @details 设置功能操作属性数据
  * @param funcs
  */
-void GraphPage::setSelectedFunctions(QStringList funcs) {
+void GraphPage::setSelectedFunctions(QStringList funcs)
+{
     funcs_ = funcs;
 }
 
@@ -222,11 +246,13 @@ void GraphPage::setSelectedFunctions(QStringList funcs) {
  * @details 获取功能操作属性数据
  * @param funcs
  */
-QStringList GraphPage::getSelectedFunctions() {
+QStringList GraphPage::getSelectedFunctions()
+{
     return funcs_;
 }
 
-void GraphPage::createItems(const QString &typeId, QPointF position) {
+void GraphPage::createItems(const QString &typeId, QPointF position)
+{
     Element *last = nullptr;
 
     CreateObjFunc func = mapNameFuncData_[typeId];
@@ -266,14 +292,16 @@ void GraphPage::populateCoordinates(const Qt::Alignment &alignment,
 }
 
 
-void GraphPage::addElementEvent() {
+void GraphPage::addElementEvent()
+{
     emit newElementAdded();
 }
 
 
 void GraphPage::readItems(QDataStream &in,
                           int offset,
-                          bool select) {
+                          bool select)
+{
     int objectType;
     int itemsCount;
     copyList.clear();
@@ -300,7 +328,8 @@ void GraphPage::readItems(QDataStream &in,
     }
 }
 
-void GraphPage::loadAsBinary(const QString &filename) {
+void GraphPage::loadAsBinary(const QString &filename)
+{
 
     QFile file(filename);
 
@@ -321,7 +350,8 @@ void GraphPage::loadAsBinary(const QString &filename) {
     file.close();
 }
 
-void GraphPage::loadAsXML(const QString &filename) {
+void GraphPage::loadAsXML(const QString &filename)
+{
 
     QFile file(filename);
 

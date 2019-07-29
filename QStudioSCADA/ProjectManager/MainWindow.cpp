@@ -229,7 +229,7 @@ void MainWindow::VariableGroupAdd() {
     TagManager::ioDBVarGroups_.varBlockGroupList_.append(pGroup);
     TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
     UpdateDeviceVariableTableGroup();
-    if (window != NULL) {
+        if(window != nullptr) {
       QString titleNew =
           QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
       window->SetTitle(titleNew);
@@ -252,14 +252,14 @@ void MainWindow::VariableGroupRename() {
       pDlg->SetLabelName("数据组名：");
       pDlg->SetGroupName(text);
       if (pDlg->exec() == QDialog::Accepted) {
-        if (window != NULL) {
+                if(window != nullptr) {
           QString titleNew = QString("%1%2%3")
                                  .arg("设备变量")
                                  .arg("-")
                                  .arg(pDlg->GetGroupName());
           window->SetTitle(titleNew);
         } else
-          qDebug() << "window == NULL";
+                    qDebug()<<"window == nullptr";
         QString srcfile, desfile;
         srcfile = ProjectMgrUtils::getProjectPath(m_strProjectName) +
                   "/DevVarList-" + var->m_name + ".odb";
@@ -285,7 +285,7 @@ void MainWindow::VariableDeleteGroup() {
   foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
     if (qTiem->text() == var->m_name) {
       ChildForm *findForm = findMdiChild(m_strProjectName);
-      if (findForm != NULL) {
+            if(findForm != nullptr) {
         findForm->hide();
       }
       QString file = "";
@@ -534,7 +534,7 @@ void MainWindow::on_actionOpenProject_triggered() {
   QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
   QString fileName = QFileDialog::getOpenFileName(
       this, tr("选择工程文件"), path, tr("project file (*.pdt)"));
-  if (fileName != NULL) {
+    if(fileName != nullptr) {
     doOpenProject(fileName);
   }
 }
@@ -559,37 +559,32 @@ void MainWindow::enableToolBar(QString text) {
   ui->DeviceOperateToolBar->setEnabled(bdevice);
 }
 
-void MainWindow::on_treeViewProject_clicked(const QModelIndex &index) {
-  if (m_strProjectName == NULL) return;
-
-  QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
-  QString winTittle = item->text();
-
-  ////////////////////////////////////////////////////////////////////////
+void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
+    QString winTittle = szItemText;
 
   ChildForm *findForm = findMdiChild(m_strProjectName);
-  if (findForm == NULL) {
+    if(findForm == nullptr) {
     findForm = new ChildForm(this, m_strProjectName);
     findForm->setWindowTitle(m_strProjectName);
     ui->mdiArea->addSubWindow(findForm);
     connect(this, SIGNAL(treeItemClicked(const QString &)), findForm,
-            SLOT(treeItemClicked(const QString &)));
+                findForm, SLOT(treeItemClicked(const QString &)), Qt::DirectConnection);
   }
 
   ////////////////////////////////////////////////////////////////////////
 
-  if (item->text() == tr("变量管理") || item->text() == tr("设备变量")) {
+    if(szItemText == tr("变量管理") || szItemText == tr("设备变量")) {
     if (findForm) findForm->hide();
     return;
   }
 
-  if (item->text() == tr("中间变量") || item->text() == tr("系统变量")) {
-    winTittle = item->text();
+    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
+        winTittle = szItemText;
   } else {
     // 设备变量
     foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
-      if (item->text() == var->m_name) {
-        winTittle =
+            if(szItemText == var->m_name) {
+                winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
             QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(item->text());
       }
     }
@@ -601,39 +596,39 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index) {
   ////////////////////////////////////////////////////////////////////////
 
   bool VarFound = false;
-  if (item->text() == tr("中间变量") || item->text() == tr("系统变量")) {
+    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
     VarFound = true;
   } else {
     // 设备变量
     foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
-      if (item->text() == var->m_name) VarFound = true;
+            if(szItemText == var->m_name)
     }
   }
 
   ////////////////////////////////////////////////////////////////////////
 
-  if (item->text() == tr("系统参数")) {
+    if(szItemText == tr("系统参数")) {
     findForm->switchPage(PAGE_SYSTEM_PARAMETER);
-  } else if (item->text() == tr("通讯设备") || item->text() == tr("串口设备") ||
+    } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") || szItemText == tr("网络设备")) {
              item->text() == tr("网络设备")) {
     findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
   } else if (VarFound) {  // 变量
-    if (item->text() == tr("中间变量") || item->text() == tr("系统变量")) {
-      winTittle = item->text();
+        if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
+            winTittle = szItemText;
     } else {
-      winTittle =
+            winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
           QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(item->text());
     }
     findForm->switchPage(PAGE_VARIABLE_MANAGER);
-    if (item->text() == tr("设备变量")) findForm->switchPage(PAGE_NONE);
-  } else if (item->text() == tr("画面")) {
+        if(szItemText == tr("设备变量"))
+    } else if(szItemText == tr("画面")) {
     findForm->switchPage(PAGE_DRAW_PAGE);
-  } else if (item->text() == tr("实时数据库")) {
+    } else if(szItemText == tr("实时数据库")) {
     findForm->switchPage(PAGE_RTDB);
-  } else if (item->text() == tr("历史数据库")) {
+    } else if(szItemText == tr("历史数据库")) {
     findForm->switchPage(PAGE_NONE);
     findForm->hide();
-  } else if (item->text() == tr("脚本编辑器")) {
+    } else if(szItemText == tr("脚本编辑器")) {
     findForm->switchPage(PAGE_SCRIPT_MANAGER);
   }
 
@@ -641,8 +636,18 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index) {
   emit treeItemClicked(winTittle);
 }
 
-void MainWindow::UpdateProjectName(QString name) {
-  if (name != NULL) {
+
+
+void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
+{
+    if(m_strProjectName == "")
+        return;
+
+    QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
+    onTreeViewProjectClicked(item->text());
+}
+
+    if(name != nullptr) {
     m_strProjectName = name;
     m_strProjectPath = ProjectMgrUtils::getProjectPath(name);
     QString strName = name.mid(name.lastIndexOf("/") + 1,
@@ -657,7 +662,7 @@ void MainWindow::UpdateProjectName(QString name) {
     pTreeViewProjectModel->clear();
     ui->treeViewProject->reset();
     delete pTreeViewProjectModel;
-    pTreeViewProjectModel = NULL;
+        pTreeViewProjectModel = nullptr;
 
     setUpProjectTreeView();
   }
@@ -677,6 +682,7 @@ void MainWindow::UpdateDeviceVariableTableGroup() {
     pDevVariableTabList.append(pDevVarTab);
     pDevVariable->appendRow(pDevVarTab);
   }
+    QApplication::processEvents();
 }
 
 /*
@@ -685,7 +691,7 @@ void MainWindow::UpdateDeviceVariableTableGroup() {
 void MainWindow::on_actionSaveProject_triggered() {
   foreach (QMdiSubWindow *window, ui->mdiArea->subWindowList()) {
     ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
-    if (findForm != NULL) findForm->save();
+        if(findForm != nullptr)
   }
 }
 
@@ -696,10 +702,10 @@ void MainWindow::on_actionCloseProject_triggered() {
   if (pProjectItem->text() == "未创建工程") return;
   foreach (QMdiSubWindow *window, ui->mdiArea->subWindowList()) {
     ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
-    if (findForm != NULL) findForm->save();
+        if(findForm != nullptr)
     window->close();
   }
-  UpdateProjectName(NULL);
+    UpdateProjectName(nullptr);
 }
 
 /*
@@ -791,6 +797,7 @@ void MainWindow::on_actionUDisk_triggered() {}
  */
 void MainWindow::on_actionDownload_triggered() {
   if (m_strProjectName == NULL) return;
+    if(m_strProjectName == nullptr)
 
   // 创建tmp目录
   QString tmpDir = QCoreApplication::applicationDirPath() + "/tmp";
@@ -858,7 +865,7 @@ void MainWindow::on_actionDownload_triggered() {
  */
 void MainWindow::on_actionAddTag_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->addVariableTag();
   }
 }
@@ -868,7 +875,7 @@ void MainWindow::on_actionAddTag_triggered() {
  */
 void MainWindow::on_actionAppendTag_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->appendVariableTag();
   }
 }
@@ -878,7 +885,7 @@ void MainWindow::on_actionAppendTag_triggered() {
  */
 void MainWindow::on_actionRowCopyTag_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->rowCopyVariableTag();
   }
 }
@@ -888,7 +895,7 @@ void MainWindow::on_actionRowCopyTag_triggered() {
  */
 void MainWindow::on_actionColumnCopyTag_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->columnCopyVariableTag();
   }
 }
@@ -898,7 +905,7 @@ void MainWindow::on_actionColumnCopyTag_triggered() {
  */
 void MainWindow::on_actionModifyTag_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->modifyVariableTag();
   }
 }
@@ -908,7 +915,7 @@ void MainWindow::on_actionModifyTag_triggered() {
  */
 void MainWindow::on_actionDeleteTag_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->deleteVariableTag();
   }
 }
@@ -924,7 +931,7 @@ void MainWindow::on_actionExportTag_triggered() {
   if (strSaveCsvPath == "") return;
 
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->variableTagExportToCsv(strSaveCsvPath);
   }
 }
@@ -945,30 +952,50 @@ void MainWindow::on_actionImportTag_triggered() {
   QString strGroupName =
       strCsvName.right(strCsvName.length() - strCsvName.lastIndexOf("-") - 1);
 
-  bool found = false;
-  foreach (DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
-    if (strGroupName == var->m_name) {
-      found = true;
-      break;
-    }
-  }
-  if (!found) {
-    DBVarGroup *pGroup = new DBVarGroup();
-    pGroup->m_type = "WorkNode";
-    pGroup->m_name = strGroupName;
-    TagManager::ioDBVarGroups_.varBlockGroupList_.append(pGroup);
-    TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
-    UpdateDeviceVariableTableGroup();
-    enableToolBar(strCsvName);
-  }
+    if(strCsvName.startsWith(tr("中间变量"))) {
+        ChildForm* pFindForm = findMdiChild(this->m_CurItem);
+        if(pFindForm != nullptr) {
+            QString titleNew = tr("中间变量");
+            pFindForm->SetTitle(titleNew);
+            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
+        }
+    } else if(strCsvName.startsWith(tr("设备变量"))) {
+        bool found = false;
+        foreach(DBVarGroup *var, TagManager::ioDBVarGroups_.varBlockGroupList_) {
+            if(strGroupName == var->m_name) {
+                found = true;
+                break;
+            }
+        }
 
-  ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
-    QString titleNew =
-        QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
-    window->SetTitle(titleNew);
-    window->variableTagImportFromCsv(strSaveCsvFile);
-  }
+        if(!found) {
+            DBVarGroup *pGroup = new DBVarGroup();
+            pGroup->m_type = "WorkNode";
+            pGroup->m_name = strGroupName;
+            TagManager::ioDBVarGroups_.varBlockGroupList_.append(pGroup);
+            TagManager::ioDBVarGroups_.saveToFile(DATA_SAVE_FORMAT);
+            UpdateDeviceVariableTableGroup();
+            enableToolBar(strCsvName);
+
+            onTreeViewProjectClicked(tr("设备变量"));
+            QApplication::processEvents();
+            onTreeViewProjectClicked(strGroupName);
+            QApplication::processEvents();
+
+            ChildForm* pFindForm = findMdiChild(this->m_CurItem);
+            if(pFindForm != nullptr) {
+                pFindForm->variableTagImportFromCsv(strSaveCsvFile);
+            }
+            return;
+        }
+
+        ChildForm* pFindForm = findMdiChild(this->m_CurItem);
+        if(pFindForm != nullptr) {
+            QString szWinTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
+            pFindForm->SetTitle(szWinTittle);
+            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
+        }
+    }
 }
 
 /**
@@ -976,7 +1003,7 @@ void MainWindow::on_actionImportTag_triggered() {
  */
 void MainWindow::on_actionDeviceNew_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->newDevice();
   }
 }
@@ -986,7 +1013,7 @@ void MainWindow::on_actionDeviceNew_triggered() {
  */
 void MainWindow::on_actionDeviceModify_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->modifyDevice();
   }
 }
@@ -996,7 +1023,7 @@ void MainWindow::on_actionDeviceModify_triggered() {
  */
 void MainWindow::on_actionDeviceDelete_triggered() {
   ChildForm *window = findMdiChild(this->m_CurItem);
-  if (window != NULL) {
+    if(window != nullptr) {
     window->deleteDevice();
   }
 }
@@ -1142,7 +1169,7 @@ void MainWindow::on_actionBigIcon_triggered() {
   ui->actionBigIcon->setChecked(true);
   ui->actionSmallIcon->setChecked(false);
   ChildForm *findForm = findMdiChild(this->m_CurItem);
-  if (findForm != NULL) {
+    if(findForm != nullptr) {
     findForm->showLargeIcon();
   }
 }
@@ -1154,7 +1181,7 @@ void MainWindow::on_actionSmallIcon_triggered() {
   ui->actionBigIcon->setChecked(false);
   ui->actionSmallIcon->setChecked(true);
   ChildForm *findForm = findMdiChild(this->m_CurItem);
-  if (findForm != NULL) {
+    if(findForm != nullptr) {
     findForm->showSmallIcon();
   }
 }

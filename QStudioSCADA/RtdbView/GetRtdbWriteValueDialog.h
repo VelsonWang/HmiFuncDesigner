@@ -13,7 +13,7 @@ class GetRtdbWriteValueDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GetRtdbWriteValueDialog(TagItem *tag, QWidget *parent = 0);
+    explicit GetRtdbWriteValueDialog(TagItem *tag, QWidget *parent = nullptr);
     ~GetRtdbWriteValueDialog();
     QString GetWriteValue();
 

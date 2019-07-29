@@ -24,7 +24,7 @@ class DBTagObject : public EventProducer
 {
 public:
     explicit DBTagObject();
-    DBTagObject(qint32 id, TTagDataType t, TPermissionType p, qint32 len,
+    DBTagObject(QString id, TTagDataType t, TPermissionType p, qint32 len,
                 QVariant dat, TTagType tt, QObject *pObj);
     ~DBTagObject();
 
@@ -40,7 +40,7 @@ signals:
 public slots:
 
 public:
-    qint32 mId; // 变量ID
+    QString mId; // 变量ID
     TTagDataType mType; // 变量类型 字节 字 双字等
     TPermissionType mPermission; // 读写权限
     qint32 mLength; // 长度
@@ -59,7 +59,7 @@ public:
     {
         DBTagObject *pObj = (DBTagObject *)e.getObj();
         QObject *pTagObj = pObj->mPrivate.pTagObject;
-        if(pTagObj != NULL)
+        if(pTagObj != nullptr)
         {
             switch(pObj->mPrivate.type)
             {

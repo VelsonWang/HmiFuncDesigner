@@ -4,17 +4,17 @@
 
 DBTagObject::DBTagObject()
 {
-    mId = 0;
+    mId = "";
     mType = TYPE_BOOL;
     mPermission = READ_WRIE;
     mLength = 0;
     mData = 0;
     mPrivate.type =TYPE_TMP;
-    mPrivate.pTagObject = NULL;
-    pVendor = NULL;
+    mPrivate.pTagObject = nullptr;
+    pVendor = nullptr;
 }
 
-DBTagObject::DBTagObject(qint32 id, TTagDataType t, TPermissionType p, qint32 len,
+DBTagObject::DBTagObject(QString id, TTagDataType t, TPermissionType p, qint32 len,
                          QVariant dat, TTagType tt, QObject *pObj)
 {
     mId = id;
@@ -24,13 +24,13 @@ DBTagObject::DBTagObject(qint32 id, TTagDataType t, TPermissionType p, qint32 le
     mData = dat;
     mPrivate.type = tt;
     mPrivate.pTagObject = pObj;
-    pVendor = NULL;
+    pVendor = nullptr;
 }
 
 
 DBTagObject::~DBTagObject()
 {
-    if(mPrivate.pTagObject != NULL)
+    if(mPrivate.pTagObject != nullptr)
         delete mPrivate.pTagObject;
 }
 

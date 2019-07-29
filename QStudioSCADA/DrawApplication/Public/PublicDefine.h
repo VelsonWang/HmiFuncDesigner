@@ -18,6 +18,8 @@ const int InputEditItemType = QGraphicsItem::UserType + 41;
 const int PictureItemType = QGraphicsItem::UserType + 42;
 const int IndicationLampItemType = QGraphicsItem::UserType + 43;
 const int SwitchButtonItemType = QGraphicsItem::UserType + 44;
+const int ClockItemType = QGraphicsItem::UserType + 45;
+const int MovingTextItemType = QGraphicsItem::UserType + 46;
 
 
 enum {
@@ -66,6 +68,12 @@ enum {
     EL_TEXT2 = 42,
     EL_BACKGROUND1 = 43,
     EL_BACKGROUND2 = 44,
+    EL_PERIOD = 45,
+    EL_SHOW_DATE = 46,
+    EL_SHOW_WEEK = 47,
+    EL_TAG_TEXT_LIST = 48,
+    EL_TEXT_MOVE_DIR = 49,
+    EL_TEXT_MOVE_CHAR_NUM = 50,
 
     EL_PROPERTY_EMPTY = 255
 };

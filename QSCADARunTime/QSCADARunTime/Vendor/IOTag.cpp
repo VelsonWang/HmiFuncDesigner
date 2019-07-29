@@ -254,12 +254,12 @@ void IOTag::SetTagBufferLength(qint32 i)
     pWriteBuf = new unsigned char[mLength];
 }
 
-void IOTag::SetTagID(qint32 id)
+void IOTag::SetTagID(const QString &id)
 {
     mId = id;
 }
 
-qint32 IOTag::GetTagID()
+QString IOTag::GetTagID()
 {
     return mId;
 }

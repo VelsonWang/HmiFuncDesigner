@@ -49,9 +49,9 @@ void ElementRect::paint(QPainter *painter) {
         if(szTagSelected_ != "" && bEnable_) {
             QString szTagValue = "";
             if(tagColorList_.size()) {
-                qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
-                if(id != -1) {
-                    szTagValue = RealTimeDB::GetDataString(id);
+                QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+                if(szTagID != "") {
+                    szTagValue = RealTimeDB::GetDataString(szTagID);
                 } else {
                     szTagValue = "#";
                 }

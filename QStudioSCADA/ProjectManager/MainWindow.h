@@ -107,6 +107,7 @@ private:
     void updateRecentProjectList(QString newProj);
     void doOpenProject(QString proj);
     void CreateDefaultIOTagGroup();
+    void onTreeViewProjectClicked(const QString &szItemText);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);

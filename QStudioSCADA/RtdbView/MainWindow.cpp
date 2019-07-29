@@ -259,7 +259,7 @@ bool MainWindow::Load(SaveFormat saveFormat)
         {
             QJsonObject jsonObj = tagSysArray[i].toObject();
             TagItem *pItem = new TagItem();
-            pItem->mId = jsonObj["iID"].toInt();
+            pItem->mId = jsonObj["sID"].toString();
             pItem->mName = jsonObj["sName"].toString();
             pItem->mDescription = jsonObj["sDescription"].toString();
             mSysTagList.append(pItem);
@@ -275,7 +275,7 @@ bool MainWindow::Load(SaveFormat saveFormat)
         {
             QJsonObject jsonObj = TmpVarArray[i].toObject();
             TagItem *pItem = new TagItem();
-            pItem->mId = jsonObj["iID"].toInt();
+            pItem->mId = jsonObj["sID"].toString();
             pItem->mName = jsonObj["sName"].toString();
             pItem->mDescription = jsonObj["sDescription"].toString();
             mTmpTagList.append(pItem);
@@ -299,7 +299,7 @@ bool MainWindow::Load(SaveFormat saveFormat)
             {
                 QJsonObject jsonObj = IOVarArray[i].toObject();
                 TagItem *pItem = new TagItem();
-                pItem->mId = jsonObj["iID"].toInt();
+                pItem->mId = jsonObj["sID"].toString();
                 pItem->mName = jsonObj["sName"].toString();
                 pItem->mDescription = jsonObj["sDescription"].toString();
                 pItem->mDeviceInfo = jsonObj["sIOConnect"].toString();
@@ -331,7 +331,7 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
         }
         else
         {
-            if(bConnectStatus_ && timer_ != NULL)
+            if(bConnectStatus_ && timer_ != nullptr)
                 if(timer_->isActive()) timer_->stop();
             window->close();
         }
@@ -481,20 +481,25 @@ void MainWindow::timeout()
     if(list.count() != 2) return;
     int idStart = QString(list[0]).toInt();
     int idEnd = QString(list[1]).toInt();
-    idStart = tagList.at(idStart-1)->mId;
-    idEnd = tagList.at(idEnd-1)->mId;
-    //qDebug()<< idStart << idEnd;
 
-    int id = idStart;
-    if(windowTitle.contains("IO设备")) id += 0 + mMapIoTagPageId[windowTitle] * 1000;
-    else if(windowTitle.contains("中间变量")) id += 1000000;
-    else if(windowTitle.contains("系统变量")) id += 2000000;
-    else ;
+    int iPos = -1;
+    QString szIDTmp = "";
+    QString szTmp = "0";
+
+    szIDTmp = tagList.at(idStart-1)->mId;
+    iPos = szIDTmp.lastIndexOf(".");
+    szTmp = szIDTmp.right(szIDTmp.length() - iPos - 1);
+    idStart = szTmp.toInt();
+
+    szIDTmp = tagList.at(idEnd-1)->mId;
+    iPos = szIDTmp.lastIndexOf(".");
+    szTmp = szIDTmp.right(szIDTmp.length() - iPos - 1);
+    idEnd = szTmp.toInt();
 
     url_ = QString("http://%1:%2/%3").arg(ip_).arg(port_).arg("READ");
     QUrl url(url_);
     QJsonObject json;
-    json["StartID"] = id;
+    json["StartID"] = tagList.at(idStart-1)->mId;
     json["Number"] = idEnd-idStart+1;
     QJsonDocument document;
     document.setObject(json);
@@ -502,6 +507,7 @@ void MainWindow::timeout()
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant("application/json"));
     m_networkAccessManager->post(request, datas);
+
 #if 0
     QEventLoop eventLoop;
     QObject::connect(m_networkAccessManager, &QNetworkAccessManager::finished,
@@ -532,18 +538,14 @@ void MainWindow::writeRtdbTag(QString cmdline)
     MdiChildWindow* pMdiChildWindow =  qobject_cast<MdiChildWindow *>(listSubWin.at(0)->widget()); ;
     QString winTitle = pMdiChildWindow->windowTitle();
 
-    int id = idString.toInt();
-    if(winTitle.contains("IO设备")) id += 0 + mMapIoTagPageId[winTitle] * 1000;
-    if(winTitle.contains("中间变量")) id += 1000000;
-
     url_ = QString("http://%1:%2/%3").arg(ip_).arg(port_).arg("WRITE");
     QUrl url(url_);
     QJsonObject jsonWrite;
-    jsonWrite["StartID"] = id;
+    jsonWrite["StartID"] = idString;
     jsonWrite["Number"] = 1;
     QJsonArray tagArray;
     QJsonObject jsonObj;
-    jsonObj[QString::number(id)] = valueString;
+    jsonObj[idString] = valueString;
     tagArray.append(jsonObj);
     jsonWrite["TagArray"] = tagArray;
 
@@ -578,8 +580,7 @@ void MainWindow::finished(QNetworkReply *reply)
             if(reply->url().path().toUpper() == "/READ")
             {
                 const QJsonObject jsonDocObj = doc.object();
-                int startID = jsonDocObj["StartID"].toInt();
-                int start_id = startID;
+                QString szStartID = jsonDocObj["StartID"].toString();
                 int id = 0;
 
                 QList<QMdiSubWindow *> listSubWin = ui->mdiArea->subWindowList();
@@ -611,47 +612,36 @@ void MainWindow::finished(QNetworkReply *reply)
                 if(list.count() != 2) return;
                 int idStart = QString(list[0]).toInt();
                 int idEnd = QString(list[1]).toInt();
-                idStart = tagList.at(idStart-1)->mId;
-                idEnd = tagList.at(idEnd-1)->mId;
+
+                int iPos = -1;
+                QString szIDTmp = "";
+                QString szTmp = "0";
+
+                szIDTmp = tagList.at(idStart-1)->mId;
+                iPos = szIDTmp.lastIndexOf(".");
+                szTmp = szIDTmp.right(szIDTmp.length() - iPos - 1);
+                idStart = szTmp.toInt();
+
+                szIDTmp = tagList.at(idEnd-1)->mId;
+                iPos = szIDTmp.lastIndexOf(".");
+                szTmp = szIDTmp.right(szIDTmp.length() - iPos - 1);
+                idEnd = szTmp.toInt();
+
                 int num = idEnd-idStart+1;
-                int pageid = 0;
-
-                if(windowTitle.contains("IO设备"))
-                {
-                    pageid = mMapIoTagPageId[windowTitle];
-                    idStart += 0 + pageid * 1000;
-                }
-                else if(windowTitle.contains("中间变量")) idStart += 1000000;
-                else if(windowTitle.contains("系统变量")) idStart += 2000000;
-                else ;
-
                 idEnd = idStart+num;
 
                 QJsonArray tagArray = jsonDocObj["TagArray"].toArray();
+                id = idStart;
                 for (int i = 0; i < tagArray.size(); ++i) {
-                    id = start_id;
                     QJsonObject jsonObj = tagArray[i].toObject();
-                    QString datVal = jsonObj[QString::number(id)].toString();
+                    QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
+                    QString datVal = jsonObj[szTagID].toString();
 
                     if(id >= idStart && id <= idEnd)
                     {
-                        if(windowTitle.contains("IO设备"))
-                        {
-                            if(pageid > 0) id = id / mMapIoTagPageId[windowTitle] / 1000;
-                            pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
-                        }
-                        else if(windowTitle.contains("中间变量"))
-                        {
-                            id -= 1000000;
-                            pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
-                        }
-                        else if(windowTitle.contains("系统变量"))
-                        {
-                            id -= 2000000;
-                            pMdiChildWindow->SetTagLogicValueAndStatus(id, datVal, "");
-                        }
+                        pMdiChildWindow->SetTagLogicValueAndStatus(szTagID, datVal, "");
                     }
-                    start_id++;
+                    id++;
                 }
             }
             else if(reply->url().path().toUpper() == "/WRITE")

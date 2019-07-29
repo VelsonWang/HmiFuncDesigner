@@ -81,7 +81,7 @@ void TagColorListEditorDialog::initUi() {
  */
 void TagColorListEditorDialog::initTableWidget() {
   QStringList hHeaderLabels;
-  hHeaderLabels << tr("变量值") << tr("填充颜色");
+  hHeaderLabels << tr("变量�) << tr("填充颜色");
   ui->tableTagColor->setColumnCount(hHeaderLabels.count());
   ui->tableTagColor->setHorizontalHeaderLabels(hHeaderLabels);
   ui->tableTagColor->horizontalHeader()->setHighlightSections(false);
@@ -107,7 +107,7 @@ void TagColorListEditorDialog::on_btnAdd_clicked() {
 
 /**
  * @brief TagColorListEditorDialog::on_btnDel_clicked
- * @details 删除选中的功能函数
+ * @details 删除选中的功能函�
  */
 void TagColorListEditorDialog::on_btnDel_clicked() {
   ui->tableTagColor->removeRow(ui->tableTagColor->currentRow());

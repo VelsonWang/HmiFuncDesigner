@@ -71,9 +71,9 @@ void ElementInputEdit::paint(QPainter *painter) {
  * @details 刷新变量值
  */
 void ElementInputEdit::refreshTagValue() {
-    qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
-    if(id != -1) {
-        elementText = RealTimeDB::GetDataString(id);
+    QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+    if(szTagID != "") {
+        elementText = RealTimeDB::GetDataString(szTagID);
     }else {
         elementText = "#";
     }
@@ -227,9 +227,9 @@ void ElementInputEdit::enterPressed() {
     bInEditMode_ = false;
     elementText = inputLineEdit_->text();
     if(szTagSelected_ != "") {
-        qint32 id = RealTimeDB::getIdByTagName(szTagSelected_);
-        if(id != -1) {
-            RealTimeDB::SetDataString(id, elementText);
+        QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        if(szTagID != "") {
+            RealTimeDB::SetDataString(szTagID, elementText);
         }
     }
     inputLineEdit_->setText("");
@@ -244,8 +244,8 @@ void ElementInputEdit::closePressed() {
 
 void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
     if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
+        QString szTagID = attributes.value("elementId").toString();
+        setElementId(szTagID);
     }
 
     if (attributes.hasAttribute("enableEdit")) {

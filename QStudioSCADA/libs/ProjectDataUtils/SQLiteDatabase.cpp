@@ -160,14 +160,14 @@ bool SQLiteDatabase::insertOrUpdateRecord(const QString &table,
   return true;
 }
 
-bool SQLiteDatabase::isContain(const QString &table) {
-  bool ret = false;
-  QSqlQuery query(db_);
 
-  query.exec(
-      QString(
-          "select count(*) from sqlite_master where type='table' and name='%1'")
-          .arg(table));
+
+bool SQLiteDatabase::isContain(const QString& table)
+{
+    bool ret = false;
+    QSqlQuery query(db_);
+
+    query.exec(QString("select count(*) from sqlite_master where type='table' and name='%1'").arg(table));
 
   if (!query.next() || query.value(0).toInt() == 0)
     ret = false;
@@ -176,3 +176,7 @@ bool SQLiteDatabase::isContain(const QString &table) {
 
   return ret;
 }
+
+
+
+

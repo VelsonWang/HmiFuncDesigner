@@ -183,8 +183,8 @@ void ElementPushButton::mouseReleaseEvent(QMouseEvent *event) {
 
 void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
     if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
+        QString szTagID = attributes.value("elementId").toString();
+        setElementId(szTagID);
     }
 
     if (attributes.hasAttribute("x")) {

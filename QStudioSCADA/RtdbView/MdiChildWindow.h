@@ -12,9 +12,9 @@ class MdiChildWindow : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MdiChildWindow(QList<TagItem *> tagList, QString tittle = QString(), QWidget *parent = 0);
+    explicit MdiChildWindow(QList<TagItem *> tagList, QString tittle = QString(), QWidget *parent = nullptr);
     ~MdiChildWindow();
-    void SetTagLogicValueAndStatus(int id, QString logicValue, QString status);
+    void SetTagLogicValueAndStatus(QString id, QString logicValue, QString status);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);

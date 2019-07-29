@@ -268,7 +268,7 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
     m_currPageFlow = page;
 
     if(m_currPageFlow == PAGE_NONE) {
-        ui->stackedWidget->setCurrentWidget(NULL);
+        ui->stackedWidget->setCurrentWidget(nullptr);
     } else if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
         ui->stackedWidget->setCurrentWidget(m_sysParamWinPtr);
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
@@ -360,7 +360,6 @@ void ChildForm::showSmallIcon()
 
 void ChildForm::treeItemClicked(const QString &itemText)
 {
-    //qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << itemText;
     if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
         m_sysParamWinPtr->setItemName(itemText);
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面

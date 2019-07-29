@@ -217,10 +217,10 @@ QScriptValue SetRealValue(QScriptContext *context,
     QScriptValue sVar = context->argument(0);
     QScriptValue dValue = context->argument(1);
 
-    qint32 id = RealTimeDB::getIdByTagName(sVar.toString());
-    if(id != -1)
+    QString szTagTD = RealTimeDB::getIdByTagName(sVar.toString());
+    if(szTagTD != "")
     {
-        RealTimeDB::SetDataString(id, QString("%1").arg(dValue.toNumber()));
+        RealTimeDB::SetDataString(szTagTD, QString("%1").arg(dValue.toNumber()));
     }
     return dValue;
 }
@@ -238,12 +238,12 @@ QScriptValue AddAIValue(QScriptContext *context,
     QScriptValue dValue = context->argument(1);
     double newValue = 0.0;
 
-    qint32 id = RealTimeDB::getIdByTagName(sVar.toString());
-    if(id != -1)
+    QString szTagTD = RealTimeDB::getIdByTagName(sVar.toString());
+    if(szTagTD != "")
     {
-        double oldValue = RealTimeDB::GetDataString(id).toDouble();
+        double oldValue = RealTimeDB::GetDataString(szTagTD).toDouble();
         newValue = oldValue + dValue.toNumber();
-        RealTimeDB::SetDataString(id, QString("%1").arg(newValue));
+        RealTimeDB::SetDataString(szTagTD, QString("%1").arg(newValue));
     }
     return newValue;
 }
@@ -261,12 +261,12 @@ QScriptValue SubAIValue(QScriptContext *context,
     QScriptValue dValue = context->argument(1);
     double newValue = 0.0;
 
-    qint32 id = RealTimeDB::getIdByTagName(sVar.toString());
-    if(id != -1)
+    QString szTagTD = RealTimeDB::getIdByTagName(sVar.toString());
+    if(szTagTD != "")
     {
-        double oldValue = RealTimeDB::GetDataString(id).toDouble();
+        double oldValue = RealTimeDB::GetDataString(szTagTD).toDouble();
         newValue = oldValue - dValue.toNumber();
-        RealTimeDB::SetDataString(id, QString("%1").arg(newValue));
+        RealTimeDB::SetDataString(szTagTD, QString("%1").arg(newValue));
     }
     return newValue;
 }
@@ -284,10 +284,10 @@ QScriptValue GetRealValue(QScriptContext *context,
     QScriptValue sVar = context->argument(0);
     double dValue = 0.0;
 
-    qint32 id = RealTimeDB::getIdByTagName(sVar.toString());
-    if(id != -1)
+    QString szTagTD = RealTimeDB::getIdByTagName(sVar.toString());
+    if(szTagTD != "")
     {
-        dValue = RealTimeDB::GetDataString(id).toDouble();
+        dValue = RealTimeDB::GetDataString(szTagTD).toDouble();
     }
     return dValue;
 }
@@ -306,15 +306,15 @@ QScriptValue StateChange(QScriptContext *context,
     QScriptValue dValue = context->argument(1);
     double newValue = 0.0;
 
-    qint32 id = RealTimeDB::getIdByTagName(sVar.toString());
-    if(id != -1)
+    QString szTagTD = RealTimeDB::getIdByTagName(sVar.toString());
+    if(szTagTD != "")
     {
-        double oldValue = RealTimeDB::GetDataString(id).toDouble();
+        double oldValue = RealTimeDB::GetDataString(szTagTD).toDouble();
         if(oldValue != 0.0)
             newValue = 0.0;
         else
             newValue = 1.0;
-        RealTimeDB::SetDataString(id, QString("%1").arg(newValue));
+        RealTimeDB::SetDataString(szTagTD, QString("%1").arg(newValue));
     }
     return newValue;
 }
@@ -333,11 +333,11 @@ QScriptValue SetSysValue(QScriptContext *context,
     QScriptValue dValue = context->argument(1);
     double newValue = 0.0;
 
-    qint32 id = RealTimeDB::getIdByTagName(sSys.toString());
-    if(id != -1)
+    QString szTagTD = RealTimeDB::getIdByTagName(sSys.toString());
+    if(szTagTD != "")
     {
         newValue = dValue.toNumber();
-        RealTimeDB::SetDataString(id, QString("%1").arg(newValue));
+        RealTimeDB::SetDataString(szTagTD, QString("%1").arg(newValue));
     }
 
     return newValue;
@@ -355,10 +355,10 @@ QScriptValue GetSysValue(QScriptContext *context,
     QScriptValue sSys = context->argument(0);
     double dValue = 0.0;
 
-    qint32 id = RealTimeDB::getIdByTagName(sSys.toString());
-    if(id != -1)
+    QString szTagTD = RealTimeDB::getIdByTagName(sSys.toString());
+    if(szTagTD != "")
     {
-        dValue = RealTimeDB::GetDataString(id).toDouble();
+        dValue = RealTimeDB::GetDataString(szTagTD).toDouble();
     }
     return dValue;
 }

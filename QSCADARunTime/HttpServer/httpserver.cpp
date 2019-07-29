@@ -110,21 +110,31 @@ void HttpServer::on_request_end()
     if (path == "/READ")
     {
         const QJsonObject jsonDocObj = doc.object();
-        int startID = jsonDocObj["StartID"].toInt();
+        QString szStartID = jsonDocObj["StartID"].toString();
         int number = jsonDocObj["Number"].toInt();
-        //qDebug() << QString("StartID: %1 ").arg(startID) << QString(" Number: %1 ").arg(number);
+        //qDebug() << QString("StartID: %1 ").arg(szStartID) << QString(" Number: %1 ").arg(number);
 
-        retJsonObj["StartID"] = startID;
+        retJsonObj["StartID"] = szStartID;
         retJsonObj["Number"] = number;
         retJsonObj["Status"] = "OK";
 
         QJsonArray tagArray;
-        int id = startID;
+
+        int iPos = -1;
+        QString szTagIDTmp = "";
+        QString szTmp = "0";
+
+        szTagIDTmp = szStartID;
+        iPos = szTagIDTmp.lastIndexOf(".");
+        szTmp = szTagIDTmp.right(szTagIDTmp.length() - iPos - 1);
+        int id = szTmp.toInt();
+
         for(int i=0; i<number; i++)
         {
             QJsonObject jsonObj;
-            //qDebug() << id << RealTimeDB::GetDataString(id);
-            jsonObj[QString::number(id)] = RealTimeDB::GetDataString(id);
+            //qDebug() << szTagID << RealTimeDB::GetDataString(szTagID);
+            QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
+            jsonObj[szTagID] = RealTimeDB::GetDataString(szTagID);
             tagArray.append(jsonObj);
             id++;
         }
@@ -133,17 +143,26 @@ void HttpServer::on_request_end()
     else if (path == "/WRITE")
     {
         const QJsonObject jsonDocObj = doc.object();
-        int startID = jsonDocObj["StartID"].toInt();
+        QString szStartID = jsonDocObj["StartID"].toString();
         int number = jsonDocObj["Number"].toInt();
 
-        int id = startID;
+        int iPos = -1;
+        QString szTagIDTmp = "";
+        QString szTmp = "0";
+
+        szTagIDTmp = szStartID;
+        iPos = szTagIDTmp.lastIndexOf(".");
+        szTmp = szTagIDTmp.right(szTagIDTmp.length() - iPos - 1);
+        int id = szTmp.toInt();
+
         QJsonArray tagArray = jsonDocObj["TagArray"].toArray();
         for (int i = 0; i < tagArray.size(); ++i) {
             QJsonObject jsonObj = tagArray[i].toObject();
-            RealTimeDB::SetDataString(id, jsonObj[QString::number(id)].toString());
+            QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
+            RealTimeDB::SetDataString(szTagID, jsonObj[szTagID].toString());
             id++;
         }
-        retJsonObj["StartID"] = startID;
+        retJsonObj["StartID"] = szStartID;
         retJsonObj["Number"] = number;
         retJsonObj["Status"] = "OK";
     }

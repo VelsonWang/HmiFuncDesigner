@@ -15,7 +15,7 @@ class VariableEditDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit VariableEditDialog(QString projName, QWidget *parent = 0);
+    explicit VariableEditDialog(QString projName, QWidget *parent = nullptr);
     ~VariableEditDialog();
 
 public:

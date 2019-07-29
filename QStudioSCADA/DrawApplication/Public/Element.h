@@ -14,6 +14,7 @@
 #include "fileproperty.h"
 #include "listproperty.h"
 #include "fontproperty.h"
+#include "doubleproperty.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 

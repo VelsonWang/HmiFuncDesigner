@@ -19,7 +19,7 @@ TimerTask::~TimerTask()
          if(timer->isActive())
               timer->stop();
          delete timer;
-         timer = NULL;
+         timer = nullptr;
     }
 }
 
@@ -39,28 +39,28 @@ void TimerTask::timerUpdate()
     QDateTime datetime = QDateTime::currentDateTime();
     QDate date = datetime.date();
     QTime time = datetime.time();
-    qint32 id;
+    QString szTagID = "";
     // 系统变量--年
-    id = make_id(TYPE_SYSTEM, 1, 0);
-    RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)date.year()));
+    szTagID = "sys.1";
+    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)date.year()));
 
     // 系统变量--月
-    id = make_id(TYPE_SYSTEM, 2, 0);
-    RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)date.month()));
+    szTagID = "sys.2";
+    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)date.month()));
 
     // 系统变量--日
-    id = make_id(TYPE_SYSTEM, 3, 0);
-    RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)date.day()));
+    szTagID = "sys.3";
+    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)date.day()));
 
     // 系统变量--时
-    id = make_id(TYPE_SYSTEM, 4, 0);
-    RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)time.hour()));
+    szTagID = "sys.4";
+    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)time.hour()));
 
     // 系统变量--分
-    id = make_id(TYPE_SYSTEM, 5, 0);
-    RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)time.minute()));
+    szTagID = "sys.5";
+    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)time.minute()));
 
     // 系统变量--秒
-    id = make_id(TYPE_SYSTEM, 6, 0);
-    RealTimeDB::SetTypeAndData(id, TYPE_UINT16, QVariant((qint16)time.second()));
+    szTagID = "sys.6";
+    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)time.second()));
 }

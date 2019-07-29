@@ -42,16 +42,16 @@ typedef struct tagPeriodScriptObject
 typedef struct tagConditionScriptObject
 {
     QString scriptText;
-    qint32 tagIdLeft;
-    qint32 tagIdRight;
+    QString tagIdLeft;
+    QString tagIdRight;
     double dRight;
     QString opt;
     tagConditionScriptObject()
     {
         scriptText = "";
         opt = "";
-        tagIdLeft = -1;
-        tagIdRight = -1;
+        tagIdLeft = "";
+        tagIdRight = "";
         dRight = 0.0;
     }
 }TConditionScriptObject;

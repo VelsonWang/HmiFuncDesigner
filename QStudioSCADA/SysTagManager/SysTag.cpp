@@ -39,7 +39,7 @@ QVariant TagSystemTableModel::data(const QModelIndex &index, int role) const
     if (role == Qt::SizeHintRole) {
         QStyleOptionComboBox option;
         switch (index.column()) {
-            case TagID: option.currentText = item.m_TagID;break;
+            case TagID: option.currentText = item.m_sTagID;break;
             case Name: option.currentText = item.m_sName;break;
             case Description: option.currentText = item.m_sDescription; break;
             case Unit: option.currentText = item.m_sUnit; break;
@@ -57,7 +57,7 @@ QVariant TagSystemTableModel::data(const QModelIndex &index, int role) const
     }
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
         switch (index.column()) {
-            case TagID: return item.m_TagID;
+            case TagID: return item.m_sTagID;
             case Name: return item.m_sName;
             case Description: return item.m_sDescription;
             case Unit: return item.m_sUnit;
@@ -112,7 +112,7 @@ bool TagSystemTableModel::setData(const QModelIndex &index,
 
     TagSysItem &item = m_tagSysItems[index.row()];
     switch (index.column()) {
-        case TagID: item.m_TagID = value.toInt(); break;;
+        case TagID: item.m_sTagID = value.toString(); break;;
         case Name: item.m_sName = value.toString(); break;
         case Description: item.m_sDescription = value.toString(); break;
         case Unit: item.m_sUnit = value.toString(); break;
@@ -161,7 +161,7 @@ void TagSystemTableModel::load(const QString &filename, SaveFormat saveFormat)
     for (int i = 0; i < tagSysArray.size(); ++i) {
         QJsonObject jsonObj = tagSysArray[i].toObject();
         TagSysItem item;
-        item.m_TagID = jsonObj["iID"].toInt();
+        item.m_sTagID = jsonObj["sID"].toString();
         item.m_sName = jsonObj["sName"].toString();
         item.m_sDescription = jsonObj["sDescription"].toString();
         item.m_sUnit = jsonObj["sUnit"].toString();
@@ -190,7 +190,7 @@ void TagSystemTableModel::save(const QString &filename, SaveFormat saveFormat)
     {
         TagSysItem item =  m_tagSysItems.at(i);
         QJsonObject jsonObj;
-        jsonObj["iID"] =  item.m_TagID;
+        jsonObj["sID"] =  item.m_sTagID;
         jsonObj["sName"] = item.m_sName;
         jsonObj["sDescription"] = item.m_sDescription;
         jsonObj["sUnit"] = item.m_sUnit;
@@ -273,17 +273,24 @@ void SysTag::variableAdd()
 
     index = pTableViewVarManagerModel->index(pTableViewVarManagerModel->rowCount()-1, 0);
     QVariant val = pTableViewVarManagerModel->data(index);
+    QString szVarTmp = val.toString();
 
     pTableViewVarManagerModel->insertRows(pTableViewVarManagerModel->rowCount(), 1);
 
     index = pTableViewVarManagerModel->index(pTableViewVarManagerModel->rowCount()-1, 0);
 
-    int id;
-    if(pTableViewVarManagerModel->rowCount() > 0)
-        id = val.toInt() + 1;
-    else
-        id = SYSVARIABLE_BASE + 1;
-    pTableViewVarManagerModel->setData(index, id);
+    int id = 0;
+    if(pTableViewVarManagerModel->rowCount() > 0) {
+        QString szStartText = "sys.";
+        QString szTmp = "0";
+        if(szVarTmp.startsWith(szStartText)) {
+            szTmp = szVarTmp.remove(0, szStartText.length());
+            id = szTmp.toInt() + 1;
+        }
+    } else {
+        id = 1;
+    }
+    pTableViewVarManagerModel->setData(index, QString("sys.%1").arg(QString::number(id)));
 
     index = pTableViewVarManagerModel->index(pTableViewVarManagerModel->rowCount()-1, 1);
     pTableViewVarManagerModel->setData(index, QString("sys%1").arg(pTableViewVarManagerModel->rowCount()));

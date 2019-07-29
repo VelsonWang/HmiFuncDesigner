@@ -1,8 +1,8 @@
 ﻿#include "RtdbConnectDialog.h"
-#include <QDebug>
+#include "ui_RtdbConnectDialog.h"
 #include "ConfigUtils.h"
 #include "Helper.h"
-#include "ui_RtdbConnectDialog.h"
+#include <QDebug>
 
 RtdbConnectDialog::RtdbConnectDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::RtdbConnectDialog) {
@@ -17,7 +17,7 @@ RtdbConnectDialog::RtdbConnectDialog(QWidget *parent)
 }
 
 RtdbConnectDialog::~RtdbConnectDialog() { delete ui; }
-
+    Q_UNUSED(arg1)
 void RtdbConnectDialog::on_editAddress_textChanged(const QString &arg1) {}
 
 void RtdbConnectDialog::on_btnConnect_clicked() {
