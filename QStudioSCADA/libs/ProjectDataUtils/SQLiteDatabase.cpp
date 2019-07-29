@@ -1,8 +1,8 @@
 ﻿#include "SQLiteDatabase.h"
-#include "uLog.h"
+#include <QSqlError>
 #include <QSqlQuery>
 #include <QSqlRecord>
-#include <QSqlError>
+#include "ulog.h"
 
 SQLiteDatabase::SQLiteDatabase(const QString &dbname,
                                const QString &user,
@@ -23,10 +23,7 @@ SQLiteDatabase::SQLiteDatabase(const QString &dbname,
     }
 }
 
-SQLiteDatabase::~SQLiteDatabase()
-{
-    closeDatabase();
-}
+SQLiteDatabase::~SQLiteDatabase() { closeDatabase(); }
 
 bool SQLiteDatabase::openDatabase()
 {
@@ -125,10 +122,7 @@ int SQLiteDatabase::createTable(const QString &table,
     return 4;
 }
 
-bool SQLiteDatabase::createTables()
-{
-    return false;
-}
+bool SQLiteDatabase::createTables() { return false; }
 
 
 bool SQLiteDatabase::insertOrUpdateRecord(const QString &table,

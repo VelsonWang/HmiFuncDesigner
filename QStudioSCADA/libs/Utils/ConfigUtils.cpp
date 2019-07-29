@@ -1,10 +1,10 @@
-﻿#include "configutils.h"
-#include <QString>
-#include <QSettings>
+﻿#include "ConfigUtils.h"
 #include <QApplication>
+#include <QDebug>
 #include <QFile>
 #include <QMessageBox>
-#include <QDebug>
+#include <QSettings>
+#include <QString>
 
 /**
  * @brief ConfigUtils::setCfgStr 写字符配置值

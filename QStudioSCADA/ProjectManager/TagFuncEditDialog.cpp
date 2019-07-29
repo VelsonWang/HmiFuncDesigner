@@ -1,23 +1,19 @@
 ﻿#include "TagFuncEditDialog.h"
-#include "TagManager.h"
-#include "configutils.h"
-#include "Helper.h"
+#include <QApplication>
+#include <QDebug>
+#include <QDesktopWidget>
 #include <QFile>
 #include <QHeaderView>
 #include <QMessageBox>
-#include <QApplication>
 #include <QRect>
-#include <QDesktopWidget>
-#include <QDebug>
-
+#include "ConfigUtils.h"
+#include "Helper.h"
+#include "TagManager.h"
 
 static const int MaxTableColumns = 2;
 
-FuncModel::FuncModel(QObject *parent)
-    : QAbstractTableModel(parent)
-{
+FuncModel::FuncModel(QObject *parent) : QAbstractTableModel(parent) {}
 
-}
 
 FuncModel::~FuncModel()
 {
@@ -58,22 +54,20 @@ QVariant FuncModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-
-QVariant FuncModel::headerData(int section,
-        Qt::Orientation orientation, int role) const
-{
-    if (role != Qt::DisplayRole)
-        return QVariant();
-    if (orientation == Qt::Horizontal)
-    {
-        switch (section)
-        {
-            case FUNC_NAME: return tr("功能函数");
-            case EVENT_TYPE: return tr("事件类型");
-            default: Q_ASSERT(false);
-        }
+QVariant FuncModel::headerData(int section, Qt::Orientation orientation,
+                               int role) const {
+  if (role != Qt::DisplayRole) return QVariant();
+  if (orientation == Qt::Horizontal) {
+    switch (section) {
+      case FUNC_NAME:
+        return tr("功能函数");
+      case EVENT_TYPE:
+        return tr("事件类型");
+      default:
+        Q_ASSERT(false);
     }
-    return section + 1;
+  }
+  return section + 1;
 }
 
 

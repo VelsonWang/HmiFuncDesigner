@@ -1,13 +1,12 @@
 #include "tagcolorlisteditordialog.h"
-#include "ui_TagColorListEditorDialog.h"
-#include <QLineEdit>
-#include <QHBoxLayout>
-#include <QFileDialog>
-#include <QKeyEvent>
 #include <QApplication>
 #include <QColorDialog>
 #include <QDebug>
-
+#include <QFileDialog>
+#include <QHBoxLayout>
+#include <QKeyEvent>
+#include <QLineEdit>
+#include "ui_TagColorListEditorDialog.h"
 
 ColorEditor::ColorEditor(QWidget *parent) :
     QWidget(parent),
@@ -74,17 +73,13 @@ QColor ColorEditor::getColor() const {
 
 /////////////////////////////////////////////////////
 
-
-TagColorListEditorDialog::TagColorListEditorDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::TagColorListEditorDialog) {
-    ui->setupUi(this);
-    initUi();
+TagColorListEditorDialog::TagColorListEditorDialog(QWidget *parent)
+    : QDialog(parent), ui(new Ui::TagColorListEditorDialog) {
+  ui->setupUi(this);
+  initUi();
 }
 
-TagColorListEditorDialog::~TagColorListEditorDialog() {
-    delete ui;
-}
+TagColorListEditorDialog::~TagColorListEditorDialog() { delete ui; }
 
 void TagColorListEditorDialog::initUi() {
     this->setWindowTitle(tr("设置颜色"));

@@ -17,6 +17,7 @@ INCLUDEPATH += .
 INCLUDEPATH += ./widget
 INCLUDEPATH += $$PWD/../common/qtsingleapplication
 INCLUDEPATH += $$PWD/../common/register
+INCLUDEPATH += $$PWD/../libs/qscintilla
 
 include($$PWD/../common/qtsingleapplication/qtsingleapplication.pri)
 include($$PWD/../common/register/register.pri)
