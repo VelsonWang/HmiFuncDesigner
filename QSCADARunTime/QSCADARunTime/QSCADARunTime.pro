@@ -55,11 +55,20 @@ INCLUDEPATH += \
     $$LIBRARY_SRC_PATH/libs/ProjectDataUtils
 
 CONFIG(debug, debug|release) { #debug
-    LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
-    LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
-    LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
-    LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
-    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
+    win32 {
+        LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
+        LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
+        LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
+        LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
+        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
+    }
+    unix {
+        LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
+        LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
+        LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
+        LIBS += -L$$LINK_LIBRARY_PATH -lUtils
+        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
+    }
 }
 else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
@@ -166,7 +175,8 @@ HEADERS  += \
     $$PWD/Port/ComPort.h \
     $$PWD/Port/IPort.h
 
-
+##################################################################
+# dependency libev-dev
 unix:include($$PWD/eventdispatcher_libev/eventdispatcher_libev.pri)
 
 FORMS +=

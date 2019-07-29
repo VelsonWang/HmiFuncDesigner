@@ -2,9 +2,16 @@
 include(../../DrawApplicationPlugin.pri)
 
 CONFIG(debug, debug|release) { #debug
-    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
-    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
-    LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
+    win32 {
+        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
+        LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
+    }
+    unix {
+        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
+        LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
+    }
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
     LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils

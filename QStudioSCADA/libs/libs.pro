@@ -11,7 +11,7 @@ SUBDIRS   = \
     PluginManager \
     DrawUtils \
     qtpropertybrowser \
-    QScintilla \
+    qscintilla \
     Lua \
     Ftp \
     PropertyEditor \

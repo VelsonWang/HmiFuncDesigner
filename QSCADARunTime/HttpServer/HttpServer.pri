@@ -5,8 +5,8 @@ CONFIG += c++11 console
 CONFIG -= app_bundle
 
 
-INCLUDEPATH += $$PWD/. \
-	$$PWD/libhttp \
+INCLUDEPATH += $$PWD/
+INCLUDEPATH += $$PWD/libhttp
 
 SOURCES += \
     $$PWD/libhttp/qhttpconnection.cpp \

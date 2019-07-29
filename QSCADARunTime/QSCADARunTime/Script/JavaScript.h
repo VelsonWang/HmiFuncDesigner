@@ -1,7 +1,7 @@
 #ifndef JAVASCRIPT_H
 #define JAVASCRIPT_H
 
-#include "../Public/Public.h"
+#include "../Public/public.h"
 
 #include <QObject>
 #include <QString>

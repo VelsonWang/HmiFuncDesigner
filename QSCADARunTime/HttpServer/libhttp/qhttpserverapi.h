@@ -36,8 +36,8 @@
 // #endif
 // #else
 // Define empty for other platforms
-#define QHTTPSERVER_API
 #endif
+#define QHTTPSERVER_API
 #else
 #ifdef Q_WS_WIN
 // Define to export or import depending if we are building or using the library.

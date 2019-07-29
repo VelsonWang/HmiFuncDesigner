@@ -1,4 +1,4 @@
-﻿#include "pluginmanager.h"
+﻿#include "PluginManager.h"
 #include "Helper.h"
 #include <QApplication>
 #include <QPluginLoader>
@@ -22,9 +22,15 @@ void PluginManager::loadPlugin()
 
     foreach (QString fileName, pluginsDir.entryList(QDir::Files))
     {
+#ifdef Q_OS_WIN
         if(!fileName.endsWith(".dll"))
             continue;
-        //qDebug() << __FUNCTION__ << __LINE__ << fileName;
+#endif
+
+#ifdef Q_OS_LINUX
+        if(!fileName.endsWith(".so"))
+            continue;
+#endif
 
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
         QObject *pluginObj = pluginLoader.instance();

@@ -410,11 +410,10 @@ QScriptValue SetDateTime(QScriptContext *context,
 #endif
 
 #ifdef Q_OS_LINUX
-    QString str = "";
-    str = "date -s " + nm + "/" + nd + "/" + ny;
-    system(str.toLatin1().data());
-    str = "date -s " + nh + ":" + nf + ":" + ns;
-    system(str.toLatin1().data());
+    QString szCmd = QString("date -s %1/%2/%3").arg(nm).arg(nd).arg(ny);
+    system(szCmd.toLatin1().data());
+    szCmd = QString("date -s %1:%2:%3").arg(nh).arg(nf).arg(ns);
+    system(szCmd.toLatin1().data());
     //force write CMOS
     system("clock -w");
 #endif

@@ -2,7 +2,12 @@
 include(../../DrawApplicationPlugin.pri)
 
 CONFIG(debug, debug|release) { #debug
-    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+    win32 {
+        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+    }
+    unix {
+        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+    }
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
 }

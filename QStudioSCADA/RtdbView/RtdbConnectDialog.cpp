@@ -4,10 +4,12 @@
 #include "Helper.h"
 #include <QDebug>
 
-RtdbConnectDialog::RtdbConnectDialog(QWidget *parent)
-    : QDialog(parent), ui(new Ui::RtdbConnectDialog) {
-  ui->setupUi(this);
-  setWindowTitle(tr("实时数据库连接"));
+RtdbConnectDialog::RtdbConnectDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::RtdbConnectDialog)
+{
+    ui->setupUi(this);
+    setWindowTitle(tr("实时数据库连接"));
 
   QString strFile = Helper::AppDir() + "/Config/Current.ini";
   QString ip = ConfigUtils::getCfgStr(strFile, "Rtdb", "IP", "127.0.0.1");
@@ -16,42 +18,66 @@ RtdbConnectDialog::RtdbConnectDialog(QWidget *parent)
   mOpt = -1;
 }
 
-RtdbConnectDialog::~RtdbConnectDialog() { delete ui; }
+RtdbConnectDialog::~RtdbConnectDialog()
+{
+    delete ui;
+}
+
+void RtdbConnectDialog::on_editAddress_textChanged(const QString &arg1)
+{
     Q_UNUSED(arg1)
-void RtdbConnectDialog::on_editAddress_textChanged(const QString &arg1) {}
-
-void RtdbConnectDialog::on_btnConnect_clicked() {
-  WriteConfig();
-  this->accept();
-  mOpt = 1;
 }
 
-void RtdbConnectDialog::on_btnDisConnect_clicked() {
-  this->reject();
-  mOpt = 0;
+void RtdbConnectDialog::on_btnConnect_clicked()
+{
+    WriteConfig();
+    this->accept();
+    mOpt = 1;
 }
 
-void RtdbConnectDialog::on_btnExit_clicked() {
-  WriteConfig();
-  mOpt = -1;
-  this->reject();
+void RtdbConnectDialog::on_btnDisConnect_clicked()
+{
+    this->reject();
+    mOpt = 0;
 }
 
-void RtdbConnectDialog::closeEvent(QCloseEvent * /*event*/) {
-  qDebug() << "close";
+void RtdbConnectDialog::on_btnExit_clicked()
+{
+    WriteConfig();
+    mOpt = -1;
+    this->reject();
 }
 
-void RtdbConnectDialog::WriteConfig() {
-  QString strFile = Helper::AppDir() + "/Config/Current.ini";
-  ConfigUtils::setCfgStr(strFile, "Rtdb", "IP", ui->editAddress->text());
+void RtdbConnectDialog::closeEvent(QCloseEvent */*event*/)
+{
+    qDebug()<< "close";
+
 }
 
-QString RtdbConnectDialog::GetIPAddress() {
-  QString ip = ui->editAddress->text();
-  if (ip.isEmpty()) ip = "127.0.0.1";
-  return ip;
+
+void RtdbConnectDialog::WriteConfig()
+{
+    QString strFile = Helper::AppDir() + "/Config/Current.ini";
+    ConfigUtils::setCfgStr(strFile, "Rtdb", "IP", ui->editAddress->text());
 }
 
-int RtdbConnectDialog::GetOption() { return mOpt; }
 
-void RtdbConnectDialog::SetConnectStatus(QString s) { ui->lblMsg->setText(s); }
+QString RtdbConnectDialog::GetIPAddress()
+{
+    QString ip = ui->editAddress->text();
+    if(ip.isEmpty())
+        ip = "127.0.0.1";
+    return ip;
+}
+
+int RtdbConnectDialog::GetOption()
+{
+    return mOpt;
+}
+
+void RtdbConnectDialog::SetConnectStatus(QString s)
+{
+    ui->lblMsg->setText(s);
+}
+
+

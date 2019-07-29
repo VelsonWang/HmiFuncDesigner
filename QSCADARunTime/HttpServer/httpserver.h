@@ -7,9 +7,9 @@
 #include <QNetworkReply>
 #include <QMutex>
 
-#include "libhttp\qhttpserver.h"
-#include "libhttp\qhttprequest.h"
-#include "libhttp\qhttpresponse.h"
+#include "libhttp/qhttpserver.h"
+#include "libhttp/qhttprequest.h"
+#include "libhttp/qhttpresponse.h"
 
 class HttpServer : public QObject
 {

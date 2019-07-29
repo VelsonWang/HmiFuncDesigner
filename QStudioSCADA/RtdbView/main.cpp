@@ -1,5 +1,4 @@
-﻿#include "ConfigUtils.h"
-#include "MainWindow.h"
+﻿#include "MainWindow.h"
 #include "ConfigUtils.h"
 
 #include <QApplication>

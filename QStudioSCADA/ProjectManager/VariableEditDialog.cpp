@@ -599,7 +599,14 @@ void VariableEditDialog::on_cboDeviceName_currentTextChanged(const QString &devi
     pluginsDir.cdUp();
     pluginsDir.cd("deviceplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-        if(fileName.indexOf(pluginNmae) != -1 && fileName.endsWith(".dll")) {
+#ifdef Q_OS_WIN
+        QString szFileEndWith = QString(".dll");
+#endif
+
+#ifdef Q_OS_LINUX
+        QString szFileEndWith = QString(".so");
+#endif
+        if(fileName.indexOf(pluginNmae) != -1 && fileName.endsWith(szFileEndWith)) {
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
             QObject *plugin = pluginLoader.instance();
             if (plugin) {
