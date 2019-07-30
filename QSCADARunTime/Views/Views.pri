@@ -22,7 +22,8 @@ INCLUDEPATH += \
     $$PWD/Elements/EIndicationLamp \
     $$PWD/Elements/ESwitchButton \
     $$PWD/Elements/EClock \
-    $$PWD/Elements/EMovingText
+    $$PWD/Elements/EMovingText \
+    $$PWD/Elements/ETagTextList
 
 SOURCES += \
     $$PWD/GraphPage.cpp \
@@ -59,7 +60,9 @@ SOURCES += \
     $$PWD/Elements/EClock/ElementClock.cpp \
     $$PWD/Elements/EClock/EClock.cpp \
     $$PWD/Elements/EMovingText/ElementMovingText.cpp \
-    $$PWD/Elements/EMovingText/EMovingText.cpp
+    $$PWD/Elements/EMovingText/EMovingText.cpp \
+    $$PWD/Elements/ETagTextList/ElementTagTextList.cpp \
+    $$PWD/Elements/ETagTextList/ETagTextList.cpp
 
 HEADERS += \
     $$PWD/GraphPage.h \
@@ -99,7 +102,9 @@ HEADERS += \
     $$PWD/Elements/EClock/ElementClock.h \
     $$PWD/Elements/EClock/EClock.h \
     $$PWD/Elements/EMovingText/ElementMovingText.h \
-    $$PWD/Elements/EMovingText/EMovingText.h
+    $$PWD/Elements/EMovingText/EMovingText.h \
+    $$PWD/Elements/ETagTextList/ElementTagTextList.h \
+    $$PWD/Elements/ETagTextList/ETagTextList.h
 
 FORMS += \
     $$PWD/SoftKeyboard/InputMethodAlphabet.ui \

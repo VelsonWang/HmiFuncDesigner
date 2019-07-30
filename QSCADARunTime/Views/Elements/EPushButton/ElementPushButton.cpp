@@ -7,12 +7,13 @@
 #include <QDir>
 #include <QDebug>
 
-ElementPushButton::ElementPushButton() {
+ElementPushButton::ElementPushButton()
+{
     internalElementType = tr("PushButton");
     showContent_ = tr("文本");
     bShowContentText_ = true;
-    szHAlign_ = tr("居中对齐");
-    szVAlign_ = tr("居中对齐");
+    szHAlign_ = QString("center");
+    szVAlign_ = QString("center");
     font_ = QFont("宋体", 12);
     init();
     elementWidth = 100;
@@ -27,29 +28,34 @@ ElementPushButton::ElementPushButton() {
     isSelected_ = false;
 }
 
-QRectF ElementPushButton::boundingRect() const {
+QRectF ElementPushButton::boundingRect() const
+{
     qreal extra = 6;
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(extra, extra, -extra, -extra);
 }
 
-QPainterPath ElementPushButton::shape() const {
+QPainterPath ElementPushButton::shape() const
+{
     QPainterPath path;
     path.addRect(elementRect);
     return path;
 }
 
-void ElementPushButton::setClickPosition(QPointF position) {
-    elementXPos = position.x();
-    elementYPos = position.y();
+void ElementPushButton::setClickPosition(QPointF position)
+{
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementPushButton::updateBoundingElement() {
+void ElementPushButton::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementPushButton::paint(QPainter *painter) {
+void ElementPushButton::paint(QPainter *painter)
+{
     if(!showOnInitial_ || !bShow_) {
         return;
     }
@@ -70,8 +76,12 @@ void ElementPushButton::paint(QPainter *painter) {
     painter->restore();
 }
 
-void ElementPushButton::drawPushButton(QPainter *painter) {
-    QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+void ElementPushButton::drawPushButton(QPainter *painter)
+{
+    QRect rect(static_cast<int>(elementRect.x()),
+               static_cast<int>(elementRect.y()),
+               static_cast<int>(elementRect.width()),
+               static_cast<int>(elementRect.height()));
 
     if(transparent_) {
         painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
@@ -95,20 +105,20 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
             painter->setFont(font_);
 
             int hFlags = Qt::AlignLeft;
-            if(szHAlign_ == tr("左对齐")) {
+            if(szHAlign_ == QString("left")) {
                 hFlags = Qt::AlignLeft;
-            } else if(szHAlign_ == tr("居中对齐")) {
+            } else if(szHAlign_ == QString("center")) {
                 hFlags = Qt::AlignHCenter;
-            } else if(szHAlign_ == tr("右对齐")) {
+            } else if(szHAlign_ == QString("right")) {
                 hFlags = Qt::AlignRight;
             }
 
             int vFlags = Qt::AlignVCenter;
-            if(szVAlign_ == tr("上对齐")) {
+            if(szVAlign_ == QString("top")) {
                 vFlags = Qt::AlignTop;
-            } else if(szVAlign_ == tr("居中对齐")) {
+            } else if(szVAlign_ == QString("center")) {
                 vFlags = Qt::AlignVCenter;
-            } else if(szVAlign_ == tr("下对齐")) {
+            } else if(szVAlign_ == QString("bottom")) {
                 vFlags = Qt::AlignBottom;
             }
 
@@ -121,7 +131,9 @@ void ElementPushButton::drawPushButton(QPainter *painter) {
                 QString picture = getProjectPath() + "/Pictures/" + filePicture_;
                 if(QFile::exists(picture)) {
                     QImage image(getProjectPath() + "/Pictures/" + filePicture_);
-                    QImage scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                    QImage scaleImage = image.scaled(static_cast<int>(elementRect.width()),
+                                                     static_cast<int>(elementRect.height()),
+                                                     Qt::IgnoreAspectRatio);
                     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
                     painter->drawImage(elementRect, scaleImage);
                 }
@@ -221,12 +233,12 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
+        this->szHAlign_ = align;
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
+        this->szVAlign_ = align;
     }
 
     if (attributes.hasAttribute("backgroundColor")) {
@@ -326,16 +338,16 @@ void ElementPushButton::readData(QDataStream &in) {
        >> funcs;
 
     this->setElementId(id);
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->showContent_ = showContent;
     this->filePicture_ = pic;
     this->elementText = text;
-    this->setHAlignString(hAlign, szHAlign_);
-    this->setVAlignString(vAlign, szVAlign_);
+    this->szHAlign_ = hAlign;
+    this->szVAlign_ = vAlign;
     this->backgroundColor_ = backgroundColor;
     this->transparent_ = transparent;
     this->textColor = textColor;
@@ -392,16 +404,16 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
        >> funcs;
 
     ele.setElementId(id);
-    ele.setElementXPos(xpos);
-    ele.setElementYPos(ypos);
-    ele.setElementZValue(zvalue);
+    ele.setElementXPos(static_cast<int>(xpos));
+    ele.setElementYPos(static_cast<int>(ypos));
+    ele.setElementZValue(static_cast<int>(zvalue));
     ele.setElementWidth(width);
     ele.setElementHeight(height);
     ele.showContent_ = showContent;
     ele.filePicture_ = pic;
     ele.elementText = text;
-    ele.setHAlignString(hAlign, ele.szHAlign_);
-    ele.setVAlignString(vAlign, ele.szVAlign_);
+    ele.szHAlign_ = hAlign;
+    ele.szVAlign_ = vAlign;
     ele.backgroundColor_ = backgroundColor;
     ele.transparent_ = transparent;
     ele.font_ = font;

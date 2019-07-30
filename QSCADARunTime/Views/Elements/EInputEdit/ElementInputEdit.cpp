@@ -4,11 +4,12 @@
 #include "RealTimeDB.h"
 #include <QDebug>
 
-ElementInputEdit::ElementInputEdit() {
+ElementInputEdit::ElementInputEdit()
+{
     elementId = QString(tr("InputEdit"));
     internalElementType = tr("InputEdit");
-    szHAlign_ = tr("左对齐");
-    szVAlign_ = tr("居中对齐");
+    szHAlign_ = QString("left");
+    szVAlign_ = QString("center");
     backgroundColor_ = Qt::white;
     transparentBackground_ = false;
     borderWidth_ = 2;
@@ -24,36 +25,42 @@ ElementInputEdit::ElementInputEdit() {
     bInEditMode_ = false;
 }
 
-ElementInputEdit::~ElementInputEdit() {
+ElementInputEdit::~ElementInputEdit()
+{
     if(inputLineEdit_ != nullptr) {
         delete inputLineEdit_;
         inputLineEdit_ = nullptr;
     }
 }
 
-QRectF ElementInputEdit::boundingRect() const {
+QRectF ElementInputEdit::boundingRect() const
+{
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
-QPainterPath ElementInputEdit::shape() const {
+QPainterPath ElementInputEdit::shape() const
+{
     QPainterPath path;
     path.addRect(elementRect);
     return path;
 }
 
-void ElementInputEdit::setClickPosition(QPointF position) {
-    elementXPos = position.x();
-    elementYPos = position.y();
+void ElementInputEdit::setClickPosition(QPointF position)
+{
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementInputEdit::updateBoundingElement() {
+void ElementInputEdit::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementInputEdit::paint(QPainter *painter) {
+void ElementInputEdit::paint(QPainter *painter)
+{
     if(!showOnInitial_ || !bShow_) {
         return;
     }
@@ -70,7 +77,8 @@ void ElementInputEdit::paint(QPainter *painter) {
  * @brief ElementInputEdit::refreshTagValue
  * @details 刷新变量值
  */
-void ElementInputEdit::refreshTagValue() {
+void ElementInputEdit::refreshTagValue()
+{
     QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
     if(szTagID != "") {
         elementText = RealTimeDB::GetDataString(szTagID);
@@ -79,7 +87,8 @@ void ElementInputEdit::refreshTagValue() {
     }
 }
 
-void ElementInputEdit::drawInputEdit(QPainter *painter) {
+void ElementInputEdit::drawInputEdit(QPainter *painter)
+{
     refreshTagValue();
     // 绘制边框
     if(borderWidth_ > 0) {
@@ -104,20 +113,20 @@ void ElementInputEdit::drawInputEdit(QPainter *painter) {
     painter->setFont(font_);
 
     int hFlags = Qt::AlignLeft;
-    if(szHAlign_ == tr("左对齐")) {
+    if(szHAlign_ == QString("left")) {
         hFlags = Qt::AlignLeft;
-    } else if(szHAlign_ == tr("居中对齐")) {
+    } else if(szHAlign_ == QString("center")) {
         hFlags = Qt::AlignHCenter;
-    } else if(szHAlign_ == tr("右对齐")) {
+    } else if(szHAlign_ == QString("right")) {
         hFlags = Qt::AlignRight;
     }
 
     int vFlags = Qt::AlignVCenter;
-    if(szVAlign_ == tr("上对齐")) {
+    if(szVAlign_ == QString("top")) {
         vFlags = Qt::AlignTop;
-    } else if(szVAlign_ == tr("居中对齐")) {
+    } else if(szVAlign_ == QString("center")) {
         vFlags = Qt::AlignVCenter;
-    } else if(szVAlign_ == tr("下对齐")) {
+    } else if(szVAlign_ == QString("bottom")) {
         vFlags = Qt::AlignBottom;
     }
 
@@ -140,11 +149,13 @@ void ElementInputEdit::drawInputEdit(QPainter *painter) {
         painter->drawText(textRect, hFlags|vFlags, szDrawText);
 }
 
-void ElementInputEdit::mouseMoveEvent(QMouseEvent *event) {
+void ElementInputEdit::mouseMoveEvent(QMouseEvent *event)
+{
     Q_UNUSED(event)
 }
 
-void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
+void ElementInputEdit::mousePressEvent(QMouseEvent *event)
+{
     Q_UNUSED(event)
     if(!enableOnInitial_ || !enableEdit_ || !bShow_ || !bEnable_) {
         return;
@@ -216,14 +227,16 @@ void ElementInputEdit::mousePressEvent(QMouseEvent *event) {
     }
 }
 
-void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event) {
+void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event)
+{
     Q_UNUSED(event)
     if(!enableOnInitial_ || !bShow_ || !bEnable_) {
         return;
     }
 }
 
-void ElementInputEdit::enterPressed() {
+void ElementInputEdit::enterPressed()
+{
     bInEditMode_ = false;
     elementText = inputLineEdit_->text();
     if(szTagSelected_ != "") {
@@ -236,13 +249,15 @@ void ElementInputEdit::enterPressed() {
     inputLineEdit_->hide();
 }
 
-void ElementInputEdit::closePressed() {
+void ElementInputEdit::closePressed()
+{
     bInEditMode_ = false;
     inputLineEdit_->setText("");
     inputLineEdit_->hide();
 }
 
-void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szTagID = attributes.value("elementId").toString();
         setElementId(szTagID);
@@ -286,12 +301,12 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
+        this->szHAlign_ = align;
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
+        this->szVAlign_ = align;
     }
 
     if (attributes.hasAttribute("backgroundColor")) {
@@ -355,7 +370,8 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes) {
 }
 
 
-void ElementInputEdit::readData(QDataStream &in) {
+void ElementInputEdit::readData(QDataStream &in)
+{
     QString id;
     bool enableEdit;
     QString szTagSelected;
@@ -403,14 +419,14 @@ void ElementInputEdit::readData(QDataStream &in) {
     this->setElementId(id);
     this->enableEdit_ = enableEdit;
     this->szTagSelected_ = szTagSelected;
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->elementText = text;
-    this->setHAlignString(hAlign, szHAlign_);
-    this->setVAlignString(vAlign, szVAlign_);
+    this->szHAlign_ = hAlign;
+    this->szVAlign_ = vAlign;
     this->backgroundColor_ = backgroundColor;
     this->transparentBackground_ = transparentBackground;
     this->textColor = textColor;
@@ -425,7 +441,8 @@ void ElementInputEdit::readData(QDataStream &in) {
 }
 
 
-QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
+QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit)
+{
     QString id;
     bool enableEdit;
     QString szTagSelected;
@@ -473,14 +490,14 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit) {
     edit.setElementId(id);
     edit.enableEdit_ = enableEdit;
     edit.szTagSelected_ = szTagSelected;
-    edit.setElementXPos(xpos);
-    edit.setElementYPos(ypos);
-    edit.setElementZValue(zvalue);
+    edit.setElementXPos(static_cast<int>(xpos));
+    edit.setElementYPos(static_cast<int>(ypos));
+    edit.setElementZValue(static_cast<int>(zvalue));
     edit.setElementWidth(width);
     edit.setElementHeight(height);
     edit.elementText = text;
-    edit.setHAlignString(hAlign, edit.szHAlign_);
-    edit.setVAlignString(vAlign, edit.szVAlign_);
+    edit.szHAlign_ = hAlign;
+    edit.szVAlign_ = vAlign;
     edit.backgroundColor_ = backgroundColor;
     edit.transparentBackground_ = transparentBackground;
     edit.textColor = textColor;

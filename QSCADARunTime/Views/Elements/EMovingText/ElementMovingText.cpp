@@ -11,8 +11,8 @@
 ElementMovingText::ElementMovingText()
     : Element()
 {
-    elementId = tr("Clock");
-    internalElementType = tr("Clock");
+    elementId = tr("MovingText");
+    internalElementType = tr("MovingText");
     init();
     iLastMSecs_ = QDateTime::currentMSecsSinceEpoch();
     iPos_ = 0;

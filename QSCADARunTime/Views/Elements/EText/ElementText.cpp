@@ -4,35 +4,41 @@
 #include <QDebug>
 
 ElementText::ElementText() :
-    bHide_(false) {
+    bHide_(false)
+{
     elementId = tr("Text");
     internalElementType = tr("Text");
     init();
 }
 
-QRectF ElementText::boundingRect() const {
+QRectF ElementText::boundingRect() const
+{
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra,-extra,extra,extra);
 }
 
-QPainterPath ElementText::shape() const {
+QPainterPath ElementText::shape() const
+{
     QPainterPath path;
     path.addRect(elementRect);
     return path;
 }
 
-void ElementText::setClickPosition(QPointF position) {
-    elementXPos = position.x();
-    elementYPos = position.y();
+void ElementText::setClickPosition(QPointF position)
+{
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementText::updateBoundingElement() {
+void ElementText::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementText::paint(QPainter *painter) {
+void ElementText::paint(QPainter *painter)
+{
     if(!showOnInitial_ || bHide_ || !bShow_) {
         return;
     }
@@ -54,7 +60,10 @@ void ElementText::paint(QPainter *painter) {
 
     // 绘制边框
     if(borderWidth_ > 0) {
-        QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+        QRect rect(static_cast<int>(elementRect.x()),
+                   static_cast<int>(elementRect.y()),
+                   static_cast<int>(elementRect.width()),
+                   static_cast<int>(elementRect.height()));
         for(int i=0; i<borderWidth_; i++) {
             PubTool::DrawFrameRect(painter, rect, borderColor_);
             rect.adjust(1, 1, -1, -1);
@@ -63,7 +72,8 @@ void ElementText::paint(QPainter *painter) {
     painter->restore();
 }
 
-void ElementText::refreshTagValue() {
+void ElementText::refreshTagValue()
+{
     if (szTagSelected_ == "") {
 		return;
 	}
@@ -76,27 +86,28 @@ void ElementText::refreshTagValue() {
 	}
 }
 
-void ElementText::drawText(QPainter *painter) {
+void ElementText::drawText(QPainter *painter)
+{
     refreshTagValue();
     painter->setPen(textColor);
     painter->setBrush(Qt::NoBrush);
     painter->setFont(font_);
 
     int hFlags = Qt::AlignLeft;
-    if(szHAlign_ == tr("左对齐")) {
+    if(szHAlign_ == QString("left")) {
         hFlags = Qt::AlignLeft;
-    } else if(szHAlign_ == tr("居中对齐")) {
+    } else if(szHAlign_ == QString("center")) {
         hFlags = Qt::AlignHCenter;
-    } else if(szHAlign_ == tr("右对齐")) {
+    } else if(szHAlign_ == QString("right")) {
         hFlags = Qt::AlignRight;
     }
 
     int vFlags = Qt::AlignVCenter;
-    if(szVAlign_ == tr("上对齐")) {
+    if(szVAlign_ == QString("top")) {
         vFlags = Qt::AlignTop;
-    } else if(szVAlign_ == tr("居中对齐")) {
+    } else if(szVAlign_ == QString("center")) {
         vFlags = Qt::AlignVCenter;
-    } else if(szVAlign_ == tr("下对齐")) {
+    } else if(szVAlign_ == QString("bottom")) {
         vFlags = Qt::AlignBottom;
     }
 
@@ -106,22 +117,27 @@ void ElementText::drawText(QPainter *painter) {
     painter->drawText(textRect, hFlags|vFlags, elementText);
 }
 
-void ElementText::mouseMoveEvent(QMouseEvent *event) {
+void ElementText::mouseMoveEvent(QMouseEvent *event)
+{
     Q_UNUSED(event)
 }
 
-void ElementText::mousePressEvent(QMouseEvent *event) {
+void ElementText::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
     if(hideOnClick_) {
         bHide_ = true;
     }
 }
 
-void ElementText::mouseReleaseEvent(QMouseEvent *event) {
-
+void ElementText::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
 }
 
 
-void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementText::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         QString szTagID = attributes.value("elementId").toString();
         setElementId(szTagID);
@@ -157,12 +173,12 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
+        szHAlign_ = align;
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
+        szVAlign_ = align;
     }
 
     if (attributes.hasAttribute("backgroundColor")) {
@@ -218,7 +234,8 @@ void ElementText::readFromXml(const QXmlStreamAttributes &attributes) {
 }
 
 
-void ElementText::readData(QDataStream &in) {
+void ElementText::readData(QDataStream &in)
+{
     QString id;
 	QString szTagSelected;
     qreal xpos;
@@ -261,14 +278,14 @@ void ElementText::readData(QDataStream &in) {
 
     this->setElementId(id);
 	this->szTagSelected_ = szTagSelected;
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->elementText = text;
-    this->setHAlignString(hAlign, szHAlign_);
-    this->setVAlignString(vAlign, szVAlign_);
+    this->szHAlign_ = hAlign;
+    this->szVAlign_ = vAlign;
     this->backgroundColor_ = backgroundColor;
     this->transparentBackground_ = transparentBackground;
     this->textColor = textColor;
@@ -281,7 +298,8 @@ void ElementText::readData(QDataStream &in) {
     this->updateBoundingElement();
 }
 
-QDataStream &operator>>(QDataStream &in,ElementText &rect) {
+QDataStream &operator>>(QDataStream &in,ElementText &rect)
+{
     QString id;
 	QString szTagSelected;
     qreal xpos;
@@ -324,14 +342,14 @@ QDataStream &operator>>(QDataStream &in,ElementText &rect) {
 
     rect.setElementId(id);
 	rect.szTagSelected_ = szTagSelected;
-    rect.setElementXPos(xpos);
-    rect.setElementYPos(ypos);
-    rect.setElementZValue(zvalue);
+    rect.setElementXPos(static_cast<int>(xpos));
+    rect.setElementYPos(static_cast<int>(ypos));
+    rect.setElementZValue(static_cast<int>(zvalue));
     rect.setElementWidth(width);
     rect.setElementHeight(height);
     rect.elementText = text;
-    rect.setHAlignString(hAlign, rect.szHAlign_);
-    rect.setVAlignString(vAlign, rect.szVAlign_);
+    rect.szHAlign_ = hAlign;
+    rect.szVAlign_ = vAlign;
     rect.backgroundColor_ = backgroundColor;
     rect.transparentBackground_ = transparentBackground;
     rect.textColor = textColor;

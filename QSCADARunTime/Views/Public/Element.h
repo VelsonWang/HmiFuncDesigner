@@ -14,7 +14,7 @@ class Element : public QObject
 {
     Q_OBJECT
 public:
-    explicit Element(QObject *parent = 0);
+    explicit Element(QObject *parent = nullptr);
     virtual ~Element();
 
     void init();
@@ -57,11 +57,6 @@ public:
     void setProjectPath(const QString &path);
     // 获取工程路径
     QString getProjectPath() const;
-
-    QString getHAlignString(const QString& szAlign) const;
-    void setHAlignString(const QString& szAlign, QString& szAlignSet);
-    QString getVAlignString(const QString& szAlign) const;
-    void setVAlignString(const QString& szAlign, QString& szAlignSet);
 
     // 设置元素所属窗口
     void setOwnerWidget(QWidget *owner);

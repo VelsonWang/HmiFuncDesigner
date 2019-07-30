@@ -24,6 +24,10 @@ ColorPropertyEditor::ColorPropertyEditor(QWidget *parent) :
     layout->addWidget(toolButton_);
 }
 
+ColorPropertyEditor::~ColorPropertyEditor()
+{
+}
+
 void ColorPropertyEditor::setColor(const QColor& color)
 {
     if (color_ != color) {

@@ -12,8 +12,8 @@ ElementSwitchButton::ElementSwitchButton()
     internalElementType = tr("SwitchButton");
     showContent_ = tr("文本");
     bShowContentText_ = true;
-    szHAlign_ = tr("居中对齐");
-    szVAlign_ = tr("居中对齐");
+    szHAlign_ = QString("center");
+    szVAlign_ = QString("center");
     font_ = QFont("宋体", 12);
     init();
     elementWidth = 100;
@@ -51,8 +51,8 @@ QPainterPath ElementSwitchButton::shape() const
 
 void ElementSwitchButton::setClickPosition(QPointF position)
 {
-    elementXPos = position.x();
-    elementYPos = position.y();
+    elementXPos = static_cast<int>(position.x());
+    elementYPos = static_cast<int>(position.y());
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
@@ -102,7 +102,10 @@ void ElementSwitchButton::execScriptFunction(bool bVal)
 
 void ElementSwitchButton::drawSwitchButton(QPainter *painter)
 {
-    QRect rect(elementRect.x(), elementRect.y(), elementRect.width(), elementRect.height());
+    QRect rect(static_cast<int>(elementRect.x()),
+               static_cast<int>(elementRect.y()),
+               static_cast<int>(elementRect.width()),
+               static_cast<int>(elementRect.height()));
 
     if(transparent_) {
         painter->setPen(QPen(Qt::gray, 1, Qt::DashLine));
@@ -150,20 +153,20 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
             painter->setFont(font_);
 
             int hFlags = Qt::AlignLeft;
-            if(szHAlign_ == tr("左对齐")) {
+            if(szHAlign_ == QString("left")) {
                 hFlags = Qt::AlignLeft;
-            } else if(szHAlign_ == tr("居中对齐")) {
+            } else if(szHAlign_ == QString("center")) {
                 hFlags = Qt::AlignHCenter;
-            } else if(szHAlign_ == tr("右对齐")) {
+            } else if(szHAlign_ == QString("right")) {
                 hFlags = Qt::AlignRight;
             }
 
             int vFlags = Qt::AlignVCenter;
-            if(szVAlign_ == tr("上对齐")) {
+            if(szVAlign_ == QString("top")) {
                 vFlags = Qt::AlignTop;
-            } else if(szVAlign_ == tr("居中对齐")) {
+            } else if(szVAlign_ == QString("center")) {
                 vFlags = Qt::AlignVCenter;
-            } else if(szVAlign_ == tr("下对齐")) {
+            } else if(szVAlign_ == QString("bottom")) {
                 vFlags = Qt::AlignBottom;
             }
 
@@ -192,7 +195,9 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
                     if(showNoScale_) {
                         scaleImage = image;
                     } else {
-                        scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
+                        scaleImage = image.scaled(static_cast<int>(elementRect.width()),
+                                                  static_cast<int>(elementRect.height()),
+                                                  Qt::IgnoreAspectRatio);
                     }
                     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
                     painter->drawImage(elementRect, scaleImage);
@@ -332,12 +337,12 @@ void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
+        this->szHAlign_ = align;
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
+        this->szVAlign_ = align;
     }
 
     if (attributes.hasAttribute("resetBackgroundColor")) {
@@ -477,14 +482,14 @@ void ElementSwitchButton::readData(QDataStream &in)
     this->showNoScale_ = showNoScale;
     this->resetText_ = szResetText;
     this->setText_ = szSetText;
-    this->setElementXPos(xpos);
-    this->setElementYPos(ypos);
-    this->setElementZValue(zvalue);
+    this->setElementXPos(static_cast<int>(xpos));
+    this->setElementYPos(static_cast<int>(ypos));
+    this->setElementZValue(static_cast<int>(zvalue));
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->showContent_ = showContent;
-    this->setHAlignString(hAlign, szHAlign_);
-    this->setVAlignString(vAlign, szVAlign_);
+    this->szHAlign_ = hAlign;
+    this->szVAlign_ = vAlign;
     this->resetBackgroundColor_ = resetBackgroundColor;
     this->setBackgroundColor_ = setBackgroundColor;
     this->transparent_ = transparent;
@@ -572,14 +577,14 @@ QDataStream &operator>>(QDataStream &in,ElementSwitchButton &ele)
     ele.showNoScale_ = showNoScale;
     ele.resetText_ = szResetText;
     ele.setText_ = szSetText;
-    ele.setElementXPos(xpos);
-    ele.setElementYPos(ypos);
-    ele.setElementZValue(zvalue);
+    ele.setElementXPos(static_cast<int>(xpos));
+    ele.setElementYPos(static_cast<int>(ypos));
+    ele.setElementZValue(static_cast<int>(zvalue));
     ele.setElementWidth(width);
     ele.setElementHeight(height);
     ele.showContent_ = showContent;
-    ele.setHAlignString(hAlign, ele.szHAlign_);
-    ele.setVAlignString(vAlign, ele.szVAlign_);
+    ele.szHAlign_ = hAlign;
+    ele.szVAlign_ = vAlign;
     ele.resetBackgroundColor_ = resetBackgroundColor;
     ele.setBackgroundColor_ = setBackgroundColor;
     ele.transparent_ = transparent;

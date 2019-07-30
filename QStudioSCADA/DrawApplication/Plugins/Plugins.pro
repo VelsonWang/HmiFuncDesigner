@@ -14,5 +14,6 @@ SUBDIRS += \
     EIndicationLamp \
     ESwitchButton \
     EClock \
-    EMovingText
+    EMovingText \
+    ETagTextList
 

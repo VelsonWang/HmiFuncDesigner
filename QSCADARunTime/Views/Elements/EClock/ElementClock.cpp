@@ -102,20 +102,20 @@ void ElementClock::drawClock(QPainter *painter)
     painter->setFont(font_);
 
     int hFlags = Qt::AlignLeft;
-    if(szHAlign_ == tr("左对齐")) {
+    if(szHAlign_ == QString("left")) {
         hFlags = Qt::AlignLeft;
-    } else if(szHAlign_ == tr("居中对齐")) {
+    } else if(szHAlign_ == QString("center")) {
         hFlags = Qt::AlignHCenter;
-    } else if(szHAlign_ == tr("右对齐")) {
+    } else if(szHAlign_ == QString("right")) {
         hFlags = Qt::AlignRight;
     }
 
     int vFlags = Qt::AlignVCenter;
-    if(szVAlign_ == tr("上对齐")) {
+    if(szVAlign_ == QString("top")) {
         vFlags = Qt::AlignTop;
-    } else if(szVAlign_ == tr("居中对齐")) {
+    } else if(szVAlign_ == QString("center")) {
         vFlags = Qt::AlignVCenter;
-    } else if(szVAlign_ == tr("下对齐")) {
+    } else if(szVAlign_ == QString("bottom")) {
         vFlags = Qt::AlignBottom;
     }
 
@@ -180,12 +180,12 @@ void ElementClock::readFromXml(const QXmlStreamAttributes &attributes)
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
+        this->szHAlign_ = align;
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
+        this->szVAlign_ = align;
     }
 
     if (attributes.hasAttribute("borderColor")) {
@@ -293,8 +293,8 @@ void ElementClock::readData(QDataStream &in)
     this->transparentBackground_ = transparentBackground;
     this->textColor = textColor;
     this->font_ = font;
-    this->setHAlignString(hAlign, szHAlign_);
-    this->setVAlignString(vAlign, szVAlign_);
+    this->szHAlign_ = hAlign;
+    this->szVAlign_ = vAlign;
     this->borderColor_ = borderColor;
     this->borderWidth_ = borderWidth;
     this->showDate_ = showDate;
@@ -357,8 +357,8 @@ QDataStream &operator>>(QDataStream &in,ElementClock &clock)
     clock.transparentBackground_ = transparentBackground;
     clock.textColor = textColor;
     clock.font_ = font;
-    clock.setHAlignString(hAlign, clock.szHAlign_);
-    clock.setVAlignString(vAlign, clock.szVAlign_);
+    clock.szHAlign_ = hAlign;
+    clock.szVAlign_ = vAlign;
     clock.borderColor_ = borderColor;
     clock.borderWidth_ = borderWidth;
     clock.showDate_ = showDate;

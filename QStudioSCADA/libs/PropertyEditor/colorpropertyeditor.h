@@ -11,7 +11,8 @@ class ColorPropertyEditor : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ColorPropertyEditor(QWidget *parent = 0);
+    explicit ColorPropertyEditor(QWidget *parent = nullptr);
+    ~ColorPropertyEditor();
 
     QColor getColor() const;
     static QPixmap getColorPixmap(const QColor& color, unsigned int size = 16);
