@@ -63,7 +63,7 @@ QString XMLObject::getTagName() {
 // 设置标签名称
 // setTagName("page")
 // <page name="jason">hi, my name is jason.</page>
-// 标签名称为person
+// 标签名称为page
 //
 void XMLObject::setTagName(const QString &tagName) {
     m_tagName = tagName;

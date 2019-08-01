@@ -21,6 +21,8 @@ const int SwitchButtonItemType = QGraphicsItem::UserType + 44;
 const int ClockItemType = QGraphicsItem::UserType + 45;
 const int MovingTextItemType = QGraphicsItem::UserType + 46;
 const int TagTextListItemType = QGraphicsItem::UserType + 47;
+const int ValueStickItemType = QGraphicsItem::UserType + 48;
+
 
 enum {
     EL_X = 0, //coord X
@@ -74,6 +76,16 @@ enum {
     EL_TAG_TEXT_LIST = 48,
     EL_TEXT_MOVE_DIR = 49,
     EL_TEXT_MOVE_CHAR_NUM = 50,
+    EL_SCALE_VALUE_MAX = 51,
+    EL_SCALE_VALUE_MIN = 52,
+    EL_SCALE_NUM = 53,
+    EL_FOREGROUND = 54,
+    EL_SCALECOLOR = 55,
+    EL_SCALE_DIR = 56,
+    EL_SCALE_POS = 57,
+    EL_SHOW_RULER = 58,
+    EL_SLIDE_INPUT = 59,
+
 
     EL_PROPERTY_EMPTY = 255
 };

@@ -15,5 +15,6 @@ SUBDIRS += \
     ESwitchButton \
     EClock \
     EMovingText \
-    ETagTextList
+    ETagTextList \
+    EValueStick
 

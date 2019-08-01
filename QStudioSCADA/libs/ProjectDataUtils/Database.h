@@ -16,7 +16,7 @@ public:
                       const QString &pwd = "725431",
                       const QString &hostname = "127.0.0.1",
                       int port = 0,
-                      QObject *parent = 0);
+                      QObject *parent = nullptr);
     virtual ~Database();
 
     virtual bool openDatabase() = 0;
@@ -97,6 +97,17 @@ public:
     int getLastInsertId(const QString &tableName);
     int getMaxId(const QString &tableName);
     int getRowCount(const QString &tableName, const QString &expr);
+
+    QSqlQuery createQuery();
+
+    // 声明事务开始
+    bool beginTransaction();
+    // 回滚
+    bool rollbackTransaction();
+    // 事务提交
+    bool commitTransaction();
+    // 是否存在表
+    bool isExistTable(const QString &szTableName);
 
 public:
     QString name_;

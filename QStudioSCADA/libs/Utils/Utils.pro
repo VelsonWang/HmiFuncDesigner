@@ -15,6 +15,7 @@ SOURCES += \
     Helper.cpp \
     MiscUtils.cpp \
     StyleSheetHelper.cpp \
+    TimeElapsed.cpp \
     XMLObject.cpp
 
 HEADERS += \
@@ -24,6 +25,7 @@ HEADERS += \
     ObjectCreator.h \
     Singleton.h \
     StyleSheetHelper.h \
+    TimeElapsed.h \
     XMLObject.h
 
 
