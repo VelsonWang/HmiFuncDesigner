@@ -38,7 +38,78 @@ public:
     static bool IsInRect(QRect rct, int X, int Y, bool bBorder = true);
     static bool IsInRect(QRect rct, QRect subRct, bool bBorder = true);
     static bool IsCrossRect(QRect aRct, QRect bRct, bool bBorder = true);
+    static bool Draw3DFrame(QPainter *painter, QRect rect, QColor leftTopColor,
+                            QColor rightBottomColor, QColor fillColor);
 
+    static void FillColorRect(QPainter *painter, QRect rect, QColor color);
+
+    // 删除数字字符串小数点后面的无效零字符
+    static QString DeleteEndZeroOfDecimal(const QString szStr);
+    // 删除数字字符串前面的无效零字符
+    static QString DeleteFrontZeroOfDecimal(const QString szStr);
+
+    inline static QRect InflateRect(QRect &rect, int offset);
+    inline static QRect DeflateRect(QRect &rect, int offset);
 };
+
+
+
+inline QRect PubTool::InflateRect(QRect &rect, int offset)
+{
+    QRect tmpRect;
+    if ( rect.left() < rect.right() )
+    {
+        tmpRect.setLeft(rect.left() - offset);
+        tmpRect.setRight(rect.right() + offset);
+    }
+    else
+    {
+        tmpRect.setLeft(rect.left() + offset);
+        tmpRect.setRight(rect.right()- offset);
+    }
+
+    if ( rect.top() < rect.bottom() )
+    {
+        tmpRect.setTop(rect.top() - offset);
+        tmpRect.setBottom(rect.bottom() + offset);
+    }
+    else
+    {
+        tmpRect.setTop(rect.top() + offset);
+        tmpRect.setBottom(rect.bottom() - offset);
+    }
+    return tmpRect;
+}
+
+
+////////////////////////////////////////////////////////////////////////////////
+
+
+inline QRect PubTool::DeflateRect(QRect &rect, int offset)
+{
+    QRect tmpRect;
+    if ( rect.left() < rect.right() )
+    {
+        tmpRect.setLeft(rect.left()  + offset);
+        tmpRect.setRight(rect.right() - offset);
+    }
+    else
+    {
+        tmpRect.setLeft(rect.left()  - offset);
+        tmpRect.setRight(rect.right() + offset);
+    }
+
+    if ( rect.top() < rect.bottom() )
+    {
+        tmpRect.setTop(rect.top() + offset);
+        tmpRect.setBottom(rect.bottom() - offset);
+    }
+    else
+    {
+        tmpRect.setTop(rect.top() - offset);
+        tmpRect.setBottom(rect.bottom() + offset);
+    }
+    return tmpRect;
+}
 
 #endif // PUBTOOL_H

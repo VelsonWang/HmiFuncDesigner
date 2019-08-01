@@ -94,8 +94,6 @@ private:
     bool showRuler_;
     // 显示刻度
     bool showScale_;
-    // 滑动输入
-    bool slideInput_;
     // 初始可见性
     bool showOnInitial_;
 
@@ -129,8 +127,6 @@ private:
     BoolProperty *showRulerProperty_;
     // 显示刻度
     BoolProperty *showScaleProperty_;
-    // 滑动输入
-    BoolProperty *slideInputProperty_;
     // 初始可见性
     BoolProperty *showOnInitialProperty_;
     // X坐标

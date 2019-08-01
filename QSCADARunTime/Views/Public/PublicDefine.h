@@ -22,6 +22,7 @@ const int SwitchButtonItemType = QGraphicsItem::UserType + 44;
 const int ClockItemType = QGraphicsItem::UserType + 45;
 const int MovingTextItemType = QGraphicsItem::UserType + 46;
 const int TagTextListItemType = QGraphicsItem::UserType + 47;
+const int ValueStickItemType = QGraphicsItem::UserType + 48;
 
 enum {
     EL_X = 0, //coord X

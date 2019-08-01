@@ -84,7 +84,7 @@ enum {
     EL_SCALE_DIR = 56,
     EL_SCALE_POS = 57,
     EL_SHOW_RULER = 58,
-    EL_SLIDE_INPUT = 59,
+
 
 
     EL_PROPERTY_EMPTY = 255
