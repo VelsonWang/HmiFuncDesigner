@@ -121,6 +121,8 @@ private:
     void writeLibrary(QFile &file, GraphPage *graphPage);
     void horizontalSort(QList<QGraphicsItem *> &dat);
     void verticalSort(QList<QGraphicsItem *> &dat);
+    // 更新当前页面子控件所属页面大小
+    void updateAllElementGraphPageSize(int width, int height);
 
 private slots:
     void slotGroupElements();
