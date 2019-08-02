@@ -22,6 +22,7 @@
 #include "EMovingText/EMovingText.h"
 #include "ETagTextList/ETagTextList.h"
 #include "EValueStick/EValueStick.h"
+#include "EJarShape/EJarShape.h"
 
 
 template<template<typename T> class S, typename T>
@@ -82,6 +83,7 @@ void registerCreateObjectFunc()
     REGISTER_CREATEOR(QObject::tr("移动文本"), MovingTextItemType, "MovingText", EMovingText);
     REGISTER_CREATEOR(QObject::tr("变量文本列表"), TagTextListItemType, "TagTextList", ETagTextList);
     REGISTER_CREATEOR(QObject::tr("数值棒图"), ValueStickItemType, "ValueStick", EValueStick);
+    REGISTER_CREATEOR(QObject::tr("罐形容器"), JarShapeItemType, "JarShape", EJarShape);
 }
 
 GraphPage::GraphPage(const QRectF &rect, QWidget *parent)

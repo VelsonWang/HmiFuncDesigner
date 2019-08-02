@@ -23,6 +23,7 @@ const int ClockItemType = QGraphicsItem::UserType + 45;
 const int MovingTextItemType = QGraphicsItem::UserType + 46;
 const int TagTextListItemType = QGraphicsItem::UserType + 47;
 const int ValueStickItemType = QGraphicsItem::UserType + 48;
+const int JarShapeItemType = QGraphicsItem::UserType + 49;
 
 enum {
     EL_X = 0, //coord X

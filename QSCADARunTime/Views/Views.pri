@@ -24,7 +24,8 @@ INCLUDEPATH += \
     $$PWD/Elements/EClock \
     $$PWD/Elements/EMovingText \
     $$PWD/Elements/ETagTextList \
-    $$PWD/Elements/EValueStick
+    $$PWD/Elements/EValueStick \
+    $$PWD/Elements/EJarShape
 
 SOURCES += \
     $$PWD/GraphPage.cpp \
@@ -65,7 +66,9 @@ SOURCES += \
     $$PWD/Elements/ETagTextList/ElementTagTextList.cpp \
     $$PWD/Elements/ETagTextList/ETagTextList.cpp \
     $$PWD/Elements/EValueStick/ElementValueStick.cpp \
-    $$PWD/Elements/EValueStick/EValueStick.cpp
+    $$PWD/Elements/EValueStick/EValueStick.cpp \
+    $$PWD/Elements/EJarShape/ElementJarShape.cpp \
+    $$PWD/Elements/EJarShape/EJarShape.cpp
 
 HEADERS += \
     $$PWD/GraphPage.h \
@@ -109,7 +112,9 @@ HEADERS += \
     $$PWD/Elements/ETagTextList/ElementTagTextList.h \
     $$PWD/Elements/ETagTextList/ETagTextList.h \
     $$PWD/Elements/EValueStick/ElementValueStick.h \
-    $$PWD/Elements/EValueStick/EValueStick.h
+    $$PWD/Elements/EValueStick/EValueStick.h \
+    $$PWD/Elements/EJarShape/ElementJarShape.h \
+    $$PWD/Elements/EJarShape/EJarShape.h
 
 FORMS += \
     $$PWD/SoftKeyboard/InputMethodAlphabet.ui \
