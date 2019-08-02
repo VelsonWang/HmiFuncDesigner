@@ -22,7 +22,7 @@ const int ClockItemType = QGraphicsItem::UserType + 45;
 const int MovingTextItemType = QGraphicsItem::UserType + 46;
 const int TagTextListItemType = QGraphicsItem::UserType + 47;
 const int ValueStickItemType = QGraphicsItem::UserType + 48;
-
+const int JarShapeItemType = QGraphicsItem::UserType + 49;
 
 enum {
     EL_X = 0, //coord X
@@ -84,7 +84,11 @@ enum {
     EL_SCALE_DIR = 56,
     EL_SCALE_POS = 57,
     EL_SHOW_RULER = 58,
-
+    EL_LESS_THAN_LOWER_LIMIT_COLOR = 59,
+    EL_NORMAL_COLOR = 60,
+    EL_GREATER_THAN_UPPER_LIMIT_COLOR = 61,
+    EL_LOWER_LIMIT_VALUE = 62,
+    EL_UPPER_LIMIT_VALUE = 63,
 
 
     EL_PROPERTY_EMPTY = 255
