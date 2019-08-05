@@ -26,15 +26,21 @@ void SOAPServerWorker::doService(const QString &ip, int port)
     soap_init(&recieveSoap);
 
     LogInfo("ip:", ip, " port:", port);
-    LogInfo("Soap bind return:", soap_bind(&recieveSoap, ip.toStdString().c_str(), port, 100));
+    SOAP_SOCKET sock = soap_bind(&recieveSoap, ip.toStdString().c_str(), port, 100);
+    if (!soap_valid_socket(sock)) {
+        soap_print_fault(&recieveSoap, stderr);
+        LogInfo("Soap bind fail!");
+    }
+    LogInfo("Soap bind return:", sock);
 
     while(bRunningFlag_)
     {
-        int s = soap_accept(&recieveSoap);
-        if(s < 0)
-        {
-            soap_print_fault(&recieveSoap, stderr);
-            exit(-1);
+        SOAP_SOCKET s = soap_accept(&recieveSoap);
+        if (!soap_valid_socket(s)) {
+            if (recieveSoap.errnum) {
+                soap_print_fault(&recieveSoap, stderr);
+                LogInfo("soap_accept error!");
+            }
         }
         LogInfo("Socket connection successful: client socket = ", s);
 
