@@ -6,7 +6,8 @@ QT += network
 QT += script
 QT += sql
 
-TARGET_BIN_PATH = $$_PRO_FILE_PWD_/../../RuntimeBin
+#TARGET_BIN_PATH = $$_PRO_FILE_PWD_/../../RuntimeBin
+TARGET_BIN_PATH = $$_PRO_FILE_PWD_/../../QStudioSCADABin/bin
 LINK_LIBRARY_PATH = $$_PRO_FILE_PWD_/../../lib
 
 DESTDIR = $$TARGET_BIN_PATH

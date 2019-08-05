@@ -173,8 +173,11 @@ int main(int argc, char *argv[])
 
     //////////////////////////////////////////////////////////////////////////////
 
-
     QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
+    if(argc == 2) {
+        projPath = argv[1];
+    }
+
     QDir dir(projPath);
     if (!dir.exists())
     {

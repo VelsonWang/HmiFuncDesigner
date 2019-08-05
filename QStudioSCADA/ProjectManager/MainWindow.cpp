@@ -533,13 +533,14 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked) {
 * 工具条使能
 */
 void MainWindow::enableToolBar(QString text) {
-    bool bTagIOOrTmp =
-            (text == tr("中间变量")) | (text.startsWith(tr("设备变量")));
+    bool bTagIOOrTmp = (text == tr("中间变量")) | (text.startsWith(tr("设备变量")));
     ui->TagOperateToolBar->setEnabled(bTagIOOrTmp);
 
     bool bdevice = (text == tr("串口设备")) | (text == tr("网络设备")) |
             (text == tr("总线设备")) | (text == tr("OPC设备"));
     ui->DeviceOperateToolBar->setEnabled(bdevice);
+
+    ui->actionRun->setEnabled(false);
 }
 
 void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
@@ -637,9 +638,11 @@ void MainWindow::UpdateProjectName(QString name)
         m_strProjectPath = ProjectMgrUtils::getProjectPath(name);
         QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
         pProjectItem->setText(strName);
+        ui->actionRun->setEnabled(true);
     } else {
         m_strProjectName = "";
         m_strProjectPath = "";
+        ui->actionRun->setEnabled(false);
         qDeleteAll(TagManager::ioDBVarGroups_.varBlockGroupList_);
         TagManager::ioDBVarGroups_.varBlockGroupList_.clear();
 
@@ -717,15 +720,34 @@ void MainWindow::on_actionSimulate_triggered() {}
 /*
  * 插槽：运行
  */
-void MainWindow::on_actionRun_triggered() {}
+void MainWindow::on_actionRun_triggered()
+{
+    QString fileRuntimeApplication = "";
+#ifdef Q_OS_WIN
+    fileRuntimeApplication = Helper::AppDir() + "/QSCADARunTime.exe";
+#endif
+
+#ifdef Q_OS_LINUX
+    fileRuntimeApplication = Helper::AppDir() + "/DrawApplication";
+#endif
+
+    QFile file(fileRuntimeApplication);
+    if (file.exists()) {
+        QProcess *process = new QProcess();
+        process->setWorkingDirectory(Helper::AppDir() + "/");
+        QStringList argv;
+        argv << m_strProjectPath;
+        process->start(fileRuntimeApplication, argv);
+    }
+}
 
 /*
  * 插槽：上载
  */
-void MainWindow::on_actionUpLoad_triggered() {
+void MainWindow::on_actionUpLoad_triggered()
+{
     // 创建tmp目录
-    QString tmpDir =
-            QCoreApplication::applicationDirPath() + "/UploadProjects/tmp";
+    QString tmpDir = QCoreApplication::applicationDirPath() + "/UploadProjects/tmp";
     QDir dir(tmpDir);
     if (!dir.exists()) {
         dir.mkpath(tmpDir);

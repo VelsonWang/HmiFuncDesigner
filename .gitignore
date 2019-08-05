@@ -26,6 +26,12 @@ QStudioSCADABin/wave/
 QStudioSCADABin/bin/sqldrivers/
 QStudioSCADABin/bin/log/
 
+QStudioSCADABin/bin/DrawApplication
+QStudioSCADABin/bin/project
+QStudioSCADABin/bin/QSCADARunTime
+QStudioSCADABin/bin/RtdbView
+QStudioSCADABin/bin/SysTagManager
+
 RuntimeBin/log/
 RuntimeBin/Project/
 RuntimeBin/RunProject/
