@@ -105,7 +105,13 @@
 
 
 
-### 10. 支持的通信协议  Supported communication protocol
+### 10.支持控件 Support controls
+
+​	**文本、椭圆、直线、矩形、箭头、切换按钮，变量文本列表、图片、弹出按钮、指示灯、数值棒图、时钟、移动文本、罐形容器、输入编辑框**
+
+
+
+### 11. 支持的通信协议  Supported communication protocol
 
 1.**Modbus RTU**
 
@@ -117,7 +123,7 @@
 
 
 
-### 11. 联系方式  Contact
+### 12. 联系方式  Contact
 
 **Email：VelsonWang@qq.com**
 
