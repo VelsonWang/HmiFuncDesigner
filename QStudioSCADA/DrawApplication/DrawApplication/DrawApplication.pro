@@ -39,6 +39,7 @@ CONFIG(debug, debug|release) { #debug
 
 
 SOURCES += \
+    GetWidthHeightDialog.cpp \
     main.cpp \
     GraphPage.cpp \
     GraphPageManager.cpp \
@@ -59,6 +60,7 @@ SOURCES += \
     ../PropertyEditorEx/functionpropertyeditor.cpp
 
 HEADERS  += \
+    GetWidthHeightDialog.h \
     GraphPage.h \
     GraphPageManager.h \
     UndoCommand.h \
@@ -81,6 +83,7 @@ HEADERS  += \
 
 FORMS    += \
     ElementLibraryWidget.ui \
+    GetWidthHeightDialog.ui \
     MainWindow.ui \
     ../PropertyEditorEx/FunctionEditorDialog.ui
 

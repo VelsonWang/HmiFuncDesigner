@@ -124,12 +124,25 @@ private:
     // 更新当前页面子控件所属页面大小
     void updateAllElementGraphPageSize(int width, int height);
 
+public:
+    void onAlignElements(Qt::Alignment alignment, QList<QGraphicsItem*> items);
+    void onHUniformDistributeElements(QList<QGraphicsItem*> items);
+    void onVUniformDistributeElements(QList<QGraphicsItem*> items);
+    void onSetTheSameSizeElements(QList<QGraphicsItem*> items);
+    void onUpLayerElements(QList<QGraphicsItem*> items);
+    void onDownLayerElements(QList<QGraphicsItem*> items);
+    void onEditDelete(QList<QGraphicsItem*> items);
+    void onEditCopy(QList<QGraphicsItem*> items);
+    void onEditPaste();
+
 private slots:
     void slotGroupElements();
     void slotUngroupElements();
     void slotAlignElements();
     void slotHUniformDistributeElements();
     void slotVUniformDistributeElements();
+    // 设置选中控件大小一致
+    void slotSetTheSameSizeElements();
     void slotUpLayerElements();
     void slotDownLayerElements();
     void slotSaveAsLibrary();
@@ -137,6 +150,8 @@ private slots:
     void slotEditCopy();
     void slotEditPaste();
     void slotSelectAll();
+
+
 
 public slots:
     void slotSelectionChanged();
@@ -197,6 +212,7 @@ private:
     QAction *alignLeftAction;
     QAction *hUniformDistributeAction_; // 水平均匀分布
     QAction *vUniformDistributeAction_; // 垂直均匀分布
+    QAction *setTheSameSizeAction_; // 设置选中控件大小一致
     QAction *upLayerAction_;
     QAction *downLayerAction_;
     QAction *saveAsLibraryAction;

@@ -25,7 +25,9 @@ public:
     void regenerateElementId() override;
     void release() override; // 释放占用的资源
 
-    enum {Type = TextItemType};
+    enum {
+        Type = TextItemType
+    };
 
     int type() const {
         return Type;

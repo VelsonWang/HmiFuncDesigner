@@ -44,5 +44,8 @@
         <file>images/saveproject.png</file>
         <file>images/align_hsame.png</file>
         <file>images/align_vsame.png</file>
+        <file>images/the-same-size.png</file>
+        <file>images/posback.png</file>
+        <file>images/posfront.png</file>
     </qresource>
 </RCC>

@@ -6,7 +6,7 @@
 #include <QStringList>
 #include <QWidget>
 #include <QStandardItemModel>
-
+#include <QFileSystemWatcher>
 
 namespace Ui {
 class DrawPageWin;
@@ -17,7 +17,7 @@ class DrawPageWin : public ChildBase
     Q_OBJECT
 
 public:
-    explicit DrawPageWin(QWidget *parent = 0,
+    explicit DrawPageWin(QWidget *parent = nullptr,
                          const QString &itemName = "",
                          const QString &projName = "");
     ~DrawPageWin();
@@ -55,6 +55,7 @@ private slots:
     void CopyDrawPage();
     void PasteDrawPage();
     void on_listViewDrawPage_doubleClicked(const QModelIndex &index);
+    void onFileChanged(const QString &path);
 
 private:
     Ui::DrawPageWin *ui;
@@ -62,7 +63,7 @@ private:
     QString szProjPath_;
     QString szProjName_;
     QString szCopyDrawPageFileName_;
-
+    QFileSystemWatcher fileSystemWatcher_;
 };
 
 #endif // DRAWPAGEWIN_H

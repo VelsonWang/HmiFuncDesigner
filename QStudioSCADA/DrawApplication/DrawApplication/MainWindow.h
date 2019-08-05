@@ -23,7 +23,7 @@ public:
     explicit MainWindow(const QString &szProjPath,
                         const QString &szProjName,
                         const QString &szGraphPageName,
-                        QWidget *parent = 0);
+                        QWidget *parent = nullptr);
     ~MainWindow();
 
     bool isGridVisible() const;
@@ -81,6 +81,24 @@ private slots:
     void slotChangeGraphPageName();
     void slotCloseGraphPage();
     void slotCloseAll();
+    // 对齐操作
+    void slotAlignElements();
+    // 水平均匀分布
+    void slotHUniformDistributeElements();
+    // 垂直均匀分布
+    void slotVUniformDistributeElements();
+    // 设置选中控件大小一致
+    void slotSetTheSameSizeElements();
+    // 上移一层
+    void slotUpLayerElements();
+    // 下移一层
+    void slotDownLayerElements();
+    // 删除
+    void slotEditDelete();
+    // 拷贝
+    void slotEditCopy();
+    // 粘贴
+    void slotEditPaste();
 
 private:
     QString szProjPath_;
@@ -102,6 +120,19 @@ private:
     QAction *actionRedo_;
     QAction *actionCloseGraphPage_;
     QAction *actionCloseAll_;
+
+    QAction *actionCopy_; // 拷贝
+    QAction *actionPaste_; // 粘贴
+    QAction *actionDelete_; // 删除
+    QAction *alignTopAction_; // 顶部对齐
+    QAction *alignDownAction_; // 底部对齐
+    QAction *alignRightAction_; // 右对齐
+    QAction *alignLeftAction_; // 左对齐
+    QAction *hUniformDistributeAction_; // 水平均匀分布
+    QAction *vUniformDistributeAction_; // 垂直均匀分布
+    QAction *setTheSameSizeAction_; // 设置选中控件大小一致
+    QAction *upLayerAction_; // 上移一层
+    QAction *downLayerAction_; // 下移一层
 
     GraphPage *currentGraphPage_;
     QGraphicsView *currentView_;

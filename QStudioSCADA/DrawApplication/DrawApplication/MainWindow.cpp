@@ -18,8 +18,8 @@ MainWindow::MainWindow(const QString &szProjPath,
                        const QString &szGraphPageName,
                        QWidget *parent) :
     QMainWindow(parent),
-    currentGraphPage_(nullptr),
-    currentView_(nullptr),
+    currentGraphPage_(Q_NULLPTR),
+    currentView_(Q_NULLPTR),
     gridVisible_(true),
     currentGraphPageIndex_(0),
     szProjPath_(szProjPath),
@@ -143,6 +143,59 @@ void MainWindow::createActions()
     actionRedo_->setText(tr("重做"));
     actionRedo_->setIcon(QIcon(":/images/redo.png"));
     actionRedo_->setShortcut(QKeySequence::Redo);
+
+    actionDelete_ = new QAction(QIcon(":/images/delete.png"), tr("删除"));
+    actionDelete_->setShortcut(QKeySequence::Delete);
+    connect(actionDelete_, SIGNAL(triggered()), SLOT(slotEditDelete()));
+
+    actionCopy_ = new QAction(QIcon(":/images/editcopy.png"),tr("拷贝"));
+    actionCopy_->setShortcut(QKeySequence::Copy);
+    connect(actionCopy_, SIGNAL(triggered()), SLOT(slotEditCopy()));
+
+    actionPaste_ = new QAction(QIcon(":/images/editpaste.png"),tr("粘贴"));
+    actionPaste_->setShortcut(QKeySequence::Paste);
+    connect(actionPaste_, SIGNAL(triggered()), SLOT(slotEditPaste()));
+
+    // 顶部对齐
+    alignTopAction_ = new QAction(QIcon(":/images/align-top.png"), tr("顶部对齐"));
+    alignTopAction_->setData(Qt::AlignTop);
+    connect(alignTopAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 底部对齐
+    alignDownAction_ = new QAction(QIcon(":/images/align-bottom.png"), tr("底部对齐"));
+    alignDownAction_->setData(Qt::AlignBottom);
+    connect(alignDownAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 右对齐
+    alignRightAction_ = new QAction(QIcon(":/images/align-right.png"), tr("右对齐"));
+    alignRightAction_->setData(Qt::AlignRight);
+    connect(alignRightAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 左对齐
+    alignLeftAction_ = new QAction(QIcon(":/images/align-left.png"), tr("左对齐"));
+    alignLeftAction_->setData(Qt::AlignLeft);
+    connect(alignLeftAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 水平均匀分布
+    hUniformDistributeAction_ = new QAction(QIcon(":/images/align_hsame.png"), tr("水平均匀分布"));
+    connect(hUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotHUniformDistributeElements()));
+
+    // 垂直均匀分布
+    vUniformDistributeAction_ = new QAction(QIcon(":/images/align_vsame.png"), tr("垂直均匀分布"));
+    connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
+
+    // 设置选中控件大小一致
+    setTheSameSizeAction_ = new QAction(QIcon(":/images/the-same-size.png"), tr("大小一致"));
+    connect(setTheSameSizeAction_, SIGNAL(triggered()), SLOT(slotSetTheSameSizeElements()));
+
+    // 上移一层
+    upLayerAction_ = new QAction(QIcon(":/images/posfront.png"), tr("上移一层"));
+    connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
+
+    // 下移一层
+    downLayerAction_ = new QAction(QIcon(":/images/posback.png"), tr("下移一层"));
+    connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
+
 }
 
 void MainWindow::createMenus()
@@ -170,7 +223,6 @@ void MainWindow::createMenus()
 
 void MainWindow::createToolbars()
 {
-
     toolBar->addAction(actionSaveGraphPage_);
     toolBar->addSeparator();
     toolBar->addAction(actionShowGrid);
@@ -181,11 +233,24 @@ void MainWindow::createToolbars()
     toolBar->addAction(actionUndo_);
     toolBar->addAction(actionRedo_);
     toolBar->addSeparator();
+    toolBar->addAction(actionCopy_); // 拷贝
+    toolBar->addAction(actionPaste_); // 粘贴
+    toolBar->addAction(actionDelete_); // 删除
+    toolBar->addSeparator();
+    toolBar->addAction(alignTopAction_); // 顶部对齐
+    toolBar->addAction(alignDownAction_); // 底部对齐
+    toolBar->addAction(alignLeftAction_); // 左对齐
+    toolBar->addAction(alignRightAction_); // 右对齐
+    toolBar->addAction(hUniformDistributeAction_); // 水平均匀分布
+    toolBar->addAction(vUniformDistributeAction_); // 垂直均匀分布
+    toolBar->addAction(setTheSameSizeAction_); // 设置选中控件大小一致
+    toolBar->addAction(upLayerAction_); // 上移一层
+    toolBar->addAction(downLayerAction_); // 下移一层
+    toolBar->addSeparator();
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-
     bool unsaved = false;
 
     QListIterator<GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
@@ -256,13 +321,11 @@ void MainWindow::slotEditNew()
 
 QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
 {
-
     QString title = currentGraphPage_->getGraphPageId();
 
     if (title.isEmpty()) {
         title = "Untitled";
-    }
-    else {
+    } else {
         title = QFileInfo(title).fileName();
     }
 
@@ -510,8 +573,8 @@ void MainWindow::slotCloseAll()
         delete view;
     }
 
-    currentView_ = 0;
-    currentGraphPage_ = 0;
+    currentView_ = Q_NULLPTR;
+    currentGraphPage_ = Q_NULLPTR;
     slotUpdateActions();
 }
 
@@ -545,8 +608,8 @@ void MainWindow::slotCloseGraphPage()
     delete view;
 
     if (graphPageTabWidget_->count() == 0) {
-        currentGraphPage_ = 0;
-        currentView_ = 0;
+        currentGraphPage_ = Q_NULLPTR;
+        currentView_ = Q_NULLPTR;
     }
 
     slotUpdateActions();
@@ -734,8 +797,8 @@ void MainWindow::slotZoomIn()
     if(currentGraphPage_ != nullptr) {
         int width = currentGraphPage_->getGraphPageWidth();
         int height = currentGraphPage_->getGraphPageHeight();
-        currentGraphPage_->setGraphPageWidth(width * 1.25);
-        currentGraphPage_->setGraphPageHeight(height * 1.25);
+        currentGraphPage_->setGraphPageWidth(static_cast<int>(width * 1.25));
+        currentGraphPage_->setGraphPageHeight(static_cast<int>(height * 1.25));
         currentGraphPage_->setGridVisible(currentGraphPage_->isGridVisible());
     }
     if (currentView_ != nullptr) {
@@ -749,8 +812,8 @@ void MainWindow::slotZoomOut()
     if(currentGraphPage_ != nullptr) {
         int width = currentGraphPage_->getGraphPageWidth();
         int height = currentGraphPage_->getGraphPageHeight();
-        currentGraphPage_->setGraphPageWidth(width * 1/1.25);
-        currentGraphPage_->setGraphPageHeight(height * 1/1.25);
+        currentGraphPage_->setGraphPageWidth(static_cast<int>(width * 1/1.25));
+        currentGraphPage_->setGraphPageHeight(static_cast<int>(height * 1/1.25));
         currentGraphPage_->setGridVisible(currentGraphPage_->isGridVisible());
     }
     if (currentView_ != nullptr) {
@@ -760,10 +823,123 @@ void MainWindow::slotZoomOut()
 }
 
 
+/**
+ * @brief MainWindow::slotAlignElements
+ * @details 顶部对齐, 底部对齐, 右对齐, 左对齐
+ */
+void MainWindow::slotAlignElements()
+{
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action)
+        return;
+
+    Qt::Alignment alignment = static_cast<Qt::Alignment>(action->data().toInt());
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onAlignElements(alignment, items);
+    }
+}
 
 
+/**
+ * @brief MainWindow::slotHUniformDistributeElements
+ * @details 水平均匀分布
+ */
+void MainWindow::slotHUniformDistributeElements()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onHUniformDistributeElements(items);
+    }
+}
 
 
+/**
+ * @brief MainWindow::slotVUniformDistributeElements
+ * @details 垂直均匀分布
+ */
+void MainWindow::slotVUniformDistributeElements()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onVUniformDistributeElements(items);
+    }
+}
 
 
+/**
+ * @brief MainWindow::slotSetTheSameSizeElements
+ * @details 设置选中控件大小一致
+ */
+void MainWindow::slotSetTheSameSizeElements()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onSetTheSameSizeElements(items);
+    }
+}
 
+
+/**
+ * @brief MainWindow::slotUpLayerElements
+ * @details 上移一层
+ */
+void MainWindow::slotUpLayerElements()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onUpLayerElements(items);
+    }
+}
+
+
+/**
+ * @brief MainWindow::slotDownLayerElements
+ * @details 下移一层
+ */
+void MainWindow::slotDownLayerElements()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onDownLayerElements(items);
+    }
+}
+
+
+/**
+ * @brief MainWindow::slotEditDelete
+ * @details 删除
+ */
+void MainWindow::slotEditDelete()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onEditDelete(items);
+    }
+}
+
+
+/**
+ * @brief MainWindow::slotEditCopy
+ * @details 拷贝
+ */
+void MainWindow::slotEditCopy()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onEditCopy(items);
+    }
+}
+
+
+/**
+ * @brief MainWindow::slotEditPaste
+ * @details 粘贴
+ */
+void MainWindow::slotEditPaste()
+{
+    if(currentGraphPage_ != nullptr) {
+        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
+        currentGraphPage_->onEditPaste();
+    }
+}

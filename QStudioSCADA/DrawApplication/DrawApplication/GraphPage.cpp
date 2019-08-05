@@ -11,6 +11,7 @@
 #include "PluginManager.h"
 #include "Helper.h"
 #include "XMLObject.h"
+#include "GetWidthHeightDialog.h"
 
 /** Template algorithms*/
 template<template<typename T> class S, typename T>
@@ -40,16 +41,16 @@ const QString MimeType = "rti/designer";
 
 GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
     QGraphicsScene(parent),
-    propertyModel(0),
     filename(QString()),
     unsavedFlag(false),
+    propertyModel(nullptr),
     szProjPath_(""),
     szProjName_("")
 {
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
-    if (rect.width() == 0 || rect.height() == 0) {
+    if (static_cast<int>(rect.width()) == 0 || static_cast<int>(rect.height()) == 0) {
         setSceneRect(0, 0, 800, 480);
     } else {
         setSceneRect(rect);
@@ -57,8 +58,8 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
 
     gridVisible = false;
 
-    graphPageWidth = sceneRect().width();
-    graphPageHeight = sceneRect().height();
+    graphPageWidth = static_cast<int>(sceneRect().width());
+    graphPageHeight = static_cast<int>(sceneRect().height());
     graphPagePriority.clear();
     graphPagePriority.append(tr("主要的"));
     graphPageBackground = QColor(Qt::white);
@@ -263,10 +264,13 @@ void GraphPage::createContextMenuActions()
     vUniformDistributeAction_ = new QAction(QIcon(":/images/align_vsame.png"), tr("垂直均匀分布"), &contextServiceMenu);
     connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
 
-    upLayerAction_ = new QAction(QIcon(), tr("上移一层"), &contextServiceMenu);
+    setTheSameSizeAction_ = new QAction(QIcon(":/images/the-same-size.png"), tr("大小一致"), &contextServiceMenu);
+    connect(setTheSameSizeAction_, SIGNAL(triggered()), SLOT(slotSetTheSameSizeElements()));
+
+    upLayerAction_ = new QAction(QIcon(":/images/posfront.png"), tr("上移一层"), &contextServiceMenu);
     connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
 
-    downLayerAction_ = new QAction(QIcon(), tr("下移一层"), &contextServiceMenu);
+    downLayerAction_ = new QAction(QIcon(":/images/posback.png"), tr("下移一层"), &contextServiceMenu);
     connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
 
     saveAsLibraryAction = new QAction(QIcon(":/images/library.png"), tr("保存为库"),&contextMenu);
@@ -297,6 +301,7 @@ void GraphPage::createContextMenuActions()
     contextServiceMenu.addAction(alignLeftAction);
     contextServiceMenu.addAction(hUniformDistributeAction_);
     contextServiceMenu.addAction(vUniformDistributeAction_);
+    contextServiceMenu.addAction(setTheSameSizeAction_);
     contextServiceMenu.addSeparator();
     contextServiceMenu.addAction(upLayerAction_);
     contextServiceMenu.addAction(downLayerAction_);
@@ -321,6 +326,9 @@ void GraphPage::updateActions()
     alignDownAction->setEnabled(selectedItems().count() < 2 ? false : true);
     alignRightAction->setEnabled(selectedItems().count() < 2 ? false : true);
     alignLeftAction->setEnabled(selectedItems().count() < 2 ? false : true);
+    hUniformDistributeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
+    vUniformDistributeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
+    setTheSameSizeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
 }
 
 
@@ -538,7 +546,7 @@ void GraphPage::connectItem(Element *item)
 
 void GraphPage::createItems(const QString &typeId, QPointF position)
 {
-    Element *last = 0;
+    Element *last = Q_NULLPTR;
 
     QMapIterator<QString, QMap<QString, IDrawApplicationPlugin*> > iter(PluginManager::getInstance()->plugins_);
     while(iter.hasNext()) {
@@ -548,7 +556,6 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementName() == typeId) {
-
                 Element *ele = plugin->createElement(szProjPath_, szProjName_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
@@ -590,15 +597,8 @@ void GraphPage::slotUngroupElements()
 
 }
 
-void GraphPage::slotAlignElements()
+void GraphPage::onAlignElements(Qt::Alignment alignment, QList<QGraphicsItem*> items)
 {
-    QAction *action = qobject_cast<QAction*>(sender());
-    if (!action)
-        return;
-
-    Qt::Alignment alignment = static_cast<Qt::Alignment>(action->data().toInt());
-
-    QList<QGraphicsItem*> items = selectedItems();
     QVector<double> coordinates;
     populateCoordinates(alignment, &coordinates, items);
     double offset;
@@ -610,12 +610,27 @@ void GraphPage::slotAlignElements()
     }
 
     if (alignment == Qt::AlignLeft || alignment == Qt::AlignRight) {
-        for (int i = 0; i < items.count(); ++i)
-            ((Element *)items.at(i))->moveTo(offset - coordinates.at(i), 0);
+        for (int i = 0; i < items.count(); ++i) {
+            Element *pEle = (Element *)items.at(i);
+            pEle->moveTo(offset - coordinates.at(i), 0);
+            pEle->updateBoundingElement();
+        }
     } else {
-        for (int i = 0; i < items.count(); ++i)
-            ((Element *)items.at(i))->moveTo(0, offset - coordinates.at(i));
+        for (int i = 0; i < items.count(); ++i) {
+            Element *pEle = (Element *)items.at(i);
+            pEle->moveTo(0, offset - coordinates.at(i));
+            pEle->updateBoundingElement();
+        }
     }
+}
+
+void GraphPage::slotAlignElements()
+{
+    QAction *action = qobject_cast<QAction*>(sender());
+    if (!action)
+        return;
+    Qt::Alignment alignment = static_cast<Qt::Alignment>(action->data().toInt());
+    onAlignElements(alignment, selectedItems());
 }
 
 /**
@@ -634,13 +649,8 @@ void GraphPage::horizontalSort(QList<QGraphicsItem *> &dat)
     }
 }
 
-/**
- * @brief GraphPage::slotHUniformDistributeElements
- * @details 水平均匀分布
- */
-void GraphPage::slotHUniformDistributeElements()
+void GraphPage::onHUniformDistributeElements(QList<QGraphicsItem*> items)
 {
-    QList<QGraphicsItem *> items = selectedItems();
     if(items.count() < 2) {
         return;
     }
@@ -661,9 +671,20 @@ void GraphPage::slotHUniformDistributeElements()
 
     for(int i=1; i<items.count()-1; i++) {
         QGraphicsItem * pItem = items.at(i);
-        ((Element *)pItem)->setElementXPos(x);
+        Element *pEle = (Element *)items.at(i);
+        pEle->setElementXPos(x);
+        pEle->updateBoundingElement();
         x = x + pItem->sceneBoundingRect().width() + space;
     }
+}
+
+/**
+ * @brief GraphPage::slotHUniformDistributeElements
+ * @details 水平均匀分布
+ */
+void GraphPage::slotHUniformDistributeElements()
+{
+    onHUniformDistributeElements(selectedItems());
 }
 
 
@@ -683,13 +704,8 @@ void GraphPage::verticalSort(QList<QGraphicsItem *> &dat)
     }
 }
 
-/**
- * @brief GraphPage::slotVUniformDistributeElements
- * @details 垂直均匀分布
- */
-void GraphPage::slotVUniformDistributeElements()
+void GraphPage::onVUniformDistributeElements(QList<QGraphicsItem*> items)
 {
-    QList<QGraphicsItem *> items = selectedItems();
     if(items.count() < 2) {
         return;
     }
@@ -710,9 +726,69 @@ void GraphPage::slotVUniformDistributeElements()
 
     for(int i=1; i<items.count()-1; i++) {
         QGraphicsItem * pItem = items.at(i);
-        ((Element *)pItem)->setElementYPos(y);
+        Element *pEle = (Element *)items.at(i);
+        pEle->setElementYPos(y);
+        pEle->updateBoundingElement();
         y = y + pItem->sceneBoundingRect().height() + space;
     }
+}
+
+
+/**
+ * @brief GraphPage::slotVUniformDistributeElements
+ * @details 垂直均匀分布
+ */
+void GraphPage::slotVUniformDistributeElements()
+{
+    onVUniformDistributeElements(selectedItems());
+}
+
+
+void GraphPage::onSetTheSameSizeElements(QList<QGraphicsItem*> items)
+{
+    if(items.count() < 2) {
+        return;
+    }
+
+    double dTotalWidth = 0;
+    double dTotalHeight = 0;
+
+    QListIterator<QGraphicsItem *> iter(items);
+    while (iter.hasNext()) {
+        QRectF rect = iter.next()->sceneBoundingRect();
+        dTotalWidth += rect.width();
+        dTotalHeight += rect.height();
+    }
+
+    int iWidth = static_cast<int>(dTotalWidth / items.count());
+    int iHeight = static_cast<int>(dTotalHeight / items.count());
+
+    GetWidthHeightDialog dlg;
+    dlg.setWidth(iWidth);
+    dlg.setHeight(iHeight);
+    if(dlg.exec() == GetWidthHeightDialog::Accepted) {
+        iWidth = dlg.getWidth();
+        iHeight = dlg.getHeight();
+        QListIterator<QGraphicsItem *> iterEle(items);
+        while (iterEle.hasNext()) {
+            QGraphicsItem * pItem = iterEle.next();
+            Element *pEle = (Element *)pItem;
+            pEle->setElementWidth(iWidth);
+            pEle->setElementHeight(iHeight);
+            pEle->updateBoundingElement();
+        }
+    }
+    this->update();
+}
+
+
+/**
+ * @brief GraphPage::slotSetTheSameSizeElements
+ * @details 设置选中控件大小一致
+ */
+void GraphPage::slotSetTheSameSizeElements()
+{
+    onSetTheSameSizeElements(selectedItems());
 }
 
 
@@ -736,27 +812,60 @@ void GraphPage::populateCoordinates(const Qt::Alignment &alignment,
     }
 }
 
-void GraphPage::slotUpLayerElements()
+
+void GraphPage::onUpLayerElements(QList<QGraphicsItem*> items)
 {
-    foreach (QGraphicsItem *item,selectedItems()) {
+    foreach (QGraphicsItem *item, items) {
         Element *ele = (Element *)item;
         ele->setElementZValue(ele->getElementZValue() + 1);
     }
 }
 
-void GraphPage::slotDownLayerElements()
+
+/**
+ * @brief GraphPage::slotUpLayerElements
+ * @details 上移一层
+ */
+void GraphPage::slotUpLayerElements()
 {
-    foreach (QGraphicsItem *item,selectedItems()) {
+    onUpLayerElements(selectedItems());
+}
+
+
+void GraphPage::onDownLayerElements(QList<QGraphicsItem*> items)
+{
+    foreach (QGraphicsItem *item, items) {
         Element *ele = (Element*)item;
         ele->setElementZValue(ele->getElementZValue() - 1);
     }
 }
 
-void GraphPage::slotEditDelete()
+
+/**
+ * @brief GraphPage::slotDownLayerElements
+ * @details 下移一层
+ */
+void GraphPage::slotDownLayerElements()
 {
-    m_undoStack->push(new RemoveCommand(selectedItems(), this));
+    onDownLayerElements(selectedItems());
+}
+
+
+void GraphPage::onEditDelete(QList<QGraphicsItem*> items)
+{
+    m_undoStack->push(new RemoveCommand(items, this));
     propertyModel->resetModel();
     emit elementsDeleted();
+}
+
+
+/**
+ * @brief GraphPage::slotEditDelete
+ * @details 删除
+ */
+void GraphPage::slotEditDelete()
+{
+    onEditDelete(selectedItems());
 }
 
 void GraphPage::removeElementEvent()
@@ -825,15 +934,23 @@ void GraphPage::slotSelectAll()
     }
 }
 
-void GraphPage::slotEditCopy()
-{
-    QList <QGraphicsItem*> selItems = selectedItems();
 
-    if (selItems.isEmpty()) {
+void GraphPage::onEditCopy(QList<QGraphicsItem*> items)
+{
+    if (items.isEmpty()) {
         return;
     }
+    copyItems(items);
+}
 
-    copyItems(selItems);
+
+/**
+ * @brief GraphPage::slotEditCopy
+ * @details 拷贝
+ */
+void GraphPage::slotEditCopy()
+{
+    onEditCopy(selectedItems());
 }
 
 void GraphPage::copyItems(const QList<QGraphicsItem *> &items)
@@ -847,7 +964,8 @@ void GraphPage::copyItems(const QList<QGraphicsItem *> &items)
     clipboard->setMimeData(mimeData);
 }
 
-void GraphPage::slotEditPaste()
+
+void GraphPage::onEditPaste()
 {
     QClipboard *clipboard = QApplication::clipboard();
     const QMimeData *mimeData = clipboard->mimeData();
@@ -861,6 +979,16 @@ void GraphPage::slotEditPaste()
         QDataStream in(&copiedItems, QIODevice::ReadOnly);
         readItems(in, pasteOffset, true);
     }
+}
+
+
+/**
+ * @brief GraphPage::slotEditPaste
+ * @details 粘贴
+ */
+void GraphPage::slotEditPaste()
+{
+    onEditPaste();
 }
 
 void GraphPage::readItems(QDataStream &in, int offset, bool select)
@@ -938,7 +1066,7 @@ void GraphPage::saveAsBinary(const QString &filename)
     }
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(0,
+        QMessageBox::information(nullptr,
                                  tr("错误"),
                                  tr("文件无法保存"),
                                  QMessageBox::Ok);
@@ -959,7 +1087,7 @@ void GraphPage::loadAsBinary(const QString &filename)
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(0,
+        QMessageBox::information(nullptr,
                                  tr("错误"),
                                  tr("文件无法保存"),
                                  QMessageBox::Ok);
@@ -1190,7 +1318,9 @@ void GraphPage::slotSaveAsLibrary()
     QFile file(filename);
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(0,tr("错误"),tr("无法打开文件"),
+        QMessageBox::information(nullptr,
+                                 tr("错误"),
+                                 tr("无法打开文件"),
                                  QMessageBox::Ok);
         return;
     }
@@ -1267,7 +1397,7 @@ void GraphPage::getSupportEvents(QStringList &listValue)
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, 0)) {
+    if(!xmlFuncSupportList.load(buffer, nullptr)) {
         return;
     }
 
