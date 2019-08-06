@@ -66,6 +66,7 @@ void ElementJarShape::paint(QPainter *painter)
         return;
     }
 
+    painter->save();
     painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
     painter->translate(QPoint(elementXPos, elementYPos));
@@ -73,6 +74,7 @@ void ElementJarShape::paint(QPainter *painter)
 
     // 绘制罐形容器
     drawJarShape(painter);
+    painter->restore();
 }
 
 

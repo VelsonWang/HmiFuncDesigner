@@ -539,8 +539,6 @@ void MainWindow::enableToolBar(QString text) {
     bool bdevice = (text == tr("串口设备")) | (text == tr("网络设备")) |
             (text == tr("总线设备")) | (text == tr("OPC设备"));
     ui->DeviceOperateToolBar->setEnabled(bdevice);
-
-    ui->actionRun->setEnabled(false);
 }
 
 void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
@@ -633,7 +631,7 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 
 void MainWindow::UpdateProjectName(QString name)
 {
-    if(name != nullptr) {
+    if(!name.isEmpty()) {
         m_strProjectName = name;
         m_strProjectPath = ProjectMgrUtils::getProjectPath(name);
         QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
@@ -699,7 +697,7 @@ void MainWindow::on_actionCloseProject_triggered()
             findForm->save();
         window->close();
     }
-    UpdateProjectName(nullptr);
+    UpdateProjectName(QString());
 }
 
 /*
