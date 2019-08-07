@@ -2,6 +2,8 @@
 #include "Helper.h"
 #include "TagManager.h"
 #include "DrawListUtils.h"
+#include "ProjectInfoManager.h"
+#include "ProjectData.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -10,6 +12,7 @@
 #include <QFileDialog>
 #include <QScrollArea>
 #include <QToolBar>
+#include <QInputDialog>
 #include <QDebug>
 
 
@@ -51,6 +54,8 @@ MainWindow::MainWindow(const QString &szProjPath,
 
     TagManager::setProjectPath(szProjPath_);
     DrawListUtils::setProjectPath(szProjPath_);
+
+    listWidgetGraphPages->setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
 
@@ -287,29 +292,44 @@ void MainWindow::openGraphPage(const QString &szProjPath,
                                const QString &szProjName,
                                const QString &szPageName)
 {
-    QString fileName = szProjPath + "/" + szPageName + ".drw";
+    DrawListUtils::loadDrawList(szProjPath);
+    foreach(QString szPageId, DrawListUtils::drawList_) {
+        listWidgetGraphPages->addItem(szPageId);
+        QString fileName = szProjPath + "/" + szPageId + ".drw";
 
-    if (fileName.toLower().endsWith(".drw")) {
+        if (fileName.toLower().endsWith(".drw")) {
+            QGraphicsView *view = createTabView();
 
-        QGraphicsView *view = createTabView();
+            if (graphPageTabWidget_->indexOf(view) != -1) {
+                delete view;
+                return;
+            }
 
-        if (graphPageTabWidget_->indexOf(view) != -1) {
-            delete view;
-            return;
+            GraphPage *graphPage = new GraphPage(QRectF());
+            if (!createDocument(graphPage, view, fileName)) {
+                return;
+            }
+
+            if(szPageId == szPageName) {
+                currentGraphPage_ = graphPage;
+                currentView_ = view;
+            }
+
+            graphPage->setProjectPath(szProjPath);
+            graphPage->setProjectName(szProjName);
+            graphPage->loadAsXML(fileName);
+            view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+            graphPage->fillGraphPagePropertyModel();
+            graphPage->setFileName(szPageId + ".drw");
+            graphPage->setGraphPageId(szPageId);
         }
-
-        GraphPage *graphPage = new GraphPage(QRectF());
-        if (!createDocument(graphPage, view, fileName)) {
-            return;
-        }
-        graphPage->setProjectPath(szProjPath);
-        graphPage->setProjectName(szProjName);
-        graphPage->loadAsXML(fileName);
-        view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-        graphPage->fillGraphPagePropertyModel();
-        graphPage->setFileName(szPageName + ".drw");
-        graphPage->setGraphPageId(szPageName);
     }
+
+    QList<QListWidgetItem*> listWidgetItem = listWidgetGraphPages->findItems(szPageName, Qt::MatchCaseSensitive);
+    if ( listWidgetItem.size() > 0 ) {
+        listWidgetGraphPages->setCurrentItem(listWidgetItem.at(0));
+    }
+
 }
 
 
@@ -486,6 +506,8 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
         return;
     }
 
+    listWidgetGraphPages->setCurrentRow(GraphPageNum);
+
     for (int i = 0; i < graphPageTabWidget_->count(); i++) {
         QGraphicsView *view = (QGraphicsView*)graphPageTabWidget_->widget(i);
         ((GraphPage*)view->scene())->setActive(false);
@@ -653,6 +675,9 @@ void MainWindow::slotEditOpen()
         if (!createDocument(graphPage, view, filename)) {
             return;
         } 
+
+        currentGraphPage_ = graphPage;
+        currentView_ = view;
         graphPage->setProjectPath(szProjPath_);
         graphPage->setProjectName(szProjName_);
         graphPage->loadAsXML(filename);
@@ -682,12 +707,10 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     }
 
     graphPage->setGridVisible(gridVisible_);
-    currentGraphPage_ = graphPage;
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    currentView_ = view;
     graphPage->setPropertyModel(propertyModel_);
-    graphPageTabWidget_->addTab(currentView_, graphPage->getGraphPageId());
+    graphPageTabWidget_->addTab(view, graphPage->getGraphPageId());
     graphPageTabWidget_->setCurrentWidget(view);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
 
@@ -942,4 +965,266 @@ void MainWindow::slotEditPaste()
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
         currentGraphPage_->onEditPaste();
     }
+}
+
+
+/**
+ * @brief MainWindow::on_listWidgetGraphPages_itemClicked
+ * @details 画面名称被单击
+ * @param item
+ */
+void MainWindow::on_listWidgetGraphPages_currentTextChanged(const QString &currentText)
+{
+    Q_UNUSED(currentText)
+    graphPageTabWidget_->setCurrentIndex(listWidgetGraphPages->currentRow());
+}
+
+
+/**
+ * @brief MainWindow::contextMenuEvent
+ * @details 右键菜单
+ * @param event
+ */
+void MainWindow::contextMenuEvent(QContextMenuEvent *event)
+{
+    Q_UNUSED(event)
+
+    QMenu *pMenu = new QMenu(this);
+
+    QAction *pNewAct = new QAction(tr("新建"), this);
+    pNewAct->setStatusTip(tr("新建画面"));
+    connect(pNewAct, SIGNAL(triggered()), this, SLOT(onNewGraphPage()));
+    pMenu->addAction(pNewAct);
+
+    QAction *pRenameAct = new QAction(tr("重命名"), this);
+    pRenameAct->setStatusTip(tr("重命名画面"));
+    connect(pRenameAct, SIGNAL(triggered()), this, SLOT(onRenameGraphPage()));
+    pMenu->addAction(pRenameAct);
+
+    QAction *pDeleteAct = new QAction(tr("删除"), this);
+    pDeleteAct->setStatusTip(tr("删除画面"));
+    connect(pDeleteAct, SIGNAL(triggered()), this, SLOT(onDeleteGraphPage()));
+    pMenu->addAction(pDeleteAct);
+
+    QAction *pCopyAct = new QAction(tr("复制"), this);
+    pCopyAct->setStatusTip(tr("复制画面"));
+    connect(pCopyAct, SIGNAL(triggered()), this, SLOT(onCopyGraphPage()));
+    pMenu->addAction(pCopyAct);
+
+    QAction *pPasteAct = new QAction(tr("粘贴"), this);
+    pPasteAct->setStatusTip(tr("粘贴画面"));
+    connect(pPasteAct, SIGNAL(triggered()), this, SLOT(onPasteGraphPage()));
+    pMenu->addAction(pPasteAct);
+
+    pMenu->move(cursor().pos());
+    pMenu->show();
+}
+
+
+/**
+ * @brief MainWindow::createEmptyGraphpage
+ * @details 创建空的画面页
+ * @param projPath 工程路径
+ * @param graphPageName 画面名称
+ * @param width 画面宽度
+ * @param height 画面高度
+ */
+void MainWindow::createEmptyGraphpage(const QString &projPath,
+                                      const QString &graphPageName,
+                                      int width,
+                                      int height)
+{
+    QString fileName = projPath + "/" + graphPageName + ".drw";
+    QString szContent = QString(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                "<graphPage fileName=\"%1.drw\" graphPageId=\"%1\" "
+                "width=\"%2\" height=\"%3\" background=\"#ffffff\">\n"
+                "</graphPage>")
+            .arg(graphPageName)
+            .arg(QString::number(width))
+            .arg(QString::number(height));
+
+    Helper::writeString(fileName, szContent);
+}
+
+
+/**
+ * @brief MainWindow::onNewGraphPage
+ * @details 新建画面
+ */
+void MainWindow::onNewGraphPage()
+{
+    int last = DrawListUtils::getMaxDrawPageNum("draw");
+    QString szGraphPageName = QString("draw%1").arg(last);
+
+    QInputDialog dlg(this);
+    dlg.setWindowTitle(tr("画面名称"));
+    dlg.setLabelText(tr("请输入画面名称"));
+    dlg.setOkButtonText(tr("确定"));
+    dlg.setCancelButtonText(tr("取消"));
+    dlg.setTextValue(szGraphPageName);
+
+reInput:
+    if ( dlg.exec() == QDialog::Accepted ) {
+        szGraphPageName = dlg.textValue();
+        if ( szGraphPageName == "" ) {
+            goto reInput;
+        }
+
+        QList<GraphPage*> listGraphPage = GraphPageManager::getInstance()->getGraphPageList();
+
+        int width = 480;
+        int height = 272;
+        if ( listGraphPage.size() > 0 ) {
+            GraphPage* pGraphPage = listGraphPage.at(0);
+            width = pGraphPage->getGraphPageWidth();
+            height = pGraphPage->getGraphPageHeight();
+        }
+
+        createEmptyGraphpage(szProjPath_, szGraphPageName, width, height);
+        DrawListUtils::drawList_.append(szGraphPageName);
+        DrawListUtils::saveDrawList(szProjPath_);
+
+        listWidgetGraphPages->addItem(szGraphPageName);
+        QString fileName = szProjPath_ + "/" + szGraphPageName + ".drw";
+
+        if (fileName.toLower().endsWith(".drw")) {
+            QGraphicsView *view = createTabView();
+
+            if (graphPageTabWidget_->indexOf(view) != -1) {
+                delete view;
+                return;
+            }
+
+            GraphPage *graphPage = new GraphPage(QRectF());
+            if (!createDocument(graphPage, view, fileName)) {
+                return;
+            }
+
+            currentGraphPage_ = graphPage;
+            currentView_ = view;
+            graphPage->setProjectPath(szProjPath_);
+            graphPage->setProjectName(szProjName_);
+            graphPage->loadAsXML(fileName);
+            view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+            graphPage->fillGraphPagePropertyModel();
+            graphPage->setFileName(szGraphPageName + ".drw");
+            graphPage->setGraphPageId(szGraphPageName);
+        }
+
+        QList<QListWidgetItem*> listWidgetItem = listWidgetGraphPages->findItems(szGraphPageName, Qt::MatchCaseSensitive);
+        if ( listWidgetItem.size() > 0 ) {
+            listWidgetGraphPages->setCurrentItem(listWidgetItem.at(0));
+            graphPageTabWidget_->setCurrentIndex(listWidgetGraphPages->currentRow());
+        }
+
+    }
+}
+
+
+/**
+ * @brief MainWindow::onRenameGraphPage
+ * @details 修改画面名称
+ */
+void MainWindow::onRenameGraphPage()
+{
+    QString szOldGraphPageName = listWidgetGraphPages->currentItem()->text();
+
+    QInputDialog dlg(this);
+    dlg.setWindowTitle(tr("修改画面名称"));
+    dlg.setLabelText(tr("请输入画面名称"));
+    dlg.setOkButtonText(tr("确定"));
+    dlg.setCancelButtonText(tr("取消"));
+    dlg.setTextValue(szOldGraphPageName);
+
+reInput:
+    if (dlg.exec() == QDialog::Accepted) {
+        QString szNewGraphPageName = dlg.textValue();
+
+        if (szNewGraphPageName == "") {
+            goto reInput;
+        }
+
+        for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
+            if ( szOldGraphPageName == DrawListUtils::drawList_.at(i) ) {
+                DrawListUtils::drawList_.replace(i, szNewGraphPageName);
+                // rename file
+                QString oldName = szProjPath_ + "/" + szOldGraphPageName + ".drw";
+                QString newName = szProjPath_ + "/" + szNewGraphPageName + ".drw";
+                QFile::rename(oldName, newName);
+                DrawListUtils::saveDrawList(szProjPath_);
+                listWidgetGraphPages->currentItem()->setText(szNewGraphPageName);
+                GraphPage *pGraphPage = GraphPageManager::getInstance()->getGraphPageById(szOldGraphPageName);
+                pGraphPage->setFileName(szNewGraphPageName + ".drw");
+                pGraphPage->setGraphPageId(szNewGraphPageName);
+                graphPageTabWidget_->setTabText(graphPageTabWidget_->currentIndex(), szNewGraphPageName);
+                break;
+            }
+        }
+    }
+}
+
+
+/**
+ * @brief MainWindow::onDeleteGraphPage
+ * @details 删除画面
+ */
+void MainWindow::onDeleteGraphPage()
+{/*
+    QString szGraphPageName = listWidgetGraphPages->currentItem()->text();
+
+    for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
+        if ( szGraphPageName == DrawListUtils::drawList_.at(i) ) {
+            DrawListUtils::drawList_.removeAt(i);
+            // delete file
+            QString fileName = szProjPath_ + "/" + szGraphPageName + ".drw";
+            QFile file(fileName);
+            if (file.exists()) {
+                file.remove();
+            }
+
+            // ui 删除
+            DrawListUtils::saveDrawList(szProjPath_);
+            break;
+        }
+    }*/
+}
+
+/*
+* 复制画面
+*/
+void MainWindow::onCopyGraphPage()
+{/*
+    QModelIndex idx = ui->listViewDrawPage->selectionModel()->currentIndex();
+    QStandardItem *item = this->pListDrawPageModel->itemFromIndex(idx);
+    szCopyGraphPageFileName_ = item->text();*/
+}
+
+/*
+* 粘贴画面
+*/
+void MainWindow::onPasteGraphPage()
+{
+    /*
+    int last = 0;
+
+regetnum:
+    last = DrawListUtils::getMaxDrawPageNum(szCopyDrawPageFileName_);
+    QString strDrawPageName = szCopyDrawPageFileName_ + QString("-%1").arg(last);
+    if (DrawListUtils::drawList_.contains(strDrawPageName)) {
+        szCopyDrawPageFileName_ = strDrawPageName;
+        goto regetnum;
+    }
+
+    DrawListUtils::drawList_.append(strDrawPageName);
+
+    // copy file
+    QString fileName = szProjPath_ + "/" + szCopyGraphPageFileName_ + ".drw";
+    QFile file(fileName);
+
+    QString pasteFileName = szProjPath_ + "/" + strDrawPageName + ".drw";
+    file.copy(pasteFileName);
+    ListViewUpdate();
+    setModifiedFlag(true);
+    save();*/
 }

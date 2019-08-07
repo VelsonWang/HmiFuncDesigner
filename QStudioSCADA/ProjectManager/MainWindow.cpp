@@ -51,7 +51,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow() {
     delete pTreeViewProjectModel;
-    pTreeViewProjectModel = NULL;
+    pTreeViewProjectModel = Q_NULLPTR;
     delete ui;
 }
 
@@ -60,18 +60,15 @@ void MainWindow::setUpProjectTreeView() {
     ui->treeViewProject->setHeaderHidden(true);
 
     pTreeViewProjectModel = new QStandardItemModel();
-    pProjectItem =
-            new QStandardItem(QIcon(":/images/pj_pro.png"), tr("未创建工程"));
+    pProjectItem = new QStandardItem(QIcon(":/images/pj_pro.png"), tr("未创建工程"));
     pProjectItem->setEditable(false);
-    pSystemParameters =
-            new QStandardItem(QIcon(":/images/pj_sys.png"), tr("系统参数"));
+    pSystemParameters = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("系统参数"));
     pSystemParameters->setEditable(false);
     pProjectItem->appendRow(pSystemParameters);
 
     //////////////////////////////////////////////////////
 
-    pCommunicationDevice =
-            new QStandardItem(QIcon(":/images/pj_sys.png"), tr("通讯设备"));
+    pCommunicationDevice = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("通讯设备"));
     pCommunicationDevice->setEditable(false);
     pComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), tr("串口设备"));
     pComDevice->setEditable(false);
@@ -89,33 +86,26 @@ void MainWindow::setUpProjectTreeView() {
   */
     pProjectItem->appendRow(pCommunicationDevice);
 
-    pDataBaseConfig =
-            new QStandardItem(QIcon(":/images/pj_sys.png"), tr("变量管理"));
+    pDataBaseConfig = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("变量管理"));
     pDataBaseConfig->setEditable(false);
-    pDevVariable =
-            new QStandardItem(QIcon(":/images/pj_zone.png"), tr("设备变量"));
+    pDevVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("设备变量"));
     pDevVariable->setEditable(false);
 
     pDataBaseConfig->appendRow(pDevVariable);
-    pTmpVariable =
-            new QStandardItem(QIcon(":/images/pj_zone.png"), tr("中间变量"));
+    pTmpVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("中间变量"));
     pTmpVariable->setEditable(false);
     pDataBaseConfig->appendRow(pTmpVariable);
-    pSysVariable =
-            new QStandardItem(QIcon(":/images/pj_zone.png"), tr("系统变量"));
+    pSysVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("系统变量"));
     pSysVariable->setEditable(false);
     pDataBaseConfig->appendRow(pSysVariable);
     pProjectItem->appendRow(pDataBaseConfig);
 
-    pDataBaseManager =
-            new QStandardItem(QIcon(":/images/pj_sys.png"), tr("数据库管理"));
+    pDataBaseManager = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("数据库管理"));
     pDataBaseManager->setEditable(false);
-    pRealTimeDatabase =
-            new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
+    pRealTimeDatabase = new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
     pRealTimeDatabase->setEditable(false);
     pDataBaseManager->appendRow(pRealTimeDatabase);
-    pHistoryDatabase =
-            new QStandardItem(QIcon(":/images/db_hisdbview.png"), tr("历史数据库"));
+    pHistoryDatabase = new QStandardItem(QIcon(":/images/db_hisdbview.png"), tr("历史数据库"));
     pHistoryDatabase->setEditable(false);
     pDataBaseManager->appendRow(pHistoryDatabase);
     pProjectItem->appendRow(pDataBaseManager);
@@ -124,37 +114,13 @@ void MainWindow::setUpProjectTreeView() {
     pDrawPage->setEditable(false);
     pProjectItem->appendRow(pDrawPage);
 
-    pLogicProgram =
-            new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
+    pLogicProgram = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
     pLogicProgram->setEditable(false);
-    /*
-  pLadderEditor = new QStandardItem(QIcon(":/images/pj_plc.png"), tr("梯形图"));
-  pLadderEditor->setEditable(false);
-  pLogicProgram->appendRow(pLadderEditor);
-  */
-    pScriptEditor =
-            new QStandardItem(QIcon(":/images/pj_script.png"), tr("脚本编辑器"));
+
+    pScriptEditor = new QStandardItem(QIcon(":/images/pj_script.png"), tr("脚本编辑器"));
     pScriptEditor->setEditable(false);
     pLogicProgram->appendRow(pScriptEditor);
     pProjectItem->appendRow(pLogicProgram);
-
-    /*
-  pSystemTool = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("系统工具"));
-  pSystemTool->setEditable(false);
-  pDriveMonitor = new QStandardItem(QIcon(":/images/pj_drive.png"),
-  tr("驱动监视"));
-  pDriveMonitor->setEditable(false);
-  pSystemTool->appendRow(pDriveMonitor);
-  pDatabaseInterface = new QStandardItem(QIcon(":/images/pj_mysql.png"),
-  tr("数据库接口"));
-  pDatabaseInterface->setEditable(false);
-  pSystemTool->appendRow(pDatabaseInterface);
-  pBuilderXMLInterface = new QStandardItem(QIcon(":/images/pj_xml.png"),
-  tr("建筑XML接口"));
-  pBuilderXMLInterface->setEditable(false);
-  pSystemTool->appendRow(pBuilderXMLInterface);
-  pProjectItem->appendRow(pSystemTool);
-  */
 
     pTreeViewProjectModel->appendRow(pProjectItem);
     ui->treeViewProject->setModel(pTreeViewProjectModel);

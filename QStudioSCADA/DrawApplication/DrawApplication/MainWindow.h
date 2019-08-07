@@ -34,6 +34,7 @@ public:
 
 protected:
     void closeEvent(QCloseEvent *);
+    void contextMenuEvent(QContextMenuEvent * event);
 
 private:
     void initView();
@@ -55,6 +56,11 @@ private:
     bool createDocument(GraphPage *graphPage,
                         QGraphicsView *view,
                         const QString &filename);
+    // 创建空的画面页
+    void createEmptyGraphpage(const QString &projPath,
+                              const QString &graphPageName,
+                              int width,
+                              int height);
 
 public slots:
     void slotNewElementAdded();
@@ -99,6 +105,18 @@ private slots:
     void slotEditCopy();
     // 粘贴
     void slotEditPaste();
+    // 画面名称被单击
+    void on_listWidgetGraphPages_currentTextChanged(const QString &currentText);
+    // 新建画面
+    void onNewGraphPage();
+    // 重命名画面
+    void onRenameGraphPage();
+    // 删除画面
+    void onDeleteGraphPage();
+    // 复制画面
+    void onCopyGraphPage();
+    // 粘贴画面
+    void onPasteGraphPage();
 
 private:
     QString szProjPath_;
@@ -146,6 +164,7 @@ private:
 
     bool gridVisible_;
     int currentGraphPageIndex_;
+    QString szCopyGraphPageFileName_;
 };
 
 #endif // MAINWINDOW_H

@@ -67,7 +67,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>781</width>
+         <width>688</width>
          <height>642</height>
         </rect>
        </property>
@@ -104,38 +104,41 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QDockWidget" name="dockElemets">
+  <widget class="QDockWidget" name="dockGraphPages">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="minimumSize">
     <size>
      <width>160</width>
-     <height>44</height>
+     <height>119</height>
     </size>
    </property>
    <property name="windowTitle">
-    <string>图形元素</string>
+    <string>画面</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockElemetsLayout">
     <layout class="QVBoxLayout" name="verticalLayout_3">
-     <property name="spacing">
-      <number>1</number>
-     </property>
      <property name="leftMargin">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="topMargin">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="rightMargin">
-      <number>1</number>
+      <number>0</number>
      </property>
      <property name="bottomMargin">
-      <number>1</number>
+      <number>0</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" name="ElemetsLayout"/>
+      <widget class="QListWidget" name="listWidgetGraphPages"/>
      </item>
     </layout>
    </widget>
@@ -149,7 +152,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>44</width>
+     <width>98</width>
      <height>44</height>
     </size>
    </property>
@@ -208,6 +211,45 @@
      </property>
      <item>
       <layout class="QVBoxLayout" name="ObjectTreeLayout"/>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockElemets">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>160</width>
+     <height>48</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>图形元素</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_8">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" name="ElemetsLayout"/>
      </item>
     </layout>
    </widget>

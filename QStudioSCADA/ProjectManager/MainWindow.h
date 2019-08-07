@@ -82,13 +82,8 @@ private:
     QStandardItem *pHistoryDatabase;
     QStandardItem *pDrawPage;
     QStandardItem *pLogicProgram;
-    QStandardItem *pLadderEditor;
     QStandardItem *pScriptEditor;
     QStandardItem *pSystemTool;
-    QStandardItem *pDriveMonitor;
-    QStandardItem *pDatabaseInterface;
-    QStandardItem *pBuilderXMLInterface;
-
 
 
 private:
