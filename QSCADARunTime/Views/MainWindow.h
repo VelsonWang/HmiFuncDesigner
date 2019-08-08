@@ -5,6 +5,7 @@
 #include <QStack>
 #include <QMutexLocker>
 #include <QMutex>
+#include <QCloseEvent>
 #include <stdlib.h>
 #include "GraphPage.h"
 #include "propertymodel.h"
@@ -66,6 +67,9 @@ private:
     bool isGraphPageOpen(const QString &filename);
     bool createDocument(GraphPage *graphPage, const QString &filename);
     void moveCenter();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 public:
     QStack<GraphPage *> showedGraphPageStack_;

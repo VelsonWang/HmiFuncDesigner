@@ -33,7 +33,7 @@ void FunctionPropertyEditor::setFunctions(const QStringList &funcs) {
 }
 
 void FunctionPropertyEditor::onToolButtonClicked() {
-    FunctionEditorDialog dlg(0, supportEvents_);
+    FunctionEditorDialog dlg(Q_NULLPTR, supportEvents_);
     dlg.setFunctions(funcs_);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList funcs = dlg.getFunctions();

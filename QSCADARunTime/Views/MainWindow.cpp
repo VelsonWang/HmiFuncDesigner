@@ -10,7 +10,7 @@
 #include <QDebug>
 
 QMutex MainWindow::mutex_;
-MainWindow *MainWindow::instance_ = 0;
+MainWindow *MainWindow::instance_ = Q_NULLPTR;
 QString MainWindow::projpath_ = "";
 QString MainWindow::graphPageName_ = "";
 
@@ -32,6 +32,13 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow() {
     unLoadGraphPages();
+}
+
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    Q_UNUSED(event)
+    qApp->exit(0);
 }
 
 

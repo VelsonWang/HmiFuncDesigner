@@ -78,6 +78,7 @@ public:
     void cleanPropertyModel();
     void connectItem(Element *item);
     bool getUnsavedFlag();
+    void setUnsavedFlag(bool bFlag = true);
 
     friend QDataStream &operator<<(QDataStream &out, GraphPage &page);
     friend QDataStream &operator>>(QDataStream &in, GraphPage &page);
@@ -186,7 +187,7 @@ private:
     QStringList funcs_;
 
     bool onActive;
-    bool unsavedFlag;
+    bool unsavedFlag_;
 
     PropertyModel *propertyModel;
     QUndoStack *m_undoStack;
@@ -220,7 +221,6 @@ private:
     QAction *actionCopy;
     QAction *actionPaste;
     QAction *actionSelectAll;
-
 };
 
 #endif // GRAPHPAGE_H

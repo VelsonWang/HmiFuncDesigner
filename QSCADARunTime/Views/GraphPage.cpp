@@ -552,7 +552,7 @@ void GraphPage::refreshGraphPage() {
 void GraphPage::openGraphPage() {
     refreshTmr_.start(100);
     // 处理"打开画面"功能
-    SCADARunTime::execScriptFunction(funcs_, tr("打开画面"));
+    SCADARunTime::execScriptFunction(funcs_, tr("OpenGraphPage"));
 }
 
 
@@ -563,7 +563,7 @@ void GraphPage::openGraphPage() {
 void GraphPage::closeGraphPage() {
     refreshTmr_.stop();
     // 处理"关闭画面"功能
-    SCADARunTime::execScriptFunction(funcs_, tr("关闭画面"));
+    SCADARunTime::execScriptFunction(funcs_, tr("CloseGraphPage"));
 }
 
 

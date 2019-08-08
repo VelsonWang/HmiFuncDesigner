@@ -51,7 +51,7 @@ void ElementClock::paint(QPainter *painter)
         if((QDateTime::currentMSecsSinceEpoch() - iLastMSecs_) > period_ * 1000) {
             iLastMSecs_ = QDateTime::currentMSecsSinceEpoch();
             // 处理"时钟到来"功能
-            SCADARunTime::execScriptFunction(funcs_, tr("时钟到来"));
+            SCADARunTime::execScriptFunction(funcs_, tr("TimeOut"));
         }
     }
 
@@ -94,6 +94,7 @@ void ElementClock::drawClock(QPainter *painter)
     }
     if(showWeek_) {
         int iWeek = QDate::currentDate().dayOfWeek();
+		szText += " ";
         szText += szWeeks[iWeek - 1];
     }
 

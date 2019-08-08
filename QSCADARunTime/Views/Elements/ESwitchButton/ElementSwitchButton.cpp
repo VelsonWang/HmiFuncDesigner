@@ -88,10 +88,10 @@ void ElementSwitchButton::execScriptFunction(bool bVal)
     if(bLastTagVal_ != bVal) {
         if(!bLastTagVal_ && bVal) {
             // 处理"切换到开事件"功能
-            SCADARunTime::execScriptFunction(funcs_, tr("切换到开事件"));
+            SCADARunTime::execScriptFunction(funcs_, tr("OffToOn"));
         } else if(bLastTagVal_ && !bVal) {
             // 处理"切换到关事件"功能
-            SCADARunTime::execScriptFunction(funcs_, tr("切换到关事件"));
+            SCADARunTime::execScriptFunction(funcs_, tr("OnToOff"));
         } else {
 
         }

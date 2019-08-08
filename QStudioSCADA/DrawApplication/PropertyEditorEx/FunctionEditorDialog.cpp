@@ -9,17 +9,32 @@
 #include <QListWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
+#include <QStringList>
 #include <QDebug>
 
 
-FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events) :
-    QDialog(parent),
-    ui(new Ui::FunctionEditorDialog),
-    supportEvents_(events),
-    iSelectedCurRow_(-1)
+FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events)
+    : QDialog(parent),
+      ui(new Ui::FunctionEditorDialog),
+      iSelectedCurRow_(-1)
 {
     ui->setupUi(this);
     this->setWindowTitle(tr("功能操作编辑"));
+
+    mapNameToShowName_.clear();
+    mapShowNameToName_.clear();
+    supportEvents_.clear();
+
+    for(int i=0; i<events.size(); i++) {
+        QString szNameToShowName = events.at(i);
+        QStringList listNameToShowName = szNameToShowName.split('-');
+        if ( listNameToShowName.size() == 2 ) {
+            supportEvents_ << listNameToShowName.at(1);
+            mapNameToShowName_[listNameToShowName.at(0)] = listNameToShowName.at(1);
+            mapShowNameToName_[listNameToShowName.at(1)] = listNameToShowName.at(0);
+        }
+    }
+
     selectFuncObjItemList_.clear();
     funcObjItemList_.clear();
     propertyModel_ = new PropertyModel();
@@ -83,7 +98,7 @@ void FunctionEditorDialog::initListWidget() {
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, 0)) {
+    if(!xmlFuncSupportList.load(buffer, Q_NULLPTR)) {
         return;
     }
 
@@ -185,7 +200,7 @@ QStringList FunctionEditorDialog::getFunctions() {
         QTableWidgetItem *pItemFuncName = ui->tableEventFunc->item(i, 0);
         QTableWidgetItem *pItemFuncEvent = ui->tableEventFunc->item(i, 1);
         QString szFuncName = pItemFuncName->text();
-        QString szFuncEvent = pItemFuncEvent->text();
+        QString szFuncEvent = mapShowNameToName_[pItemFuncEvent->text()];
         QString szRowFuncEvent = szFuncName + ":" + szFuncEvent;
         funcs_.append(szRowFuncEvent);
     }
@@ -197,9 +212,11 @@ void FunctionEditorDialog::setFunctions(const QStringList &funcs) {
         selectFuncObjItemList_.clear();
         funcs_ = funcs;
         foreach (QString szFuncEvent, funcs_) {
-            if(szFuncEvent == "")continue;
+            if(szFuncEvent == "")
+                continue;
             TFuncObjectItem *pNewFuncObj = new TFuncObjectItem();
             pNewFuncObj->setFuncString(szFuncEvent);
+            pNewFuncObj->szEvent_ = mapNameToShowName_[pNewFuncObj->szEvent_];
             TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(pNewFuncObj->szName_);
             if(pFuncObjectItem == nullptr)
                 continue;

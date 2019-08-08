@@ -42,7 +42,7 @@ const QString MimeType = "rti/designer";
 GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
     QGraphicsScene(parent),
     filename(QString()),
-    unsavedFlag(false),
+    unsavedFlag_(false),
     propertyModel(nullptr),
     szProjPath_(""),
     szProjName_("")
@@ -86,7 +86,12 @@ bool GraphPage::active()
 
 bool GraphPage::getUnsavedFlag()
 {
-    return unsavedFlag;
+    return unsavedFlag_;
+}
+
+void GraphPage::setUnsavedFlag(bool bFlag)
+{
+    unsavedFlag_ = bFlag;
 }
 
 void GraphPage::setPropertyModel(PropertyModel *model)
@@ -177,7 +182,7 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property)
 
     fillGridPixmap();
 
-    unsavedFlag = true;
+    unsavedFlag_ = true;
     emit GraphPagePropertyChanged();
 }
 
@@ -340,7 +345,7 @@ void GraphPage::slotElementPropertyChanged(Property *property)
 
     currentItem->updateElementProperty(property->getId(),property->getValue());
 
-    unsavedFlag = true;
+    unsavedFlag_ = true;
     emit elementPropertyChanged();
 
     if (property->getId() == EL_ID) {
@@ -1077,7 +1082,7 @@ void GraphPage::saveAsBinary(const QString &filename)
     out << *this;
     writeItems(out,items());
     m_undoStack->setClean();
-    unsavedFlag = false;
+    unsavedFlag_ = false;
     file.close();
     emit GraphPageSaved();
 }
@@ -1120,7 +1125,7 @@ void GraphPage::saveAsXML(const QString &filename)
 
     writeGraphPage(file, this);
 
-    unsavedFlag = false;
+    unsavedFlag_ = false;
     m_undoStack->setClean();
     file.close();
     emit GraphPageSaved();
@@ -1414,8 +1419,7 @@ void GraphPage::getSupportEvents(QStringList &listValue)
             foreach(XMLObject* event, childrenGroup) {
                 QString eventName = event->getProperty("name");
                 QString eventShowName = event->getProperty("ShowName");
-                listValue << eventShowName;
-
+                listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
                 QList<XMLObject*> funcDesc = event->getChildren();
                 if(funcDesc.size() < 1)
                     continue;

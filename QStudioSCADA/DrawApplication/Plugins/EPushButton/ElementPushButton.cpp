@@ -897,7 +897,7 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
             foreach(XMLObject* event, childrenGroup) {
                 QString eventName = event->getProperty("name");
                 QString eventShowName = event->getProperty("ShowName");
-                listValue << eventShowName;
+                listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
 
                 QList<XMLObject*> funcDesc = event->getChildren();
                 if(funcDesc.size() < 1)

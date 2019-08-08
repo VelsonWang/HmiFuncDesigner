@@ -6,6 +6,7 @@
 #include "property.h"
 #include <QDialog>
 #include <QList>
+#include <QMap>
 
 #include <QDebug>
 
@@ -150,7 +151,7 @@ class FunctionEditorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FunctionEditorDialog(QWidget *parent = 0, QStringList events = QStringList());
+    explicit FunctionEditorDialog(QWidget *parent = Q_NULLPTR, QStringList events = QStringList());
     ~FunctionEditorDialog();
     QStringList getFunctions();
     void setFunctions(const QStringList &funcs);
@@ -190,6 +191,8 @@ private:
     QStringList funcs_;
     QStringList supportEvents_;
     QList <Property *> propList_;
+    QMap<QString, QString> mapNameToShowName_;
+    QMap<QString, QString> mapShowNameToName_;
 };
 
 #endif // FUNCTIONEDITORDIALOG_H
