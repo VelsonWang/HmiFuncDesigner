@@ -3,6 +3,7 @@
 #include "PubTool.h"
 #include <cfloat>
 #include <QFontMetrics>
+#include <algorithm>
 
 #define SCALE_LENTH         4
 #define BIT_SCALE_LENTH     6
@@ -657,7 +658,7 @@ void ElementValueStick::drawValueStick(QPainter *painter)
         // 计算矩形区域(垂直显示)
         if ( showScale_ && (showRuler_ && bTextVisible) ) {
             // 标尺和文本都可见
-            int iTextRectWidth = __max(iMinValueTextWidth, iMaxValueTextWidth);
+            int iTextRectWidth = std::max(iMinValueTextWidth, iMaxValueTextWidth);
             // 获取粗略刻度文本长度
             int iTempMaxWidthLen = iTextRectWidth;
 

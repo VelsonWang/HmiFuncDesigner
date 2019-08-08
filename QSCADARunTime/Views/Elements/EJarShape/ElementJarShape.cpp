@@ -6,6 +6,7 @@
 #include <QDate>
 #include <QFontMetrics>
 #include <cfloat>
+#include <algorithm>
 #include <QDebug>
 
 
@@ -176,7 +177,7 @@ void ElementJarShape::drawJarShape(QPainter *painter)
     iTmp2= 0;
     iTmp3 = static_cast<int>(maxValue_/scaleNum_);
 
-    fTmp = __max(scalerRect.bottom() - scalerRect.top() - 6, 0);
+    fTmp = std::max(scalerRect.bottom() - scalerRect.top() - 6, 0);
     fTmp = (float)((double)(scaleNum_*fTmp)/(double)maxValue_);
     iLowPosition = fTmp * ((double)lowerLimitValue_ / (double)scaleNum_);
     iUpperPosition = fTmp * ((double)upperLimitValue_ / (double)scaleNum_);
