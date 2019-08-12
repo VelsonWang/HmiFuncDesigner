@@ -126,11 +126,12 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/Csv \
     $$IDE_SOURCE_TREE/libs/XmlUtils \
     $$IDE_SOURCE_TREE/libs/Lua \
-    $$IDE_SOURCE_TREE/libs/QScintilla \
-    $$IDE_SOURCE_TREE/libs/QScintilla/Qsci \
-    $$IDE_SOURCE_TREE/libs/QScintilla/src \
-    $$IDE_SOURCE_TREE/libs/QScintilla/include \
-    $$IDE_SOURCE_TREE/libs/QScintilla/lexlib \
+    $$IDE_SOURCE_TREE/libs/qtsingleapplication \
+    $$IDE_SOURCE_TREE/libs/qscintilla \
+    $$IDE_SOURCE_TREE/libs/qscintilla/Qsci \
+    $$IDE_SOURCE_TREE/libs/qscintilla/src \
+    $$IDE_SOURCE_TREE/libs/qscintilla/include \
+    $$IDE_SOURCE_TREE/libs/qscintilla/lexlib \
     $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
     $$IDE_SOURCE_TREE/libs/PropertyEditor \
     $$IDE_SOURCE_TREE/libs/TagManager \

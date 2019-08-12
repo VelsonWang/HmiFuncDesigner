@@ -37,6 +37,7 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }
 
+include($$IDE_SOURCE_TREE/libs/qtsingleapplication/qtsingleapplication.pri)
 
 SOURCES += \
     GetWidthHeightDialog.cpp \

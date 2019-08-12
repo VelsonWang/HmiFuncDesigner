@@ -5,7 +5,7 @@
 #include "DrawListUtils.h"
 #include "PluginManager.h"
 #include "ProjectData.h"
-
+#include "qtsingleapplication.h"
 
 /**
  * @brief qMain
@@ -18,7 +18,13 @@
  */
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    //QApplication a(argc, argv);
+    QtSingleApplication app(argc, argv); // 程序单实例运行
+
+    if (app.isRunning())
+    {
+        return !app.sendMessage("start " + app.applicationDirPath());
+    }
 
     QString szProjPath = "";
     QString szProjName = "";
@@ -38,9 +44,10 @@ int main(int argc, char *argv[])
 
     MainWindow mainWin(szProjPath, szProjName, szGraphPageName);
     mainWin.openGraphPage(szProjPath, szProjName, szGraphPageName);
+    app.setActivationWindow(&mainWin);
     mainWin.show();
 
-    int ret = a.exec();
+    int ret = app.exec();
 
     // 释放插件
     PluginManager::getInstance()->releasePlugin();
