@@ -255,7 +255,7 @@ void IoDataTag::LoadData(const QJsonObject &json)
 void TmpDataTag::LoadData(const QJsonObject &json)
 {
     mId = json["sID"].toString();
-    mType = TYPE_VARIANT;
+    mType = TYPE_STRING;
     mName = json["sName"].toString();
     mDescription = json["sDescription"].toString();
     mUnit = json["sUnit"].toString();
@@ -395,7 +395,7 @@ void TmpDataTag::LoadData(const QJsonObject &json)
 void SysDataTag::LoadData(const QJsonObject &json)
 {
     mId = json["sID"].toString();
-    mType = TYPE_VARIANT;
+    mType = TYPE_STRING;
     mName = json["sName"].toString();
     mDescription = json["sDescription"].toString();
     mUnit = json["sUnit"].toString();

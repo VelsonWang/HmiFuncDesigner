@@ -57,7 +57,9 @@ void DBTagObject::SetData(QVariant v, bool bReadFromDevice)
 
 void DBTagObject::SetData(unsigned char* buffer)
 {
+    QVariant oldData = mData;
     TTagDataType type = mType;
+
     switch(type)
     {
         case TYPE_VARIANT:
@@ -152,6 +154,13 @@ void DBTagObject::SetData(unsigned char* buffer)
             QVariant value(dat);
             mData = value;
         }break;
+    }
+
+    if(mData != oldData)
+    {
+        // 发送更新事件到消息服务
+        QString msg = QString("%1 %2").arg("VALUE_CHANGE").arg(this->mId);
+        SCADARunTime::doMessage(msg);
     }
 }
 

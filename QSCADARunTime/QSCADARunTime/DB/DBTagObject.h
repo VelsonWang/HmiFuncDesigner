@@ -83,15 +83,6 @@ public:
                 break;
             }
         }
-        /*
-        if(e.getType() == BEFORE_READ)
-        {
-            qDebug() << "BEFORE_READ " << e.getData().toString();
-        }
-        if(e.getType() == VALUE_CHANGE)
-        {
-            qDebug() << "VALUE_CHANGE " << e.getData().toString();
-        }*/
     }
 };
 #endif // DBTAGOBJECT_H

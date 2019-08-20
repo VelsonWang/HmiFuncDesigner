@@ -24,6 +24,8 @@ private:
 private:
     QScriptEngine *m_pScriptEngine;
     QString m_strScript;
+
+    Q_DISABLE_COPY(RunScriptTask)
 };
 
 typedef struct tagPeriodScriptObject
@@ -66,7 +68,7 @@ public:
     bool runOnStartScripts();
     bool runOnPeriodScripts();
     void stopRunOnPeriodScripts();
-    bool runOnConditionScripts(qint32 tagId);
+    bool runOnConditionScripts(const QString &tagId);
 
 private:
     void clear();

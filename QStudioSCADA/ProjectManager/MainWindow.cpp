@@ -138,7 +138,7 @@ void MainWindow::setActiveSubWindow(ChildForm *window) {
     if (!window) return;
     window->showMaximized();
     m_CurItem = window->windowTitle();
-    ui->mdiArea->setActiveSubWindow(0);  // Activates the subwindow window. If
+    ui->mdiArea->setActiveSubWindow(Q_NULLPTR);  // Activates the subwindow window. If
     // window is 0, any current active window
     // is deactivated.
     ui->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow *>(window));
@@ -1115,7 +1115,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
         /////////////////////////////////////////////////////
 
         bStart = bEnd = false;
-        QAction *pActPos;
+        QAction *pActPos = Q_NULLPTR;
         listAct.clear();
         listAct = ui->menuProject->actions();
         for (int i = 0; i < listAct.size(); ++i) {

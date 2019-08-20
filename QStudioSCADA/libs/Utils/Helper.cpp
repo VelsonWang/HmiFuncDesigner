@@ -161,7 +161,7 @@ bool Helper::DeleteDir(const QString &dirName)
 void Helper::WidgetMoveCenter(QWidget *w)
 {
     QDesktopWidget * pDesktopWidget = QApplication::desktop();
-    QRect rect = pDesktopWidget->screenGeometry();
+    const QRect rect = pDesktopWidget->screenGeometry();
     int screenWidth = rect.width();
     int screenHeight = rect.height();
 
@@ -173,7 +173,7 @@ void Helper::WidgetMoveCenter(QWidget *w)
 QString Helper::GBK2UTF8(const QString &inStr)
 {
     QTextCodec *gbk = QTextCodec::codecForName("GB18030");
-    QTextCodec *utf8 = QTextCodec::codecForName("UTF-8");
+    //QTextCodec *utf8 = QTextCodec::codecForName("UTF-8");
 
     QString g2u = gbk->toUnicode(gbk->fromUnicode(inStr));              // gbk  convert utf8
     return g2u;
@@ -182,7 +182,7 @@ QString Helper::GBK2UTF8(const QString &inStr)
 QString Helper::UTF82GBK(const QString &inStr)
 {
     QTextCodec *gbk = QTextCodec::codecForName("GB18030");
-    QTextCodec *utf8 = QTextCodec::codecForName("UTF-8");
+    //QTextCodec *utf8 = QTextCodec::codecForName("UTF-8");
 
     QString utf2gbk = gbk->toUnicode(inStr.toLocal8Bit());
     return utf2gbk;

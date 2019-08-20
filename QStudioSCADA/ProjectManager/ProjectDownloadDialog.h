@@ -29,7 +29,7 @@ private slots:
     void on_btnCancal_clicked();
 
 private:
-    int port;
+    quint16 port;
     QHostAddress *serverIP;
     QTcpSocket *tcpSocket;
     bool status;

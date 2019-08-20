@@ -48,7 +48,7 @@ class ListenerRegister : public QObject
     Q_OBJECT
 
 public:
-    ListenerRegister(QObject* parent=0);
+    ListenerRegister(QObject* parent = Q_NULLPTR);
     ~ListenerRegister();
 
 public:
@@ -66,7 +66,7 @@ class EventProducer : public QObject
     Q_OBJECT
 
 public:
-    EventProducer(QObject* parent=0);
+    EventProducer(QObject* parent = Q_NULLPTR);
     ~EventProducer();
 
 public:

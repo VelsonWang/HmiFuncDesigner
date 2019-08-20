@@ -46,14 +46,14 @@ ListenerRegister::~ListenerRegister()
 
 void ListenerRegister::addListener(Listener *pObj)
 {
-    if (pObj == NULL)
+    if (pObj == Q_NULLPTR)
         return;
     m_listeners.append(pObj);
 }
 
 void ListenerRegister::removeListener(Listener *pObj)
 {
-    if (pObj == NULL)
+    if (pObj == Q_NULLPTR)
         return;
     m_listeners.removeOne(pObj);
 }

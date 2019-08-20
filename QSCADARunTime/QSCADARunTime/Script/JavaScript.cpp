@@ -93,7 +93,7 @@ ScriptObject *ScriptFileManage::GetScriptObject(const QString &name)
         if(pobj->m_strName == name)
             return pobj;
     }
-    return NULL;
+    return Q_NULLPTR;
 }
 
 void ScriptFileManage::load(const QString &filename, SaveFormat saveFormat)
@@ -375,7 +375,8 @@ QScriptValue Sleep(QScriptContext *context,
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue nSec = context->argument(0);
-    QThread::sleep(nSec.toInteger());
+    unsigned long lSec = static_cast<unsigned long>(nSec.toInteger());
+    QThread::sleep(lSec);
     return 1;
 }
 
@@ -390,22 +391,22 @@ QScriptValue SetDateTime(QScriptContext *context,
 {
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
-    int ny = context->argument(0).toInteger();
-    int nm = context->argument(1).toInteger();
-    int nd = context->argument(2).toInteger();
-    int nh = context->argument(3).toInteger();
-    int nf = context->argument(4).toInteger();
-    int ns = context->argument(5).toInteger();
+    int ny = static_cast<int>(context->argument(0).toInteger());
+    int nm = static_cast<int>(context->argument(1).toInteger());
+    int nd = static_cast<int>(context->argument(2).toInteger());
+    int nh = static_cast<int>(context->argument(3).toInteger());
+    int nf = static_cast<int>(context->argument(4).toInteger());
+    int ns = static_cast<int>(context->argument(5).toInteger());
 
 #ifdef Q_OS_WIN
     SYSTEMTIME st;
     GetSystemTime(&st);
-    st.wYear = ny;
-    st.wMonth = nm;
-    st.wDay = nd;
-    st.wHour = nh;
-    st.wMinute = nf;
-    st.wSecond = ns;
+    st.wYear = static_cast<WORD>(ny);
+    st.wMonth = static_cast<WORD>(nm);
+    st.wDay = static_cast<WORD>(nd);
+    st.wHour = static_cast<WORD>(nh);
+    st.wMinute = static_cast<WORD>(nf);
+    st.wSecond = static_cast<WORD>(ns);
     SetSystemTime(&st);
 #endif
 
@@ -433,7 +434,8 @@ QScriptValue WaitForMillisec(QScriptContext *context,
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue millisec = context->argument(0);
-    QThread::msleep(millisec.toInteger());
+    unsigned long lMsec = static_cast<unsigned long>(millisec.toInteger());
+    QThread::msleep(lMsec);
     return 1;
 }
 
@@ -535,8 +537,8 @@ QScriptValue MoveControlElement(QScriptContext *context,
     QScriptValue nx = context->argument(1);
     QScriptValue ny = context->argument(2);
     QString szId = id.toString();
-    int x = nx.toInteger();
-    int y = ny.toInteger();
+    int x = static_cast<int>(nx.toInteger());
+    int y = static_cast<int>(ny.toInteger());
     MainWindow::instance()->moveControlElement(szId, x, y);
     return 1;
 }

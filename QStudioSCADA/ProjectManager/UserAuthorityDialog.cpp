@@ -222,7 +222,7 @@ void UserAuthorityDialog::on_brnDelUser_clicked()
 
 void UserAuthorityDialog::on_tableViewUser_clicked(const QModelIndex &index)
 {
-
+    Q_UNUSED(index)
 }
 
 bool UserAuthorityDialog::check_data()

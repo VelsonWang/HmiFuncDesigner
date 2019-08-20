@@ -203,7 +203,7 @@ bool SCADARunTime::Load(SaveFormat saveFormat)
                 pIOTag->SetDBTagObject(pDBIoTagObject);
 
                 IVendor *pVendor = FindVendor(pIoDataTag->mDeviceName);
-                if(pVendor != NULL)
+                if(pVendor != Q_NULLPTR)
                 {
                     pVendor->AddIOTagToDeviceTagList(pIOTag);
                     pDBIoTagObject->pVendor = pVendor;
@@ -336,13 +336,13 @@ void SCADARunTime::doMessage(QString msg)
 {
     if(msg.indexOf(QString("VALUE_CHANGE")) != -1)
     {
-        qint32 tagId = msg.replace(QString("VALUE_CHANGE "), QString("")).toInt();
+        QString tagId = msg.replace(QString("VALUE_CHANGE "), QString(""));
         // 运行条件运行脚本
-        if(m_pRunScript == nullptr)
+        if(m_pRunScript == Q_NULLPTR) {
             m_pRunScript = new RunScript(m_sProjectPath);
+        }
         m_pRunScript->runOnConditionScripts(tagId);
     }
-
 }
 
 

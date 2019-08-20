@@ -155,7 +155,7 @@ bool RunScript::loadScriptObjects()
             else
             {
                 pScriptObject->tagIdLeft = RealTimeDB::getIdByTagName(leftOpt);
-                pScriptObject->tagIdRight = -1;
+                pScriptObject->tagIdRight = "";
                 if(rightOpt != "")
                     pScriptObject->dRight = rightOpt.toDouble();
             }
@@ -225,7 +225,7 @@ void RunScript::timeout()
  * @details 条件运行脚本
  * @return
  */
-bool RunScript::runOnConditionScripts(qint32 tagId)
+bool RunScript::runOnConditionScripts(const QString &tagId)
 {
     for (int i = 0; i < m_runOnConditionList.size(); i++)
     {
@@ -235,7 +235,7 @@ bool RunScript::runOnConditionScripts(qint32 tagId)
         {
             double dLeft = RealTimeDB::GetDataString(pScriptObject->tagIdLeft).toDouble();
             double dRight = 0.0;
-            if(pScriptObject->tagIdRight == -1)
+            if(pScriptObject->tagIdRight == "")
             {
                 dRight = pScriptObject->dRight;
             }
