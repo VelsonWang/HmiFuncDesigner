@@ -92,7 +92,7 @@ int Element::getElementZValue() const
     return elementZValue;
 }
 
-QList <Property*> Element::getPropertyList() const
+QList<QtProperty*> Element::getPropertyList() const
 {
     return propList;
 }

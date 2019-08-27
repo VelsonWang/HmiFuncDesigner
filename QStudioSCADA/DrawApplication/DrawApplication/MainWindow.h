@@ -1,6 +1,5 @@
 ﻿#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
-
 #include <QUndoView>
 #include <QUndoGroup>
 #include <QUndoStack>
@@ -8,10 +7,11 @@
 #include "GraphPageTreeView.h"
 #include "ElementLibraryWidget.h"
 #include "GraphPage.h"
-#include "propertymodel.h"
-#include "propertytableview.h"
 #include "GraphPageManager.h"
 #include "ui_MainWindow.h"
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
 
 class QToolBar;
 
@@ -68,6 +68,8 @@ public slots:
     void slotElementIdChanged();
     void slotElementPropertyChanged();
     void slotGraphPagePropertyChanged();
+
+    void propertyValueChanged(QtProperty *property, const QVariant &value);
 
 private slots:
     QGraphicsView *createTabView();
@@ -158,13 +160,19 @@ private:
     QTabWidget *graphPageTabWidget_;
     ObjectsTreeView *objTree_;
     ElementLibraryWidget *elementWidget_;
-    PropertyTableView *propertyView_;
-    PropertyModel *propertyModel_;
     QUndoGroup *undoGroup_;
 
     bool gridVisible_;
     int currentGraphPageIndex_;
     QString szCopyGraphPageFileName_;
+
+private:
+    QtVariantPropertyManager *variantPropertyManager_;
+    QtTreePropertyBrowser *propertyEditor_;
+    QtVariantEditorFactory *variantEditorFactory_;
+    QMap<QtProperty *, QString> propertyToId_;
+    QMap<QString, QtVariantProperty *> idToProperty_;
+    QMap<QString, bool> idToExpanded_;
 };
 
 #endif // MAINWINDOW_H

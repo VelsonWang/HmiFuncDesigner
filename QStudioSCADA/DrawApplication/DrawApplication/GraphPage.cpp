@@ -43,7 +43,7 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
     QGraphicsScene(parent),
     filename(QString()),
     unsavedFlag_(false),
-    propertyModel(nullptr),
+    variantPropertyManager_(Q_NULLPTR),
     szProjPath_(""),
     szProjName_("")
 {
@@ -94,13 +94,23 @@ void GraphPage::setUnsavedFlag(bool bFlag)
     unsavedFlag_ = bFlag;
 }
 
-void GraphPage::setPropertyModel(PropertyModel *model)
+void GraphPage::setVariantPropertyManager(QtVariantPropertyManager *propertyMgr)
 {
-    propertyModel = model;
+    variantPropertyManager_ = propertyMgr;
     fillGraphPagePropertyModel();
 
-    connect(propertyModel, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotElementPropertyChanged(Property* )));
-    connect(propertyModel, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotGraphPagePropertyChanged(Property* )));
+    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+                    this, SLOT(slotElementPropertyChanged(QtProperty *, const QVariant &)));
+    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+                    this, SLOT(slotGraphPagePropertyChanged(QtProperty *, const QVariant &)));
+
+    connect(variantPropertyManager_, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotElementPropertyChanged(Property* )));
+    connect(variantPropertyManager_, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotGraphPagePropertyChanged(Property* )));
+}
+
+void GraphPage::setTreePropertyBrowser(QtTreePropertyBrowser *propertyEditor)
+{
+    propertyEditor_ = propertyEditor;
 }
 
 void GraphPage::fillGridPixmap()
@@ -150,7 +160,28 @@ bool GraphPage::isGridVisible() const
     return gridVisible;
 }
 
-void GraphPage::slotGraphPagePropertyChanged(Property *property)
+void GraphPage::addProperty(QtVariantProperty *property, const QString &id)
+{
+    propertyToId_[property] = id;
+    idToProperty_[id] = property;
+    QtBrowserItem *item = propertyEditor_->addProperty(property);
+    if (idToExpanded_.contains(id)) {
+        propertyEditor_->setExpanded(item, idToExpanded_[id]);
+    }
+}
+
+void GraphPage::updateExpandState()
+{
+    QList<QtBrowserItem *> list = propertyEditor_->topLevelItems();
+    QListIterator<QtBrowserItem *> it(list);
+    while (it.hasNext()) {
+        QtBrowserItem *item = it.next();
+        QtProperty *prop = item->property();
+        idToExpanded_[propertyToId_[prop]] = propertyEditor_->isExpanded(item);
+    }
+}
+
+void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVariant &value)
 {
     if (!selectedItems().isEmpty()) {
         return;
@@ -160,25 +191,28 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property)
         return;
     }
 
-    switch (property->getId()) {
-    case GRAPHPAGE_ID:
-        setGraphPageId(property->getValue().toString());
-        break;
-    case GRAPHPAGE_BACKGROUND:
-        setGraphPageBackground(property->getValue().value<QColor>());
-        break;
-    case GRAPHPAGE_WIDTH:
-        setGraphPageWidth(property->getValue().toInt());
+    if (!propertyToId_.contains(property))
+        return;
+
+    if (!currentItem)
+        return;
+
+    QString id = propertyToId_[property];
+    if (id == QLatin1String("id")) {
+        setGraphPageId(value.toString());
+    } else if (id == QLatin1String("background")) {
+        setGraphPageBackground(value.value<QColor>());
+    } else if (id == QLatin1String("width")) {
+        setGraphPageWidth(value.toInt());
         updateAllElementGraphPageSize(graphPageWidth, graphPageHeight);
-        break;
-    case GRAPHPAGE_HEIGHT:
-        setGraphPageHeight(property->getValue().toInt());
+    } else if (id == QLatin1String("height")) {
+        setGraphPageHeight(value.toInt());
         updateAllElementGraphPageSize(graphPageWidth, graphPageHeight);
-        break;
-    case EL_FUNCTION:
-        setSelectedFunctions(property->getValue().toStringList());
-        break;
     }
+
+#if 0
+    setSelectedFunctions(property->getValue().toStringList());
+#endif
 
     fillGridPixmap();
 
@@ -188,56 +222,87 @@ void GraphPage::slotGraphPagePropertyChanged(Property *property)
 
 void GraphPage::cleanPropertyModel()
 {
-    propertyModel->resetModel();
+    QMap<QtProperty *, QString>::ConstIterator itProp = propertyToId_.constBegin();
+    while (itProp != propertyToId_.constEnd()) {
+        delete itProp.key();
+        itProp++;
+    }
+    propertyToId_.clear();
+    idToProperty_.clear();
 }
 
 void GraphPage::fillGraphPagePropertyModel()
 {
-    idProperty->setValue(graphPageId);
-    backgroundProperty->setValue(graphPageBackground);
-    widthProperty->setValue(graphPageWidth);
-    heightProperty->setValue(graphPageHeight);
-    funcProperty->setValue(funcs_);
+    QtVariantProperty *property;
 
-    propertyModel->resetModel();
-
-    QListIterator <Property*> i(propList);
-
-    while (i.hasNext()) {
-        propertyModel->addProperty(i.next());
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(graphPageId);
     }
+
+    property = idToProperty_[QLatin1String("background")];
+    if(property != Q_NULLPTR) {
+        property->setValue(graphPageBackground);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(graphPageWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(graphPageHeight);
+    }
+
+#if 0
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(funcs_);
+    }
+#endif
+
+    propertyEditor_->clear();
+    QListIterator <QtProperty*> iter(propList);
+    while (iter.hasNext()) {
+        propertyEditor_->addProperty(iter.next());
+    }
+
 }
 
 void GraphPage::createPropertyList()
 {
-    idProperty = new TextProperty(tr("ID"));
-    idProperty->setId(GRAPHPAGE_ID);
-    idProperty->setReadOnly(true);
-    propList.insert(propList.end(),idProperty);
+    //updateExpandState();
+    cleanPropertyModel();
 
-    titleProperty = new EmptyProperty(tr("基本属性"));
-    propList.insert(propList.end(),titleProperty);
+    QtVariantProperty *property;
 
-    backgroundProperty = new ColorProperty(tr("背景颜色"));
-    backgroundProperty->setId(GRAPHPAGE_BACKGROUND);
-    propList.insert(propList.end(),backgroundProperty);
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
-    widthProperty = new IntegerProperty(tr("宽度"));
-    widthProperty->setId(GRAPHPAGE_WIDTH);
-    widthProperty->setSettings(0, 5000);
-    propList.insert(propList.end(),widthProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("背景颜色"));
+    addProperty(property, QLatin1String("background"));
 
-    heightProperty = new IntegerProperty(tr("高度"));
-    heightProperty->setId(GRAPHPAGE_HEIGHT);
-    heightProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
+
+#if 0
     QStringList listEvents;
     getSupportEvents(listEvents);
     funcProperty = new FunctionProperty(tr("功能操作"));
     funcProperty->setId(EL_FUNCTION);
     funcProperty->setSupportEvents(listEvents);
     propList.insert(propList.end(), funcProperty);
+#endif
+
 }
 
 void GraphPage::createContextMenuActions()
@@ -337,18 +402,23 @@ void GraphPage::updateActions()
 }
 
 
-void GraphPage::slotElementPropertyChanged(Property *property)
+void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant &value)
 {
     if (selectedItems().isEmpty()) {
         return;
     }
 
-    currentItem->updateElementProperty(property->getId(),property->getValue());
+    if (!propertyToId_.contains(property))
+        return;
+
+    QString id = propertyToId_[property];
+
+    currentItem->updateElementProperty(id, value);
 
     unsavedFlag_ = true;
     emit elementPropertyChanged();
 
-    if (property->getId() == EL_ID) {
+    if (id == QLatin1String("id")) {
         emit elementIdChanged();
     }
 }
@@ -358,11 +428,11 @@ void GraphPage::slotSelectionChanged()
     updateActions();
 
     if (selectedItems().isEmpty()) {
-        propertyModel->resetModel();
+        propertyEditor_->clear();
         return;
     }
 
-    propertyModel->resetModel();
+    propertyEditor_->clear();
     currentItem = dynamic_cast<Element *>(selectedItems().first());
 
     if (!currentItem) {
@@ -370,10 +440,9 @@ void GraphPage::slotSelectionChanged()
     }
 
     currentItem->updatePropertyModel();
-    QListIterator<Property*> iter(currentItem->getPropertyList());
-
+    QListIterator<QtProperty*> iter(currentItem->getPropertyList());
     while (iter.hasNext()) {
-        propertyModel->addProperty(iter.next());
+        propertyEditor_->addProperty(iter.next());
     }
 }
 
@@ -859,7 +928,7 @@ void GraphPage::slotDownLayerElements()
 void GraphPage::onEditDelete(QList<QGraphicsItem*> items)
 {
     m_undoStack->push(new RemoveCommand(items, this));
-    propertyModel->resetModel();
+    propertyEditor_->clear();
     emit elementsDeleted();
 }
 

@@ -4,6 +4,8 @@
 #include "DrawListUtils.h"
 #include "ProjectInfoManager.h"
 #include "ProjectData.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -74,9 +76,21 @@ void MainWindow::initView()
     elementWidget_ = new ElementLibraryWidget();
     this->ElemetsLayout->addWidget(elementWidget_);
 
-    propertyModel_ = new PropertyModel();
-    propertyView_ = new PropertyTableView(propertyModel_, false);
-    this->PropertyLayout->addWidget(propertyView_);
+    variantPropertyManager_ = new QtVariantPropertyManager(this);
+
+    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+            this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
+
+    variantEditorFactory_ = new QtVariantEditorFactory(this);
+
+    propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
+    propertyEditor_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    propertyEditor_->setHeaderLabels(QStringList() << tr("参数名称") << tr("参数值"));
+    propertyEditor_->setColumnWidth(0, 60);
+    propertyEditor_->setColumnWidth(1, 300);
+    propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
+
+    this->PropertyLayout->addWidget(propertyEditor_);
 
     objTree_ = new ObjectsTreeView();
     this->ObjectTreeLayout->addWidget(objTree_);
@@ -335,7 +349,6 @@ void MainWindow::openGraphPage(const QString &szProjPath,
 
 void MainWindow::slotEditNew()
 {
-
     addNewGraphPage();
 }
 
@@ -414,7 +427,8 @@ void MainWindow::addNewGraphPage()
     QString title = fixedWindowTitle(view);
     graphPage->setFileName(title + ".drw");
     graphPage->setGraphPageId(title);
-    graphPage->setPropertyModel(propertyModel_);
+    graphPage->setVariantPropertyManager(variantPropertyManager_);
+    graphPage->setTreePropertyBrowser(propertyEditor_);
     graphPageTabWidget_->addTab(currentView_, title);
     graphPageTabWidget_->setCurrentWidget(currentView_);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
@@ -502,7 +516,7 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
 {
     if (GraphPageNum == -1) {
         objTree_->clearModel();
-        propertyModel_->resetModel();
+        //propertyModel_->resetModel();
         return;
     }
 
@@ -546,6 +560,11 @@ void MainWindow::slotElementPropertyChanged()
 }
 
 void MainWindow::slotGraphPagePropertyChanged()
+{
+
+}
+
+void MainWindow::propertyValueChanged(QtProperty *property, const QVariant &value)
 {
 
 }
@@ -709,7 +728,8 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     graphPage->setGridVisible(gridVisible_);
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    graphPage->setPropertyModel(propertyModel_);
+    graphPage->setVariantPropertyManager(variantPropertyManager_);
+    graphPage->setTreePropertyBrowser(propertyEditor_);
     graphPageTabWidget_->addTab(view, graphPage->getGraphPageId());
     graphPageTabWidget_->setCurrentWidget(view);
     GraphPageManager::getInstance()->addGraphPage(graphPage);

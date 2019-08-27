@@ -21,7 +21,9 @@
 #include "UndoCommand.h"
 #include "Element.h"
 #include "functionproperty.h"
-
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
 
 class GraphPage : public QGraphicsScene
 {
@@ -48,7 +50,8 @@ public:
     void setSelectedFunctions(QStringList funcs);
     QStringList getSelectedFunctions();
 
-    void setPropertyModel(PropertyModel *model);
+    void setVariantPropertyManager(QtVariantPropertyManager *propertyMgr);
+    void setTreePropertyBrowser(QtTreePropertyBrowser *propertyEditor);
     QUndoStack *undoStack() const;
 
     void setActive(bool);
@@ -156,8 +159,8 @@ private slots:
 
 public slots:
     void slotSelectionChanged();
-    void slotElementPropertyChanged(Property *);
-    void slotGraphPagePropertyChanged(Property *);
+    void slotElementPropertyChanged(QtProperty *property, const QVariant &value);
+    void slotGraphPagePropertyChanged(QtProperty *property, const QVariant &value);
     void slotElementMoved(QPointF);
     void slotElementResized(int,int,QPointF);
 
@@ -189,18 +192,9 @@ private:
     bool onActive;
     bool unsavedFlag_;
 
-    PropertyModel *propertyModel;
     QUndoStack *m_undoStack;
     QPixmap gridPixmap;
-    QList <Property *> propList;
-    QList <QGraphicsItem*> copyList;
-
-    TextProperty *idProperty;
-    EmptyProperty *titleProperty;
-    ColorProperty *backgroundProperty;
-    IntegerProperty *widthProperty;
-    IntegerProperty *heightProperty;
-    FunctionProperty *funcProperty;
+    QList<QGraphicsItem*> copyList;
 
     QMenu contextMenu;
     QMenu contextServiceMenu;
@@ -221,6 +215,17 @@ private:
     QAction *actionCopy;
     QAction *actionPaste;
     QAction *actionSelectAll;
+
+private:
+    void addProperty(QtVariantProperty *property, const QString &id);
+    void updateExpandState();
+    QList <QtProperty *> propList;
+    QtVariantPropertyManager *variantPropertyManager_;
+    QtTreePropertyBrowser *propertyEditor_;
+    QMap<QtProperty *, QString> propertyToId_;
+    QMap<QString, QtVariantProperty *> idToProperty_;
+    QMap<QString, bool> idToExpanded_;
+
 };
 
 #endif // GRAPHPAGE_H

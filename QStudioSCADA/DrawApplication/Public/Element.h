@@ -18,6 +18,10 @@
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
+
 class Element : public QGraphicsObject
 {
     Q_OBJECT
@@ -31,9 +35,9 @@ public:
     qreal angle() const;
 
     virtual void setClickPosition(QPointF) = 0;
-    virtual void updateElementProperty(uint id, const QVariant &value) = 0;
+    virtual void updateElementProperty(const QString &id, const QVariant &value) = 0;
     virtual void updateBoundingElement() = 0;
-    QList <Property*> getPropertyList() const;
+    QList<QtProperty*> getPropertyList() const;
     virtual void updatePropertyModel() = 0;
     virtual void createPropertyList() = 0;
     virtual void writeAsXml(QXmlStreamWriter &) = 0;
@@ -116,7 +120,7 @@ protected:
     int oldHeight;
     QRectF handleTop;
     QRectF handleBottom;
-    QList <Property*> propList;
+    QList<QtProperty*> propList;
 
     enum ResizeDirection
     {
