@@ -50,8 +50,7 @@ public:
     void setSelectedFunctions(QStringList funcs);
     QStringList getSelectedFunctions();
 
-    void setVariantPropertyManager(QtVariantPropertyManager *propertyMgr);
-    void setTreePropertyBrowser(QtTreePropertyBrowser *propertyEditor);
+    void setPropertyManagerAndPropertyBrowser(QtVariantPropertyManager *propertyMgr, QtTreePropertyBrowser *propertyEditor);
     QUndoStack *undoStack() const;
 
     void setActive(bool);

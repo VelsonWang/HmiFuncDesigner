@@ -12,6 +12,7 @@
 #include "Helper.h"
 #include "XMLObject.h"
 #include "GetWidthHeightDialog.h"
+#include <QDebug>
 
 /** Template algorithms*/
 template<template<typename T> class S, typename T>
@@ -67,7 +68,7 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
     m_undoStack = new QUndoStack(this);
     m_undoStack->setUndoLimit(20);
 
-    createPropertyList();
+    //createPropertyList();
     createContextMenuActions();
     updateActions();
 
@@ -94,24 +95,21 @@ void GraphPage::setUnsavedFlag(bool bFlag)
     unsavedFlag_ = bFlag;
 }
 
-void GraphPage::setVariantPropertyManager(QtVariantPropertyManager *propertyMgr)
+void GraphPage::setPropertyManagerAndPropertyBrowser(QtVariantPropertyManager *propertyMgr,
+                                                     QtTreePropertyBrowser *propertyEditor)
 {
     variantPropertyManager_ = propertyMgr;
+    propertyEditor_ = propertyEditor;
+
+    createPropertyList();
     fillGraphPagePropertyModel();
 
     connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
                     this, SLOT(slotElementPropertyChanged(QtProperty *, const QVariant &)));
     connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
                     this, SLOT(slotGraphPagePropertyChanged(QtProperty *, const QVariant &)));
-
-    connect(variantPropertyManager_, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotElementPropertyChanged(Property* )));
-    connect(variantPropertyManager_, SIGNAL(onDataChangedByEditor(Property* )), SLOT(slotGraphPagePropertyChanged(Property* )));
 }
 
-void GraphPage::setTreePropertyBrowser(QtTreePropertyBrowser *propertyEditor)
-{
-    propertyEditor_ = propertyEditor;
-}
 
 void GraphPage::fillGridPixmap()
 {
@@ -162,6 +160,7 @@ bool GraphPage::isGridVisible() const
 
 void GraphPage::addProperty(QtVariantProperty *property, const QString &id)
 {
+    propList.append(property);
     propertyToId_[property] = id;
     idToProperty_[id] = property;
     QtBrowserItem *item = propertyEditor_->addProperty(property);
@@ -183,6 +182,7 @@ void GraphPage::updateExpandState()
 
 void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVariant &value)
 {
+    //qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << propertyToId_[property] << value;
     if (!selectedItems().isEmpty()) {
         return;
     }
@@ -192,9 +192,6 @@ void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVarian
     }
 
     if (!propertyToId_.contains(property))
-        return;
-
-    if (!currentItem)
         return;
 
     QString id = propertyToId_[property];
@@ -272,6 +269,7 @@ void GraphPage::fillGraphPagePropertyModel()
 
 void GraphPage::createPropertyList()
 {
+    propList.clear();
     //updateExpandState();
     cleanPropertyModel();
 
@@ -413,6 +411,10 @@ void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant 
 
     QString id = propertyToId_[property];
 
+    if (!currentItem) {
+        return;
+    }
+
     currentItem->updateElementProperty(id, value);
 
     unsavedFlag_ = true;
@@ -429,6 +431,7 @@ void GraphPage::slotSelectionChanged()
 
     if (selectedItems().isEmpty()) {
         propertyEditor_->clear();
+        currentItem = Q_NULLPTR;
         return;
     }
 

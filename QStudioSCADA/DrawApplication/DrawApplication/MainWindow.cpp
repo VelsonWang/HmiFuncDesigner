@@ -85,9 +85,9 @@ void MainWindow::initView()
 
     propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
     propertyEditor_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    propertyEditor_->setHeaderLabels(QStringList() << tr("参数名称") << tr("参数值"));
-    propertyEditor_->setColumnWidth(0, 60);
-    propertyEditor_->setColumnWidth(1, 300);
+    propertyEditor_->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
+    //propertyEditor_->setColumnWidth(0, 60);
+    //propertyEditor_->setColumnWidth(1, 200);
     propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
 
     this->PropertyLayout->addWidget(propertyEditor_);
@@ -336,6 +336,7 @@ void MainWindow::openGraphPage(const QString &szProjPath,
             graphPage->fillGraphPagePropertyModel();
             graphPage->setFileName(szPageId + ".drw");
             graphPage->setGraphPageId(szPageId);
+            graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
         }
     }
 
@@ -427,8 +428,7 @@ void MainWindow::addNewGraphPage()
     QString title = fixedWindowTitle(view);
     graphPage->setFileName(title + ".drw");
     graphPage->setGraphPageId(title);
-    graphPage->setVariantPropertyManager(variantPropertyManager_);
-    graphPage->setTreePropertyBrowser(propertyEditor_);
+    graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     graphPageTabWidget_->addTab(currentView_, title);
     graphPageTabWidget_->setCurrentWidget(currentView_);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
@@ -707,7 +707,7 @@ void MainWindow::slotEditOpen()
         }
         graphPage->setFileName(pageFileName);
         graphPage->setGraphPageId(pageFileName.left(pageFileName.length() - 4));
-
+        graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     }
 }
 
@@ -728,8 +728,7 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     graphPage->setGridVisible(gridVisible_);
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    graphPage->setVariantPropertyManager(variantPropertyManager_);
-    graphPage->setTreePropertyBrowser(propertyEditor_);
+    graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     graphPageTabWidget_->addTab(view, graphPage->getGraphPageId());
     graphPageTabWidget_->setCurrentWidget(view);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
@@ -1130,6 +1129,7 @@ reInput:
             graphPage->fillGraphPagePropertyModel();
             graphPage->setFileName(szGraphPageName + ".drw");
             graphPage->setGraphPageId(szGraphPageName);
+            graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
         }
 
         QList<QListWidgetItem*> listWidgetItem = listWidgetGraphPages->findItems(szGraphPageName, Qt::MatchCaseSensitive);
@@ -1286,6 +1286,7 @@ reGetNum:
         graphPage->fillGraphPagePropertyModel();
         graphPage->setFileName(strDrawPageName + ".drw");
         graphPage->setGraphPageId(strDrawPageName);
+        graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     }
 
     QList<QListWidgetItem*> listWidgetItem = listWidgetGraphPages->findItems(strDrawPageName, Qt::MatchCaseSensitive);
