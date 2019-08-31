@@ -6,6 +6,8 @@
 #include "ProjectData.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
+#include "variantmanager.h"
+#include "variantfactory.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -76,12 +78,12 @@ void MainWindow::initView()
     elementWidget_ = new ElementLibraryWidget();
     this->ElemetsLayout->addWidget(elementWidget_);
 
-    variantPropertyManager_ = new QtVariantPropertyManager(this);
+    variantPropertyManager_ = new VariantManager(this);
 
     connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
             this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
 
-    variantEditorFactory_ = new QtVariantEditorFactory(this);
+    variantEditorFactory_ = new VariantFactory(this);
 
     propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
     propertyEditor_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);

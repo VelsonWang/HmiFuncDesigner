@@ -140,6 +140,7 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/DrawApplication/IDrawApplicationPlugin \
     $$IDE_SOURCE_TREE/DrawApplication/DrawApplication \
     $$IDE_SOURCE_TREE/DrawApplication/PropertyEditorEx \
+    $$IDE_SOURCE_TREE/DrawApplication/QtPropertyBrowserEx \
     $$IDE_SOURCE_TREE/DrawApplication/Public
 	
 

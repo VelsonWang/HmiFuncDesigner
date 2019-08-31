@@ -13,6 +13,7 @@
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
 
+
 class QToolBar;
 
 class MainWindow : public QMainWindow, public Ui::MainWindow

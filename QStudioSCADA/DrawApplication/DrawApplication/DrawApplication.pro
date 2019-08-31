@@ -43,6 +43,10 @@ CONFIG(debug, debug|release) { #debug
 include($$IDE_SOURCE_TREE/libs/qtsingleapplication/qtsingleapplication.pri)
 
 SOURCES += \
+    ../QtPropertyBrowserEx/functionedit.cpp \
+    ../QtPropertyBrowserEx/functioneditordialog.cpp \
+    ../QtPropertyBrowserEx/variantfactory.cpp \
+    ../QtPropertyBrowserEx/variantmanager.cpp \
     GetWidthHeightDialog.cpp \
     main.cpp \
     GraphPage.cpp \
@@ -58,12 +62,13 @@ SOURCES += \
     ../Public/PubTool.cpp \
     ../Public/Element.cpp \
     ../Public/ElementGroup.cpp \
-    PluginManager.cpp \
-    ../PropertyEditorEx/FunctionEditorDialog.cpp \
-    ../PropertyEditorEx/functionproperty.cpp \
-    ../PropertyEditorEx/functionpropertyeditor.cpp
+    PluginManager.cpp
 
 HEADERS  += \
+    ../QtPropertyBrowserEx/functionedit.h \
+    ../QtPropertyBrowserEx/functioneditordialog.h \
+    ../QtPropertyBrowserEx/variantfactory.h \
+    ../QtPropertyBrowserEx/variantmanager.h \
     GetWidthHeightDialog.h \
     GraphPage.h \
     GraphPageManager.h \
@@ -80,16 +85,13 @@ HEADERS  += \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../Public/Element.h \
     ../Public/ElementGroup.h \
-    PluginManager.h \
-    ../PropertyEditorEx/FunctionEditorDialog.h \
-    ../PropertyEditorEx/functionproperty.h \
-    ../PropertyEditorEx/functionpropertyeditor.h
+    PluginManager.h
 
 FORMS    += \
+    ../QtPropertyBrowserEx/functioneditordialog.ui \
     ElementLibraryWidget.ui \
     GetWidthHeightDialog.ui \
-    MainWindow.ui \
-    ../PropertyEditorEx/FunctionEditorDialog.ui
+    MainWindow.ui
 
 RESOURCES += \
     images.qrc

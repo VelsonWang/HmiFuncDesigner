@@ -12,6 +12,8 @@
 #include "Helper.h"
 #include "XMLObject.h"
 #include "GetWidthHeightDialog.h"
+#include "variantmanager.h"
+#include "variantfactory.h"
 #include <QDebug>
 
 /** Template algorithms*/
@@ -68,7 +70,6 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
     m_undoStack = new QUndoStack(this);
     m_undoStack->setUndoLimit(20);
 
-    //createPropertyList();
     createContextMenuActions();
     updateActions();
 
@@ -205,11 +206,12 @@ void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVarian
     } else if (id == QLatin1String("height")) {
         setGraphPageHeight(value.toInt());
         updateAllElementGraphPageSize(graphPageWidth, graphPageHeight);
+    } else if (id == QLatin1String("functions")) {
+        qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << propertyToId_[property] << value;
+        QString szFuncs = value.toString();
+        setSelectedFunctions(szFuncs.split('|'));
     }
 
-#if 0
-    setSelectedFunctions(property->getValue().toStringList());
-#endif
 
     fillGridPixmap();
 
@@ -252,12 +254,10 @@ void GraphPage::fillGraphPagePropertyModel()
         property->setValue(graphPageHeight);
     }
 
-#if 0
-    property = idToProperty_[QLatin1String("height")];
+    property = idToProperty_[QLatin1String("functions")];
     if(property != Q_NULLPTR) {
-        property->setValue(funcs_);
+        property->setValue(funcs_.join('|'));
     }
-#endif
 
     propertyEditor_->clear();
     QListIterator <QtProperty*> iter(propList);
@@ -270,7 +270,7 @@ void GraphPage::fillGraphPagePropertyModel()
 void GraphPage::createPropertyList()
 {
     propList.clear();
-    //updateExpandState();
+    updateExpandState();
     cleanPropertyModel();
 
     QtVariantProperty *property;
@@ -292,15 +292,11 @@ void GraphPage::createPropertyList()
     property->setAttribute(QLatin1String("maximum"), 5000);
     addProperty(property, QLatin1String("height"));
 
-#if 0
+    property = variantPropertyManager_->addProperty(VariantManager::functionTypeId(), tr("功能操作"));
     QStringList listEvents;
     getSupportEvents(listEvents);
-    funcProperty = new FunctionProperty(tr("功能操作"));
-    funcProperty->setId(EL_FUNCTION);
-    funcProperty->setSupportEvents(listEvents);
-    propList.insert(propList.end(), funcProperty);
-#endif
-
+    property->setAttribute(QLatin1String("supportevents"), listEvents.join("|"));
+    addProperty(property, QLatin1String("functions"));
 }
 
 void GraphPage::createContextMenuActions()
