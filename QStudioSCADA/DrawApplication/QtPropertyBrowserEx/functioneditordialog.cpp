@@ -37,14 +37,23 @@ FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events)
 
     selectFuncObjItemList_.clear();
     funcObjItemList_.clear();
-    propertyModel_ = new PropertyModel();
-    connect(propertyModel_, SIGNAL(onDataChangedByEditor(Property* )), SLOT(propertyChanged(Property* )));
-    propertyView_ = new PropertyTableView(propertyModel_, false);
-    propertyView_->setPropertyKeyColumnWidth(160);
-    propertyView_->setPropertyValueColumnWidth(200);
-    propertyView_->resize(370, propertyView_->size().height());
-    propertyView_->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    ui->propTableFuncLayout->addWidget(propertyView_);
+
+    variantPropertyManager_ = new QtVariantPropertyManager(this);
+
+    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+            this, SLOT(propertyChanged(QtProperty *, const QVariant &)));
+
+    variantEditorFactory_ = new QtVariantEditorFactory(this);
+
+    propertyEditor_ = new QtTreePropertyBrowser(this);
+    propertyEditor_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    propertyEditor_->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
+    propertyEditor_->setColumnWidth(0, 160);
+    propertyEditor_->setColumnWidth(1, 200);
+    propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
+    propertyEditor_->resize(370, propertyEditor_->size().height());
+    ui->propTableFuncLayout->addWidget(propertyEditor_);
+
     initUI();
 }
 
@@ -71,11 +80,10 @@ FunctionEditorDialog::~FunctionEditorDialog()
  * @brief FunctionEditorDialog::initUI
  * @details 初始化ui
  */
-void FunctionEditorDialog::initUI() {
-
+void FunctionEditorDialog::initUI()
+{
     initListWidget();
     initTableWidget();
-
 }
 
 
@@ -83,8 +91,8 @@ void FunctionEditorDialog::initUI() {
  * @brief FunctionEditorDialog::initListWidget
  * @details 初始化列表控件
  */
-void FunctionEditorDialog::initListWidget() {
-
+void FunctionEditorDialog::initListWidget()
+{
     QString xmlFileName = Helper::AppDir() + "/Config/DrawAppJScriptFun.xml";
 
     QFile fileCfg(xmlFileName);
@@ -177,8 +185,8 @@ void FunctionEditorDialog::initListWidget() {
  * @brief FunctionEditorDialog::initTableWidget
  * @details 初始化表控件
  */
-void FunctionEditorDialog::initTableWidget() {
-
+void FunctionEditorDialog::initTableWidget()
+{
     QStringList headerLabels;
     headerLabels << tr("功能函数") << tr("事件类型");
     ui->tableEventFunc->setColumnCount(headerLabels.count());
@@ -193,7 +201,8 @@ void FunctionEditorDialog::initTableWidget() {
 }
 
 
-QStringList FunctionEditorDialog::getFunctions() {
+QStringList FunctionEditorDialog::getFunctions()
+{
     funcs_.clear();
     int iRowCount = ui->tableEventFunc->rowCount();
     for(int i=0; i<iRowCount; i++) {
@@ -207,7 +216,8 @@ QStringList FunctionEditorDialog::getFunctions() {
     return funcs_;
 }
 
-void FunctionEditorDialog::setFunctions(const QStringList &funcs) {
+void FunctionEditorDialog::setFunctions(const QStringList &funcs)
+{
     if (funcs_ != funcs) {
         selectFuncObjItemList_.clear();
         funcs_ = funcs;
@@ -254,7 +264,8 @@ void FunctionEditorDialog::on_btnAdd_clicked()
  * @brief FunctionEditorDialog::on_btnDel_clicked
  * @details 删除选中的功能函数
  */
-void FunctionEditorDialog::on_btnDel_clicked() {
+void FunctionEditorDialog::on_btnDel_clicked()
+{
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
     if(pItem == nullptr)
         return;
@@ -336,7 +347,8 @@ void FunctionEditorDialog::on_btnCancel_clicked()
  * @details 列表项函数被单击
  * @param item 列表项
  */
-void FunctionEditorDialog::listItemClicked(QListWidgetItem *item) {
+void FunctionEditorDialog::listItemClicked(QListWidgetItem *item)
+{
     TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(item->text());
     if(pFuncObjectItem != nullptr) {
         ui->plainTextFuncDesc->setPlainText(pFuncObjectItem->szDesc_);
@@ -350,7 +362,8 @@ void FunctionEditorDialog::listItemClicked(QListWidgetItem *item) {
  * @details 列表项函数被双击
  * @param item 列表项
  */
-void FunctionEditorDialog::listItemDoubleClicked(QListWidgetItem *item) {
+void FunctionEditorDialog::listItemDoubleClicked(QListWidgetItem *item)
+{
     int iRowCount = ui->tableEventFunc->rowCount();
     ui->tableEventFunc->insertRow(iRowCount);
     TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(item->text());
@@ -389,7 +402,8 @@ void FunctionEditorDialog::listItemDoubleClicked(QListWidgetItem *item) {
  * @param name 函数名称
  * @return 函数数据对象
  */
-TFuncObjectItem *FunctionEditorDialog::getFuncObjectItem(const QString &name) {
+TFuncObjectItem *FunctionEditorDialog::getFuncObjectItem(const QString &name)
+{
     for(int i=0; i<funcObjItemList_.count(); i++) {
         TFuncObjectItem *pFuncObjItem = funcObjItemList_.at(i);
         if(pFuncObjItem->szName_ == name){
@@ -404,7 +418,8 @@ TFuncObjectItem *FunctionEditorDialog::getFuncObjectItem(const QString &name) {
  * @details 设置支持的事件列表
  * @param events 事件列表
  */
-void FunctionEditorDialog::setSupportEvents(QStringList events) {
+void FunctionEditorDialog::setSupportEvents(QStringList events)
+{
     supportEvents_ = events;
 }
 
@@ -412,13 +427,22 @@ void FunctionEditorDialog::setSupportEvents(QStringList events) {
  * @brief FunctionEditorDialog::clearProperty
  * @details 清空属性列表
  */
-void FunctionEditorDialog::clearProperty() {
-    propertyModel_->resetModel();
-    qDeleteAll(propList_);
+void FunctionEditorDialog::clearProperty()
+{
+    QMap<QtProperty *, QString>::ConstIterator itProp = propertyToId_.constBegin();
+    while (itProp != propertyToId_.constEnd()) {
+        delete itProp.key();
+        itProp++;
+    }
+    propertyToId_.clear();
+    idToProperty_.clear();
+
+    propertyEditor_->clear();
     propList_.clear();
 }
 
-void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index) {
+void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
+{
     Q_UNUSED(index)
     iSelectedCurRow_ = ui->tableEventFunc->currentRow();
     clearProperty();
@@ -431,16 +455,16 @@ void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index) {
         ui->plainTextFuncDesc->setPlainText(pFuncObjItem->szDesc_);
         szSelectedFuncName_ = pFuncObjItem->szName_;
         createPropertyList();
-        propertyModel_->resetModel();
-        QListIterator<Property *> iter(getPropertyList());
+        propertyEditor_->clear();
+        QListIterator <QtProperty*> iter(propList_);
         while (iter.hasNext()) {
-            propertyModel_->addProperty(iter.next());
+            propertyEditor_->addProperty(iter.next());
         }
     }
 }
 
-void FunctionEditorDialog::createPropertyList() {
-
+void FunctionEditorDialog::createPropertyList()
+{
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
     if(pItem == nullptr)
         return;
@@ -448,78 +472,127 @@ void FunctionEditorDialog::createPropertyList() {
     QString szFuncNameOrg = pItemNeed->text();
     TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(pItem->row());
     if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
+        clearProperty();
+        updateExpandState();
 
-        ListProperty *propEvent = new ListProperty(tr("事件类型"));
-        propEvent->setId(EL_EVENT);
-        propEvent->setList(supportEvents_);
-        propEvent->setValue(pFuncObjItem->szEvent_);
-        propList_.insert(propList_.end(), propEvent);
+        QtVariantProperty *property = Q_NULLPTR;
 
-        EmptyProperty *funcNameProp = new EmptyProperty(pFuncObjItem->szName_);
-        propList_.insert(propList_.end(), funcNameProp);
+        property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("事件类型"));
+        property->setAttribute(QLatin1String("enumNames"), supportEvents_);
+        property->setValue(pFuncObjItem->szEvent_);
+        addProperty(property, QLatin1String("eventType"));
+
+        property = variantPropertyManager_->addProperty(QVariant::String, pFuncObjItem->szName_);
+        property->setAttribute(QLatin1String("readOnly"), true);
+        addProperty(property, QLatin1String("funcName"));
+
         foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
             if(pArgItem->type == "VALUE") {
-                TextProperty *varProp = new TextProperty(pArgItem->name);
-                varProp->setId(EL_TEXT);
-                propList_.insert(propList_.end(), varProp);
+                property = variantPropertyManager_->addProperty(QVariant::String, pArgItem->name);
                 if(pArgItem->value == "")
                     pArgItem->value = "0";
-                varProp->setValue(pArgItem->value);
+                property->setValue(pArgItem->value);
+                addProperty(property, QLatin1String("value"));
             } else if(pArgItem->type == "TAGLIST") {
-                ListProperty *tagProp = new ListProperty(pArgItem->name);
-                tagProp->setId(EL_TAG);
-                QStringList varList;
-                TagManager::getAllTagName(TagManager::getProjectPath(), varList);
-                tagProp->setList(varList);
-                propList_.insert(propList_.end(), tagProp);
+                property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
+                tagNames_.clear();
+                TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+                property->setAttribute(QLatin1String("enumNames"), tagNames_);
                 if(pArgItem->value == "")
-                    pArgItem->value = varList.at(0);
-                tagProp->setValue(pArgItem->value);
+                    pArgItem->value = tagNames_.at(0);
+                property->setValue(pArgItem->value);
+                addProperty(property, QLatin1String("tag"));
             } else if(pArgItem->type == "GRAPHPAGELIST") {
-                ListProperty *graphProp = new ListProperty(pArgItem->name);
-                graphProp->setId(EL_GRAPHPAGE);
+                property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 DrawListUtils::loadDrawList(DrawListUtils::getProjectPath());
-                graphProp->setList(DrawListUtils::drawList_);
-                propList_.insert(propList_.end(), graphProp);
+                property->setAttribute(QLatin1String("enumNames"), DrawListUtils::drawList_);
                 if(pArgItem->value == "")
                     pArgItem->value = DrawListUtils::drawList_.at(0);
-                graphProp->setValue(pArgItem->value);
+                property->setValue(pArgItem->value);
+                addProperty(property, QLatin1String("graph"));
             } else if(pArgItem->type == "ELEMENTIDLIST") {
-                ListProperty *idProp = new ListProperty(pArgItem->name);
-                idProp->setId(EL_ID);
-                QStringList idList;
-                ElementIDHelper::getAllElementIDName(ElementIDHelper::getProjectPath(), idList);
-                idProp->setList(idList);
-                propList_.insert(propList_.end(), idProp);
+                property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
+                elementIds_.clear();
+                ElementIDHelper::getAllElementIDName(ElementIDHelper::getProjectPath(), elementIds_);
+                property->setAttribute(QLatin1String("enumNames"), elementIds_);
                 if(pArgItem->value == "")
-                    pArgItem->value = idList.at(0);
-                idProp->setValue(pArgItem->value);
+                    pArgItem->value = elementIds_.at(0);
+                property->setValue(pArgItem->value);
+                addProperty(property, QLatin1String("element"));
             }
         }
     }
 }
 
 
-QList<Property *> FunctionEditorDialog::getPropertyList() const {
+QList<QtProperty *> FunctionEditorDialog::getPropertyList() const
+{
     return propList_;
 }
 
-void FunctionEditorDialog::propertyChanged(Property *property) {
+void FunctionEditorDialog::propertyChanged(QtProperty *property, const QVariant &value)
+{
+    if (!propertyToId_.contains(property))
+        return;
+
+    QString id = propertyToId_[property];
+
     TFuncObjectItem *pFuncObjItem;
     pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
 
-    QString szName = property->getName();
+
+
+
+
+    QString szName = property->propertyName();
     foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
         if(pArgItem->name == szName) {
-            pArgItem->value = property->getValue().toString();
+            QString szVal = "null";
+            if (id == QLatin1String("value")) {
+                szVal = value.toString();
+            } else if (id == QLatin1String("tag")) {
+                szVal = tagNames_.at(value.toInt());
+            } else if (id == QLatin1String("graph")) {
+                szVal = DrawListUtils::drawList_.at(value.toInt());
+            }  else if (id == QLatin1String("element")) {
+                szVal = elementIds_.at(value.toInt());
+            }  else  {
+
+            }
+            pArgItem->value = szVal;
             break;
         }
     }
+
     if(szName == tr("事件类型")) {
-        pFuncObjItem->szEvent_ = property->getValue().toString();
+        pFuncObjItem->szEvent_ = supportEvents_.at(value.toInt());
     }
 
     QString szFunc = pFuncObjItem->getFuncString();
     ui->tableEventFunc->item(iSelectedCurRow_, 0)->setText(szFunc);
     ui->tableEventFunc->item(iSelectedCurRow_, 1)->setText(pFuncObjItem->szEvent_);
+}
+
+
+void FunctionEditorDialog::addProperty(QtVariantProperty *property, const QString &id)
+{
+    propList_.append(property);
+    propertyToId_[property] = id;
+    idToProperty_[id] = property;
+    QtBrowserItem *item = propertyEditor_->addProperty(property);
+    if (idToExpanded_.contains(id)) {
+        propertyEditor_->setExpanded(item, idToExpanded_[id]);
+    }
+}
+
+
+void FunctionEditorDialog::updateExpandState()
+{
+    QList<QtBrowserItem *> list = propertyEditor_->topLevelItems();
+    QListIterator<QtBrowserItem *> it(list);
+    while (it.hasNext()) {
+        QtBrowserItem *item = it.next();
+        QtProperty *prop = item->property();
+        idToExpanded_[propertyToId_[prop]] = propertyEditor_->isExpanded(item);
+    }
 }

@@ -23,9 +23,8 @@ FunctionEdit::FunctionEdit(QWidget *parent)
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_InputMethodEnabled);
     connect(theLineEdit, SIGNAL(textEdited(const QString &)),
-                this, SIGNAL(filePathChanged(const QString &)));
-    connect(button, SIGNAL(clicked()),
-                this, SLOT(buttonClicked()));
+            this, SIGNAL(filePathChanged(const QString &)));
+    connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 }
 
 void FunctionEdit::buttonClicked()

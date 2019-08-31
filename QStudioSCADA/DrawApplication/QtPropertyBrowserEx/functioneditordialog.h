@@ -1,9 +1,9 @@
 #ifndef FUNCTIONEDITORDIALOG_H
 #define FUNCTIONEDITORDIALOG_H
 
-#include "propertytableview.h"
-#include "propertymodel.h"
-#include "property.h"
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
 #include <QDialog>
 #include <QList>
 #include <QMap>
@@ -165,7 +165,7 @@ private:
     void clearProperty();
     void updatePropertyModel();
     void createPropertyList();
-    QList<Property *> getPropertyList() const;
+    QList<QtProperty *> getPropertyList() const;
 
 private slots:
     void on_btnAdd_clicked();
@@ -176,13 +176,11 @@ private slots:
     void on_btnCancel_clicked();    
     void listItemClicked(QListWidgetItem *item);
     void listItemDoubleClicked(QListWidgetItem *item);
-    void propertyChanged(Property *property);
+    void propertyChanged(QtProperty *property, const QVariant &value);
     void on_tableEventFunc_clicked(const QModelIndex &index);
 
 private:
     Ui::FunctionEditorDialog *ui;
-    PropertyTableView *propertyView_;
-    PropertyModel *propertyModel_;
     QString szSelectedFuncName_;
     int iSelectedCurRow_;
     QList<TFuncObjectItem *> funcObjItemList_;
@@ -190,9 +188,21 @@ private:
     QList<QListWidget *> listWidgetList_;
     QStringList funcs_;
     QStringList supportEvents_;
-    QList <Property *> propList_;
     QMap<QString, QString> mapNameToShowName_;
     QMap<QString, QString> mapShowNameToName_;
+    QStringList tagNames_;
+    QStringList elementIds_;
+
+private:
+    void addProperty(QtVariantProperty *property, const QString &id);
+    void updateExpandState();
+    QList <QtProperty *> propList_;
+    QtVariantPropertyManager *variantPropertyManager_;
+    QtTreePropertyBrowser *propertyEditor_;
+    QtVariantEditorFactory *variantEditorFactory_;
+    QMap<QtProperty *, QString> propertyToId_;
+    QMap<QString, QtVariantProperty *> idToProperty_;
+    QMap<QString, bool> idToExpanded_;
 };
 
 #endif // FUNCTIONEDITORDIALOG_H

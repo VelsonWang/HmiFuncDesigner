@@ -54,7 +54,8 @@ int VariantManager::attributeType(int propertyType, const QString &attribute) co
     return QtVariantPropertyManager::attributeType(propertyType, attribute);
 }
 
-QVariant VariantManager::attributeValue(const QtProperty *property, const QString &attribute)
+QVariant VariantManager::attributeValue(const QtProperty *property,
+                                        const QString &attribute) const
 {
     if (theValues.contains(property)) {
         if (attribute == QLatin1String("supportevents"))
@@ -90,22 +91,19 @@ void VariantManager::setValue(QtProperty *property, const QVariant &val)
 }
 
 void VariantManager::setAttribute(QtProperty *property,
-                const QString &attribute, const QVariant &val)
+                                  const QString &attribute,
+                                  const QVariant &val)
 {
     if (theValues.contains(property)) {
         if (attribute == QLatin1String("supportevents")) {
-            qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
             if (val.type() != QVariant::String && !val.canConvert(QVariant::String))
                 return;
             QString str = val.value<QString>();
             Data d = theValues[property];
-            qDebug() << __FILE__ << __LINE__ << __FUNCTION__
-                     << attribute
-                     << d.attribute
-                     << str;
+
             if (d.attribute == str)
                 return;
-            qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+
             d.attribute = str;
             theValues[property] = d;
             emit attributeChanged(property, attribute, str);

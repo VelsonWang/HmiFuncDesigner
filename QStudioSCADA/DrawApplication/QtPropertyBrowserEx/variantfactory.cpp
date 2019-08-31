@@ -5,8 +5,8 @@
 
 VariantFactory::~VariantFactory()
 {
-    QList<FunctionEdit *> editors = theEditorToProperty.keys();
-    QListIterator<FunctionEdit *> it(editors);
+    QList<QWidget *> editors = theEditorToProperty.keys();
+    QListIterator<QWidget *> it(editors);
     while (it.hasNext())
         delete it.next();
 }
@@ -21,14 +21,11 @@ void VariantFactory::connectPropertyManager(QtVariantPropertyManager *manager)
 }
 
 QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
-        QtProperty *property, QWidget *parent)
+                                      QtProperty *property,
+                                      QWidget *parent)
 {
     if (manager->propertyType(property) == VariantManager::functionTypeId()) {
         FunctionEdit *editor = new FunctionEdit(parent);
-        qDebug() << __FILE__ << __LINE__ << __FUNCTION__
-                 << manager->value(property).toString()
-                 << manager->attributeValue(property, QLatin1String("supportevents")).toString()
-                 << manager->attributes(VariantManager::functionTypeId());
         editor->setFunctions(manager->value(property).toString().split('|'));
         editor->setSupportEvents(manager->attributeValue(property, QLatin1String("supportevents")).toString().split('|'));
         theCreatedEditors[property].append(editor);
@@ -52,16 +49,20 @@ void VariantFactory::disconnectPropertyManager(QtVariantPropertyManager *manager
     QtVariantEditorFactory::disconnectPropertyManager(manager);
 }
 
-void VariantFactory::slotPropertyChanged(QtProperty *property,
-                const QVariant &value)
+void VariantFactory::slotPropertyChanged(QtProperty *property, const QVariant &value)
 {
     if (!theCreatedEditors.contains(property))
         return;
 
-    QList<FunctionEdit *> editors = theCreatedEditors[property];
-    QListIterator<FunctionEdit *> itEditor(editors);
-    while (itEditor.hasNext())
-        itEditor.next()->setFunctions(value.toString().split('|'));
+    QtVariantPropertyManager *manager = propertyManager(property);
+    if (manager->propertyType(property) == VariantManager::functionTypeId()) {
+        QList<QWidget *> editors = theCreatedEditors[property];
+        QListIterator<QWidget *> itEditor(editors);
+        while (itEditor.hasNext()) {
+            FunctionEdit *pFunctionEdit = dynamic_cast<FunctionEdit *>(itEditor.next());
+            pFunctionEdit->setFunctions(value.toString().split('|'));
+        }
+    }
 }
 
 void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
@@ -70,19 +71,23 @@ void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
     if (!theCreatedEditors.contains(property))
         return;
 
-    if (attribute == QLatin1String("supportevents")) {
-        QList<FunctionEdit *> editors = theCreatedEditors[property];
-        QListIterator<FunctionEdit *> itEditor(editors);
-        while (itEditor.hasNext())
-            itEditor.next()->setFunctions(value.toString().split('|'));
+    QtVariantPropertyManager *manager = propertyManager(property);
+    if (manager->propertyType(property) == VariantManager::functionTypeId()) {
+        if (attribute == QLatin1String("supportevents")) {
+            QList<QWidget *> editors = theCreatedEditors[property];
+            QListIterator<QWidget *> itEditor(editors);
+            while (itEditor.hasNext()) {
+                FunctionEdit *pFunctionEdit = dynamic_cast<FunctionEdit *>(itEditor.next());
+                pFunctionEdit->setSupportEvents(value.toString().split('|'));
+            }
+        }
     }
 }
 
 void VariantFactory::slotSetValue(const QString &value)
 {
     QObject *object = sender();
-    QMap<FunctionEdit *, QtProperty *>::ConstIterator itEditor =
-                theEditorToProperty.constBegin();
+    QMap<QWidget *, QtProperty *>::ConstIterator itEditor = theEditorToProperty.constBegin();
     while (itEditor != theEditorToProperty.constEnd()) {
         if (itEditor.key() == object) {
             QtProperty *property = itEditor.value();
@@ -98,11 +103,10 @@ void VariantFactory::slotSetValue(const QString &value)
 
 void VariantFactory::slotEditorDestroyed(QObject *object)
 {
-    QMap<FunctionEdit *, QtProperty *>::ConstIterator itEditor =
-                theEditorToProperty.constBegin();
+    QMap<QWidget *, QtProperty *>::ConstIterator itEditor = theEditorToProperty.constBegin();
     while (itEditor != theEditorToProperty.constEnd()) {
         if (itEditor.key() == object) {
-            FunctionEdit *editor = itEditor.key();
+            QWidget *editor = itEditor.key();
             QtProperty *property = itEditor.value();
             theEditorToProperty.remove(editor);
             theCreatedEditors[property].removeAll(editor);

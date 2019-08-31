@@ -207,7 +207,6 @@ void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVarian
         setGraphPageHeight(value.toInt());
         updateAllElementGraphPageSize(graphPageWidth, graphPageHeight);
     } else if (id == QLatin1String("functions")) {
-        qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << propertyToId_[property] << value;
         QString szFuncs = value.toString();
         setSelectedFunctions(szFuncs.split('|'));
     }
