@@ -10,10 +10,12 @@ class ElementArrow : public Element
 {
     Q_OBJECT
 public:
-    ElementArrow(const QString &szProjPath, const QString &szProjName);
+    ElementArrow(const QString &szProjPath,
+                 const QString &szProjName,
+                 QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(uint id, const QVariant &value) override;
+    void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
     void writeAsXml(QXmlStreamWriter &) override;
@@ -47,27 +49,6 @@ private:
     int borderWidth_;
     // 线条颜色
     QColor borderColor_;
-
-    // ID
-    TextProperty *idProperty;
-    // 标题
-    EmptyProperty *titleProperty;
-    // X坐标
-    IntegerProperty *xCoordProperty;
-    // Y坐标
-    IntegerProperty *yCoordProperty;
-    // Z坐标
-    IntegerProperty *zValueProperty;
-    // 宽度
-    IntegerProperty *widthProperty_;
-    // 高度
-    IntegerProperty *heightProperty_;
-    // 边框宽度
-    IntegerProperty *borderWidthProperty_;
-    // 边框颜色
-    ColorProperty *borderColorProperty_;
-    // 旋转角度
-    IntegerProperty *angleProperty;
 };
 
 #endif // ELEMENTARROW_H

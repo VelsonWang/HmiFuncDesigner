@@ -395,7 +395,6 @@ void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant 
         return;
     }
 
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << property->propertyName() << property->valueText() << value;
     QString id = propertyToId_[property];
 
     if (!currentItem) {
@@ -403,11 +402,11 @@ void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant 
     }
 
     currentItem->updateElementProperty(property, value);
-qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << property->propertyName() << property->valueText() << value;
+
     unsavedFlag_ = true;
     emit elementPropertyChanged();
 
-    if (id == QLatin1String("id")) {
+    if (property->propertyName() == tr("ID")) {
         emit elementIdChanged();
     }
 }

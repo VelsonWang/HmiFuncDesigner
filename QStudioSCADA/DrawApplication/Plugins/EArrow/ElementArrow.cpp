@@ -6,8 +6,10 @@ static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 int ElementArrow::iLastIndex_ = 1;
 
-ElementArrow::ElementArrow(const QString &szProjPath, const QString &szProjName)
-    : Element(szProjPath, szProjName),
+ElementArrow::ElementArrow(const QString &szProjPath,
+                           const QString &szProjName,
+                           QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr),
       arrowSize(10)
 {
     elementId = QString(tr("Arrow_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
@@ -55,98 +57,90 @@ QRectF ElementArrow::boundingRect() const
 
 void ElementArrow::createPropertyList()
 {
-    idProperty = new TextProperty(tr("ID"));
-    idProperty->setId(EL_ID);
-    idProperty->setReadOnly(true);
-    propList.insert(propList.end(), idProperty);
+    propList.clear();
+    clearProperties();
 
-    titleProperty = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    // ID
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
     // 线条宽度
-    borderWidthProperty_ = new IntegerProperty(tr("线条宽度"));
-    borderWidthProperty_->setId(EL_BORDER_WIDTH);
-    borderWidthProperty_->setSettings(0, 1000);
-    borderWidthProperty_->setValue(borderWidth_);
-    propList.insert(propList.end(), borderWidthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("线条宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("borderWidth"));
 
     // 线条颜色
-    borderColorProperty_ = new ColorProperty(tr("线条颜色"));
-    borderColorProperty_->setId(EL_BORDER_COLOR);
-    borderColorProperty_->setValue(borderColor_);
-    propList.insert(propList.end(), borderColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("线条颜色"));
+    addProperty(property, QLatin1String("borderColor"));
 
-    xCoordProperty = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
+    // 坐标 X
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
-    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
+    // 坐标 Y
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
-    zValueProperty = new IntegerProperty(tr("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
+    // Z 值
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
     // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
     // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 
     // 旋转角度
-    angleProperty = new IntegerProperty(tr("角度"));
-    angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0,360);
-    propList.insert(propList.end(),angleProperty);
-
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("角度"));
+    property->setAttribute(QLatin1String("minimum"), -360);
+    property->setAttribute(QLatin1String("maximum"), 360);
+    addProperty(property, QLatin1String("angle"));
 }
 
-void ElementArrow::updateElementProperty(uint id, const QVariant &value)
+void ElementArrow::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-    case EL_X:
+    } else if (id == QLatin1String("borderWidth")) {
+        borderWidth_ = value.toInt();
+    } else if (id == QLatin1String("borderColor")) {
+        borderColor_ = value.value<QColor>();
+    } else if (id == QLatin1String("xCoord")) {
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
-        break;
-    case EL_Y:
+    } else if (id == QLatin1String("yCoord")) {
         elementYPos = value.toInt();
         setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
+    } else if (id == QLatin1String("zValue")) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
+    } else if (id == QLatin1String("width")) {
         elementWidth = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_HEIGHT:
+    } else if (id == QLatin1String("height")) {
         elementHeight = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_BORDER_WIDTH:
-        borderWidth_ = value.toInt();
-        break;
-    case EL_BORDER_COLOR:
-        borderColor_ = value.value<QColor>();
-        break;
-    case EL_ANGLE:
+    } else if (id == QLatin1String("angle")) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
-        break;
     }
 
     scene()->update();
@@ -155,15 +149,52 @@ void ElementArrow::updateElementProperty(uint id, const QVariant &value)
 
 void ElementArrow::updatePropertyModel()
 {
-    idProperty->setValue(elementId);
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    widthProperty_->setValue(elementWidth);
-    heightProperty_->setValue(elementHeight);
-    borderWidthProperty_->setValue(borderWidth_);
-    borderColorProperty_->setValue(borderColor_);
-    angleProperty->setValue(elemAngle);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
+
+    property = idToProperty_[QLatin1String("borderWidth")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderWidth_);
+    }
+
+    property = idToProperty_[QLatin1String("borderColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderColor_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
+
+    property = idToProperty_[QLatin1String("angle")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elemAngle);
+    }
 }
 
 void ElementArrow::setClickPosition(QPointF position)

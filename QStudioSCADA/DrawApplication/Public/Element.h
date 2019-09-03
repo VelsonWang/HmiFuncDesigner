@@ -5,16 +5,6 @@
 #include <QGraphicsScene>
 #include <QCursor>
 #include "PublicDefine.h"
-#include "propertymodel.h"
-#include "boolproperty.h"
-#include "emptyproperty.h"
-#include "colorproperty.h"
-#include "textproperty.h"
-#include "integerproperty.h"
-#include "fileproperty.h"
-#include "listproperty.h"
-#include "fontproperty.h"
-#include "doubleproperty.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 

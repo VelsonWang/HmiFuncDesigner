@@ -104,7 +104,7 @@ void ElementLine::createPropertyList()
 
     // 旋转角度
     property = variantPropertyManager_->addProperty(QVariant::Int, tr("角度"));
-    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("minimum"), -360);
     property->setAttribute(QLatin1String("maximum"), 360);
     addProperty(property, QLatin1String("angle"));
 }

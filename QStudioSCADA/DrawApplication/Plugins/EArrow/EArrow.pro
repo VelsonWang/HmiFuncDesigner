@@ -3,13 +3,13 @@ include(../../DrawApplicationPlugin.pri)
 
 CONFIG(debug, debug|release) { #debug
     win32 {
-        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+        LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowserd
     }
     unix {
-        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+        LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
     }
 } else { # release
-    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+    LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
 }
 
 SOURCES += EArrowPlugin.cpp \
