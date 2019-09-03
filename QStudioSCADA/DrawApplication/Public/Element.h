@@ -26,7 +26,9 @@ class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    Element(const QString &szProjPath, const QString &szProjName);
+    Element(const QString &szProjPath,
+            const QString &szProjName,
+            QtVariantPropertyManager *propertyMgr);
     virtual ~Element();
 
     void init();
@@ -35,7 +37,7 @@ public:
     qreal angle() const;
 
     virtual void setClickPosition(QPointF) = 0;
-    virtual void updateElementProperty(const QString &id, const QVariant &value) = 0;
+    virtual void updateElementProperty(QtProperty *property, const QVariant &value) = 0;
     virtual void updateBoundingElement() = 0;
     QList<QtProperty*> getPropertyList() const;
     virtual void updatePropertyModel() = 0;
@@ -139,6 +141,16 @@ protected:
 signals:
     void elementMoved(QPointF);
     void elementResized(int,int,QPointF);
+
+
+public:
+    void addProperty(QtVariantProperty *property, const QString &id);
+    void clearProperties();
+
+    QtVariantPropertyManager *variantPropertyManager_;
+    QMap<QtProperty *, QString> propertyToId_;
+    QMap<QString, QtVariantProperty *> idToProperty_;
+    QMap<QString, bool> idToExpanded_;
 };
 
 #endif // ELEMENT_H

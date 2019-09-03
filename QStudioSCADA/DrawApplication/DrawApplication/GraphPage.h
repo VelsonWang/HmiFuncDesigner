@@ -20,7 +20,6 @@
 #include "enumproperty.h"
 #include "UndoCommand.h"
 #include "Element.h"
-#include "functionproperty.h"
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
@@ -30,7 +29,10 @@ class GraphPage : public QGraphicsScene
     Q_OBJECT
 
 public:
-    GraphPage(const QRectF &rect,QObject *parent = nullptr);
+    GraphPage(const QRectF &rect,
+              QtVariantPropertyManager *propertyMgr,
+              QtTreePropertyBrowser *propertyEditor,
+              QObject *parent = Q_NULLPTR);
 
     void setGridVisible(bool);
     bool isGridVisible() const;
@@ -50,7 +52,6 @@ public:
     void setSelectedFunctions(QStringList funcs);
     QStringList getSelectedFunctions();
 
-    void setPropertyManagerAndPropertyBrowser(QtVariantPropertyManager *propertyMgr, QtTreePropertyBrowser *propertyEditor);
     QUndoStack *undoStack() const;
 
     void setActive(bool);

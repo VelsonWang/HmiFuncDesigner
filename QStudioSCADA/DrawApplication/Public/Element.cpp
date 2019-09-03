@@ -2,10 +2,13 @@
 #include <QDebug>
 
 
-Element::Element(const QString &szProjPath, const QString &szProjName) :
-    elementId(""),
-    szProjectPath_(szProjPath),
-    szProjectName_(szProjName)
+Element::Element(const QString &szProjPath,
+                 const QString &szProjName,
+                 QtVariantPropertyManager *propertyMgr)
+    : elementId(""),
+      szProjectPath_(szProjPath),
+      szProjectName_(szProjName),
+      variantPropertyManager_(propertyMgr)
 {
 }
 
@@ -330,4 +333,21 @@ void Element::RestrictedRectangularRegion()
 }
 
 
+void Element::addProperty(QtVariantProperty *property, const QString &id)
+{
+    propList.append(property);
+    propertyToId_[property] = id;
+    idToProperty_[id] = property;
+}
 
+
+void Element::clearProperties()
+{
+    QMap<QtProperty *, QString>::ConstIterator itProp = propertyToId_.constBegin();
+    while (itProp != propertyToId_.constEnd()) {
+        delete itProp.key();
+        itProp++;
+    }
+    propertyToId_.clear();
+    idToProperty_.clear();
+}

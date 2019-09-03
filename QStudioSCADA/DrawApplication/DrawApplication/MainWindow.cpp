@@ -101,7 +101,6 @@ void MainWindow::initView()
 
 void MainWindow::createActions()
 {
-
     actionShowGraphObj_ = new QAction(tr("图形元素"), this);
     actionShowGraphObj_->setCheckable(true);
     actionShowGraphObj_->setChecked(true);
@@ -321,7 +320,7 @@ void MainWindow::openGraphPage(const QString &szProjPath,
                 return;
             }
 
-            GraphPage *graphPage = new GraphPage(QRectF());
+            GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
             if (!createDocument(graphPage, view, fileName)) {
                 return;
             }
@@ -334,11 +333,10 @@ void MainWindow::openGraphPage(const QString &szProjPath,
             graphPage->setProjectPath(szProjPath);
             graphPage->setProjectName(szProjName);
             graphPage->loadAsXML(fileName);
-            view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->fillGraphPagePropertyModel();
+            view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szPageId + ".drw");
             graphPage->setGraphPageId(szPageId);
-            graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
         }
     }
 
@@ -419,7 +417,7 @@ void MainWindow::addNewGraphPage()
         return;
     }
 
-    GraphPage *graphPage = new GraphPage(QRectF());
+    GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
     graphPage->setProjectPath(szProjPath_);
     graphPage->setProjectName(szProjName_);
     graphPage->setGridVisible(gridVisible_);
@@ -430,7 +428,6 @@ void MainWindow::addNewGraphPage()
     QString title = fixedWindowTitle(view);
     graphPage->setFileName(title + ".drw");
     graphPage->setGraphPageId(title);
-    graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     graphPageTabWidget_->addTab(currentView_, title);
     graphPageTabWidget_->setCurrentWidget(currentView_);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
@@ -486,11 +483,11 @@ void MainWindow::slotUpdateActions()
     static const QIcon unsaved(":/images/filesave.png");
 
     for (int i = 0; i < graphPageTabWidget_->count(); i++) {
-        QGraphicsView *view = (QGraphicsView*)graphPageTabWidget_->widget(i);
+        QGraphicsView *view = dynamic_cast<QGraphicsView*>(graphPageTabWidget_->widget(i));
         GraphPage *scene = dynamic_cast<GraphPage *>(view->scene());
         view->setFixedSize(scene->getGraphPageWidth(), scene->getGraphPageHeight());
-        if (!((GraphPage*)view->scene())->undoStack()->isClean() ||
-            ((GraphPage*)view->scene())->getUnsavedFlag()) {
+        if (!dynamic_cast<GraphPage *>(view->scene())->undoStack()->isClean() ||
+            dynamic_cast<GraphPage *>(view->scene())->getUnsavedFlag()) {
             graphPageTabWidget_->setTabIcon(graphPageTabWidget_->indexOf(view), unsaved);
         } else {
             graphPageTabWidget_->setTabIcon(graphPageTabWidget_->indexOf(view), QIcon());
@@ -518,19 +515,18 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
 {
     if (GraphPageNum == -1) {
         objTree_->clearModel();
-        //propertyModel_->resetModel();
         return;
     }
 
     listWidgetGraphPages->setCurrentRow(GraphPageNum);
 
     for (int i = 0; i < graphPageTabWidget_->count(); i++) {
-        QGraphicsView *view = (QGraphicsView*)graphPageTabWidget_->widget(i);
-        ((GraphPage*)view->scene())->setActive(false);
+        QGraphicsView *view = dynamic_cast<QGraphicsView *>(graphPageTabWidget_->widget(i));
+        dynamic_cast<GraphPage *>(view->scene())->setActive(false);
     }
 
-    currentView_ = (QGraphicsView*)graphPageTabWidget_->widget(GraphPageNum);
-    currentGraphPage_ = (GraphPage*)currentView_->scene();
+    currentView_ = dynamic_cast<QGraphicsView *>(graphPageTabWidget_->widget(GraphPageNum));
+    currentGraphPage_ = dynamic_cast<GraphPage *>(currentView_->scene());
     currentGraphPage_->setActive(true);
     currentGraphPage_->fillGraphPagePropertyModel();
     objTree_->setContentList(currentGraphPage_->items());
@@ -542,7 +538,7 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
 void MainWindow::slotChangeGraphPageName()
 {
     graphPageTabWidget_->setTabText(currentGraphPageIndex_, currentGraphPage_->getGraphPageId());
-    int index = GraphPageManager::getInstance()->getIndexByGraphPage(currentGraphPage_);
+    //int index = GraphPageManager::getInstance()->getIndexByGraphPage(currentGraphPage_);
 }
 
 void MainWindow::updateObjectTree()
@@ -568,7 +564,8 @@ void MainWindow::slotGraphPagePropertyChanged()
 
 void MainWindow::propertyValueChanged(QtProperty *property, const QVariant &value)
 {
-
+    Q_UNUSED(property)
+    Q_UNUSED(value)
 }
 
 void MainWindow::slotNewElementAdded()
@@ -692,7 +689,7 @@ void MainWindow::slotEditOpen()
             return;
         }
 
-        GraphPage *graphPage = new GraphPage(QRectF());
+        GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
         if (!createDocument(graphPage, view, filename)) {
             return;
         } 
@@ -709,7 +706,6 @@ void MainWindow::slotEditOpen()
         }
         graphPage->setFileName(pageFileName);
         graphPage->setGraphPageId(pageFileName.left(pageFileName.length() - 4));
-        graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     }
 }
 
@@ -730,7 +726,6 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     graphPage->setGridVisible(gridVisible_);
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     graphPageTabWidget_->addTab(view, graphPage->getGraphPageId());
     graphPageTabWidget_->setCurrentWidget(view);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
@@ -1117,7 +1112,7 @@ reInput:
                 return;
             }
 
-            GraphPage *graphPage = new GraphPage(QRectF());
+            GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
             if (!createDocument(graphPage, view, fileName)) {
                 return;
             }
@@ -1128,10 +1123,8 @@ reInput:
             graphPage->setProjectName(szProjName_);
             graphPage->loadAsXML(fileName);
             view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-            graphPage->fillGraphPagePropertyModel();
             graphPage->setFileName(szGraphPageName + ".drw");
             graphPage->setGraphPageId(szGraphPageName);
-            graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
         }
 
         QList<QListWidgetItem*> listWidgetItem = listWidgetGraphPages->findItems(szGraphPageName, Qt::MatchCaseSensitive);
@@ -1274,7 +1267,7 @@ reGetNum:
             return;
         }
 
-        GraphPage *graphPage = new GraphPage(QRectF());
+        GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
         if (!createDocument(graphPage, view, szPasteFileName)) {
             return;
         }
@@ -1285,10 +1278,8 @@ reGetNum:
         graphPage->setProjectName(szProjName_);
         graphPage->loadAsXML(szPasteFileName);
         view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-        graphPage->fillGraphPagePropertyModel();
         graphPage->setFileName(strDrawPageName + ".drw");
         graphPage->setGraphPageId(strDrawPageName);
-        graphPage->setPropertyManagerAndPropertyBrowser(variantPropertyManager_, propertyEditor_);
     }
 
     QList<QListWidgetItem*> listWidgetItem = listWidgetGraphPages->findItems(strDrawPageName, Qt::MatchCaseSensitive);

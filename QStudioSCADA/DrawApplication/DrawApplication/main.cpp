@@ -18,11 +18,9 @@
  */
 int main(int argc, char *argv[])
 {
-    //QApplication a(argc, argv);
     QtSingleApplication app(argc, argv); // 程序单实例运行
 
-    if (app.isRunning())
-    {
+    if (app.isRunning()) {
         return !app.sendMessage("start " + app.applicationDirPath());
     }
 

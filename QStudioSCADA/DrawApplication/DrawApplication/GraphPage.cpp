@@ -42,15 +42,18 @@ T max(const S<T> &sequence)
 const QString MimeType = "rti/designer";
 
 
-GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
+GraphPage::GraphPage(const QRectF &rect,
+                     QtVariantPropertyManager *propertyMgr,
+                     QtTreePropertyBrowser *propertyEditor,
+                     QObject *parent) :
     QGraphicsScene(parent),
     filename(QString()),
     unsavedFlag_(false),
-    variantPropertyManager_(Q_NULLPTR),
     szProjPath_(""),
-    szProjName_("")
+    szProjName_(""),
+    variantPropertyManager_(propertyMgr),
+    propertyEditor_(propertyEditor)
 {
-
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
     if (static_cast<int>(rect.width()) == 0 || static_cast<int>(rect.height()) == 0) {
@@ -73,6 +76,13 @@ GraphPage::GraphPage(const QRectF &rect, QObject *parent) :
     createContextMenuActions();
     updateActions();
 
+    createPropertyList();
+    fillGraphPagePropertyModel();
+
+    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+                    this, SLOT(slotElementPropertyChanged(QtProperty *, const QVariant &)));
+    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+                    this, SLOT(slotGraphPagePropertyChanged(QtProperty *, const QVariant &)));
     connect(this, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()));
 }
 
@@ -94,21 +104,6 @@ bool GraphPage::getUnsavedFlag()
 void GraphPage::setUnsavedFlag(bool bFlag)
 {
     unsavedFlag_ = bFlag;
-}
-
-void GraphPage::setPropertyManagerAndPropertyBrowser(QtVariantPropertyManager *propertyMgr,
-                                                     QtTreePropertyBrowser *propertyEditor)
-{
-    variantPropertyManager_ = propertyMgr;
-    propertyEditor_ = propertyEditor;
-
-    createPropertyList();
-    fillGraphPagePropertyModel();
-
-    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-                    this, SLOT(slotElementPropertyChanged(QtProperty *, const QVariant &)));
-    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-                    this, SLOT(slotGraphPagePropertyChanged(QtProperty *, const QVariant &)));
 }
 
 
@@ -211,7 +206,6 @@ void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVarian
         setSelectedFunctions(szFuncs.split('|'));
     }
 
-
     fillGridPixmap();
 
     unsavedFlag_ = true;
@@ -259,7 +253,7 @@ void GraphPage::fillGraphPagePropertyModel()
     }
 
     propertyEditor_->clear();
-    QListIterator <QtProperty*> iter(propList);
+    QListIterator<QtProperty*> iter(propList);
     while (iter.hasNext()) {
         propertyEditor_->addProperty(iter.next());
     }
@@ -401,17 +395,15 @@ void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant 
         return;
     }
 
-    if (!propertyToId_.contains(property))
-        return;
-
+    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << property->propertyName() << property->valueText() << value;
     QString id = propertyToId_[property];
 
     if (!currentItem) {
         return;
     }
 
-    currentItem->updateElementProperty(id, value);
-
+    currentItem->updateElementProperty(property, value);
+qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << property->propertyName() << property->valueText() << value;
     unsavedFlag_ = true;
     emit elementPropertyChanged();
 
@@ -628,7 +620,7 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementName() == typeId) {
-                Element *ele = plugin->createElement(szProjPath_, szProjName_);
+                Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
                     ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
@@ -683,13 +675,13 @@ void GraphPage::onAlignElements(Qt::Alignment alignment, QList<QGraphicsItem*> i
 
     if (alignment == Qt::AlignLeft || alignment == Qt::AlignRight) {
         for (int i = 0; i < items.count(); ++i) {
-            Element *pEle = (Element *)items.at(i);
+            Element *pEle = dynamic_cast<Element *>(items.at(i));
             pEle->moveTo(offset - coordinates.at(i), 0);
             pEle->updateBoundingElement();
         }
     } else {
         for (int i = 0; i < items.count(); ++i) {
-            Element *pEle = (Element *)items.at(i);
+            Element *pEle = dynamic_cast<Element *>(items.at(i));
             pEle->moveTo(0, offset - coordinates.at(i));
             pEle->updateBoundingElement();
         }
@@ -1080,7 +1072,7 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select)
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
-                    Element *ele = plugin->createElement(szProjPath_, szProjName_);
+                    Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
@@ -1305,7 +1297,7 @@ Element *GraphPage::createElement(const QString &internalType)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementIDString() == internalType) {
-                return plugin->createElement(szProjPath_, szProjName_);
+                return plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
             }
         }
     }

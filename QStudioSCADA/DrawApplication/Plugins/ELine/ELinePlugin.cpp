@@ -89,7 +89,9 @@ QString ELinePlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ELinePlugin::createElement(const QString &szProjPath, const QString &szProjName)
+Element* ELinePlugin::createElement(const QString &szProjPath,
+                                    const QString &szProjName,
+                                    QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementLine(szProjPath, szProjName);
+    return new ElementLine(szProjPath, szProjName, propertyMgr);
 }

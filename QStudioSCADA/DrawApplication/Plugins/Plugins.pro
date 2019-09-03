@@ -2,6 +2,7 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
 ##############<基本图元>###################
+    ELine
 #    ELine \
 #    EArrow \
 #    EEllipse \

@@ -493,6 +493,9 @@ void FunctionEditorDialog::createPropertyList()
                     pArgItem->value = "0";
                 property->setValue(pArgItem->value);
                 addProperty(property, QLatin1String("value"));
+                if(pArgItem->value == "0") {
+                    propertyChanged(property, pArgItem->value);
+                }
             } else if(pArgItem->type == "TAGLIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 tagNames_.clear();
@@ -502,6 +505,9 @@ void FunctionEditorDialog::createPropertyList()
                     pArgItem->value = tagNames_.at(0);
                 property->setValue(pArgItem->value);
                 addProperty(property, QLatin1String("tag"));
+                if(pArgItem->value == tagNames_.at(0)) {
+                    propertyChanged(property, pArgItem->value);
+                }
             } else if(pArgItem->type == "GRAPHPAGELIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 DrawListUtils::loadDrawList(DrawListUtils::getProjectPath());
@@ -510,6 +516,9 @@ void FunctionEditorDialog::createPropertyList()
                     pArgItem->value = DrawListUtils::drawList_.at(0);
                 property->setValue(pArgItem->value);
                 addProperty(property, QLatin1String("graph"));
+                if(pArgItem->value == DrawListUtils::drawList_.at(0)) {
+                    propertyChanged(property, pArgItem->value);
+                }
             } else if(pArgItem->type == "ELEMENTIDLIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 elementIds_.clear();
@@ -519,6 +528,9 @@ void FunctionEditorDialog::createPropertyList()
                     pArgItem->value = elementIds_.at(0);
                 property->setValue(pArgItem->value);
                 addProperty(property, QLatin1String("element"));
+                if(pArgItem->value == elementIds_.at(0)) {
+                    propertyChanged(property, pArgItem->value);
+                }
             }
         }
     }
@@ -539,10 +551,6 @@ void FunctionEditorDialog::propertyChanged(QtProperty *property, const QVariant 
 
     TFuncObjectItem *pFuncObjItem;
     pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
-
-
-
-
 
     QString szName = property->propertyName();
     foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
