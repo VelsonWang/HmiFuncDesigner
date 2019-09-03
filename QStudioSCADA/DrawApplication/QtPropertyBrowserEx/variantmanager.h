@@ -21,6 +21,8 @@ public:
 
 
     static int functionTypeId();
+    static int tagColorListTypeId();
+    static int TagTextListTypeId();
 
 public slots:
     virtual void setValue(QtProperty *property, const QVariant &val);

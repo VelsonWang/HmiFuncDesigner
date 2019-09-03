@@ -25,9 +25,8 @@ public:
     void regenerateElementId() override;
     void release() override; // 释放占用的资源
 
-    enum {Type = ArrowItemType};
-    int type() const {
-        return Type;
+    int type() const override {
+        return ArrowItemType;
     }
 
     friend QDataStream &operator<<(QDataStream &out,const ElementArrow &line);

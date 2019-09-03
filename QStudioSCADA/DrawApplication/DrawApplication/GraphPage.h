@@ -12,12 +12,6 @@
 #include <QClipboard>
 #include <QApplication>
 #include <QFile>
-#include "propertymodel.h"
-#include "emptyproperty.h"
-#include "textproperty.h"
-#include "colorproperty.h"
-#include "integerproperty.h"
-#include "enumproperty.h"
 #include "UndoCommand.h"
 #include "Element.h"
 #include "qtpropertymanager.h"

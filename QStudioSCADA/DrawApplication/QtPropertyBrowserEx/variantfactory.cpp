@@ -1,7 +1,8 @@
 #include "variantfactory.h"
 #include "variantmanager.h"
 #include "functionedit.h"
-#include <QDebug>
+#include "tagcolorlistedit.h"
+#include "tagtextlistedit.h"
 
 VariantFactory::~VariantFactory()
 {
@@ -31,12 +32,35 @@ QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
         theCreatedEditors[property].append(editor);
         theEditorToProperty[editor] = property;
 
-        connect(editor, SIGNAL(filePathChanged(const QString &)),
+        connect(editor, SIGNAL(functionsChanged(const QString &)),
+                this, SLOT(slotSetValue(const QString &)));
+        connect(editor, SIGNAL(destroyed(QObject *)),
+                this, SLOT(slotEditorDestroyed(QObject *)));
+        return editor;
+    } else if (manager->propertyType(property) == VariantManager::tagColorListTypeId()) {
+        TagColorListEdit *editor = new TagColorListEdit(parent);
+        editor->setValueColorList(manager->value(property).toString().split('|'));
+        theCreatedEditors[property].append(editor);
+        theEditorToProperty[editor] = property;
+
+        connect(editor, SIGNAL(valueColorListChanged(const QString &)),
+                this, SLOT(slotSetValue(const QString &)));
+        connect(editor, SIGNAL(destroyed(QObject *)),
+                this, SLOT(slotEditorDestroyed(QObject *)));
+        return editor;
+    } else if (manager->propertyType(property) == VariantManager::TagTextListTypeId()) {
+        TagTextListEdit *editor = new TagTextListEdit(parent);
+        editor->setValueTextList(manager->value(property).toString().split('|'));
+        theCreatedEditors[property].append(editor);
+        theEditorToProperty[editor] = property;
+
+        connect(editor, SIGNAL(valueTextListChanged(const QString &)),
                 this, SLOT(slotSetValue(const QString &)));
         connect(editor, SIGNAL(destroyed(QObject *)),
                 this, SLOT(slotEditorDestroyed(QObject *)));
         return editor;
     }
+
     return QtVariantEditorFactory::createEditor(manager, property, parent);
 }
 
@@ -55,12 +79,18 @@ void VariantFactory::slotPropertyChanged(QtProperty *property, const QVariant &v
         return;
 
     QtVariantPropertyManager *manager = propertyManager(property);
-    if (manager->propertyType(property) == VariantManager::functionTypeId()) {
-        QList<QWidget *> editors = theCreatedEditors[property];
-        QListIterator<QWidget *> itEditor(editors);
-        while (itEditor.hasNext()) {
+    QList<QWidget *> editors = theCreatedEditors[property];
+    QListIterator<QWidget *> itEditor(editors);
+    while (itEditor.hasNext()) {
+        if (manager->propertyType(property) == VariantManager::functionTypeId()) {
             FunctionEdit *pFunctionEdit = dynamic_cast<FunctionEdit *>(itEditor.next());
             pFunctionEdit->setFunctions(value.toString().split('|'));
+        } else if (manager->propertyType(property) == VariantManager::tagColorListTypeId()) {
+            TagColorListEdit *pTagColorListEdit = dynamic_cast<TagColorListEdit *>(itEditor.next());
+            pTagColorListEdit->setValueColorList(value.toString().split('|'));
+        } else if (manager->propertyType(property) == VariantManager::TagTextListTypeId()) {
+            TagTextListEdit *pTagTextListEdit = dynamic_cast<TagTextListEdit *>(itEditor.next());
+            pTagTextListEdit->setValueTextList(value.toString().split('|'));
         }
     }
 }
@@ -81,6 +111,10 @@ void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
                 pFunctionEdit->setSupportEvents(value.toString().split('|'));
             }
         }
+    } else if (manager->propertyType(property) == VariantManager::tagColorListTypeId()) {
+
+    } else if (manager->propertyType(property) == VariantManager::TagTextListTypeId()) {
+
     }
 }
 

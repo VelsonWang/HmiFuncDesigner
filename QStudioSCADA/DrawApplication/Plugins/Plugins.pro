@@ -3,8 +3,8 @@ TEMPLATE = subdirs
 SUBDIRS += \
 ##############<基本图元>###################
     ELine \
-    EArrow
-#    EArrow \
+    EArrow \
+    EEllipse
 #    EEllipse \
 #    ERect \
 #    EText \

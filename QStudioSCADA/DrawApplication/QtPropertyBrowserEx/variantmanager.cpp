@@ -1,29 +1,55 @@
 
 #include "variantmanager.h"
-#include <QDebug>
 
 class FunctionPropertyType
 {
 };
-
 Q_DECLARE_METATYPE(FunctionPropertyType)
+
+class TagColorListPropertyType
+{
+};
+Q_DECLARE_METATYPE(TagColorListPropertyType)
+
+class TagTextListPropertyType
+{
+};
+Q_DECLARE_METATYPE(TagTextListPropertyType)
+
+
 
 int VariantManager::functionTypeId()
 {
     return qMetaTypeId<FunctionPropertyType>();
 }
 
+int VariantManager::tagColorListTypeId()
+{
+    return qMetaTypeId<TagColorListPropertyType>();
+}
+
+int VariantManager::TagTextListTypeId()
+{
+    return qMetaTypeId<TagTextListPropertyType>();
+}
+
 bool VariantManager::isPropertyTypeSupported(int propertyType) const
 {
-    if (propertyType == functionTypeId())
+    if (propertyType == functionTypeId() ||
+            propertyType == tagColorListTypeId() ||
+            propertyType == TagTextListTypeId())
         return true;
+
     return QtVariantPropertyManager::isPropertyTypeSupported(propertyType);
 }
 
 int VariantManager::valueType(int propertyType) const
 {
-    if (propertyType == functionTypeId())
+    if (propertyType == functionTypeId() ||
+            propertyType == tagColorListTypeId() ||
+            propertyType == TagTextListTypeId())
         return QVariant::String;
+
     return QtVariantPropertyManager::valueType(propertyType);
 }
 
@@ -40,7 +66,12 @@ QStringList VariantManager::attributes(int propertyType) const
         QStringList attr;
         attr << QLatin1String("supportevents");
         return attr;
+    } else if (propertyType == tagColorListTypeId()) {
+        return QtVariantPropertyManager::attributes(propertyType);
+    } else if (propertyType == TagTextListTypeId()) {
+        return QtVariantPropertyManager::attributes(propertyType);
     }
+
     return QtVariantPropertyManager::attributes(propertyType);
 }
 
@@ -50,7 +81,12 @@ int VariantManager::attributeType(int propertyType, const QString &attribute) co
         if (attribute == QLatin1String("supportevents"))
             return QVariant::String;
         return 0;
+    } else if (propertyType == tagColorListTypeId()) {
+        return QtVariantPropertyManager::attributeType(propertyType, attribute);
+    } else if (propertyType == TagTextListTypeId()) {
+        return QtVariantPropertyManager::attributeType(propertyType, attribute);
     }
+
     return QtVariantPropertyManager::attributeType(propertyType, attribute);
 }
 
@@ -115,8 +151,11 @@ void VariantManager::setAttribute(QtProperty *property,
 
 void VariantManager::initializeProperty(QtProperty *property)
 {
-    if (propertyType(property) == functionTypeId())
+    if (propertyType(property) == functionTypeId() ||
+            propertyType(property) == tagColorListTypeId() ||
+            propertyType(property) == TagTextListTypeId()) {
         theValues[property] = Data();
+    }
     QtVariantPropertyManager::initializeProperty(property);
 }
 

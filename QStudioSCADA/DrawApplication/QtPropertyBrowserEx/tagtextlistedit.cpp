@@ -1,10 +1,10 @@
-#include "functionedit.h"
-#include "functioneditordialog.h"
+#include "tagtextlistedit.h"
+#include "tagtextlisteditordialog.h"
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QFocusEvent>
 
-FunctionEdit::FunctionEdit(QWidget *parent)
+TagTextListEdit::TagTextListEdit(QWidget *parent)
     : QWidget(parent)
 {
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -22,15 +22,33 @@ FunctionEdit::FunctionEdit(QWidget *parent)
     connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
 }
 
-void FunctionEdit::buttonClicked()
+void TagTextListEdit::buttonClicked()
 {
-    FunctionEditorDialog dlg(Q_NULLPTR, supportEvents_);
-    dlg.setFunctions(funcs_);
+    TagTextListEditorDialog dlg;
+    dlg.setValueTextList(valueTextList_);
+
     if(dlg.exec() == QDialog::Accepted) {
-        QStringList funcs = dlg.getFunctions();
-        setFunctions(funcs);
-        QString szFuncs = funcs.join("|");
-        theLabel_->setText(szFuncs);
-        emit functionsChanged(szFuncs);
+        QStringList list = dlg.getValueTextList();
+        if (list != valueTextList_) {
+            setValueTextList(list);
+            QString szVal = list.join("|");
+            theLabel_->setText(szVal);
+            emit valueTextListChanged(szVal);
+        }
     }
 }
+
+void TagTextListEdit::setValueTextList(const QStringList &list)
+{
+    if (valueTextList_ != list) {
+        valueTextList_ = list;
+    }
+}
+
+
+QStringList TagTextListEdit::getValueTextList() const
+{
+    return valueTextList_;
+}
+
+

@@ -1,5 +1,5 @@
-#include "functionedit.h"
-#include "functioneditordialog.h"
+#include "tagcolorlistedit.h"
+#include "tagcolorlisteditordialog.h"
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QFocusEvent>
@@ -10,57 +10,41 @@ TagColorListEdit::TagColorListEdit(QWidget *parent)
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setMargin(0);
     layout->setSpacing(0);
-    theLineEdit = new QLineEdit(this);
-    theLineEdit->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
-    theLineEdit->setReadOnly(true);
-    theLineEdit->setStyleSheet("background:rgb(194, 194, 194)");
+    theLabel_ = new QLabel(this);
+    theLabel_->setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred));
     QToolButton *button = new QToolButton(this);
     button->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred));
     button->setText(QLatin1String("..."));
-    layout->addWidget(theLineEdit);
+    layout->addWidget(theLabel_);
     layout->addWidget(button);
-    setFocusProxy(theLineEdit);
     setFocusPolicy(Qt::StrongFocus);
     setAttribute(Qt::WA_InputMethodEnabled);
-    connect(theLineEdit, SIGNAL(textEdited(const QString &)),
-            this, SIGNAL(filePathChanged(const QString &)));
     connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+}
+
+QStringList TagColorListEdit::getValueColorList() const
+{
+    return valueColorList_;
+}
+
+void TagColorListEdit::setValueColorList(const QStringList &list)
+{
+    if (valueColorList_ != list) {
+        valueColorList_ = list;
+    }
 }
 
 void TagColorListEdit::buttonClicked()
 {
-    TagColorListEditorDialog dlg(Q_NULLPTR, supportEvents_);
-    dlg.setFunctions(funcs_);
+    TagColorListEditorDialog dlg;
+    dlg.setValueColorList(valueColorList_);
     if(dlg.exec() == QDialog::Accepted) {
-        QStringList funcs = dlg.getFunctions();
-        setFunctions(funcs);
-        QString szFuncs = funcs.join("|");
-        theLineEdit->setText(szFuncs);
-        emit filePathChanged(szFuncs);
+        QStringList list = dlg.getValueColorList();
+        if (list != valueColorList_) {
+            setValueColorList(list);
+            QString szVal = list.join("|");
+            theLabel_->setText(szVal);
+            emit valueColorListChanged(szVal);
+        }
     }
-}
-
-void TagColorListEdit::focusInEvent(QFocusEvent *e)
-{
-    theLineEdit->event(e);
-    if (e->reason() == Qt::TabFocusReason || e->reason() == Qt::BacktabFocusReason) {
-        theLineEdit->selectAll();
-    }
-    QWidget::focusInEvent(e);
-}
-
-void TagColorListEdit::focusOutEvent(QFocusEvent *e)
-{
-    theLineEdit->event(e);
-    QWidget::focusOutEvent(e);
-}
-
-void TagColorListEdit::keyPressEvent(QKeyEvent *e)
-{
-    theLineEdit->event(e);
-}
-
-void TagColorListEdit::keyReleaseEvent(QKeyEvent *e)
-{
-    theLineEdit->event(e);
 }

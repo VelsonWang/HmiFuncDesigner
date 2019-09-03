@@ -5,7 +5,6 @@
 #include <QPainter>
 #include <QDataStream>
 #include "Element.h"
-#include "tagcolorlistproperty.h"
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
@@ -29,12 +28,8 @@ public:
     void regenerateElementId() override;
     void release() override; // 释放占用的资源
 
-    enum {
-        Type = LineItemType
-    };
-
-    int type() const {
-        return Type;
+    int type() const override {
+        return LineItemType;
     }
 
     friend QDataStream &operator<<(QDataStream &out,const ElementLine &line);

@@ -1,5 +1,5 @@
-#include "FunctionEditorDialog.h"
-#include "ui_FunctionEditorDialog.h"
+#include "functioneditordialog.h"
+#include "ui_functioneditordialog.h"
 #include "Helper.h"
 #include "XMLObject.h"
 #include "Element.h"
@@ -445,7 +445,6 @@ void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
 {
     Q_UNUSED(index)
     iSelectedCurRow_ = ui->tableEventFunc->currentRow();
-    clearProperty();
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
     if(pItem == nullptr)
         return;

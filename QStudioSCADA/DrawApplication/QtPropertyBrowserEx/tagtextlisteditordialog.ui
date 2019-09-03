@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>TagColorListEditorDialog</class>
- <widget class="QDialog" name="TagColorListEditorDialog">
+ <class>TagTextListEditorDialog</class>
+ <widget class="QDialog" name="TagTextListEditorDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>673</width>
-    <height>371</height>
+    <width>748</width>
+    <height>354</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>设置颜色</string>
+   <string>设置文本</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QTableWidget" name="tableTagColor"/>
+    <widget class="QTableWidget" name="tableTagText"/>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">

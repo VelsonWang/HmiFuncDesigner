@@ -6,29 +6,6 @@
 #include <QLabel>
 #include <QToolButton>
 
-class ColorEditor : public QWidget
-{
-    Q_OBJECT
-public:
-    explicit ColorEditor(QWidget *parent = 0);
-    ~ColorEditor();
-
-    void setColor(const QColor &color);
-    QColor getColor() const;
-
-    bool eventFilter(QObject *obj, QEvent *ev);
-
-private slots:
-    void onToolButtonClicked();
-
-private:
-    QColor color_;
-    QToolButton* toolButton_;
-    QLabel* colorLabel_;
-};
-
-////////////////////////////////////////////////////////
-
 namespace Ui {
 class TagColorListEditorDialog;
 }
@@ -38,7 +15,7 @@ class TagColorListEditorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TagColorListEditorDialog(QWidget *parent = 0);
+    explicit TagColorListEditorDialog(QWidget *parent = Q_NULLPTR);
     ~TagColorListEditorDialog();
     QStringList getValueColorList();
     void setValueColorList(const QStringList &list);

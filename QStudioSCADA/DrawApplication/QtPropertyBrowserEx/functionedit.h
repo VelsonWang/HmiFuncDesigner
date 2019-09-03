@@ -2,7 +2,7 @@
 #ifndef FUNCTIONEDIT_H
 #define FUNCTIONEDIT_H
 
-#include <QLineEdit>
+#include <QLabel>
 
 class FunctionEdit : public QWidget
 {
@@ -21,16 +21,13 @@ public:
     void setSupportEvents(QStringList events) { supportEvents_ = events; }
 
 signals:
-    void filePathChanged(const QString &filePath);
-protected:
-    void focusInEvent(QFocusEvent *e);
-    void focusOutEvent(QFocusEvent *e);
-    void keyPressEvent(QKeyEvent *e);
-    void keyReleaseEvent(QKeyEvent *e);
+    void functionsChanged(const QString &szVal);
+
 private slots:
     void buttonClicked();
+
 private:
-    QLineEdit *theLineEdit;
+    QLabel *theLabel_;
     QStringList funcs_;
     QStringList supportEvents_;
 

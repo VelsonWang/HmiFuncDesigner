@@ -38,12 +38,9 @@ CONFIG(debug, debug|release) { #debug
 }
 
 include($$IDE_SOURCE_TREE/libs/qtsingleapplication/qtsingleapplication.pri)
+include(../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
 
 SOURCES += \
-    ../QtPropertyBrowserEx/functionedit.cpp \
-    ../QtPropertyBrowserEx/functioneditordialog.cpp \
-    ../QtPropertyBrowserEx/variantfactory.cpp \
-    ../QtPropertyBrowserEx/variantmanager.cpp \
     GetWidthHeightDialog.cpp \
     main.cpp \
     GraphPage.cpp \
@@ -62,10 +59,6 @@ SOURCES += \
     PluginManager.cpp
 
 HEADERS  += \
-    ../QtPropertyBrowserEx/functionedit.h \
-    ../QtPropertyBrowserEx/functioneditordialog.h \
-    ../QtPropertyBrowserEx/variantfactory.h \
-    ../QtPropertyBrowserEx/variantmanager.h \
     GetWidthHeightDialog.h \
     GraphPage.h \
     GraphPageManager.h \
@@ -85,7 +78,6 @@ HEADERS  += \
     PluginManager.h
 
 FORMS    += \
-    ../QtPropertyBrowserEx/functioneditordialog.ui \
     ElementLibraryWidget.ui \
     GetWidthHeightDialog.ui \
     MainWindow.ui

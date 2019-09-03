@@ -395,8 +395,6 @@ void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant 
         return;
     }
 
-    QString id = propertyToId_[property];
-
     if (!currentItem) {
         return;
     }
