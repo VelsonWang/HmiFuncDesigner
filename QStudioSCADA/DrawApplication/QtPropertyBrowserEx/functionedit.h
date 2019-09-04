@@ -10,15 +10,15 @@ class FunctionEdit : public QWidget
 public:
     FunctionEdit(QWidget *parent = Q_NULLPTR);
 
-    QStringList getFunctions() const { return funcs_; }
-    void setFunctions(const QStringList &funcs) { funcs_ = funcs; }
+    QStringList getFunctions() const;
+    void setFunctions(const QStringList &funcs);
 
     /**
      * @brief setSupportEvents
      * @details 设置支持的事件列表
      * @param events 事件列表
      */
-    void setSupportEvents(QStringList events) { supportEvents_ = events; }
+    void setSupportEvents(QStringList events);
 
 signals:
     void functionsChanged(const QString &szVal);

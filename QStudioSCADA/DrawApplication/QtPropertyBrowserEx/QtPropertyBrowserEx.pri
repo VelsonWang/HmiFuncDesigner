@@ -14,6 +14,7 @@ SOURCES += \
     $$PWD/tagcolorlisteditordialog.cpp \
     $$PWD/tagtextlistedit.cpp \	
     $$PWD/tagtextlisteditordialog.cpp \
+	$$PWD/fileedit.cpp \
 	$$PWD/coloreditor.cpp \
     $$PWD/variantfactory.cpp \
     $$PWD/variantmanager.cpp 
@@ -25,6 +26,7 @@ HEADERS += \
     $$PWD/tagcolorlisteditordialog.h \
     $$PWD/tagtextlistedit.h \		
 	$$PWD/tagtextlisteditordialog.h \
+	$$PWD/fileedit.h \	
 	$$PWD/coloreditor.h \
     $$PWD/variantfactory.h \
     $$PWD/variantmanager.h 

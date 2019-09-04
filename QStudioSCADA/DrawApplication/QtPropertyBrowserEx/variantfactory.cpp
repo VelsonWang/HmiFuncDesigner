@@ -3,6 +3,7 @@
 #include "functionedit.h"
 #include "tagcolorlistedit.h"
 #include "tagtextlistedit.h"
+#include "fileedit.h"
 
 VariantFactory::~VariantFactory()
 {
@@ -59,6 +60,18 @@ QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
         connect(editor, SIGNAL(destroyed(QObject *)),
                 this, SLOT(slotEditorDestroyed(QObject *)));
         return editor;
+    } else if (manager->propertyType(property) == VariantManager::filePathTypeId()) {
+        FileEdit *editor = new FileEdit(parent);
+        editor->setFilePath(manager->value(property).toString());
+        editor->setFilter(manager->attributeValue(property, QLatin1String("filter")).toString());
+        theCreatedEditors[property].append(editor);
+        theEditorToProperty[editor] = property;
+
+        connect(editor, SIGNAL(filePathChanged(const QString &)),
+                this, SLOT(slotSetValue(const QString &)));
+        connect(editor, SIGNAL(destroyed(QObject *)),
+                this, SLOT(slotEditorDestroyed(QObject *)));
+        return editor;
     }
 
     return QtVariantEditorFactory::createEditor(manager, property, parent);
@@ -91,6 +104,9 @@ void VariantFactory::slotPropertyChanged(QtProperty *property, const QVariant &v
         } else if (manager->propertyType(property) == VariantManager::TagTextListTypeId()) {
             TagTextListEdit *pTagTextListEdit = dynamic_cast<TagTextListEdit *>(itEditor.next());
             pTagTextListEdit->setValueTextList(value.toString().split('|'));
+        } else if (manager->propertyType(property) == VariantManager::filePathTypeId()) {
+            FileEdit *pFileEdit = dynamic_cast<FileEdit *>(itEditor.next());
+            pFileEdit->setFilePath(value.toString());
         }
     }
 }
@@ -115,6 +131,15 @@ void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
 
     } else if (manager->propertyType(property) == VariantManager::TagTextListTypeId()) {
 
+    } else if (manager->propertyType(property) == VariantManager::filePathTypeId()) {
+        if (attribute == QLatin1String("filter")) {
+            QList<QWidget *> editors = theCreatedEditors[property];
+            QListIterator<QWidget *> itEditor(editors);
+            while (itEditor.hasNext()) {
+                FileEdit *pFileEdit = dynamic_cast<FileEdit *>(itEditor.next());
+                pFileEdit->setFilter(value.toString());
+            }
+        }
     }
 }
 

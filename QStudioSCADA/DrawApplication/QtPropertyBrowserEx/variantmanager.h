@@ -19,10 +19,10 @@ public:
     virtual int attributeType(int propertyType, const QString &attribute) const;
     virtual QVariant attributeValue(const QtProperty *property, const QString &attribute) const;
 
-
     static int functionTypeId();
     static int tagColorListTypeId();
     static int TagTextListTypeId();
+    static int filePathTypeId();
 
 public slots:
     virtual void setValue(QtProperty *property, const QVariant &val);

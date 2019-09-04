@@ -34,3 +34,26 @@ void FunctionEdit::buttonClicked()
         emit functionsChanged(szFuncs);
     }
 }
+
+QStringList FunctionEdit::getFunctions() const
+{
+    return funcs_;
+}
+
+
+void FunctionEdit::setFunctions(const QStringList &funcs)
+{
+    funcs_ = funcs;
+    QString szFuncs = funcs.join("|");
+    theLabel_->setText(szFuncs);
+}
+
+/**
+ * @brief setSupportEvents
+ * @details 设置支持的事件列表
+ * @param events 事件列表
+ */
+void FunctionEdit::setSupportEvents(QStringList events)
+{
+    supportEvents_ = events;
+}

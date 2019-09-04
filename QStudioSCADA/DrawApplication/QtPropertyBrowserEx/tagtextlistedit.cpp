@@ -42,6 +42,8 @@ void TagTextListEdit::setValueTextList(const QStringList &list)
 {
     if (valueTextList_ != list) {
         valueTextList_ = list;
+        QString szVal = list.join("|");
+        theLabel_->setText(szVal);
     }
 }
 

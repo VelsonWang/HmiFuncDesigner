@@ -31,6 +31,8 @@ void TagColorListEdit::setValueColorList(const QStringList &list)
 {
     if (valueColorList_ != list) {
         valueColorList_ = list;
+        QString szVal = list.join("|");
+        theLabel_->setText(szVal);
     }
 }
 
