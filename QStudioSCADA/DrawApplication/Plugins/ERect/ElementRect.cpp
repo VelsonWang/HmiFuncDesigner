@@ -1,11 +1,13 @@
 ﻿#include "ElementRect.h"
 #include "TagManager.h"
-#include <QDebug>
+#include "variantmanager.h"
 
 int ElementRect::iLastIndex_ = 1;
 
-ElementRect::ElementRect(const QString &szProjPath, const QString &szProjName) :
-    Element(szProjPath, szProjName)
+ElementRect::ElementRect(const QString &szProjPath,
+                         const QString &szProjName,
+                         QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("Rect_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -60,148 +62,124 @@ QPainterPath ElementRect::shape() const
 
 void ElementRect::createPropertyList()
 {
-    idProperty = new TextProperty(tr("ID"));
-    idProperty->setId(EL_ID);
-    idProperty->setReadOnly(true);
-    propList.insert(propList.end(), idProperty);
+    propList.clear();
+    clearProperties();
 
-    titleProperty = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    // ID
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
     // 选择变量
-    tagSelectProperty_ = new ListProperty(tr("选择变量"));
-    tagSelectProperty_->setId(EL_TAG);
-    QStringList varList;
-    TagManager::getAllTagName(TagManager::getProjectPath(), varList);
-    tagSelectProperty_->setList(varList);
-    propList.insert(propList.end(), tagSelectProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
+    tagNames_.clear();
+    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    property->setAttribute(QLatin1String("enumNames"), tagNames_);
+    addProperty(property, QLatin1String("tag"));
 
     // 填充颜色列表
-    tagColorListProperty_ = new TagColorListProperty(tr("填充颜色列表"));
-    tagColorListProperty_->setId(EL_TAG_COLOR_LIST);
-    tagColorListProperty_->setValue(tagColorList_);
-    propList.insert(propList.end(), tagColorListProperty_);
+    property = variantPropertyManager_->addProperty(VariantManager::tagColorListTypeId(), tr("填充颜色列表"));
+    addProperty(property, QLatin1String("tagColorList"));
 
     // 填充颜色
-    fillColorProperty_ = new ColorProperty(tr("填充颜色"));
-    fillColorProperty_->setId(EL_FILL_COLOR);
-    fillColorProperty_->setValue(fillColor_);
-    propList.insert(propList.end(), fillColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("填充颜色"));
+    addProperty(property, QLatin1String("fillColor"));
 
     // 是否填充颜色
-    isFillProperty_ = new BoolProperty(tr("填充"));
-    isFillProperty_->setId(EL_IS_FILL_COLOR);
-    isFillProperty_->setTrueText(tr("填充"));
-    isFillProperty_->setFalseText(tr("不填充"));
-    isFillProperty_->setValue(isFill_);
-    propList.insert(propList.end(), isFillProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("填充"));
+    addProperty(property, QLatin1String("isFill"));
 
     // 边框宽度
-    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
-    borderWidthProperty_->setId(EL_BORDER_WIDTH);
-    borderWidthProperty_->setSettings(0, 1000);
-    borderWidthProperty_->setValue(borderWidth_);
-    propList.insert(propList.end(), borderWidthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("边框宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("borderWidth"));
 
     // 边框颜色
-    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
-    borderColorProperty_->setId(EL_BORDER_COLOR);
-    borderColorProperty_->setValue(borderColor_);
-    propList.insert(propList.end(), borderColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("边框颜色"));
+    addProperty(property, QLatin1String("borderColor"));
 
     // 初始可见性
-    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
-    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
-    showOnInitialProperty_->setTrueText(tr("显示"));
-    showOnInitialProperty_->setFalseText(tr("不显示"));
-    showOnInitialProperty_->setValue(showOnInitial_);
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
+    addProperty(property, QLatin1String("showOnInitial"));
 
-    xCoordProperty = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
+    // 坐标 X
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
-    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
+    // 坐标 Y
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
-    zValueProperty = new IntegerProperty(tr("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
+    // Z 值
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
     // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
     // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 
     // 旋转角度
-    angleProperty = new IntegerProperty(tr("角度"));
-    angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0,360);
-    propList.insert(propList.end(),angleProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("角度"));
+    property->setAttribute(QLatin1String("minimum"), -360);
+    property->setAttribute(QLatin1String("maximum"), 360);
+    addProperty(property, QLatin1String("angle"));
 }
 
-void ElementRect::updateElementProperty(uint id, const QVariant &value)
+void ElementRect::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-    case EL_X:
+    } else if (id == QLatin1String("tag")) {
+        szTagSelected_ = tagNames_.at(value.toInt());
+    } else if (id == QLatin1String("tagColorList")) {
+        QString szTagColor = value.toString();
+        tagColorList_ = szTagColor.split('|');
+    } else if (id == QLatin1String("fillColor")) {
+        fillColor_ = value.value<QColor>();
+    } else if (id == QLatin1String("isFill")) {
+        isFill_ = value.toBool();
+    } else if (id == QLatin1String("borderWidth")) {
+        borderWidth_ = value.toInt();
+    } else if (id == QLatin1String("borderColor")) {
+        borderColor_ = value.value<QColor>();
+    } else if (id == QLatin1String("showOnInitial")) {
+        showOnInitial_ = value.toBool();
+    } else if (id == QLatin1String("xCoord")) {
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
-        break;
-    case EL_Y:
+    } else if (id == QLatin1String("yCoord")) {
         elementYPos = value.toInt();
         setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
+    } else if (id == QLatin1String("zValue")) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
+    } else if (id == QLatin1String("width")) {
         elementWidth = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_HEIGHT:
+    } else if (id == QLatin1String("height")) {
         elementHeight = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_TAG:
-        szTagSelected_ = value.toString();
-        break;
-    case EL_TAG_COLOR_LIST:
-        tagColorList_ = value.toStringList();
-        break;
-    case EL_FILL_COLOR:
-        fillColor_ = value.value<QColor>();
-        break;
-    case EL_IS_FILL_COLOR:
-        isFill_ = value.toBool();
-        break;
-    case EL_BORDER_WIDTH:
-        borderWidth_ = value.toInt();
-        break;
-    case EL_BORDER_COLOR:
-        borderColor_ = value.value<QColor>();
-        break;
-    case EL_SHOW_ON_INITIAL:
-        showOnInitial_ = value.toBool();
-        break;
-    case EL_ANGLE:
+    } else if (id == QLatin1String("angle")) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
-        break;
     }
 
     scene()->update();
@@ -210,20 +188,77 @@ void ElementRect::updateElementProperty(uint id, const QVariant &value)
 
 void ElementRect::updatePropertyModel()
 {
-    idProperty->setValue(elementId);
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    widthProperty_->setValue(elementWidth);
-    heightProperty_->setValue(elementHeight);
-    tagSelectProperty_->setValue(szTagSelected_);
-    tagColorListProperty_->setValue(tagColorList_);
-    fillColorProperty_->setValue(fillColor_);
-    isFillProperty_->setValue(isFill_);
-    borderWidthProperty_->setValue(borderWidth_);
-    borderColorProperty_->setValue(borderColor_);
-    showOnInitialProperty_->setValue(showOnInitial_);
-    angleProperty->setValue(elemAngle);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
+
+    property = idToProperty_[QLatin1String("tag")];
+    if(property != Q_NULLPTR) {
+        property->setValue(szTagSelected_);
+    }
+
+    property = idToProperty_[QLatin1String("tagColorList")];
+    if(property != Q_NULLPTR) {
+        property->setValue(tagColorList_.join('|'));
+    }
+
+    property = idToProperty_[QLatin1String("fillColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(fillColor_);
+    }
+
+    property = idToProperty_[QLatin1String("isFill")];
+    if(property != Q_NULLPTR) {
+        property->setValue(isFill_);
+    }
+
+    property = idToProperty_[QLatin1String("borderWidth")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderWidth_);
+    }
+
+    property = idToProperty_[QLatin1String("borderColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderColor_);
+    }
+
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
+
+    property = idToProperty_[QLatin1String("angle")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elemAngle);
+    }
 }
 
 void ElementRect::setClickPosition(QPointF position)

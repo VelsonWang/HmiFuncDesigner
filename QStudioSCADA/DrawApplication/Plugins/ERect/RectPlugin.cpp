@@ -89,7 +89,9 @@ QString RectPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* RectPlugin::createElement(const QString &szProjPath, const QString &szProjName)
+Element* RectPlugin::createElement(const QString &szProjPath,
+                                   const QString &szProjName,
+                                   QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementRect(szProjPath, szProjName);
+    return new ElementRect(szProjPath, szProjName, propertyMgr);
 }

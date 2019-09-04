@@ -4,8 +4,8 @@ SUBDIRS += \
 ##############<基本图元>###################
     ELine \
     EArrow \
-    EEllipse
-#    EEllipse \
+    EEllipse \
+    ERect
 #    ERect \
 #    EText \
 ###############<基本控件>##################

@@ -1,7 +1,6 @@
 ﻿#include "ElementEllipse.h"
 #include "TagManager.h"
 #include "variantmanager.h"
-#include <QDebug>
 
 int ElementEllipse::iLastIndex_ = 1;
 
