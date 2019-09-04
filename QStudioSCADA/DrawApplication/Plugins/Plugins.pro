@@ -5,8 +5,8 @@ SUBDIRS += \
     ELine \
     EArrow \
     EEllipse \
-    ERect
-#    ERect \
+    ERect \
+    EText
 #    EText \
 ###############<基本控件>##################
 #    EPushButton \
