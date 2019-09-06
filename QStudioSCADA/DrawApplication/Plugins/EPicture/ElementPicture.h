@@ -10,10 +10,12 @@ class ElementPicture : public Element
 {
     Q_OBJECT
 public:
-    ElementPicture(const QString &szProjPath, const QString &szProjName);
+    ElementPicture(const QString &szProjPath,
+                   const QString &szProjName,
+                   QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(uint id, const QVariant &value) override;
+    void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
     void writeAsXml(QXmlStreamWriter &writer) override;
@@ -23,10 +25,8 @@ public:
     void regenerateElementId() override;
     void release() override; // 释放占用的资源
 
-    enum {Type = PictureItemType};
-
-    int type() const {
-        return Type;
+    int type() const override {
+        return PictureItemType;
     }
 
     friend QDataStream &operator<<(QDataStream &out,const ElementPicture &Picture);
@@ -53,35 +53,6 @@ private:
     QColor borderColor_;
     // 初始可见性
     bool showOnInitial_;
-
-    // ID
-    TextProperty *idProperty;
-    // 标题
-    EmptyProperty *titleProperty;
-    // X坐标
-    IntegerProperty *xCoordProperty;
-    // Y坐标
-    IntegerProperty *yCoordProperty;
-    // Z坐标
-    IntegerProperty *zValueProperty;
-    // 宽度
-    IntegerProperty *widthProperty_;
-    // 高度
-    IntegerProperty *heightProperty_;
-    // 选择图片
-    FileProperty *fileProperty;
-    // 原尺寸显示
-    BoolProperty *showNoScaleProperty_;
-    // 边框宽度
-    IntegerProperty *borderWidthProperty_;
-    // 边框颜色
-    ColorProperty *borderColorProperty_;
-    // 初始可见性
-    BoolProperty *showOnInitialProperty_;
-    // 旋转角度
-    IntegerProperty *angleProperty;
-
-
 };
 
 

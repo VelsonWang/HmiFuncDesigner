@@ -89,7 +89,9 @@ QString InputEditPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* InputEditPlugin::createElement(const QString &szProjPath, const QString &szProjName)
+Element* InputEditPlugin::createElement(const QString &szProjPath,
+                                        const QString &szProjName,
+                                        QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementInputEdit(szProjPath, szProjName);
+    return new ElementInputEdit(szProjPath, szProjName, propertyMgr);
 }

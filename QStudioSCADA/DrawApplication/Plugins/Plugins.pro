@@ -8,9 +8,9 @@ SUBDIRS += \
     ERect \
     EText \
 ###############<基本控件>##################
-    EPushButton
-#    EPushButton \
-#    EInputEdit \
+    EPushButton \
+    EInputEdit \
+    EPicture
 #    EPicture \
 #    EIndicationLamp \
 #    ESwitchButton \

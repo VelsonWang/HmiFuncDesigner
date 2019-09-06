@@ -3,11 +3,14 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
+#include "variantmanager.h"
 
 int ElementPicture::iLastIndex_ = 1;
 
-ElementPicture::ElementPicture(const QString &szProjPath, const QString &szProjName) :
-    Element(szProjPath, szProjName)
+ElementPicture::ElementPicture(const QString &szProjPath,
+                               const QString &szProjName,
+                               QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("Picture_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -68,109 +71,83 @@ QPainterPath ElementPicture::shape() const
 
 void ElementPicture::createPropertyList()
 {
-    idProperty = new TextProperty(tr("ID"));
-    idProperty->setId(EL_ID);
-    idProperty->setReadOnly(true);
-    propList.insert(propList.end(), idProperty);
+    propList.clear();
+    clearProperties();
 
-    titleProperty = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty);
+    QtVariantProperty *property = Q_NULLPTR;
 
-    fileProperty = new FileProperty(tr("选择图片"));
-    fileProperty->setId(EL_FILE);
-    propList.insert(propList.end(), fileProperty);
+    // ID
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
+
+    // 图片
+    property = variantPropertyManager_->addProperty(VariantManager::filePathTypeId(), tr("选择图片"));
+    property->setAttribute(QLatin1String("filter"), "image files (*.png *.jpg *.jpeg *.bmp)");
+    addProperty(property, QLatin1String("filePicture"));
 
     // 原尺寸显示
-    showNoScaleProperty_ = new BoolProperty(tr("原尺寸显示"));
-    showNoScaleProperty_->setId(EL_SHOW_SCALE);
-    showNoScaleProperty_->setTrueText(tr("是"));
-    showNoScaleProperty_->setFalseText(tr("否"));
-    showNoScaleProperty_->setValue(showNoScale_);
-    propList.insert(propList.end(), showNoScaleProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("原尺寸显示"));
+    addProperty(property, QLatin1String("showNoScale"));
 
     // 边框宽度
-    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
-    borderWidthProperty_->setId(EL_BORDER_WIDTH);
-    borderWidthProperty_->setSettings(0, 1000);
-    borderWidthProperty_->setValue(borderWidth_);
-    propList.insert(propList.end(), borderWidthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("边框宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("borderWidth"));
 
     // 边框颜色
-    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
-    borderColorProperty_->setId(EL_BORDER_COLOR);
-    borderColorProperty_->setValue(borderColor_);
-    propList.insert(propList.end(), borderColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("边框颜色"));
+    addProperty(property, QLatin1String("borderColor"));
 
     // 初始可见性
-    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
-    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
-    showOnInitialProperty_->setTrueText(tr("显示"));
-    showOnInitialProperty_->setFalseText(tr("不显示"));
-    showOnInitialProperty_->setValue(showOnInitial_);
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
+    addProperty(property, QLatin1String("showOnInitial"));
 
-    xCoordProperty = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
+    // 坐标 X
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
-    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
+    // 坐标 Y
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
-    zValueProperty = new IntegerProperty(tr("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
+    // Z 值
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
     // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
     // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 
     // 旋转角度
-    angleProperty = new IntegerProperty(tr("角度"));
-    angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0,360);
-    propList.insert(propList.end(),angleProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("角度"));
+    property->setAttribute(QLatin1String("minimum"), -360);
+    property->setAttribute(QLatin1String("maximum"), 360);
+    addProperty(property, QLatin1String("angle"));
 }
 
-void ElementPicture::updateElementProperty(uint id, const QVariant &value)
+void ElementPicture::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-    case EL_X:
-        elementXPos = value.toInt();
-        setElementXPos(elementXPos);
-        break;
-    case EL_Y:
-        elementYPos = value.toInt();
-        setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
-        elementZValue = value.toInt();
-        setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
-        elementWidth = value.toInt();
-        updateBoundingElement();
-        break;
-    case EL_HEIGHT:
-        elementHeight = value.toInt();
-        updateBoundingElement();
-        break;
-    case EL_FILE:
-    {
+    } else if (id == QLatin1String("filePicture")) {
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
@@ -191,23 +168,32 @@ void ElementPicture::updateElementProperty(uint id, const QVariant &value)
             picResMgr_.add(ProjectData::getInstance()->dbData_, filePicture_);
             updatePropertyModel();
         }
-    }break;
-    case EL_SHOW_SCALE:
+    } else if (id == QLatin1String("showNoScale")) {
         showNoScale_ = value.toBool();
-        break;
-    case EL_BORDER_WIDTH:
+    } else if (id == QLatin1String("borderWidth")) {
         borderWidth_ = value.toInt();
-        break;
-    case EL_BORDER_COLOR:
+    } else if (id == QLatin1String("borderColor")) {
         borderColor_ = value.value<QColor>();
-        break;
-    case EL_SHOW_ON_INITIAL:
+    } else if (id == QLatin1String("showOnInitial")) {
         showOnInitial_ = value.toBool();
-        break;
-    case EL_ANGLE:
+    } else if (id == QLatin1String("xCoord")) {
+        elementXPos = value.toInt();
+        setElementXPos(elementXPos);
+    } else if (id == QLatin1String("yCoord")) {
+        elementYPos = value.toInt();
+        setElementYPos(elementYPos);
+    } else if (id == QLatin1String("zValue")) {
+        elementZValue = value.toInt();
+        setZValue(elementZValue);
+    } else if (id == QLatin1String("width")) {
+        elementWidth = value.toInt();
+        updateBoundingElement();
+    } else if (id == QLatin1String("height")) {
+        elementHeight = value.toInt();
+        updateBoundingElement();
+    } else if (id == QLatin1String("angle")) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
-        break;
     }
 
     scene()->update();
@@ -216,18 +202,67 @@ void ElementPicture::updateElementProperty(uint id, const QVariant &value)
 
 void ElementPicture::updatePropertyModel()
 {
-    idProperty->setValue(elementId);
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    widthProperty_->setValue(elementWidth);
-    heightProperty_->setValue(elementHeight);
-    fileProperty->setValue(filePicture_);
-    showNoScaleProperty_->setValue(showNoScale_);
-    borderWidthProperty_->setValue(borderWidth_);
-    borderColorProperty_->setValue(borderColor_);
-    showOnInitialProperty_->setValue(showOnInitial_);
-    angleProperty->setValue(elemAngle);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
+
+    property = idToProperty_[QLatin1String("filePicture")];
+    if(property != Q_NULLPTR) {
+        property->setValue(filePicture_);
+    }
+
+    property = idToProperty_[QLatin1String("showNoScale")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showNoScale_);
+    }
+
+    property = idToProperty_[QLatin1String("borderWidth")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderWidth_);
+    }
+
+    property = idToProperty_[QLatin1String("borderColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderColor_);
+    }
+
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
+
+    property = idToProperty_[QLatin1String("angle")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elemAngle);
+    }
 }
 
 void ElementPicture::setClickPosition(QPointF position)

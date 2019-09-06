@@ -11,7 +11,6 @@
 #include <QFile>
 #include <QDir>
 #include "variantmanager.h"
-#include <QDebug>
 
 
 int ElementPushButton::iLastIndex_ = 1;
