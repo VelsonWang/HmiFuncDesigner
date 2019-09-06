@@ -89,7 +89,9 @@ QString JarShapePlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* JarShapePlugin::createElement(const QString &szProjPath, const QString &szProjName)
+Element* JarShapePlugin::createElement(const QString &szProjPath,
+                                       const QString &szProjName,
+                                       QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementJarShape(szProjPath, szProjName);
+    return new ElementJarShape(szProjPath, szProjName, propertyMgr);
 }

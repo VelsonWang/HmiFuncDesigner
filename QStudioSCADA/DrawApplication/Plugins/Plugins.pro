@@ -16,7 +16,6 @@ SUBDIRS += \
     EClock \
     EMovingText \
     ETagTextList \
-    EValueStick
-#    EValueStick \
-#    EJarShape
+    EValueStick \
+    EJarShape
 

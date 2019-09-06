@@ -9,8 +9,10 @@
 
 int ElementJarShape::iLastIndex_ = 1;
 
-ElementJarShape::ElementJarShape(const QString &szProjPath, const QString &szProjName)
-    : Element(szProjPath, szProjName)
+ElementJarShape::ElementJarShape(const QString &szProjPath,
+                                 const QString &szProjName,
+                                 QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("JarShape_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -71,225 +73,267 @@ QPainterPath ElementJarShape::shape() const
 
 void ElementJarShape::createPropertyList()
 {
+    propList.clear();
+    clearProperties();
+
+    QtVariantProperty *property = Q_NULLPTR;
+
     // ID
-    idProperty_ = new TextProperty(tr("ID"));
-    idProperty_->setId(EL_ID);
-    idProperty_->setReadOnly(true);
-    propList.insert(propList.end(), idProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
-    // 标题
-    titleProperty_ = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty_);
-
-	// 选择变量
-	tagSelectProperty_ = new ListProperty(tr("选择变量"));
-	tagSelectProperty_->setId(EL_TAG);
-	QStringList varList;
-	TagManager::getAllTagName(TagManager::getProjectPath(), varList);
-	tagSelectProperty_->setList(varList);
-	propList.insert(propList.end(), tagSelectProperty_);
+    // 选择变量
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
+    tagNames_.clear();
+    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    property->setAttribute(QLatin1String("enumNames"), tagNames_);
+    addProperty(property, QLatin1String("tag"));
 
     // 罐形容器标题
-    jarShapeProperty_ = new TextProperty(tr("容器标题"));
-    jarShapeProperty_->setId(EL_TEXT);
-    jarShapeProperty_->setValue(jarShape_);
-    propList.insert(propList.end(), jarShapeProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("容器标题"));
+    addProperty(property, QLatin1String("text"));
 
     // 字体
-    fontProperty_ = new FontProperty(tr("字体"));
-    fontProperty_->setId(EL_FONT);
-    fontProperty_->setValue(font_);
-    propList.insert(propList.end(), fontProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Font, tr("字体"));
+    addProperty(property, QLatin1String("font"));
 
     // 文本颜色
-    textColorProperty_ = new ColorProperty(tr("文本颜色"));
-    textColorProperty_->setId(EL_FONT_COLOR);
-    textColorProperty_->setValue(textColor);
-    propList.insert(propList.end(), textColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("文本颜色"));
+    addProperty(property, QLatin1String("textColor"));
 
     // 罐体颜色
-    borderColorProperty_ = new ColorProperty(tr("罐体颜色"));
-    borderColorProperty_->setId(EL_BORDER_COLOR);
-    borderColorProperty_->setValue(borderColor_);
-    propList.insert(propList.end(), borderColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("罐体颜色"));
+    addProperty(property, QLatin1String("borderColor"));
 
     // 低于下限颜色
-    lessThanLowerLimitColorProperty_ = new ColorProperty(tr("低于下限颜色"));
-    lessThanLowerLimitColorProperty_->setId(EL_LESS_THAN_LOWER_LIMIT_COLOR);
-    lessThanLowerLimitColorProperty_->setValue(lessThanLowerLimitColor_);
-    propList.insert(propList.end(), lessThanLowerLimitColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("低于下限颜色"));
+    addProperty(property, QLatin1String("lessThanLowerLimitColor"));
 
     // 正常液面颜色
-    normalColorProperty_ = new ColorProperty(tr("正常液面颜色"));
-    normalColorProperty_->setId(EL_NORMAL_COLOR);
-    normalColorProperty_->setValue(normalColor_);
-    propList.insert(propList.end(), normalColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("正常液面颜色"));
+    addProperty(property, QLatin1String("normalColor"));
 
     // 高于上限颜色
-    greaterThanUpperLimitColorProperty_ = new ColorProperty(tr("高于上限颜色"));
-    greaterThanUpperLimitColorProperty_->setId(EL_GREATER_THAN_UPPER_LIMIT_COLOR);
-    greaterThanUpperLimitColorProperty_->setValue(greaterThanUpperLimitColor_);
-    propList.insert(propList.end(), greaterThanUpperLimitColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("高于上限颜色"));
+    addProperty(property, QLatin1String("greaterThanUpperLimitColor"));
 
     // 上限值
-    upperLimitValueProperty_ = new DoubleProperty(tr("上限值"));
-    upperLimitValueProperty_->setSettings(DBL_MIN, DBL_MAX, 5);
-    upperLimitValueProperty_->setId(EL_UPPER_LIMIT_VALUE);
-    upperLimitValueProperty_->setValue(upperLimitValue_);
-    propList.insert(propList.end(), upperLimitValueProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Double, tr("上限值"));
+    property->setAttribute(QLatin1String("minimum"), DBL_MIN);
+    property->setAttribute(QLatin1String("maximum"), DBL_MAX);
+    property->setAttribute(QLatin1String("singleStep"), 0.1);
+    property->setAttribute(QLatin1String("decimals"), 1);
+    addProperty(property, QLatin1String("upperLimitValue"));
 
     // 下限值
-    lowerLimitValueProperty_ = new DoubleProperty(tr("下限值"));
-    lowerLimitValueProperty_->setSettings(DBL_MIN, DBL_MAX, 5);
-    lowerLimitValueProperty_->setId(EL_LOWER_LIMIT_VALUE);
-    lowerLimitValueProperty_->setValue(lowerLimitValue_);
-    propList.insert(propList.end(), lowerLimitValueProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Double, tr("下限值"));
+    property->setAttribute(QLatin1String("minimum"), DBL_MIN);
+    property->setAttribute(QLatin1String("maximum"), DBL_MAX);
+    property->setAttribute(QLatin1String("singleStep"), 0.1);
+    property->setAttribute(QLatin1String("decimals"), 1);
+    addProperty(property, QLatin1String("lowerLimitValue"));
 
     // 满量程值-刻度最大值
-    maxValueProperty_ = new DoubleProperty(tr("满量程值"));
-    maxValueProperty_->setSettings(DBL_MIN, DBL_MAX, 5);
-    maxValueProperty_->setId(EL_SCALE_VALUE_MAX);
-    maxValueProperty_->setValue(maxValue_);
-    propList.insert(propList.end(), maxValueProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Double, tr("满量程值"));
+    property->setAttribute(QLatin1String("minimum"), DBL_MIN);
+    property->setAttribute(QLatin1String("maximum"), DBL_MAX);
+    property->setAttribute(QLatin1String("singleStep"), 0.1);
+    property->setAttribute(QLatin1String("decimals"), 1);
+    addProperty(property, QLatin1String("maxValue"));
 
     // 刻度个数
-    scaleNumProperty_ = new IntegerProperty(tr("刻度个数"));
-    scaleNumProperty_->setSettings(0, 5000);
-    scaleNumProperty_->setId(EL_SCALE_NUM);
-    scaleNumProperty_->setValue(scaleNum_);
-    propList.insert(propList.end(), scaleNumProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("刻度个数"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("scaleNum"));
 
     // 初始可见性
-    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
-    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
-    showOnInitialProperty_->setTrueText(tr("显示"));
-    showOnInitialProperty_->setFalseText(tr("不显示"));
-    showOnInitialProperty_->setValue(showOnInitial_);
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
+    addProperty(property, QLatin1String("showOnInitial"));
 
     // 坐标 X
-    xCoordProperty = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
     // 坐标 Y
-    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
     // Z 值
-    zValueProperty = new IntegerProperty(tr("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
     // 宽度
-    widthProperty = new IntegerProperty(tr("宽度"));
-    widthProperty->setId(EL_WIDTH);
-    widthProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
     // 高度
-    heightProperty = new IntegerProperty(tr("高度"));
-    heightProperty->setId(EL_HEIGHT);
-    heightProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 }
 
-void ElementJarShape::updateElementProperty(uint id, const QVariant &value)
+void ElementJarShape::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-	case EL_TAG:
-		szTagSelected_ = value.toString();
-		break;
-    case EL_TEXT:
+    } else if (id == QLatin1String("tag")) {
+        szTagSelected_ = tagNames_.at(value.toInt());
+    } else if (id == QLatin1String("text")) {
         jarShape_ = value.toString();
-        break;
-    case EL_FONT:
+    } else if (id == QLatin1String("font")) {
         font_ = value.value<QFont>();
-        break;
-    case EL_FONT_COLOR:
+    } else if (id == QLatin1String("textColor")) {
         textColor = value.value<QColor>();
-        break;
-    case EL_BORDER_COLOR:
+    } else if (id == QLatin1String("borderColor")) {
         borderColor_ = value.value<QColor>();
-        break;
-    case EL_LESS_THAN_LOWER_LIMIT_COLOR:
+    } else if (id == QLatin1String("lessThanLowerLimitColor")) {
         lessThanLowerLimitColor_ = value.value<QColor>();
-        break;
-    case EL_NORMAL_COLOR:
+    } else if (id == QLatin1String("normalColor")) {
         normalColor_ = value.value<QColor>();
-        break;
-    case EL_GREATER_THAN_UPPER_LIMIT_COLOR:
+    } else if (id == QLatin1String("greaterThanUpperLimitColor")) {
         greaterThanUpperLimitColor_ = value.value<QColor>();
-        break;
-    case EL_UPPER_LIMIT_VALUE:
+    } else if (id == QLatin1String("upperLimitValue")) {
         upperLimitValue_ = value.toDouble();
-        break;
-    case EL_LOWER_LIMIT_VALUE:
+    } else if (id == QLatin1String("lowerLimitValue")) {
         lowerLimitValue_ = value.toDouble();
-        break;
-    case EL_SCALE_VALUE_MAX:
+    } else if (id == QLatin1String("maxValue")) {
         maxValue_ = value.toDouble();
-        break;
-    case EL_SCALE_NUM:
+    } else if (id == QLatin1String("scaleNum")) {
         scaleNum_ = value.toInt();
-        break;
-    case EL_SHOW_ON_INITIAL:
+    } else if (id == QLatin1String("showOnInitial")) {
         showOnInitial_ = value.toBool();
-        break;
-    case EL_X:
+    } else if (id == QLatin1String("xCoord")) {
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
-        break;
-    case EL_Y:
+    } else if (id == QLatin1String("yCoord")) {
         elementYPos = value.toInt();
         setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
+    } else if (id == QLatin1String("zValue")) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
+    } else if (id == QLatin1String("width")) {
         elementWidth = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_HEIGHT:
+    } else if (id == QLatin1String("height")) {
         elementHeight = value.toInt();
         updateBoundingElement();
-        break;
     }
 
-    update();
     scene()->update();
+    update();
 }
 
 void ElementJarShape::updatePropertyModel()
 {
-    idProperty_->setValue(elementId);
-	tagSelectProperty_->setValue(szTagSelected_);
-    jarShapeProperty_->setValue(jarShape_);
-    fontProperty_->setValue(font_);
-    textColorProperty_->setValue(textColor);
-    borderColorProperty_->setValue(borderColor_);
-    lessThanLowerLimitColorProperty_->setValue(lessThanLowerLimitColor_);
-    normalColorProperty_->setValue(normalColor_);
-    greaterThanUpperLimitColorProperty_->setValue(greaterThanUpperLimitColor_);
-    upperLimitValueProperty_->setValue(upperLimitValue_);
-    lowerLimitValueProperty_->setValue(lowerLimitValue_);
-    maxValueProperty_->setValue(maxValue_);
-    scaleNumProperty_->setValue(scaleNum_);
-    showOnInitialProperty_->setValue(showOnInitial_);
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    widthProperty->setValue(elementWidth);
-    heightProperty->setValue(elementHeight);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
+
+    property = idToProperty_[QLatin1String("tag")];
+    if(property != Q_NULLPTR) {
+        property->setValue(tagNames_.indexOf(szTagSelected_));
+    }
+
+    property = idToProperty_[QLatin1String("text")];
+    if(property != Q_NULLPTR) {
+        property->setValue(jarShape_);
+    }
+
+    property = idToProperty_[QLatin1String("font")];
+    if(property != Q_NULLPTR) {
+        property->setValue(font_);
+    }
+
+    property = idToProperty_[QLatin1String("textColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(textColor);
+    }
+
+    property = idToProperty_[QLatin1String("borderColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderColor_);
+    }
+
+    property = idToProperty_[QLatin1String("lessThanLowerLimitColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(lessThanLowerLimitColor_);
+    }
+
+    property = idToProperty_[QLatin1String("normalColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(normalColor_);
+    }
+
+    property = idToProperty_[QLatin1String("greaterThanUpperLimitColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(greaterThanUpperLimitColor_);
+    }
+
+    property = idToProperty_[QLatin1String("upperLimitValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(upperLimitValue_);
+    }
+
+    property = idToProperty_[QLatin1String("lowerLimitValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(lowerLimitValue_);
+    }
+
+    property = idToProperty_[QLatin1String("maxValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(maxValue_);
+    }
+
+    property = idToProperty_[QLatin1String("scaleNum")];
+    if(property != Q_NULLPTR) {
+        property->setValue(scaleNum_);
+    }
+
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
 }
 
 void ElementJarShape::setClickPosition(QPointF position)
