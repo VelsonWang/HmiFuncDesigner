@@ -89,7 +89,9 @@ QString MovingTextPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* MovingTextPlugin::createElement(const QString &szProjPath, const QString &szProjName)
+Element* MovingTextPlugin::createElement(const QString &szProjPath,
+                                         const QString &szProjName,
+                                         QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementMovingText(szProjPath, szProjName);
+    return new ElementMovingText(szProjPath, szProjName, propertyMgr);
 }

@@ -13,8 +13,8 @@ SUBDIRS += \
     EPicture \
     EIndicationLamp \
     ESwitchButton \
-    EClock
-#    EClock \
+    EClock \
+    EMovingText
 #    EMovingText \
 #    ETagTextList \
 #    EValueStick \

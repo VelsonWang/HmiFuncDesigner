@@ -3,8 +3,6 @@
 
 #include "PublicDefine.h"
 #include "Element.h"
-#include "functionproperty.h"
-#include "tagtextlistproperty.h"
 #include <QPainter>
 #include <QDataStream>
 #include <QGraphicsSceneMouseEvent>
@@ -14,10 +12,12 @@ class ElementMovingText : public Element
     Q_OBJECT
 
 public:
-    explicit ElementMovingText(const QString &szProjPath, const QString &szProjName);
+    explicit ElementMovingText(const QString &szProjPath,
+                               const QString &szProjName,
+                               QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(uint id, const QVariant &value) override;
+    void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
     void writeAsXml(QXmlStreamWriter &) override;
@@ -30,12 +30,8 @@ public:
     QString getMoveDirString(const QString& szAlign) const;
     void setMoveDirString(const QString& szAlign, QString& szAlignSet);
 
-    enum {
-        Type = MovingTextItemType
-    };
-
-    int type() const {
-        return Type;
+    int type() const override {
+        return MovingTextItemType;
     }
 
     friend QDataStream &operator<<(QDataStream &out, const ElementMovingText &textItem);
@@ -52,6 +48,10 @@ protected:
 
 private:
     void drawMovingText(QPainter *painter);
+
+private:
+    QStringList tagNames_;
+    QStringList moveDirList_;
 
 private:
     static int iLastIndex_;
@@ -78,47 +78,6 @@ private:
     QColor borderColor_;
     // 初始可见性
     bool showOnInitial_;
-
-    // ID
-    TextProperty *idProperty_;
-    // 标题
-    EmptyProperty *titleProperty_;
-    // 选择变量
-    ListProperty *tagSelectProperty_;
-    // 变量文本列表
-    TagTextListProperty *tagTextListProperty_;
-    // 文本
-    TextProperty *elementTextProperty_;
-    // 移动方向
-    ListProperty *moveDirProperty_;
-    // 移动字符数
-    IntegerProperty *moveCharNumProperty_;
-    // 移动间隔
-    DoubleProperty *periodProperty_;
-    // 背景颜色
-    ColorProperty *backgroundColorProperty_;
-    // 透明背景颜色
-    BoolProperty *transparentBackgroundProperty_;
-    // 字体
-    FontProperty *fontProperty_;
-    // 文本颜色
-    ColorProperty *textColorProperty;
-    // 边框宽度
-    IntegerProperty *borderWidthProperty_;
-    // 边框颜色
-    ColorProperty *borderColorProperty_;
-    // 初始可见性
-    BoolProperty *showOnInitialProperty_;
-    // X坐标
-    IntegerProperty *xCoordProperty_;
-    // Y坐标
-    IntegerProperty *yCoordProperty_;
-    // Z坐标
-    IntegerProperty *zValueProperty_;
-    // 宽度
-    IntegerProperty *widthProperty_;
-    // 高度
-    IntegerProperty *heightProperty_;
 };
 
 
