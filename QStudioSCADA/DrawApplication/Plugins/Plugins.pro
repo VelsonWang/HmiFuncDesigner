@@ -11,8 +11,8 @@ SUBDIRS += \
     EPushButton \
     EInputEdit \
     EPicture \
-    EIndicationLamp
-#    EIndicationLamp \
+    EIndicationLamp \
+    ESwitchButton
 #    ESwitchButton \
 #    EClock \
 #    EMovingText \

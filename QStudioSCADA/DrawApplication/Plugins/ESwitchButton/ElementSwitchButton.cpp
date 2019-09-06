@@ -6,6 +6,7 @@
 #include "Helper.h"
 #include "XMLObject.h"
 #include "ProjectData.h"
+#include "variantmanager.h"
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QFile>
@@ -14,8 +15,10 @@
 
 int ElementSwitchButton::iLastIndex_ = 1;
 
-ElementSwitchButton::ElementSwitchButton(const QString &szProjPath, const QString &szProjName) :
-    Element(szProjPath, szProjName)
+ElementSwitchButton::ElementSwitchButton(const QString &szProjPath,
+                                         const QString &szProjName,
+                                         QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("SwitchButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -97,199 +100,168 @@ QPainterPath ElementSwitchButton::shape() const
 
 void ElementSwitchButton::createPropertyList()
 {
-    idProperty = new TextProperty(tr("ID"));
-    idProperty->setId(EL_ID);
-    idProperty->setReadOnly(true);
-    propList.insert(propList.end(), idProperty);
+    propList.clear();
+    clearProperties();
 
-    titleProperty = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    // ID
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
     // 选择变量
-    tagSelectProperty_ = new ListProperty(tr("选择变量"));
-    tagSelectProperty_->setId(EL_TAG);
-    QStringList varList;
-    TagManager::getAllTagName(TagManager::getProjectPath(), varList);
-    tagSelectProperty_->setList(varList);
-    propList.insert(propList.end(), tagSelectProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
+    tagNames_.clear();
+    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    property->setAttribute(QLatin1String("enumNames"), tagNames_);
+    addProperty(property, QLatin1String("tag"));
 
     // 选择功能
+    property = variantPropertyManager_->addProperty(VariantManager::functionTypeId(), tr("功能操作"));
     QStringList listEvents;
     getSupportEvents(listEvents);
-    funcProperty = new FunctionProperty(tr("功能操作"));
-    funcProperty->setId(EL_FUNCTION);
-    funcProperty->setSupportEvents(listEvents);
-    propList.insert(propList.end(), funcProperty);
+    property->setAttribute(QLatin1String("supportevents"), listEvents.join("|"));
+    addProperty(property, QLatin1String("functions"));
 
     // 初始状态
-    stateOnInitialProperty_ = new BoolProperty(tr("初始状态"));
-    stateOnInitialProperty_->setId(EL_STATE_ON_INITIAL);
-    stateOnInitialProperty_->setTrueText(tr("置位状态"));
-    stateOnInitialProperty_->setFalseText(tr("复位状态"));
-    stateOnInitialProperty_->setValue(stateOnInitial_);
-    propList.insert(propList.end(), stateOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始状态"));
+    addProperty(property, QLatin1String("stateOnInitial"));
 
     // 显示内容
-    showContentProperty_ = new ListProperty(tr("显示内容"));
-    showContentProperty_->setId(EL_SHOW_CONTENT);
-    QStringList contents;
-    contents << tr("文本") << tr("图片");
-    showContentProperty_->setList(contents);
-    showContentProperty_->setValue(showContent_);
-    propList.insert(propList.end(), showContentProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("显示内容"));
+    contents_.clear();
+    contents_ << tr("文本") << tr("图片");
+    property->setAttribute(QLatin1String("enumNames"), contents_);
+    addProperty(property, QLatin1String("showContent"));
 
     // 复位图片
-    resetFileProperty_ = new FileProperty(tr("选择复位图片"));
-    resetFileProperty_->setId(EL_PICTURE1);
-    if(!bShowContentText_)
-        propList.insert(propList.end(), resetFileProperty_);
+    property = variantPropertyManager_->addProperty(VariantManager::filePathTypeId(), tr("选择复位图片"));
+    property->setAttribute(QLatin1String("filter"), "image files (*.png *.jpg *.jpeg *.bmp)");
+    addProperty(property, QLatin1String("resetPicture"), !bShowContentText_);
 
     // 置位图片
-    setFileProperty_ = new FileProperty(tr("选择置位图片"));
-    setFileProperty_->setId(EL_PICTURE2);
-    if(!bShowContentText_)
-        propList.insert(propList.end(), setFileProperty_);
+    property = variantPropertyManager_->addProperty(VariantManager::filePathTypeId(), tr("选择置位图片"));
+    property->setAttribute(QLatin1String("filter"), "image files (*.png *.jpg *.jpeg *.bmp)");
+    addProperty(property, QLatin1String("setPicture"), !bShowContentText_);
 
     // 原尺寸显示
-    showNoScaleProperty_ = new BoolProperty(tr("原尺寸显示"));
-    showNoScaleProperty_->setId(EL_SHOW_SCALE);
-    showNoScaleProperty_->setTrueText(tr("是"));
-    showNoScaleProperty_->setFalseText(tr("否"));
-    showNoScaleProperty_->setValue(showNoScale_);
-    if(!bShowContentText_)
-        propList.insert(propList.end(), showNoScaleProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("原尺寸显示"));
+    addProperty(property, QLatin1String("showNoScale"), !bShowContentText_);
 
     // 复位显示文本
-    resetTextProperty_ = new TextProperty(tr("关时文本"));
-    resetTextProperty_->setId(EL_TEXT1);
-    resetTextProperty_->setValue(resetText_);
-    if(bShowContentText_)
-        propList.insert(propList.end(), resetTextProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("关时文本"));
+    addProperty(property, QLatin1String("resetText"), bShowContentText_);
 
     // 置位显示文本
-    setTextProperty_ = new TextProperty(tr("开时文本"));
-    setTextProperty_->setId(EL_TEXT2);
-    setTextProperty_->setValue(setText_);
-    if(bShowContentText_)
-        propList.insert(propList.end(), setTextProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("开时文本"));
+    addProperty(property, QLatin1String("setText"), bShowContentText_);
 
     // 字体
-    fontProperty_ = new FontProperty(tr("字体"));
-    fontProperty_->setId(EL_FONT);
-    fontProperty_->setValue(QFont("Arial Black", 12));
-    if(bShowContentText_)
-        propList.insert(propList.end(), fontProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Font, tr("字体"));
+    addProperty(property, QLatin1String("font"), bShowContentText_);
 
     // 文本颜色
-    textColorProperty = new ColorProperty(tr("颜色"));
-    textColorProperty->setId(EL_FONT_COLOR);
-    if(bShowContentText_)
-        propList.insert(propList.end(), textColorProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("文本颜色"));
+    addProperty(property, QLatin1String("textColor"), bShowContentText_);
 
     // 水平对齐
-    hAlignProperty_ = new ListProperty(tr("水平对齐"));
-    hAlignProperty_->setId(EL_H_ALIGN);
-    QStringList hAlignList;
-    hAlignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
-    hAlignProperty_->setList(hAlignList);
-    if(bShowContentText_)
-        propList.insert(propList.end(), hAlignProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("水平对齐"));
+    hAlignList_.clear();
+    hAlignList_ << tr("左对齐") << tr("居中对齐") << tr("右对齐");
+    property->setAttribute(QLatin1String("enumNames"), hAlignList_);
+    addProperty(property, QLatin1String("hAlign"), bShowContentText_);
 
     // 垂直对齐
-    vAlignProperty_ = new ListProperty(tr("水平对齐"));
-    vAlignProperty_->setId(EL_V_ALIGN);
-    QStringList vAlignList;
-    vAlignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
-    vAlignProperty_->setList(vAlignList);
-    if(bShowContentText_)
-        propList.insert(propList.end(), vAlignProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("垂直对齐"));
+    vAlignList_.clear();
+    vAlignList_ << tr("上对齐") << tr("居中对齐") << tr("下对齐");
+    property->setAttribute(QLatin1String("enumNames"), vAlignList_);
+    addProperty(property, QLatin1String("vAlign"), bShowContentText_);
 
     // 复位按钮背景颜色
-    resetBackgroundColorProperty_ = new ColorProperty(tr("关背景颜色"));
-    resetBackgroundColorProperty_->setId(EL_BACKGROUND1);
-    resetBackgroundColorProperty_->setValue(resetBackgroundColor_);
-    if(bShowContentText_)
-        propList.insert(propList.end(), resetBackgroundColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("关背景颜色"));
+    addProperty(property, QLatin1String("resetBackground"), bShowContentText_);
 
     // 置位按钮背景颜色
-    setBackgroundColorProperty_ = new ColorProperty(tr("开背景颜色"));
-    setBackgroundColorProperty_->setId(EL_BACKGROUND2);
-    setBackgroundColorProperty_->setValue(setBackgroundColor_);
-    if(bShowContentText_)
-        propList.insert(propList.end(), setBackgroundColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("开背景颜色"));
+    addProperty(property, QLatin1String("setBackground"), bShowContentText_);
 
     // 透明
-    transparentProperty_ = new BoolProperty(tr("透明显示"));
-    transparentProperty_->setId(EL_TRANSPARENT_BACKGROUND);
-    transparentProperty_->setTrueText(tr("透明"));
-    transparentProperty_->setFalseText(tr("不透明"));
-    transparentProperty_->setValue(transparent_);
-    propList.insert(propList.end(), transparentProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("透明显示"));
+    addProperty(property, QLatin1String("transparent"));
 
     // 初始有效性
-    enableOnInitialProperty_ = new BoolProperty(tr("初始有效性"));
-    enableOnInitialProperty_->setId(EL_ENABLE_ON_INITIAL);
-    enableOnInitialProperty_->setTrueText(tr("有效"));
-    enableOnInitialProperty_->setFalseText(tr("失效"));
-    enableOnInitialProperty_->setValue(enableOnInitial_);
-    propList.insert(propList.end(), enableOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始有效性"));
+    addProperty(property, QLatin1String("enableOnInitial"));
 
     // 初始可见性
-    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
-    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
-    showOnInitialProperty_->setTrueText(tr("显示"));
-    showOnInitialProperty_->setFalseText(tr("不显示"));
-    showOnInitialProperty_->setValue(showOnInitial_);
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
+    addProperty(property, QLatin1String("showOnInitial"));
 
-    xCoordProperty = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
+    // 坐标 X
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
-    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
+    // 坐标 Y
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
-    zValueProperty = new IntegerProperty(tr("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
+    // Z 值
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
     // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
     // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 
     // 旋转角度
-    angleProperty = new IntegerProperty(tr("角度"));
-    angleProperty->setId(EL_ANGLE);
-    angleProperty->setSettings(0, 360);
-    propList.insert(propList.end(), angleProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("角度"));
+    property->setAttribute(QLatin1String("minimum"), -360);
+    property->setAttribute(QLatin1String("maximum"), 360);
+    addProperty(property, QLatin1String("angle"));
 }
 
-void ElementSwitchButton::updateElementProperty(uint id, const QVariant &value)
+void ElementSwitchButton::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-    case EL_TAG:
-        szTagSelected_ = value.toString();
-        break;
-    case EL_STATE_ON_INITIAL:
+    } else if (id == QLatin1String("tag")) {
+        szTagSelected_ = tagNames_.at(value.toInt());
+    } else if (id == QLatin1String("functions")) {
+        QString szFuncs = value.toString();
+        funcs_ = szFuncs.split('|');
+    } else if (id == QLatin1String("stateOnInitial")) {
         stateOnInitial_ = value.toBool();
-        break;
-    case EL_PICTURE1:
-    {
+    } else if (id == QLatin1String("showContent")) {
+        QString szShowContent = contents_.at(value.toInt());
+        if(showContent_ != szShowContent) {
+            showContent_ = szShowContent;
+            bShowContentText_ = true;
+            if(showContent_ == tr("图片")) {
+                bShowContentText_ = false;
+            }
+            updateBoundingElement();
+            // 属性集发生改变需要更新属性表
+            updatePropertyEditor();
+        }
+    } else if (id == QLatin1String("resetPicture")) {
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
@@ -310,9 +282,7 @@ void ElementSwitchButton::updateElementProperty(uint id, const QVariant &value)
             picResMgr_.add(ProjectData::getInstance()->dbData_, resetPictureFile_);
             updatePropertyModel();
         }
-    }break;
-    case EL_PICTURE2:
-    {
+    } else if (id == QLatin1String("setPicture")) {
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
@@ -333,200 +303,359 @@ void ElementSwitchButton::updateElementProperty(uint id, const QVariant &value)
             picResMgr_.add(ProjectData::getInstance()->dbData_, setPictureFile_);
             updatePropertyModel();
         }
-    }break;
-    case EL_SHOW_SCALE:
+    } else if (id == QLatin1String("showNoScale")) {
         showNoScale_ = value.toBool();
-        break;
-    case EL_TEXT1:
+    } else if (id == QLatin1String("resetText")) {
         resetText_ = value.toString();
-        break;
-    case EL_TEXT2:
+    } else if (id == QLatin1String("setText")) {
         setText_ = value.toString();
-        break;
-    case EL_X:
+    } else if (id == QLatin1String("font")) {
+        font_ = value.value<QFont>();
+    } else if (id == QLatin1String("textColor")) {
+        textColor = value.value<QColor>();
+    } else if (id == QLatin1String("hAlign")) {
+        szHAlign_ = hAlignList_.at(value.toInt());
+    } else if (id == QLatin1String("vAlign")) {
+        szVAlign_ = vAlignList_.at(value.toInt());
+    } else if (id == QLatin1String("resetBackground")) {
+        resetBackgroundColor_ = value.value<QColor>();
+    } else if (id == QLatin1String("setBackground")) {
+        setBackgroundColor_ = value.value<QColor>();
+    } else if (id == QLatin1String("transparent")) {
+        transparent_ = value.toBool();
+    } else if (id == QLatin1String("enableOnInitial")) {
+        enableOnInitial_ = value.toBool();
+    } else if (id == QLatin1String("showOnInitial")) {
+        showOnInitial_ = value.toBool();
+    } else if (id == QLatin1String("xCoord")) {
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
-        break;
-    case EL_Y:
+    } else if (id == QLatin1String("yCoord")) {
         elementYPos = value.toInt();
         setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
+    } else if (id == QLatin1String("zValue")) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
+    } else if (id == QLatin1String("width")) {
         elementWidth = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_HEIGHT:
+    } else if (id == QLatin1String("height")) {
         elementHeight = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_SHOW_CONTENT:
-        if(showContent_ != value.toString()) {
-            showContent_ = value.toString();
-            bShowContentText_ = true;
-            if(showContent_ == tr("图片")) {
-                bShowContentText_ = false;
-            }
-            updateBoundingElement();
-            // 属性集发生改变需要更新属性表
-            updatePropertyTableView();
-        }
-        break;
-    case EL_FONT:
-        font_ = value.value<QFont>();
-        break;
-    case EL_H_ALIGN:
-        szHAlign_ = value.toString();
-        break;
-    case EL_V_ALIGN:
-        szVAlign_ = value.toString();
-        break;
-    case EL_BACKGROUND1:
-        resetBackgroundColor_ = value.value<QColor>();
-        break;
-    case EL_BACKGROUND2:
-        setBackgroundColor_ = value.value<QColor>();
-        break;
-    case EL_TRANSPARENT_BACKGROUND:
-        transparent_ = value.toBool();
-        break;
-    case EL_FONT_COLOR:
-        textColor = value.value<QColor>();
-        break;
-    case EL_ANGLE:
+    } else if (id == QLatin1String("angle")) {
         elemAngle = value.toInt();
         setAngle(elemAngle);
-        break;
-    case EL_ENABLE_ON_INITIAL:
-        enableOnInitial_ = value.toBool();
-        break;
-    case EL_SHOW_ON_INITIAL:
-        showOnInitial_ = value.toBool();
-        break;
-    case EL_FUNCTION:
-        funcs_ = value.toStringList();
-        break;
     }
 
-    update();
     scene()->update();
+    update();
 }
 
 void ElementSwitchButton::updatePropertyModel()
 {
-    idProperty->setValue(elementId);
-    tagSelectProperty_->setValue(szTagSelected_);
-    funcProperty->setValue(funcs_);
-    stateOnInitialProperty_->setValue(stateOnInitial_);
-    showContentProperty_->setValue(showContent_);
+    QtVariantProperty *property = Q_NULLPTR;
 
-    resetFileProperty_->setValue(resetPictureFile_);
-    setFileProperty_->setValue(setPictureFile_);
-    showNoScaleProperty_->setValue(showNoScale_);
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
 
-    resetTextProperty_->setValue(resetText_);
-    setTextProperty_->setValue(setText_);
-    fontProperty_->setValue(font_);
-    textColorProperty->setValue(textColor);
-    hAlignProperty_->setValue(szHAlign_);
-    vAlignProperty_->setValue(szVAlign_);
+    property = idToProperty_[QLatin1String("tag")];
+    if(property != Q_NULLPTR) {
+        property->setValue(tagNames_.indexOf(szTagSelected_));
+    }
 
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    widthProperty_->setValue(elementWidth);
-    heightProperty_->setValue(elementHeight);
+    property = idToProperty_[QLatin1String("functions")];
+    if(property != Q_NULLPTR) {
+        property->setValue(funcs_.join('|'));
+    }
 
-    resetBackgroundColorProperty_->setValue(resetBackgroundColor_);
-    setBackgroundColorProperty_->setValue(setBackgroundColor_);
-    transparentProperty_->setValue(transparent_);
-    angleProperty->setValue(elemAngle);
-    enableOnInitialProperty_->setValue(enableOnInitial_);
-    showOnInitialProperty_->setValue(showOnInitial_);
+    property = idToProperty_[QLatin1String("stateOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(stateOnInitial_);
+    }
 
+    property = idToProperty_[QLatin1String("showContent")];
+    if(property != Q_NULLPTR) {
+        property->setValue(contents_.indexOf(showContent_));
+    }
+
+    property = idToProperty_[QLatin1String("resetPicture")];
+    if(property != Q_NULLPTR) {
+        property->setValue(resetPictureFile_);
+    }
+
+    property = idToProperty_[QLatin1String("setPicture")];
+    if(property != Q_NULLPTR) {
+        property->setValue(setPictureFile_);
+    }
+
+    property = idToProperty_[QLatin1String("showNoScale")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showNoScale_);
+    }
+
+    property = idToProperty_[QLatin1String("resetText")];
+    if(property != Q_NULLPTR) {
+        property->setValue(resetText_);
+    }
+
+    property = idToProperty_[QLatin1String("setText")];
+    if(property != Q_NULLPTR) {
+        property->setValue(setText_);
+    }
+
+    property = idToProperty_[QLatin1String("font")];
+    if(property != Q_NULLPTR) {
+        property->setValue(font_);
+    }
+
+    property = idToProperty_[QLatin1String("textColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(textColor);
+    }
+
+    property = idToProperty_[QLatin1String("hAlign")];
+    if(property != Q_NULLPTR) {
+        property->setValue(hAlignList_.indexOf(szHAlign_));
+    }
+
+    property = idToProperty_[QLatin1String("vAlign")];
+    if(property != Q_NULLPTR) {
+        property->setValue(vAlignList_.indexOf(szVAlign_));
+    }
+
+    property = idToProperty_[QLatin1String("resetBackground")];
+    if(property != Q_NULLPTR) {
+        property->setValue(resetBackgroundColor_);
+    }
+
+    property = idToProperty_[QLatin1String("setBackground")];
+    if(property != Q_NULLPTR) {
+        property->setValue(setBackgroundColor_);
+    }
+
+    property = idToProperty_[QLatin1String("transparent")];
+    if(property != Q_NULLPTR) {
+        property->setValue(transparent_);
+    }
+
+    property = idToProperty_[QLatin1String("enableOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(enableOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
+
+    property = idToProperty_[QLatin1String("angle")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elemAngle);
+    }
 }
 
 void ElementSwitchButton::reloadPropertyList()
 {
+    QtVariantProperty *property = Q_NULLPTR;
     propList.clear();
 
     // ID
-    propList.insert(propList.end(), idProperty);
-    // 标题
-    propList.insert(propList.end(), titleProperty);
-    // 选择变量
-    propList.insert(propList.end(), tagSelectProperty_);
-    // 选择功能
-    propList.insert(propList.end(), funcProperty);
-    // 初始状态
-    propList.insert(propList.end(), stateOnInitialProperty_);
-    // 显示内容
-    propList.insert(propList.end(), showContentProperty_);
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
 
+    // 选择变量
+    property = idToProperty_[QLatin1String("tag")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
+    // 选择功能
+    property = idToProperty_[QLatin1String("functions")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
+    // 初始状态
+    property = idToProperty_[QLatin1String("stateOnInitial")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
+    // 显示内容
+    property = idToProperty_[QLatin1String("showContent")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
 
     if(!bShowContentText_) { // 显示内容图片
         // 复位图片
-        propList.insert(propList.end(), resetFileProperty_);
+        property = idToProperty_[QLatin1String("resetPicture")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 置位图片
-        propList.insert(propList.end(), setFileProperty_);
+        property = idToProperty_[QLatin1String("setPicture")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 原尺寸显示
-        propList.insert(propList.end(), showNoScaleProperty_);
+        property = idToProperty_[QLatin1String("showNoScale")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
     } else { // 显示内容文本
         // 复位显示文本
-        propList.insert(propList.end(), resetTextProperty_);
+        property = idToProperty_[QLatin1String("resetText")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 置位显示文本
-        propList.insert(propList.end(), setTextProperty_);
+        property = idToProperty_[QLatin1String("setText")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 字体
-        propList.insert(propList.end(), fontProperty_);
+        property = idToProperty_[QLatin1String("font")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 文本颜色
-        propList.insert(propList.end(), textColorProperty);
+        property = idToProperty_[QLatin1String("textColor")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 水平对齐
-        propList.insert(propList.end(), hAlignProperty_);
+        property = idToProperty_[QLatin1String("hAlign")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 垂直对齐
-        propList.insert(propList.end(), vAlignProperty_);
+        property = idToProperty_[QLatin1String("vAlign")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 关背景颜色
-        propList.insert(propList.end(), resetBackgroundColorProperty_);
+        property = idToProperty_[QLatin1String("resetBackground")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
+
         // 开背景颜色
-        propList.insert(propList.end(), setBackgroundColorProperty_);
+        property = idToProperty_[QLatin1String("setBackground")];
+        if(property != Q_NULLPTR) {
+            propList.append(property);
+        }
     }
 
     // 透明
-    propList.insert(propList.end(), transparentProperty_);
+    property = idToProperty_[QLatin1String("transparent")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     // 初始有效性
-    propList.insert(propList.end(), enableOnInitialProperty_);
+    property = idToProperty_[QLatin1String("enableOnInitial")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     // 初始可见性
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     // 坐标 X
-    propList.insert(propList.end(), xCoordProperty);
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     //坐标 Y
-    propList.insert(propList.end(), yCoordProperty);
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     // Z 值
-    propList.insert(propList.end(), zValueProperty);
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     // 宽度
-    propList.insert(propList.end(), widthProperty_);
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     // 高度
-    propList.insert(propList.end(), heightProperty_);
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
     // 旋转角度
-    propList.insert(propList.end(), angleProperty);
+    property = idToProperty_[QLatin1String("angle")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
 }
 
 /**
- * @brief ElementSwitchButton::updatePropertyTableView
+ * @brief ElementSwitchButton::updatePropertyEditor
  * @details 更新属性表
  */
-void ElementSwitchButton::updatePropertyTableView()
+void ElementSwitchButton::updatePropertyEditor()
 {
-    PropertyModel *pModel = showContentProperty_->getPropertyModel();
-    if(pModel != nullptr) {
-        pModel->resetModel();
-        updatePropertyModel();
-        reloadPropertyList();
-        QListIterator<Property*> iter(getPropertyList());
-        while (iter.hasNext()) {
-            pModel->addProperty(iter.next());
+    VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
+    if(pVariantManager != Q_NULLPTR) {
+        QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
+        if(pPropertyEditor != Q_NULLPTR) {
+            pPropertyEditor->clear();
+            this->updatePropertyModel();
+            reloadPropertyList();
+            QListIterator<QtProperty*> iter(this->getPropertyList());
+            while (iter.hasNext()) {
+                pPropertyEditor->addProperty(iter.next());
+            }
         }
     }
 }
