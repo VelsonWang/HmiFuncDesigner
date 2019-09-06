@@ -10,8 +10,8 @@ SUBDIRS += \
 ###############<基本控件>##################
     EPushButton \
     EInputEdit \
-    EPicture
-#    EPicture \
+    EPicture \
+    EIndicationLamp
 #    EIndicationLamp \
 #    ESwitchButton \
 #    EClock \

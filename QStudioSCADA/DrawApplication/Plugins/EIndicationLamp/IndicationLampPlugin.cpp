@@ -89,7 +89,9 @@ QString IndicationLampPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* IndicationLampPlugin::createElement(const QString &szProjPath, const QString &szProjName)
+Element* IndicationLampPlugin::createElement(const QString &szProjPath,
+                                             const QString &szProjName,
+                                             QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementIndicationLamp(szProjPath, szProjName);
+    return new ElementIndicationLamp(szProjPath, szProjName, propertyMgr);
 }

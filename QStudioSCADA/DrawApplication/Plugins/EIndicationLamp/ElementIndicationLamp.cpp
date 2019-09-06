@@ -4,11 +4,14 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
+#include "variantmanager.h"
 
 int ElementIndicationLamp::iLastIndex_ = 1;
 
-ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath, const QString &szProjName) :
-    Element(szProjPath, szProjName)
+ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath,
+                                             const QString &szProjName,
+                                             QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("IndicationLamp_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -74,99 +77,87 @@ QPainterPath ElementIndicationLamp::shape() const
 
 void ElementIndicationLamp::createPropertyList()
 {
-    idProperty = new TextProperty(tr("ID"));
-    idProperty->setId(EL_ID);
-    idProperty->setReadOnly(true);
-    propList.insert(propList.end(), idProperty);
+    propList.clear();
+    clearProperties();
 
-    titleProperty = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    // ID
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
     // 选择变量
-    tagSelectProperty_ = new ListProperty(tr("选择变量"));
-    tagSelectProperty_->setId(EL_TAG);
-    QStringList varList;
-    TagManager::getAllTagName(TagManager::getProjectPath(), varList);
-    tagSelectProperty_->setList(varList);
-    propList.insert(propList.end(), tagSelectProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
+    tagNames_.clear();
+    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    property->setAttribute(QLatin1String("enumNames"), tagNames_);
+    addProperty(property, QLatin1String("tag"));
 
     // 初始状态
-    stateOnInitialProperty_ = new BoolProperty(tr("初始状态"));
-    stateOnInitialProperty_->setId(EL_STATE_ON_INITIAL);
-    stateOnInitialProperty_->setTrueText(tr("置位状态"));
-    stateOnInitialProperty_->setFalseText(tr("复位状态"));
-    stateOnInitialProperty_->setValue(stateOnInitial_);
-    propList.insert(propList.end(), stateOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始状态"));
+    addProperty(property, QLatin1String("stateOnInitial"));
 
     // 复位图片
-    resetFileProperty_ = new FileProperty(tr("选择复位图片"));
-    resetFileProperty_->setId(EL_PICTURE1);
-    propList.insert(propList.end(), resetFileProperty_);
+    property = variantPropertyManager_->addProperty(VariantManager::filePathTypeId(), tr("选择复位图片"));
+    property->setAttribute(QLatin1String("filter"), "image files (*.png *.jpg *.jpeg *.bmp)");
+    addProperty(property, QLatin1String("resetPicture"));
 
     // 置位图片
-    setFileProperty_ = new FileProperty(tr("选择置位图片"));
-    setFileProperty_->setId(EL_PICTURE2);
-    propList.insert(propList.end(), setFileProperty_);
+    property = variantPropertyManager_->addProperty(VariantManager::filePathTypeId(), tr("选择置位图片"));
+    property->setAttribute(QLatin1String("filter"), "image files (*.png *.jpg *.jpeg *.bmp)");
+    addProperty(property, QLatin1String("setPicture"));
 
     // 原尺寸显示
-    showNoScaleProperty_ = new BoolProperty(tr("原尺寸显示"));
-    showNoScaleProperty_->setId(EL_SHOW_SCALE);
-    showNoScaleProperty_->setTrueText(tr("是"));
-    showNoScaleProperty_->setFalseText(tr("否"));
-    showNoScaleProperty_->setValue(showNoScale_);
-    propList.insert(propList.end(), showNoScaleProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("原尺寸显示"));
+    addProperty(property, QLatin1String("showNoScale"));
 
     // 初始可见性
-    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
-    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
-    showOnInitialProperty_->setTrueText(tr("显示"));
-    showOnInitialProperty_->setFalseText(tr("不显示"));
-    showOnInitialProperty_->setValue(showOnInitial_);
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
+    addProperty(property, QLatin1String("showOnInitial"));
 
-    xCoordProperty = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty->setSettings(0, 5000);
-    xCoordProperty->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty);
+    // 坐标 X
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
-    yCoordProperty = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty->setId(EL_Y);
-    yCoordProperty->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty);
+    // 坐标 Y
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
-    zValueProperty = new IntegerProperty(tr("Z 值"));
-    zValueProperty->setId(EL_Z_VALUE);
-    zValueProperty->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty);
+    // Z 值
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
     // 宽度
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
     // 高度
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
-
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 }
 
-void ElementIndicationLamp::updateElementProperty(uint id, const QVariant &value)
+void ElementIndicationLamp::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-    case EL_TAG:
-        szTagSelected_ = value.toString();
-        break;
-    case EL_STATE_ON_INITIAL:
+    } else if (id == QLatin1String("tag")) {
+        szTagSelected_ = tagNames_.at(value.toInt());
+    } else if (id == QLatin1String("stateOnInitial")) {
         stateOnInitial_ = value.toBool();
-        break;
-    case EL_PICTURE1:
-    {
+    } else if (id == QLatin1String("resetPicture")) {
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
@@ -187,9 +178,7 @@ void ElementIndicationLamp::updateElementProperty(uint id, const QVariant &value
             picResMgr_.add(ProjectData::getInstance()->dbData_, resetFileIndicationLamp_);
             updatePropertyModel();
         }
-    }break;
-    case EL_PICTURE2:
-    {
+    } else if (id == QLatin1String("setPicture")) {
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
@@ -210,33 +199,25 @@ void ElementIndicationLamp::updateElementProperty(uint id, const QVariant &value
             picResMgr_.add(ProjectData::getInstance()->dbData_, setFileIndicationLamp_);
             updatePropertyModel();
         }
-    }break;
-    case EL_X:
+    } else if (id == QLatin1String("showNoScale")) {
+        showNoScale_ = value.toBool();
+    } else if (id == QLatin1String("showOnInitial")) {
+        showOnInitial_ = value.toBool();
+    } else if (id == QLatin1String("xCoord")) {
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
-        break;
-    case EL_Y:
+    } else if (id == QLatin1String("yCoord")) {
         elementYPos = value.toInt();
         setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
+    } else if (id == QLatin1String("zValue")) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
+    } else if (id == QLatin1String("width")) {
         elementWidth = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_HEIGHT:
+    } else if (id == QLatin1String("height")) {
         elementHeight = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_SHOW_SCALE:
-        showNoScale_ = value.toBool();
-        break;
-    case EL_SHOW_ON_INITIAL:
-        showOnInitial_ = value.toBool();
-        break;
     }
 
     scene()->update();
@@ -245,18 +226,67 @@ void ElementIndicationLamp::updateElementProperty(uint id, const QVariant &value
 
 void ElementIndicationLamp::updatePropertyModel()
 {
-    idProperty->setValue(elementId);
-    tagSelectProperty_->setValue(szTagSelected_);
-    stateOnInitialProperty_->setValue(stateOnInitial_);
-    resetFileProperty_->setValue(resetFileIndicationLamp_);
-    setFileProperty_->setValue(setFileIndicationLamp_);
-    xCoordProperty->setValue(elementXPos);
-    yCoordProperty->setValue(elementYPos);
-    zValueProperty->setValue(elementZValue);
-    widthProperty_->setValue(elementWidth);
-    heightProperty_->setValue(elementHeight);
-    showNoScaleProperty_->setValue(showNoScale_);
-    showOnInitialProperty_->setValue(showOnInitial_);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
+
+    property = idToProperty_[QLatin1String("tag")];
+    if(property != Q_NULLPTR) {
+        property->setValue(tagNames_.indexOf(szTagSelected_));
+    }
+
+    property = idToProperty_[QLatin1String("stateOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(stateOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("resetPicture")];
+    if(property != Q_NULLPTR) {
+        property->setValue(resetFileIndicationLamp_);
+    }
+
+    property = idToProperty_[QLatin1String("setPicture")];
+    if(property != Q_NULLPTR) {
+        property->setValue(setFileIndicationLamp_);
+    }
+
+    property = idToProperty_[QLatin1String("showNoScale")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showNoScale_);
+    }
+
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
 }
 
 void ElementIndicationLamp::setClickPosition(QPointF position)

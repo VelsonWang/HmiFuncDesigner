@@ -10,10 +10,12 @@ class ElementIndicationLamp : public Element
 {
     Q_OBJECT
 public:
-    ElementIndicationLamp(const QString &szProjPath, const QString &szProjName);
+    ElementIndicationLamp(const QString &szProjPath,
+                          const QString &szProjName,
+                          QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(uint id, const QVariant &value) override;
+    void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
     void writeAsXml(QXmlStreamWriter &writer) override;
@@ -23,10 +25,8 @@ public:
     void regenerateElementId() override;
     void release() override; // 释放占用的资源
 
-    enum {Type = IndicationLampItemType};
-
-    int type() const {
-        return Type;
+    int type() const override {
+        return IndicationLampItemType;
     }
 
     friend QDataStream &operator<<(QDataStream &out,const ElementIndicationLamp &IndicationLamp);
@@ -40,6 +40,9 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
     QPainterPath shape() const override;
+
+private:
+    QStringList tagNames_;
 
 private:
     static int iLastIndex_;
@@ -58,35 +61,6 @@ private:
     bool showNoScale_;
     // 初始可见性
     bool showOnInitial_;
-
-    // ID
-    TextProperty *idProperty;
-    // 标题
-    EmptyProperty *titleProperty;
-    // 选择变量
-    ListProperty *tagSelectProperty_;
-    // 初始状态
-    BoolProperty *stateOnInitialProperty_;
-    // 选择复位图片
-    FileProperty *resetFileProperty_;
-    // 选择置位图片
-    FileProperty *setFileProperty_;
-
-    // X坐标
-    IntegerProperty *xCoordProperty;
-    // Y坐标
-    IntegerProperty *yCoordProperty;
-    // Z坐标
-    IntegerProperty *zValueProperty;
-    // 宽度
-    IntegerProperty *widthProperty_;
-    // 高度
-    IntegerProperty *heightProperty_;
-    // 原尺寸显示
-    BoolProperty *showNoScaleProperty_;
-    // 初始可见性
-    BoolProperty *showOnInitialProperty_;
-
 };
 
 
