@@ -4,14 +4,17 @@
 #include "TagManager.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
+#include "variantmanager.h"
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDate>
 
 int ElementTagTextList::iLastIndex_ = 1;
 
-ElementTagTextList::ElementTagTextList(const QString &szProjPath, const QString &szProjName)
-    : Element(szProjPath, szProjName)
+ElementTagTextList::ElementTagTextList(const QString &szProjPath,
+                                       const QString &szProjName,
+                                       QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("TagTextList_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -71,212 +74,251 @@ QPainterPath ElementTagTextList::shape() const
 
 void ElementTagTextList::createPropertyList()
 {
-    // ID
-    idProperty_ = new TextProperty(tr("ID"));
-    idProperty_->setId(EL_ID);
-    idProperty_->setReadOnly(true);
-    propList.insert(propList.end(), idProperty_);
+    propList.clear();
+    clearProperties();
 
-    // 标题
-    titleProperty_ = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty_);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    // ID
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
     // 选择变量
-    tagSelectProperty_ = new ListProperty(tr("选择变量"));
-    tagSelectProperty_->setId(EL_TAG);
-    QStringList varList;
-    TagManager::getAllTagName(TagManager::getProjectPath(), varList);
-    tagSelectProperty_->setList(varList);
-    propList.insert(propList.end(), tagSelectProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
+    tagNames_.clear();
+    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    property->setAttribute(QLatin1String("enumNames"), tagNames_);
+    addProperty(property, QLatin1String("tag"));
 
     // 变量文本列表
-    tagTextListProperty_ = new TagTextListProperty(tr("变量文本列表"));
-    tagTextListProperty_->setId(EL_TAG_TEXT_LIST);
-    tagTextListProperty_->setValue(tagTextList_);
-    propList.insert(propList.end(), tagTextListProperty_);
+    property = variantPropertyManager_->addProperty(VariantManager::TagTextListTypeId(), tr("变量文本列表"));
+    addProperty(property, QLatin1String("tagTextList"));
 
     // 文本
-    elementTextProperty_ = new TextProperty(tr("文本"));
-    elementTextProperty_->setId(EL_TEXT);
-    elementTextProperty_->setValue(elementText);
-    propList.insert(propList.end(), elementTextProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("文本"));
+    addProperty(property, QLatin1String("text"));
 
     // 水平对齐
-    hAlignProperty_ = new ListProperty(tr("水平对齐"));
-    hAlignProperty_->setId(EL_H_ALIGN);
-    QStringList hAlignList;
-    hAlignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
-    hAlignProperty_->setList(hAlignList);
-    propList.insert(propList.end(), hAlignProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("水平对齐"));
+    hAlignList_.clear();
+    hAlignList_ << tr("左对齐") << tr("居中对齐") << tr("右对齐");
+    property->setAttribute(QLatin1String("enumNames"), hAlignList_);
+    addProperty(property, QLatin1String("hAlign"));
 
     // 垂直对齐
-    vAlignProperty_ = new ListProperty(tr("水平对齐"));
-    vAlignProperty_->setId(EL_V_ALIGN);
-    QStringList vAlignList;
-    vAlignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
-    vAlignProperty_->setList(vAlignList);
-    propList.insert(propList.end(), vAlignProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("垂直对齐"));
+    vAlignList_.clear();
+    vAlignList_ << tr("上对齐") << tr("居中对齐") << tr("下对齐");
+    property->setAttribute(QLatin1String("enumNames"), vAlignList_);
+    addProperty(property, QLatin1String("vAlign"));
 
     // 背景颜色
-    backgroundColorProperty_ = new ColorProperty(tr("背景颜色"));
-    backgroundColorProperty_->setId(EL_BACKGROUND);
-    backgroundColorProperty_->setValue(backgroundColor_);
-    propList.insert(propList.end(), backgroundColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("背景颜色"));
+    addProperty(property, QLatin1String("background"));
 
     // 透明背景颜色
-    transparentBackgroundProperty_ = new BoolProperty(tr("透明背景颜色"));
-    transparentBackgroundProperty_->setId(EL_TRANSPARENT_BACKGROUND);
-    transparentBackgroundProperty_->setTrueText(tr("透明"));
-    transparentBackgroundProperty_->setFalseText(tr("不透明"));
-    transparentBackgroundProperty_->setValue(transparentBackground_);
-    propList.insert(propList.end(), transparentBackgroundProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("透明背景颜色"));
+    addProperty(property, QLatin1String("transparent"));
 
     // 字体
-    fontProperty_ = new FontProperty(tr("字体"));
-    fontProperty_->setId(EL_FONT);
-    fontProperty_->setValue(QFont("Arial Black", 12));
-    propList.insert(propList.end(), fontProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Font, tr("字体"));
+    addProperty(property, QLatin1String("font"));
 
     // 文本颜色
-    textColorProperty = new ColorProperty(tr("文本颜色"));
-    textColorProperty->setId(EL_FONT_COLOR);
-    propList.insert(propList.end(),textColorProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("文本颜色"));
+    addProperty(property, QLatin1String("textColor"));
 
     // 边框宽度
-    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
-    borderWidthProperty_->setId(EL_BORDER_WIDTH);
-    borderWidthProperty_->setSettings(0, 1000);
-    borderWidthProperty_->setValue(borderWidth_);
-    propList.insert(propList.end(), borderWidthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("边框宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("borderWidth"));
 
     // 边框颜色
-    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
-    borderColorProperty_->setId(EL_BORDER_COLOR);
-    borderColorProperty_->setValue(borderColor_);
-    propList.insert(propList.end(), borderColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("边框颜色"));
+    addProperty(property, QLatin1String("borderColor"));
 
     // 初始可见性
-    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
-    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
-    showOnInitialProperty_->setTrueText(tr("显示"));
-    showOnInitialProperty_->setFalseText(tr("不显示"));
-    showOnInitialProperty_->setValue(showOnInitial_);
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
+    addProperty(property, QLatin1String("showOnInitial"));
 
-    xCoordProperty_ = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty_->setSettings(0, 5000);
-    xCoordProperty_->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty_);
+    // 坐标 X
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
-    yCoordProperty_ = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty_->setId(EL_Y);
-    yCoordProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty_);
+    // 坐标 Y
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
-    zValueProperty_ = new IntegerProperty(tr("Z 值"));
-    zValueProperty_->setId(EL_Z_VALUE);
-    zValueProperty_->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty_);
+    // Z 值
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
+    // 宽度
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    // 高度
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 }
 
-void ElementTagTextList::updateElementProperty(uint id, const QVariant &value)
+void ElementTagTextList::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-    case EL_TAG:
-        szTagSelected_ = value.toString();
-        break;
-    case EL_TAG_TEXT_LIST:
-        tagTextList_ = value.toStringList();
-        break;
-    case EL_TEXT:
+    } else if (id == QLatin1String("tag")) {
+        szTagSelected_ = tagNames_.at(value.toInt());
+    } else if (id == QLatin1String("tagTextList")) {
+        QString szTagText = value.toString();
+        tagTextList_ = szTagText.split('|');
+    } else if (id == QLatin1String("text")) {
         elementText = value.toString();
-        break;
-    case EL_H_ALIGN:
-        szHAlign_ = value.toString();
-        break;
-    case EL_V_ALIGN:
-        szVAlign_ = value.toString();
-        break;
-    case EL_BACKGROUND:
+    } else if (id == QLatin1String("hAlign")) {
+        szHAlign_ = hAlignList_.at(value.toInt());
+    } else if (id == QLatin1String("vAlign")) {
+        szVAlign_ = vAlignList_.at(value.toInt());
+    } else if (id == QLatin1String("background")) {
         backgroundColor_ = value.value<QColor>();
-        break;
-    case EL_TRANSPARENT_BACKGROUND:
+    } else if (id == QLatin1String("transparent")) {
         transparentBackground_ = value.toBool();
-        break;
-    case EL_FONT:
+    } else if (id == QLatin1String("font")) {
         font_ = value.value<QFont>();
-        break;
-    case EL_FONT_COLOR:
+    } else if (id == QLatin1String("textColor")) {
         textColor = value.value<QColor>();
-        break;
-    case EL_BORDER_WIDTH:
+    } else if (id == QLatin1String("borderWidth")) {
         borderWidth_ = value.toInt();
-        break;
-    case EL_BORDER_COLOR:
+    } else if (id == QLatin1String("borderColor")) {
         borderColor_ = value.value<QColor>();
-        break;
-    case EL_SHOW_ON_INITIAL:
+    } else if (id == QLatin1String("showOnInitial")) {
         showOnInitial_ = value.toBool();
-        break;
-    case EL_X:
+    } else if (id == QLatin1String("xCoord")) {
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
-        break;
-    case EL_Y:
+    } else if (id == QLatin1String("yCoord")) {
         elementYPos = value.toInt();
         setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
+    } else if (id == QLatin1String("zValue")) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
+    } else if (id == QLatin1String("width")) {
         elementWidth = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_HEIGHT:
+    } else if (id == QLatin1String("height")) {
         elementHeight = value.toInt();
         updateBoundingElement();
-        break;
     }
 
-    update();
     scene()->update();
+    update();
 }
 
 void ElementTagTextList::updatePropertyModel()
 {
-    idProperty_->setValue(elementId);
-    tagSelectProperty_->setValue(szTagSelected_);
-    tagTextListProperty_->setValue(tagTextList_);
-    elementTextProperty_->setValue(elementText);
-    hAlignProperty_->setValue(szHAlign_);
-    vAlignProperty_->setValue(szVAlign_);
-    backgroundColorProperty_->setValue(backgroundColor_);
-    transparentBackgroundProperty_->setValue(transparentBackground_);
-    fontProperty_->setValue(font_);
-    textColorProperty->setValue(textColor);
-    borderWidthProperty_->setValue(borderWidth_);
-    borderColorProperty_->setValue(borderColor_);
-    showOnInitialProperty_->setValue(showOnInitial_);
-    xCoordProperty_->setValue(elementXPos);
-    yCoordProperty_->setValue(elementYPos);
-    zValueProperty_->setValue(elementZValue);
-    widthProperty_->setValue(elementWidth);
-    heightProperty_->setValue(elementHeight);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
+
+    property = idToProperty_[QLatin1String("tag")];
+    if(property != Q_NULLPTR) {
+        property->setValue(tagNames_.indexOf(szTagSelected_));
+    }
+
+    property = idToProperty_[QLatin1String("tagTextList")];
+    if(property != Q_NULLPTR) {
+        property->setValue(tagTextList_.join('|'));
+    }
+
+    property = idToProperty_[QLatin1String("text")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementText);
+    }
+
+    property = idToProperty_[QLatin1String("hAlign")];
+    if(property != Q_NULLPTR) {
+        property->setValue(hAlignList_.indexOf(szHAlign_));
+    }
+
+    property = idToProperty_[QLatin1String("vAlign")];
+    if(property != Q_NULLPTR) {
+        property->setValue(vAlignList_.indexOf(szVAlign_));
+    }
+
+    property = idToProperty_[QLatin1String("background")];
+    if(property != Q_NULLPTR) {
+        property->setValue(backgroundColor_);
+    }
+
+    property = idToProperty_[QLatin1String("transparent")];
+    if(property != Q_NULLPTR) {
+        property->setValue(transparentBackground_);
+    }
+
+    property = idToProperty_[QLatin1String("font")];
+    if(property != Q_NULLPTR) {
+        property->setValue(font_);
+    }
+
+    property = idToProperty_[QLatin1String("textColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(textColor);
+    }
+
+    property = idToProperty_[QLatin1String("borderWidth")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderWidth_);
+    }
+
+    property = idToProperty_[QLatin1String("borderColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderColor_);
+    }
+
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
 }
 
 void ElementTagTextList::setClickPosition(QPointF position)

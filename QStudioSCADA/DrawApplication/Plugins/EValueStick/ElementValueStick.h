@@ -12,10 +12,12 @@ class ElementValueStick : public Element
     Q_OBJECT
 
 public:
-    explicit ElementValueStick(const QString &szProjPath, const QString &szProjName);
+    explicit ElementValueStick(const QString &szProjPath,
+                               const QString &szProjName,
+                               QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(uint id, const QVariant &value) override;
+    void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
     void writeAsXml(QXmlStreamWriter &) override;
@@ -31,12 +33,8 @@ public:
     QString getPosString(const QString& szPos) const;
     void setPosString(const QString& szPos, QString& szPosSet);
 
-    enum {
-        Type = ValueStickItemType
-    };
-
-    int type() const {
-        return Type;
+    int type() const override {
+        return ValueStickItemType;
     }
 
     friend QDataStream &operator<<(QDataStream &out, const ElementValueStick &textItem);
@@ -65,6 +63,11 @@ private:
                          QColor scaleColor,
                          QString scaleDirect,
                          QString scalePosition);
+
+private:
+    QStringList tagNames_;
+    QStringList scaleDirList_;
+    QStringList scalePosList_;
 
 private:
     static int iLastIndex_;
@@ -96,50 +99,6 @@ private:
     bool showScale_;
     // 初始可见性
     bool showOnInitial_;
-
-    // ID
-    TextProperty *idProperty_;
-    // 标题
-    EmptyProperty *titleProperty_;
-	// 选择变量
-	ListProperty *tagSelectProperty_;
-    // 刻度最大值
-    DoubleProperty *maxValueProperty_;
-    // 刻度最小值
-    DoubleProperty *minValueProperty_;
-    // 刻度个数
-    IntegerProperty *scaleNumProperty_;
-    // 背景颜色
-    ColorProperty *backgroundColorProperty_;
-    // 前景颜色
-    ColorProperty *foregroundColorProperty_;
-    // 标尺颜色
-    ColorProperty *scaleColorProperty_;
-    // 标尺方向
-    ListProperty *scaleDirProperty_;
-    // 标尺位置
-    ListProperty *scalePosProperty_;
-    // 字体
-    FontProperty *fontProperty_;
-    // 文本颜色
-    ColorProperty *textColorProperty_;
-    // 显示标尺
-    BoolProperty *showRulerProperty_;
-    // 显示刻度
-    BoolProperty *showScaleProperty_;
-    // 初始可见性
-    BoolProperty *showOnInitialProperty_;
-    // X坐标
-    IntegerProperty *xCoordProperty;
-    // Y坐标
-    IntegerProperty *yCoordProperty;
-    // Z坐标
-    IntegerProperty *zValueProperty;
-    // 宽度
-    IntegerProperty *widthProperty;
-    // 高度
-    IntegerProperty *heightProperty;
-
 };
 
 #endif // ELEMENTVALUESTICK_H

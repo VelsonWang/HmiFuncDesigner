@@ -89,7 +89,9 @@ QString ValueStickPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ValueStickPlugin::createElement(const QString &szProjPath, const QString &szProjName)
+Element* ValueStickPlugin::createElement(const QString &szProjPath,
+                                         const QString &szProjName,
+                                         QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementValueStick(szProjPath, szProjName);
+    return new ElementValueStick(szProjPath, szProjName, propertyMgr);
 }

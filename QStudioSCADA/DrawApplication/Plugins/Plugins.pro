@@ -14,9 +14,9 @@ SUBDIRS += \
     EIndicationLamp \
     ESwitchButton \
     EClock \
-    EMovingText
-#    EMovingText \
-#    ETagTextList \
+    EMovingText \
+    ETagTextList \
+    EValueStick
 #    EValueStick \
 #    EJarShape
 
