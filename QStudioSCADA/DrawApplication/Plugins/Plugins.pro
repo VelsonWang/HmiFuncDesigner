@@ -12,8 +12,8 @@ SUBDIRS += \
     EInputEdit \
     EPicture \
     EIndicationLamp \
-    ESwitchButton
-#    ESwitchButton \
+    ESwitchButton \
+    EClock
 #    EClock \
 #    EMovingText \
 #    ETagTextList \

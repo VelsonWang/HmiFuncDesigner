@@ -1,21 +1,22 @@
 
 include(../../DrawApplicationPlugin.pri)
+include(../../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
 
 CONFIG(debug, debug|release) { #debug
     win32 {
-        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditord
+        LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowserd
         LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
         LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
         LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
     }
     unix {
-        LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+        LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowser
         LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
         LIBS += -L$$LINK_LIBRARY_PATH -lUtils
         LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
     }
 } else { # release
-    LIBS += -L$$IDE_LIBRARY_PATH -lPropertyEditor
+    LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowser
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
@@ -24,10 +25,7 @@ CONFIG(debug, debug|release) { #debug
 SOURCES += \
     ../../Public/Element.cpp \
     ElementClock.cpp \
-    ClockPlugin.cpp \
-    ../../PropertyEditorEx/FunctionEditorDialog.cpp \
-    ../../PropertyEditorEx/functionproperty.cpp \
-    ../../PropertyEditorEx/functionpropertyeditor.cpp
+    ClockPlugin.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -35,17 +33,12 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementClock.h \
-    ClockPlugin.h \
-    ../../PropertyEditorEx/FunctionEditorDialog.h \
-    ../../PropertyEditorEx/functionproperty.h \
-    ../../PropertyEditorEx/functionpropertyeditor.h
+    ClockPlugin.h
 
 DISTFILES += EClock.json
 
 RESOURCES += \
     images.qrc
 
-FORMS += \
-    ../../PropertyEditorEx/FunctionEditorDialog.ui
 
 

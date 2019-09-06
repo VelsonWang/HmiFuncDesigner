@@ -4,14 +4,17 @@
 #include "TagManager.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
+#include "variantmanager.h"
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDate>
 
 int ElementClock::iLastIndex_ = 1;
 
-ElementClock::ElementClock(const QString &szProjPath, const QString &szProjName)
-    : Element(szProjPath, szProjName)
+ElementClock::ElementClock(const QString &szProjPath,
+                           const QString &szProjName,
+                           QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("Clock_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -75,227 +78,266 @@ QPainterPath ElementClock::shape() const
 
 void ElementClock::createPropertyList()
 {
-    // ID
-    idProperty_ = new TextProperty(tr("ID"));
-    idProperty_->setId(EL_ID);
-    idProperty_->setReadOnly(true);
-    propList.insert(propList.end(), idProperty_);
+    propList.clear();
+    clearProperties();
 
-    // 标题
-    titleProperty_ = new EmptyProperty(tr("标题"));
-    propList.insert(propList.end(), titleProperty_);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    // ID
+    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
+    property->setAttribute(QLatin1String("readOnly"), true);
+    addProperty(property, QLatin1String("id"));
 
     // 时钟间隔
-    periodProperty_ = new DoubleProperty(tr("时钟间隔"));
-    periodProperty_->setId(EL_PERIOD);
-    periodProperty_->setSettings(0, 6000, 5);
-    periodProperty_->setValue(period_);
-    propList.insert(propList.end(), periodProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Double, tr("时钟间隔"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 6000);
+    property->setAttribute(QLatin1String("singleStep"), 0.1);
+    property->setAttribute(QLatin1String("decimals"), 1);
+    addProperty(property, QLatin1String("period"));
 
     // 选择功能
+    property = variantPropertyManager_->addProperty(VariantManager::functionTypeId(), tr("功能操作"));
     QStringList listEvents;
     getSupportEvents(listEvents);
-    funcProperty_ = new FunctionProperty(tr("功能操作"));
-    funcProperty_->setId(EL_FUNCTION);
-    funcProperty_->setSupportEvents(listEvents);
-    propList.insert(propList.end(), funcProperty_);
+    property->setAttribute(QLatin1String("supportevents"), listEvents.join("|"));
+    addProperty(property, QLatin1String("functions"));
 
     // 背景颜色
-    backgroundColorProperty_ = new ColorProperty(tr("背景颜色"));
-    backgroundColorProperty_->setId(EL_BACKGROUND);
-    backgroundColorProperty_->setValue(backgroundColor_);
-    propList.insert(propList.end(), backgroundColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("背景颜色"));
+    addProperty(property, QLatin1String("background"));
 
     // 透明背景颜色
-    transparentBackgroundProperty_ = new BoolProperty(tr("透明背景颜色"));
-    transparentBackgroundProperty_->setId(EL_TRANSPARENT_BACKGROUND);
-    transparentBackgroundProperty_->setTrueText(tr("透明"));
-    transparentBackgroundProperty_->setFalseText(tr("不透明"));
-    transparentBackgroundProperty_->setValue(transparentBackground_);
-    propList.insert(propList.end(), transparentBackgroundProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("透明背景颜色"));
+    addProperty(property, QLatin1String("transparent"));
 
     // 字体
-    fontProperty_ = new FontProperty(tr("字体"));
-    fontProperty_->setId(EL_FONT);
-    fontProperty_->setValue(QFont("Arial Black", 12));
-    propList.insert(propList.end(), fontProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Font, tr("字体"));
+    addProperty(property, QLatin1String("font"));
 
     // 文本颜色
-    textColorProperty = new ColorProperty(tr("文本颜色"));
-    textColorProperty->setId(EL_FONT_COLOR);
-    propList.insert(propList.end(),textColorProperty);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("文本颜色"));
+    addProperty(property, QLatin1String("textColor"));
 
     // 水平对齐
-    hAlignProperty_ = new ListProperty(tr("水平对齐"));
-    hAlignProperty_->setId(EL_H_ALIGN);
-    QStringList hAlignList;
-    hAlignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
-    hAlignProperty_->setList(hAlignList);
-    propList.insert(propList.end(), hAlignProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("水平对齐"));
+    hAlignList_.clear();
+    hAlignList_ << tr("左对齐") << tr("居中对齐") << tr("右对齐");
+    property->setAttribute(QLatin1String("enumNames"), hAlignList_);
+    addProperty(property, QLatin1String("hAlign"));
 
     // 垂直对齐
-    vAlignProperty_ = new ListProperty(tr("水平对齐"));
-    vAlignProperty_->setId(EL_V_ALIGN);
-    QStringList vAlignList;
-    vAlignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
-    vAlignProperty_->setList(vAlignList);
-    propList.insert(propList.end(), vAlignProperty_);
+    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("垂直对齐"));
+    vAlignList_.clear();
+    vAlignList_ << tr("上对齐") << tr("居中对齐") << tr("下对齐");
+    property->setAttribute(QLatin1String("enumNames"), vAlignList_);
+    addProperty(property, QLatin1String("vAlign"));
 
     // 边框宽度
-    borderWidthProperty_ = new IntegerProperty(tr("边框宽度"));
-    borderWidthProperty_->setId(EL_BORDER_WIDTH);
-    borderWidthProperty_->setSettings(0, 1000);
-    borderWidthProperty_->setValue(borderWidth_);
-    propList.insert(propList.end(), borderWidthProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("边框宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("borderWidth"));
 
     // 边框颜色
-    borderColorProperty_ = new ColorProperty(tr("边框颜色"));
-    borderColorProperty_->setId(EL_BORDER_COLOR);
-    borderColorProperty_->setValue(borderColor_);
-    propList.insert(propList.end(), borderColorProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Color, tr("边框颜色"));
+    addProperty(property, QLatin1String("borderColor"));
 
     // 显示日期
-    showDateProperty_ = new BoolProperty(tr("显示日期"));
-    showDateProperty_->setId(EL_SHOW_DATE);
-    showDateProperty_->setTrueText(tr("是"));
-    showDateProperty_->setFalseText(tr("否"));
-    showDateProperty_->setValue(showDate_);
-    propList.insert(propList.end(), showDateProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("显示日期"));
+    addProperty(property, QLatin1String("showDate"));
 
     // 显示星期
-    showWeekProperty_ = new BoolProperty(tr("显示星期"));
-    showWeekProperty_->setId(EL_SHOW_WEEK);
-    showWeekProperty_->setTrueText(tr("是"));
-    showWeekProperty_->setFalseText(tr("否"));
-    showWeekProperty_->setValue(showWeek_);
-    propList.insert(propList.end(), showWeekProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("显示星期"));
+    addProperty(property, QLatin1String("showWeek"));
 
     // 初始可见性
-    showOnInitialProperty_ = new BoolProperty(tr("初始可见性"));
-    showOnInitialProperty_->setId(EL_SHOW_ON_INITIAL);
-    showOnInitialProperty_->setTrueText(tr("显示"));
-    showOnInitialProperty_->setFalseText(tr("不显示"));
-    showOnInitialProperty_->setValue(showOnInitial_);
-    propList.insert(propList.end(), showOnInitialProperty_);
+    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
+    addProperty(property, QLatin1String("showOnInitial"));
 
-    xCoordProperty_ = new IntegerProperty(tr("坐标 X"));
-    xCoordProperty_->setSettings(0, 5000);
-    xCoordProperty_->setId(EL_X);
-    propList.insert(propList.end(), xCoordProperty_);
+    // 坐标 X
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("xCoord"));
 
-    yCoordProperty_ = new IntegerProperty(tr("坐标 Y"));
-    yCoordProperty_->setId(EL_Y);
-    yCoordProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), yCoordProperty_);
+    // 坐标 Y
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("yCoord"));
 
-    zValueProperty_ = new IntegerProperty(tr("Z 值"));
-    zValueProperty_->setId(EL_Z_VALUE);
-    zValueProperty_->setSettings(-1000, 1000);
-    propList.insert(propList.end(), zValueProperty_);
+    // Z 值
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
+    property->setAttribute(QLatin1String("minimum"), -1000);
+    property->setAttribute(QLatin1String("maximum"), 1000);
+    addProperty(property, QLatin1String("zValue"));
 
-    widthProperty_ = new IntegerProperty(tr("宽度"));
-    widthProperty_->setId(EL_WIDTH);
-    widthProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), widthProperty_);
+    // 宽度
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("width"));
 
-    heightProperty_ = new IntegerProperty(tr("高度"));
-    heightProperty_->setId(EL_HEIGHT);
-    heightProperty_->setSettings(0, 5000);
-    propList.insert(propList.end(), heightProperty_);
+    // 高度
+    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
+    property->setAttribute(QLatin1String("minimum"), 0);
+    property->setAttribute(QLatin1String("maximum"), 5000);
+    addProperty(property, QLatin1String("height"));
 }
 
-void ElementClock::updateElementProperty(uint id, const QVariant &value)
+void ElementClock::updateElementProperty(QtProperty *property, const QVariant &value)
 {
-    switch (id) {
-    case EL_ID:
+    QString id = propertyToId_[property];
+
+    if (id == QLatin1String("id")) {
         elementId = value.toString();
-        break;
-    case EL_PERIOD:
+    } else if (id == QLatin1String("period")) {
         period_ = value.toDouble();
-		break;
-    case EL_FUNCTION:
-        funcs_ = value.toStringList();
-        break;
-    case EL_BACKGROUND:
+    } else if (id == QLatin1String("functions")) {
+        QString szFuncs = value.toString();
+        funcs_ = szFuncs.split('|');
+    } else if (id == QLatin1String("background")) {
         backgroundColor_ = value.value<QColor>();
-        break;
-    case EL_TRANSPARENT_BACKGROUND:
+    } else if (id == QLatin1String("transparent")) {
         transparentBackground_ = value.toBool();
-        break;
-    case EL_FONT:
+    } else if (id == QLatin1String("font")) {
         font_ = value.value<QFont>();
-        break;
-    case EL_FONT_COLOR:
+    } else if (id == QLatin1String("textColor")) {
         textColor = value.value<QColor>();
-        break;
-    case EL_H_ALIGN:
-        szHAlign_ = value.toString();
-        break;
-    case EL_V_ALIGN:
-        szVAlign_ = value.toString();
-        break;
-    case EL_BORDER_WIDTH:
+    } else if (id == QLatin1String("hAlign")) {
+        szHAlign_ = hAlignList_.at(value.toInt());
+    } else if (id == QLatin1String("vAlign")) {
+        szVAlign_ = vAlignList_.at(value.toInt());
+    } else if (id == QLatin1String("borderWidth")) {
         borderWidth_ = value.toInt();
-        break;
-    case EL_BORDER_COLOR:
+    } else if (id == QLatin1String("borderColor")) {
         borderColor_ = value.value<QColor>();
-        break;
-    case EL_SHOW_DATE:
+    } else if (id == QLatin1String("showDate")) {
         showDate_ = value.toBool();
-        break;
-    case EL_SHOW_WEEK:
+    } else if (id == QLatin1String("showWeek")) {
         showWeek_ = value.toBool();
-        break;
-    case EL_SHOW_ON_INITIAL:
+    } else if (id == QLatin1String("showOnInitial")) {
         showOnInitial_ = value.toBool();
-        break;
-    case EL_X:
+    } else if (id == QLatin1String("xCoord")) {
         elementXPos = value.toInt();
         setElementXPos(elementXPos);
-        break;
-    case EL_Y:
+    } else if (id == QLatin1String("yCoord")) {
         elementYPos = value.toInt();
         setElementYPos(elementYPos);
-        break;
-    case EL_Z_VALUE:
+    } else if (id == QLatin1String("zValue")) {
         elementZValue = value.toInt();
         setZValue(elementZValue);
-        break;
-    case EL_WIDTH:
+    } else if (id == QLatin1String("width")) {
         elementWidth = value.toInt();
         updateBoundingElement();
-        break;
-    case EL_HEIGHT:
+    } else if (id == QLatin1String("height")) {
         elementHeight = value.toInt();
         updateBoundingElement();
-        break;
     }
 
-    update();
     scene()->update();
+    update();
 }
 
 void ElementClock::updatePropertyModel()
 {
-    idProperty_->setValue(elementId);
-    periodProperty_->setValue(period_);
-    funcProperty_->setValue(funcs_);
-    backgroundColorProperty_->setValue(backgroundColor_);
-    transparentBackgroundProperty_->setValue(transparentBackground_);
-    fontProperty_->setValue(font_);
-    textColorProperty->setValue(textColor);
-    hAlignProperty_->setValue(szHAlign_);
-    vAlignProperty_->setValue(szVAlign_);
-    borderWidthProperty_->setValue(borderWidth_);
-    borderColorProperty_->setValue(borderColor_);
-    showDateProperty_->setValue(showDate_);
-    showWeekProperty_->setValue(showWeek_);
-    showOnInitialProperty_->setValue(showOnInitial_);
-    xCoordProperty_->setValue(elementXPos);
-    yCoordProperty_->setValue(elementYPos);
-    zValueProperty_->setValue(elementZValue);
-    widthProperty_->setValue(elementWidth);
-    heightProperty_->setValue(elementHeight);
+    QtVariantProperty *property = Q_NULLPTR;
+
+    property = idToProperty_[QLatin1String("id")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementId);
+    }
+
+    property = idToProperty_[QLatin1String("period")];
+    if(property != Q_NULLPTR) {
+        property->setValue(period_);
+    }
+
+    property = idToProperty_[QLatin1String("functions")];
+    if(property != Q_NULLPTR) {
+        property->setValue(funcs_.join('|'));
+    }
+
+    property = idToProperty_[QLatin1String("background")];
+    if(property != Q_NULLPTR) {
+        property->setValue(backgroundColor_);
+    }
+
+    property = idToProperty_[QLatin1String("transparent")];
+    if(property != Q_NULLPTR) {
+        property->setValue(transparentBackground_);
+    }
+
+    property = idToProperty_[QLatin1String("font")];
+    if(property != Q_NULLPTR) {
+        property->setValue(font_);
+    }
+
+    property = idToProperty_[QLatin1String("textColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(textColor);
+    }
+
+    property = idToProperty_[QLatin1String("hAlign")];
+    if(property != Q_NULLPTR) {
+        property->setValue(hAlignList_.indexOf(szHAlign_));
+    }
+
+    property = idToProperty_[QLatin1String("vAlign")];
+    if(property != Q_NULLPTR) {
+        property->setValue(vAlignList_.indexOf(szVAlign_));
+    }
+
+    property = idToProperty_[QLatin1String("borderWidth")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderWidth_);
+    }
+
+    property = idToProperty_[QLatin1String("borderColor")];
+    if(property != Q_NULLPTR) {
+        property->setValue(borderColor_);
+    }
+
+    property = idToProperty_[QLatin1String("showDate")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showDate_);
+    }
+
+    property = idToProperty_[QLatin1String("showWeek")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showWeek_);
+    }
+
+    property = idToProperty_[QLatin1String("showOnInitial")];
+    if(property != Q_NULLPTR) {
+        property->setValue(showOnInitial_);
+    }
+
+    property = idToProperty_[QLatin1String("xCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementXPos);
+    }
+
+    property = idToProperty_[QLatin1String("yCoord")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementYPos);
+    }
+
+    property = idToProperty_[QLatin1String("zValue")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementZValue);
+    }
+
+    property = idToProperty_[QLatin1String("width")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementWidth);
+    }
+
+    property = idToProperty_[QLatin1String("height")];
+    if(property != Q_NULLPTR) {
+        property->setValue(elementHeight);
+    }
 }
 
 void ElementClock::setClickPosition(QPointF position)
