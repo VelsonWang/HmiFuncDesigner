@@ -42,6 +42,18 @@ int VariantManager::filePathTypeId()
     return qMetaTypeId<FilePathPropertyType>();
 }
 
+VariantManager::VariantManager(QObject *parent)
+    : QtVariantPropertyManager(parent),
+      propertyEditor_(Q_NULLPTR)
+{
+
+}
+
+VariantManager::~VariantManager()
+{
+
+}
+
 bool VariantManager::isPropertyTypeSupported(int propertyType) const
 {
     if (propertyType == functionTypeId() ||
@@ -188,3 +200,14 @@ void VariantManager::uninitializeProperty(QtProperty *property)
     QtVariantPropertyManager::uninitializeProperty(property);
 }
 
+void VariantManager::setPropertyEditor(QtTreePropertyBrowser *editor)
+{
+    if(propertyEditor_ != editor) {
+        propertyEditor_ = editor;
+    }
+}
+
+QtTreePropertyBrowser *VariantManager::getPropertyEditor()
+{
+    return propertyEditor_;
+}

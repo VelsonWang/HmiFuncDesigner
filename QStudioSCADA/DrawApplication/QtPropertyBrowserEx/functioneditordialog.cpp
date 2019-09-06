@@ -502,7 +502,7 @@ void FunctionEditorDialog::createPropertyList()
                 property->setAttribute(QLatin1String("enumNames"), tagNames_);
                 if(pArgItem->value == "")
                     pArgItem->value = tagNames_.at(0);
-                property->setValue(pArgItem->value);
+                property->setValue(tagNames_.indexOf(pArgItem->value));
                 addProperty(property, QLatin1String("tag"));
                 if(pArgItem->value == tagNames_.at(0)) {
                     propertyChanged(property, pArgItem->value);
@@ -513,7 +513,7 @@ void FunctionEditorDialog::createPropertyList()
                 property->setAttribute(QLatin1String("enumNames"), DrawListUtils::drawList_);
                 if(pArgItem->value == "")
                     pArgItem->value = DrawListUtils::drawList_.at(0);
-                property->setValue(pArgItem->value);
+                property->setValue(DrawListUtils::drawList_.indexOf(pArgItem->value));
                 addProperty(property, QLatin1String("graph"));
                 if(pArgItem->value == DrawListUtils::drawList_.at(0)) {
                     propertyChanged(property, pArgItem->value);
@@ -525,7 +525,7 @@ void FunctionEditorDialog::createPropertyList()
                 property->setAttribute(QLatin1String("enumNames"), elementIds_);
                 if(pArgItem->value == "")
                     pArgItem->value = elementIds_.at(0);
-                property->setValue(pArgItem->value);
+                property->setValue(elementIds_.indexOf(pArgItem->value));
                 addProperty(property, QLatin1String("element"));
                 if(pArgItem->value == elementIds_.at(0)) {
                     propertyChanged(property, pArgItem->value);

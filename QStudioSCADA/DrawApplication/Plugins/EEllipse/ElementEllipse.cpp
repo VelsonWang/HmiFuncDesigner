@@ -196,7 +196,7 @@ void ElementEllipse::updatePropertyModel()
 
     property = idToProperty_[QLatin1String("tag")];
     if(property != Q_NULLPTR) {
-        property->setValue(szTagSelected_);
+        property->setValue(tagNames_.indexOf(szTagSelected_));
     }
 
     property = idToProperty_[QLatin1String("tagColorList")];

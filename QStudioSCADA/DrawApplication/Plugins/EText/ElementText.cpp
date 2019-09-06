@@ -235,7 +235,7 @@ void ElementText::updatePropertyModel()
 
     property = idToProperty_[QLatin1String("tag")];
     if(property != Q_NULLPTR) {
-        property->setValue(szTagSelected_);
+        property->setValue(tagNames_.indexOf(szTagSelected_));
     }
 
     property = idToProperty_[QLatin1String("text")];
@@ -245,12 +245,12 @@ void ElementText::updatePropertyModel()
 
     property = idToProperty_[QLatin1String("hAlign")];
     if(property != Q_NULLPTR) {
-        property->setValue(szHAlign_);
+        property->setValue(hAlignList_.indexOf(szHAlign_));
     }
 
     property = idToProperty_[QLatin1String("vAlign")];
     if(property != Q_NULLPTR) {
-        property->setValue(szVAlign_);
+        property->setValue(vAlignList_.indexOf(szVAlign_));
     }
 
     property = idToProperty_[QLatin1String("background")];

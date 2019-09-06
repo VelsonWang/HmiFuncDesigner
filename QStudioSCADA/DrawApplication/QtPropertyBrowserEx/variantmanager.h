@@ -3,13 +3,14 @@
 #define VARIANTMANAGER_H
 
 #include "qtvariantproperty.h"
-
+#include "qttreepropertybrowser.h"
 
 class VariantManager : public QtVariantPropertyManager
 {
     Q_OBJECT
 public:
-    VariantManager(QObject *parent = Q_NULLPTR) : QtVariantPropertyManager(parent) { }
+    explicit VariantManager(QObject *parent = Q_NULLPTR);
+    ~VariantManager();
 
     virtual QVariant value(const QtProperty *property) const;
     virtual int valueType(int propertyType) const;
@@ -24,6 +25,9 @@ public:
     static int TagTextListTypeId();
     static int filePathTypeId();
 
+    void setPropertyEditor(QtTreePropertyBrowser *editor);
+    QtTreePropertyBrowser *getPropertyEditor();
+
 public slots:
     virtual void setValue(QtProperty *property, const QVariant &val);
     virtual void setAttribute(QtProperty *property,
@@ -33,6 +37,10 @@ protected:
     virtual QString valueText(const QtProperty *property) const;
     virtual void initializeProperty(QtProperty *property);
     virtual void uninitializeProperty(QtProperty *property);
+
+private:
+    QtTreePropertyBrowser *propertyEditor_ = Q_NULLPTR;
+
 
 private:
     struct Data {

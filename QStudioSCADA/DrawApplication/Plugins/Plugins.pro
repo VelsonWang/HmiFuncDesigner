@@ -6,9 +6,9 @@ SUBDIRS += \
     EArrow \
     EEllipse \
     ERect \
-    EText
-#    EText \
+    EText \
 ###############<基本控件>##################
+    EPushButton
 #    EPushButton \
 #    EInputEdit \
 #    EPicture \

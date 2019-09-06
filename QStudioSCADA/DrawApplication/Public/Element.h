@@ -134,7 +134,7 @@ signals:
 
 
 public:
-    void addProperty(QtVariantProperty *property, const QString &id);
+    void addProperty(QtVariantProperty *property, const QString &id, bool bAddToList = true);
     void clearProperties();
 
     QtVariantPropertyManager *variantPropertyManager_;

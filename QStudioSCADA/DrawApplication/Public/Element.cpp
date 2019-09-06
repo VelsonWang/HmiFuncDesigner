@@ -333,9 +333,11 @@ void Element::RestrictedRectangularRegion()
 }
 
 
-void Element::addProperty(QtVariantProperty *property, const QString &id)
+void Element::addProperty(QtVariantProperty *property, const QString &id, bool bAddToList)
 {
-    propList.append(property);
+    if(bAddToList) {
+        propList.append(property);
+    }
     propertyToId_[property] = id;
     idToProperty_[id] = property;
 }

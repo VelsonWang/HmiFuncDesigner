@@ -78,7 +78,8 @@ void MainWindow::initView()
     elementWidget_ = new ElementLibraryWidget();
     this->ElemetsLayout->addWidget(elementWidget_);
 
-    variantPropertyManager_ = new VariantManager(this);
+    VariantManager *pVariantManager  = new VariantManager(this);
+    variantPropertyManager_ = pVariantManager;
 
     connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
             this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
@@ -91,7 +92,7 @@ void MainWindow::initView()
     //propertyEditor_->setColumnWidth(0, 60);
     //propertyEditor_->setColumnWidth(1, 200);
     propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
-
+    pVariantManager->setPropertyEditor(propertyEditor_);
     this->PropertyLayout->addWidget(propertyEditor_);
 
     objTree_ = new ObjectsTreeView();
