@@ -66,7 +66,7 @@ void DrawPageWin::open()
 void DrawPageWin::save()
 {
     if (getModifiedFlag()) {
-        setModifiedFlag(true);
+        setModifiedFlag(false);
         DrawListUtils::saveDrawList(szProjPath_);
     }
 }
@@ -163,13 +163,13 @@ reinput:
                 QString oldName = szProjPath_ + "/" + strOldName + ".drw";
                 QString newName = szProjPath_ + "/" + strNewName + ".drw";
                 QFile::rename(oldName, newName);
-                ListViewUpdate();
                 break;
             }
         }
 
         setModifiedFlag(true);
         save();
+        ListViewUpdate();
     }
 }
 
@@ -190,13 +190,13 @@ void DrawPageWin::DeleteDrawPage()
             QFile file(fileName);
             if (file.exists())
                 file.remove();
-            ListViewUpdate();
             break;
         }
     }
 
     setModifiedFlag(true);
     save();
+    ListViewUpdate();
 }
 
 /*
@@ -232,9 +232,9 @@ regetnum:
 
     QString pasteFileName = szProjPath_ + "/" + strDrawPageName + ".drw";
     file.copy(pasteFileName);
-    ListViewUpdate();
     setModifiedFlag(true);
     save();
+    ListViewUpdate();
 }
 
 /*
