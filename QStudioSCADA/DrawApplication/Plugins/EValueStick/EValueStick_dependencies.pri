@@ -1,6 +1,0 @@
-QTC_PLUGIN_NAME = EValueStick
-
-QTC_LIB_DEPENDS += 
-
-QTC_PLUGIN_DEPENDS += 
-
