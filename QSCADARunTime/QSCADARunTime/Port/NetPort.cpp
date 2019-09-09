@@ -78,6 +78,7 @@ int NetPort::write(unsigned char *buf, int len, int ms) {
 #if 0
     qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
+    Q_UNUSED(ms)
     std::size_t sendLen = sock_.send((const char* )buf, (std::size_t)len);
     return (int)sendLen;
 }

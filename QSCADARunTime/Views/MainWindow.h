@@ -8,8 +8,6 @@
 #include <QCloseEvent>
 #include <stdlib.h>
 #include "GraphPage.h"
-#include "propertymodel.h"
-#include "propertytableview.h"
 #include "GraphPageManager.h"
 
 class MainWindow : public QMainWindow
@@ -17,10 +15,11 @@ class MainWindow : public QMainWindow
     Q_OBJECT
     
 public:
-    explicit MainWindow(QWidget *parent = 0);
+    explicit MainWindow(QWidget *parent = Q_NULLPTR);
     ~MainWindow();
 
-    static MainWindow *instance() {
+    static MainWindow *instance()
+    {
         QMutexLocker locker(&mutex_);
         if (instance_ == nullptr) {
             instance_ = new MainWindow();
@@ -30,7 +29,8 @@ public:
     }
 
 
-    static void deleteInstance() {
+    static void deleteInstance()
+    {
         if(instance_ != nullptr) {
             delete instance_;
             instance_ = nullptr;

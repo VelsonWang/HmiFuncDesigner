@@ -367,6 +367,8 @@ struct socket {
 		int i = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
 		return i;
 #else
+        (void)sec;
+        (void)us;
 		return -1;
 #endif
 	}

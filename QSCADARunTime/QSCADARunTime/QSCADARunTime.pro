@@ -50,7 +50,6 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
 LIBRARY_SRC_PATH = $$_PRO_FILE_PWD_/../../QStudioSCADA
 INCLUDEPATH += \
     $$LIBRARY_SRC_PATH/libs/edncrypt \
-    $$LIBRARY_SRC_PATH/libs/PropertyEditor \
     $$LIBRARY_SRC_PATH/libs/DrawUtils \
     $$LIBRARY_SRC_PATH/libs/Utils \
     $$LIBRARY_SRC_PATH/libs/ProjectDataUtils
@@ -59,14 +58,12 @@ CONFIG(debug, debug|release) { #debug
     win32 {
         LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
         LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
-        LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditord
         LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
         LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
     }
     unix {
         LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
         LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
-        LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
         LIBS += -L$$LINK_LIBRARY_PATH -lUtils
         LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
     }
@@ -74,7 +71,6 @@ CONFIG(debug, debug|release) { #debug
 else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
-    LIBS += -L$$LINK_LIBRARY_PATH -lPropertyEditor
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }

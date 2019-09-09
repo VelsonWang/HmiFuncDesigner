@@ -65,12 +65,12 @@ public:
 class ComDevice : public DeviceInfoObject
 {
 public:
-    explicit ComDevice()
+    explicit ComDevice() : DeviceInfoObject()
     {
 
     }
 
-    ComDevice(const ComDevice &obj)
+    ComDevice(const ComDevice &obj) : DeviceInfoObject(obj)
     {
         copyObject(obj);
     }
@@ -97,7 +97,8 @@ public:
         iTimeout_ = obj.iTimeout_;
     }
 
-    void fromString(const QString &param) {
+    void fromString(const QString &param)
+    {
         QStringList listParam = param.split('|');
         if(listParam.count() == 6) {
             szPortNumber_ = listParam.at(0);
@@ -109,7 +110,8 @@ public:
         }
     }
 
-    QString toString() {
+    QString toString()
+    {
         QStringList param;
         param.append(szPortNumber_);
         param.append(QString::number(iBaudrate_));
@@ -133,12 +135,12 @@ public:
 class NetDevice : public DeviceInfoObject
 {
 public:
-    explicit NetDevice()
+    explicit NetDevice() : DeviceInfoObject()
     {
 
     }
 
-    NetDevice(const NetDevice &obj)
+    NetDevice(const NetDevice &obj) : DeviceInfoObject(obj)
     {
         copyObject(obj);
     }
@@ -163,17 +165,19 @@ public:
         iPort1_ = obj.iPort1_;
     }
 
-    void fromString(const QString &param) {
+    void fromString(const QString &param)
+    {
         QStringList listParam = param.split('|');
         if(listParam.count() == 4) {
             szIpAddress_ = listParam.at(0);
             iPort_ = listParam.at(1).toInt();
-            szIpAddress1_ = listParam.at(2).toInt();
-            iPort1_ = listParam.at(3).toFloat();
+            szIpAddress1_ = listParam.at(2);
+            iPort1_ = listParam.at(3).toInt();
         }
     }
 
-    QString toString() {
+    QString toString()
+    {
         QStringList param;
         param.append(szIpAddress_);
         param.append(QString::number(iPort_));

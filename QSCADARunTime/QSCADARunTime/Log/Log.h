@@ -26,7 +26,7 @@ class Log : public QObject
     LOG4QT_DECLARE_QCLASS_LOGGER
 
 public:
-    Log(QObject *parent = 0);
+    Log(QObject *parent = Q_NULLPTR);
     ~Log();
 
     static Log* instance();
@@ -39,21 +39,24 @@ public:
 
 };
 
-class LogHelper{
+class LogHelper
+{
     Q_DISABLE_COPY(LogHelper)
 
 public:
-    Q_DECL_CONSTEXPR LogHelper() :
-        version_(1),
-        line_(0),
-        file_(0),
-        function_(0) {
+    Q_DECL_CONSTEXPR LogHelper()
+        : version_(1),
+          line_(0),
+          file_(Q_NULLPTR),
+          function_(Q_NULLPTR)
+    {
 
     }
 
     LogHelper(const char *fileName, int lineNumber, const char *functionName);
 
-    enum LogType {
+    enum LogType
+    {
         LGDebugMsg,
         LGInfoMsg,
         LGWarningMsg,
@@ -61,50 +64,61 @@ public:
         LGFatalMsg
     };
 
-    QString TemplateParameter () {
+    QString TemplateParameter ()
+    {
         return "";
     }
 
     template <typename T, typename ... Args>
-    QString TemplateParameter(T head, Args ... args) {
+    QString TemplateParameter(T head, Args ... args)
+    {
         return QString("%1 ").arg(head) + TemplateParameter(args...);
     }
 
     template <typename T, typename ... Args>
-    void debug(T head, Args ... args) {
+    void debug(T head, Args ... args)
+    {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
         writelogToLocal(LGDebugMsg,logmsg);
     }
 
     template <typename T, typename ... Args>
-    void info(T head, Args ... args) {
+    void info(T head, Args ... args)
+    {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
         writelogToLocal(LGInfoMsg,logmsg);
     }
 
     template <typename T, typename ... Args>
-    void warn(T head, Args ... args) {
+    void warn(T head, Args ... args)
+    {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
         writelogToLocal(LGWarningMsg,logmsg);
     }
 
     template <typename T, typename ... Args>
-    void error(T head, Args ... args ){
+    void error(T head, Args ... args )
+    {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
         writelogToLocal(LGErrorMsg,logmsg);
     }
 
     template <typename T, typename ... Args>
-    void fatal(T head, Args ... args) {
+    void fatal(T head, Args ... args)
+    {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
         writelogToLocal(LGFatalMsg,logmsg);
     }
 
     virtual void writelogToLocal(LogType logtype, const QString& logmsg);
-    virtual void copy(const LogHelper &logContext){}
+    virtual void copy(const LogHelper &logContext)
+    {
+        Q_UNUSED(logContext)
+    }
 
     template <typename T>
-    inline LogHelper &operator<<(T logmsg) {
+    inline LogHelper &operator<<(T logmsg)
+    {
         writelogToLocal(LGInfoMsg, QString("%1").arg(logmsg));
         return *this;
     }
