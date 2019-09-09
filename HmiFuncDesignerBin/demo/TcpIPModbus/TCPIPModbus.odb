@@ -1,0 +1,15 @@
+{
+    "bDynamicOptimization": false,
+    "iCtrlVar": "",
+    "iFrameLen": "64",
+    "iFrameTimePeriod": "50",
+    "iPort": "502",
+    "iPort1": "0",
+    "iRemotePort": "",
+    "iStateVar": "",
+    "ipAddress": "127.0.0.1",
+    "ipAddress1": "0",
+    "sDeviceName": "TCPIPModbus",
+    "sLink": "主链路",
+    "sProtocol": "TCPIPModbus"
+}

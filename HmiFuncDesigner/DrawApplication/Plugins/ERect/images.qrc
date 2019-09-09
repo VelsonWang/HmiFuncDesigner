@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/rectitem.png</file>
+    </qresource>
+</RCC>

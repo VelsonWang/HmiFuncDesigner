@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<FuncSupportList>
+    <FuncSupport name="SysOptFun" funcName="系统操作">
+		<Func name="SwitchGraphPage">
+			<name>函数原型:void SwitchGraphPage(string page)</name>
+			<desc>函数描述:切换至画面page</desc>
+			<args name="参数:">
+                <arg name="page" type="GraphPageList">string page  // 画面名称</arg>
+			</args>
+			<demo>示例:_N_TSwitchGraphPage("draw2")  // 切换至画面draw2</demo>
+		</Func>
+		<Func name="ReturnGraphPage">
+			<name>函数原型:void ReturnGraphPage()</name>
+			<desc>函数描述:返回至上一画面</desc>
+			<demo>示例:_N_TReturnGraphPage()  // 返回至上一画面</demo>
+		</Func>
+		<Func name="Sleep">
+			<name>函数原型:void Sleep(int nSec)</name>
+			<desc>函数描述:控制延时</desc>
+			<args name="参数:">
+                <arg name="nSec" type="Value">int nSec  // 延时时间</arg>
+			</args>
+			<demo>示例:_N_TSleep(1)  // 延时1s钟</demo>
+		</Func>
+		<Func name="SetDateTime">
+			<name>函数原型:void SetDateTime(int ny, int nm, int nd, int nh, int nf, int ns)</name>
+			<desc>函数描述:设置系统时间</desc>
+			<args name="参数:">
+                <arg name="ny" type="Value">int ny  // 年</arg>
+                <arg name="nm" type="Value">int nm  // 月</arg>
+                <arg name="nd" type="Value">int nd  // 日</arg>
+                <arg name="nh" type="Value">int nh  // 时</arg>
+                <arg name="nf" type="Value">int nf  // 分</arg>
+                <arg name="ns" type="Value">int ns  // 秒</arg>
+			</args>
+			<demo>示例:_N_TSetDateTime(2013,10,1,0,0,0)  // 设置系统时间为2013-10-01 00:00:00</demo>
+		</Func>
+		<Func name="WaitForMillisec">
+			<name>函数原型:void WaitForMillisec(int millisec)</name>
+			<desc>函数描述:延时</desc>
+			<args name="参数:">
+                <arg name="millisec" type="Value">int millisec  // 延时的毫秒数</arg>
+			</args>
+			<demo>示例:_N_TWaitForMillisec(1)  // 延时1毫秒</demo>
+		</Func>
+	</FuncSupport>
+    <FuncSupport name="ScriptObj" funcName="脚本函数">
+		<Func name="SetRealValue">
+			<name>函数原型:void SetRealValue(string sVar, double dvalue)</name>
+			<desc>函数描述:设置变量值</desc>
+			<args name="参数:">
+                <arg name="sVar" type="TagList">string sVar  // 变量名</arg>
+                <arg name="dValue" type="Value">double dValue  // 赋的值</arg>
+			</args>
+			<demo>示例:_N_TSetRealValue("var0", 123.12)  // 设置变量var0的值为123.12</demo>
+		</Func>
+		<Func name="GetRealValue">
+			<name>函数原型:double GetRealValue(string sVar)</name>
+			<desc>函数描述:获取变量的值</desc>
+			<args name="参数:">
+                <arg name="sVar" type="TagList">string sVar  // 变量名</arg>
+			</args>
+			<demo>示例:_N_TGetRealValue("var0")  // 获取变量var0的值</demo>
+		</Func>
+		<Func name="StateChange">
+			<name>函数原型:void StateChange(string sVar)</name>
+			<desc>函数描述:变量0,1切换</desc>
+			<args name="参数:">
+                <arg name="sVar" type="TagList">string sVar  // 变量名</arg>
+			</args>
+			<demo>示例:_N_TStateChange("var0")  // 切换变量var0的状态</demo>
+		</Func>
+		<Func name="SetSysValue">
+			<name>函数原型:void SetSysValue(string sSys, double dValue)</name>
+			<desc>函数描述:设置系统变量值</desc>
+			<args name="参数:">
+                <arg name="sSys" type="TagList">string sSys  // 系统变量名</arg>
+                <arg name="dValue" type="Value">double dValue  // 赋的值</arg>
+			</args>
+			<demo>示例:_N_TSetSysValue("sys0", 123.12)  // 设置系统变量sys0的值为123.12</demo>
+		</Func>
+		<Func name="GetSysValue">
+			<name>函数原型:double GetSysValue(string sSys)</name>
+			<desc>函数描述:获取系统变量值</desc>
+			<args name="参数:">
+                <arg name="sSys" type="TagList">string sSys  // 系统变量名</arg>
+			</args>
+			<demo>示例:_N_TGetSysValue("sys0")  // 获取系统变量sys0的值</demo>
+		</Func>
+		<Func name="AddAIValue">
+			<name>函数原型:void AddAIValue(string sVar, double dValue)</name>
+			<desc>函数描述:变量值自增</desc>
+			<args name="参数:">
+                <arg name="sVar" type="TagList">string sVar  // 变量名</arg>
+                <arg name="dValue" type="Value">double dValue  // 自增值</arg>
+			</args>
+			<demo>示例:_N_TAddAIValue("var0", 123.12)  // 变量var0的值增加123.12</demo>
+		</Func>
+		<Func name="SubAIValue">
+			<name>函数原型:void SubAIValue(string sVar, double dValue)</name>
+			<desc>函数描述:变量值自减</desc>
+			<args name="参数:">
+                <arg name="sVar" type="TagList">string sVar  // 变量名</arg>
+                <arg name="dValue" type="Value">double dValue  // 自减值</arg>
+			</args>
+			<demo>示例:_N_TSubAIValue("var0", 123.12)  // 变量var0的值减少123.12</demo>
+		</Func>
+	</FuncSupport>
+    <FuncSupport name="CtrlEleOptFun" funcName="控件操作">
+		<Func name="HideControlElement">
+			<name>函数原型:void HideControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName将变为不可见状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_THideControlElement("Text_0001")  // 将文本控件"Text_0001"隐藏为不可见状态</demo>
+		</Func>
+		<Func name="ShowControlElement">
+			<name>函数原型:void ShowControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName将变为可见状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TShowControlElement("Text_0001")  // 将文本控件"Text_0001"显示为可见状态</demo>
+		</Func>
+		<Func name="DisableControlElement">
+			<name>函数原型:void DisableControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:失效控件元素sCtrlEleName变为不可用状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TDisableControlElement("Text_0001")  // 将输入编辑控件InputEdit_0001失效变为不可用状态</demo>
+		</Func>
+		<Func name="EnableControlElement">
+			<name>函数原型:void EnableControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:生效控件元素sCtrlEleName变为可用状态</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TEnableControlElement("Text_0001")  // 将输入编辑控件InputEdit_0001生效变为可用状态</demo>
+		</Func>
+		<Func name="MoveControlElement">
+			<name>函数原型:void MoveControlElement(string sCtrlEleName , int x, int y)</name>
+			<desc>函数描述:控件元素sCtrlEleName坐标移动(x, y)</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+				<arg name="x" type="Value">int x  // 控件元素X坐标</arg>
+				<arg name="y" type="Value">int y  // 控件元素y坐标</arg>
+			</args>
+			<demo>示例:_N_TMoveControlElement ("Text_0001", -5, -10)  // 将文本控件"Text_0001"坐标上移10，左移5</demo>
+		</Func>	
+		<Func name="BlinkControlElement">
+			<name>函数原型:void BlinkControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName闪烁显示</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TBlinkControlElement ("Text_0001")  // 将文本控件"Text_0001"闪烁显示</demo>
+		</Func>
+		<Func name="StopBlinkControlElement">
+			<name>函数原型:void StopBlinkControlElement(string sCtrlEleName)</name>
+			<desc>函数描述:控件元素sCtrlEleName停止闪烁显示</desc>
+			<args name="参数:">
+                <arg name="sCtrlEleName" type="ElementIDList">string sCtrlEleName  // 控件元素ID</arg>
+			</args>
+			<demo>示例:_N_TStopBlinkControlElement("Text_0001")  // 将文本控件"Text_0001"停止闪烁显示</demo>
+		</Func>
+
+	</FuncSupport>
+</FuncSupportList>

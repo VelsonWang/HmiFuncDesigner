@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/ellipseitem.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,13 @@
+{
+    "DeviceArray": [
+        {
+            "bstop": false,
+            "name": "TCPIPModbus",
+            "path": "",
+            "prog": "TCPIPModbus",
+            "ramid": 0,
+            "rdy": "主链路",
+            "type": "NET"
+        }
+    ]
+}
