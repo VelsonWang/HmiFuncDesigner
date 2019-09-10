@@ -529,7 +529,7 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
     currentView_ = dynamic_cast<QGraphicsView *>(graphPageTabWidget_->widget(GraphPageNum));
     currentGraphPage_ = dynamic_cast<GraphPage *>(currentView_->scene());
     currentGraphPage_->setActive(true);
-    currentGraphPage_->fillGraphPagePropertyModel();
+    //currentGraphPage_->fillGraphPagePropertyModel();
     objTree_->setContentList(currentGraphPage_->items());
     objTree_->updateContent();
     currentGraphPageIndex_ = GraphPageNum;
