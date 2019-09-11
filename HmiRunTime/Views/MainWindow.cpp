@@ -1,6 +1,8 @@
 ﻿#include "MainWindow.h"
 #include "Helper.h"
 #include "DrawListUtils.h"
+#include "Log/Log.h"
+#include "HmiRunTime.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -16,8 +18,8 @@ QString MainWindow::graphPageName_ = "";
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    currentGraphPage_(nullptr) {
-
+    currentGraphPage_(nullptr)
+{
     // 注册元素对象创建函数
     registerCreateObjectFunc();
 
@@ -30,7 +32,8 @@ MainWindow::MainWindow(QWidget *parent) :
 }
 
 
-MainWindow::~MainWindow() {
+MainWindow::~MainWindow()
+{
     unLoadGraphPages();
 }
 
@@ -38,6 +41,8 @@ MainWindow::~MainWindow() {
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     Q_UNUSED(event)
+    LogInfo("exit application!");
+    g_pHmiRunTime->Stop();
     qApp->exit(0);
 }
 
@@ -47,7 +52,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
  * @details 加载工程画面
  * @param pagePath
  */
-void MainWindow::loadGraphPages(const QString &pagePath) {
+void MainWindow::loadGraphPages(const QString &pagePath)
+{
     projpath_ = pagePath;
     DrawListUtils::loadDrawList(projpath_);
     foreach (QString pageName, DrawListUtils::drawList_) {
@@ -72,7 +78,8 @@ void MainWindow::loadGraphPages(const QString &pagePath) {
  * @brief MainWindow::unLoadGraphPages
  * @details 卸载工程画面
  */
-void MainWindow::unLoadGraphPages() {
+void MainWindow::unLoadGraphPages()
+{
     GraphPageManager::releaseInstance();
     currentGraphPage_ = nullptr;
 }
@@ -84,7 +91,8 @@ void MainWindow::unLoadGraphPages() {
  * @param pagePath 画面路径
  * @param pagePath 画面名称
  */
-void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName) {
+void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
+{
     QString fileName = pagePath + "/" + pageName;
     if (fileName.toLower().endsWith(".drw")) {
         QString pageName_ = pageName;
@@ -106,7 +114,8 @@ void MainWindow::openGraphPage(const QString &pagePath, const QString &pageName)
  * @details 切换至画面
  * @param pageName 画面名称
  */
-void MainWindow::switchGraphPage(const QString &pageName) {
+void MainWindow::switchGraphPage(const QString &pageName)
+{
     QString pageId = pageName;
     GraphPage *graphPage = GraphPageManager::getInstance()->getGraphPageById(pageId);
     if(graphPage != nullptr) {
@@ -124,7 +133,8 @@ void MainWindow::switchGraphPage(const QString &pageName) {
  * @brief MainWindow::returnGraphPage
  * @details 返回功能切换画面
  */
-void MainWindow::returnGraphPage() {
+void MainWindow::returnGraphPage()
+{
     if(currentGraphPage_ != nullptr) {
         if(showedGraphPageStack_.size() > 0) {
             currentGraphPage_->hide();
@@ -141,7 +151,8 @@ void MainWindow::returnGraphPage() {
     }
 }
 
-bool MainWindow::isGraphPageOpen(const QString &filename) {
+bool MainWindow::isGraphPageOpen(const QString &filename)
+{
     QListIterator <GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
     while (it.hasNext()) {
         if (filename == it.next()->getFileName()) {
@@ -152,7 +163,8 @@ bool MainWindow::isGraphPageOpen(const QString &filename) {
 }
 
 bool MainWindow::createDocument(GraphPage *graphPage,
-                                const QString &filename) {
+                                const QString &filename)
+{
     if (isGraphPageOpen(filename)) {
         QMessageBox::information(this,
                                  tr("打开文件错误"),
@@ -168,13 +180,15 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     return true;
 }
 
-void MainWindow::updateGraphPageViewInfo(const QString &fileName) {
+void MainWindow::updateGraphPageViewInfo(const QString &fileName)
+{
     QFileInfo file(fileName);
     currentGraphPage_->setGraphPageId(file.baseName());
 }
 
 
-void MainWindow::moveCenter() {
+void MainWindow::moveCenter()
+{
     Helper::WidgetMoveCenter(this);
 }
 
@@ -184,7 +198,8 @@ void MainWindow::moveCenter() {
  * @details 隐藏控件
  * @param eleId 控件ID
  */
-void MainWindow::hideControlElement(const QString &eleId) {
+void MainWindow::hideControlElement(const QString &eleId)
+{
     QStringList listPageIdEleId = eleId.split('.');
     if(listPageIdEleId.size() == 2) {
         QString szPageId = listPageIdEleId.at(0);
@@ -206,7 +221,8 @@ void MainWindow::hideControlElement(const QString &eleId) {
  * @details 显示控件
  * @param eleId 控件ID
  */
-void MainWindow::showControlElement(const QString &eleId) {
+void MainWindow::showControlElement(const QString &eleId)
+{
     QStringList listPageIdEleId = eleId.split('.');
     if(listPageIdEleId.size() == 2) {
         QString szPageId = listPageIdEleId.at(0);
@@ -228,7 +244,8 @@ void MainWindow::showControlElement(const QString &eleId) {
  * @details 生效控件
  * @param eleId 控件ID
  */
-void MainWindow::enableElement(const QString &eleId) {
+void MainWindow::enableElement(const QString &eleId)
+{
     QStringList listPageIdEleId = eleId.split('.');
     if(listPageIdEleId.size() == 2) {
         QString szPageId = listPageIdEleId.at(0);
@@ -250,7 +267,8 @@ void MainWindow::enableElement(const QString &eleId) {
  * @details 失效控件
  * @param eleId 控件ID
  */
-void MainWindow::disableElement(const QString &eleId) {
+void MainWindow::disableElement(const QString &eleId)
+{
     QStringList listPageIdEleId = eleId.split('.');
     if(listPageIdEleId.size() == 2) {
         QString szPageId = listPageIdEleId.at(0);
@@ -274,7 +292,8 @@ void MainWindow::disableElement(const QString &eleId) {
  * @param x x偏移坐标
  * @param y y偏移坐标
  */
-void MainWindow::moveControlElement(const QString &eleId, int x, int y) {
+void MainWindow::moveControlElement(const QString &eleId, int x, int y)
+{
     QStringList listPageIdEleId = eleId.split('.');
     if(listPageIdEleId.size() == 2) {
         QString szPageId = listPageIdEleId.at(0);
@@ -296,7 +315,8 @@ void MainWindow::moveControlElement(const QString &eleId, int x, int y) {
  * @details 闪烁控件
  * @param eleId 控件ID
  */
-void MainWindow::startBlinkElement(const QString &eleId) {
+void MainWindow::startBlinkElement(const QString &eleId)
+{
     QStringList listPageIdEleId = eleId.split('.');
     if(listPageIdEleId.size() == 2) {
         QString szPageId = listPageIdEleId.at(0);
@@ -318,7 +338,8 @@ void MainWindow::startBlinkElement(const QString &eleId) {
  * @details 停止闪烁控件
  * @param eleId 控件ID
  */
-void MainWindow::stopBlinkElement(const QString &eleId) {
+void MainWindow::stopBlinkElement(const QString &eleId)
+{
     QStringList listPageIdEleId = eleId.split('.');
     if(listPageIdEleId.size() == 2) {
         QString szPageId = listPageIdEleId.at(0);

@@ -1,5 +1,6 @@
-﻿#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+﻿#ifndef DRAWMAINWINDOW_H
+#define DRAWMAINWINDOW_H
+
 #include <QUndoView>
 #include <QUndoGroup>
 #include <QUndoStack>
@@ -8,7 +9,7 @@
 #include "ElementLibraryWidget.h"
 #include "GraphPage.h"
 #include "GraphPageManager.h"
-#include "ui_MainWindow.h"
+#include "ui_DrawMainWindow.h"
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
@@ -16,16 +17,16 @@
 
 class QToolBar;
 
-class MainWindow : public QMainWindow, public Ui::MainWindow
+class DrawMainWindow : public QMainWindow, public Ui::DrawMainWindow
 {
     Q_OBJECT
     
 public:
-    explicit MainWindow(const QString &szProjPath,
+    explicit DrawMainWindow(const QString &szProjPath,
                         const QString &szProjName,
                         const QString &szGraphPageName,
                         QWidget *parent = nullptr);
-    ~MainWindow();
+    ~DrawMainWindow();
 
     bool isGridVisible() const;
     // 打开画面
@@ -176,4 +177,4 @@ private:
     QMap<QString, bool> idToExpanded_;
 };
 
-#endif // MAINWINDOW_H
+#endif // DrawMainWindow_H

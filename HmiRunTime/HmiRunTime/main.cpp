@@ -1,5 +1,4 @@
-﻿
-#include "tcpserver.h"
+﻿#include "tcpserver.h"
 #include "HmiRunTime.h"
 #include "public.h"
 #include "TimerTask.h"
@@ -11,7 +10,7 @@
 #include "ConfigUtils.h"
 #include "edncrypt.h"
 #include "gSOAPServer.h"
-
+#include "MainWindow.h"
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
@@ -122,7 +121,7 @@ int main(int argc, char *argv[])
 #ifndef Q_OS_WIN
     //QCoreApplication::setEventDispatcher(new EventDispatcherLibEv());
 #endif
-    QApplication  app(argc, argv);
+    QApplication app(argc, argv);
 
     QString strInput = "";
     QString configPath = "";
@@ -184,13 +183,13 @@ int main(int argc, char *argv[])
         dir.mkpath(projPath);
     }
 
-    SCADARunTime runTime(projPath);
+    HmiRunTime runTime(projPath);
     runTime.Load(DATA_SAVE_FORMAT);
     // 添加脚本函数至脚本引擎
-    SCADARunTime::scriptEngine_ = new QScriptEngine();
-    addFuncToScriptEngine(SCADARunTime::scriptEngine_);
+    HmiRunTime::scriptEngine_ = new QScriptEngine();
+    addFuncToScriptEngine(HmiRunTime::scriptEngine_);
     runTime.Start();
-    g_SCADARunTimePtr = &runTime;
+    g_pHmiRunTime = &runTime;
 
     QApplication::processEvents();
 

@@ -36,13 +36,10 @@ void PortThread::Start()
     if(mbIsRunning)
         return;
     mbIsRunning = true;
-    foreach (IVendor *pVendor, m_VendorList)
-    {
-        if(pVendor != NULL)
-        {
+    foreach (IVendor *pVendor, m_VendorList) {
+        if(pVendor != Q_NULLPTR) {
             //pVendor->SetOwnThread(this);
-            if(!pVendor->IsRunning())
-            {
+            if(!pVendor->IsRunning()) {
                 pVendor->Open();
                 pVendor->Initialize();
                 pVendor->Start();
@@ -59,12 +56,9 @@ void PortThread::Start()
 void PortThread::Stop()
 {
     mbIsRunning = false;
-    foreach (IVendor *pVendor, m_VendorList)
-    {
-        if(pVendor != NULL)
-        {
-            if(pVendor->IsRunning())
-            {
+    foreach (IVendor *pVendor, m_VendorList) {
+        if(pVendor != Q_NULLPTR) {
+            if(pVendor->IsRunning()) {
                 pVendor->Stop();
                 pVendor->Close();
             }
@@ -77,12 +71,11 @@ void PortThread::Stop()
 void PortThread::run()
 {
     qDebug()<< "PortThread run:" << m_name;
-    while(mbIsRunning)
-    {
-        foreach (IVendor *pVendor, m_VendorList)
-        {
-            if(pVendor != NULL)
-            {
+    while(mbIsRunning) {
+        foreach (IVendor *pVendor, m_VendorList) {
+            if(!mbIsRunning)
+                return;
+            if(pVendor != Q_NULLPTR) {
                 pVendor->DoLoop();
             }
         }

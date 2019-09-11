@@ -10,7 +10,7 @@
 
 
 ModbusRTUDevice::ModbusRTUDevice()
-    : pComDevicePrivate_(nullptr)
+    : pComDevicePrivate_(Q_NULLPTR)
 {
     comPort_ = new ComPort();
     iFacePort = comPort_;
@@ -24,9 +24,9 @@ ModbusRTUDevice::~ModbusRTUDevice()
         comPort_ = nullptr;
     }
 
-    if(pComDevicePrivate_ != nullptr) {
+    if(pComDevicePrivate_ != Q_NULLPTR) {
         delete pComDevicePrivate_;
-        pComDevicePrivate_ = nullptr;
+        pComDevicePrivate_ = Q_NULLPTR;
     }
 }
 
@@ -37,7 +37,7 @@ ModbusRTUDevice::~ModbusRTUDevice()
 */
 QString ModbusRTUDevice::GetDeviceName()
 {
-    if(pComDevicePrivate_ != nullptr)
+    if(pComDevicePrivate_ != Q_NULLPTR)
         return pComDevicePrivate_->m_sDeviceName;
     return "";
 }
@@ -156,8 +156,10 @@ bool ModbusRTUDevice::AfterWriteIOTag(IOTag* pTag) {
 */
 bool ModbusRTUDevice::WriteIOTags()
 {
-    while (!mWriteQueue.isEmpty())
-    {
+    while (!mWriteQueue.isEmpty()) {
+        if(!mbIsRunning)
+            return false;
+
         IOTag* pTag = mWriteQueue.dequeue();
         WriteIOTag(pTag);
     }
@@ -220,10 +222,12 @@ bool ModbusRTUDevice::AfterReadIOTag(IOTag* pTag) {
 */
 bool ModbusRTUDevice::ReadIOTags()
 {
-    for (int i = 0; i < mReadList.size(); ++i)
-    {
+    for (int i = 0; i < mReadList.size(); ++i) {
         if(!mWriteQueue.isEmpty())
             break;
+
+        if(!mbIsRunning)
+            return false;
 
         IOTag* pTag = mReadList.at(i);
 
@@ -236,7 +240,7 @@ bool ModbusRTUDevice::ReadIOTags()
             miFailCnt++;
         }
 
-        if(pComDevicePrivate_ !=0 )
+        if(pComDevicePrivate_ != Q_NULLPTR)
         {
             if(pComDevicePrivate_->m_iFrameTimePeriod > 0)
                 QThread::msleep(pComDevicePrivate_->m_iFrameTimePeriod);

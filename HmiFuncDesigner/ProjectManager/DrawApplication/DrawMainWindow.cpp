@@ -1,4 +1,4 @@
-﻿#include "MainWindow.h"
+﻿#include "DrawMainWindow.h"
 #include "Helper.h"
 #include "TagManager.h"
 #include "DrawListUtils.h"
@@ -20,7 +20,7 @@
 #include <QDebug>
 
 
-MainWindow::MainWindow(const QString &szProjPath,
+DrawMainWindow::DrawMainWindow(const QString &szProjPath,
                        const QString &szProjName,
                        const QString &szGraphPageName,
                        QWidget *parent) :
@@ -44,7 +44,7 @@ MainWindow::MainWindow(const QString &szProjPath,
 
     setWindowState(Qt::WindowMaximized);
     setWindowTitle(tr("画面编辑器"));
-    setWindowIcon(QIcon(":/images/application.png"));
+    setWindowIcon(QIcon(":/DrawAppImages/application.png"));
 
     connect(graphPageTabWidget_, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
 
@@ -63,13 +63,13 @@ MainWindow::MainWindow(const QString &szProjPath,
 }
 
 
-MainWindow::~MainWindow()
+DrawMainWindow::~DrawMainWindow()
 {
 
 }
 
 
-void MainWindow::initView()
+void DrawMainWindow::initView()
 {
     graphPageTabWidget_ = new QTabWidget(this);
     graphPageTabWidget_->installEventFilter(this);
@@ -100,7 +100,7 @@ void MainWindow::initView()
     slotShowTreeObj(false);
 }
 
-void MainWindow::createActions()
+void DrawMainWindow::createActions()
 {
     actionShowGraphObj_ = new QAction(tr("图形元素"), this);
     actionShowGraphObj_->setCheckable(true);
@@ -117,15 +117,15 @@ void MainWindow::createActions()
     actionShowPropEditor_->setChecked(true);
     connect(actionShowPropEditor_, SIGNAL(triggered(bool)), SLOT(slotShowPropEditor(bool)));
 
-    actionNew = new QAction(QIcon(":/images/filenew.png"), tr("新建"), this);
+    actionNew = new QAction(QIcon(":/DrawAppImages/filenew.png"), tr("新建"), this);
     actionNew->setShortcut(QString("Ctrl+N"));
     connect(actionNew, SIGNAL(triggered()), SLOT(slotEditNew()));
 
-    actionOpen = new QAction(QIcon(":/images/fileopen.png"), tr("打开"), this);
+    actionOpen = new QAction(QIcon(":/DrawAppImages/fileopen.png"), tr("打开"), this);
     actionOpen->setShortcut(QString("Ctrl+O"));
     connect(actionOpen, SIGNAL(triggered()), SLOT(slotEditOpen()));
 
-    actionSaveGraphPage_ = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), this);
+    actionSaveGraphPage_ = new QAction(QIcon(":/DrawAppImages/saveproject.png"), tr("保存"), this);
     actionSaveGraphPage_->setShortcut(QKeySequence::Save);
     connect(actionSaveGraphPage_, SIGNAL(triggered()), SLOT(slotSaveGraphPage()));
 
@@ -139,87 +139,87 @@ void MainWindow::createActions()
     actionExit_->setShortcut(QKeySequence::Quit);
     connect(actionExit_,SIGNAL(triggered()),SLOT(slotExit()));
 
-    actionShowGrid = new QAction(QIcon(":/images/showgrid.png"), tr("显示栅格"), this);
+    actionShowGrid = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
     actionShowGrid->setCheckable(true);
     actionShowGrid->setChecked(false);
     connect(actionShowGrid, SIGNAL(triggered(bool)), SLOT(slotShowGrid(bool)));
 
-    actionShowLinear_ = new QAction(QIcon(":/images/ruler.png"), tr("显示线条"), this);
+    actionShowLinear_ = new QAction(QIcon(":/DrawAppImages/ruler.png"), tr("显示线条"), this);
     actionShowLinear_->setCheckable(true);
     actionShowLinear_->setChecked(false);
     connect(actionShowLinear_, SIGNAL(triggered(bool)), SLOT(slotShowLinear(bool)));
 
-    actionZoomIn_ = new QAction(QIcon(":/images/zoom-in.png"), tr("放大"), this);
+    actionZoomIn_ = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
     connect(actionZoomIn_, SIGNAL(triggered()), SLOT(slotZoomIn()));
 
-    actionZoomOut_ = new QAction(QIcon(":/images/zoom-out.png"), tr("缩小"), this);
+    actionZoomOut_ = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
     connect(actionZoomOut_, SIGNAL(triggered()), SLOT(slotZoomOut()));
 
     actionUndo_ = undoGroup_->createUndoAction(this);
-    actionUndo_->setIcon(QIcon(":/images/undo.png"));
+    actionUndo_->setIcon(QIcon(":/DrawAppImages/undo.png"));
     actionUndo_->setText(tr("撤销"));
     actionUndo_->setShortcut(QKeySequence::Undo);
 
     actionRedo_ = undoGroup_->createRedoAction(this);
     actionRedo_->setText(tr("重做"));
-    actionRedo_->setIcon(QIcon(":/images/redo.png"));
+    actionRedo_->setIcon(QIcon(":/DrawAppImages/redo.png"));
     actionRedo_->setShortcut(QKeySequence::Redo);
 
-    actionDelete_ = new QAction(QIcon(":/images/delete.png"), tr("删除"));
+    actionDelete_ = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
     actionDelete_->setShortcut(QKeySequence::Delete);
     connect(actionDelete_, SIGNAL(triggered()), SLOT(slotEditDelete()));
 
-    actionCopy_ = new QAction(QIcon(":/images/editcopy.png"),tr("拷贝"));
+    actionCopy_ = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
     actionCopy_->setShortcut(QKeySequence::Copy);
     connect(actionCopy_, SIGNAL(triggered()), SLOT(slotEditCopy()));
 
-    actionPaste_ = new QAction(QIcon(":/images/editpaste.png"),tr("粘贴"));
+    actionPaste_ = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
     actionPaste_->setShortcut(QKeySequence::Paste);
     connect(actionPaste_, SIGNAL(triggered()), SLOT(slotEditPaste()));
 
     // 顶部对齐
-    alignTopAction_ = new QAction(QIcon(":/images/align-top.png"), tr("顶部对齐"));
+    alignTopAction_ = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
     alignTopAction_->setData(Qt::AlignTop);
     connect(alignTopAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
     // 底部对齐
-    alignDownAction_ = new QAction(QIcon(":/images/align-bottom.png"), tr("底部对齐"));
+    alignDownAction_ = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
     alignDownAction_->setData(Qt::AlignBottom);
     connect(alignDownAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
     // 右对齐
-    alignRightAction_ = new QAction(QIcon(":/images/align-right.png"), tr("右对齐"));
+    alignRightAction_ = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
     alignRightAction_->setData(Qt::AlignRight);
     connect(alignRightAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
     // 左对齐
-    alignLeftAction_ = new QAction(QIcon(":/images/align-left.png"), tr("左对齐"));
+    alignLeftAction_ = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
     alignLeftAction_->setData(Qt::AlignLeft);
     connect(alignLeftAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
 
     // 水平均匀分布
-    hUniformDistributeAction_ = new QAction(QIcon(":/images/align_hsame.png"), tr("水平均匀分布"));
+    hUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
     connect(hUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotHUniformDistributeElements()));
 
     // 垂直均匀分布
-    vUniformDistributeAction_ = new QAction(QIcon(":/images/align_vsame.png"), tr("垂直均匀分布"));
+    vUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
     connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
 
     // 设置选中控件大小一致
-    setTheSameSizeAction_ = new QAction(QIcon(":/images/the-same-size.png"), tr("大小一致"));
+    setTheSameSizeAction_ = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
     connect(setTheSameSizeAction_, SIGNAL(triggered()), SLOT(slotSetTheSameSizeElements()));
 
     // 上移一层
-    upLayerAction_ = new QAction(QIcon(":/images/posfront.png"), tr("上移一层"));
+    upLayerAction_ = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
     connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
 
     // 下移一层
-    downLayerAction_ = new QAction(QIcon(":/images/posback.png"), tr("下移一层"));
+    downLayerAction_ = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
     connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
 
 }
 
-void MainWindow::createMenus()
+void DrawMainWindow::createMenus()
 {
     QMenu *filemenu = new QMenu(tr("文件"), this);
 #if 0  // for test we need this
@@ -242,7 +242,7 @@ void MainWindow::createMenus()
     QMainWindow::menuBar()->addMenu(windowMenu);
 }
 
-void MainWindow::createToolbars()
+void DrawMainWindow::createToolbars()
 {
     toolBar->addAction(actionSaveGraphPage_);
     toolBar->addSeparator();
@@ -270,7 +270,7 @@ void MainWindow::createToolbars()
     toolBar->addSeparator();
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void DrawMainWindow::closeEvent(QCloseEvent *event)
 {
     bool unsaved = false;
 
@@ -304,7 +304,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
  * @param pagePath 画面路径
  * @param pagePath 画面名称
  */
-void MainWindow::openGraphPage(const QString &szProjPath,
+void DrawMainWindow::openGraphPage(const QString &szProjPath,
                                const QString &szProjName,
                                const QString &szPageName)
 {
@@ -349,12 +349,12 @@ void MainWindow::openGraphPage(const QString &szProjPath,
 }
 
 
-void MainWindow::slotEditNew()
+void DrawMainWindow::slotEditNew()
 {
     addNewGraphPage();
 }
 
-QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
+QString DrawMainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
 {
     QString title = currentGraphPage_->getGraphPageId();
 
@@ -396,7 +396,7 @@ QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
     return result;
 }
 
-bool MainWindow::isGraphPageOpen(const QString &filename)
+bool DrawMainWindow::isGraphPageOpen(const QString &filename)
 {
     QListIterator <GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
 
@@ -409,7 +409,7 @@ bool MainWindow::isGraphPageOpen(const QString &filename)
     return false;
 }
 
-void MainWindow::addNewGraphPage()
+void DrawMainWindow::addNewGraphPage()
 {
     QGraphicsView *view = createTabView();
 
@@ -439,7 +439,7 @@ void MainWindow::addNewGraphPage()
     connectGraphPage(graphPage);
 }
 
-void MainWindow::connectGraphPage(GraphPage *graphPage)
+void DrawMainWindow::connectGraphPage(GraphPage *graphPage)
 {
     connect(graphPage->undoStack(), SIGNAL(indexChanged(int)), SLOT(slotUpdateActions()));
     connect(graphPage->undoStack(), SIGNAL(cleanChanged(bool)), SLOT(slotUpdateActions()));
@@ -453,7 +453,7 @@ void MainWindow::connectGraphPage(GraphPage *graphPage)
     connect(graphPage, SIGNAL(GraphPageSaved()), SLOT(slotUpdateActions()));
 }
 
-void MainWindow::disconnectGraphPage(GraphPage *graphPage)
+void DrawMainWindow::disconnectGraphPage(GraphPage *graphPage)
 {
     disconnect(graphPage->undoStack(), SIGNAL(indexChanged(int)), this, SLOT(slotUpdateActions()));
     disconnect(graphPage->undoStack(), SIGNAL(cleanChanged(bool)), this, SLOT(slotUpdateActions()));
@@ -467,7 +467,7 @@ void MainWindow::disconnectGraphPage(GraphPage *graphPage)
     disconnect(graphPage, SIGNAL(GraphPageSaved()), this, SLOT(slotUpdateActions()));
 }
 
-QGraphicsView *MainWindow::createTabView()
+QGraphicsView *DrawMainWindow::createTabView()
 {
     QGraphicsView *view = new QGraphicsView;
     view->setDragMode(QGraphicsView::RubberBandDrag);
@@ -479,9 +479,9 @@ QGraphicsView *MainWindow::createTabView()
     return view;
 }
 
-void MainWindow::slotUpdateActions()
+void DrawMainWindow::slotUpdateActions()
 {
-    static const QIcon unsaved(":/images/filesave.png");
+    static const QIcon unsaved(":/DrawAppImages/filesave.png");
 
     for (int i = 0; i < graphPageTabWidget_->count(); i++) {
         QGraphicsView *view = dynamic_cast<QGraphicsView*>(graphPageTabWidget_->widget(i));
@@ -512,7 +512,7 @@ void MainWindow::slotUpdateActions()
     }
 }
 
-void MainWindow::slotChangeGraphPage(int GraphPageNum)
+void DrawMainWindow::slotChangeGraphPage(int GraphPageNum)
 {
     if (GraphPageNum == -1) {
         objTree_->clearModel();
@@ -536,50 +536,50 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
     slotUpdateActions();
 }
 
-void MainWindow::slotChangeGraphPageName()
+void DrawMainWindow::slotChangeGraphPageName()
 {
     graphPageTabWidget_->setTabText(currentGraphPageIndex_, currentGraphPage_->getGraphPageId());
     //int index = GraphPageManager::getInstance()->getIndexByGraphPage(currentGraphPage_);
 }
 
-void MainWindow::updateObjectTree()
+void DrawMainWindow::updateObjectTree()
 {
     objTree_->setContentList(currentGraphPage_->items());
     objTree_->updateContent();
 }
 
-void MainWindow::slotElementIdChanged()
+void DrawMainWindow::slotElementIdChanged()
 {
     updateObjectTree();
 }
 
-void MainWindow::slotElementPropertyChanged()
+void DrawMainWindow::slotElementPropertyChanged()
 {
 
 }
 
-void MainWindow::slotGraphPagePropertyChanged()
+void DrawMainWindow::slotGraphPagePropertyChanged()
 {
 
 }
 
-void MainWindow::propertyValueChanged(QtProperty *property, const QVariant &value)
+void DrawMainWindow::propertyValueChanged(QtProperty *property, const QVariant &value)
 {
     Q_UNUSED(property)
     Q_UNUSED(value)
 }
 
-void MainWindow::slotNewElementAdded()
+void DrawMainWindow::slotNewElementAdded()
 {
     updateObjectTree();
 }
 
-void MainWindow::slotElementsDeleted()
+void DrawMainWindow::slotElementsDeleted()
 {
     updateObjectTree();
 }
 
-void MainWindow::slotShowGrid(bool on)
+void DrawMainWindow::slotShowGrid(bool on)
 {
     QListIterator <GraphPage*> iter(GraphPageManager::getInstance()->getGraphPageList());
 
@@ -590,23 +590,23 @@ void MainWindow::slotShowGrid(bool on)
     gridVisible_ = on;
 }
 
-void MainWindow::slotShowGraphObj(bool on)
+void DrawMainWindow::slotShowGraphObj(bool on)
 {
     on ? this->dockElemets->show() : this->dockElemets->hide();
 }
 
-void MainWindow::slotShowTreeObj(bool on)
+void DrawMainWindow::slotShowTreeObj(bool on)
 {
     on ? this->dockObjectTree->show() : this->dockObjectTree->hide();
 }
 
-void MainWindow::slotShowPropEditor(bool on)
+void DrawMainWindow::slotShowPropEditor(bool on)
 {
     on ? this->dockProperty->show() : this->dockProperty->hide();
 }
 
 
-void MainWindow::slotCloseAll()
+void DrawMainWindow::slotCloseAll()
 {
     while (graphPageTabWidget_->count()) {
         QGraphicsView *view = static_cast<QGraphicsView*>(graphPageTabWidget_->widget(graphPageTabWidget_->currentIndex()));
@@ -619,7 +619,7 @@ void MainWindow::slotCloseAll()
     slotUpdateActions();
 }
 
-void MainWindow::removeGraphPage(QGraphicsView *view)
+void DrawMainWindow::removeGraphPage(QGraphicsView *view)
 {
     int index = graphPageTabWidget_->indexOf(view);
     GraphPage *graphPage = static_cast<GraphPage*>(view->scene());
@@ -642,7 +642,7 @@ void MainWindow::removeGraphPage(QGraphicsView *view)
     delete graphPage;
 }
 
-void MainWindow::slotCloseGraphPage()
+void DrawMainWindow::slotCloseGraphPage()
 {
     QGraphicsView *view = currentView_;
     removeGraphPage(view);
@@ -656,7 +656,7 @@ void MainWindow::slotCloseGraphPage()
     slotUpdateActions();
 }
 
-void MainWindow::slotEditOpen()
+void DrawMainWindow::slotEditOpen()
 {
     const QString &filename = QFileDialog::getOpenFileName(this,
                                                            tr("Open"),
@@ -710,7 +710,7 @@ void MainWindow::slotEditOpen()
     }
 }
 
-bool MainWindow::createDocument(GraphPage *graphPage,
+bool DrawMainWindow::createDocument(GraphPage *graphPage,
                                 QGraphicsView *view,
                                 const QString &filename)
 {
@@ -742,7 +742,7 @@ bool MainWindow::createDocument(GraphPage *graphPage,
 }
 
 
-QString MainWindow::getFileName()
+QString DrawMainWindow::getFileName()
 {
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save as"),
@@ -751,7 +751,7 @@ QString MainWindow::getFileName()
     return filename;
 }
 
-void MainWindow::updateGraphPageViewInfo(const QString &fileName)
+void DrawMainWindow::updateGraphPageViewInfo(const QString &fileName)
 {
     int index = graphPageTabWidget_->indexOf(currentView_);
     QFileInfo file(fileName);
@@ -760,7 +760,7 @@ void MainWindow::updateGraphPageViewInfo(const QString &fileName)
     slotChangeGraphPageName();
 }
 
-void MainWindow::slotSaveGraphPage()
+void DrawMainWindow::slotSaveGraphPage()
 {
     if (!currentGraphPage_) {
         return;
@@ -789,7 +789,7 @@ void MainWindow::slotSaveGraphPage()
     }
 }
 
-void MainWindow::slotExit()
+void DrawMainWindow::slotExit()
 {
     if (graphPageTabWidget_->count() == 0) {
         QApplication::quit();
@@ -819,7 +819,7 @@ void MainWindow::slotExit()
     QApplication::quit();
 }
 
-int MainWindow::exitResponse()
+int DrawMainWindow::exitResponse()
 {
     int ret = QMessageBox::information(this,
                                        tr("退出程序"),
@@ -828,11 +828,11 @@ int MainWindow::exitResponse()
     return ret;
 }
 
-void MainWindow::slotShowLinear(bool on) {
+void DrawMainWindow::slotShowLinear(bool on) {
     Q_UNUSED(on)
 }
 
-void MainWindow::slotZoomIn()
+void DrawMainWindow::slotZoomIn()
 {
     if(currentGraphPage_ != nullptr) {
         int width = currentGraphPage_->getGraphPageWidth();
@@ -847,7 +847,7 @@ void MainWindow::slotZoomIn()
     }
 }
 
-void MainWindow::slotZoomOut()
+void DrawMainWindow::slotZoomOut()
 {
     if(currentGraphPage_ != nullptr) {
         int width = currentGraphPage_->getGraphPageWidth();
@@ -864,10 +864,10 @@ void MainWindow::slotZoomOut()
 
 
 /**
- * @brief MainWindow::slotAlignElements
+ * @brief DrawMainWindow::slotAlignElements
  * @details 顶部对齐, 底部对齐, 右对齐, 左对齐
  */
-void MainWindow::slotAlignElements()
+void DrawMainWindow::slotAlignElements()
 {
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action)
@@ -882,10 +882,10 @@ void MainWindow::slotAlignElements()
 
 
 /**
- * @brief MainWindow::slotHUniformDistributeElements
+ * @brief DrawMainWindow::slotHUniformDistributeElements
  * @details 水平均匀分布
  */
-void MainWindow::slotHUniformDistributeElements()
+void DrawMainWindow::slotHUniformDistributeElements()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -895,10 +895,10 @@ void MainWindow::slotHUniformDistributeElements()
 
 
 /**
- * @brief MainWindow::slotVUniformDistributeElements
+ * @brief DrawMainWindow::slotVUniformDistributeElements
  * @details 垂直均匀分布
  */
-void MainWindow::slotVUniformDistributeElements()
+void DrawMainWindow::slotVUniformDistributeElements()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -908,10 +908,10 @@ void MainWindow::slotVUniformDistributeElements()
 
 
 /**
- * @brief MainWindow::slotSetTheSameSizeElements
+ * @brief DrawMainWindow::slotSetTheSameSizeElements
  * @details 设置选中控件大小一致
  */
-void MainWindow::slotSetTheSameSizeElements()
+void DrawMainWindow::slotSetTheSameSizeElements()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -921,10 +921,10 @@ void MainWindow::slotSetTheSameSizeElements()
 
 
 /**
- * @brief MainWindow::slotUpLayerElements
+ * @brief DrawMainWindow::slotUpLayerElements
  * @details 上移一层
  */
-void MainWindow::slotUpLayerElements()
+void DrawMainWindow::slotUpLayerElements()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -934,10 +934,10 @@ void MainWindow::slotUpLayerElements()
 
 
 /**
- * @brief MainWindow::slotDownLayerElements
+ * @brief DrawMainWindow::slotDownLayerElements
  * @details 下移一层
  */
-void MainWindow::slotDownLayerElements()
+void DrawMainWindow::slotDownLayerElements()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -947,10 +947,10 @@ void MainWindow::slotDownLayerElements()
 
 
 /**
- * @brief MainWindow::slotEditDelete
+ * @brief DrawMainWindow::slotEditDelete
  * @details 删除
  */
-void MainWindow::slotEditDelete()
+void DrawMainWindow::slotEditDelete()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -960,10 +960,10 @@ void MainWindow::slotEditDelete()
 
 
 /**
- * @brief MainWindow::slotEditCopy
+ * @brief DrawMainWindow::slotEditCopy
  * @details 拷贝
  */
-void MainWindow::slotEditCopy()
+void DrawMainWindow::slotEditCopy()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -973,10 +973,10 @@ void MainWindow::slotEditCopy()
 
 
 /**
- * @brief MainWindow::slotEditPaste
+ * @brief DrawMainWindow::slotEditPaste
  * @details 粘贴
  */
-void MainWindow::slotEditPaste()
+void DrawMainWindow::slotEditPaste()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -986,11 +986,11 @@ void MainWindow::slotEditPaste()
 
 
 /**
- * @brief MainWindow::on_listWidgetGraphPages_itemClicked
+ * @brief DrawMainWindow::on_listWidgetGraphPages_itemClicked
  * @details 画面名称被单击
  * @param item
  */
-void MainWindow::on_listWidgetGraphPages_currentTextChanged(const QString &currentText)
+void DrawMainWindow::on_listWidgetGraphPages_currentTextChanged(const QString &currentText)
 {
     Q_UNUSED(currentText)
     graphPageTabWidget_->setCurrentIndex(listWidgetGraphPages->currentRow());
@@ -998,11 +998,11 @@ void MainWindow::on_listWidgetGraphPages_currentTextChanged(const QString &curre
 
 
 /**
- * @brief MainWindow::contextMenuEvent
+ * @brief DrawMainWindow::contextMenuEvent
  * @details 右键菜单
  * @param event
  */
-void MainWindow::contextMenuEvent(QContextMenuEvent *event)
+void DrawMainWindow::contextMenuEvent(QContextMenuEvent *event)
 {
     Q_UNUSED(event)
 
@@ -1039,14 +1039,14 @@ void MainWindow::contextMenuEvent(QContextMenuEvent *event)
 
 
 /**
- * @brief MainWindow::createEmptyGraphpage
+ * @brief DrawMainWindow::createEmptyGraphpage
  * @details 创建空的画面页
  * @param projPath 工程路径
  * @param graphPageName 画面名称
  * @param width 画面宽度
  * @param height 画面高度
  */
-void MainWindow::createEmptyGraphpage(const QString &projPath,
+void DrawMainWindow::createEmptyGraphpage(const QString &projPath,
                                       const QString &graphPageName,
                                       int width,
                                       int height)
@@ -1066,10 +1066,10 @@ void MainWindow::createEmptyGraphpage(const QString &projPath,
 
 
 /**
- * @brief MainWindow::onNewGraphPage
+ * @brief DrawMainWindow::onNewGraphPage
  * @details 新建画面
  */
-void MainWindow::onNewGraphPage()
+void DrawMainWindow::onNewGraphPage()
 {
     int last = DrawListUtils::getMaxDrawPageNum("draw");
     QString szGraphPageName = QString("draw%1").arg(last);
@@ -1138,10 +1138,10 @@ reInput:
 
 
 /**
- * @brief MainWindow::onRenameGraphPage
+ * @brief DrawMainWindow::onRenameGraphPage
  * @details 修改画面名称
  */
-void MainWindow::onRenameGraphPage()
+void DrawMainWindow::onRenameGraphPage()
 {
     QString szOldGraphPageName = listWidgetGraphPages->currentItem()->text();
 
@@ -1182,10 +1182,10 @@ reInput:
 
 
 /**
- * @brief MainWindow::onDeleteGraphPage
+ * @brief DrawMainWindow::onDeleteGraphPage
  * @details 删除画面
  */
-void MainWindow::onDeleteGraphPage()
+void DrawMainWindow::onDeleteGraphPage()
 {
     QString szGraphPageName = listWidgetGraphPages->currentItem()->text();
 
@@ -1227,20 +1227,20 @@ void MainWindow::onDeleteGraphPage()
 
 
 /**
- * @brief MainWindow::onCopyGraphPage
+ * @brief DrawMainWindow::onCopyGraphPage
  * @details 复制画面
  */
-void MainWindow::onCopyGraphPage()
+void DrawMainWindow::onCopyGraphPage()
 {
     szCopyGraphPageFileName_ = listWidgetGraphPages->currentItem()->text();
 }
 
 
 /**
- * @brief MainWindow::onPasteGraphPage
+ * @brief DrawMainWindow::onPasteGraphPage
  * @details 粘贴画面
  */
-void MainWindow::onPasteGraphPage()
+void DrawMainWindow::onPasteGraphPage()
 {
     int iLast = 0;
 

@@ -1,5 +1,5 @@
-﻿#ifndef SCADARUNTIME_H
-#define SCADARUNTIME_H
+﻿#ifndef HMIRUNTIME_H
+#define HMIRUNTIME_H
 
 #include <QObject>
 #include <QList>
@@ -17,12 +17,12 @@
 #include "PortThread.h"
 #include "RunScript.h"
 
-class SCADARunTime : public QObject
+class HmiRunTime : public QObject
 {
     Q_OBJECT
 public:
-    explicit SCADARunTime(QString projectPath, QObject *parent = 0);
-    ~SCADARunTime();
+    explicit HmiRunTime(QString projectPath, QObject *parent = Q_NULLPTR);
+    ~HmiRunTime();
     bool Load(SaveFormat saveFormat);
     bool Unload();
     void Start();
@@ -57,6 +57,6 @@ private:
     static RunScript *m_pRunScript;
 };
 
-extern SCADARunTime *g_SCADARunTimePtr;
+extern HmiRunTime *g_pHmiRunTime;
 
-#endif // SCADARUNTIME_H
+#endif // HMIRUNTIME_H

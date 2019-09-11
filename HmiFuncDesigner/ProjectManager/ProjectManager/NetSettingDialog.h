@@ -1,7 +1,7 @@
 #ifndef NETSETTINGDIALOG_H
 #define NETSETTINGDIALOG_H
 
-#include "../Public/Public.h"
+#include "../../Public/Public.h"
 #include <QDialog>
 #include <QJsonObject>
 

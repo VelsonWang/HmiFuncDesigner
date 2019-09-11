@@ -336,7 +336,6 @@ void GraphPage::readItems(QDataStream &in,
 
 void GraphPage::loadAsBinary(const QString &filename)
 {
-
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
@@ -358,7 +357,6 @@ void GraphPage::loadAsBinary(const QString &filename)
 
 void GraphPage::loadAsXML(const QString &filename)
 {
-
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
@@ -375,7 +373,8 @@ void GraphPage::loadAsXML(const QString &filename)
     file.close();
 }
 
-void GraphPage::readGraphPageConfig(QFile &file) {
+void GraphPage::readGraphPageConfig(QFile &file)
+{
     QXmlStreamReader reader;
     reader.setDevice(&file);
 
@@ -393,7 +392,8 @@ void GraphPage::readGraphPageConfig(QFile &file) {
     }
 }
 
-void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
+void GraphPage::readGraphPageTag(QXmlStreamReader &xml)
+{
     setGraphPageAttributes(xml);
     copyList.clear();
     xml.readNext();
@@ -417,7 +417,8 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml) {
     zValueSort(elementList_);
 }
 
-void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
+void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml)
+{
     if (xml.attributes().hasAttribute("fileName")) {
         setFileName(xml.attributes().value("fileName").toString());
     }
@@ -444,7 +445,8 @@ void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml) {
     }
 }
 
-Element *GraphPage::createElement(const QString &internalType) {
+Element *GraphPage::createElement(const QString &internalType)
+{
     CreateObjFunc func = mapIDStringFuncData_[internalType];
     IDrawGraphPage *pEleObj = dynamic_cast<IDrawGraphPage *>(func());
     if(pEleObj != nullptr) {
@@ -454,7 +456,8 @@ Element *GraphPage::createElement(const QString &internalType) {
 }
 
 
-void GraphPage::loadLibrary(QByteArray &data) {
+void GraphPage::loadLibrary(QByteArray &data)
+{
     QDataStream in(&data,QIODevice::ReadOnly);
     QString filename;
     in >> filename;
@@ -462,7 +465,7 @@ void GraphPage::loadLibrary(QByteArray &data) {
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(0,
+        QMessageBox::information(Q_NULLPTR,
                                  tr("错误"),
                                  tr("无法打开文件"),
                                  QMessageBox::Ok);
@@ -475,7 +478,8 @@ void GraphPage::loadLibrary(QByteArray &data) {
     file.close();
 }
 
-void GraphPage::readLibraryConfig(QFile &file) {
+void GraphPage::readLibraryConfig(QFile &file)
+{
     QXmlStreamReader reader;
     reader.setDevice(&file);
 
@@ -494,7 +498,8 @@ void GraphPage::readLibraryConfig(QFile &file) {
     }
 }
 
-void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
+void GraphPage::readLibraryTag(QXmlStreamReader &xml)
+{
     copyList.clear();
     xml.readNext();
 
@@ -522,7 +527,8 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml) {
  * @details 获取工程路径
  * @return 工程路径
  */
-QString GraphPage::getProjectPath() const {
+QString GraphPage::getProjectPath() const
+{
     return projpath_;
 }
 
@@ -532,7 +538,8 @@ QString GraphPage::getProjectPath() const {
  * @details 设置工程路径
  * @param path 工程路径
  */
-void GraphPage::setProjectPath(const QString &path) {
+void GraphPage::setProjectPath(const QString &path)
+{
     projpath_ = path;
 }
 
@@ -540,7 +547,8 @@ void GraphPage::setProjectPath(const QString &path) {
  * @brief GraphPage::refreshGraphPage
  * @details 画面刷新
  */
-void GraphPage::refreshGraphPage() {
+void GraphPage::refreshGraphPage()
+{
     this->update();
 }
 
@@ -549,10 +557,11 @@ void GraphPage::refreshGraphPage() {
  * @brief GraphPage::openGraphPage
  * @details 画面打开
  */
-void GraphPage::openGraphPage() {
+void GraphPage::openGraphPage()
+{
     refreshTmr_.start(100);
     // 处理"打开画面"功能
-    SCADARunTime::execScriptFunction(funcs_, tr("OpenGraphPage"));
+    HmiRunTime::execScriptFunction(funcs_, tr("OpenGraphPage"));
 }
 
 
@@ -560,10 +569,11 @@ void GraphPage::openGraphPage() {
  * @brief GraphPage::closeGraphPage
  * @details 画面关闭
  */
-void GraphPage::closeGraphPage() {
+void GraphPage::closeGraphPage()
+{
     refreshTmr_.stop();
     // 处理"关闭画面"功能
-    SCADARunTime::execScriptFunction(funcs_, tr("CloseGraphPage"));
+    HmiRunTime::execScriptFunction(funcs_, tr("CloseGraphPage"));
 }
 
 
@@ -573,7 +583,8 @@ void GraphPage::closeGraphPage() {
  * @param eleId 控件ID
  * @return 控件对象
  */
-Element *GraphPage::getElement(const QString &eleId) {
+Element *GraphPage::getElement(const QString &eleId)
+{
     foreach (Element *pEle, elementList_) {
         if(pEle->getElementId() == eleId)
             return pEle;
@@ -582,7 +593,8 @@ Element *GraphPage::getElement(const QString &eleId) {
 }
 
 
-QDataStream &operator>>(QDataStream &in,GraphPage &page) {
+QDataStream &operator>>(QDataStream &in,GraphPage &page)
+{
     QString filename;
     QString id;
     QColor backColor;

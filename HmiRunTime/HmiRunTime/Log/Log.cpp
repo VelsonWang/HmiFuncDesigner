@@ -39,6 +39,7 @@ void Log::fatal(const QString &log) {
 }
 
 
+bool LogHelper::showFileFuncLine_ = false;
 
 LogHelper::LogHelper(const char *fileName, int lineNumber, const char *functionName)
        : version_(1)
@@ -57,25 +58,48 @@ void LogHelper::writelogToLocal(LogHelper::LogType logtype, const QString &log)
             .arg(line_)
             .arg(threadText);
 
-    switch (logtype) {
-    case LGDebugMsg:
-        Log::instance()->debug(filter+log);
-        break;
-    case LGInfoMsg:
-        Log::instance()->info(filter+log);
-        break;
-    case LGWarningMsg:
-        Log::instance()->warn(filter+log);
-        break;
-    case LGErrorMsg:
-        Log::instance()->error(filter+log);
-        break;
-    case LGFatalMsg:
-        Log::instance()->fatal(filter+log);
-        break;
-    default:
-        Log::instance()->info(filter+log);
-        break;
+    if(showFileFuncLine_) {
+        switch (logtype) {
+        case LGDebugMsg:
+            Log::instance()->debug(filter+log);
+            break;
+        case LGInfoMsg:
+            Log::instance()->info(filter+log);
+            break;
+        case LGWarningMsg:
+            Log::instance()->warn(filter+log);
+            break;
+        case LGErrorMsg:
+            Log::instance()->error(filter+log);
+            break;
+        case LGFatalMsg:
+            Log::instance()->fatal(filter+log);
+            break;
+        default:
+            Log::instance()->info(filter+log);
+            break;
+        }
+    } else {
+        switch (logtype) {
+        case LGDebugMsg:
+            Log::instance()->debug(log);
+            break;
+        case LGInfoMsg:
+            Log::instance()->info(log);
+            break;
+        case LGWarningMsg:
+            Log::instance()->warn(log);
+            break;
+        case LGErrorMsg:
+            Log::instance()->error(log);
+            break;
+        case LGFatalMsg:
+            Log::instance()->fatal(log);
+            break;
+        default:
+            Log::instance()->info(log);
+            break;
+        }
     }
 }
 

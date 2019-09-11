@@ -6,8 +6,7 @@ QT += network
 QT += script
 QT += sql
 
-#TARGET_BIN_PATH = $$_PRO_FILE_PWD_/../../RuntimeBin
-TARGET_BIN_PATH = $$_PRO_FILE_PWD_/../../HmiFuncDesignerBin/bin
+TARGET_BIN_PATH = $$_PRO_FILE_PWD_/../../HmiRunTimeBin
 LINK_LIBRARY_PATH = $$_PRO_FILE_PWD_/../../lib
 
 DESTDIR = $$TARGET_BIN_PATH

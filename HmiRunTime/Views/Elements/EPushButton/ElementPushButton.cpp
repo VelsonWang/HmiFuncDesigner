@@ -159,7 +159,7 @@ void ElementPushButton::mousePressEvent(QMouseEvent *event) {
             mousePoint.y() >= (elementYPos)) {
         isSelected_ = true;
         // 处理"按下事件"功能
-        SCADARunTime::execScriptFunction(funcs_, tr("PressDown"));
+        HmiRunTime::execScriptFunction(funcs_, tr("PressDown"));
     } else {
         isSelected_ = false;
     }
@@ -183,7 +183,7 @@ void ElementPushButton::mouseReleaseEvent(QMouseEvent *event) {
             mousePoint.y() >= (elementYPos)) {
         isSelected_ = false;
         // 处理"抬起事件"功能
-        SCADARunTime::execScriptFunction(funcs_, tr("ReleaseUp"));
+        HmiRunTime::execScriptFunction(funcs_, tr("ReleaseUp"));
     }
 
     QWidget *pOwner = getOwnerWidget();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
+ <class>DrawMainWindow</class>
+ <widget class="QMainWindow" name="DrawMainWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>DrawMainWindow</string>
   </property>
   <property name="autoFillBackground">
    <bool>false</bool>
@@ -67,7 +67,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>688</width>
+         <width>685</width>
          <height>642</height>
         </rect>
        </property>
@@ -256,8 +256,8 @@
   </widget>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/filenew.png</normaloff>:/images/filenew.png</iconset>
+    <iconset resource="DrawAppImages.qrc">
+     <normaloff>:/DrawAppImages/filenew.png</normaloff>:/DrawAppImages/filenew.png</iconset>
    </property>
    <property name="text">
     <string>Новый проект или экран</string>
@@ -265,8 +265,8 @@
   </action>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/fileopen.png</normaloff>:/images/fileopen.png</iconset>
+    <iconset resource="DrawAppImages.qrc">
+     <normaloff>:/DrawAppImages/fileopen.png</normaloff>:/DrawAppImages/fileopen.png</iconset>
    </property>
    <property name="text">
     <string>Открыть проект или экран</string>
@@ -284,8 +284,8 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/filesave.png</normaloff>:/images/filesave.png</iconset>
+    <iconset resource="DrawAppImages.qrc">
+     <normaloff>:/DrawAppImages/filesave.png</normaloff>:/DrawAppImages/filesave.png</iconset>
    </property>
    <property name="text">
     <string>Сохранить проект</string>
@@ -311,8 +311,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="images.qrc">
-     <normaloff>:/images/showgrid.png</normaloff>:/images/showgrid.png</iconset>
+    <iconset resource="DrawAppImages.qrc">
+     <normaloff>:/DrawAppImages/showgrid.png</normaloff>:/DrawAppImages/showgrid.png</iconset>
    </property>
    <property name="text">
     <string>Сетка</string>
@@ -334,71 +334,10 @@
     <enum>Qt::WindowShortcut</enum>
    </property>
   </action>
-  <action name="action0_125">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>0.125</string>
-   </property>
-  </action>
-  <action name="action0_25">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>0.25</string>
-   </property>
-  </action>
-  <action name="action0_5">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>0.5</string>
-   </property>
-  </action>
-  <action name="action1">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1</string>
-   </property>
-  </action>
-  <action name="action2">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>2</string>
-   </property>
-  </action>
-  <action name="action4">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>4</string>
-   </property>
-  </action>
-  <action name="action8">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>8</string>
-   </property>
-  </action>
-  <action name="action">
-   <property name="text">
-    <string>Закрыть проект</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
-  <include location="images.qrc"/>
+  <include location="DrawAppImages.qrc"/>
  </resources>
  <connections/>
 </ui>

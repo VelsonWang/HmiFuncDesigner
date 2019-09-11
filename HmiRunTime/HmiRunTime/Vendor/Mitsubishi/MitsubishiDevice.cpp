@@ -10,7 +10,7 @@
 
 
 MitsubishiDevice::MitsubishiDevice()
-    : pComDevicePrivate(0) {
+    : pComDevicePrivate(Q_NULLPTR) {
     comPort_ = new ComPort();
     iFacePort = comPort_;
     mitsubishi_.setPort(iFacePort);
@@ -22,9 +22,9 @@ MitsubishiDevice::~MitsubishiDevice() {
         comPort_ = nullptr;
     }
 
-    if(pComDevicePrivate != 0) {
+    if(pComDevicePrivate != Q_NULLPTR) {
         delete pComDevicePrivate;
-        pComDevicePrivate = 0;
+        pComDevicePrivate = Q_NULLPTR;
     }
 }
 
@@ -34,7 +34,7 @@ MitsubishiDevice::~MitsubishiDevice() {
 * 获取设备名称
 */
 QString MitsubishiDevice::GetDeviceName() {
-    if(pComDevicePrivate !=0 )
+    if(pComDevicePrivate != Q_NULLPTR)
         return pComDevicePrivate->m_sDeviceName;
     return "";
 }
@@ -147,6 +147,9 @@ bool MitsubishiDevice::AfterWriteIOTag(IOTag* pTag) {
 */
 bool MitsubishiDevice::WriteIOTags() {
     while (!mWriteQueue.isEmpty()) {
+        if(!mbIsRunning)
+            return false;
+
         IOTag* pTag = mWriteQueue.dequeue();
         WriteIOTag(pTag);
     }
@@ -208,10 +211,14 @@ bool MitsubishiDevice::AfterReadIOTag(IOTag* pTag) {
 /*
 * 读变量列表
 */
-bool MitsubishiDevice::ReadIOTags() {
+bool MitsubishiDevice::ReadIOTags()
+{
     for (int i = 0; i < mReadList.size(); ++i) {
         if(!mWriteQueue.isEmpty())
             break;
+
+        if(!mbIsRunning)
+            return false;
 
         IOTag* pTag = mReadList.at(i);
 
@@ -221,7 +228,7 @@ bool MitsubishiDevice::ReadIOTags() {
             miFailCnt++;
         }
 
-        if(pComDevicePrivate != 0) {
+        if(pComDevicePrivate != Q_NULLPTR) {
             if(pComDevicePrivate->m_iFrameTimePeriod > 0)
                 QThread::msleep(pComDevicePrivate->m_iFrameTimePeriod);
         }

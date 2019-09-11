@@ -20,7 +20,8 @@
 DrawPageWin::DrawPageWin(QWidget *parent, const QString &itemName,
                          const QString &projName)
     : ChildBase(parent, itemName, projName),
-      ui(new Ui::DrawPageWin)
+      ui(new Ui::DrawPageWin),
+      pDrawMainWindow_(Q_NULLPTR)
 {
     ui->setupUi(this);
     this->setWindowTitle(itemName);
@@ -330,22 +331,17 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
         return;
     }
 
-    QString fileDrawApplication = "";
-#ifdef Q_OS_WIN
-    fileDrawApplication = Helper::AppDir() + "/DrawApplication.exe";
-#endif
-
-#ifdef Q_OS_LINUX
-    fileDrawApplication = Helper::AppDir() + "/DrawApplication";
-#endif
-
-    QFile file(fileDrawApplication);
-    if (file.exists()) {
-        QProcess *process = new QProcess();
-        QStringList argv;
-        argv << szProjPath_ << szProjName_ << item->text();
-        process->start(fileDrawApplication, argv);
+    if(pDrawMainWindow_ != Q_NULLPTR) {
+        delete pDrawMainWindow_;
+        pDrawMainWindow_ = Q_NULLPTR;
     }
+
+    if(pDrawMainWindow_ == Q_NULLPTR) {
+        pDrawMainWindow_ = new DrawMainWindow(szProjPath_, szProjName_, item->text());
+        pDrawMainWindow_->openGraphPage(szProjPath_, szProjName_, item->text());
+        pDrawMainWindow_->show();
+    }
+
 }
 
 

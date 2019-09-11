@@ -2,7 +2,7 @@
 #define SCRIPTMANAGEWIN_H
 
 #include "ChildBase.h"
-#include "../Public/Public.h"
+#include "../../Public/Public.h"
 #include <QWidget>
 #include <QListWidget>
 #include <QList>

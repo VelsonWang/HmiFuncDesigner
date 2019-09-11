@@ -32,19 +32,19 @@ HmiFuncDesignerBin/bin/QSCADARunTime
 HmiFuncDesignerBin/bin/RtdbView
 HmiFuncDesignerBin/bin/SysTagManager
 
-RuntimeBin/log/
-RuntimeBin/Project/
-RuntimeBin/RunProject/
-RuntimeBin/Vendor/
-RuntimeBin/bearer/
-RuntimeBin/iconengines/
-RuntimeBin/imageformats/
-RuntimeBin/platforms/
-RuntimeBin/styles/
-RuntimeBin/translations/
-RuntimeBin/sqldrivers/
-RuntimeBin/*.exe
-RuntimeBin/*.dll
+HmiRunTimeBin/log/
+HmiRunTimeBin/Project/
+HmiRunTimeBin/RunProject/
+HmiRunTimeBin/Vendor/
+HmiRunTimeBin/bearer/
+HmiRunTimeBin/iconengines/
+HmiRunTimeBin/imageformats/
+HmiRunTimeBin/platforms/
+HmiRunTimeBin/styles/
+HmiRunTimeBin/translations/
+HmiRunTimeBin/sqldrivers/
+HmiRunTimeBin/*.exe
+HmiRunTimeBin/*.dll
 
 third/
 

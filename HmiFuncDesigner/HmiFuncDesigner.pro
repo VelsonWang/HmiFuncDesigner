@@ -27,7 +27,6 @@ SUBDIRS += \
     ProjectManager \
     SysTagManager \
     RtdbView \
-    DrawApplication \
 #    JsEditor
     RegisterTool \    # 通用授权工具
     EDncryptTool      # 加密解密工具

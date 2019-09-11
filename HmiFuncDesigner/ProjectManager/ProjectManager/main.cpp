@@ -5,7 +5,7 @@
 #include "edncrypt.h"
 #include "cregister.h"
 #include "cregisterdialog.h"
-
+#include "PluginManager.h"
 #include <QApplication>
 #include <QTextCodec>
 #include <QFont>
@@ -39,9 +39,17 @@ int main(int argc, char *argv[])
     }
 #endif
 
+    // 加载元素插件
+    PluginManager::getInstance()->loadPlugin();
+
     MainWindow win;
     app.setActivationWindow(&win);
     win.show();
 
-    return app.exec();
+    int ret = app.exec();
+
+    // 释放插件
+    PluginManager::getInstance()->releasePlugin();
+
+    return ret;
 }

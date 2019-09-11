@@ -120,6 +120,7 @@ osx {
 }
 
 INCLUDEPATH += \
+    $$IDE_SOURCE_TREE/Public \
     $$IDE_SOURCE_TREE/libs/Utils \
     $$IDE_SOURCE_TREE/libs/edncrypt \
     $$IDE_SOURCE_TREE/libs/DrawUtils \
@@ -136,10 +137,11 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/TagManager \
     $$IDE_SOURCE_TREE/libs/ProjectDataUtils \
     $$IDE_SOURCE_TREE/Devices/IDevicePlugin \
-    $$IDE_SOURCE_TREE/DrawApplication/IDrawApplicationPlugin \
-    $$IDE_SOURCE_TREE/DrawApplication/DrawApplication \
-    $$IDE_SOURCE_TREE/DrawApplication/QtPropertyBrowserEx \
-    $$IDE_SOURCE_TREE/DrawApplication/Public
+    $$IDE_SOURCE_TREE/ProjectManager/IDrawApplicationPlugin \
+    $$IDE_SOURCE_TREE/ProjectManager/DrawApplication \
+    $$IDE_SOURCE_TREE/ProjectManager/QtPropertyBrowserEx \
+    $$IDE_SOURCE_TREE/ProjectManager/Public \
+    $$IDE_SOURCE_TREE/ProjectManager
 	
 
 QTC_PLUGIN_DIRS_FROM_ENVIRONMENT = $$(QTC_PLUGIN_DIRS)

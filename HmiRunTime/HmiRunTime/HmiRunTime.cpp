@@ -19,20 +19,21 @@
 #include <QMutexLocker>
 #include <QDebug>
 
-SCADARunTime *g_SCADARunTimePtr = nullptr;
-QString SCADARunTime::m_sProjectPath = QString("");
-RunScript *SCADARunTime::m_pRunScript = nullptr;
-QScriptEngine *SCADARunTime::scriptEngine_ = nullptr;
+HmiRunTime *g_pHmiRunTime = nullptr;
+QString HmiRunTime::m_sProjectPath = QString("");
+RunScript *HmiRunTime::m_pRunScript = nullptr;
+QScriptEngine *HmiRunTime::scriptEngine_ = nullptr;
 
 
-SCADARunTime::SCADARunTime(QString projectPath, QObject *parent)
+HmiRunTime::HmiRunTime(QString projectPath, QObject *parent)
     : QObject(parent)
 {
     m_sProjectPath = projectPath;
     m_pRunScript = new RunScript(projectPath);
 }
 
-SCADARunTime::~SCADARunTime() {
+HmiRunTime::~HmiRunTime()
+{
     if(m_pRunScript != nullptr) {
         delete m_pRunScript;
         m_pRunScript = nullptr;
@@ -43,7 +44,7 @@ SCADARunTime::~SCADARunTime() {
     }
 }
 
-void SCADARunTime::AddPortName(const QString name)
+void HmiRunTime::AddPortName(const QString name)
 {
     foreach (QString port, m_listPortName)
     {
@@ -54,7 +55,7 @@ void SCADARunTime::AddPortName(const QString name)
     m_listPortName.append(name);
 }
 
-bool SCADARunTime::Load(SaveFormat saveFormat)
+bool HmiRunTime::Load(SaveFormat saveFormat)
 {
     if(m_sProjectPath == "")
         return false;
@@ -225,7 +226,7 @@ bool SCADARunTime::Load(SaveFormat saveFormat)
 }
 
 
-bool SCADARunTime::Unload()
+bool HmiRunTime::Unload()
 {
     qDeleteAll(m_VendorList);
     m_VendorList.clear();
@@ -242,7 +243,7 @@ bool SCADARunTime::Unload()
 }
 
 
-void SCADARunTime::Start()
+void HmiRunTime::Start()
 { 
     foreach (QString name, m_listPortName)
     {
@@ -292,7 +293,7 @@ void SCADARunTime::Start()
     }
 }
 
-void SCADARunTime::Stop()
+void HmiRunTime::Stop()
 {
     m_pRunScript->stopRunOnPeriodScripts();
 
@@ -303,7 +304,7 @@ void SCADARunTime::Stop()
 }
 
 
-IVendor *SCADARunTime::FindVendor(const QString name)
+IVendor *HmiRunTime::FindVendor(const QString name)
 {
     IVendor *ret = NULL;
     for (int i = 0; i < m_VendorList.size(); ++i)
@@ -316,7 +317,7 @@ IVendor *SCADARunTime::FindVendor(const QString name)
 }
 
 
-QJsonObject SCADARunTime::LoadJsonObjectFromFile(SaveFormat saveFormat, QString f)
+QJsonObject HmiRunTime::LoadJsonObjectFromFile(SaveFormat saveFormat, QString f)
 {
     QFile loadFile(f);
     if (!loadFile.open(QIODevice::ReadOnly))
@@ -328,11 +329,11 @@ QJsonObject SCADARunTime::LoadJsonObjectFromFile(SaveFormat saveFormat, QString 
 }
 
 /**
- * @brief SCADARunTime::doMessage
+ * @brief HmiRunTime::doMessage
  * @details 处理消息
  * @param msg
  */
-void SCADARunTime::doMessage(QString msg)
+void HmiRunTime::doMessage(QString msg)
 {
     if(msg.indexOf(QString("VALUE_CHANGE")) != -1)
     {
@@ -346,9 +347,9 @@ void SCADARunTime::doMessage(QString msg)
 }
 
 
-bool SCADARunTime::event(QEvent *event)
+bool HmiRunTime::event(QEvent *event)
 {
-    Log4Qt::Logger *log = Log4Qt::Logger::logger("SCADARunTime");
+    Log4Qt::Logger *log = Log4Qt::Logger::logger("HmiRunTime");
 
     if(event->type() == EV_StartRuntime)
     {
@@ -381,12 +382,12 @@ bool SCADARunTime::event(QEvent *event)
 
 
 /**
- * @brief SCADARunTime::execScriptFunction
+ * @brief HmiRunTime::execScriptFunction
  * @details 执行脚本功能
  * @param szFuncList 功能函数事件字符
  * @param szMatchEvent 匹配执行的事件
  */
-void SCADARunTime::execScriptFunction(const QStringList &szFuncList,
+void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
                                       const QString &szMatchEvent) {
     if(scriptEngine_ != nullptr) {
         foreach (QString szFuncEv, szFuncList) {
@@ -412,12 +413,12 @@ void SCADARunTime::execScriptFunction(const QStringList &szFuncList,
 
 
 /**
- * @brief SCADARunTime::getProjectName
+ * @brief HmiRunTime::getProjectName
  * @details 获取工程名称
  * @param szProjectPath
  * @return
  */
-QString SCADARunTime::getProjectName(const QString &szProjectPath) {
+QString HmiRunTime::getProjectName(const QString &szProjectPath) {
     QFileInfo srcFileInfo(szProjectPath);
     QString szProjName = "";
     if (srcFileInfo.isDir()) {

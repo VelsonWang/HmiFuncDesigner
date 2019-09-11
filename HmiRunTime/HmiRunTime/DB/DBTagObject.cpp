@@ -40,7 +40,7 @@ void DBTagObject::SetData(QVariant v, bool bReadFromDevice)
     {
         // 发送更新事件到消息服务
         QString msg = QString("%1 %2").arg("VALUE_CHANGE").arg(this->mId);
-        SCADARunTime::doMessage(msg);
+        HmiRunTime::doMessage(msg);
     }
     mData = v;
     if(!bReadFromDevice)
@@ -160,7 +160,7 @@ void DBTagObject::SetData(unsigned char* buffer)
     {
         // 发送更新事件到消息服务
         QString msg = QString("%1 %2").arg("VALUE_CHANGE").arg(this->mId);
-        SCADARunTime::doMessage(msg);
+        HmiRunTime::doMessage(msg);
     }
 }
 

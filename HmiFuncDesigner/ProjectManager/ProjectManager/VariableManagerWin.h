@@ -3,7 +3,7 @@
 
 #include "ChildBase.h"
 #include "TagFuncEditDialog.h"
-#include "../Public/Public.h"
+#include "../../Public/Public.h"
 #include "TagManager.h"
 #include <QList>
 #include <QString>

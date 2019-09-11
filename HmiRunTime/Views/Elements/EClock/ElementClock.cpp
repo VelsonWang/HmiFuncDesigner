@@ -51,7 +51,7 @@ void ElementClock::paint(QPainter *painter)
         if((QDateTime::currentMSecsSinceEpoch() - iLastMSecs_) > period_ * 1000) {
             iLastMSecs_ = QDateTime::currentMSecsSinceEpoch();
             // 处理"时钟到来"功能
-            SCADARunTime::execScriptFunction(funcs_, tr("TimeOut"));
+            HmiRunTime::execScriptFunction(funcs_, tr("TimeOut"));
         }
     }
 

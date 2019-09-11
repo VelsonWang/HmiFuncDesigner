@@ -123,6 +123,9 @@ public:
         return *this;
     }
 
+public:
+    static bool showFileFuncLine_;
+
     int version_;
     int line_;
     const char *file_;

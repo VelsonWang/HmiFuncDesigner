@@ -1,7 +1,7 @@
 #ifndef NEWPROJECTDIALOG_H
 #define NEWPROJECTDIALOG_H
 
-#include "../Public/Public.h"
+#include "../../Public/Public.h"
 #include <QDialog>
 #include <QMap>
 

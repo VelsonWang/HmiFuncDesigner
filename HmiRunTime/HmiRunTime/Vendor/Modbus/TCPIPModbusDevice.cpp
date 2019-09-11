@@ -11,7 +11,7 @@
 
 
 TCPIPModbusDevice::TCPIPModbusDevice()
-    : pNetDevicePrivate(0)
+    : pNetDevicePrivate(Q_NULLPTR)
 {
     netPort_ = new NetPort();
     iFacePort = netPort_;
@@ -20,15 +20,15 @@ TCPIPModbusDevice::TCPIPModbusDevice()
 
 TCPIPModbusDevice::~TCPIPModbusDevice()
 {
-    if(netPort_ != nullptr)
+    if(netPort_ != Q_NULLPTR)
     {
         delete netPort_;
-        netPort_ = nullptr;
+        netPort_ = Q_NULLPTR;
     }
-    if(pNetDevicePrivate != 0 )
+    if(pNetDevicePrivate != Q_NULLPTR)
     {
         delete pNetDevicePrivate;
-        pNetDevicePrivate = 0;
+        pNetDevicePrivate = Q_NULLPTR;
     }
 }
 
@@ -39,7 +39,7 @@ TCPIPModbusDevice::~TCPIPModbusDevice()
 */
 QString TCPIPModbusDevice::GetDeviceName()
 {
-    if(pNetDevicePrivate !=0 )
+    if(pNetDevicePrivate != Q_NULLPTR)
         return pNetDevicePrivate->m_sDeviceName;
     return "";
 }
@@ -161,8 +161,10 @@ bool TCPIPModbusDevice::AfterWriteIOTag(IOTag* pTag) {
 */
 bool TCPIPModbusDevice::WriteIOTags()
 {
-    while (!mWriteQueue.isEmpty())
-    {
+    while (!mWriteQueue.isEmpty()) {
+        if(!mbIsRunning)
+            return false;
+
         IOTag* pTag = mWriteQueue.dequeue();
         WriteIOTag(pTag);
     }
@@ -231,6 +233,9 @@ bool TCPIPModbusDevice::ReadIOTags()
         if(!mWriteQueue.isEmpty())
             break;
 
+        if(!mbIsRunning)
+            return false;
+
         IOTag* pTag = mReadList.at(i);
 
         if(ReadIOTag(pTag))
@@ -242,7 +247,7 @@ bool TCPIPModbusDevice::ReadIOTags()
             miFailCnt++;
         }
 
-        if(pNetDevicePrivate !=0 )
+        if(pNetDevicePrivate != Q_NULLPTR)
         {
             if(pNetDevicePrivate->m_iFrameTimePeriod > 0)
                 QThread::msleep(pNetDevicePrivate->m_iFrameTimePeriod);

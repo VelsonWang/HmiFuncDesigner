@@ -62,9 +62,9 @@ void TcpServer::clear()
 
 void TcpServer::reStartRuntime()
 {
-    if(g_SCADARunTimePtr != nullptr)
+    if(g_pHmiRunTime != Q_NULLPTR)
     {
         SysRuntimeEvent runtimeEv(static_cast<QEvent::Type>(EV_RestartRuntime));
-        QCoreApplication::sendEvent(g_SCADARunTimePtr, &runtimeEv);
+        QCoreApplication::sendEvent(g_pHmiRunTime, &runtimeEv);
     }
 }

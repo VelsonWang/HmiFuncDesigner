@@ -16,6 +16,7 @@
 #include <QStandardItem>
 #include <QStringList>
 #include <QTime>
+#include <QDir>
 #include "AboutDialog.h"
 #include "CommunicationDeviceWin.h"
 #include "ConfigUtils.h"
@@ -688,11 +689,11 @@ void MainWindow::on_actionRun_triggered()
 {
     QString fileRuntimeApplication = "";
 #ifdef Q_OS_WIN
-    fileRuntimeApplication = Helper::AppDir() + "/HmiRunTime.exe";
+    fileRuntimeApplication = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime.exe");
 #endif
 
 #ifdef Q_OS_LINUX
-    fileRuntimeApplication = Helper::AppDir() + "/HmiRunTime";
+    fileRuntimeApplication = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime");
 #endif
 
     QFile file(fileRuntimeApplication);
