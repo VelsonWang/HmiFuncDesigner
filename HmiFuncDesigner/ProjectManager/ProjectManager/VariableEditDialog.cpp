@@ -113,7 +113,7 @@ void VariableEditDialog::on_btnOk_clicked()
     QString area = ui->cboRegisterSection->currentText();
     if(devPlugin_ != nullptr) {
         devPlugin_->GetRegisterAreaLimit(area, lowerLimit, upperLimit);
-        if((iRegAddr + iOffset) < lowerLimit && (iRegAddr + iOffset) > upperLimit) {
+        if((iRegAddr + iOffset) < lowerLimit || (iRegAddr + iOffset) > upperLimit) {
             QMessageBox::warning(this,
                                  tr("提示"),
                                  QString(tr("地址设置不在范围[%1,%2]"))
