@@ -1,6 +1,7 @@
 ﻿#include <QTime>
 #include "NetPort.h"
 #include "Public/PublicFunction.h"
+#include <QThread>
 
 NetPort::NetPort() {
     //init only required for windows, no-op on *nix
@@ -60,6 +61,8 @@ int NetPort::read(unsigned char *buf, int len, int ms) {
             if(len > byteArray.size())
                 len = byteArray.size();
             break;
+        } else {
+            QThread::msleep(1);
         }
     }
 

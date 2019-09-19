@@ -335,10 +335,10 @@ void DrawMainWindow::openGraphPage(const QString &szProjPath,
             graphPage->setProjectName(szProjName);
             graphPage->setGridVisible(gridVisible_);
             graphPage->loadAsXML(fileName);
-            graphPage->fillGraphPagePropertyModel();
             view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szPageId + ".drw");
             graphPage->setGraphPageId(szPageId);
+            graphPage->fillGraphPagePropertyModel();
         }
     }
 

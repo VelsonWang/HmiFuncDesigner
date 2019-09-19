@@ -149,8 +149,6 @@ private slots:
     void slotEditPaste();
     void slotSelectAll();
 
-
-
 public slots:
     void slotSelectionChanged();
     void slotElementPropertyChanged(QtProperty *property, const QVariant &value);

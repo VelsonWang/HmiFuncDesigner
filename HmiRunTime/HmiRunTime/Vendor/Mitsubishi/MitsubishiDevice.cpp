@@ -230,7 +230,7 @@ bool MitsubishiDevice::ReadIOTags()
 
         if(pComDevicePrivate != Q_NULLPTR) {
             if(pComDevicePrivate->m_iFrameTimePeriod > 0)
-                QThread::msleep(pComDevicePrivate->m_iFrameTimePeriod);
+                QThread::msleep(static_cast<unsigned long>(pComDevicePrivate->m_iFrameTimePeriod));
         }
     }
     return true;

@@ -41,6 +41,7 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor \
                Vendor/Modbus \
                Vendor/Mitsubishi \
+               Vendor/SIEMENS_S7_200 \
                Event \
                Script \
                Log \
@@ -81,6 +82,8 @@ win32 {
 }
 
 SOURCES += \
+    Vendor/SIEMENS_S7_200/S7_200.cpp \
+    Vendor/SIEMENS_S7_200/S7_200Device.cpp \
     qextserial/qextserialport.cpp \
     DB/DBTagObject.cpp \
     DB/RealTimeDB.cpp \
@@ -112,6 +115,8 @@ SOURCES += \
 
 
 HEADERS  += \
+    Vendor/SIEMENS_S7_200/S7_200.h \
+    Vendor/SIEMENS_S7_200/S7_200Device.h \
     qextserial/qextserialport_global.h \
     qextserial/qextserialport.h \
     DB/DBTagObject.h \

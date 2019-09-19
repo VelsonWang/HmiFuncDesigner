@@ -141,6 +141,8 @@ bool UserAuthority::insert(ProjectDataSQLiteDatabase *pDB,
     }
 
     this->load(pDB);
+
+    return ret;
 }
 
 bool UserAuthority::del(ProjectDataSQLiteDatabase *pDB,

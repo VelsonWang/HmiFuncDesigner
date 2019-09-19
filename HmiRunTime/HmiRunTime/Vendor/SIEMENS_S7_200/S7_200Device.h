@@ -1,5 +1,7 @@
-﻿#ifndef MITSUBISHIDEVICE_H
-#define MITSUBISHIDEVICE_H
+﻿#ifndef S7_200DEVICE_H
+#define S7_200DEVICE_H
+
+
 
 #include <QObject>
 #include <QQueue>
@@ -13,13 +15,13 @@
 #include "IPort.h"
 #include "public.h"
 #include "ComPort.h"
-#include "Mitsubishi.h"
+#include "S7_200.h"
 
-class MitsubishiDevice : public IVendor
+class S7_200Device : public IVendor
 {
 public:
-    explicit MitsubishiDevice();
-    ~MitsubishiDevice();
+    explicit S7_200Device();
+    ~S7_200Device();
     bool LoadData(const QString &devName);
 
 public:
@@ -72,8 +74,8 @@ public:
 private:
     ComPort * comPort_;
     ComDevicePrivate *pComDevicePrivate;
-    Mitsubishi mitsubishi_;
+    S7_200 ppi_;
 
 };
 
-#endif // MITSUBISHIDEVICE_H
+#endif 

@@ -1,29 +1,28 @@
-﻿#include "ModbusASCIIDevice.h"
+﻿#include "S7_200Device.h"
 #include "RealTimeDB.h"
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QThread>
+
 #include <QDebug>
 
-ModbusASCIIDevice::ModbusASCIIDevice()
+
+S7_200Device::S7_200Device()
     : pComDevicePrivate(Q_NULLPTR) {
     comPort_ = new ComPort();
     iFacePort = comPort_;
-    modbusAscii_.setPort(iFacePort);
+    ppi_.setPort(iFacePort);
 }
 
-ModbusASCIIDevice::~ModbusASCIIDevice()
-{  
-    if(comPort_ != nullptr)
-    {
+S7_200Device::~S7_200Device() {
+    if(comPort_ != Q_NULLPTR) {
         delete comPort_;
-        comPort_ = nullptr;
+        comPort_ = Q_NULLPTR;
     }
 
-    if(pComDevicePrivate != Q_NULLPTR)
-    {
+    if(pComDevicePrivate != Q_NULLPTR) {
         delete pComDevicePrivate;
         pComDevicePrivate = Q_NULLPTR;
     }
@@ -34,8 +33,7 @@ ModbusASCIIDevice::~ModbusASCIIDevice()
 /*
 * 获取设备名称
 */
-QString ModbusASCIIDevice::GetDeviceName()
-{
+QString S7_200Device::GetDeviceName() {
     if(pComDevicePrivate != Q_NULLPTR)
         return pComDevicePrivate->m_sDeviceName;
     return "";
@@ -44,8 +42,7 @@ QString ModbusASCIIDevice::GetDeviceName()
 /*
 * 打开设备
 */
-bool ModbusASCIIDevice::Open()
-{
+bool S7_200Device::Open() {
     return true;
 }
 
@@ -53,8 +50,7 @@ bool ModbusASCIIDevice::Open()
 /*
 * 设备初始化
 */
-void ModbusASCIIDevice::Initialize()
-{
+void S7_200Device::Initialize() {
 
 }
 
@@ -62,8 +58,7 @@ void ModbusASCIIDevice::Initialize()
 /*
 * 添加设备变量至变量列表
 */
-void ModbusASCIIDevice::AddIOTagToDeviceTagList(IOTag* pTag)
-{
+void S7_200Device::AddIOTagToDeviceTagList(IOTag* pTag) {
     mReadList.append(pTag);
 }
 
@@ -71,20 +66,17 @@ void ModbusASCIIDevice::AddIOTagToDeviceTagList(IOTag* pTag)
 /*
 * 添加设备变量至变量写队列
 */
-void ModbusASCIIDevice::AddIOTagToDeviceTagWriteQueue(IOTag* pTag)
-{
+void S7_200Device::AddIOTagToDeviceTagWriteQueue(IOTag* pTag) {
 	QMutexLocker locker(&m_WriteMutex);
     mWriteQueue.enqueue(pTag);
 }
 
-static void ClearIOTagReadBuffer(IOTag* pTag)
-{
+static void ClearIOTagReadBuffer(IOTag* pTag) {
     for(int i=0; i<pTag->mLength; i++)
         pTag->pReadBuf[i] = 0;
 }
 
-static void ClearIOTagWriteBuffer(IOTag* pTag)
-{
+static void ClearIOTagWriteBuffer(IOTag* pTag) {
     for(int i=0; i<pTag->mLength; i++)
         pTag->pWriteBuf[i] = 0;
 }
@@ -93,10 +85,8 @@ static void ClearIOTagWriteBuffer(IOTag* pTag)
 /*
 * 查找设备变量
 */
-IOTag* ModbusASCIIDevice::FindIOTagByID(const QString &id)
-{
-    for (int i = 0; i < mReadList.size(); ++i)
-    {
+IOTag* S7_200Device::FindIOTagByID(const QString &id) {
+    for (int i = 0; i < mReadList.size(); ++i) {
         IOTag* pTag = mReadList.at(i);
         if(pTag->GetTagID() == id)
         {
@@ -106,13 +96,14 @@ IOTag* ModbusASCIIDevice::FindIOTagByID(const QString &id)
     return nullptr;
 }
 
+
 /**
- * @brief ModbusASCIIDevice::BeforeWriteIOTag
+ * @brief S7_200Device::BeforeWriteIOTag
  * @details 写变量前处理
  * @param pTag 变量
  * @return
  */
-bool ModbusASCIIDevice::BeforeWriteIOTag(IOTag* pTag) {
+bool S7_200Device::BeforeWriteIOTag(IOTag* pTag) {
     Q_UNUSED(pTag)
     return true;
 }
@@ -120,18 +111,17 @@ bool ModbusASCIIDevice::BeforeWriteIOTag(IOTag* pTag) {
 /*
 * 写变量
 */
-bool ModbusASCIIDevice::WriteIOTag(IOTag* pTag)
-{
+bool S7_200Device::WriteIOTag(IOTag* pTag) {
     if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == WRIE) {
         ClearWriteBuffer();
         ClearIOTagWriteBuffer(pTag);
 
-        if(!modbusAscii_.isCanWrite(pTag))
+        if(!ppi_.isCanWrite(pTag))
             return false;
 
         BeforeWriteIOTag(pTag);
 
-        if(modbusAscii_.writeData(pTag) != 1)
+        if(ppi_.writeData(pTag) != 1)
             return false;
 
         AfterWriteIOTag(pTag);
@@ -139,22 +129,23 @@ bool ModbusASCIIDevice::WriteIOTag(IOTag* pTag)
     return true;
 }
 
+
 /**
- * @brief ModbusASCIIDevice::AfterWriteIOTag
+ * @brief S7_200Device::AfterWriteIOTag
  * @details 写变量后处理
  * @param pTag 变量
  * @return
  */
-bool ModbusASCIIDevice::AfterWriteIOTag(IOTag* pTag) {
+bool S7_200Device::AfterWriteIOTag(IOTag* pTag) {
     Q_UNUSED(pTag)
     return true;
 }
 
+
 /*
 * 写变量列表
 */
-bool ModbusASCIIDevice::WriteIOTags()
-{
+bool S7_200Device::WriteIOTags() {
     while (!mWriteQueue.isEmpty()) {
         if(!mbIsRunning)
             return false;
@@ -165,35 +156,36 @@ bool ModbusASCIIDevice::WriteIOTags()
     return true;
 }
 
+
 /**
- * @brief ModbusASCIIDevice::BeforeReadIOTag
+ * @brief S7_200Device::BeforeReadIOTag
  * @details 读变量前处理
  * @param pTag 变量
  * @return
  */
-bool ModbusASCIIDevice::BeforeReadIOTag(IOTag* pTag) {
+bool S7_200Device::BeforeReadIOTag(IOTag* pTag) {
     Q_UNUSED(pTag)
     return true;
 }
 
+
 /*
 * 读变量
 */
-bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
-{
-	QMutexLocker locker(&m_WriteMutex);
+bool S7_200Device::ReadIOTag(IOTag* pTag) {
+    QMutexLocker locker(&m_WriteMutex);
     if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == READ) {
         ClearReadBuffer();
         ClearIOTagReadBuffer(pTag);
 
         DBTagObject *pDBTagObject = pTag->GetDBTagObject();
 
-        if(!modbusAscii_.isCanRead(pTag))
+        if(!ppi_.isCanRead(pTag))
             return false;
 
         BeforeReadIOTag(pTag);
 
-        if(modbusAscii_.readData(pTag) != 1)
+        if(ppi_.readData(pTag) != 1)
             return false;
 
         pDBTagObject->SetData(pTag->pReadBuf);
@@ -203,21 +195,23 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
     return true;
 }
 
+
 /**
- * @brief ModbusASCIIDevice::AfterReadIOTag
+ * @brief S7_200Device::AfterReadIOTag
  * @details 读变量后处理
  * @param pTag 变量
  * @return
  */
-bool ModbusASCIIDevice::AfterReadIOTag(IOTag* pTag) {
+bool S7_200Device::AfterReadIOTag(IOTag* pTag) {
     Q_UNUSED(pTag)
     return true;
 }
 
+
 /*
 * 读变量列表
 */
-bool ModbusASCIIDevice::ReadIOTags()
+bool S7_200Device::ReadIOTags()
 {
     for (int i = 0; i < mReadList.size(); ++i) {
         if(!mWriteQueue.isEmpty())
@@ -228,17 +222,13 @@ bool ModbusASCIIDevice::ReadIOTags()
 
         IOTag* pTag = mReadList.at(i);
 
-        if(ReadIOTag(pTag))
-        {
+        if(ReadIOTag(pTag)) {
             miFailCnt = 0;
-        }
-        else
-        {
+        } else {
             miFailCnt++;
         }
 
-        if(pComDevicePrivate != Q_NULLPTR)
-        {
+        if(pComDevicePrivate != Q_NULLPTR) {
             if(pComDevicePrivate->m_iFrameTimePeriod > 0)
                 QThread::msleep(static_cast<unsigned long>(pComDevicePrivate->m_iFrameTimePeriod));
         }
@@ -250,8 +240,7 @@ bool ModbusASCIIDevice::ReadIOTags()
 /*
 * 是否运行
 */
-bool ModbusASCIIDevice::IsRunning()
-{
+bool S7_200Device::IsRunning() {
     return mbIsRunning;
 }
 
@@ -259,8 +248,7 @@ bool ModbusASCIIDevice::IsRunning()
 /*
 * 启动
 */
-void ModbusASCIIDevice::Start()
-{
+void S7_200Device::Start() {
     mbIsRunning = true;
 }
 
@@ -268,8 +256,7 @@ void ModbusASCIIDevice::Start()
 /*
 * 停止
 */
-void ModbusASCIIDevice::Stop()
-{
+void S7_200Device::Stop() {
     mbIsRunning = false;
 }
 
@@ -277,8 +264,7 @@ void ModbusASCIIDevice::Stop()
 /*
 * 循环处理
 */
-void ModbusASCIIDevice::DoLoop()
-{
+void S7_200Device::DoLoop() {
     //qDebug()<< GetDeviceName() << " is start!";
     //while(mbIsRunning)
     {
@@ -291,8 +277,7 @@ void ModbusASCIIDevice::DoLoop()
 /*
 * 是重启运行
 */
-bool ModbusASCIIDevice::IsRestart()
-{
+bool S7_200Device::IsRestart() {
     return true;
 }
 
@@ -300,8 +285,7 @@ bool ModbusASCIIDevice::IsRestart()
 /*
 * 是否在线
 */
-bool ModbusASCIIDevice::IsOnLine()
-{
+bool S7_200Device::IsOnLine() {
     return (miFailCnt < 5);
 }
 
@@ -309,16 +293,14 @@ bool ModbusASCIIDevice::IsOnLine()
 /*
 * 关闭设备
 */
-bool ModbusASCIIDevice::Close()
-{
+bool S7_200Device::Close() {
     return true;
 }
 
 /*
 * 获取端口名称
 */
-QString ModbusASCIIDevice::GetPortName()
-{
+QString S7_200Device::GetPortName() {
     return pComDevicePrivate->m_sPortNumber;
 }
 
@@ -326,19 +308,16 @@ QString ModbusASCIIDevice::GetPortName()
 /*
 * 从文件读取配置数据
 */
-bool ModbusASCIIDevice::LoadData(const QString &devName)
-{
+bool S7_200Device::LoadData(const QString &devName) {
     pComDevicePrivate = new ComDevicePrivate();
-    if (pComDevicePrivate->LoadData(devName))
-    {
+    if (pComDevicePrivate->LoadData(devName)) {
         QStringList comArgs;
         comArgs << QString().number(pComDevicePrivate->m_iBaudrate);
         comArgs << QString().number(pComDevicePrivate->m_iDatabit);
         comArgs << pComDevicePrivate->m_sVerifybit;
         comArgs << QString().number(pComDevicePrivate->m_fStopbit);
 
-        if(!iFacePort->open(pComDevicePrivate->m_sPortNumber, comArgs))
-        {
+        if(!iFacePort->open(pComDevicePrivate->m_sPortNumber, comArgs)) {
             qWarning("ComPort open fail!");
             return false;
         }
@@ -346,6 +325,7 @@ bool ModbusASCIIDevice::LoadData(const QString &devName)
     }
     return false;
 }
+
 
 
 
