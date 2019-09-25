@@ -40,6 +40,7 @@ ElementPushButton::ElementPushButton(const QString &szProjPath,
     enableOnInitial_ = true;
     showOnInitial_ = true;
     transparent_ = false;
+    script_ = "";
     TagManager::setProjectPath(szProjectPath_);
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
@@ -107,6 +108,11 @@ void ElementPushButton::createPropertyList()
     getSupportEvents(listEvents);
     property->setAttribute(QLatin1String("supportevents"), listEvents.join("|"));
     addProperty(property, QLatin1String("functions"));
+
+    // JavaScript脚本
+    property = variantPropertyManager_->addProperty(VariantManager::scriptTypeId(), tr("执行脚本"));
+    property->setAttribute(QLatin1String("supportevents"), listEvents.join("|"));
+    addProperty(property, QLatin1String("script"));
 
     // 显示内容
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("显示内容"));
@@ -208,6 +214,8 @@ void ElementPushButton::updateElementProperty(QtProperty *property, const QVaria
     } else if (id == QLatin1String("functions")) {
         QString szFuncs = value.toString();
         funcs_ = szFuncs.split('|');
+    }  else if (id == QLatin1String("script")) {
+        script_ = value.toString();
     } else if (id == QLatin1String("showContent")) {
         QString szShowContent = contents_.at(value.toInt());
         if(showContent_ != szShowContent) {
@@ -295,6 +303,11 @@ void ElementPushButton::updatePropertyModel()
     property = idToProperty_[QLatin1String("functions")];
     if(property != Q_NULLPTR) {
         property->setValue(funcs_.join('|'));
+    }
+
+    property = idToProperty_[QLatin1String("script")];
+    if(property != Q_NULLPTR) {
+        property->setValue(script_);
     }
 
     property = idToProperty_[QLatin1String("showContent")];
@@ -397,6 +410,12 @@ void ElementPushButton::reloadPropertyList()
 
     // 选择功能
     property = idToProperty_[QLatin1String("functions")];
+    if(property != Q_NULLPTR) {
+        propList.append(property);
+    }
+
+    // JavaScript脚本
+    property = idToProperty_[QLatin1String("script")];
     if(property != Q_NULLPTR) {
         propList.append(property);
     }
@@ -768,6 +787,7 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer)
     writer.writeAttribute("enableOnInitial", enableOnInitial_?"true":"false");
     writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
     writer.writeAttribute("functions", funcs_.join("|"));
+    writer.writeAttribute("script", script_);
     writer.writeEndElement();
 }
 
@@ -878,6 +898,10 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes)
         funcs_ = listString.split('|');
     }
 
+    if (attributes.hasAttribute("script")) {
+        script_ = attributes.value("script").toString();
+    }
+
     updateBoundingElement();
     updatePropertyModel();
 
@@ -905,7 +929,8 @@ void ElementPushButton::writeData(QDataStream &out)
         << this->elemAngle
         << this->enableOnInitial_
         << this->showOnInitial_
-        << this->funcs_;
+        << this->funcs_
+        << this->script_;
 }
 
 void ElementPushButton::readData(QDataStream &in)
@@ -930,6 +955,7 @@ void ElementPushButton::readData(QDataStream &in)
     bool enableOnInitial;
     bool showOnInitial;
     QStringList funcs;
+    QString script;
 
     in >> id
        >> xpos
@@ -950,7 +976,8 @@ void ElementPushButton::readData(QDataStream &in)
        >> angle
        >> enableOnInitial
        >> showOnInitial
-       >> funcs;
+       >> funcs
+       >> script;
 
     this->setElementId(id);
     int index = getIndexFromIDString(id);
@@ -975,6 +1002,7 @@ void ElementPushButton::readData(QDataStream &in)
     this->enableOnInitial_ = enableOnInitial;
     this->showOnInitial_ = showOnInitial;
     this->funcs_ = funcs;
+    this->script_ = script;
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
@@ -1043,7 +1071,8 @@ QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele)
         << ele.elemAngle
         << ele.enableOnInitial_
         << ele.showOnInitial_
-        << ele.funcs_;
+        << ele.funcs_
+        << ele.script_;
     return out;
 }
 
@@ -1069,6 +1098,7 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele)
     bool enableOnInitial;
     bool showOnInitial;
     QStringList funcs;
+    QString script;
 
     in >> id
        >> xpos
@@ -1089,7 +1119,8 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele)
        >> angle
        >> enableOnInitial
        >> showOnInitial
-       >> funcs;
+       >> funcs
+       >> script;
 
     ele.setElementId(id);
     int index = ele.getIndexFromIDString(id);
@@ -1115,6 +1146,7 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele)
     ele.enableOnInitial_ = enableOnInitial;
     ele.showOnInitial_ = showOnInitial;
     ele.funcs_ = funcs;
+    ele.script_ = script;
     ele.updateBoundingElement();
     ele.updatePropertyModel();
 

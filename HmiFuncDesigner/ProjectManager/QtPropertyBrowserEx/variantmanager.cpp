@@ -21,6 +21,10 @@ class FilePathPropertyType
 };
 Q_DECLARE_METATYPE(FilePathPropertyType)
 
+class ScriptPropertyType
+{
+};
+Q_DECLARE_METATYPE(ScriptPropertyType)
 
 int VariantManager::functionTypeId()
 {
@@ -42,6 +46,12 @@ int VariantManager::filePathTypeId()
     return qMetaTypeId<FilePathPropertyType>();
 }
 
+int VariantManager::scriptTypeId()
+{
+    return qMetaTypeId<ScriptPropertyType>();
+}
+
+
 VariantManager::VariantManager(QObject *parent)
     : QtVariantPropertyManager(parent),
       propertyEditor_(Q_NULLPTR)
@@ -59,7 +69,8 @@ bool VariantManager::isPropertyTypeSupported(int propertyType) const
     if (propertyType == functionTypeId() ||
             propertyType == tagColorListTypeId() ||
             propertyType == TagTextListTypeId() ||
-            propertyType == filePathTypeId())
+            propertyType == filePathTypeId() ||
+            propertyType == scriptTypeId())
         return true;
 
     return QtVariantPropertyManager::isPropertyTypeSupported(propertyType);
@@ -70,7 +81,8 @@ int VariantManager::valueType(int propertyType) const
     if (propertyType == functionTypeId() ||
             propertyType == tagColorListTypeId() ||
             propertyType == TagTextListTypeId() ||
-            propertyType == filePathTypeId())
+            propertyType == filePathTypeId() ||
+            propertyType == scriptTypeId())
         return QVariant::String;
 
     return QtVariantPropertyManager::valueType(propertyType);
@@ -97,6 +109,10 @@ QStringList VariantManager::attributes(int propertyType) const
         QStringList attr;
         attr << QLatin1String("filter");
         return attr;
+    } else if (propertyType == scriptTypeId()) {
+        QStringList attr;
+        attr << QLatin1String("supportevents");
+        return attr;
     }
 
     return QtVariantPropertyManager::attributes(propertyType);
@@ -114,6 +130,10 @@ int VariantManager::attributeType(int propertyType, const QString &attribute) co
         return QtVariantPropertyManager::attributeType(propertyType, attribute);
     } else if (propertyType == filePathTypeId()) {
         if (attribute == QLatin1String("filter"))
+            return QVariant::String;
+        return 0;
+    } else if (propertyType == scriptTypeId()) {
+        if (attribute == QLatin1String("supportevents"))
             return QVariant::String;
         return 0;
     }
@@ -188,7 +208,8 @@ void VariantManager::initializeProperty(QtProperty *property)
     if (propertyType(property) == functionTypeId() ||
             propertyType(property) == tagColorListTypeId() ||
             propertyType(property) == TagTextListTypeId() ||
-            propertyType(property) == filePathTypeId()) {
+            propertyType(property) == filePathTypeId() ||
+            propertyType(property) == scriptTypeId()) {
         theValues[property] = Data();
     }
     QtVariantPropertyManager::initializeProperty(property);

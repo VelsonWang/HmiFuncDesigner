@@ -2,9 +2,6 @@
 #include "VersionInfo.h"
 #include "qtsingleapplication.h"
 #include "ConfigUtils.h"
-#include "edncrypt.h"
-#include "cregister.h"
-#include "cregisterdialog.h"
 #include "PluginManager.h"
 #include <QApplication>
 #include <QTextCodec>
@@ -29,15 +26,6 @@ int main(int argc, char *argv[])
     font.setFamily("宋体");
     font.setPointSize(10);
     app.setFont(font);
-
-#if 0
-    // 检查序列号授权信息
-    if(!CRegister::CheckRegisterCode()) {
-        if(QDialog::Accepted != CRegisterDialog::RegisterDialog()) {
-            return 0;
-        }
-    }
-#endif
 
     // 加载元素插件
     PluginManager::getInstance()->loadPlugin();

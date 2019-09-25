@@ -6,14 +6,14 @@ CONFIG += ordered
 
 SUBDIRS   = \
     Utils \
-    edncrypt \
+#    edncrypt \
     Csv \
     PluginManager \
     DrawUtils \
     qtpropertybrowser \
     qscintilla \
-    Lua \
-    Ftp \
+#    Lua \
+#    Ftp \
     TagManager \
     ProjectDataUtils
 

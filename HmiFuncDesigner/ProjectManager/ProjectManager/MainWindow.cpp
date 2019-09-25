@@ -702,7 +702,7 @@ void MainWindow::on_actionRun_triggered()
         process->setWorkingDirectory(Helper::AppDir() + "/");
         QStringList argv;
         argv << m_strProjectPath;
-        process->start(fileRuntimeApplication, argv);
+        process->startDetached(fileRuntimeApplication, argv);
     }
 }
 

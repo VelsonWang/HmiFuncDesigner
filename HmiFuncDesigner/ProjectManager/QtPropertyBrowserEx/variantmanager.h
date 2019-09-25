@@ -24,6 +24,7 @@ public:
     static int tagColorListTypeId();
     static int TagTextListTypeId();
     static int filePathTypeId();
+    static int scriptTypeId();
 
     void setPropertyEditor(QtTreePropertyBrowser *editor);
     QtTreePropertyBrowser *getPropertyEditor();

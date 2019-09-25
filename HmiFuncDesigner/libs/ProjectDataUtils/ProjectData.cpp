@@ -69,6 +69,7 @@ bool ProjectData::createOrOpenProjectData(const QString &projPath,
         qWarning() << __FILE__ << __LINE__ <<__FUNCTION__
                    << "szProjPath_: " << szProjPath_ << " "
                    << "szProjName_: " << szProjName_;
+        return false;
     }
 
     fileName = szProjPath_ + "/" + szProjName_ + ".pdt";
