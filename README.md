@@ -15,20 +15,21 @@
 
 ​	3.**如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
 
-
 ### 3. HmiFuncDesigner软件编译 How the HmiFuncDesigner compiles
 
- 1. **打开"Qt Creator 4.5.1 (Community)"软件，打开HmiFuncDesigner/HmiFuncDesigner.pro工程。**
+ 1. **工程路径不要太长，最好控制在256字符以内，以免编译出错！（注：Windows系统）**
 
- 2. **选择Release模式。**
+ 2. **打开"Qt Creator 4.5.1 (Community)"软件，打开HmiFuncDesigner/HmiFuncDesigner.pro工程。**
 
- 3. **清除以前编译工程产生的数据文件。**
+ 3. **选择Release模式。**
 
- 4. **重新编译工程。**
+ 4. **清除以前编译工程产生的数据文件。**
 
- 5. **编译完成功后生成的软件位于HmiFuncDesignerBin/bin目录下。**
+ 5. **重新编译工程。**
 
- 6. **拷贝所需要的运行库，打开命令窗口“Qt 5.10.1 for Desktop (MinGW 5.3.0 32 bit)”，HmiFuncDesignerBin/bin目录，执行windeployqt 软件名称.exe。**
+ 6. **编译完成功后生成的软件位于HmiFuncDesignerBin/bin目录下。**
+
+ 7. **拷贝所需要的运行库，打开命令窗口“Qt 5.10.1 for Desktop (MinGW 5.3.0 32 bit)”，HmiFuncDesignerBin/bin目录，执行windeployqt 软件名称.exe。**
 
     **具体操作如下图所示：**
 

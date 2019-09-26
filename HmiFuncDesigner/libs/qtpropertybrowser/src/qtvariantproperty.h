@@ -166,7 +166,7 @@ class QT_QTPROPERTYBROWSER_EXPORT QtVariantEditorFactory : public QtAbstractEdit
 {
     Q_OBJECT
 public:
-    QtVariantEditorFactory(QObject *parent = 0);
+    QtVariantEditorFactory(QObject *parent = Q_NULLPTR);
     ~QtVariantEditorFactory();
 protected:
     void connectPropertyManager(QtVariantPropertyManager *manager);

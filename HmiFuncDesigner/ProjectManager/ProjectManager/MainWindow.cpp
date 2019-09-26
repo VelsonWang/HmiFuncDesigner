@@ -422,7 +422,7 @@ void MainWindow::initWindow() {
     ui->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-    ui->statusBar->showMessage(tr("欢迎使用SCADA组态系统"));
+    ui->statusBar->showMessage(tr("欢迎使用HmiFuncDesigner组态系统"));
 }
 
 void MainWindow::on_actionNewPoject_triggered() {
@@ -702,7 +702,7 @@ void MainWindow::on_actionRun_triggered()
         process->setWorkingDirectory(Helper::AppDir() + "/");
         QStringList argv;
         argv << m_strProjectPath;
-        process->start(fileRuntimeApplication, argv);
+        process->startDetached(fileRuntimeApplication, argv);
     }
 }
 

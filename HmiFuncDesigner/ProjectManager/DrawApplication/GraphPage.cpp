@@ -178,7 +178,6 @@ void GraphPage::updateExpandState()
 
 void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVariant &value)
 {
-    //qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << propertyToId_[property] << value;
     if (!selectedItems().isEmpty()) {
         return;
     }
@@ -190,6 +189,7 @@ void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVarian
     if (!propertyToId_.contains(property))
         return;
 
+    //qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << propertyToId_[property] << value;
     QString id = propertyToId_[property];
     if (id == QLatin1String("id")) {
         setGraphPageId(value.toString());
@@ -225,6 +225,8 @@ void GraphPage::cleanPropertyModel()
 
 void GraphPage::fillGraphPagePropertyModel()
 {
+    propertyEditor_->clear();
+
     QtVariantProperty *property;
 
     property = idToProperty_[QLatin1String("id")];
@@ -252,19 +254,17 @@ void GraphPage::fillGraphPagePropertyModel()
         property->setValue(funcs_.join('|'));
     }
 
-    propertyEditor_->clear();
     QListIterator<QtProperty*> iter(propList);
     while (iter.hasNext()) {
         propertyEditor_->addProperty(iter.next());
     }
-
 }
 
 void GraphPage::createPropertyList()
 {
     propList.clear();
     updateExpandState();
-    cleanPropertyModel();
+//    cleanPropertyModel();
 
     QtVariantProperty *property;
 

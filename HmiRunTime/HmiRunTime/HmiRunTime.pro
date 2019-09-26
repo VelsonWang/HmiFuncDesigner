@@ -41,10 +41,12 @@ INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor \
                Vendor/Modbus \
                Vendor/Mitsubishi \
+               Vendor/SIEMENS_S7_200 \
                Event \
                Script \
                Log \
-               Socket
+               Socket \
+               Service
 
 LIBRARY_SRC_PATH = $$_PRO_FILE_PWD_/../../HmiFuncDesigner
 INCLUDEPATH += \
@@ -81,6 +83,10 @@ win32 {
 }
 
 SOURCES += \
+    MessageTransfer.cpp \
+    Service/MemoryMessageService.cpp \
+    Vendor/SIEMENS_S7_200/S7_200.cpp \
+    Vendor/SIEMENS_S7_200/S7_200Device.cpp \
     qextserial/qextserialport.cpp \
     DB/DBTagObject.cpp \
     DB/RealTimeDB.cpp \
@@ -112,6 +118,11 @@ SOURCES += \
 
 
 HEADERS  += \
+    MessageTransfer.h \
+    Service/MemoryMessageService.h \
+    Service/MessageCmd.h \
+    Vendor/SIEMENS_S7_200/S7_200.h \
+    Vendor/SIEMENS_S7_200/S7_200Device.h \
     qextserial/qextserialport_global.h \
     qextserial/qextserialport.h \
     DB/DBTagObject.h \

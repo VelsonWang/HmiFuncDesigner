@@ -1,7 +1,6 @@
-﻿
-#include <QTime>
+﻿#include <QTime>
 #include <QDebug>
-
+#include <QThread>
 #include "ComPort.h"
 #include "Public/PublicFunction.h"
 
@@ -104,6 +103,8 @@ int ComPort::read(unsigned char *buf, int len, int ms) {
 
         if((time.elapsed() - start) > ms) {
             if(len > buf_.size()) len = buf_.size();
+        } else {
+            QThread::msleep(1);
         }
     }
 

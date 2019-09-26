@@ -11,6 +11,7 @@
 #include "edncrypt.h"
 #include "gSOAPServer.h"
 #include "MainWindow.h"
+#include "MemoryMessageService.h"
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
@@ -213,6 +214,10 @@ int main(int argc, char *argv[])
     ///////////////////////////////////////////////////////////////////////////
     /// 启动定时任务
     TimerTask *pTimerTask = new TimerTask();
+
+    // 启动共享内存消息服务
+    MemoryMessageService service;
+    service.start();
 
     ret = app.exec();
 

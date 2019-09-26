@@ -9,6 +9,7 @@ CONFIG(debug, debug|release) { #debug
         LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
         LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
         LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
+        LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
     }
     unix {
         LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowser
@@ -16,6 +17,7 @@ CONFIG(debug, debug|release) { #debug
         LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
         LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
         LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
+        LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
     }
 } else { # release
     LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowser
@@ -23,6 +25,7 @@ CONFIG(debug, debug|release) { #debug
     LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
     LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
 }
 
 

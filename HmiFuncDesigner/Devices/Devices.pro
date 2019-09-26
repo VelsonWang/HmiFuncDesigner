@@ -4,4 +4,5 @@ SUBDIRS += \
     ModbusRTU \
     ModbusASCII \
     TCPIPModbus \
-    FX2N
+    FX2N \
+    S7_200

@@ -141,7 +141,7 @@ void DrawMainWindow::createActions()
 
     actionShowGrid = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
     actionShowGrid->setCheckable(true);
-    actionShowGrid->setChecked(false);
+    actionShowGrid->setChecked(gridVisible_);
     connect(actionShowGrid, SIGNAL(triggered(bool)), SLOT(slotShowGrid(bool)));
 
     actionShowLinear_ = new QAction(QIcon(":/DrawAppImages/ruler.png"), tr("显示线条"), this);
@@ -333,11 +333,12 @@ void DrawMainWindow::openGraphPage(const QString &szProjPath,
 
             graphPage->setProjectPath(szProjPath);
             graphPage->setProjectName(szProjName);
+            graphPage->setGridVisible(gridVisible_);
             graphPage->loadAsXML(fileName);
-            graphPage->fillGraphPagePropertyModel();
             view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szPageId + ".drw");
             graphPage->setGraphPageId(szPageId);
+            graphPage->fillGraphPagePropertyModel();
         }
     }
 

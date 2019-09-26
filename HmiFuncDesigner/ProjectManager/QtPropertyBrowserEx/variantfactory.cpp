@@ -4,6 +4,7 @@
 #include "tagcolorlistedit.h"
 #include "tagtextlistedit.h"
 #include "fileedit.h"
+#include "scriptedit.h"
 
 VariantFactory::~VariantFactory()
 {
@@ -72,6 +73,18 @@ QWidget *VariantFactory::createEditor(QtVariantPropertyManager *manager,
         connect(editor, SIGNAL(destroyed(QObject *)),
                 this, SLOT(slotEditorDestroyed(QObject *)));
         return editor;
+    } else if (manager->propertyType(property) == VariantManager::scriptTypeId()) {
+        ScriptEdit *editor = new ScriptEdit(parent);
+        editor->setScript(manager->value(property).toString());
+        editor->setSupportEvents(manager->attributeValue(property, QLatin1String("supportevents")).toString().split('|'));
+        theCreatedEditors[property].append(editor);
+        theEditorToProperty[editor] = property;
+
+        connect(editor, SIGNAL(scriptChanged(const QString &)),
+                this, SLOT(slotSetValue(const QString &)));
+        connect(editor, SIGNAL(destroyed(QObject *)),
+                this, SLOT(slotEditorDestroyed(QObject *)));
+        return editor;
     }
 
     return QtVariantEditorFactory::createEditor(manager, property, parent);
@@ -107,6 +120,9 @@ void VariantFactory::slotPropertyChanged(QtProperty *property, const QVariant &v
         } else if (manager->propertyType(property) == VariantManager::filePathTypeId()) {
             FileEdit *pFileEdit = dynamic_cast<FileEdit *>(itEditor.next());
             pFileEdit->setFilePath(value.toString());
+        } else if (manager->propertyType(property) == VariantManager::scriptTypeId()) {
+            ScriptEdit *pScriptEdit = dynamic_cast<ScriptEdit *>(itEditor.next());
+            pScriptEdit->setScript(value.toString());
         }
     }
 }
@@ -138,6 +154,15 @@ void VariantFactory::slotPropertyAttributeChanged(QtProperty *property,
             while (itEditor.hasNext()) {
                 FileEdit *pFileEdit = dynamic_cast<FileEdit *>(itEditor.next());
                 pFileEdit->setFilter(value.toString());
+            }
+        }
+    } else if (manager->propertyType(property) == VariantManager::scriptTypeId()) {
+        if (attribute == QLatin1String("supportevents")) {
+            QList<QWidget *> editors = theCreatedEditors[property];
+            QListIterator<QWidget *> itEditor(editors);
+            while (itEditor.hasNext()) {
+                ScriptEdit *pScriptEdit = dynamic_cast<ScriptEdit *>(itEditor.next());
+                pScriptEdit->setSupportEvents(value.toString().split('|'));
             }
         }
     }

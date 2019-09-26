@@ -65,7 +65,14 @@ bool ProjectData::createOrOpenProjectData(const QString &projPath,
     szProjPath_ = fileName;
     szProjName_ = projName;
 
-    fileName = fileName + "/" + projName + ".pdt";
+    if(szProjPath_.isEmpty() || szProjName_.isEmpty()) {
+        qWarning() << __FILE__ << __LINE__ <<__FUNCTION__
+                   << "szProjPath_: " << szProjPath_ << " "
+                   << "szProjName_: " << szProjName_;
+        return false;
+    }
+
+    fileName = szProjPath_ + "/" + szProjName_ + ".pdt";
 
     if(dbPath_ != "") {
         if(dbData_ != nullptr) {

@@ -1,8 +1,6 @@
 ﻿#ifndef MITSUBISHIDEVICE_H
 #define MITSUBISHIDEVICE_H
 
-
-
 #include <QObject>
 #include <QQueue>
 #include <QList>

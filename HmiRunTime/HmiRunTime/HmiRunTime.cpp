@@ -4,6 +4,7 @@
 #include "ModbusASCIIDevice.h"
 #include "TCPIPModbusDevice.h"
 #include "MitsubishiDevice.h"
+#include "S7_200Device.h"
 #include "DBTagObject.h"
 #include "RealTimeDB.h"
 #include "Tag.h"
@@ -19,10 +20,10 @@
 #include <QMutexLocker>
 #include <QDebug>
 
-HmiRunTime *g_pHmiRunTime = nullptr;
+HmiRunTime *g_pHmiRunTime = Q_NULLPTR;
 QString HmiRunTime::m_sProjectPath = QString("");
-RunScript *HmiRunTime::m_pRunScript = nullptr;
-QScriptEngine *HmiRunTime::scriptEngine_ = nullptr;
+RunScript *HmiRunTime::m_pRunScript = Q_NULLPTR;
+QScriptEngine *HmiRunTime::scriptEngine_ = Q_NULLPTR;
 
 
 HmiRunTime::HmiRunTime(QString projectPath, QObject *parent)
@@ -34,20 +35,19 @@ HmiRunTime::HmiRunTime(QString projectPath, QObject *parent)
 
 HmiRunTime::~HmiRunTime()
 {
-    if(m_pRunScript != nullptr) {
+    if(m_pRunScript != Q_NULLPTR) {
         delete m_pRunScript;
-        m_pRunScript = nullptr;
+        m_pRunScript = Q_NULLPTR;
     }
-    if(scriptEngine_ != nullptr) {
+    if(scriptEngine_ != Q_NULLPTR) {
         delete scriptEngine_;
-        scriptEngine_ = nullptr;
+        scriptEngine_ = Q_NULLPTR;
     }
 }
 
 void HmiRunTime::AddPortName(const QString name)
 {
-    foreach (QString port, m_listPortName)
-    {
+    foreach (QString port, m_listPortName) {
         if(name == port)
             return;
     }
@@ -86,37 +86,33 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
         QString sDeviceName = pObj->szDeviceName_;
 
         qDebug()<< "Protocol is" <<sProtocol.toUpper();
-        if(sProtocol.toUpper() == QString("MODBUSRTU"))
-        {
+        if(sProtocol.toUpper() == QString("MODBUSRTU")) {
             ModbusRTUDevice *pMbRTUDevice = new ModbusRTUDevice();
             pMbRTUDevice->LoadData(sDeviceName);
             m_VendorList.append(pMbRTUDevice);
-        }
-        else if(sProtocol.toUpper() == QString("MODBUSASCII"))
-        {
+        } else if(sProtocol.toUpper() == QString("MODBUSASCII")) {
             ModbusASCIIDevice *pMbAsciiDevice = new ModbusASCIIDevice();
             pMbAsciiDevice->LoadData(sDeviceName);
             m_VendorList.append(pMbAsciiDevice);           
-        }
-        else if(sProtocol.toUpper() == QString("TCPIPMODBUS"))
-        {
+        } else if(sProtocol.toUpper() == QString("TCPIPMODBUS")) {
             TCPIPModbusDevice *pMbTcpipDevice = new TCPIPModbusDevice();
             pMbTcpipDevice->LoadData(sDeviceName);
             m_VendorList.append(pMbTcpipDevice);
-        }
-        else if(sProtocol.toUpper() == QString("FXPROTOCOL"))
-        {
+        } else if(sProtocol.toUpper() == QString("FXPROTOCOL")) {
             MitsubishiDevice *pMitsubishiDevice = new MitsubishiDevice();
             pMitsubishiDevice->LoadData(sDeviceName);
             m_VendorList.append(pMitsubishiDevice);
+        } else if(sProtocol.toUpper() == QString("S7_200")) {
+            S7_200Device *pS7_200Device = new S7_200Device();
+            pS7_200Device->LoadData(sDeviceName);
+            m_VendorList.append(pS7_200Device);
         }
     }
 
     /////////////////////////////////////////////
 
     // 查找已使用的端口名称并添加至列表
-    foreach (IVendor *pVendor, m_VendorList)
-    {
+    foreach (IVendor *pVendor, m_VendorList) {
         AddPortName(pVendor->GetPortName());
     }
 
@@ -125,11 +121,9 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
     // load tags and create rtdb
     //-----------------系统变量------------------//
     QJsonObject jsonSysTags = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/SysVarList.odb");
-    if(jsonSysTags != QJsonObject())
-    {
+    if(jsonSysTags != QJsonObject()) {
         QJsonArray tagSysArray = jsonSysTags["SysVarArray"].toArray();
-        for (int i = 0; i < tagSysArray.size(); ++i)
-        {
+        for (int i = 0; i < tagSysArray.size(); ++i) {
             QJsonObject jsonObj = tagSysArray[i].toObject();
             SysDataTag *pSysTag = new SysDataTag();
             pSysTag->LoadData(jsonObj);
@@ -144,11 +138,9 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
 
     //-----------------中间变量------------------//
     QJsonObject jsonTmpTags = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/TmpVarList.odb");
-    if(jsonTmpTags != QJsonObject())
-    {
+    if(jsonTmpTags != QJsonObject()) {
         QJsonArray TmpVarArray = jsonTmpTags["TmpVarArray"].toArray();
-        for (int i = 0; i < TmpVarArray.size(); ++i)
-        {
+        for (int i = 0; i < TmpVarArray.size(); ++i) {
             QJsonObject jsonObj = TmpVarArray[i].toObject();
             TmpDataTag *pTmpTag = new TmpDataTag();
             pTmpTag->LoadData(jsonObj);
@@ -163,12 +155,10 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
 
     //-----------------设备变量------------------//
     QJsonObject jsonDBVarList = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/DBVarList.odb");
-    if(jsonDBVarList != QJsonObject())
-    {
+    if(jsonDBVarList != QJsonObject()) {
         QJsonArray DevVarTabArray = jsonDBVarList["DevVarTabArray"].toArray();
         //qDebug() << "DevVarTabArray.size() " << DevVarTabArray.size();
-        for (int i = 0; i < DevVarTabArray.size(); ++i)
-        {
+        for (int i = 0; i < DevVarTabArray.size(); ++i) {
             QJsonObject jsonObj = DevVarTabArray[i].toObject();
             QJsonObject jsonIoTags = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/DevVarList-" + jsonObj["name"].toString()+ ".odb");
             if(jsonIoTags == QJsonObject())
@@ -204,8 +194,7 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
                 pIOTag->SetDBTagObject(pDBIoTagObject);
 
                 IVendor *pVendor = FindVendor(pIoDataTag->mDeviceName);
-                if(pVendor != Q_NULLPTR)
-                {
+                if(pVendor != Q_NULLPTR) {
                     pVendor->AddIOTagToDeviceTagList(pIOTag);
                     pDBIoTagObject->pVendor = pVendor;
                 }
@@ -216,7 +205,7 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
     }
 
     //-----------------加载JavaScript------------------//
-    if(m_pRunScript == nullptr)
+    if(m_pRunScript == Q_NULLPTR)
         m_pRunScript = new RunScript(m_sProjectPath);
     m_pRunScript->loadScriptObjects();
 
@@ -257,7 +246,7 @@ void HmiRunTime::Start()
     }
 
     // 运行启动运行脚本
-    if(m_pRunScript == nullptr)
+    if(m_pRunScript == Q_NULLPTR)
         m_pRunScript = new RunScript(m_sProjectPath);
     m_pRunScript->runOnStartScripts();
 
@@ -267,7 +256,7 @@ void HmiRunTime::Start()
     }
 
     // 运行定时运行脚本
-    if(m_pRunScript == nullptr)
+    if(m_pRunScript == Q_NULLPTR)
         m_pRunScript = new RunScript(m_sProjectPath);
     m_pRunScript->runOnPeriodScripts();
 
@@ -306,7 +295,7 @@ void HmiRunTime::Stop()
 
 IVendor *HmiRunTime::FindVendor(const QString name)
 {
-    IVendor *ret = NULL;
+    IVendor *ret = Q_NULLPTR;
     for (int i = 0; i < m_VendorList.size(); ++i)
     {
         ret = m_VendorList.at(i);
@@ -389,7 +378,7 @@ bool HmiRunTime::event(QEvent *event)
  */
 void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
                                       const QString &szMatchEvent) {
-    if(scriptEngine_ != nullptr) {
+    if(scriptEngine_ != Q_NULLPTR) {
         foreach (QString szFuncEv, szFuncList) {
             QStringList listFuncEv = szFuncEv.split(':');
             if(listFuncEv.size() == 2) {
