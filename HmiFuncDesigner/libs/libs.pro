@@ -6,7 +6,7 @@ CONFIG += ordered
 
 SUBDIRS   = \
     Utils \
-#    edncrypt \
+    edncrypt \
     Csv \
     PluginManager \
     DrawUtils \

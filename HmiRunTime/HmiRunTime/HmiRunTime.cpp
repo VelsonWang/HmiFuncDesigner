@@ -377,7 +377,7 @@ bool HmiRunTime::event(QEvent *event)
  * @param szMatchEvent 匹配执行的事件
  */
 void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
-                                      const QString &szMatchEvent) {
+                                    const QString &szMatchEvent) {
     if(scriptEngine_ != Q_NULLPTR) {
         foreach (QString szFuncEv, szFuncList) {
             QStringList listFuncEv = szFuncEv.split(':');
@@ -394,6 +394,36 @@ void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
                         LogError(err);
                         return;
                     }
+                }
+            }
+        }
+    }
+}
+
+
+
+/**
+ * @brief HmiRunTime::execScriptText
+ * @details 执行脚本文本
+ * @param szScriptText 脚本文本
+ * @param szMatchEvent 匹配执行的事件
+ */
+void HmiRunTime::execScriptText(const QString &szScriptText,
+                                const QString &szMatchEvent) {
+    if(scriptEngine_ != Q_NULLPTR) {
+        QStringList listFuncEv = szScriptText.split("][");
+        if(listFuncEv.size() == 2) {
+            QString szEv = listFuncEv.at(0);
+            QString szScript = listFuncEv.at(1);
+            if(szEv == szMatchEvent) {
+                QScriptValue result = scriptEngine_->evaluate(szScript);
+                if (result.isError()) {
+                    QString err = QString::fromLatin1("File:%1 Function:%2 script syntax evaluate error: %3")
+                            .arg(__FILE__)
+                            .arg(__FUNCTION__)
+                            .arg(result.toString());
+                    LogError(err);
+                    return;
                 }
             }
         }

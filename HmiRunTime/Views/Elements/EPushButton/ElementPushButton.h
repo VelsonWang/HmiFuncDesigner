@@ -40,6 +40,8 @@ private:
 private:
     QRectF elementRect;
     QStringList funcs_;
+    // JavaScript脚本
+    QString script_;
     // 显示内容
     QString showContent_;
     bool bShowContentText_;
