@@ -21,7 +21,7 @@ public:
     ~ScriptPropertyEditorDlg();
 
     QString getScript();
-    void setScript(const QString &script);
+    void setScript(const QString &szScript);
 
 protected:
     //void resizeEvent(QResizeEvent *event);
@@ -69,7 +69,8 @@ private slots:
 private:
     Ui::ScriptPropertyEditorDlg *ui;
     QsciScintilla *scriptEdit;
-    QString script_;
+    QString szScript_;
+    QString szEvent_;
     QStringList supportEvents_;
     QMap<QString, QString> mapNameToShowName_;
     QMap<QString, QString> mapShowNameToName_;

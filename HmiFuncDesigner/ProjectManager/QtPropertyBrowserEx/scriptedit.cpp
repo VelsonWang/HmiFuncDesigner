@@ -25,25 +25,24 @@ ScriptEdit::ScriptEdit(QWidget *parent)
 void ScriptEdit::buttonClicked()
 {
     ScriptPropertyEditorDlg dlg(Q_NULLPTR, supportEvents_);
-    dlg.setScript(script_);
+    dlg.setScript(szScript_);
     if(dlg.exec() == QDialog::Accepted) {
         QString script = dlg.getScript();
         setScript(script);
-        emit scriptChanged(script);
+        emit scriptChanged(theLabel_->text());
     }
 }
 
 QString ScriptEdit::getScript() const
 {
-    return script_;
+    return szScript_;
 }
 
 
-void ScriptEdit::setScript(const QString &script)
+void ScriptEdit::setScript(const QString &szScript)
 {
-    QString szScriptTmp = script;
-    script_ = script;
-    theLabel_->setText(szScriptTmp.replace("\n", ""));
+    szScript_ = szScript;
+    theLabel_->setText(szScript);
 }
 
 /**

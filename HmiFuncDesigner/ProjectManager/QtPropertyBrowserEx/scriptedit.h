@@ -11,7 +11,7 @@ public:
     ScriptEdit(QWidget *parent = Q_NULLPTR);
 
     QString getScript() const;
-    void setScript(const QString &script);
+    void setScript(const QString &szScript);
 
     /**
      * @brief setSupportEvents
@@ -28,7 +28,7 @@ private slots:
 
 private:
     QLabel *theLabel_;
-    QString script_;
+    QString szScript_;
     QStringList supportEvents_;
 
 };

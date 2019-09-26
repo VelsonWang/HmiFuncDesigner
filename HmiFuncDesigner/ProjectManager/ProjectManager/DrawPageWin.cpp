@@ -46,6 +46,7 @@ void DrawPageWin::init()
 {
     if (!m_strProjectName.isEmpty()) {
         szProjPath_ = ProjectMgrUtils::getProjectPath(m_strProjectName);
+        szProjName_ = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
         open();
         ListViewUpdate();
         connect(&fileSystemWatcher_, SIGNAL(fileChanged(QString)), this, SLOT(onFileChanged(QString)));

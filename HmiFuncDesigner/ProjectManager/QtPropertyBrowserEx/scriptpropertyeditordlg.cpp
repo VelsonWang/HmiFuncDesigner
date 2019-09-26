@@ -9,14 +9,12 @@
 #include "Qsci/qscilexerjavascript.h"
 #include "Qsci/qscilexerlua.h"
 #include "Qsci/qsciscintilla.h"
-
+#include <QTextStream>
 #include <QMessageBox>
 #include <QScriptEngine>
 #include <QSize>
 #include <QSplitter>
 #include <QVBoxLayout>
-
-#include <QDebug>
 
 ScriptPropertyEditorDlg::ScriptPropertyEditorDlg(QWidget *parent, QStringList events)
     : QDialog(parent),
@@ -27,6 +25,7 @@ ScriptPropertyEditorDlg::ScriptPropertyEditorDlg(QWidget *parent, QStringList ev
     mapNameToShowName_.clear();
     mapShowNameToName_.clear();
     supportEvents_.clear();
+    ui->cboEventTrigger->clear();
 
     for(int i=0; i<events.size(); i++) {
         QString szNameToShowName = events.at(i);
@@ -37,12 +36,12 @@ ScriptPropertyEditorDlg::ScriptPropertyEditorDlg(QWidget *parent, QStringList ev
             mapShowNameToName_[listNameToShowName.at(1)] = listNameToShowName.at(0);
         }
     }
+    ui->cboEventTrigger->addItems(supportEvents_);
 
     ///////////////////////////////>>////////////////
 
     scriptEdit = new QsciScintilla(ui->widgetEditor);
-    QsciLexerJavaScript *scriptLexer =
-            new QsciLexerJavaScript();      //创建一个词法分析器
+    QsciLexerJavaScript *scriptLexer = new QsciLexerJavaScript();      //创建一个词法分析器
     scriptEdit->setLexer(scriptLexer);  //设置词法分析器
 
     scriptEdit->setMarginType(0, QsciScintilla::NumberMargin);  //设置编号为0的页边显示行号。
@@ -73,18 +72,43 @@ ScriptPropertyEditorDlg::~ScriptPropertyEditorDlg() {
 
 QString ScriptPropertyEditorDlg::getScript()
 {
-    script_ = scriptEdit->text();
-    return script_;
+    QStringList listEvScript;
+
+    szScript_ = scriptEdit->text();
+    QString szScriptTmp = szScript_;
+    szScriptTmp = szScriptTmp.replace("\r", "_R");
+    szScriptTmp = szScriptTmp.replace("\n", "_N");
+
+    szEvent_ = ui->cboEventTrigger->currentText();
+    QString szScriptEvent = mapShowNameToName_[szEvent_];
+
+    listEvScript << szScriptEvent << szScriptTmp;
+    return listEvScript.join("][");
 }
 
 
-void ScriptPropertyEditorDlg::setScript(const QString &script)
+void ScriptPropertyEditorDlg::setScript(const QString &szScript)
 {
-    script_ = script;
-    scriptEdit->setText(script_);
+    QString szScriptTmp = szScript;
+    szScriptTmp = szScriptTmp.replace("_R", "\r");
+    szScriptTmp = szScriptTmp.replace("_N", "\n");
+
+    if (szScript_ != szScriptTmp) {
+        QStringList listEvScript = szScriptTmp.split("][");
+        if(listEvScript.size() == 2) {
+            szEvent_ = listEvScript.at(0);
+            szScript_ = listEvScript.at(1);
+            scriptEdit->setText(szScript_);
+            QString szScriptEvent = mapNameToShowName_[szEvent_];
+            ui->cboEventTrigger->setCurrentText(szScriptEvent);
+        }
+    }
 }
 
-void ScriptPropertyEditorDlg::documentWasModified() {}
+
+void ScriptPropertyEditorDlg::documentWasModified() {
+
+}
 
 /*
 void ScriptPropertyEditorDlg::resizeEvent(QResizeEvent *event)
@@ -487,5 +511,6 @@ void ScriptPropertyEditorDlg::on_btnToolRtdb_clicked() {
     }
     delete pDlg;
 }
+
 
 

@@ -160,6 +160,8 @@ void ElementPushButton::mousePressEvent(QMouseEvent *event) {
         isSelected_ = true;
         // 处理"按下事件"功能
         HmiRunTime::execScriptFunction(funcs_, tr("PressDown"));
+        // 执行"按下事件"脚本
+        HmiRunTime::execScriptText(script_, tr("PressDown"));
     } else {
         isSelected_ = false;
     }
@@ -184,6 +186,8 @@ void ElementPushButton::mouseReleaseEvent(QMouseEvent *event) {
         isSelected_ = false;
         // 处理"抬起事件"功能
         HmiRunTime::execScriptFunction(funcs_, tr("ReleaseUp"));
+        // 执行"抬起事件"脚本
+        HmiRunTime::execScriptText(script_, tr("ReleaseUp"));
     }
 
     QWidget *pOwner = getOwnerWidget();
@@ -291,6 +295,10 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes) {
         funcs_ = listString.split('|');
     }
 
+    if (attributes.hasAttribute("script")) {
+        script_ = attributes.value("script").toString();
+    }
+
     updateBoundingElement();
 }
 
@@ -315,6 +323,7 @@ void ElementPushButton::readData(QDataStream &in) {
     bool enableOnInitial;
     bool showOnInitial;
     QStringList funcs;
+    QString script;
 
     in >> id
        >> xpos
@@ -335,7 +344,8 @@ void ElementPushButton::readData(QDataStream &in) {
        >> angle
        >> enableOnInitial
        >> showOnInitial
-       >> funcs;
+       >> funcs
+       >> script;
 
     this->setElementId(id);
     this->setElementXPos(static_cast<int>(xpos));
@@ -356,6 +366,8 @@ void ElementPushButton::readData(QDataStream &in) {
     this->enableOnInitial_ = enableOnInitial;
     this->showOnInitial_ = showOnInitial;
     this->funcs_ = funcs;
+    this->script_ = script;
+
     this->updateBoundingElement();
 }
 
@@ -381,6 +393,7 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
     bool enableOnInitial;
     bool showOnInitial;
     QStringList funcs;
+    QString script;
 
     in >> id
        >> xpos
@@ -401,7 +414,8 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
        >> angle
        >> enableOnInitial
        >> showOnInitial
-       >> funcs;
+       >> funcs
+       >> script;
 
     ele.setElementId(id);
     ele.setElementXPos(static_cast<int>(xpos));
@@ -423,6 +437,8 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele) {
     ele.enableOnInitial_ = enableOnInitial;
     ele.showOnInitial_ = showOnInitial;
     ele.funcs_ = funcs;
+    ele.script_ = script;
+
     ele.updateBoundingElement();
 
     return in;

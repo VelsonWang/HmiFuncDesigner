@@ -12,7 +12,6 @@
 #include <QDir>
 #include "variantmanager.h"
 
-
 int ElementPushButton::iLastIndex_ = 1;
 
 ElementPushButton::ElementPushButton(const QString &szProjPath,
@@ -787,7 +786,12 @@ void ElementPushButton::writeAsXml(QXmlStreamWriter &writer)
     writer.writeAttribute("enableOnInitial", enableOnInitial_?"true":"false");
     writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
     writer.writeAttribute("functions", funcs_.join("|"));
-    writer.writeAttribute("script", script_);
+
+    QString szScriptTmp = script_;
+    szScriptTmp = szScriptTmp.replace("_R", "\r");
+    szScriptTmp = szScriptTmp.replace("_N", "\n");
+    writer.writeAttribute("script", szScriptTmp);
+
     writer.writeEndElement();
 }
 
@@ -899,7 +903,10 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes)
     }
 
     if (attributes.hasAttribute("script")) {
-        script_ = attributes.value("script").toString();
+        QString szScriptTmp = attributes.value("script").toString();
+        szScriptTmp = szScriptTmp.replace("\r", "_R");
+        szScriptTmp = szScriptTmp.replace("\n", "_N");
+        script_ = szScriptTmp;
     }
 
     updateBoundingElement();
@@ -910,6 +917,10 @@ void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes)
 
 void ElementPushButton::writeData(QDataStream &out)
 {
+    QString szScriptTmp = script_;
+    szScriptTmp = szScriptTmp.replace("_R", "\r");
+    szScriptTmp = szScriptTmp.replace("_N", "\n");
+
     out << this->elementId
         << this->x()
         << this->y()
@@ -930,7 +941,7 @@ void ElementPushButton::writeData(QDataStream &out)
         << this->enableOnInitial_
         << this->showOnInitial_
         << this->funcs_
-        << this->script_;
+        << szScriptTmp;
 }
 
 void ElementPushButton::readData(QDataStream &in)
@@ -1002,7 +1013,12 @@ void ElementPushButton::readData(QDataStream &in)
     this->enableOnInitial_ = enableOnInitial;
     this->showOnInitial_ = showOnInitial;
     this->funcs_ = funcs;
-    this->script_ = script;
+
+    QString szScriptTmp = script;
+    szScriptTmp = szScriptTmp.replace("\r", "_R");
+    szScriptTmp = szScriptTmp.replace("\n", "_N");
+    this->script_ = szScriptTmp;
+
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
@@ -1052,6 +1068,10 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
 
 QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele)
 {
+    QString szScriptTmp = ele.script_;
+    szScriptTmp = szScriptTmp.replace("_R", "\r");
+    szScriptTmp = szScriptTmp.replace("_N", "\n");
+
     out << ele.elementId
         << ele.x()
         << ele.y()
@@ -1072,7 +1092,7 @@ QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele)
         << ele.enableOnInitial_
         << ele.showOnInitial_
         << ele.funcs_
-        << ele.script_;
+        << szScriptTmp;
     return out;
 }
 
@@ -1146,7 +1166,12 @@ QDataStream &operator>>(QDataStream &in,ElementPushButton &ele)
     ele.enableOnInitial_ = enableOnInitial;
     ele.showOnInitial_ = showOnInitial;
     ele.funcs_ = funcs;
-    ele.script_ = script;
+
+    QString szScriptTmp = script;
+    szScriptTmp = szScriptTmp.replace("\r", "_R");
+    szScriptTmp = szScriptTmp.replace("\n", "_N");
+    ele.script_ = szScriptTmp;
+
     ele.updateBoundingElement();
     ele.updatePropertyModel();
 
