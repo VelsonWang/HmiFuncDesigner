@@ -1,6 +1,8 @@
 docs
 lib
 build-*
+HmiFuncDesignerROUT/
+HmiFuncDesignerDOUT/
 HmiFuncDesignerBin/bin/bearer/
 HmiFuncDesignerBin/bin/iconengines/
 HmiFuncDesignerBin/bin/imageformats/
@@ -32,6 +34,8 @@ HmiFuncDesignerBin/bin/QSCADARunTime
 HmiFuncDesignerBin/bin/RtdbView
 HmiFuncDesignerBin/bin/SysTagManager
 
+HmiRunTimeDOUT/
+HmiRunTimeROUT/
 HmiRunTimeBin/log/
 HmiRunTimeBin/Project/
 HmiRunTimeBin/RunProject/
