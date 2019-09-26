@@ -322,7 +322,7 @@ bool QtKeySequenceEdit::eventFilter(QObject *o, QEvent *e)
                 actionString.remove(pos, actionString.length() - pos);
             action->setText(actionString);
         }
-        QAction *actionBefore = 0;
+        QAction *actionBefore = Q_NULLPTR;
         if (actions.count() > 0)
             actionBefore = actions[0];
         QAction *clearAction = new QAction(tr("Clear Shortcut"), menu);

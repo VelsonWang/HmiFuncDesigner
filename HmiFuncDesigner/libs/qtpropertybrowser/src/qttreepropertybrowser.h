@@ -86,8 +86,8 @@ public:
 
     bool isHeaderVisible() const;
     void setHeaderVisible(bool visible);
-    void setHeaderLabels(const QStringList &labels); // add by mf
-    void setColumnWidth(int colIndex, int width); // add by mf
+    void setHeaderLabels(const QStringList &labels);
+    void setColumnWidth(int colIndex, int width);
 
     ResizeMode resizeMode() const;
     void setResizeMode(ResizeMode mode);
