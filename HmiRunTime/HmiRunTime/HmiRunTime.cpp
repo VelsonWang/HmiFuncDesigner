@@ -378,7 +378,7 @@ bool HmiRunTime::event(QEvent *event)
  */
 void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
                                     const QString &szMatchEvent) {
-    if(scriptEngine_ != Q_NULLPTR) {
+    if(scriptEngine_ != Q_NULLPTR && szFuncList.size() > 0 && szMatchEvent != "") {
         foreach (QString szFuncEv, szFuncList) {
             QStringList listFuncEv = szFuncEv.split(':');
             if(listFuncEv.size() == 2) {
@@ -410,7 +410,7 @@ void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
  */
 void HmiRunTime::execScriptText(const QString &szScriptText,
                                 const QString &szMatchEvent) {
-    if(scriptEngine_ != Q_NULLPTR) {
+    if(scriptEngine_ != Q_NULLPTR && szScriptText != "" && szMatchEvent != "") {
         QStringList listFuncEv = szScriptText.split("][");
         if(listFuncEv.size() == 2) {
             QString szEv = listFuncEv.at(0);
