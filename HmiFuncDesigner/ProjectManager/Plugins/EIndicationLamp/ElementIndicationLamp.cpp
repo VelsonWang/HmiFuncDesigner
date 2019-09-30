@@ -334,6 +334,22 @@ void ElementIndicationLamp::paint(QPainter *painter,
             painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
             painter->drawImage(elementRect, scaleImage);
         }
+    }else{
+        painter->save();
+        QRadialGradient radialGradient(elementRect.width()/2 , elementRect.height()/2, 50,elementRect.width()/2 , elementRect.height()/2);
+        //创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,如果需要对称那么中心坐标和焦点坐标要一致
+        if(stateOnInitial_){
+            radialGradient.setColorAt(0,Qt::yellow);
+            radialGradient.setColorAt(0.8,Qt::blue);        //设置50%处的半径为蓝色
+        }else{
+            radialGradient.setColorAt(0,Qt::black);
+            radialGradient.setColorAt(0.8,Qt::white);        //设置50%处的半径为蓝色
+        }
+
+        radialGradient.setColorAt(1,Qt::darkGray);
+        painter->setBrush(QBrush(radialGradient));
+        painter->drawEllipse(elementRect);
+        painter->restore();
     }
 
     painter->setPen(QPen(Qt::gray, 1, Qt::DashDotLine));
