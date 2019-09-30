@@ -336,19 +336,28 @@ void ElementIndicationLamp::paint(QPainter *painter,
         }
     }else{
         painter->save();
-        QRadialGradient radialGradient(elementRect.width()/2 , elementRect.height()/2, 50,elementRect.width()/2 , elementRect.height()/2);
-        //创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,如果需要对称那么中心坐标和焦点坐标要一致
+        qreal fHalfWidth = elementRect.width()/2;
+        qreal fHalfHeight = elementRect.height()/2;
+        qreal fRadius = (fHalfWidth < fHalfHeight) ? fHalfWidth : fHalfHeight;
+        QRadialGradient radialGradient(fHalfWidth, fHalfHeight, fRadius, fHalfWidth, fHalfHeight);
+        // 创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,
+        // 如果需要对称那么中心坐标和焦点坐标要一致
         if(stateOnInitial_){
-            radialGradient.setColorAt(0,Qt::yellow);
-            radialGradient.setColorAt(0.8,Qt::blue);        //设置50%处的半径为蓝色
+            radialGradient.setColorAt(0, Qt::yellow);
+            radialGradient.setColorAt(0.8, Qt::blue); // 设置50%处的半径为蓝色
         }else{
-            radialGradient.setColorAt(0,Qt::black);
-            radialGradient.setColorAt(0.8,Qt::white);        //设置50%处的半径为蓝色
+            radialGradient.setColorAt(0, Qt::black);
+            radialGradient.setColorAt(0.8, Qt::white); // 设置50%处的半径为蓝色
         }
 
-        radialGradient.setColorAt(1,Qt::darkGray);
+        radialGradient.setColorAt(1, Qt::darkGray);
         painter->setBrush(QBrush(radialGradient));
-        painter->drawEllipse(elementRect);
+        QRectF tmpRect;
+        tmpRect.setX(elementRect.x()+elementRect.width()/2-fRadius);
+        tmpRect.setY(elementRect.y()+elementRect.height()/2-fRadius);
+        tmpRect.setWidth(fRadius*2);
+        tmpRect.setHeight(fRadius*2);
+        painter->drawEllipse(tmpRect);
         painter->restore();
     }
 
