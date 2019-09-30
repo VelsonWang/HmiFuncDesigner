@@ -79,14 +79,34 @@ void ElementIndicationLamp::paint(QPainter *painter)
             painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
             painter->drawImage(elementRect, scaleImage);
         }
+    }else{
+        painter->save();
+        qreal fHalfWidth = elementRect.width()/2;
+        qreal fHalfHeight = elementRect.height()/2;
+        qreal fRadius = (fHalfWidth < fHalfHeight) ? fHalfWidth : fHalfHeight;
+        QRadialGradient radialGradient(fHalfWidth, fHalfHeight, fRadius, fHalfWidth, fHalfHeight);
+        // 创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,
+        // 如果需要对称那么中心坐标和焦点坐标要一致
+        if(stateOnInitial_){
+            radialGradient.setColorAt(0, Qt::yellow);
+            radialGradient.setColorAt(0.8, Qt::blue); // 设置50%处的半径为蓝色
+        }else{
+            radialGradient.setColorAt(0, Qt::black);
+            radialGradient.setColorAt(0.8, Qt::white); // 设置50%处的半径为蓝色
+        }
+
+        radialGradient.setColorAt(1, Qt::darkGray);
+        painter->setBrush(QBrush(radialGradient));
+        QRectF tmpRect;
+        tmpRect.setX(elementRect.x()+elementRect.width()/2-fRadius);
+        tmpRect.setY(elementRect.y()+elementRect.height()/2-fRadius);
+        tmpRect.setWidth(fRadius*2);
+        tmpRect.setHeight(fRadius*2);
+        painter->drawEllipse(tmpRect);
+        painter->restore();
     }
 
-    painter->setPen(QPen(Qt::gray, 1, Qt::DashDotLine));
-    painter->setBrush(Qt::NoBrush);
-    painter->drawRect(elementRect);
-
     painter->restore();
-
 }
 
 void ElementIndicationLamp::mouseMoveEvent(QMouseEvent *event)
