@@ -2,24 +2,24 @@
 
 IOTag::IOTag(QObject *parent) :
     QObject(parent),
-    m_pDBTagObject(0),
+    m_pDBTagObject(Q_NULLPTR),
     mLength(0)
 {
-    pReadBuf = 0;
-    pWriteBuf = 0;
+    pReadBuf = Q_NULLPTR;
+    pWriteBuf = Q_NULLPTR;
 }
 
 IOTag::~IOTag()
 {
-    if(pReadBuf != 0)
+    if(pReadBuf != Q_NULLPTR)
     {
         delete[] pReadBuf;
-        pReadBuf = 0;
+        pReadBuf = Q_NULLPTR;
     }
-    if(pWriteBuf != 0)
+    if(pWriteBuf != Q_NULLPTR)
     {
         delete[] pWriteBuf;
-        pWriteBuf = 0;
+        pWriteBuf = Q_NULLPTR;
     }
 }
 
@@ -144,6 +144,11 @@ qint32 IOTag::GetDataTypeLength()
             ret = mLength;
             break;
         }
+        case TYPE_BYTES:
+        {
+            ret = mLength;
+            break;
+        }
         default:
         {
             ret = mLength;
@@ -246,9 +251,9 @@ void IOTag::SetDBTagObject(DBTagObject * p)
 void IOTag::SetTagBufferLength(qint32 i)
 {
     mLength = i;
-    if(pReadBuf != 0)
+    if(pReadBuf != Q_NULLPTR)
         delete[] pReadBuf;
-    if(pWriteBuf != 0)
+    if(pWriteBuf != Q_NULLPTR)
         delete[] pWriteBuf;
     pReadBuf = new unsigned char[mLength];
     pWriteBuf = new unsigned char[mLength];
@@ -286,4 +291,65 @@ IOTag &IOTag::operator=(const IOTag &rtag)
     pWriteBuf = new unsigned char[this->mLength];
 
     return *this;
+}
+
+
+/**
+ * @brief IOTag::getBlockReadTagId
+ * @details 获取所属块读变量ID
+ * @return 所属块读变量ID
+ */
+QString IOTag::getBlockReadTagId() const
+{
+    return m_szBlockReadTagId;
+}
+
+/**
+ * @brief IOTag::setBlockReadTagId
+ * @details 设置所属块读变量ID
+ * @param szID 所属块读变量ID
+ */
+void IOTag::setBlockReadTagId(const QString &szID)
+{
+    m_szBlockReadTagId = szID;
+}
+
+/**
+ * @brief IOTag::isReadBlockReadTagSuccess
+ * @details 获取块读变量读取成功或失败标志
+ * @return 块读变量读取成功或失败标志
+ */
+bool IOTag::isReadBlockReadTagSuccess()
+{
+    return m_bReadBlockReadTagSuccess;
+}
+
+/**
+ * @brief IOTag::setReadBlockReadTagSuccess
+ * @details 设置块读变量读取成功或失败标志
+ * @param bFlag 块读变量读取成功或失败标志
+ */
+void IOTag::setReadBlockReadTagSuccess(bool bFlag)
+{
+    m_bReadBlockReadTagSuccess = bFlag;
+}
+
+/**
+ * @brief IOTag::setBlockReadTag
+ * @details 设置所属块读变量
+ * @param pTag 所属块读变量
+ */
+void IOTag::setBlockReadTag(IOTag* pTag)
+{
+    m_pObjBlockReadTag = pTag;
+}
+
+/**
+ * @brief IOTag::getBlockReadTag
+ * @details 获取所属块读变量
+ * @return 所属块读变量
+ */
+IOTag* IOTag::getBlockReadTag()
+{
+    return m_pObjBlockReadTag;
 }

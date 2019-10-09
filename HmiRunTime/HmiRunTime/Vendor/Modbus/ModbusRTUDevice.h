@@ -68,6 +68,9 @@ public:
     // 获取端口名称
     virtual QString GetPortName();
 
+private:
+    // 加入块读变量至待读变量标签列表
+    void insertBlockReadTagToReadList();
 
 private:
     ComPort * comPort_;
