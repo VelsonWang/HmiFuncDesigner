@@ -84,6 +84,7 @@ win32 {
 
 SOURCES += \
     MessageTransfer.cpp \
+    SerialPortReMapping.cpp \
     Service/MemoryMessageService.cpp \
     Vendor/SIEMENS_S7_200/S7_200.cpp \
     Vendor/SIEMENS_S7_200/S7_200Device.cpp \
@@ -119,6 +120,7 @@ SOURCES += \
 
 HEADERS  += \
     MessageTransfer.h \
+    SerialPortReMapping.h \
     Service/MemoryMessageService.h \
     Service/MessageCmd.h \
     Vendor/SIEMENS_S7_200/S7_200.h \

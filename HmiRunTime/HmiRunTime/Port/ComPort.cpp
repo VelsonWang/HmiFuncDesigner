@@ -3,16 +3,19 @@
 #include <QThread>
 #include "ComPort.h"
 #include "Public/PublicFunction.h"
+#include "SerialPortReMapping.h"
 
 #define TIME_OUT 10
 
-ComPort::ComPort() {
+ComPort::ComPort()
+{
     serialPortPtr_ = nullptr;
     buf_.clear();
 }
 
 
-ComPort::~ComPort() {
+ComPort::~ComPort()
+{
     close();
     if(serialPortPtr_ != nullptr) {
         delete serialPortPtr_;
@@ -27,14 +30,17 @@ ComPort::~ComPort() {
  * @param args ["9600","N","8","1"]
  * @return
  */
-bool ComPort::open(QString port, QStringList args) {
+bool ComPort::open(QString port, QStringList args)
+{
     if(port == "" || args.length() != 4)
         return false;
 
+    QString szSerialPortName = Singleton<SerialPortReMapping>::instance().getSerialPortName(port);
+
 #ifdef Q_OS_LINUX
-    serialPortPtr_ = new QextSerialPort("/dev/" + port);
+    serialPortPtr_ = new QextSerialPort(szSerialPortName);
 #elif defined (Q_OS_WIN)
-    serialPortPtr_ = new QextSerialPort(port);
+    serialPortPtr_ = new QextSerialPort(szSerialPortName);
 #endif
 
     //设置波特率
@@ -89,7 +95,8 @@ bool ComPort::open(QString port, QStringList args) {
 }
 
 
-int ComPort::read(unsigned char *buf, int len, int ms) {
+int ComPort::read(unsigned char *buf, int len, int ms)
+{
     long start;
 
     QTime time;
@@ -119,7 +126,8 @@ int ComPort::read(unsigned char *buf, int len, int ms) {
     return len;
 }
 
-int ComPort::write(unsigned char *buf, int len, int /*ms*/) {
+int ComPort::write(unsigned char *buf, int len, int /*ms*/)
+{
     int count = 0;
 #if 0
     qDebug()<< "write: " << hexToString((char *)buf, len);
@@ -130,7 +138,8 @@ int ComPort::write(unsigned char *buf, int len, int /*ms*/) {
 }
 
 
-bool ComPort::close() {
+bool ComPort::close()
+{
     buf_.clear();
     if(serialPortPtr_ != nullptr) {
         if(serialPortPtr_->isOpen()) {
