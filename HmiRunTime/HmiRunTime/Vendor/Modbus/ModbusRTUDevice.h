@@ -69,10 +69,6 @@ public:
     virtual QString GetPortName();
 
 private:
-    // 加入块读变量至待读变量标签列表
-    void insertBlockReadTagToReadList();
-
-private:
     ComPort * comPort_;
     ComDevicePrivate *pComDevicePrivate_;
     ModbusRTU modbusRTU_;

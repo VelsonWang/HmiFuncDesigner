@@ -416,6 +416,23 @@ int ModbusASCII::readData(IOTag* pTag) {
         }
 
         wDataLen = retSize;
+    } else if(pTag->GetDataType() == TYPE_BYTES) {
+        retSize = readDataBuffer_[2];
+
+        if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
+            j = 0;
+            for(i=0; i<retSize; i++)
+                *(pTag->pReadBuf + (j++)) = readDataBuffer_[3+i];
+        } else {
+            j = 0;
+            for(i=0;i<retSize;i++,j++) {
+                *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[3+i];
+                i++;
+                *(pTag->pReadBuf + 2 * j) = readDataBuffer_[3+i];
+            }
+        }
+
+        wDataLen = retSize;
     }
 
     return 1;

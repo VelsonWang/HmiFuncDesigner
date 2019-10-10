@@ -8,7 +8,7 @@
 #include <QDebug>
 
 ModbusASCIIDevice::ModbusASCIIDevice()
-    : pComDevicePrivate(Q_NULLPTR) {
+    : pComDevicePrivate_(Q_NULLPTR) {
     comPort_ = new ComPort();
     iFacePort = comPort_;
     modbusAscii_.setPort(iFacePort);
@@ -22,10 +22,10 @@ ModbusASCIIDevice::~ModbusASCIIDevice()
         comPort_ = nullptr;
     }
 
-    if(pComDevicePrivate != Q_NULLPTR)
+    if(pComDevicePrivate_ != Q_NULLPTR)
     {
-        delete pComDevicePrivate;
-        pComDevicePrivate = Q_NULLPTR;
+        delete pComDevicePrivate_;
+        pComDevicePrivate_ = Q_NULLPTR;
     }
 }
 
@@ -36,8 +36,8 @@ ModbusASCIIDevice::~ModbusASCIIDevice()
 */
 QString ModbusASCIIDevice::GetDeviceName()
 {
-    if(pComDevicePrivate != Q_NULLPTR)
-        return pComDevicePrivate->m_sDeviceName;
+    if(pComDevicePrivate_ != Q_NULLPTR)
+        return pComDevicePrivate_->m_sDeviceName;
     return "";
 }
 
@@ -181,7 +181,7 @@ bool ModbusASCIIDevice::BeforeReadIOTag(IOTag* pTag) {
 */
 bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
 {
-	QMutexLocker locker(&m_WriteMutex);
+    QMutexLocker locker(&m_WriteMutex);
     if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == READ) {
         ClearReadBuffer();
         ClearIOTagReadBuffer(pTag);
@@ -193,10 +193,43 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
 
         BeforeReadIOTag(pTag);
 
-        if(modbusAscii_.readData(pTag) != 1)
-            return false;
+        if(pTag->getBlockReadTagId() == "block") { // 块读取变量
+            if(modbusAscii_.readData(pTag) != 1) {
+                pTag->setReadBlockReadTagSuccess(false);
+                return false;
+            }
+            pTag->setReadBlockReadTagSuccess(true);
+        } else { // 单一变量读取操作
+            IOTag* pBlockReadTag = pTag->getBlockReadTag();
+            if(pBlockReadTag != Q_NULLPTR) {
+                // 块读取变量读取成功, 变量直接拷贝数据, 否则直接读取单一变量
+                if(pBlockReadTag->isReadBlockReadTagSuccess()) {
+                    int iBlockRegAddr = pBlockReadTag->GetRegisterAddress() + pBlockReadTag->GetOffset();
+                    int iBlockDataTypeLength = pBlockReadTag->GetDataTypeLength();
 
-        pDBTagObject->SetData(pTag->pReadBuf);
+                    int iRegAddr = pTag->GetRegisterAddress() + pTag->GetOffset();
+                    int iDataTypeLength = pTag->GetDataTypeLength();
+
+                    TModbus_CPUMEM cm = modbusAscii_.getCpuMem(pTag->GetRegisterArea());
+                    if(cm == CM_0x || cm == CM_1x) {
+                        int iByteAddr = (iRegAddr-iBlockRegAddr)/8;
+                        int iBitAddr = (iRegAddr-iBlockRegAddr)%8;
+                        quint8 buf[1] = {0};
+                        memcpy((void *)&buf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], 1);
+                        pTag->pReadBuf[0] = (buf[0] >> iBitAddr) & 0x01;
+                    } else if(cm == CM_3x || cm == CM_4x) {
+                        int iByteAddr = (iRegAddr-iBlockRegAddr)*2;
+                        memcpy((void *)&pTag->pReadBuf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], iDataTypeLength);
+                    }
+
+                } else {
+                    if(modbusAscii_.readData(pTag) != 1)
+                        return false;
+                }
+            }
+            if(pDBTagObject != Q_NULLPTR)
+                pDBTagObject->SetData(pTag->pReadBuf);
+        }
 
         AfterReadIOTag(pTag);
     }
@@ -228,19 +261,27 @@ bool ModbusASCIIDevice::ReadIOTags()
 
         IOTag* pTag = mReadList.at(i);
 
-        if(ReadIOTag(pTag))
-        {
+        if(ReadIOTag(pTag)) {
             miFailCnt = 0;
-        }
-        else
-        {
+        } else {
             miFailCnt++;
         }
 
-        if(pComDevicePrivate != Q_NULLPTR)
-        {
-            if(pComDevicePrivate->m_iFrameTimePeriod > 0)
-                QThread::msleep(static_cast<unsigned long>(pComDevicePrivate->m_iFrameTimePeriod));
+        if(pTag->getBlockReadTagId() == "block") { // 块读取变量
+            if(pComDevicePrivate_ != Q_NULLPTR) {
+                if(pComDevicePrivate_->m_iFrameTimePeriod > 0)
+                    QThread::msleep(static_cast<unsigned long>(pComDevicePrivate_->m_iFrameTimePeriod));
+            }
+        } else {
+            IOTag* pBlockReadTag = pTag->getBlockReadTag();
+            if(pBlockReadTag != Q_NULLPTR) {
+                if(!pBlockReadTag->isReadBlockReadTagSuccess()) {
+                    if(pComDevicePrivate_ != Q_NULLPTR) {
+                        if(pComDevicePrivate_->m_iFrameTimePeriod > 0)
+                            QThread::msleep(static_cast<unsigned long>(pComDevicePrivate_->m_iFrameTimePeriod));
+                    }
+                }
+            }
         }
     }
     return true;
@@ -261,6 +302,8 @@ bool ModbusASCIIDevice::IsRunning()
 */
 void ModbusASCIIDevice::Start()
 {
+    // 加入块读变量至待读变量标签列表
+    modbusAscii_.insertBlockReadTagToReadList(mReadList);
     mbIsRunning = true;
 }
 
@@ -319,7 +362,7 @@ bool ModbusASCIIDevice::Close()
 */
 QString ModbusASCIIDevice::GetPortName()
 {
-    return pComDevicePrivate->m_sPortNumber;
+    return pComDevicePrivate_->m_sPortNumber;
 }
 
 
@@ -328,16 +371,16 @@ QString ModbusASCIIDevice::GetPortName()
 */
 bool ModbusASCIIDevice::LoadData(const QString &devName)
 {
-    pComDevicePrivate = new ComDevicePrivate();
-    if (pComDevicePrivate->LoadData(devName))
+    pComDevicePrivate_ = new ComDevicePrivate();
+    if (pComDevicePrivate_->LoadData(devName))
     {
         QStringList comArgs;
-        comArgs << QString().number(pComDevicePrivate->m_iBaudrate);
-        comArgs << QString().number(pComDevicePrivate->m_iDatabit);
-        comArgs << pComDevicePrivate->m_sVerifybit;
-        comArgs << QString().number(pComDevicePrivate->m_fStopbit);
+        comArgs << QString().number(pComDevicePrivate_->m_iBaudrate);
+        comArgs << QString().number(pComDevicePrivate_->m_iDatabit);
+        comArgs << pComDevicePrivate_->m_sVerifybit;
+        comArgs << QString().number(pComDevicePrivate_->m_fStopbit);
 
-        if(!iFacePort->open(pComDevicePrivate->m_sPortNumber, comArgs))
+        if(!iFacePort->open(pComDevicePrivate_->m_sPortNumber, comArgs))
         {
             qWarning("ComPort open fail!");
             return false;
@@ -346,7 +389,6 @@ bool ModbusASCIIDevice::LoadData(const QString &devName)
     }
     return false;
 }
-
 
 
 

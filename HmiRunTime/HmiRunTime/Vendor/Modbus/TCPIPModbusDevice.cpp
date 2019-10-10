@@ -11,7 +11,7 @@
 
 
 TCPIPModbusDevice::TCPIPModbusDevice()
-    : pNetDevicePrivate(Q_NULLPTR)
+    : pNetDevicePrivate_(Q_NULLPTR)
 {
     netPort_ = new NetPort();
     iFacePort = netPort_;
@@ -20,15 +20,13 @@ TCPIPModbusDevice::TCPIPModbusDevice()
 
 TCPIPModbusDevice::~TCPIPModbusDevice()
 {
-    if(netPort_ != Q_NULLPTR)
-    {
+    if(netPort_ != Q_NULLPTR) {
         delete netPort_;
         netPort_ = Q_NULLPTR;
     }
-    if(pNetDevicePrivate != Q_NULLPTR)
-    {
-        delete pNetDevicePrivate;
-        pNetDevicePrivate = Q_NULLPTR;
+    if(pNetDevicePrivate_ != Q_NULLPTR) {
+        delete pNetDevicePrivate_;
+        pNetDevicePrivate_ = Q_NULLPTR;
     }
 }
 
@@ -39,8 +37,8 @@ TCPIPModbusDevice::~TCPIPModbusDevice()
 */
 QString TCPIPModbusDevice::GetDeviceName()
 {
-    if(pNetDevicePrivate != Q_NULLPTR)
-        return pNetDevicePrivate->m_sDeviceName;
+    if(pNetDevicePrivate_ != Q_NULLPTR)
+        return pNetDevicePrivate_->m_sDeviceName;
     return "";
 }
 
@@ -98,11 +96,9 @@ static void ClearIOTagWriteBuffer(IOTag* pTag)
 */
 IOTag* TCPIPModbusDevice::FindIOTagByID(const QString &id)
 {
-    for (int i = 0; i < mReadList.size(); ++i)
-    {
+    for (int i = 0; i < mReadList.size(); ++i) {
         IOTag* pTag = mReadList.at(i);
-        if(pTag->GetTagID() == id)
-        {
+        if(pTag->GetTagID() == id) {
             return pTag;
         }
     }
@@ -115,7 +111,8 @@ IOTag* TCPIPModbusDevice::FindIOTagByID(const QString &id)
  * @param pTag 变量
  * @return
  */
-bool TCPIPModbusDevice::BeforeWriteIOTag(IOTag* pTag) {
+bool TCPIPModbusDevice::BeforeWriteIOTag(IOTag* pTag)
+{
     Q_UNUSED(pTag)
     return true;
 }
@@ -150,7 +147,8 @@ bool TCPIPModbusDevice::WriteIOTag(IOTag* pTag)
  * @param pTag 变量
  * @return
  */
-bool TCPIPModbusDevice::AfterWriteIOTag(IOTag* pTag) {
+bool TCPIPModbusDevice::AfterWriteIOTag(IOTag* pTag)
+{
     Q_UNUSED(pTag)
     return true;
 }
@@ -178,7 +176,8 @@ bool TCPIPModbusDevice::WriteIOTags()
  * @param pTag 变量
  * @return
  */
-bool TCPIPModbusDevice::BeforeReadIOTag(IOTag* pTag) {
+bool TCPIPModbusDevice::BeforeReadIOTag(IOTag* pTag)
+{
     Q_UNUSED(pTag)
     return true;
 }
@@ -187,8 +186,9 @@ bool TCPIPModbusDevice::BeforeReadIOTag(IOTag* pTag) {
 /*
 * 读变量
 */
-bool TCPIPModbusDevice::ReadIOTag(IOTag* pTag) {
-	QMutexLocker locker(&m_WriteMutex);
+bool TCPIPModbusDevice::ReadIOTag(IOTag* pTag)
+{
+    QMutexLocker locker(&m_WriteMutex);
     if(pTag->GetPermissionType() == READ_WRIE || pTag->GetPermissionType() == READ) {
         ClearReadBuffer();
         ClearIOTagReadBuffer(pTag);
@@ -200,10 +200,43 @@ bool TCPIPModbusDevice::ReadIOTag(IOTag* pTag) {
 
         BeforeReadIOTag(pTag);
 
-        if(TCPIPModbus_.readData(pTag) != 1)
-            return false;
+        if(pTag->getBlockReadTagId() == "block") { // 块读取变量
+            if(TCPIPModbus_.readData(pTag) != 1) {
+                pTag->setReadBlockReadTagSuccess(false);
+                return false;
+            }
+            pTag->setReadBlockReadTagSuccess(true);
+        } else { // 单一变量读取操作
+            IOTag* pBlockReadTag = pTag->getBlockReadTag();
+            if(pBlockReadTag != Q_NULLPTR) {
+                // 块读取变量读取成功, 变量直接拷贝数据, 否则直接读取单一变量
+                if(pBlockReadTag->isReadBlockReadTagSuccess()) {
+                    int iBlockRegAddr = pBlockReadTag->GetRegisterAddress() + pBlockReadTag->GetOffset();
+                    int iBlockDataTypeLength = pBlockReadTag->GetDataTypeLength();
 
-        pDBTagObject->SetData(pTag->pReadBuf);
+                    int iRegAddr = pTag->GetRegisterAddress() + pTag->GetOffset();
+                    int iDataTypeLength = pTag->GetDataTypeLength();
+
+                    TModbus_CPUMEM cm = TCPIPModbus_.getCpuMem(pTag->GetRegisterArea());
+                    if(cm == CM_0x || cm == CM_1x) {
+                        int iByteAddr = (iRegAddr-iBlockRegAddr)/8;
+                        int iBitAddr = (iRegAddr-iBlockRegAddr)%8;
+                        quint8 buf[1] = {0};
+                        memcpy((void *)&buf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], 1);
+                        pTag->pReadBuf[0] = (buf[0] >> iBitAddr) & 0x01;
+                    } else if(cm == CM_3x || cm == CM_4x) {
+                        int iByteAddr = (iRegAddr-iBlockRegAddr)*2;
+                        memcpy((void *)&pTag->pReadBuf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], iDataTypeLength);
+                    }
+
+                } else {
+                    if(TCPIPModbus_.readData(pTag) != 1)
+                        return false;
+                }
+            }
+            if(pDBTagObject != Q_NULLPTR)
+                pDBTagObject->SetData(pTag->pReadBuf);
+        }
 
         AfterReadIOTag(pTag);
     }
@@ -228,8 +261,7 @@ bool TCPIPModbusDevice::AfterReadIOTag(IOTag* pTag) {
 */
 bool TCPIPModbusDevice::ReadIOTags()
 {
-    for (int i = 0; i < mReadList.size(); ++i)
-    {
+    for (int i = 0; i < mReadList.size(); ++i) {
         if(!mWriteQueue.isEmpty())
             break;
 
@@ -238,19 +270,27 @@ bool TCPIPModbusDevice::ReadIOTags()
 
         IOTag* pTag = mReadList.at(i);
 
-        if(ReadIOTag(pTag))
-        {
+        if(ReadIOTag(pTag)) {
             miFailCnt = 0;
-        }
-        else
-        {
+        } else {
             miFailCnt++;
         }
 
-        if(pNetDevicePrivate != Q_NULLPTR)
-        {
-            if(pNetDevicePrivate->m_iFrameTimePeriod > 0)
-                QThread::msleep(pNetDevicePrivate->m_iFrameTimePeriod);
+        if(pTag->getBlockReadTagId() == "block") { // 块读取变量
+            if(pNetDevicePrivate_ != Q_NULLPTR) {
+                if(pNetDevicePrivate_->m_iFrameTimePeriod > 0)
+                    QThread::msleep(static_cast<unsigned long>(pNetDevicePrivate_->m_iFrameTimePeriod));
+            }
+        } else {
+            IOTag* pBlockReadTag = pTag->getBlockReadTag();
+            if(pBlockReadTag != Q_NULLPTR) {
+                if(!pBlockReadTag->isReadBlockReadTagSuccess()) {
+                    if(pNetDevicePrivate_ != Q_NULLPTR) {
+                        if(pNetDevicePrivate_->m_iFrameTimePeriod > 0)
+                            QThread::msleep(static_cast<unsigned long>(pNetDevicePrivate_->m_iFrameTimePeriod));
+                    }
+                }
+            }
         }
     }
     return true;
@@ -271,6 +311,8 @@ bool TCPIPModbusDevice::IsRunning()
 */
 void TCPIPModbusDevice::Start()
 {
+    // 加入块读变量至待读变量标签列表
+    TCPIPModbus_.insertBlockReadTagToReadList(mReadList);
     mbIsRunning = true;
 }
 
@@ -325,7 +367,7 @@ bool TCPIPModbusDevice::Close()
 */
 QString TCPIPModbusDevice::GetPortName()
 {   
-    return QString("%1:%2").arg(pNetDevicePrivate->m_sIpAddress).arg(pNetDevicePrivate->m_iPort);
+    return QString("%1:%2").arg(pNetDevicePrivate_->m_sIpAddress).arg(pNetDevicePrivate_->m_iPort);
 }
 
 
@@ -334,12 +376,12 @@ QString TCPIPModbusDevice::GetPortName()
 */
 bool TCPIPModbusDevice::LoadData(const QString &devName)
 {
-    pNetDevicePrivate = new NetDevicePrivate();
-    if (pNetDevicePrivate->LoadData(devName))
+    pNetDevicePrivate_ = new NetDevicePrivate();
+    if (pNetDevicePrivate_->LoadData(devName))
     {
         QStringList netArgs;
-        netArgs << pNetDevicePrivate->m_sIpAddress;
-        netArgs << QString().number(pNetDevicePrivate->m_iPort);
+        netArgs << pNetDevicePrivate_->m_sIpAddress;
+        netArgs << QString().number(pNetDevicePrivate_->m_iPort);
 
         if(!iFacePort->open("Net", netArgs))
         {
