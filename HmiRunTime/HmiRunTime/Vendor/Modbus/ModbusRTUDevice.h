@@ -68,7 +68,6 @@ public:
     // 获取端口名称
     virtual QString GetPortName();
 
-
 private:
     ComPort * comPort_;
     ComDevicePrivate *pComDevicePrivate_;

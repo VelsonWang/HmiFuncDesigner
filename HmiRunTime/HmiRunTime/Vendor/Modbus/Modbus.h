@@ -55,6 +55,9 @@ public:
     virtual bool isCanRead(IOTag* /* pTag */){return false;}
     virtual int readData(IOTag* /* pTag */){return 0;}
 
+    // 加入块读变量至待读变量标签列表
+    void insertBlockReadTagToReadList(QList<IOTag *> &listRead);
+
 signals:
 
 public slots:

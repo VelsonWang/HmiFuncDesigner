@@ -3,6 +3,7 @@
 
 #include <QTextCodec>
 #include <QString>
+#include <QWidget>
 
 class Helper
 {

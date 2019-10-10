@@ -70,7 +70,7 @@ public:
 
 private:
     NetPort* netPort_;
-    NetDevicePrivate *pNetDevicePrivate;
+    NetDevicePrivate *pNetDevicePrivate_;
     TCPIPModbus TCPIPModbus_;
 
 };

@@ -5,6 +5,7 @@
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QThread>
+#include <cstring>
 
 #include <QDebug>
 
@@ -19,9 +20,9 @@ ModbusRTUDevice::ModbusRTUDevice()
 
 ModbusRTUDevice::~ModbusRTUDevice()
 {
-    if(comPort_ != nullptr) {
+    if(comPort_ != Q_NULLPTR) {
         delete comPort_;
-        comPort_ = nullptr;
+        comPort_ = Q_NULLPTR;
     }
 
     if(pComDevicePrivate_ != Q_NULLPTR) {
@@ -96,11 +97,9 @@ static void ClearIOTagWriteBuffer(IOTag* pTag)
 */
 IOTag* ModbusRTUDevice::FindIOTagByID(const QString &id)
 {
-    for (int i = 0; i < mReadList.size(); ++i)
-    {
+    for (int i = 0; i < mReadList.size(); ++i) {
         IOTag* pTag = mReadList.at(i);
-        if(pTag->GetTagID() == id)
-        {
+        if(pTag->GetTagID() == id) {
             return pTag;
         }
     }
@@ -195,10 +194,43 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
 
         BeforeReadIOTag(pTag);
 
-        if(modbusRTU_.readData(pTag) != 1)
-            return false;
+        if(pTag->getBlockReadTagId() == "block") { // 块读取变量
+            if(modbusRTU_.readData(pTag) != 1) {
+                pTag->setReadBlockReadTagSuccess(false);
+                return false;
+            }
+            pTag->setReadBlockReadTagSuccess(true);
+        } else { // 单一变量读取操作
+            IOTag* pBlockReadTag = pTag->getBlockReadTag();
+            if(pBlockReadTag != Q_NULLPTR) {
+                // 块读取变量读取成功, 变量直接拷贝数据, 否则直接读取单一变量
+                if(pBlockReadTag->isReadBlockReadTagSuccess()) {
+                    int iBlockRegAddr = pBlockReadTag->GetRegisterAddress() + pBlockReadTag->GetOffset();
+                    int iBlockDataTypeLength = pBlockReadTag->GetDataTypeLength();
 
-        pDBTagObject->SetData(pTag->pReadBuf);
+                    int iRegAddr = pTag->GetRegisterAddress() + pTag->GetOffset();
+                    int iDataTypeLength = pTag->GetDataTypeLength();
+
+                    TModbus_CPUMEM cm = modbusRTU_.getCpuMem(pTag->GetRegisterArea());
+                    if(cm == CM_0x || cm == CM_1x) {
+                        int iByteAddr = (iRegAddr-iBlockRegAddr)/8;
+                        int iBitAddr = (iRegAddr-iBlockRegAddr)%8;
+                        quint8 buf[1] = {0};
+                        memcpy((void *)&buf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], 1);
+                        pTag->pReadBuf[0] = (buf[0] >> iBitAddr) & 0x01;
+                    } else if(cm == CM_3x || cm == CM_4x) {
+                        int iByteAddr = (iRegAddr-iBlockRegAddr)*2;
+                        memcpy((void *)&pTag->pReadBuf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], iDataTypeLength);
+                    }
+
+                } else {
+                    if(modbusRTU_.readData(pTag) != 1)
+                        return false;
+                }
+            }
+            if(pDBTagObject != Q_NULLPTR)
+                pDBTagObject->SetData(pTag->pReadBuf);
+        }
 
         AfterReadIOTag(pTag);
     }
@@ -211,7 +243,8 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
  * @param pTag 变量
  * @return
  */
-bool ModbusRTUDevice::AfterReadIOTag(IOTag* pTag) {
+bool ModbusRTUDevice::AfterReadIOTag(IOTag* pTag)
+{
     Q_UNUSED(pTag)
     return true;
 }
@@ -231,19 +264,27 @@ bool ModbusRTUDevice::ReadIOTags()
 
         IOTag* pTag = mReadList.at(i);
 
-        if(ReadIOTag(pTag))
-        {
+        if(ReadIOTag(pTag)) {
             miFailCnt = 0;
-        }
-        else
-        {
+        } else {
             miFailCnt++;
         }
 
-        if(pComDevicePrivate_ != Q_NULLPTR)
-        {
-            if(pComDevicePrivate_->m_iFrameTimePeriod > 0)
-                QThread::msleep(pComDevicePrivate_->m_iFrameTimePeriod);
+        if(pTag->getBlockReadTagId() == "block") { // 块读取变量
+            if(pComDevicePrivate_ != Q_NULLPTR) {
+                if(pComDevicePrivate_->m_iFrameTimePeriod > 0)
+                    QThread::msleep(static_cast<unsigned long>(pComDevicePrivate_->m_iFrameTimePeriod));
+            }
+        } else {
+            IOTag* pBlockReadTag = pTag->getBlockReadTag();
+            if(pBlockReadTag != Q_NULLPTR) {
+                if(!pBlockReadTag->isReadBlockReadTagSuccess()) {
+                    if(pComDevicePrivate_ != Q_NULLPTR) {
+                        if(pComDevicePrivate_->m_iFrameTimePeriod > 0)
+                            QThread::msleep(static_cast<unsigned long>(pComDevicePrivate_->m_iFrameTimePeriod));
+                    }
+                }
+            }
         }
     }
     return true;
@@ -264,6 +305,8 @@ bool ModbusRTUDevice::IsRunning()
 */
 void ModbusRTUDevice::Start()
 {
+    // 加入块读变量至待读变量标签列表
+    modbusRTU_.insertBlockReadTagToReadList(mReadList);
     mbIsRunning = true;
 }
 
@@ -349,8 +392,6 @@ bool ModbusRTUDevice::LoadData(const QString &devName)
     }
     return false;
 }
-
-
 
 
 

@@ -11,7 +11,7 @@ class IOTag : public QObject
 {
     Q_OBJECT
 public:
-    explicit IOTag(QObject *parent = 0);
+    explicit IOTag(QObject *parent = Q_NULLPTR);
     ~IOTag();
 
 public:
@@ -40,15 +40,20 @@ public:
     void SetScale(float v);
     qint32 GetInFrameAddress();
     void SetInFrameAddress(qint32 i);
-    DBTagObject * GetDBTagObject();
+    DBTagObject* GetDBTagObject();
     void SetDBTagObject(DBTagObject * p);
-
-
-signals:
-
-public slots:
-
-
+    // 获取所属块读变量ID
+    QString getBlockReadTagId() const;
+    // 设置所属块读变量ID
+    void setBlockReadTagId(const QString &szID);
+    // 获取块读变量读取成功或失败标志
+    bool isReadBlockReadTagSuccess();
+    // 设置块读变量读取成功或失败标志
+    void setReadBlockReadTagSuccess(bool bFlag);
+    // 设置所属块读变量
+    void setBlockReadTag(IOTag* pTag);
+    // 获取所属块读变量
+    IOTag* getBlockReadTag();
 
 private:
     QString m_sDeviceName;
@@ -65,6 +70,10 @@ private:
     qint32 m_iInFrameAddress;
     DBTagObject *m_pDBTagObject;
 
+    QString m_szBlockReadTagId = ""; // 所属块读变量ID,用于从块读变量内存拷贝数据
+    bool m_bReadBlockReadTagSuccess = false; // 块读变量 true-变量读取成功, false-变量读取失败
+    IOTag* m_pObjBlockReadTag = Q_NULLPTR; // 所属块读变量
+
 private:
     QString mId; // 变量ID
 
@@ -76,7 +85,6 @@ public:
     IOTag &operator=(const IOTag &);
 
 public:
-
     qint32 mLength; // 长度   
     unsigned char* pReadBuf;
     unsigned char* pWriteBuf;

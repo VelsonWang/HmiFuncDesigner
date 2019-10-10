@@ -403,7 +403,24 @@ int TCPIPModbus::readData(IOTag* pTag) {
         }
 
         wDataLen = retSize;
-    }
+    } else if(pTag->GetDataType() == TYPE_BYTES) {
+           retSize = readDataBuffer_[8];
+
+           if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
+               j = 0;
+               for(i=0; i<retSize; i++)
+                   *(pTag->pReadBuf + (j++)) = readDataBuffer_[9+i];
+           } else {
+               j = 0;
+               for(i=0;i<retSize;i++,j++) {
+                   *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[9+i];
+                   i++;
+                   *(pTag->pReadBuf + 2 * j) = readDataBuffer_[9+i];
+               }
+           }
+
+           wDataLen = retSize;
+       }
 
     return 1;
 }

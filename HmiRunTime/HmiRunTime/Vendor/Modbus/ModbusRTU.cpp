@@ -1,6 +1,5 @@
 ﻿#include "ModbusRTU.h"
 #include "DataPack.h"
-#include "../../Public/PublicFunction.h"
 
 const quint8 auchCRCHi[] = {
     0x00, 0xC1, 0x81, 0x40, 0x01, 0xC0, 0x80, 0x41, 0x01, 0xC0, 0x80, 0x41, 0x00, 0xC1,
@@ -432,6 +431,23 @@ int ModbusRTU::readData(IOTag* pTag) {
                 *(pTag->pReadBuf + 2 * j) = readDataBuffer_[3+i];
                 i++;
                 *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[3+i];
+            }
+        }
+
+        wDataLen = retSize;
+    } else if(pTag->GetDataType() == TYPE_BYTES) {
+        retSize = readDataBuffer_[2];
+
+        if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
+            j = 0;
+            for(i=0; i<retSize; i++)
+                *(pTag->pReadBuf + (j++)) = readDataBuffer_[3+i];
+        } else {
+            j = 0;
+            for(i=0;i<retSize;i++,j++) {
+                *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[3+i];
+                i++;
+                *(pTag->pReadBuf + 2 * j) = readDataBuffer_[3+i];
             }
         }
 

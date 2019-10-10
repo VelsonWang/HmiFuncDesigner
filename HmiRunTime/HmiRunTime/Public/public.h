@@ -30,7 +30,8 @@ enum eTagDataType
     TYPE_DOUBLE,
     TYPE_ASCII2CHAR,
     TYPE_STRING,
-    TYPE_BCD
+    TYPE_BCD,
+    TYPE_BYTES
 };
 typedef enum eTagDataType TTagDataType;
 

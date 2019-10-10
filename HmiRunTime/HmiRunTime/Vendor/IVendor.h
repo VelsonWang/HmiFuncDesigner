@@ -18,7 +18,7 @@ class IVendor
 public:
     IVendor()
     {
-        iFacePort = nullptr;
+        iFacePort = Q_NULLPTR;
         miFailCnt = 0;
         mReadList.clear();
         mWriteQueue.clear();
