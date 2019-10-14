@@ -35,7 +35,8 @@ public:
     friend QDataStream &operator>>(QDataStream &in, ElementText &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event)  override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;

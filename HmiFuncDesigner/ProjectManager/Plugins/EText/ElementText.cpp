@@ -1,6 +1,7 @@
 ﻿#include "ElementText.h"
 #include "TagManager.h"
 #include "variantmanager.h"
+#include "editbasicpropertydialog.h"
 
 int ElementText::iLastIndex_ = 1;
 
@@ -472,6 +473,41 @@ void ElementText::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+/**
+ * @brief ElementText::mouseDoubleClickEvent
+ * @details 文本控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementText::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    dlg.setText(elementText);
+    dlg.setSelectedTag(szTagSelected_);
+    if(dlg.exec() == QDialog::Accepted) {
+        elementText = dlg.text();
+        szTagSelected_ = dlg.selectedTag();
+
+        // 更新属性表
+        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
+        if(pVariantManager != Q_NULLPTR) {
+            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
+            if(pPropertyEditor != Q_NULLPTR) {
+                pPropertyEditor->clear();
+                this->updatePropertyModel();
+                QListIterator<QtProperty*> iter(this->getPropertyList());
+                while (iter.hasNext()) {
+                    pPropertyEditor->addProperty(iter.next());
+                }
+            }
+        }
+
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
 
 void ElementText::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
