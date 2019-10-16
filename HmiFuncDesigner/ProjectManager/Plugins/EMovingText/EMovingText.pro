@@ -28,7 +28,8 @@ CONFIG(debug, debug|release) { #debug
 SOURCES += \
     ../../Public/Element.cpp \
     ElementMovingText.cpp \
-    MovingTextPlugin.cpp
+    MovingTextPlugin.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -36,12 +37,14 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementMovingText.h \
-    MovingTextPlugin.h
+    MovingTextPlugin.h \
+    editbasicpropertydialog.h
 
 DISTFILES += EMovingText.json
 
 RESOURCES += \
     images.qrc
 
-
+FORMS += \
+    editbasicpropertydialog.ui
 

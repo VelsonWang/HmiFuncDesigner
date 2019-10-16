@@ -39,6 +39,7 @@ public:
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
     void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
@@ -58,7 +59,7 @@ private:
     QRectF elementRect_;
     // 关联的变量
     QString szTagSelected_;
-    // 填充颜色列表
+    // 变量文本列表
     QStringList tagTextList_;
     // 移动方向
     QString szMoveDir_;
