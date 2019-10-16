@@ -443,7 +443,7 @@ void ElementIndicationLamp::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 /**
  * @brief ElementIndicationLamp::mouseDoubleClickEvent
- * @details 文本编辑控件元素单击时弹出基本属性编辑对话框
+ * @details 指示灯控件元素单击时弹出基本属性编辑对话框
  * @param event
  */
 void ElementIndicationLamp::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)

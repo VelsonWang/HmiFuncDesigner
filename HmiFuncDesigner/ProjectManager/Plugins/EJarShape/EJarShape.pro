@@ -28,7 +28,8 @@ SOURCES += \
     ../../Public/Element.cpp \
     ../../Public/PubTool.cpp \
     ElementJarShape.cpp \
-    JarShapePlugin.cpp
+    JarShapePlugin.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PubTool.h \
@@ -37,13 +38,15 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementJarShape.h \
-    JarShapePlugin.h
+    JarShapePlugin.h \
+    editbasicpropertydialog.h
 
 DISTFILES += EJarShape.json
 
 RESOURCES += \
     images.qrc
 
-FORMS +=
+FORMS += \
+    editbasicpropertydialog.ui
 
 

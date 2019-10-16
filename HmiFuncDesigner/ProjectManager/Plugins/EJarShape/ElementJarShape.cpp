@@ -4,8 +4,8 @@
 #include <cfloat>
 #include <QFontMetrics>
 #include <algorithm>
-#include <QDebug>
-
+#include "variantmanager.h"
+#include "editbasicpropertydialog.h"
 
 int ElementJarShape::iLastIndex_ = 1;
 
@@ -778,6 +778,51 @@ void ElementJarShape::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+
+/**
+ * @brief ElementJarShape::mouseDoubleClickEvent
+ * @details 罐形容器控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementJarShape::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    dlg.setSelectedTag(szTagSelected_);
+    dlg.setJarShape(jarShape_);
+    dlg.setUpperLimitValue(upperLimitValue_);
+    dlg.setLowerLimitValue(lowerLimitValue_);
+    dlg.setMaxValue(maxValue_);
+    dlg.setScaleNum(scaleNum_);
+    if(dlg.exec() == QDialog::Accepted) {
+        szTagSelected_ = dlg.selectedTag();
+        jarShape_ = dlg.jarShape();
+        upperLimitValue_ = dlg.upperLimitValue();
+        lowerLimitValue_ = dlg.lowerLimitValue();
+        maxValue_ = dlg.maxValue();
+        scaleNum_ = dlg.scaleNum();
+
+        // 更新属性表
+        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
+        if(pVariantManager != Q_NULLPTR) {
+            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
+            if(pPropertyEditor != Q_NULLPTR) {
+                pPropertyEditor->clear();
+                this->updatePropertyModel();
+                QListIterator<QtProperty*> iter(this->getPropertyList());
+                while (iter.hasNext()) {
+                    pPropertyEditor->addProperty(iter.next());
+                }
+            }
+        }
+
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
+
 
 void ElementJarShape::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
