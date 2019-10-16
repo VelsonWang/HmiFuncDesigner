@@ -31,7 +31,8 @@ CONFIG(debug, debug|release) { #debug
 SOURCES += \
     ../../Public/Element.cpp \
     ElementIndicationLamp.cpp \
-    IndicationLampPlugin.cpp
+    IndicationLampPlugin.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -39,13 +40,15 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementIndicationLamp.h \
-    IndicationLampPlugin.h
+    IndicationLampPlugin.h \
+    editbasicpropertydialog.h
 
 DISTFILES += EIndicationLamp.json
 
 RESOURCES += \
     images.qrc
 
-FORMS +=
+FORMS += \
+    editbasicpropertydialog.ui
 
 
