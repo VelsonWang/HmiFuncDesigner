@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QDir>
 #include "variantmanager.h"
+#include "editbasicpropertydialog.h"
 
 int ElementPicture::iLastIndex_ = 1;
 
@@ -387,6 +388,45 @@ void ElementPicture::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+
+/**
+ * @brief ElementPicture::mouseDoubleClickEvent
+ * @details 图片控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementPicture::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    dlg.setFilePicture(filePicture_);
+    dlg.setShowNoScale(showNoScale_);
+    dlg.setBorderWidth(borderWidth_);
+    if(dlg.exec() == QDialog::Accepted) {
+        filePicture_ = dlg.filePicture();
+        showNoScale_ = dlg.showNoScale();
+        borderWidth_ = dlg.borderWidth();
+
+        // 更新属性表
+        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
+        if(pVariantManager != Q_NULLPTR) {
+            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
+            if(pPropertyEditor != Q_NULLPTR) {
+                pPropertyEditor->clear();
+                this->updatePropertyModel();
+                QListIterator<QtProperty*> iter(this->getPropertyList());
+                while (iter.hasNext()) {
+                    pPropertyEditor->addProperty(iter.next());
+                }
+            }
+        }
+
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
+
 
 void ElementPicture::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {

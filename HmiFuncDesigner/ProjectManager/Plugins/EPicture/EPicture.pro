@@ -31,7 +31,8 @@ CONFIG(debug, debug|release) { #debug
 SOURCES += \
     ../../Public/Element.cpp \
     ElementPicture.cpp \
-    PicturePlugin.cpp
+    PicturePlugin.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -39,13 +40,15 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementPicture.h \
-    PicturePlugin.h
+    PicturePlugin.h \
+    editbasicpropertydialog.h
 
 DISTFILES += EPicture.json
 
 RESOURCES += \
     images.qrc
 
-FORMS +=
+FORMS += \
+    editbasicpropertydialog.ui
 
 
