@@ -11,6 +11,7 @@
 #include <QFile>
 #include <QDir>
 #include "variantmanager.h"
+#include "editbasicpropertydialog.h"
 
 int ElementPushButton::iLastIndex_ = 1;
 
@@ -721,6 +722,44 @@ void ElementPushButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+
+/**
+ * @brief ElementPushButton::mouseDoubleClickEvent
+ * @details 弹出按钮控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementPushButton::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    QStringList listEvents;
+    getSupportEvents(listEvents);
+    dlg.setSupportEvents(listEvents);
+    dlg.setFuncs(this->funcs_);
+    dlg.setScript(this->script_);
+    dlg.setShowContentText(this->bShowContentText_);
+    dlg.setFilePicture(this->filePicture_);
+    dlg.setElementText(this->elementText);
+    dlg.setHAlign(this->szHAlign_);
+    dlg.setVAlign(this->szVAlign_);
+    if(dlg.exec() == QDialog::Accepted) {
+        this->funcs_ = dlg.funcs();
+        this->script_ = dlg.script();
+        this->bShowContentText_ = dlg.showContentText();
+        showContent_ = this->bShowContentText_ ? tr("文本") : tr("图片");
+        this->filePicture_ = dlg.filePicture();
+        this->elementText = dlg.elementText();
+        this->szHAlign_ = dlg.hAlign();
+        this->szVAlign_ = dlg.vAlign();
+        // 更新属性表
+        updatePropertyEditor();
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
+
 
 void ElementPushButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {

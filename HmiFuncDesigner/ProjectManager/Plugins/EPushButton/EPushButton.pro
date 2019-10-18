@@ -33,7 +33,8 @@ SOURCES += \
     ../../Public/Element.cpp \
     ElementPushButton.cpp \
     PushButtonPlugin.cpp \
-    ../../Public/PubTool.cpp
+    ../../Public/PubTool.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -42,13 +43,15 @@ HEADERS += \
     ../../Public/Element.h \
     ElementPushButton.h \
     PushButtonPlugin.h \
-    ../../Public/PubTool.h
+    ../../Public/PubTool.h \
+    editbasicpropertydialog.h
 
 DISTFILES += PushButton.json
 
 RESOURCES += \
     images.qrc
 
-
+FORMS += \
+    editbasicpropertydialog.ui
 
 
