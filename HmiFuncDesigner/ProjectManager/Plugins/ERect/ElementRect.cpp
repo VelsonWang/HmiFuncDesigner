@@ -1,6 +1,7 @@
 ﻿#include "ElementRect.h"
 #include "TagManager.h"
 #include "variantmanager.h"
+#include "editbasicpropertydialog.h"
 
 int ElementRect::iLastIndex_ = 1;
 
@@ -368,6 +369,51 @@ void ElementRect::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+
+/**
+ * @brief ElementRect::mouseDoubleClickEvent
+ * @details 矩形控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    dlg.setSelectedTag(szTagSelected_);
+    dlg.setTagColorList(tagColorList_);
+    dlg.setFillColor(fillColor_);
+    dlg.setIsFill(isFill_);
+    dlg.setBorderWidth(borderWidth_);
+    dlg.setBorderColor(borderColor_);
+    if(dlg.exec() == QDialog::Accepted) {
+        szTagSelected_ = dlg.selectedTag();
+        tagColorList_ = dlg.tagColorList();
+        fillColor_ = dlg.fillColor();
+        isFill_ = dlg.isFill();
+        borderWidth_ = dlg.borderWidth();
+        borderColor_ = dlg.borderColor();
+
+        // 更新属性表
+        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
+        if(pVariantManager != Q_NULLPTR) {
+            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
+            if(pPropertyEditor != Q_NULLPTR) {
+                pPropertyEditor->clear();
+                this->updatePropertyModel();
+                QListIterator<QtProperty*> iter(this->getPropertyList());
+                while (iter.hasNext()) {
+                    pPropertyEditor->addProperty(iter.next());
+                }
+            }
+        }
+
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
+
 
 void ElementRect::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {

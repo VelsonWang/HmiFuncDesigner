@@ -28,7 +28,8 @@ CONFIG(debug, debug|release) { #debug
 SOURCES += \
     ../../Public/Element.cpp \
     ElementRect.cpp \
-    RectPlugin.cpp
+    RectPlugin.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -36,12 +37,14 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementRect.h \
-    RectPlugin.h
+    RectPlugin.h \
+    editbasicpropertydialog.h
 
 DISTFILES += ERect.json
 
 RESOURCES += \
     images.qrc
 
-
+FORMS += \
+    editbasicpropertydialog.ui
 
