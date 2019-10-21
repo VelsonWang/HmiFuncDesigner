@@ -5,6 +5,7 @@
 #include <cfloat>
 #include <QFontMetrics>
 #include <algorithm>
+#include "editbasicpropertydialog.h"
 
 #define SCALE_LENTH         4
 #define BIT_SCALE_LENTH     6
@@ -836,6 +837,59 @@ void ElementValueStick::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+
+/**
+ * @brief ElementValueStick::mouseDoubleClickEvent
+ * @details 数值棒图控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementValueStick::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    dlg.setSelectedTag(szTagSelected_);
+    dlg.setMaxValue(maxValue_);
+    dlg.setMinValue(minValue_);
+    dlg.setScaleNum(scaleNum_);
+    dlg.setBackgroundColor(backgroundColor_);
+    dlg.setForegroundColor(foregroundColor_);
+    dlg.setScaleColor(scaleColor_);
+    dlg.setScaleDir(scaleDir_);
+    dlg.setScalePos(scalePos_);
+    dlg.setTextColor(textColor);
+    if(dlg.exec() == QDialog::Accepted) {
+        szTagSelected_ = dlg.selectedTag();
+        maxValue_ = dlg.maxValue();
+        minValue_ = dlg.minValue();
+        scaleNum_ = dlg.scaleNum();
+        backgroundColor_ = dlg.backgroundColor();
+        foregroundColor_ = dlg.foregroundColor();
+        scaleColor_ = dlg.scaleColor();
+        scaleDir_ = dlg.scaleDir();
+        scalePos_ = dlg.scalePos();
+        textColor = dlg.textColor();
+
+        // 更新属性表
+        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
+        if(pVariantManager != Q_NULLPTR) {
+            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
+            if(pPropertyEditor != Q_NULLPTR) {
+                pPropertyEditor->clear();
+                this->updatePropertyModel();
+                QListIterator<QtProperty*> iter(this->getPropertyList());
+                while (iter.hasNext()) {
+                    pPropertyEditor->addProperty(iter.next());
+                }
+            }
+        }
+
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
+
 
 void ElementValueStick::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {

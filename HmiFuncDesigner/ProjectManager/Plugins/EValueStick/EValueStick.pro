@@ -28,7 +28,8 @@ SOURCES += \
     ../../Public/Element.cpp \
     ../../Public/PubTool.cpp \
     ElementValueStick.cpp \
-    ValueStickPlugin.cpp
+    ValueStickPlugin.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PubTool.h \
@@ -37,13 +38,15 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementValueStick.h \
-    ValueStickPlugin.h
+    ValueStickPlugin.h \
+    editbasicpropertydialog.h
 
 DISTFILES += EValueStick.json
 
 RESOURCES += \
     images.qrc
 
-FORMS +=
+FORMS += \
+    editbasicpropertydialog.ui
 
 
