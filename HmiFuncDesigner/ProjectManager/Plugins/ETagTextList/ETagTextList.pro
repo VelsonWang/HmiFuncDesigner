@@ -27,7 +27,8 @@ CONFIG(debug, debug|release) { #debug
 SOURCES += \
     ../../Public/Element.cpp \
     ElementTagTextList.cpp \
-    TagTextListPlugin.cpp
+    TagTextListPlugin.cpp \
+    editbasicpropertydialog.cpp
 
 HEADERS += \
     ../../Public/PublicDefine.h \
@@ -35,12 +36,14 @@ HEADERS += \
     ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../../Public/Element.h \
     ElementTagTextList.h \
-    TagTextListPlugin.h
+    TagTextListPlugin.h \
+    editbasicpropertydialog.h
 
 DISTFILES += ETagTextList.json
 
 RESOURCES += \
     images.qrc
 
-
+FORMS += \
+    editbasicpropertydialog.ui
 

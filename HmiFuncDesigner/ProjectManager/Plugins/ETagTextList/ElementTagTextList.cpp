@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDate>
+#include "editbasicpropertydialog.h"
 
 int ElementTagTextList::iLastIndex_ = 1;
 
@@ -469,6 +470,58 @@ void ElementTagTextList::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+
+/**
+ * @brief ElementTagTextList::mouseDoubleClickEvent
+ * @details 变量文本列表控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementTagTextList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    dlg.setSelectedTag(szTagSelected_);
+    dlg.setTagTextList(tagTextList_);
+    dlg.setTransparentBackground(transparentBackground_);
+    dlg.setElementText(elementText);
+    dlg.setTextColor(textColor);
+    dlg.setBackgroundColor(backgroundColor_);
+    dlg.setBorderWidth(borderWidth_);
+    dlg.setBorderColor(borderColor_);
+    dlg.setHAlign(szHAlign_);
+    dlg.setVAlign(szVAlign_);
+    if(dlg.exec() == QDialog::Accepted) {
+        szTagSelected_ = dlg.selectedTag();
+        tagTextList_ = dlg.tagTextList();
+        transparentBackground_ = dlg.transparentBackground();
+        elementText = dlg.elementText();
+        textColor = dlg.textColor();
+        backgroundColor_ = dlg.backgroundColor();
+        borderWidth_ = dlg.borderWidth();
+        borderColor_ = dlg.borderColor();
+        szHAlign_ = dlg.hAlign();
+        szVAlign_ = dlg.vAlign();
+
+        // 更新属性表
+        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
+        if(pVariantManager != Q_NULLPTR) {
+            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
+            if(pPropertyEditor != Q_NULLPTR) {
+                pPropertyEditor->clear();
+                this->updatePropertyModel();
+                QListIterator<QtProperty*> iter(this->getPropertyList());
+                while (iter.hasNext()) {
+                    pPropertyEditor->addProperty(iter.next());
+                }
+            }
+        }
+
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
 
 void ElementTagTextList::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
