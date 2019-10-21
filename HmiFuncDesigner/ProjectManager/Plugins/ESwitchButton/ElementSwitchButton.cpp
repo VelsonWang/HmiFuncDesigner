@@ -11,7 +11,8 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-
+#include "variantmanager.h"
+#include "editbasicpropertydialog.h"
 
 int ElementSwitchButton::iLastIndex_ = 1;
 
@@ -856,6 +857,50 @@ void ElementSwitchButton::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
     QGraphicsObject::mousePressEvent(event);
 }
+
+
+/**
+ * @brief ElementSwitchButton::mouseDoubleClickEvent
+ * @details 切换按钮控件元素单击时弹出基本属性编辑对话框
+ * @param event
+ */
+void ElementSwitchButton::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    EditBasicPropertyDialog dlg;
+    QStringList listEvents;
+    getSupportEvents(listEvents);
+    dlg.setSupportEvents(listEvents);
+    dlg.setFuncs(this->funcs_);
+    dlg.setTagSelected(this->szTagSelected_);
+    dlg.setStateOnInitial(this->stateOnInitial_);
+    dlg.setShowContentText(this->bShowContentText_);
+    dlg.setResetPictureFile(this->resetPictureFile_);
+    dlg.setSetPictureFile(this->setPictureFile_);
+    dlg.setResetText(this->resetText_);
+    dlg.setSetText(this->setText_);
+    dlg.setHAlign(this->szHAlign_);
+    dlg.setVAlign(this->szVAlign_);
+    if(dlg.exec() == QDialog::Accepted) {
+        this->funcs_ = dlg.funcs();
+        this->szTagSelected_ = dlg.tagSelected();
+        this->stateOnInitial_ = dlg.stateOnInitial();
+        this->bShowContentText_ = dlg.showContentText();
+        showContent_ = this->bShowContentText_ ? tr("文本") : tr("图片");
+        this->resetPictureFile_ = dlg.resetPictureFile();
+        this->setPictureFile_ = dlg.setPictureFile();
+        this->resetText_ = dlg.resetText();
+        this->setText_ = dlg.setText();
+        this->szHAlign_ = dlg.hAlign();
+        this->szVAlign_ = dlg.vAlign();
+        // 更新属性表
+        updatePropertyEditor();
+        scene()->update();
+        update();
+    }
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
+
 
 void ElementSwitchButton::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
