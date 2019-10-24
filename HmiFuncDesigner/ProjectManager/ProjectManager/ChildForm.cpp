@@ -1,6 +1,6 @@
 ﻿#include "ChildForm.h"
 #include "ui_ChildForm.h"
-#include <QDebug>
+
 
 ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     QWidget(parent),

@@ -1,5 +1,4 @@
-﻿
-#include "VariableManagerWin.h"
+﻿#include "VariableManagerWin.h"
 #include "ui_VariableManagerWin.h"
 #include "CommunicationDeviceWin.h"
 #include "ui_CommunicationDeviceWin.h"
@@ -33,8 +32,6 @@
 #include <QVBoxLayout>
 #include <QItemSelectionModel>
 #include <QModelIndexList>
-
-#include <QDebug>
 
 
 ////////////////////////////////////////////////////////////////////
@@ -954,6 +951,9 @@ void VariableManagerWin::init(const QString &itemName)
         SetTitle(itemName);
         loadFromFile(DATA_SAVE_FORMAT, m_strItemName);
     }
+
+    if(itemName.indexOf(tr("设备变量-")) > -1)
+        SetTitle(itemName);
 
     if(m_strItemName == tr("设备变量")) {
         m_variableTableView->setModel(pTagIOTableModel);

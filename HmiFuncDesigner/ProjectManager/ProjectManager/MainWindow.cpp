@@ -218,14 +218,13 @@ void MainWindow::VariableGroupRename() {
             pDlg->SetLabelName("数据组名：");
             pDlg->SetGroupName(text);
             if (pDlg->exec() == QDialog::Accepted) {
-                if(window != nullptr) {
+                if(window != Q_NULLPTR) {
                     QString titleNew = QString("%1%2%3")
                             .arg("设备变量")
                             .arg("-")
                             .arg(pDlg->GetGroupName());
                     window->SetTitle(titleNew);
-                } else
-                    qDebug()<<"window == nullptr";
+                }
                 QString srcfile, desfile;
                 srcfile = ProjectMgrUtils::getProjectPath(m_strProjectName) + "/DevVarList-" + var->m_name + ".odb";
                 var->m_name = pDlg->GetGroupName();
@@ -398,7 +397,6 @@ void MainWindow::writeSettings()
  */
 void MainWindow::readSettings()
 {
-    //qDebug()<<QCoreApplication::organizationName() << QCoreApplication::applicationName();
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
     const QByteArray geometry = settings.value("geometry", QByteArray()).toByteArray();
     if (geometry.isEmpty()) {
@@ -513,7 +511,7 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
     QString winTittle = szItemText;
 
     ChildForm *findForm = findMdiChild(m_strProjectName);
-    if(findForm == nullptr) {
+    if(findForm == Q_NULLPTR) {
         findForm = new ChildForm(this, m_strProjectName);
         findForm->setWindowTitle(m_strProjectName);
         ui->mdiArea->addSubWindow(findForm);
@@ -724,14 +722,12 @@ void MainWindow::on_actionUpLoad_triggered()
         QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
         QFile programFile(program);
         if (!programFile.exists()) {
-            QMessageBox::information(this, "系统提示",
-                                     "命令：" + program + "不存在！");
+            QMessageBox::information(this, "系统提示", "命令：" + program + "不存在！");
             return;
         }
         QProcess *tarProc = new QProcess;
         // 设置进程工作目录
-        tarProc->setWorkingDirectory(QCoreApplication::applicationDirPath() +
-                                     "/tar");
+        tarProc->setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tar");
         QStringList arguments;
         arguments << "-xvf"
                   << "../UploadProjects/RunProject.tar"
@@ -740,12 +736,9 @@ void MainWindow::on_actionUpLoad_triggered()
         tarProc->start(program, arguments);
         if (tarProc->waitForStarted()) {
             if (tarProc->waitForFinished()) {
-                // qDebug()<< "process finished.";
                 QString strSrc = QCoreApplication::applicationDirPath() +
                         "/UploadProjects/tmp/RunProject";
 
-                qDebug() << strSrc;
-                qDebug() << desDir;
                 Helper::CopyDir(strSrc, desDir, true);
                 Helper::DeleteDir(tmpDir);
 
@@ -808,16 +801,14 @@ void MainWindow::on_actionDownload_triggered()
               << "RunProject";
     tarProc->start(program, arguments);
     if (tarProc->waitForStarted()) {
-        // qDebug()<< "process start.";
-        if (tarProc->waitForFinished()) {
-            // qDebug()<< "process finished.";
+        if (tarProc->waitForFinished(-1)) {
             // 压缩完成准备传输文件
+
         }
         if (tarProc->exitStatus() == QProcess::NormalExit) {
-            // qDebug()<< "process exitStatus is QProcess::NormalExit.";
+
         } else {  // QProcess::CrashExit
 
-            // qDebug()<< "process exitStatus is QProcess::CrashExit.";
         }
     } else {
         QMessageBox::information(this, "系统提示", "压缩工程失败！");
@@ -832,8 +823,7 @@ void MainWindow::on_actionDownload_triggered()
 
     ProjectDownloadDialog *pDlg =
             new ProjectDownloadDialog(this, m_strProjectName);
-    pDlg->setProjFileName(QCoreApplication::applicationDirPath() +
-                          "/tmp/RunProject.tar");
+    pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
     if (pDlg->exec() == QDialog::Accepted) {
     }
     delete pDlg;
@@ -1069,7 +1059,6 @@ void MainWindow::loadRecentProjectList()
  */
 void MainWindow::updateRecentProjectList(QString newProj)
 {
-    //qDebug()<<newProj;
     bool bStart = false;
     bool bEnd = false;
 
