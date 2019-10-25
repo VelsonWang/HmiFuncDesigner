@@ -96,7 +96,7 @@ public:
 
     int getLastInsertId(const QString &tableName);
     int getMaxId(const QString &tableName);
-    int getRowCount(const QString &tableName, const QString &expr);
+    int getRowCount(const QString &tableName, const QString &expr="");
 
     QSqlQuery createQuery();
 

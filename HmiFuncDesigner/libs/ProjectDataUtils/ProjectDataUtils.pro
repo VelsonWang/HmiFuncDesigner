@@ -7,7 +7,10 @@ QT += sql
 CONFIG -= shared dll
 CONFIG += staticlib
 
-SOURCES += \ 
+SOURCES += \
+    $$PWD/TagSys.cpp \
+    $$PWD/TagTmp.cpp \
+    $$PWD/TagIO.cpp \
     $$PWD/Database.cpp \
     $$PWD/SQLiteDatabase.cpp \
     $$PWD/ulog.cpp \
@@ -21,7 +24,10 @@ SOURCES += \
     $$PWD/PictureResourceManager.cpp
 
 
-HEADERS += \ 
+HEADERS += \
+    $$PWD/TagSys.h \
+    $$PWD/TagTmp.h \
+    $$PWD/TagIO.h \
     $$PWD/Database.h \
     $$PWD/SQLiteDatabase.h \
     $$PWD/ulog.h \
@@ -32,6 +38,7 @@ HEADERS += \
     $$PWD/DatabaseSetting.h \
     $$PWD/UserAuthority.h \
     $$PWD/DeviceInfo.h \
-    $$PWD/PictureResourceManager.h
+    $$PWD/PictureResourceManager.h \
+    $$PWD/Tag.h
 
 

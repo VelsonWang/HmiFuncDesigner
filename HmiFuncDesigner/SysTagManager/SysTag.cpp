@@ -2,7 +2,6 @@
 #include "ui_SysTag.h"
 #include <QMenu>
 #include <QAction>
-#include <QFile>
 #include <QJsonArray>
 #include <QJsonObject>
 #include <QJsonDocument>

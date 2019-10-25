@@ -10,6 +10,9 @@
 #include "UserAuthority.h"
 #include "DeviceInfo.h"
 #include "PictureResourceManager.h"
+#include "TagSys.h"
+#include "TagTmp.h"
+#include "TagIO.h"
 
 class ProjectDataSQLiteDatabase;
 
@@ -34,6 +37,9 @@ public:
     UserAuthority userAuthority_; // 用户权限
     DeviceInfo deviceInfo_; // 设备配置信息
     PictureResourceManager pictureResourceMgr_; // 图片资源管理
+    TagSys tagSys_; // 系统标签变量
+    TagTmp tagTmp_; // 中间标签变量
+    TagIO tagIO_; // 设备标签变量
 
 private:
     explicit ProjectData();

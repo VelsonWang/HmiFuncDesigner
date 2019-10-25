@@ -11,7 +11,7 @@ public:
                    const QString &pwd = "725431",
                    const QString &hostname = "127.0.0.1",
                    int port = 3306,
-                   QObject *parent = 0);
+                   QObject *parent = Q_NULLPTR);
     ~ProjectDataSQLiteDatabase();
 
     // 创建系统参数表
@@ -26,7 +26,14 @@ public:
     bool createTableDeviceInfo();
     // 图片资源信息表
     bool createTablePictureResourceInfo();
-
+    // 创建系统变量表
+    bool createTableTagSys();
+    // 创建中间变量表
+    bool createTableTagTmp();
+    // 创建设备变量组表
+    bool createTableTagIOGroup();
+    // 创建设备变量表
+    bool createTableTagIO();
     // 创建数据库表
     bool createTables() override;
 };
