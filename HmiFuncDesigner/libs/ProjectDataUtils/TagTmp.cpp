@@ -106,7 +106,7 @@ bool TagTmp::insert(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj)
     keyList << "tagid" << "name" << "description" << "data_type"
             << "init_val" << "min_val" << "max_val" << "converter";
 
-    valueList << pObj->m_szTagID << pObj->m_szName << pObj->m_szDataType << pObj->m_szDescription
+    valueList << pObj->m_szTagID << pObj->m_szName << pObj->m_szDescription << pObj->m_szDataType
               << pObj->m_szInitVal << pObj->m_szMinVal << pObj->m_szMaxVal << pObj->m_szProjectConverter;
 
     return pDB->insertRecord("t_tag_tmp", keyList, valueList);
@@ -171,23 +171,34 @@ bool TagTmp::update(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj)
     return ret;
 }
 
-TagTmpDBItem *TagTmp::getTagTmpDBItemByID(const QString &id)
+TagTmpDBItem *TagTmp::getTagTmpDBItemByID(ProjectDataSQLiteDatabase *pDB, const QString &id)
 {
-    for(int i=0; i<listTagTmpDBItem_.count(); i++) {
-        TagTmpDBItem *pObj = listTagTmpDBItem_.at(i);
-        if(pObj->m_szTagID == id)
-            return pObj;
+    QSqlQuery query(pDB->db_);
+    QSqlRecord rec;
+    QString szSql = QString("select * from t_tag_tmp where tagid='%1'").arg(id);
+    bool ret = query.exec(szSql);
+    if(!ret) {
+        LogError(QString("get record: %1 failed! %2 ,error: %3!")
+                 .arg("t_tag_tmp")
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
+        return Q_NULLPTR;
     }
-    return Q_NULLPTR;
-}
 
-TagTmpDBItem *TagTmp::getTagTmpDBItemByName(const QString &name)
-{
-    for(int i=0; i<listTagTmpDBItem_.count(); i++) {
-        TagTmpDBItem *pObj = listTagTmpDBItem_.at(i);
-        if(pObj->m_szName == name)
-            return pObj;
+    while (query.next()) {
+        rec = query.record();
+        TagTmpDBItem *pObj = new TagTmpDBItem();
+        pObj->m_szTagID = rec.value("tagid").toString();
+        pObj->m_szDataType = rec.value("data_type").toString();
+        pObj->m_szName = rec.value("name").toString();
+        pObj->m_szDescription = rec.value("description").toString();
+        pObj->m_szInitVal = rec.value("init_val").toString();
+        pObj->m_szMinVal = rec.value("min_val").toString();
+        pObj->m_szMaxVal = rec.value("max_val").toString();
+        pObj->m_szProjectConverter = rec.value("converter").toString();
+        return pObj;
     }
+
     return Q_NULLPTR;
 }
 

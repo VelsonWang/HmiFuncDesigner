@@ -49,10 +49,12 @@ public:
 private:
     void load(const QString &it);
     void save(const QString &it);
+
     // 初始化系统变量表
     void initialTableTagSys();
     // 刷新系统变量表
     void updateTableTagSys();
+
     // 初始化中间变量表
     void initialTableTagTmp();
     // 刷新中间变量表
@@ -63,6 +65,13 @@ private:
     void tagTmpExportToCsv(const QString &path, const QString & /*group*/);
     // 从CSV文件导入中间变量至中间变量表
     void tagTmpImportFromCsv(const QString &path);
+    // 创建中间变量
+    void createTagTmp();
+    // 追加中间变量
+    void appendTagTmp();
+    // 拷贝选中中间变量
+    void copyCurTagTmp();
+
     // 初始化设备变量表
     void initialTableTagIO();
     // 刷新设备变量表

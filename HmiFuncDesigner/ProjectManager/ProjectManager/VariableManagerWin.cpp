@@ -416,44 +416,8 @@ void VariableManagerWin::VariableAdd()
     } else
 #endif
         if(m_strItemName == tr("中间变量")) {
-            TagTmpEditDialog *pDlg = new TagTmpEditDialog(this);
-            if(pDlg->exec() == QDialog::Accepted) {
-                num = pDlg->createTagNum();
-                QList<TagTmpDBItem *> pTagTmpDBItems;
-                TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-                for(i=0; i<num; i++) {
-                    TagTmpDBItem * pTagTmp = new TagTmpDBItem();
-                    int id = 1;
-                    int iRowCnt = tagTmp.rowCount(ProjectData::getInstance()->dbData_);
-                    if(iRowCnt > 0) {
-                        QTableWidgetItem *pItemID = ui->tableTagTmp->item(iRowCnt - 1, 0);
-                        if(pItemID != Q_NULLPTR) {
-                            pTagTmp->m_szTagID = pItemID->text();
-                        } ???? 产生ID相同
-                        QString szVarTmp = pTagTmp->m_szTagID;
-                        QString szStartText = "tmp.";
-                        QString szTmp = "0";
-                        if(szVarTmp.startsWith(szStartText)) {
-                            szTmp = szVarTmp.remove(0, szStartText.length());
-                            id = szTmp.toInt() + 1;
-                        }
-                    }
-                    pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
-                    pTagTmp->m_szName = pDlg->tagName();
-                    pTagTmp->m_szDescription = pDlg->tagDescription();
-                    pTagTmp->m_szDataType = pDlg->tagDataType();
-                    pTagTmp->m_szInitVal = pDlg->tagInitValue();
-                    pTagTmp->m_szMinVal = pDlg->tagMinValue();
-                    pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
-                    pTagTmp->m_szProjectConverter = "";
-                    pTagTmpDBItems.append(pTagTmp);
-                }
-                tagTmp.insert(ProjectData::getInstance()->dbData_, pTagTmpDBItems);
-
-                // 刷新中间变量表
-                updateTableTagTmp();
-            }
-            delete pDlg;
+            // 创建中间变量
+            createTagTmp();
         }
 }
 
@@ -502,40 +466,13 @@ void VariableManagerWin::VariableAppend()
         newItem.m_sDescription = tr("描述");
         newItem.m_sUnit = "mA";
         pTagIOTableModel->AppendRow(newItem);
-    } else if(m_strItemName == "中间变量") {
-        if(pTagTmpTableModel->rowCount() < 1)
-            return;
-
-        TagTmpItem prevItem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
-        TagTmpItem newItem;
-
-        QString szVarTmp = prevItem.m_sTagID;
-        QString szStartText = "tmp.";
-        QString szTmp = "0";
-        int id = 1;
-        if(szVarTmp.startsWith(szStartText)) {
-            szTmp = szVarTmp.remove(0, szStartText.length());
-            id = szTmp.toInt() + 1;
-        }
-        newItem.m_sTagID = QString("tmp.%1").arg(QString::number(id));
-
-        newItem.m_sDataType = tr("模拟量");
-        // 获取前一行的Name
-        QString lastVarName = prevItem.m_sName;
-        QString str = "var";
-        if(lastVarName.indexOf("var") > -1) {
-            int len = lastVarName.size();
-            QString subStr = lastVarName.right(len - 3);
-            int idx = subStr.toInt();
-            str = QString("var%1").arg(idx+1);
-        }
-        newItem.m_sName = str;
-        newItem.m_sDescription = tr("描述");
-        newItem.m_sUnit = "mA";
-        newItem.m_sActionScope = tr("全局");
-        pTagTmpTableModel->AppendRow(newItem);
-    }
+    } else
 #endif
+        if(m_strItemName == "中间变量") {
+            // 追加中间变量
+            appendTagTmp();
+        }
+
 }
 
 
@@ -571,23 +508,12 @@ void VariableManagerWin::VariableRowCopy()
         curitem.m_sTagID =  QString("%1%2").arg(szVarTmp.left(iPos + 1)).arg(QString::number(id));
 
         pTagIOTableModel->AppendRow(curitem);
-    } else if(m_strItemName == tr("中间变量")) {
-        TagTmpItem curitem = pTagTmpTableModel->GetRow(row);
-        TagTmpItem lastitem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
-
-        QString szVarTmp = lastitem.m_sTagID;
-        QString szStartText = "tmp.";
-        QString szTmp = "0";
-        int id = 1;
-        if(szVarTmp.startsWith(szStartText)) {
-            szTmp = szVarTmp.remove(0, szStartText.length());
-            id = szTmp.toInt() + 1;
-        }
-        curitem.m_sTagID = QString("tmp.%1").arg(QString::number(id));
-
-        pTagTmpTableModel->AppendRow(curitem);
-    }
+    } else
 #endif
+        if(m_strItemName == tr("中间变量")) {
+            // 拷贝选中中间变量
+            copyCurTagTmp();
+        }
 }
 
 /*
@@ -951,35 +877,35 @@ void VariableManagerWin::saveTableTagTmp()
     int iRowCount = ui->tableTagTmp->rowCount();
     for(int i=0; i<iRowCount; i++) {
         TagTmpDBItem * pTagTmp = new TagTmpDBItem();
-        QTableWidgetItem *pItemID = ui->tableTagTmp->item(iRowCount, 0);
+        QTableWidgetItem *pItemID = ui->tableTagTmp->item(i, 0);
         if(pItemID != Q_NULLPTR) {
             pTagTmp->m_szTagID = pItemID->text();
         }
-        QTableWidgetItem *pItemName = ui->tableTagTmp->item(iRowCount, 1);
+        QTableWidgetItem *pItemName = ui->tableTagTmp->item(i, 1);
         if(pItemName != Q_NULLPTR) {
             pTagTmp->m_szName = pItemName->text();
         }
-        QTableWidgetItem *pItemDescription = ui->tableTagTmp->item(iRowCount, 2);
+        QTableWidgetItem *pItemDescription = ui->tableTagTmp->item(i, 2);
         if(pItemDescription != Q_NULLPTR) {
             pTagTmp->m_szDescription = pItemDescription->text();
         }
-        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRowCount, 3));
+        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(i, 3));
         if(pCbo != Q_NULLPTR) {
             pTagTmp->m_szDataType = pCbo->currentText();
         }
-        QTableWidgetItem *pItemInitVal = ui->tableTagTmp->item(iRowCount, 4);
+        QTableWidgetItem *pItemInitVal = ui->tableTagTmp->item(i, 4);
         if(pItemInitVal != Q_NULLPTR) {
             pTagTmp->m_szInitVal = pItemInitVal->text();
         }
-        QTableWidgetItem *pItemMinVal = ui->tableTagTmp->item(iRowCount, 5);
+        QTableWidgetItem *pItemMinVal = ui->tableTagTmp->item(i, 5);
         if(pItemMinVal != Q_NULLPTR) {
             pTagTmp->m_szMinVal = pItemMinVal->text();
         }
-        QTableWidgetItem *pItemMaxVal = ui->tableTagTmp->item(iRowCount, 6);
+        QTableWidgetItem *pItemMaxVal = ui->tableTagTmp->item(i, 6);
         if(pItemMaxVal != Q_NULLPTR) {
             pTagTmp->m_szMaxVal = pItemMaxVal->text();
         }
-        QTableWidgetItem *pItemProjectConverter = ui->tableTagTmp->item(iRowCount, 7);
+        QTableWidgetItem *pItemProjectConverter = ui->tableTagTmp->item(i, 7);
         if(pItemProjectConverter != Q_NULLPTR) {
             pTagTmp->m_szProjectConverter = pItemProjectConverter->text();
         }
@@ -1100,6 +1026,169 @@ void VariableManagerWin::tagTmpImportFromCsv(const QString &path)
     this->updateTableTagTmp();
 }
 
+/**
+ * @brief VariableManagerWin::createTagTmp
+ * @details 创建中间变量
+ */
+void VariableManagerWin::createTagTmp()
+{
+    TagTmpEditDialog *pDlg = new TagTmpEditDialog(this);
+    if(pDlg->exec() == QDialog::Accepted) {
+        int num = pDlg->createTagNum();
+        QList<TagTmpDBItem *> pTagTmpDBItems;
+        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+
+        int id = 1;
+        int iRowCnt = ui->tableTagTmp->rowCount();
+        if(iRowCnt > 0) {
+            QString szIDText = "";
+            QTableWidgetItem *pItemID = ui->tableTagTmp->item(iRowCnt - 1, 0);
+            if(pItemID != Q_NULLPTR) {
+                szIDText = pItemID->text();
+            }
+            QString szStartText = "tmp.";
+            QString szTmp = "0";
+            if(szIDText.startsWith(szStartText)) {
+                szTmp = szIDText.remove(0, szStartText.length());
+                id = szTmp.toInt() + 1;
+            }
+        }
+
+        for(int i=0; i<num; i++) {
+            TagTmpDBItem * pTagTmp = new TagTmpDBItem();
+            pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+            pTagTmp->m_szName = pDlg->tagName();
+            pTagTmp->m_szDescription = pDlg->tagDescription();
+            pTagTmp->m_szDataType = pDlg->tagDataType();
+            pTagTmp->m_szInitVal = pDlg->tagInitValue();
+            pTagTmp->m_szMinVal = pDlg->tagMinValue();
+            pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
+            pTagTmp->m_szProjectConverter = "";
+            pTagTmpDBItems.append(pTagTmp);
+            id++;
+        }
+        tagTmp.insert(ProjectData::getInstance()->dbData_, pTagTmpDBItems);
+
+        // 刷新中间变量表
+        updateTableTagTmp();
+
+        qDeleteAll(pTagTmpDBItems);
+        pTagTmpDBItems.clear();
+    }
+    delete pDlg;
+}
+
+
+/**
+ * @brief VariableManagerWin::appendTagTmp
+ * @details 追加中间变量
+ */
+void VariableManagerWin::appendTagTmp()
+{
+    int iRowCnt = ui->tableTagTmp->rowCount();
+    if(iRowCnt < 1)
+        return;
+
+    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+    QTableWidgetItem *pItemID = ui->tableTagTmp->item(iRowCnt - 1, 0);
+    QString szIDText = "";
+    if(pItemID != Q_NULLPTR) {
+        szIDText = pItemID->text();
+    }
+
+    int id = 1;
+    QString szStartText = "tmp.";
+    QString szTmp = "0";
+    if(szIDText.startsWith(szStartText)) {
+        szTmp = szIDText.remove(0, szStartText.length());
+        id = szTmp.toInt() + 1;
+    }
+
+    TagTmpDBItem * pNewTagTmp = new TagTmpDBItem();
+    pNewTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+    pNewTagTmp->m_szName = "";
+    pNewTagTmp->m_szDescription = "";
+    pNewTagTmp->m_szDataType = "";
+    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRowCnt - 1, 3));
+    if(pCbo != Q_NULLPTR) {
+        pNewTagTmp->m_szDataType = pCbo->currentText();
+    }
+    pNewTagTmp->m_szInitVal = "0";
+    pNewTagTmp->m_szMinVal = "";
+    pNewTagTmp->m_szMaxVal = "";
+    pNewTagTmp->m_szProjectConverter = "";
+    tagTmp.insert(ProjectData::getInstance()->dbData_, pNewTagTmp);
+    // 刷新中间变量表
+    updateTableTagTmp();
+
+    if(pNewTagTmp != Q_NULLPTR) {
+        delete pNewTagTmp;
+        pNewTagTmp = Q_NULLPTR;
+    }
+}
+
+/**
+ * @brief VariableManagerWin::copyCurTagTmp
+ * @details 拷贝选中中间变量
+ */
+void VariableManagerWin::copyCurTagTmp()
+{
+    int iSelectedRow = ui->tableTagTmp->currentRow();
+    if(iSelectedRow >= 0) {
+        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+        TagTmpDBItem * pNewTagTmp = new TagTmpDBItem();
+        int iRowCnt = ui->tableTagTmp->rowCount();
+        QTableWidgetItem *pItemID = ui->tableTagTmp->item(iRowCnt - 1, 0);
+        if(pItemID != Q_NULLPTR) {
+            QString szIDText = pItemID->text();
+            int id = 1;
+            QString szStartText = "tmp.";
+            QString szTmp = "0";
+            if(szIDText.startsWith(szStartText)) {
+                szTmp = szIDText.remove(0, szStartText.length());
+                id = szTmp.toInt() + 1;
+            }
+            pNewTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+        }
+        QTableWidgetItem *pItemName = ui->tableTagTmp->item(iSelectedRow, 1);
+        if(pItemName != Q_NULLPTR) {
+            pNewTagTmp->m_szName = pItemName->text();
+        }
+        QTableWidgetItem *pItemDescription = ui->tableTagTmp->item(iSelectedRow, 2);
+        if(pItemDescription != Q_NULLPTR) {
+            pNewTagTmp->m_szDescription = pItemDescription->text();
+        }
+        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iSelectedRow, 3));
+        if(pCbo != Q_NULLPTR) {
+            pNewTagTmp->m_szDataType = pCbo->currentText();
+        }
+        QTableWidgetItem *pItemInitVal = ui->tableTagTmp->item(iSelectedRow, 4);
+        if(pItemInitVal != Q_NULLPTR) {
+            pNewTagTmp->m_szInitVal = pItemInitVal->text();
+        }
+        QTableWidgetItem *pItemMinVal = ui->tableTagTmp->item(iSelectedRow, 5);
+        if(pItemMinVal != Q_NULLPTR) {
+            pNewTagTmp->m_szMinVal = pItemMinVal->text();
+        }
+        QTableWidgetItem *pItemMaxVal = ui->tableTagTmp->item(iSelectedRow, 6);
+        if(pItemMaxVal != Q_NULLPTR) {
+            pNewTagTmp->m_szMaxVal = pItemMaxVal->text();
+        }
+        QTableWidgetItem *pItemProjectConverter = ui->tableTagTmp->item(iSelectedRow, 7);
+        if(pItemProjectConverter != Q_NULLPTR) {
+            pNewTagTmp->m_szProjectConverter = pItemProjectConverter->text();
+        }
+
+        tagTmp.insert(ProjectData::getInstance()->dbData_, pNewTagTmp);
+        // 刷新中间变量表
+        updateTableTagTmp();
+
+        if(pNewTagTmp != Q_NULLPTR) {
+            delete pNewTagTmp;
+            pNewTagTmp = Q_NULLPTR;
+        }
+    }
+}
 
 /**
  * @brief VariableManagerWin::initialTableTagIO
@@ -1262,63 +1351,63 @@ void VariableManagerWin::saveTableTagIO()
     int iRowCount = ui->tableTagIO->rowCount();
     for(int i=0; i<iRowCount; i++) {
         TagIODBItem * pTagTmp = new TagIODBItem();
-        QTableWidgetItem *pItemID = ui->tableTagIO->item(iRowCount, 0);
+        QTableWidgetItem *pItemID = ui->tableTagIO->item(i, 0);
         if(pItemID != Q_NULLPTR) {
             pTagTmp->m_szTagID = pItemID->text();
         }
-        QTableWidgetItem *pItemName = ui->tableTagIO->item(iRowCount, 1);
+        QTableWidgetItem *pItemName = ui->tableTagIO->item(i, 1);
         if(pItemName != Q_NULLPTR) {
             pTagTmp->m_szName = pItemName->text();
         }
-        QTableWidgetItem *pItemDescription = ui->tableTagIO->item(iRowCount, 2);
+        QTableWidgetItem *pItemDescription = ui->tableTagIO->item(i, 2);
         if(pItemDescription != Q_NULLPTR) {
             pTagTmp->m_szDescription = pItemDescription->text();
         }
-        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCount, 3));
+        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 3));
         if(pCbo != Q_NULLPTR) {
             pTagTmp->m_szDeviceName = pCbo->currentText();
         }
-        QTableWidgetItem *pItemDeviceAddr = ui->tableTagIO->item(iRowCount, 4);
+        QTableWidgetItem *pItemDeviceAddr = ui->tableTagIO->item(i, 4);
         if(pItemDeviceAddr != Q_NULLPTR) {
             pTagTmp->m_szDeviceAddr = pItemDeviceAddr->text();
         }
-        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCount, 5));
+        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 5));
         if(pCbo != Q_NULLPTR) {
             pTagTmp->m_szRegisterArea = pCbo->currentText();
         }
-        QTableWidgetItem *pItemRegisterAddr = ui->tableTagIO->item(iRowCount, 6);
+        QTableWidgetItem *pItemRegisterAddr = ui->tableTagIO->item(i, 6);
         if(pItemRegisterAddr != Q_NULLPTR) {
             pTagTmp->m_szRegisterAddr = pItemRegisterAddr->text();
         }
-        QTableWidgetItem *pItemAddrOffset = ui->tableTagIO->item(iRowCount, 7);
+        QTableWidgetItem *pItemAddrOffset = ui->tableTagIO->item(i, 7);
         if(pItemAddrOffset != Q_NULLPTR) {
             pTagTmp->m_szAddrOffset = pItemAddrOffset->text();
         }
-        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCount, 8));
+        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 8));
         if(pCbo != Q_NULLPTR) {
             pTagTmp->m_szReadWriteType = pCbo->currentText();
         }
-        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCount, 9));
+        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 9));
         if(pCbo != Q_NULLPTR) {
             pTagTmp->m_szDataType = pCbo->currentText();
         }
-        QTableWidgetItem *pItemInitVal = ui->tableTagIO->item(iRowCount, 10);
+        QTableWidgetItem *pItemInitVal = ui->tableTagIO->item(i, 10);
         if(pItemInitVal != Q_NULLPTR) {
             pTagTmp->m_szInitVal = pItemInitVal->text();
         }
-        QTableWidgetItem *pItemMinVal = ui->tableTagIO->item(iRowCount, 11);
+        QTableWidgetItem *pItemMinVal = ui->tableTagIO->item(i, 11);
         if(pItemMinVal != Q_NULLPTR) {
             pTagTmp->m_szMinVal = pItemMinVal->text();
         }
-        QTableWidgetItem *pItemMaxVal = ui->tableTagIO->item(iRowCount, 12);
+        QTableWidgetItem *pItemMaxVal = ui->tableTagIO->item(i, 12);
         if(pItemMaxVal != Q_NULLPTR) {
             pTagTmp->m_szMaxVal = pItemMaxVal->text();
         }
-        QTableWidgetItem *pItemScale = ui->tableTagIO->item(iRowCount, 13);
+        QTableWidgetItem *pItemScale = ui->tableTagIO->item(i, 13);
         if(pItemScale != Q_NULLPTR) {
             pTagTmp->m_szScale = pItemScale->text();
         }
-        QTableWidgetItem *pItemProjectConverter = ui->tableTagIO->item(iRowCount, 14);
+        QTableWidgetItem *pItemProjectConverter = ui->tableTagIO->item(i, 14);
         if(pItemProjectConverter != Q_NULLPTR) {
             pTagTmp->m_szProjectConverter = pItemProjectConverter->text();
         }

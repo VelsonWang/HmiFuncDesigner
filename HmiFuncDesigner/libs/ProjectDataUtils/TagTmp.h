@@ -25,8 +25,7 @@ public:
 
     int rowCount(ProjectDataSQLiteDatabase *pDB);
 
-    TagTmpDBItem *getTagTmpDBItemByID(const QString &id);
-    TagTmpDBItem *getTagTmpDBItemByName(const QString &name);
+    TagTmpDBItem *getTagTmpDBItemByID(ProjectDataSQLiteDatabase *pDB, const QString &id);
     int getLastInsertId(ProjectDataSQLiteDatabase *pDB);
 
     bool saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
