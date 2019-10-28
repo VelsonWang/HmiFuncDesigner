@@ -4,6 +4,7 @@
 #include "ui_CommunicationDeviceWin.h"
 #include "NewComDeviceDialog.h"
 #include "VariableEditDialog.h"
+#include "TagTmpEditDialog.h"
 #include "CommentsDialog.h"
 #include "stringdata.h"
 #include "writer.h"
@@ -29,7 +30,6 @@
 #include <QVBoxLayout>
 #include <QItemSelectionModel>
 #include <QModelIndexList>
-#include <QScopedPointer>
 #include "ProjectData.h"
 #include "Tag.h"
 #include "TagSys.h"
@@ -67,6 +67,14 @@ VariableManagerWin::~VariableManagerWin()
 
 void VariableManagerWin::init(const QString &itemName)
 {   
+    if(m_strItemName == tr("设备变量")) {
+        ui->stackedWidget->setCurrentWidget(ui->pageTagIO);
+    } else if(m_strItemName == tr("中间变量")) {
+        ui->stackedWidget->setCurrentWidget(ui->pageTagTmp);
+    } else if(m_strItemName == tr("系统变量")) {
+        ui->stackedWidget->setCurrentWidget(ui->pageTagSys);
+    }
+
     if(m_strCurTagType != itemName) {
         if(!m_strCurTagType.isEmpty()) {
             SetTitle(m_strCurTagType);
@@ -79,14 +87,6 @@ void VariableManagerWin::init(const QString &itemName)
 
     if(itemName.indexOf(tr("设备变量-")) > -1)
         SetTitle(itemName);
-
-    if(m_strItemName == tr("设备变量")) {
-        ui->stackedWidget->setCurrentWidget(ui->pageTagIO);
-    } else if(m_strItemName == tr("中间变量")) {
-        ui->stackedWidget->setCurrentWidget(ui->pageTagTmp);
-    } else if(m_strItemName == tr("系统变量")) {
-        ui->stackedWidget->setCurrentWidget(ui->pageTagSys);
-    }
 
     //m_variableTableView->horizontalHeader()->setHighlightSections(false);  // 当表格只有一行的时候，则表头会出现塌陷问题
 }
@@ -349,11 +349,9 @@ void VariableManagerWin::tableViewVariableDoubleClicked(const QModelIndex &index
 */
 void VariableManagerWin::VariableAdd()
 {
-#if 0
-    bool ok = false;
     int i;
     int num;
-
+#if 0
     if(m_strItemName == tr("设备变量")) {
         VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
         pDlg->RemoveTab(1); // 隐藏数据属性页
@@ -415,19 +413,24 @@ void VariableManagerWin::VariableAdd()
             }
         }
         delete pDlg;
-    } else if(m_strItemName == tr("中间变量")) {
-        VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
-        pDlg->RemoveTab(4); // 隐藏IO连接页
-        if(pDlg->exec() == QDialog::Accepted) {
-            num = pDlg->GetBatchNum().toInt(&ok, 10);
-            if(ok)
+    } else
+#endif
+        if(m_strItemName == tr("中间变量")) {
+            TagTmpEditDialog *pDlg = new TagTmpEditDialog(this);
+            if(pDlg->exec() == QDialog::Accepted) {
+                num = pDlg->createTagNum();
+                QList<TagTmpDBItem *> pTagTmpDBItems;
+                TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
                 for(i=0; i<num; i++) {
-                    TagTmpItem prevItem;
-                    TagTmpItem newItem;
+                    TagTmpDBItem * pTagTmp = new TagTmpDBItem();
                     int id = 1;
-                    if(pTagTmpTableModel->rowCount() > 0) {
-                        prevItem = pTagTmpTableModel->GetRow(pTagTmpTableModel->rowCount()-1);
-                        QString szVarTmp = prevItem.m_sTagID;
+                    int iRowCnt = tagTmp.rowCount(ProjectData::getInstance()->dbData_);
+                    if(iRowCnt > 0) {
+                        QTableWidgetItem *pItemID = ui->tableTagTmp->item(iRowCnt - 1, 0);
+                        if(pItemID != Q_NULLPTR) {
+                            pTagTmp->m_szTagID = pItemID->text();
+                        } ???? 产生ID相同
+                        QString szVarTmp = pTagTmp->m_szTagID;
                         QString szStartText = "tmp.";
                         QString szTmp = "0";
                         if(szVarTmp.startsWith(szStartText)) {
@@ -435,23 +438,23 @@ void VariableManagerWin::VariableAdd()
                             id = szTmp.toInt() + 1;
                         }
                     }
-                    newItem.m_sTagID = QString("tmp.%1").arg(QString::number(id));
-
-                    newItem.m_sDataType = pDlg->GetDataType();
-                    newItem.m_sName = pDlg->GetName() + QString("%1").arg(i+1);
-                    newItem.m_sDescription = pDlg->GetDescription();
-                    newItem.m_sUnit = pDlg->GetUnit();
-                    newItem.m_sActionScope = "全局";
-                    newItem.m_sDataAttribute = pDlg->GetDataAttribuyeString();
-                    newItem.m_sAlarm = pDlg->GetAlarmString();
-                    newItem.m_sArchiveFile = pDlg->GetSaveDiskString();
-                    pTagTmpTableModel->AppendRow(newItem);
+                    pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+                    pTagTmp->m_szName = pDlg->tagName();
+                    pTagTmp->m_szDescription = pDlg->tagDescription();
+                    pTagTmp->m_szDataType = pDlg->tagDataType();
+                    pTagTmp->m_szInitVal = pDlg->tagInitValue();
+                    pTagTmp->m_szMinVal = pDlg->tagMinValue();
+                    pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
+                    pTagTmp->m_szProjectConverter = "";
+                    pTagTmpDBItems.append(pTagTmp);
                 }
-        }
-        delete pDlg;
-    }
+                tagTmp.insert(ProjectData::getInstance()->dbData_, pTagTmpDBItems);
 
-#endif
+                // 刷新中间变量表
+                updateTableTagTmp();
+            }
+            delete pDlg;
+        }
 }
 
 
@@ -770,11 +773,11 @@ void VariableManagerWin::initialTableTagSys()
     ui->tableTagSys->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableTagSys->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableTagSys->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    ui->tableTagSys->horizontalHeader()->setStyleSheet(
+    /*ui->tableTagSys->horizontalHeader()->setStyleSheet(
                 "QHeaderView::section{"
                 "background:rgb(72,161,229); "
                 "color: rgb(255, 255, 255); "
-                "}");
+                "}");*/
     ui->tableTagSys->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableTagSys->horizontalHeader()->show();
     ui->tableTagSys->verticalHeader()->show();
@@ -793,7 +796,7 @@ void VariableManagerWin::initialTableTagSys()
                          "color: rgb(0, 0, 0);"
                          "selection-background-color:lightblue;}";
 
-    ui->tableTagSys->setStyleSheet(styleSheet);
+    //ui->tableTagSys->setStyleSheet(styleSheet);
     ui->tableTagSys->clearSelection();
 }
 
@@ -840,7 +843,7 @@ void VariableManagerWin::updateTableTagSys()
 void VariableManagerWin::initialTableTagTmp()
 {
     QStringList headerLabels;
-    headerLabels << tr("ID") << tr("名称") << tr("数据类型") << tr("变量描述")
+    headerLabels << tr("ID") << tr("名称") << tr("变量描述") << tr("数据类型")
                  << tr("初始值") << tr("最小值") << tr("最大值") << tr("工程转换");
 
     ui->tableTagTmp->setColumnCount(headerLabels.count());
@@ -852,17 +855,17 @@ void VariableManagerWin::initialTableTagTmp()
     ui->tableTagTmp->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableTagTmp->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableTagTmp->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    ui->tableTagTmp->horizontalHeader()->setStyleSheet(
+    /*ui->tableTagTmp->horizontalHeader()->setStyleSheet(
                 "QHeaderView::section{"
                 "background:rgb(72,161,229); "
                 "color: rgb(255, 255, 255); "
-                "}");
+                "}");*/
     ui->tableTagTmp->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableTagTmp->horizontalHeader()->show();
     ui->tableTagTmp->verticalHeader()->show();
     ui->tableTagTmp->setColumnWidth(0, 80);
     ui->tableTagTmp->setColumnWidth(1, 120);
-    ui->tableTagTmp->setColumnWidth(2, 120);
+    ui->tableTagTmp->setColumnWidth(2, 200);
     ui->tableTagTmp->setColumnWidth(3, 200);
     ui->tableTagTmp->setColumnWidth(4, 100);
     ui->tableTagTmp->setColumnWidth(5, 100);
@@ -877,7 +880,7 @@ void VariableManagerWin::initialTableTagTmp()
                          "color: rgb(0, 0, 0);"
                          "selection-background-color:lightblue;}";
 
-    ui->tableTagTmp->setStyleSheet(styleSheet);
+    //ui->tableTagTmp->setStyleSheet(styleSheet);
     ui->tableTagTmp->clearSelection();
 }
 
@@ -918,15 +921,13 @@ void VariableManagerWin::updateTableTagTmp()
         ui->tableTagTmp->setItem(iRowCount, 0, pItemID);
         QTableWidgetItem *pItemName = new QTableWidgetItem(itemTagTmp->m_szName);
         ui->tableTagTmp->setItem(iRowCount, 1, pItemName);
-        QTableWidgetItem *pItemDataType = new QTableWidgetItem(itemTagTmp->m_szDataType);
-        ui->tableTagTmp->setItem(iRowCount, 2, pItemDataType);
-        QScopedPointer<QComboBox> cboPtr(new QComboBox());
+        QTableWidgetItem *pItemDescription = new QTableWidgetItem(itemTagTmp->m_szDescription);
+        ui->tableTagTmp->setItem(iRowCount, 2, pItemDescription);
+        QComboBox* cboPtr = new QComboBox();
         cboPtr->clear();
         cboPtr->addItems(listDataType);
         cboPtr->setCurrentText(itemTagTmp->m_szDataType);
-        ui->tableTagTmp->setCellWidget(iRowCount, 2, cboPtr.data());
-        QTableWidgetItem *pItemDescription = new QTableWidgetItem(itemTagTmp->m_szDescription);
-        ui->tableTagTmp->setItem(iRowCount, 3, pItemDescription);
+        ui->tableTagTmp->setCellWidget(iRowCount, 3, cboPtr);
         QTableWidgetItem *pItemInitVal = new QTableWidgetItem(itemTagTmp->m_szInitVal);
         ui->tableTagTmp->setItem(iRowCount, 4, pItemInitVal);
         QTableWidgetItem *pItemMinVal = new QTableWidgetItem(itemTagTmp->m_szMinVal);
@@ -958,13 +959,13 @@ void VariableManagerWin::saveTableTagTmp()
         if(pItemName != Q_NULLPTR) {
             pTagTmp->m_szName = pItemName->text();
         }
-        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRowCount, 2));
-        if(pCbo != Q_NULLPTR) {
-            pTagTmp->m_szDataType = pCbo->currentText();
-        }
-        QTableWidgetItem *pItemDescription = ui->tableTagTmp->item(iRowCount, 3);
+        QTableWidgetItem *pItemDescription = ui->tableTagTmp->item(iRowCount, 2);
         if(pItemDescription != Q_NULLPTR) {
             pTagTmp->m_szDescription = pItemDescription->text();
+        }
+        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRowCount, 3));
+        if(pCbo != Q_NULLPTR) {
+            pTagTmp->m_szDataType = pCbo->currentText();
         }
         QTableWidgetItem *pItemInitVal = ui->tableTagTmp->item(iRowCount, 4);
         if(pItemInitVal != Q_NULLPTR) {
@@ -1012,13 +1013,13 @@ void VariableManagerWin::tagTmpExportToCsv(const QString &path, const QString &/
         if(pItemName != Q_NULLPTR) {
             pTagTmp->m_szName = pItemName->text();
         }
-        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRowCount, 2));
-        if(pCbo != Q_NULLPTR) {
-            pTagTmp->m_szDataType = pCbo->currentText();
-        }
-        QTableWidgetItem *pItemDescription = ui->tableTagTmp->item(iRowCount, 3);
+        QTableWidgetItem *pItemDescription = ui->tableTagTmp->item(iRowCount, 2);
         if(pItemDescription != Q_NULLPTR) {
             pTagTmp->m_szDescription = pItemDescription->text();
+        }
+        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRowCount, 3));
+        if(pCbo != Q_NULLPTR) {
+            pTagTmp->m_szDataType = pCbo->currentText();
         }
         QTableWidgetItem *pItemInitVal = ui->tableTagTmp->item(iRowCount, 4);
         if(pItemInitVal != Q_NULLPTR) {
@@ -1081,8 +1082,8 @@ void VariableManagerWin::tagTmpImportFromCsv(const QString &path)
 
         pTagTmp->m_szTagID = row.at(0);
         pTagTmp->m_szName = row.at(1);
-        pTagTmp->m_szDataType = row.at(2);
-        pTagTmp->m_szDescription = row.at(3);
+        pTagTmp->m_szDescription = row.at(2);
+        pTagTmp->m_szDataType = row.at(3);
         pTagTmp->m_szInitVal = row.at(4);
         pTagTmp->m_szMinVal = row.at(5);
         pTagTmp->m_szMaxVal = row.at(6);
@@ -1121,11 +1122,11 @@ void VariableManagerWin::initialTableTagIO()
     ui->tableTagIO->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableTagIO->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableTagIO->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
-    ui->tableTagIO->horizontalHeader()->setStyleSheet(
+    /*ui->tableTagIO->horizontalHeader()->setStyleSheet(
                 "QHeaderView::section{"
                 "background:rgb(72,161,229); "
                 "color: rgb(255, 255, 255); "
-                "}");
+                "}");*/
     ui->tableTagIO->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableTagIO->horizontalHeader()->show();
     ui->tableTagIO->verticalHeader()->show();
@@ -1153,7 +1154,7 @@ void VariableManagerWin::initialTableTagIO()
                          "color: rgb(0, 0, 0);"
                          "selection-background-color:lightblue;}";
 
-    ui->tableTagIO->setStyleSheet(styleSheet);
+    //ui->tableTagIO->setStyleSheet(styleSheet);
     ui->tableTagIO->clearSelection();
 }
 
@@ -1201,24 +1202,20 @@ void VariableManagerWin::updateTableTagIO(const QString &szGroupName)
         QTableWidgetItem *pItemDescription = new QTableWidgetItem(itemTagIO->m_szDescription);
         ui->tableTagIO->setItem(iRowCount, 2, pItemDescription);
 
-        QTableWidgetItem *pItemDeviceName = new QTableWidgetItem(itemTagIO->m_szDeviceName);
-        ui->tableTagIO->setItem(iRowCount, 3, pItemDeviceName);
-        QScopedPointer<QComboBox> cboDeviceNamePtr(new QComboBox());
+        QComboBox *cboDeviceNamePtr = new QComboBox();
         cboDeviceNamePtr->clear();
         cboDeviceNamePtr->addItems(QStringList()); // TODO
         cboDeviceNamePtr->setCurrentText(itemTagIO->m_szDeviceName);
-        ui->tableTagIO->setCellWidget(iRowCount, 3, cboDeviceNamePtr.data());
+        ui->tableTagIO->setCellWidget(iRowCount, 3, cboDeviceNamePtr);
 
         QTableWidgetItem *pItemDeviceAddr = new QTableWidgetItem(itemTagIO->m_szDeviceAddr);
         ui->tableTagIO->setItem(iRowCount, 4, pItemDeviceAddr);
 
-        QTableWidgetItem *pItemRegisterArea = new QTableWidgetItem(itemTagIO->m_szRegisterArea);
-        ui->tableTagIO->setItem(iRowCount, 5, pItemRegisterArea);
-        QScopedPointer<QComboBox> cboRegisterAreaPtr(new QComboBox());
+        QComboBox *cboRegisterAreaPtr = new QComboBox();
         cboRegisterAreaPtr->clear();
         cboRegisterAreaPtr->addItems(QStringList()); // TODO
         cboRegisterAreaPtr->setCurrentText(itemTagIO->m_szRegisterArea);
-        ui->tableTagIO->setCellWidget(iRowCount, 5, cboRegisterAreaPtr.data());
+        ui->tableTagIO->setCellWidget(iRowCount, 5, cboRegisterAreaPtr);
 
         QTableWidgetItem *pItemRegisterAddr = new QTableWidgetItem(itemTagIO->m_szRegisterAddr);
         ui->tableTagIO->setItem(iRowCount, 6, pItemRegisterAddr);
@@ -1226,21 +1223,17 @@ void VariableManagerWin::updateTableTagIO(const QString &szGroupName)
         QTableWidgetItem *pItemAddrOffset = new QTableWidgetItem(itemTagIO->m_szAddrOffset);
         ui->tableTagIO->setItem(iRowCount, 7, pItemAddrOffset);
 
-        QTableWidgetItem *pItemReadWriteType = new QTableWidgetItem(itemTagIO->m_szReadWriteType);
-        ui->tableTagIO->setItem(iRowCount, 8, pItemReadWriteType);
-        QScopedPointer<QComboBox> cboReadWriteTypePtr(new QComboBox());
+        QComboBox *cboReadWriteTypePtr = new QComboBox();
         cboReadWriteTypePtr->clear();
         cboReadWriteTypePtr->addItems(QStringList()); // TODO
         cboReadWriteTypePtr->setCurrentText(itemTagIO->m_szReadWriteType);
-        ui->tableTagIO->setCellWidget(iRowCount, 8, cboReadWriteTypePtr.data());
+        ui->tableTagIO->setCellWidget(iRowCount, 8, cboReadWriteTypePtr);
 
-        QTableWidgetItem *pItemDataType = new QTableWidgetItem(itemTagIO->m_szDataType);
-        ui->tableTagIO->setItem(iRowCount, 9, pItemDataType);
-        QScopedPointer<QComboBox> cboDataTypePtr(new QComboBox());
+        QComboBox *cboDataTypePtr = new QComboBox();
         cboDataTypePtr->clear();
         cboDataTypePtr->addItems(QStringList()); // TODO
         cboDataTypePtr->setCurrentText(itemTagIO->m_szDataType);
-        ui->tableTagIO->setCellWidget(iRowCount, 9, cboDataTypePtr.data());
+        ui->tableTagIO->setCellWidget(iRowCount, 9, cboDataTypePtr);
 
         QTableWidgetItem *pItemInitVal = new QTableWidgetItem(itemTagIO->m_szInitVal);
         ui->tableTagIO->setItem(iRowCount, 10, pItemInitVal);
@@ -1431,7 +1424,7 @@ void VariableManagerWin::tagIOExportToCsv(const QString &path, const QString &gr
     header << tr("ID") << tr("变量组名称") << tr("名称") << tr("变量描述") << tr("设备名")
            << tr("设备地址") << tr("寄存器区") << tr("寄存器地址") << tr("偏移地址")
            << tr("读写类型") << tr("数据类型") << tr("初始值") << tr("最小值")
-           << tr("最大值") << tr("变比") << tr("工程转换");;
+           << tr("最大值") << tr("变比") << tr("工程转换");
     QtCSV::Writer::write(filepath, varData, QString(","), QString("\""),
                          QtCSV::Writer::REWRITE, header,  QStringList(),
                          QTextCodec::codecForName("GB18030"));

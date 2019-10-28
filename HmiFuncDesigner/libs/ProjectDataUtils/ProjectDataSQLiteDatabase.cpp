@@ -210,7 +210,7 @@ bool ProjectDataSQLiteDatabase::createTableTagSys()
 
     ret = createTable("t_tag_sys", keyList, valueList, "");
     if(ret == 1) {
-        excSQL("delete * from t_tag_sys");
+        excSQL("delete from t_tag_sys");
         QString szTagSysConfig = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
 
         QFile jasonFile(szTagSysConfig);
@@ -251,15 +251,15 @@ bool ProjectDataSQLiteDatabase::createTableTagTmp()
     QStringList keyList, valueList;
     int ret = 0;
 
-    keyList << "tagid" << "name" << "data_type" << "description"
+    keyList << "tagid" << "name" << "description" << "data_type"
             << "init_val" << "min_val" << "max_val" << "converter";
 
-    valueList << "varchar(16) not null primary key" << "varchar(32)" << "varchar(32)" << "varchar(512)"
+    valueList << "varchar(16) not null primary key" << "varchar(32)" << "varchar(512)" << "varchar(32)"
               << "varchar(256)" << "varchar(256)" << "varchar(256)" << "varchar(4096)";
 
     ret = createTable("t_tag_tmp", keyList, valueList, "");
     if(ret == 1) {
-        excSQL("delete * from t_tag_tmp");
+        excSQL("delete from t_tag_tmp");
     }
 
     return ret;
@@ -311,7 +311,7 @@ bool ProjectDataSQLiteDatabase::createTableTagIO()
 
     ret = createTable("t_tag_io", keyList, valueList, "");
     if(ret == 1) {
-        excSQL("delete * from t_tag_io");
+        excSQL("delete from t_tag_io");
     }
 
     return ret;

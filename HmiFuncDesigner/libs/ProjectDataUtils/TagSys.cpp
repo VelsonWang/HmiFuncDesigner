@@ -36,6 +36,7 @@ bool TagSys::load(ProjectDataSQLiteDatabase *pDB)
         return false;
     }
 
+    qDeleteAll(listTagSysDBItem_);
     listTagSysDBItem_.clear();
 
     while (query.next()) {

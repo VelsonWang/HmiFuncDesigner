@@ -22,7 +22,6 @@ VariableEditDialog::VariableEditDialog(QString projName, QWidget *parent) :
     ui->tabWidget->setCurrentIndex(0);
     on_checkIsAlarm_clicked(false);
     on_checkIsSaveDisk_clicked(false);
-    ui->cboSaveMode->setCurrentIndex(1);
     on_cboDataType_currentIndexChanged(ui->cboDataType->currentText());
 
     // 已经建立设备列表
@@ -35,11 +34,9 @@ VariableEditDialog::VariableEditDialog(QString projName, QWidget *parent) :
     if(ui->cboDeviceName->count()>0)
         ui->cboDeviceName->setCurrentIndex(0);
 
-    ui->tabAlarmLayout->addStretch();
     ui->tabBaseLayout->addStretch();
     ui->tabDataAttributeLayout->addStretch();
     ui->tabIOConnectLayout->addStretch();
-    ui->tabSaveDiskLayout->addStretch();
 
     m_iRegAddrOffset = 0;
 }
@@ -54,8 +51,6 @@ void VariableEditDialog::DialogFixedSize()
     ui->tabBaseLayout->setSizeConstraint(QLayout::SetFixedSize);
     ui->tabDataAttributeLayout->setSizeConstraint(QLayout::SetFixedSize);
     ui->tabIOConnectLayout->setSizeConstraint(QLayout::SetFixedSize);
-    ui->tabAlarmLayout->setSizeConstraint(QLayout::SetFixedSize);
-    ui->tabSaveDiskLayout->setSizeConstraint(QLayout::SetFixedSize);
     ui->VariableEditDialogLayout->setSizeConstraint(QLayout::SetFixedSize);
 }
 
@@ -215,51 +210,6 @@ void VariableEditDialog::SetDataAttribuyeString(QString s)
 QString VariableEditDialog::GetAlarmString()
 {
     QString s = "";
-    if(m_iVarType == DI)  // 数字量
-    {
-        if(ui->checkIsAlarm->isChecked())
-        {
-            if(ui->checkIsAlarm->isChecked())
-                s += "1,";
-            else
-                s += "0,";
-            s += ui->cboAlarmMode->currentText() + ",";
-            s += ui->editAlarmDescription->text() + ",";
-            s += ui->editFalseShow->text() + ",";
-            s += ui->editTrueShow->text() + ",";
-            s += ui->editNormalValue->text() + ",";
-            s += ui->editTrueValue->text() + ",";
-            s += ui->editAlarmLevel->text() + ",";
-            s += ui->cboAlarmAttribute->currentText();
-        }
-    }
-    else if(m_iVarType == AI)  // 模拟量
-    {
-        if(ui->checkIsAlarm->isChecked())
-        {
-            if(ui->checkIsAlarm->isChecked())
-                s += "1,";
-            else
-                s += "0,";
-            s += ui->cboAIAlarmMode->currentText() + ",";
-            s += ui->editAlarmHShow->text() + ",";
-            s += ui->editAlarmHHShow->text() + ",";
-            s += ui->editAlarmLShow->text() + ",";
-            s += ui->editAlarmLLShow->text() + ",";
-            s += ui->editAlarmPOffsetShow->text() + ",";
-            s += ui->editAlarmNOffsetShow->text() + ",";
-            s += ui->editAlarmFixValue->text() + ",";
-
-            s += ui->cboAlarmAttribute->currentText() + ",";
-            s += ui->editAlarmHValue->text() + ",";
-            s += ui->editAlarmHHValue->text() + ",";
-            s += ui->editAlarmLValue->text() + ",";
-            s += ui->editAlarmLLValue->text() + ",";
-            s += ui->editAlarmPOffsetValue->text() + ",";
-            s += ui->editAlarmNOffsetValue->text() + ",";
-            s += ui->editAIAlarmLevel->text();
-        }
-    }
     return s;
 }
 
@@ -268,51 +218,6 @@ QString VariableEditDialog::GetAlarmString()
  */
 void VariableEditDialog::SetAlarmString(QString s)
 {
-    QStringList list;
-    list = s.split(QRegExp(","));
-    if(m_iVarType == DI && list.size() == 9)  // 数字量
-    {
-        if(list.at(0) == "1")
-               ui->checkIsAlarm->setChecked(true);
-           else
-               ui->checkIsAlarm->setChecked(false);
-        on_checkIsAlarm_clicked(ui->checkIsAlarm->isChecked());
-        ui->cboAlarmMode->setCurrentText(list.at(1));
-        ui->editAlarmDescription->setText(list.at(2));
-        ui->editFalseShow->setText(list.at(3));
-        ui->editTrueShow->setText(list.at(4));
-        ui->editNormalValue->setText(list.at(5));
-        ui->editTrueValue->setText(list.at(6));
-        ui->editAlarmLevel->setText(list.at(7));
-        ui->cboAlarmAttribute->setCurrentText(list.at(8));
-    }
-    else if(m_iVarType == AI && list.size() == 17)  // 模拟量
-    {
-        if(list.at(0) == "1")
-               ui->checkIsAlarm->setChecked(true);
-           else
-               ui->checkIsAlarm->setChecked(false);
-        on_checkIsAlarm_clicked(ui->checkIsAlarm->isChecked());
-
-        ui->cboAIAlarmMode->setCurrentText(list.at(1));
-        ui->editAlarmHShow->setText(list.at(2));
-        ui->editAlarmHHShow->setText(list.at(3));
-        ui->editAlarmLShow->setText(list.at(4));
-        ui->editAlarmLLShow->setText(list.at(5));
-        ui->editAlarmPOffsetShow->setText(list.at(6));
-        ui->editAlarmNOffsetShow->setText(list.at(7));
-        ui->editAlarmFixValue->setText(list.at(8));
-
-        ui->cboAlarmAttribute->setCurrentText(list.at(9));
-        ui->editAlarmHValue->setText(list.at(10));
-        ui->editAlarmHHValue->setText(list.at(11));
-        ui->editAlarmLValue->setText(list.at(12));
-        ui->editAlarmLLValue->setText(list.at(13));
-        ui->editAlarmPOffsetValue->setText(list.at(14));
-        ui->editAlarmNOffsetValue->setText(list.at(15));
-        ui->editAIAlarmLevel->setText(list.at(16));
-    }
-    DialogFixedSize();
 }
 
 /*
@@ -321,25 +226,6 @@ void VariableEditDialog::SetAlarmString(QString s)
 QString VariableEditDialog::GetSaveDiskString()
 {
     QString s = "";
-    if(ui->checkIsSaveDisk->isChecked())
-    {
-        if(ui->checkIsSaveDisk->isChecked())
-            s += "1,";
-        else
-            s += "0,";
-        if(ui->checkIsGroupSaveDisk->isChecked())
-            s += "1,";
-        else
-            s += "0,";
-        s += ui->cboSaveMode->currentText() + ",";
-        s += ui->editSaveTime->text() + ",";
-        if(ui->checkIsDataCkeckSaveDisk->isChecked())
-            s += "1,";
-        else
-            s += "0,";
-        s += ui->editHighLimit->text() + ",";
-        s += ui->editLowLimit->text();
-    }
     return s;
 }
 
@@ -348,29 +234,6 @@ QString VariableEditDialog::GetSaveDiskString()
  */
 void VariableEditDialog::SetSaveDiskString(QString s)
 {
-    QStringList list;
-    list = s.split(QRegExp(","));
-    if(list.size() == 7)
-    {
-        if(list.at(0) == "1")
-            ui->checkIsSaveDisk->setChecked(true);
-        else
-            ui->checkIsSaveDisk->setChecked(false);
-        on_checkIsSaveDisk_clicked(ui->checkIsSaveDisk->isChecked());
-        if(list.at(1) == "1")
-            ui->checkIsGroupSaveDisk->setChecked(true);
-        else
-            ui->checkIsGroupSaveDisk->setChecked(false);
-        ui->cboSaveMode->setCurrentText(list.at(2));
-        ui->editSaveTime->setText(list.at(3));
-        if(list.at(4) == "1")
-            ui->checkIsDataCkeckSaveDisk->setChecked(true);
-        else
-            ui->checkIsDataCkeckSaveDisk->setChecked(false);
-        ui->editHighLimit->setText(list.at(5));
-        ui->editLowLimit->setText(list.at(6));
-    }
-    DialogFixedSize();
 }
 
 
@@ -379,33 +242,7 @@ void VariableEditDialog::SetSaveDiskString(QString s)
  */
 void VariableEditDialog::on_checkIsAlarm_clicked(bool checked)
 {
-    // 数字量
-    ui->cboAlarmMode->setEnabled(checked);
-    ui->cboAlarmAttribute->setEnabled(checked);
-    ui->editFalseShow->setEnabled(checked);
-    ui->editTrueShow->setEnabled(checked);
-    ui->editNormalValue->setEnabled(checked);
-    ui->editTrueValue->setEnabled(checked);
-    ui->editAlarmLevel->setEnabled(checked);
-    ui->editAlarmDescription->setEnabled(checked);
-    // 模拟量
-    ui->cboAIAlarmMode->setEnabled(checked);
-    ui->editAlarmHShow->setEnabled(checked);
-    ui->editAlarmHHShow->setEnabled(checked);
-    ui->editAlarmLShow->setEnabled(checked);
-    ui->editAlarmLLShow->setEnabled(checked);
-    ui->editAlarmPOffsetShow->setEnabled(checked);
-    ui->editAlarmNOffsetShow->setEnabled(checked);
-    ui->editAlarmFixValue->setEnabled(checked);
 
-    ui->cboAIAlarmAttribute->setEnabled(checked);
-    ui->editAlarmHValue->setEnabled(checked);
-    ui->editAlarmHHValue->setEnabled(checked);
-    ui->editAlarmLValue->setEnabled(checked);
-    ui->editAlarmLLValue->setEnabled(checked);
-    ui->editAlarmPOffsetValue->setEnabled(checked);
-    ui->editAlarmNOffsetValue->setEnabled(checked);
-    ui->editAIAlarmLevel->setEnabled(checked);
 }
 
 /*
@@ -413,12 +250,7 @@ void VariableEditDialog::on_checkIsAlarm_clicked(bool checked)
  */
 void VariableEditDialog::on_checkIsSaveDisk_clicked(bool checked)
 {
-    ui->checkIsGroupSaveDisk->setEnabled(checked);
-    ui->cboSaveMode->setEnabled(checked);
-    ui->editSaveTime->setEnabled(checked);
-    ui->editHighLimit->setEnabled(checked);
-    ui->editLowLimit->setEnabled(checked);
-    ui->checkIsDataCkeckSaveDisk->setEnabled(checked);
+
 }
 
 /*
@@ -435,16 +267,7 @@ int VariableEditDialog::GetVariableType()
 void VariableEditDialog::SetVariableType(VAR_TYPE t)
 {
     m_iVarType = t;
-    if(m_iVarType == DI)  // 数字量
-    {
-        ui->groupBoxAI->hide();
-        ui->groupBoxDI->show();
-    }
-    else if(m_iVarType == AI)  // 模拟量
-    {
-        ui->groupBoxDI->hide();
-        ui->groupBoxAI->show();
-    }
+
     DialogFixedSize();
 }
 

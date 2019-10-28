@@ -23,6 +23,8 @@ public:
     bool delAll(ProjectDataSQLiteDatabase *pDB);
     bool update(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
 
+    int rowCount(ProjectDataSQLiteDatabase *pDB);
+
     TagTmpDBItem *getTagTmpDBItemByID(const QString &id);
     TagTmpDBItem *getTagTmpDBItemByName(const QString &name);
     int getLastInsertId(ProjectDataSQLiteDatabase *pDB);

@@ -61,6 +61,7 @@ SOURCES += main.cpp\
     SystemParametersWin.cpp \
     NetSettingDialog.cpp \
     DatabaseSettingDialog.cpp \
+    TagTmpEditDialog.cpp \
     UserAuthorityDialog.cpp \
     CommunicationDeviceWin.cpp \
     NewComDeviceDialog.cpp \
@@ -97,6 +98,7 @@ HEADERS  += MainWindow.h \
     SystemParametersWin.h \
     NetSettingDialog.h \
     DatabaseSettingDialog.h \
+    TagTmpEditDialog.h \
     UserAuthorityDialog.h \
     CommunicationDeviceWin.h \
     NewComDeviceDialog.h \
@@ -133,6 +135,7 @@ FORMS    += MainWindow.ui \
     SystemParametersWin.ui \
     NetSettingDialog.ui \
     DatabaseSettingDialog.ui \
+    TagTmpEditDialog.ui \
     UserAuthorityDialog.ui \
     CommunicationDeviceWin.ui \
     NewComDeviceDialog.ui \

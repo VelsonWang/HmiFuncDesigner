@@ -36,6 +36,7 @@ bool TagTmp::load(ProjectDataSQLiteDatabase *pDB)
         return false;
     }
 
+    qDeleteAll(listTagTmpDBItem_);
     listTagTmpDBItem_.clear();
 
     while (query.next()) {
@@ -102,7 +103,7 @@ bool TagTmp::insert(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj)
 {
     QStringList keyList, valueList;
 
-    keyList << "tagid" << "name" << "data_type" << "description"
+    keyList << "tagid" << "name" << "description" << "data_type"
             << "init_val" << "min_val" << "max_val" << "converter";
 
     valueList << pObj->m_szTagID << pObj->m_szName << pObj->m_szDataType << pObj->m_szDescription
@@ -193,17 +194,23 @@ TagTmpDBItem *TagTmp::getTagTmpDBItemByName(const QString &name)
 
 int TagTmp::getLastInsertId(ProjectDataSQLiteDatabase *pDB)
 {
-    return pDB->getLastInsertId("t_tag_sys");
+    return pDB->getLastInsertId("t_tag_tmp");
 }
 
 
 bool TagTmp::saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj)
 {
     bool ret = false;
-    if(pDB->getRowCount("t_tag_sys", QString("tagid='%1'").arg(pObj->m_szTagID))) {
+    if(pDB->getRowCount("t_tag_tmp", QString("tagid='%1'").arg(pObj->m_szTagID))) {
         ret = update(pDB, pObj);
     } else {
         ret = insert(pDB, pObj);
     }
     return ret;
+}
+
+
+int TagTmp::rowCount(ProjectDataSQLiteDatabase *pDB)
+{
+    return pDB->getRowCount("t_tag_tmp");
 }
