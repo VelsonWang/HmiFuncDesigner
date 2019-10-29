@@ -21,7 +21,8 @@ class TagManagerWin;
 }
 
 
-class TagTmpDBItem;
+struct TagTmpDBItem;
+struct TagIODBItem;
 
 class TagManagerWin : public ChildBase
 {
@@ -89,8 +90,13 @@ private:
     // 删除选中中间变量
     void deleteCurTagTmp();
 
+
     // 初始化设备变量表
     void initialTableTagIO();
+    // 设备变量表新增一行
+    int tableTagIOAddRow();
+    // 获取指定行设备变量id数值部分
+    int getTagIOIdNumValue(int iRow);
     // 刷新设备变量表
     void updateTableTagIO(const QString &szGroupName);
     // 保存设备变量表
@@ -99,6 +105,12 @@ private:
     void tagIOExportToCsv(const QString &path, const QString & /*group*/);
     // 从CSV文件导入设备变量至设备变量表
     void tagIOImportFromCsv(const QString &path);
+    // 获取指定行设备变量对象
+    TagIODBItem *getTagIOObjByRow(int iRow);
+    // 设置指定行设备变量对象
+    void setTagIOObjByRow(int iRow, TagIODBItem *pObj);
+    // 创建设备变量
+    void createTagIO();
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);

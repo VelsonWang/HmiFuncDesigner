@@ -1,26 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VariableEditDialog</class>
- <widget class="QDialog" name="VariableEditDialog">
+ <class>TagIOEditDialog</class>
+ <widget class="QDialog" name="TagIOEditDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>465</width>
-    <height>293</height>
+    <width>522</width>
+    <height>381</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>批量增加变量</string>
   </property>
-  <layout class="QVBoxLayout" name="VariableEditDialogLayout">
-   <property name="sizeConstraint">
-    <enum>QLayout::SetFixedSize</enum>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabBase">
       <attribute name="title">
@@ -31,112 +28,54 @@
         <enum>QLayout::SetFixedSize</enum>
        </property>
        <item>
-        <widget class="QGroupBox" name="groupBox">
+        <widget class="QGroupBox" name="groupBoxCreateNum">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
-           <width>200</width>
-           <height>200</height>
+           <width>0</width>
+           <height>0</height>
           </size>
          </property>
          <property name="title">
-          <string>批量增加变量</string>
+          <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout_2">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetFixedSize</enum>
-          </property>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_4">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="label_11">
             <property name="text">
-             <string>单位</string>
+             <string>创建</string>
             </property>
            </widget>
           </item>
-          <item row="6" column="1">
-           <widget class="QLineEdit" name="editUnit">
-            <property name="text">
-             <string>mA</string>
+          <item>
+           <widget class="QSpinBox" name="spinBoxCreateTagNum">
+            <property name="minimumSize">
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
             </property>
            </widget>
           </item>
-          <item row="3" column="1">
-           <widget class="QLineEdit" name="editBatchNum">
+          <item>
+           <widget class="QLabel" name="label_12">
             <property name="text">
-             <string>1</string>
+             <string>个变量</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>连续个数</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>数据类型</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>变量名</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0">
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>描述</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="cboDataType">
-            <item>
-             <property name="text">
-              <string>模拟量</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>数字量</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="3" column="3">
-           <widget class="QLabel" name="label_17">
-            <property name="text">
-             <string>寄存器间隔</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="4">
-           <widget class="QLineEdit" name="editRegisterSpace">
-            <property name="text">
-             <string>1</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1" colspan="4">
-           <widget class="QLineEdit" name="editDescription">
-            <property name="text">
-             <string>描述</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QLineEdit" name="editVariableName">
-            <property name="text">
-             <string>var</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
+          <item>
            <spacer name="horizontalSpacer_4">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
@@ -149,142 +88,110 @@
             </property>
            </spacer>
           </item>
+          <item>
+           <widget class="QLabel" name="label_17">
+            <property name="text">
+             <string>寄存器间隔：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QSpinBox" name="spinBoxRegAddrOffset">
+            <property name="minimumSize">
+             <size>
+              <width>60</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="value">
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>240</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </widget>
        </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabDataAttribute">
-      <attribute name="title">
-       <string>数据属性</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="tabDataAttributeLayout">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetFixedSize</enum>
-       </property>
        <item>
-        <widget class="QGroupBox" name="groupBox_2">
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="title">
           <string/>
          </property>
-         <layout class="QGridLayout" name="gridLayout">
-          <property name="sizeConstraint">
-           <enum>QLayout::SetFixedSize</enum>
-          </property>
-          <item row="1" column="1">
-           <widget class="QLineEdit" name="editMaxValue"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>最大值</string>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
           </item>
           <item row="0" column="0">
-           <widget class="QLabel" name="label_5">
+           <widget class="QLabel" name="label">
             <property name="text">
-             <string>读写属性</string>
+             <string>变量名称：</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_6">
+          <item row="1" column="1" colspan="3">
+           <widget class="QLineEdit" name="editTagDescription">
             <property name="text">
-             <string>初始值</string>
+             <string>描述</string>
             </property>
            </widget>
           </item>
           <item row="0" column="1">
-           <widget class="QComboBox" name="cboAttribute">
-            <item>
-             <property name="text">
-              <string>只读</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>只写</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>读写</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QLineEdit" name="editInitialValue">
+           <widget class="QLineEdit" name="editTagName">
             <property name="text">
-             <string>0</string>
+             <string>var</string>
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>变比</string>
+          <item row="0" column="3">
+           <spacer name="horizontalSpacer_5">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
             </property>
-           </widget>
-          </item>
-          <item row="1" column="2">
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>最小值</string>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
             </property>
-           </widget>
+           </spacer>
           </item>
-          <item row="1" column="3">
-           <widget class="QLineEdit" name="editMinValue"/>
-          </item>
-          <item row="2" column="3">
-           <widget class="QLineEdit" name="editScaleValue">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_14">
             <property name="text">
-             <string>1</string>
+             <string>描述：</string>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="tabIOConnect">
-      <attribute name="title">
-       <string>IO连接属性</string>
-      </attribute>
-      <layout class="QVBoxLayout" name="tabIOConnectLayout">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetFixedSize</enum>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <property name="sizeConstraint">
-          <enum>QLayout::SetFixedSize</enum>
-         </property>
-         <item>
-          <widget class="QCheckBox" name="chkIsIOConnect">
-           <property name="text">
-            <string>是否IO连接</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="chkIsSelfVariable">
-           <property name="text">
-            <string>是否内部变量</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="chkGlobal">
-           <property name="text">
-            <string>全局属性</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </item>
        <item>
         <widget class="QGroupBox" name="groupBox_5">
@@ -298,7 +205,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_40">
             <property name="text">
-             <string>设备名</string>
+             <string>设备名：</string>
             </property>
            </widget>
           </item>
@@ -334,14 +241,14 @@
           <item row="0" column="2">
            <widget class="QLabel" name="label_41">
             <property name="text">
-             <string>读写类型</string>
+             <string>读写类型：</string>
             </property>
            </widget>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_42">
             <property name="text">
-             <string>设备地址</string>
+             <string>设备地址：</string>
             </property>
            </widget>
           </item>
@@ -355,7 +262,7 @@
           <item row="1" column="2">
            <widget class="QLabel" name="label_43">
             <property name="text">
-             <string>最大值</string>
+             <string>最大值：</string>
             </property>
            </widget>
           </item>
@@ -365,7 +272,7 @@
           <item row="2" column="0">
            <widget class="QLabel" name="label_44">
             <property name="text">
-             <string>寄存器区</string>
+             <string>寄存器区：</string>
             </property>
            </widget>
           </item>
@@ -375,7 +282,7 @@
           <item row="2" column="2">
            <widget class="QLabel" name="label_45">
             <property name="text">
-             <string>最小值</string>
+             <string>最小值：</string>
             </property>
            </widget>
           </item>
@@ -385,14 +292,14 @@
           <item row="3" column="0">
            <widget class="QLabel" name="label_46">
             <property name="text">
-             <string>寄存器地址</string>
+             <string>寄存器地址：</string>
             </property>
            </widget>
           </item>
           <item row="3" column="2">
            <widget class="QLabel" name="label_47">
             <property name="text">
-             <string>初值</string>
+             <string>初始值：</string>
             </property>
            </widget>
           </item>
@@ -406,7 +313,7 @@
           <item row="4" column="0">
            <widget class="QLabel" name="label_48">
             <property name="text">
-             <string>数据类型</string>
+             <string>数据类型：</string>
             </property>
            </widget>
           </item>
@@ -416,7 +323,7 @@
           <item row="4" column="2">
            <widget class="QLabel" name="label_49">
             <property name="text">
-             <string>变比</string>
+             <string>变比：</string>
             </property>
            </widget>
           </item>
@@ -430,7 +337,7 @@
           <item row="5" column="0">
            <widget class="QLabel" name="label_50">
             <property name="text">
-             <string>偏移地址</string>
+             <string>偏移地址：</string>
             </property>
            </widget>
           </item>
@@ -438,20 +345,6 @@
            <widget class="QLineEdit" name="editAddressOffset">
             <property name="text">
              <string>0</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QLabel" name="label_51">
-            <property name="text">
-             <string>同帧地址</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="3">
-           <widget class="QLineEdit" name="editAddressInFrame">
-            <property name="text">
-             <string>-1</string>
             </property>
            </widget>
           </item>
