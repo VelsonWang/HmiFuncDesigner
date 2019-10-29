@@ -136,6 +136,11 @@ bool TagTmp::del(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj)
     return pDB->deleteRecord("t_tag_tmp", QString("tagid='%1'").arg(pObj->m_szTagID));
 }
 
+bool TagTmp::del(ProjectDataSQLiteDatabase *pDB, const QString &id)
+{
+    return pDB->deleteRecord("t_tag_tmp", QString("tagid='%1'").arg(id));
+}
+
 bool TagTmp::delAll(ProjectDataSQLiteDatabase *pDB)
 {
     return pDB->deleteRecord("t_tag_tmp");

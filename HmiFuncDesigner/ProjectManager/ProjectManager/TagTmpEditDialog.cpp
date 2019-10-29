@@ -131,3 +131,9 @@ void TagTmpEditDialog::setCreateTagNum(int num)
     m_iCreateTagNum = num;
     ui->spinBoxCreateTagNum->setValue(num);
 }
+
+
+void TagTmpEditDialog::hideCreateNumUI()
+{
+    ui->groupBoxCreateNum->hide();
+}

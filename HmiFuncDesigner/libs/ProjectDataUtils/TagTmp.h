@@ -20,6 +20,7 @@ public:
     bool insert(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
     bool insert(ProjectDataSQLiteDatabase *pDB, QList<TagTmpDBItem *> &pObjs);
     bool del(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
+    bool del(ProjectDataSQLiteDatabase *pDB, const QString &id);
     bool delAll(ProjectDataSQLiteDatabase *pDB);
     bool update(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
 

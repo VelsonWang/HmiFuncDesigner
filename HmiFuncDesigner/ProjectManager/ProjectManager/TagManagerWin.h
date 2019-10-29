@@ -1,5 +1,5 @@
-﻿#ifndef VARIABLEMANAGERWIN_H
-#define VARIABLEMANAGERWIN_H
+﻿#ifndef TAGMANAGERWIN_H
+#define TAGMANAGERWIN_H
 
 #include "ChildBase.h"
 #include "TagFuncEditDialog.h"
@@ -9,6 +9,7 @@
 #include <QString>
 #include <QWidget>
 #include <QStandardItemModel>
+#include <QTableWidgetItem>
 #include <QStringList>
 #include <QVBoxLayout>
 
@@ -16,18 +17,21 @@
 
 
 namespace Ui {
-class VariableManagerWin;
+class TagManagerWin;
 }
 
-class VariableManagerWin : public ChildBase
+
+class TagTmpDBItem;
+
+class TagManagerWin : public ChildBase
 {
     Q_OBJECT
 
 public:
-    explicit VariableManagerWin(QWidget *parent = Q_NULLPTR,
+    explicit TagManagerWin(QWidget *parent = Q_NULLPTR,
                                 const QString &itemName = "",
                                 const QString &projName = "");
-    ~VariableManagerWin();
+    ~TagManagerWin();
 
     void init(const QString &itemName = "");
 
@@ -55,8 +59,13 @@ private:
     // 刷新系统变量表
     void updateTableTagSys();
 
+
     // 初始化中间变量表
     void initialTableTagTmp();
+    // 中间变量表新增一行
+    int tableTagTmpAddRow();
+    // 获取指定行中间变量id数值部分
+    int getTagTmpIdNumValue(int iRow);
     // 刷新中间变量表
     void updateTableTagTmp();
     // 保存中间变量表
@@ -69,8 +78,16 @@ private:
     void createTagTmp();
     // 追加中间变量
     void appendTagTmp();
+    // 获取指定行中间变量对象
+    TagTmpDBItem *getTagTmpObjByRow(int iRow);
+    // 设置指定行中间变量对象
+    void setTagTmpObjByRow(int iRow, TagTmpDBItem *pObj);
     // 拷贝选中中间变量
     void copyCurTagTmp();
+    // 修改选中中间变量
+    void modifyCurTagTmp();
+    // 删除选中中间变量
+    void deleteCurTagTmp();
 
     // 初始化设备变量表
     void initialTableTagIO();
@@ -88,20 +105,28 @@ protected:
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 public slots:
-    void tableViewVariableDoubleClicked(const QModelIndex &index);
-    void VariableAdd();
-    void VariableAppend();
-    void VariableRowCopy();
-    void VariableColCopy();
-    void VariableModify();
-    void VariableDelete();
+    void onTagAdd();
+    void onTagAppend();
+    void onTagRowCopy();
+    void onTagColCopy();
+    void onTagModify();
+    void onTagDelete();
 
 public:
     QString m_IOVariableListWhat;
 
+private slots:
+    void on_tableTagIO_itemPressed(QTableWidgetItem *item);
+    void on_tableTagTmp_itemPressed(QTableWidgetItem *item);
+    void on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item);
+    void on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item);
+
 private:
-    Ui::VariableManagerWin *ui; 
+    Ui::TagManagerWin *ui; 
     QString m_strCurTagType;
+    int m_iTableTagTmpSelectedRow = -1;
+    int m_iTableTagIOSelectedRow = -1;
+    QStringList m_listTagTmpDeleteRows;
 };
 
-#endif // VARIABLEMANAGERWIN_H
+#endif // TAGMANAGERWIN_H

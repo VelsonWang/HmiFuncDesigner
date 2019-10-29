@@ -5,7 +5,7 @@
 
 #include "SystemParametersWin.h"
 #include "CommunicationDeviceWin.h"
-#include "VariableManagerWin.h"
+#include "TagManagerWin.h"
 #include "DrawPageWin.h"
 #include "RealTimeDatabaseWin.h"
 #include "ScriptManageWin.h"
@@ -30,7 +30,7 @@ class ChildForm : public QWidget
     Q_OBJECT
 
 public:
-    explicit ChildForm(QWidget *parent = 0, const QString &projName = "");
+    explicit ChildForm(QWidget *parent = Q_NULLPTR, const QString &projName = "");
     ~ChildForm();
 
     void SetTitle(const QString &title);
@@ -92,7 +92,7 @@ private:
     QString m_strProjectName;
     SystemParametersWin *m_sysParamWinPtr; // 系统参数设置
     CommunicationDeviceWin *m_communicationDeviceWinPtr; // 通讯设备
-    VariableManagerWin *m_variableManagerWinPtr; // 变量管理
+    TagManagerWin *m_tagManagerWinPtr; // 变量管理
     DrawPageWin *m_drawPageWinPtr; // 画面管理
     RealTimeDatabaseWin *m_rtdbWinPtr; // 实时数据库
     ScriptManageWin *m_scriptManageWinPtr; // 脚本编辑器

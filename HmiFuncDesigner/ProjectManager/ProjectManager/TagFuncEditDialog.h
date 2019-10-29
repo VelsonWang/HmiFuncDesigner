@@ -103,7 +103,7 @@ public:
     };
 
 public:
-    explicit FuncModel(QObject *parent = 0);
+    explicit FuncModel(QObject *parent = Q_NULLPTR);
     ~FuncModel();
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -143,7 +143,7 @@ class FuncTableView : public QTableView
 {
     Q_OBJECT
 public:
-    explicit FuncTableView(QWidget *parent = 0);
+    explicit FuncTableView(QWidget *parent = Q_NULLPTR);
     ~FuncTableView();
 
 private:
@@ -171,7 +171,7 @@ class TagFuncEditDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TagFuncEditDialog(QString projectPath, QWidget *parent = 0);
+    explicit TagFuncEditDialog(QString projectPath, QWidget *parent = Q_NULLPTR);
     ~TagFuncEditDialog();
     void SetData(QString data);
     QString GetData();

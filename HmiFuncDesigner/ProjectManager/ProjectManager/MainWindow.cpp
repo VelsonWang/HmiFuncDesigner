@@ -31,7 +31,7 @@
 #include "RealTimeDatabaseWin.h"
 #include "ScriptManageWin.h"
 #include "TagManager.h"
-#include "VariableManagerWin.h"
+#include "TagManagerWin.h"
 #include "ui_MainWindow.h"
 
 MainWindow::MainWindow(QWidget *parent)

@@ -23,9 +23,9 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     ui->stackedWidget->addWidget(m_communicationDeviceWinPtr);
 
     // 变量管理
-    m_variableManagerWinPtr = new VariableManagerWin(this);
-    m_variableManagerWinPtr->setProjectName(m_strProjectName);
-    ui->stackedWidget->addWidget(m_variableManagerWinPtr);
+    m_tagManagerWinPtr = new TagManagerWin(this);
+    m_tagManagerWinPtr->setProjectName(m_strProjectName);
+    ui->stackedWidget->addWidget(m_tagManagerWinPtr);
 
     // 画面管理
     m_drawPageWinPtr = new DrawPageWin(this);
@@ -56,9 +56,9 @@ ChildForm::~ChildForm()
         m_communicationDeviceWinPtr = nullptr;
     }
 
-    if(m_variableManagerWinPtr != nullptr) {
-        delete m_variableManagerWinPtr;
-        m_variableManagerWinPtr = nullptr;
+    if(m_tagManagerWinPtr != nullptr) {
+        delete m_tagManagerWinPtr;
+        m_tagManagerWinPtr = nullptr;
     }
 
     if(m_drawPageWinPtr != nullptr) {
@@ -118,7 +118,7 @@ bool ChildForm::getModifiedFlag()
 void ChildForm::SetTitle(const QString &title)
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->SetTitle(title);
+        m_tagManagerWinPtr->SetTitle(title);
     }
     this->setWindowTitle(title);
 }
@@ -130,7 +130,7 @@ QString ChildForm::getItemName() const
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         return m_communicationDeviceWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        return m_variableManagerWinPtr->getItemName();
+        return m_tagManagerWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
         return m_drawPageWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
@@ -147,7 +147,7 @@ QString ChildForm::getItemName() const
 void ChildForm::addVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->VariableAdd();
+        m_tagManagerWinPtr->onTagAdd();
     }
 }
 
@@ -157,7 +157,7 @@ void ChildForm::addVariableTag()
 void ChildForm::appendVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->VariableAppend();
+        m_tagManagerWinPtr->onTagAppend();
     }
 }
 
@@ -168,7 +168,7 @@ void ChildForm::appendVariableTag()
 void ChildForm::rowCopyVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->VariableRowCopy();
+        m_tagManagerWinPtr->onTagRowCopy();
     }
 }
 
@@ -179,7 +179,7 @@ void ChildForm::rowCopyVariableTag()
 void ChildForm::columnCopyVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->VariableColCopy();
+        m_tagManagerWinPtr->onTagColCopy();
     }
 }
 
@@ -190,7 +190,7 @@ void ChildForm::columnCopyVariableTag()
 void ChildForm::modifyVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->VariableModify();
+        m_tagManagerWinPtr->onTagModify();
     }
 }
 
@@ -200,7 +200,7 @@ void ChildForm::modifyVariableTag()
 void ChildForm::deleteVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->VariableDelete();
+        m_tagManagerWinPtr->onTagDelete();
     }
 }
 
@@ -211,7 +211,7 @@ void ChildForm::deleteVariableTag()
 void ChildForm::variableTagExportToCsv(const QString &path)
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->exportToCsv(path);
+        m_tagManagerWinPtr->exportToCsv(path);
     }
 }
 
@@ -223,7 +223,7 @@ void ChildForm::variableTagExportToCsv(const QString &path)
 void ChildForm::variableTagImportFromCsv(const QString &file)
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_variableManagerWinPtr->importFromCsv(file);
+        m_tagManagerWinPtr->importFromCsv(file);
     }
 }
 
@@ -274,7 +274,7 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         ui->stackedWidget->setCurrentWidget(m_communicationDeviceWinPtr);
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        ui->stackedWidget->setCurrentWidget(m_variableManagerWinPtr);
+        ui->stackedWidget->setCurrentWidget(m_tagManagerWinPtr);
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
         ui->stackedWidget->setCurrentWidget(m_drawPageWinPtr);
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
@@ -295,7 +295,7 @@ void ChildForm::open()
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->open();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->open();
+        m_tagManagerWinPtr->open();
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
         m_drawPageWinPtr->open();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
@@ -312,7 +312,7 @@ void ChildForm::save()
 {
     m_sysParamWinPtr->save();
     m_communicationDeviceWinPtr->save();
-    m_variableManagerWinPtr->save();
+    m_tagManagerWinPtr->save();
     m_drawPageWinPtr->save();
     m_rtdbWinPtr->save();
     m_scriptManageWinPtr->save();
@@ -328,7 +328,7 @@ void ChildForm::showLargeIcon()
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->showLargeIcon();
+        m_tagManagerWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
         m_drawPageWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
@@ -348,7 +348,7 @@ void ChildForm::showSmallIcon()
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
         m_communicationDeviceWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->showSmallIcon();
+        m_tagManagerWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
         m_drawPageWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
@@ -366,8 +366,8 @@ void ChildForm::treeItemClicked(const QString &itemText)
         m_communicationDeviceWinPtr->setItemName(itemText);
         m_communicationDeviceWinPtr->ListViewUpdate(itemText);
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_variableManagerWinPtr->setItemName(itemText);
-        m_variableManagerWinPtr->init(itemText);
+        m_tagManagerWinPtr->setItemName(itemText);
+        m_tagManagerWinPtr->init(itemText);
     } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
         m_drawPageWinPtr->setItemName(itemText);
         m_drawPageWinPtr->init();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>VariableManagerWin</class>
- <widget class="QWidget" name="VariableManagerWin">
+ <class>TagManagerWin</class>
+ <widget class="QWidget" name="TagManagerWin">
   <property name="geometry">
    <rect>
     <x>0</x>

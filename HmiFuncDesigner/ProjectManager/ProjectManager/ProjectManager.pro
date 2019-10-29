@@ -61,14 +61,13 @@ SOURCES += main.cpp\
     SystemParametersWin.cpp \
     NetSettingDialog.cpp \
     DatabaseSettingDialog.cpp \
+    TagManagerWin.cpp \
     TagTmpEditDialog.cpp \
     UserAuthorityDialog.cpp \
     CommunicationDeviceWin.cpp \
     NewComDeviceDialog.cpp \
     ChildBase.cpp \
-    VariableManagerWin.cpp \
     VariableEditDialog.cpp \
-    CommentsDialog.cpp \
     NewVariableGroupDialog.cpp \
     DeviceListDialog.cpp \
     SelectProtocolDialog.cpp \
@@ -98,14 +97,13 @@ HEADERS  += MainWindow.h \
     SystemParametersWin.h \
     NetSettingDialog.h \
     DatabaseSettingDialog.h \
+    TagManagerWin.h \
     TagTmpEditDialog.h \
     UserAuthorityDialog.h \
     CommunicationDeviceWin.h \
     NewComDeviceDialog.h \
     ChildBase.h \
-    VariableManagerWin.h \
     VariableEditDialog.h \
-    CommentsDialog.h \
     NewVariableGroupDialog.h \
     DeviceListDialog.h \
     SelectProtocolDialog.h \
@@ -135,13 +133,12 @@ FORMS    += MainWindow.ui \
     SystemParametersWin.ui \
     NetSettingDialog.ui \
     DatabaseSettingDialog.ui \
+    TagManagerWin.ui \
     TagTmpEditDialog.ui \
     UserAuthorityDialog.ui \
     CommunicationDeviceWin.ui \
     NewComDeviceDialog.ui \
-    VariableManagerWin.ui \
     VariableEditDialog.ui \
-    CommentsDialog.ui \
     NewVariableGroupDialog.ui \
     DeviceListDialog.ui \
     SelectProtocolDialog.ui \
