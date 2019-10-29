@@ -1265,8 +1265,9 @@ int TagManagerWin::getTagIOIdNumValue(int iRow)
 void TagManagerWin::updateTableTagIO(const QString &szGroupName)
 {
     TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    QString szGroup = tagIO.getGroupNameByShowName(ProjectData::getInstance()->dbData_,
-                                                   szGroupName);
+    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+    QString szGroup = tagIOGroup.getGroupNameByShowName(ProjectData::getInstance()->dbData_,
+                                                        szGroupName);
     if(szGroup == QString())
         return;
     tagIO.load(ProjectData::getInstance()->dbData_);
@@ -1612,9 +1613,10 @@ void TagManagerWin::tagIOImportFromCsv(const QString &path)
  */
 void TagManagerWin::createTagIO()
 {
-    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    QString szGroup = tagIO.getGroupNameByShowName(ProjectData::getInstance()->dbData_,
-                                                   m_IOVariableListWhat);
+    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+    QString szGroup = tagIOGroup.getGroupNameByShowName(ProjectData::getInstance()->dbData_,
+                                                        m_IOVariableListWhat);
+
     if(szGroup == QString())
         return;
 

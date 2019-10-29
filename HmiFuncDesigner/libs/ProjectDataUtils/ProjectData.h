@@ -40,6 +40,7 @@ public:
     TagSys tagSys_; // 系统标签变量
     TagTmp tagTmp_; // 中间标签变量
     TagIO tagIO_; // 设备标签变量
+    TagIOGroup tagIOGroup_; // 设备标签变量组
 
 private:
     explicit ProjectData();

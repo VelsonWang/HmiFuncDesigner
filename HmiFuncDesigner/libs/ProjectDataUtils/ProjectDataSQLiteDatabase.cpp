@@ -283,7 +283,6 @@ bool ProjectDataSQLiteDatabase::createTableTagIOGroup()
     ret = createTable("t_io_group_info", keyList, valueList, "");
     if(ret == 1) {
         excSQL("delete from t_io_group_info");
-        excSQL("insert into t_io_group_info values(1, group1, " + QObject::tr("IO设备") + ");");
     }
 
     return ret;

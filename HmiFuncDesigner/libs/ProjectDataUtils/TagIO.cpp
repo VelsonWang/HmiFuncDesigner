@@ -5,7 +5,7 @@
 #include <QSqlRecord>
 #include <QSqlError>
 
-TagIO::TagIO(const QString &szTableName)
+TagIO::TagIO()
 {
     listTagIODBItem_.clear();
 }
@@ -36,6 +36,7 @@ bool TagIO::load(ProjectDataSQLiteDatabase *pDB)
         return false;
     }
 
+    qDeleteAll(listTagIODBItem_);
     listTagIODBItem_.clear();
 
     while (query.next()) {
@@ -245,7 +246,151 @@ bool TagIO::saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
 }
 
 
-QString TagIO::getGroupNameByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name)
+//////////////////////////////////////////////////////////////////////////////////////////
+
+
+TagIOGroup::TagIOGroup()
+{
+    listTagIOGroupDBItem_.clear();
+}
+
+TagIOGroup::~TagIOGroup()
+{
+    qDeleteAll(listTagIOGroupDBItem_);
+    listTagIOGroupDBItem_.clear();
+}
+
+/**
+ * @brief TagIOGroup::load
+ * @details 读取设备标签变量
+ * @param pDB 数据库对象
+ * @return true-成功, false-失败
+ */
+bool TagIOGroup::load(ProjectDataSQLiteDatabase *pDB)
+{
+    QSqlQuery query(pDB->db_);
+    QSqlRecord rec;
+
+    bool ret = query.exec("select * from t_io_group_info");
+    if(!ret) {
+        LogError(QString("get record: %1 failed! %2 ,error: %3!")
+                 .arg("t_io_group_info")
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
+        return false;
+    }
+
+    qDeleteAll(listTagIOGroupDBItem_);
+    listTagIOGroupDBItem_.clear();
+
+    while (query.next()) {
+        rec = query.record();
+        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
+        pObj->m_id = rec.value("id").toInt();
+        pObj->m_szGroupName = rec.value("group_name").toString();
+        pObj->m_szShowName = rec.value("show_name").toString();
+        listTagIOGroupDBItem_.append(pObj);
+    }
+
+    return ret;
+}
+
+
+/**
+ * @brief TagIOGroup::save
+ * @details 保存设备标签变量
+ * @param pDB 数据库对象
+ * @return true-成功, false-失败
+ */
+bool TagIOGroup::save(ProjectDataSQLiteDatabase *pDB)
+{
+    QSqlQuery query(pDB->db_);
+    bool ret = false;
+
+    pDB->beginTransaction();
+    for(int i=0; i<listTagIOGroupDBItem_.count(); i++) {
+        TagIOGroupDBItem *pObj = listTagIOGroupDBItem_.at(i);
+        query.prepare("update t_io_group_info set group_name = :group, show_name = :name "
+                      "where id = :id");
+
+        query.bindValue(":id", pObj->m_id);
+        query.bindValue(":group", pObj->m_szGroupName);
+        query.bindValue(":name", pObj->m_szShowName);
+        ret = query.exec();
+        if(!ret) {
+            LogError(QString("update record: %1 failed! %2 ,error: %3!")
+                     .arg("t_io_group_info")
+                     .arg(query.lastQuery())
+                     .arg(query.lastError().text()));
+            pDB->rollbackTransaction();
+        }
+    }
+    pDB->commitTransaction();
+
+    return ret;
+}
+
+
+bool TagIOGroup::insert(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
+{
+    QStringList keyList, valueList;
+
+    keyList << "group_name" <<"show_name";
+    valueList << pObj->m_szGroupName << pObj->m_szShowName;
+
+    return pDB->insertRecord("t_io_group_info", keyList, valueList);
+}
+
+
+bool TagIOGroup::del(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
+{
+    return pDB->deleteRecord("t_io_group_info", QString("id=%1").arg(pObj->m_id));
+}
+
+
+bool TagIOGroup::update(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
+{
+    QSqlQuery query(pDB->db_);
+    bool ret = false;
+
+    query.prepare("update t_io_group_info set group_name = :group, show_name = :name "
+                  "where id = :id");
+
+    query.bindValue(":id", pObj->m_id);
+    query.bindValue(":group", pObj->m_szGroupName);
+    query.bindValue(":name", pObj->m_szShowName);
+    ret = query.exec();
+    if(!ret) {
+        LogError(QString("update record: %1 failed! %2 ,error: %3!")
+                 .arg("t_io_group_info")
+                 .arg(query.lastQuery())
+                 .arg(query.lastError().text()));
+    }
+
+    return ret;
+}
+
+
+int TagIOGroup::getLastInsertId(ProjectDataSQLiteDatabase *pDB)
+{
+    return pDB->getLastInsertId("t_io_group_info");
+}
+
+
+bool TagIOGroup::saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
+{
+    bool ret = false;
+    if(pDB->getRowCount("t_io_group_info", QString("id=%1").arg(pObj->m_id))) {
+        ret = update(pDB, pObj);
+    } else {
+        ret = insert(pDB, pObj);
+    }
+
+    return ret;
+}
+
+
+QString TagIOGroup::getGroupNameByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name)
 {
     bool ret = false;
     QString rzRetValue = "";
@@ -255,4 +400,29 @@ QString TagIO::getGroupNameByShowName(ProjectDataSQLiteDatabase *pDB, const QStr
     return QString();
 }
 
+TagIOGroupDBItem *TagIOGroup::getGroupObjByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name)
+{
+    bool ret = false;
+    QStringList keyList, valueList;
+    keyList << "id" << "group_name";
+    ret = pDB->getRecord("t_io_group_info", keyList, valueList, QString("show_name='%1'").arg(name));
+    if(ret) {
+        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
+        pObj->m_id = valueList.at(0).toInt();
+        pObj->m_szGroupName = valueList.at(1);
+        pObj->m_szShowName = name;
+        return pObj;
+    }
 
+    return Q_NULLPTR;
+}
+
+int TagIOGroup::getGroupCount(ProjectDataSQLiteDatabase *pDB)
+{
+    return pDB->getRowCount("t_io_group_info");
+}
+
+int TagIOGroup::getGroupCountByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name)
+{
+    return pDB->getRowCount("t_io_group_info", QString("show_name='%1'").arg(name));
+}

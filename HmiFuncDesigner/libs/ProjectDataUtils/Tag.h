@@ -183,4 +183,36 @@ struct TagIODBItem
     QString m_szProjectConverter;  //工程转换
 };
 
+//////////////////////////////////////////////////////////
+
+struct TagIOGroupDBItem
+{
+    explicit TagIOGroupDBItem(int id=-1,
+                         const QString &groupName=QString("group1"),
+                         const QString &showName=QString()
+            )
+        : m_id(id),
+          m_szGroupName(groupName),
+          m_szShowName(showName)
+    {
+    }
+
+    TagIOGroupDBItem(const TagIOGroupDBItem &rh) {
+        m_id = rh.m_id;
+        m_szGroupName = rh.m_szGroupName;
+        m_szShowName = rh.m_szShowName;
+    }
+
+    TagIOGroupDBItem &operator=(const TagIOGroupDBItem &rh) {
+        m_id = rh.m_id;
+        m_szGroupName = rh.m_szGroupName;
+        m_szShowName = rh.m_szShowName;
+        return *this;
+    }
+
+    int m_id = -1;
+    QString m_szGroupName = "";
+    QString m_szShowName = "";
+};
+
 #endif // TAG_H

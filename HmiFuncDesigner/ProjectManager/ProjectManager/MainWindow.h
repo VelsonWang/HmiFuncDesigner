@@ -34,11 +34,10 @@ private slots:
     void on_actionOpenProject_triggered();
     void on_actionSaveProject_triggered();
     void on_treeViewProject_activated(const QModelIndex &index);
-    void VariableGroupAdd(); // 增加组
-    void VariableGroupRename(); // 重命名组
-    void VariableDeleteGroup(); // 删除组
-    void VariableGroupCopy(); // 复制组
-    void VariableModifyGroupID(); // 修改ID
+    void tagIOGroupAdd(); // 增加组
+    void tagIOGroupRename(); // 重命名组
+    void tagIODeleteGroup(); // 删除组
+    void tagIOGroupCopy(); // 复制组
     void on_actionSimulate_triggered();
     void on_actionRun_triggered();
     void on_actionUpLoad_triggered();
