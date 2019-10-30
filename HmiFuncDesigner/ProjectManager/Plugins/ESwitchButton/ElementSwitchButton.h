@@ -15,8 +15,7 @@ class ElementSwitchButton : public Element
 public:
     explicit ElementSwitchButton(const QString &szProjPath,
                                  const QString &szProjName,
-                                 QtVariantPropertyManager *propertyMgr,
-                                 ProjectData *pProjDataObj);
+                                 QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;

@@ -5,9 +5,8 @@ int ElementLine::iLastIndex_ = 1;
 
 ElementLine::ElementLine(const QString &szProjPath,
                          const QString &szProjName,
-                         QtVariantPropertyManager *propertyMgr,
-                         ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                         QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("Line_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;

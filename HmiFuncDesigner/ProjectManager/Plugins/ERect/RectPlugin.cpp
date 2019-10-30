@@ -91,8 +91,7 @@ QString RectPlugin::getElementIDString()
  */
 Element* RectPlugin::createElement(const QString &szProjPath,
                                    const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr,
-                                   ProjectData *pProjDataObj)
+                                   QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementRect(szProjPath, szProjName, propertyMgr, pProjDataObj);
+    return new ElementRect(szProjPath, szProjName, propertyMgr);
 }

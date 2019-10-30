@@ -91,8 +91,7 @@ QString EllipsePlugin::getElementIDString()
  */
 Element* EllipsePlugin::createElement(const QString &szProjPath,
                                       const QString &szProjName,
-                                      QtVariantPropertyManager *propertyMgr,
-                                      ProjectData *pProjDataObj)
+                                      QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementEllipse(szProjPath, szProjName, propertyMgr, pProjDataObj);
+    return new ElementEllipse(szProjPath, szProjName, propertyMgr);
 }

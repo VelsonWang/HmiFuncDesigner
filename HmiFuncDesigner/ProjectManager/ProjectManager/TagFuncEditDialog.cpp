@@ -14,18 +14,26 @@ static const int MaxTableColumns = 2;
 
 FuncModel::FuncModel(QObject *parent) : QAbstractTableModel(parent) {}
 
-FuncModel::~FuncModel() {
-    qDeleteAll(m_FuncList);
-    m_FuncList.clear();
+FuncModel::~FuncModel()
+{
+    while(m_FuncList.size()) {
+        PFuncObjectItem pObj = m_FuncList.takeFirst();
+        if(pObj != Q_NULLPTR) {
+            delete pObj;
+            pObj = Q_NULLPTR;
+        }
+    }
 }
 
-Qt::ItemFlags FuncModel::flags(const QModelIndex &index) const {
+Qt::ItemFlags FuncModel::flags(const QModelIndex &index) const
+{
     Qt::ItemFlags theFlags = QAbstractTableModel::flags(index);
     if (index.isValid()) theFlags |= Qt::ItemIsSelectable | Qt::ItemIsEnabled;
     return theFlags;
 }
 
-QVariant FuncModel::data(const QModelIndex &index, int role) const {
+QVariant FuncModel::data(const QModelIndex &index, int role) const
+{
     if (!index.isValid() || index.row() < 0 ||
             index.row() >= m_FuncList.count() || index.column() < 0 ||
             index.column() >= MaxTableColumns)
@@ -49,7 +57,8 @@ QVariant FuncModel::data(const QModelIndex &index, int role) const {
 }
 
 QVariant FuncModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const {
+                               int role) const
+{
     if (role != Qt::DisplayRole) return QVariant();
     if (orientation == Qt::Horizontal) {
         switch (section) {
@@ -64,16 +73,19 @@ QVariant FuncModel::headerData(int section, Qt::Orientation orientation,
     return section + 1;
 }
 
-int FuncModel::rowCount(const QModelIndex &index) const {
+int FuncModel::rowCount(const QModelIndex &index) const
+{
     return index.isValid() ? 0 : m_FuncList.count();
 }
 
-int FuncModel::columnCount(const QModelIndex &index) const {
+int FuncModel::columnCount(const QModelIndex &index) const
+{
     return index.isValid() ? 0 : MaxTableColumns;
 }
 
 bool FuncModel::setData(const QModelIndex &index, const QVariant &value,
-                        int role) {
+                        int role)
+{
     Q_UNUSED(value)
     if (!index.isValid() || role != Qt::EditRole || index.row() < 0 ||
             index.row() >= m_FuncList.count() || index.column() < 0 ||
@@ -88,21 +100,24 @@ bool FuncModel::setData(const QModelIndex &index, const QVariant &value,
     return true;
 }
 
-bool FuncModel::insertRows(int row, int count, const QModelIndex &) {
+bool FuncModel::insertRows(int row, int count, const QModelIndex &)
+{
     beginInsertRows(QModelIndex(), row, row + count - 1);
     for (int i = 0; i < count; ++i) m_FuncList.insert(row, new FuncObjectItem());
     endInsertRows();
     return true;
 }
 
-bool FuncModel::removeRows(int row, int count, const QModelIndex &) {
+bool FuncModel::removeRows(int row, int count, const QModelIndex &)
+{
     beginRemoveRows(QModelIndex(), row, row + count - 1);
     for (int i = 0; i < count; ++i) m_FuncList.removeAt(row);
     endRemoveRows();
     return true;
 }
 
-void FuncModel::save(QString &data) {
+void FuncModel::save(QString &data)
+{
     data = "";
     int count = m_FuncList.count();
     for (int i = 0; i < count; i++) {
@@ -114,7 +129,8 @@ void FuncModel::save(QString &data) {
     }
 }
 
-void FuncModel::load(QString data) {
+void FuncModel::load(QString data)
+{
     m_FuncList.clear();
     if (data == "") return;
     QStringList strObjList = data.split(';');
@@ -148,26 +164,30 @@ void FuncModel::load(QString data) {
     }
 }
 
-void FuncModel::AppendRow(PFuncObjectItem item) {
+void FuncModel::AppendRow(PFuncObjectItem item)
+{
     int last = m_FuncList.size();
     beginInsertRows(QModelIndex(), last, last);
     m_FuncList.append(item);
     endInsertRows();
 }
 
-void FuncModel::InsertRow(int i, PFuncObjectItem item) {
+void FuncModel::InsertRow(int i, PFuncObjectItem item)
+{
     beginInsertRows(QModelIndex(), i, i);
     m_FuncList.insert(i, item);
     endInsertRows();
 }
 
-PFuncObjectItem FuncModel::GetRow(int i) {
+PFuncObjectItem FuncModel::GetRow(int i)
+{
     PFuncObjectItem it = NULL;
     if (i < m_FuncList.size()) return m_FuncList.at(i);
     return it;
 }
 
-void FuncModel::UpdateRow(int i, PFuncObjectItem item) {
+void FuncModel::UpdateRow(int i, PFuncObjectItem item)
+{
     if (i < m_FuncList.size()) {
         m_FuncList.replace(i, item);
         for (int c = 0; c < MaxTableColumns; c++)
@@ -178,7 +198,8 @@ void FuncModel::UpdateRow(int i, PFuncObjectItem item) {
 /*
 * 当前行上移一行
 */
-void FuncModel::UpRow(int row) {
+void FuncModel::UpRow(int row)
+{
     if (row > 0 && row < m_FuncList.size()) {
         m_FuncList.move(row, row - 1);
         for (int c = 0; c < MaxTableColumns; c++) {
@@ -191,7 +212,8 @@ void FuncModel::UpRow(int row) {
 /*
 * 当前行下移一行
 */
-void FuncModel::DownRow(int row) {
+void FuncModel::DownRow(int row)
+{
     if (row >= 0 && row < m_FuncList.size() - 1) {
         m_FuncList.move(row, row + 1);
         for (int c = 0; c < MaxTableColumns; c++) {
@@ -705,8 +727,8 @@ bool TagFuncEditDialog::GetFuncNameArgs(QString funcString, QString &funcName,
 /*
 * 选择功能
 */
-void TagFuncEditDialog::on_treeViewFunc_doubleClicked(
-        const QModelIndex &index) {
+void TagFuncEditDialog::on_treeViewFunc_doubleClicked(const QModelIndex &index)
+{
     if (!index.isValid() || index.row() < 0) return;
     QStandardItem *item = m_pTreeViewItemModel->itemFromIndex(index);
     if (m_groupFuncNameList.indexOf(item->text()) == -1) {
@@ -721,17 +743,24 @@ void TagFuncEditDialog::on_treeViewFunc_doubleClicked(
 /*
 * 单击取消按钮
 */
-void TagFuncEditDialog::on_btnCancel_clicked() { this->reject(); }
+void TagFuncEditDialog::on_btnCancel_clicked()
+{
+    this->reject();
+}
 
 /*
 * 单击确定按钮
 */
-void TagFuncEditDialog::on_btnOk_clicked() { this->accept(); }
+void TagFuncEditDialog::on_btnOk_clicked()
+{
+    this->accept();
+}
 
 /*
 * 单击添加按钮
 */
-void TagFuncEditDialog::on_btnAdd_clicked() {
+void TagFuncEditDialog::on_btnAdd_clicked()
+{
     QModelIndex index = m_pTreeViewFunc->currentIndex();
     if (!index.isValid() || index.row() < 0) return;
     QStandardItem *item = m_pTreeViewItemModel->itemFromIndex(index);
@@ -747,7 +776,8 @@ void TagFuncEditDialog::on_btnAdd_clicked() {
 /*
 * 单击删除按钮
 */
-void TagFuncEditDialog::on_btnDel_clicked() {
+void TagFuncEditDialog::on_btnDel_clicked()
+{
     QItemSelectionModel *pItemSelectionModel = m_funcTableView->selectionModel();
     QModelIndexList modelIndexList = pItemSelectionModel->selectedIndexes();
     QMap<int, int> rowMap;
@@ -765,7 +795,8 @@ void TagFuncEditDialog::on_btnDel_clicked() {
 /*
 * 单击上移按钮
 */
-void TagFuncEditDialog::on_btnUp_clicked() {
+void TagFuncEditDialog::on_btnUp_clicked()
+{
     QModelIndex index = m_funcTableView->currentIndex();
     if (!index.isValid() || index.row() < 0) return;
     m_pfuncItemModel->UpRow(index.row());
@@ -775,7 +806,8 @@ void TagFuncEditDialog::on_btnUp_clicked() {
 /*
 * 单击下移按钮
 */
-void TagFuncEditDialog::on_btnDown_clicked() {
+void TagFuncEditDialog::on_btnDown_clicked()
+{
     QModelIndex index = m_funcTableView->currentIndex();
     if (!index.isValid() || index.row() < 0) return;
     m_pfuncItemModel->DownRow(index.row());
@@ -786,12 +818,16 @@ void TagFuncEditDialog::on_btnDown_clicked() {
 /*
 * 加载数据
 */
-void TagFuncEditDialog::SetData(QString data) { m_pfuncItemModel->load(data); }
+void TagFuncEditDialog::SetData(QString data)
+{
+    m_pfuncItemModel->load(data);
+}
 
 /*
 * 保存数据
 */
-QString TagFuncEditDialog::GetData() {
+QString TagFuncEditDialog::GetData()
+{
     QString data = "";
     m_pfuncItemModel->save(data);
     return data;

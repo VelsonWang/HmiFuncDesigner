@@ -13,9 +13,8 @@ int ElementClock::iLastIndex_ = 1;
 
 ElementClock::ElementClock(const QString &szProjPath,
                            const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr,
-                           ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                           QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("Clock_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -35,6 +34,8 @@ ElementClock::ElementClock(const QString &szProjPath,
 
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
 
     init();
     createPropertyList();
@@ -54,7 +55,7 @@ void ElementClock::regenerateElementId()
  */
 void ElementClock::release()
 {
-
+    ProjectData::releaseInstance();
 }
 
 

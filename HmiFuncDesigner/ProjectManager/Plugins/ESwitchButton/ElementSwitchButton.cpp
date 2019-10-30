@@ -18,9 +18,8 @@ int ElementSwitchButton::iLastIndex_ = 1;
 
 ElementSwitchButton::ElementSwitchButton(const QString &szProjPath,
                                          const QString &szProjName,
-                                         QtVariantPropertyManager *propertyMgr,
-                                         ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                                         QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("SwitchButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -50,11 +49,11 @@ ElementSwitchButton::ElementSwitchButton(const QString &szProjPath,
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
 
-    createPropertyList();
-    updatePropertyModel();
-
     if(ProjectData::getInstance()->getDBPath() == "")
         ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
+
+    createPropertyList();
+    updatePropertyModel();
 }
 
 void ElementSwitchButton::regenerateElementId()
@@ -77,6 +76,8 @@ void ElementSwitchButton::release()
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
         picResMgr_.del(ProjectData::getInstance()->dbData_, setPictureFile_);
     }
+
+    ProjectData::releaseInstance();
 }
 
 QRectF ElementSwitchButton::boundingRect() const
@@ -114,10 +115,7 @@ void ElementSwitchButton::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData *pObj = getProjectDataObj();
-    if(pObj != Q_NULLPTR) {
-        pObj->getAllTagName(tagNames_);
-    }
+    ProjectData::getInstance()->getAllTagName(tagNames_);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

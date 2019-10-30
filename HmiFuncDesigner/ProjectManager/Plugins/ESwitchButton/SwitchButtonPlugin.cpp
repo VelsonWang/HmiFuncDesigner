@@ -91,8 +91,7 @@ QString SwitchButtonPlugin::getElementIDString()
  */
 Element* SwitchButtonPlugin::createElement(const QString &szProjPath,
                                            const QString &szProjName,
-                                           QtVariantPropertyManager *propertyMgr,
-                                           ProjectData *pProjDataObj)
+                                           QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementSwitchButton(szProjPath, szProjName, propertyMgr, pProjDataObj);
+    return new ElementSwitchButton(szProjPath, szProjName, propertyMgr);
 }

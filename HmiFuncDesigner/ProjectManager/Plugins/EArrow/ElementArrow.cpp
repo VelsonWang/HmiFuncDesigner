@@ -1,6 +1,6 @@
 ﻿#include "ElementArrow.h"
 #include "math.h"
-#include <QDebug>
+
 
 static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
@@ -8,9 +8,8 @@ int ElementArrow::iLastIndex_ = 1;
 
 ElementArrow::ElementArrow(const QString &szProjPath,
                            const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr,
-                           ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj),
+                           QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr),
       arrowSize(10)
 {
     elementId = QString(tr("Arrow_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));

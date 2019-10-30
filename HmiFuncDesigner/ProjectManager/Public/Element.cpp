@@ -1,15 +1,12 @@
 ﻿#include "Element.h"
-#include "ProjectData.h"
 
 Element::Element(const QString &szProjPath,
                  const QString &szProjName,
-                 QtVariantPropertyManager *propertyMgr,
-                 ProjectData *pProjDataObj)
+                 QtVariantPropertyManager *propertyMgr)
     : elementId(""),
       szProjectPath_(szProjPath),
       szProjectName_(szProjName),
-      variantPropertyManager_(propertyMgr),
-      pProjectData_(pProjDataObj)
+      variantPropertyManager_(propertyMgr)
 {
 }
 
@@ -354,8 +351,3 @@ void Element::clearProperties()
     idToProperty_.clear();
 }
 
-
-ProjectData *Element::getProjectDataObj()
-{
-    return pProjectData_;
-}

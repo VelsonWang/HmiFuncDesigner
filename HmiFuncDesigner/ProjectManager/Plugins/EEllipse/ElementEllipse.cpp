@@ -6,9 +6,8 @@ int ElementEllipse::iLastIndex_ = 1;
 
 ElementEllipse::ElementEllipse(const QString &szProjPath,
                                const QString &szProjName,
-                               QtVariantPropertyManager *propertyMgr,
-                               ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                               QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("Ellipse_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -20,6 +19,8 @@ ElementEllipse::ElementEllipse(const QString &szProjPath,
     borderColor_ = Qt::black;
     showOnInitial_ = true;
     init();
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     createPropertyList();
     updatePropertyModel();
 }
@@ -36,7 +37,7 @@ void ElementEllipse::regenerateElementId()
  */
 void ElementEllipse::release()
 {
-
+    ProjectData::releaseInstance();
 }
 
 QRectF ElementEllipse::boundingRect() const
@@ -74,10 +75,7 @@ void ElementEllipse::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData *pObj = getProjectDataObj();
-    if(pObj != Q_NULLPTR) {
-        pObj->getAllTagName(tagNames_);
-    }
+    ProjectData::getInstance()->getAllTagName(tagNames_);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

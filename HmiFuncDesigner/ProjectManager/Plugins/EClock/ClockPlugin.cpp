@@ -91,8 +91,7 @@ QString ClockPlugin::getElementIDString()
  */
 Element* ClockPlugin::createElement(const QString &szProjPath,
                                     const QString &szProjName,
-                                    QtVariantPropertyManager *propertyMgr,
-                                    ProjectData *pProjDataObj)
+                                    QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementClock(szProjPath, szProjName, propertyMgr, pProjDataObj);
+    return new ElementClock(szProjPath, szProjName, propertyMgr);
 }

@@ -15,9 +15,8 @@ int ElementMovingText::iLastIndex_ = 1;
 
 ElementMovingText::ElementMovingText(const QString &szProjPath,
                                      const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr,
-                                     ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                                     QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("MovingText_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -31,6 +30,9 @@ ElementMovingText::ElementMovingText(const QString &szProjPath,
     showOnInitial_ = true;
     szMoveDir_ = tr("从右到左");
     iMoveCharNum_ = 1;
+
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
 
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
@@ -52,7 +54,7 @@ void ElementMovingText::regenerateElementId()
  */
 void ElementMovingText::release()
 {
-
+    ProjectData::releaseInstance();
 }
 
 
@@ -89,10 +91,7 @@ void ElementMovingText::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData *pObj = getProjectDataObj();
-    if(pObj != Q_NULLPTR) {
-        pObj->getAllTagName(tagNames_);
-    }
+    ProjectData::getInstance()->getAllTagName(tagNames_);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

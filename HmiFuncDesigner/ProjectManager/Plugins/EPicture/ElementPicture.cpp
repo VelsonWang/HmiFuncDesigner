@@ -10,9 +10,8 @@ int ElementPicture::iLastIndex_ = 1;
 
 ElementPicture::ElementPicture(const QString &szProjPath,
                                const QString &szProjName,
-                               QtVariantPropertyManager *propertyMgr,
-                               ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                               QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("Picture_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -26,11 +25,12 @@ ElementPicture::ElementPicture(const QString &szProjPath,
     init();
     elementWidth = 80;
     elementHeight = 80;
-    createPropertyList();
-    updatePropertyModel();
 
     if(ProjectData::getInstance()->getDBPath() == "")
         ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
+
+    createPropertyList();
+    updatePropertyModel();
 }
 
 void ElementPicture::regenerateElementId()
@@ -49,6 +49,8 @@ void ElementPicture::release()
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
         picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
     }
+
+    ProjectData::releaseInstance();
 }
 
 QRectF ElementPicture::boundingRect() const

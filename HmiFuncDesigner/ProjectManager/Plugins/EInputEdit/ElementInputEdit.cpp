@@ -7,9 +7,8 @@ int ElementInputEdit::iLastIndex_ = 1;
 
 ElementInputEdit::ElementInputEdit(const QString &szProjPath,
                                    const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr,
-                                   ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                                   QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("InputEdit_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -26,6 +25,8 @@ ElementInputEdit::ElementInputEdit(const QString &szProjPath,
     inputPassword_ = false;
     showOnInitial_ = true;
     init();
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     elementWidth = 80;
     elementHeight = 26;
     elementText = tr("输入编辑框");
@@ -45,7 +46,7 @@ void ElementInputEdit::regenerateElementId()
  */
 void ElementInputEdit::release()
 {
-
+    ProjectData::releaseInstance();
 }
 
 QRectF ElementInputEdit::boundingRect() const
@@ -87,10 +88,7 @@ void ElementInputEdit::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData *pObj = getProjectDataObj();
-    if(pObj != Q_NULLPTR) {
-        pObj->getAllTagName(tagNames_);
-    }
+    ProjectData::getInstance()->getAllTagName(tagNames_);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

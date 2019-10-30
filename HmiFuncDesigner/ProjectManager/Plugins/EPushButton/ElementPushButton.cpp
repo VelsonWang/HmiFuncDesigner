@@ -17,9 +17,8 @@ int ElementPushButton::iLastIndex_ = 1;
 
 ElementPushButton::ElementPushButton(const QString &szProjPath,
                                      const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr,
-                                     ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                                     QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("PushButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -45,11 +44,11 @@ ElementPushButton::ElementPushButton(const QString &szProjPath,
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
 
-    createPropertyList();
-    updatePropertyModel();
-
     if(ProjectData::getInstance()->getDBPath() == "")
         ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
+
+    createPropertyList();
+    updatePropertyModel();  
 }
 
 void ElementPushButton::regenerateElementId()
@@ -68,6 +67,8 @@ void ElementPushButton::release()
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
         picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
     }
+
+    ProjectData::releaseInstance();
 }
 
 QRectF ElementPushButton::boundingRect() const

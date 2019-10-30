@@ -91,8 +91,7 @@ QString PushButtonPlugin::getElementIDString()
  */
 Element* PushButtonPlugin::createElement(const QString &szProjPath,
                                          const QString &szProjName,
-                                         QtVariantPropertyManager *propertyMgr,
-                                         ProjectData *pProjDataObj)
+                                         QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementPushButton(szProjPath, szProjName, propertyMgr, pProjDataObj);
+    return new ElementPushButton(szProjPath, szProjName, propertyMgr);
 }

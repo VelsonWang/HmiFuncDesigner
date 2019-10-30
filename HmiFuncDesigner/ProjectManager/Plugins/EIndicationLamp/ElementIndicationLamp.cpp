@@ -11,9 +11,8 @@ int ElementIndicationLamp::iLastIndex_ = 1;
 
 ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath,
                                              const QString &szProjName,
-                                             QtVariantPropertyManager *propertyMgr,
-                                             ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                                             QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("IndicationLamp_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -25,6 +24,10 @@ ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath,
     showNoScale_ = false;
     showOnInitial_ = true;
     init();
+
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
+
     elementWidth = 80;
     elementHeight = 80;
     createPropertyList();
@@ -51,6 +54,7 @@ void ElementIndicationLamp::release()
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
         picResMgr_.del(ProjectData::getInstance()->dbData_, setFileIndicationLamp_);
     }
+    ProjectData::releaseInstance();
 }
 
 QRectF ElementIndicationLamp::boundingRect() const
@@ -87,12 +91,8 @@ void ElementIndicationLamp::createPropertyList()
 
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
-    ProjectData *pObj = getProjectDataObj();
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << (pObj==Q_NULLPTR);
-    if(pObj != Q_NULLPTR) {
-        pObj->getAllTagName(tagNames_);
-        qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__  << tagNames_;
-    }
+    tagNames_.clear();
+    ProjectData::getInstance()->getAllTagName(tagNames_);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

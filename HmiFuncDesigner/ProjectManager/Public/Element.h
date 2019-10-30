@@ -12,16 +12,13 @@
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
 
-class ProjectData;
-
 class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
     Element(const QString &szProjPath,
             const QString &szProjName,
-            QtVariantPropertyManager *propertyMgr,
-            ProjectData *pProjDataObj);
+            QtVariantPropertyManager *propertyMgr);
     virtual ~Element();
 
     void init();
@@ -89,8 +86,6 @@ public:
     // 限制矩形区域
     void RestrictedRectangularRegion();
 
-    ProjectData *getProjectDataObj();
-
 protected:
     QString elementId;
     QColor backgroundColor;
@@ -132,7 +127,6 @@ protected:
     QString szProjectName_; // 工程名称
     int iGraphPageWidth_; // 画面宽度
     int iGraphPageHeight_; // 画面高度
-    ProjectData *pProjectData_;
 
 signals:
     void elementMoved(QPointF);

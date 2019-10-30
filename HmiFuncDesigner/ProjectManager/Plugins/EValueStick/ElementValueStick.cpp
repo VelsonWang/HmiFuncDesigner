@@ -16,9 +16,8 @@ int ElementValueStick::iLastIndex_ = 1;
 
 ElementValueStick::ElementValueStick(const QString &szProjPath,
                                      const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr,
-                                     ProjectData *pProjDataObj)
-    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
+                                     QtVariantPropertyManager *propertyMgr)
+    : Element(szProjPath, szProjName, propertyMgr)
 {
     elementId = QString(tr("ValueStick_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -37,6 +36,8 @@ ElementValueStick::ElementValueStick(const QString &szProjPath,
     maxValue_ = 100;
     minValue_ = 0;
     init();
+    if(ProjectData::getInstance()->getDBPath() == "")
+        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     createPropertyList();
     updatePropertyModel();
 }
@@ -54,7 +55,7 @@ void ElementValueStick::regenerateElementId()
  */
 void ElementValueStick::release()
 {
-
+    ProjectData::releaseInstance();
 }
 
 
@@ -91,10 +92,7 @@ void ElementValueStick::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData *pObj = getProjectDataObj();
-    if(pObj != Q_NULLPTR) {
-        pObj->getAllTagName(tagNames_);
-    }
+    ProjectData::getInstance()->getAllTagName(tagNames_);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

@@ -3,7 +3,6 @@
 #include <QPainter>
 #include <QMouseEvent>
 #include <QFileInfo>
-#include <QDebug>
 #include <QFileDialog>
 #include <QGraphicsItem>
 #include "ElementGroup.h"
@@ -15,6 +14,7 @@
 #include "variantmanager.h"
 #include "variantfactory.h"
 #include "ProjectData.h"
+#include <QDebug>
 
 /** Template algorithms*/
 template<template<typename T> class S, typename T>
@@ -617,9 +617,7 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementName() == typeId) {
-                Element *ele = plugin->createElement(szProjPath_, szProjName_,
-                                                     variantPropertyManager_,
-                                                     ProjectData::getInstance());
+                Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
                     ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
@@ -1071,10 +1069,7 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select)
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
-                    Element *ele = plugin->createElement(szProjPath_,
-                                                         szProjName_,
-                                                         variantPropertyManager_,
-                                                         ProjectData::getInstance());
+                    Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
@@ -1299,9 +1294,7 @@ Element *GraphPage::createElement(const QString &internalType)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementIDString() == internalType) {
-                return plugin->createElement(szProjPath_, szProjName_,
-                                             variantPropertyManager_,
-                                             ProjectData::getInstance());
+                return plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
             }
         }
     }

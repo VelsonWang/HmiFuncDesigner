@@ -9,8 +9,6 @@
 #include "../Public/PublicDefine.h"
 #include "qtpropertymanager.h"
 
-class ProjectData;
-
 /*
 * 注意本类不要派生自QObject
 */
@@ -36,8 +34,7 @@ public:
     // 创建元素
     virtual Element* createElement(const QString &szProjPath,
                                    const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr,
-                                   ProjectData *pProjDataObj) = 0;
+                                   QtVariantPropertyManager *propertyMgr) = 0;
 };
 
 
