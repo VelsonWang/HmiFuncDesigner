@@ -14,7 +14,7 @@
 #include "GetWidthHeightDialog.h"
 #include "variantmanager.h"
 #include "variantfactory.h"
-#include <QDebug>
+#include "ProjectData.h"
 
 /** Template algorithms*/
 template<template<typename T> class S, typename T>
@@ -617,7 +617,9 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementName() == typeId) {
-                Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
+                Element *ele = plugin->createElement(szProjPath_, szProjName_,
+                                                     variantPropertyManager_,
+                                                     ProjectData::getInstance());
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
                     ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
@@ -1069,7 +1071,10 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select)
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != nullptr && plugin->getElementID() == objectType) {
-                    Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
+                    Element *ele = plugin->createElement(szProjPath_,
+                                                         szProjName_,
+                                                         variantPropertyManager_,
+                                                         ProjectData::getInstance());
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
@@ -1294,7 +1299,9 @@ Element *GraphPage::createElement(const QString &internalType)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != nullptr && plugin->getElementIDString() == internalType) {
-                return plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
+                return plugin->createElement(szProjPath_, szProjName_,
+                                             variantPropertyManager_,
+                                             ProjectData::getInstance());
             }
         }
     }

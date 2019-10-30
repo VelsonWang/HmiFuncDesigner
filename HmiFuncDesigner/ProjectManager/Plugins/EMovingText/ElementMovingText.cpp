@@ -1,7 +1,7 @@
 ﻿#include "ElementMovingText.h"
 #include "Helper.h"
 #include "XMLObject.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
 #include "variantmanager.h"
@@ -15,8 +15,9 @@ int ElementMovingText::iLastIndex_ = 1;
 
 ElementMovingText::ElementMovingText(const QString &szProjPath,
                                      const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                                     QtVariantPropertyManager *propertyMgr,
+                                     ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("MovingText_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -31,10 +32,8 @@ ElementMovingText::ElementMovingText(const QString &szProjPath,
     szMoveDir_ = tr("从右到左");
     iMoveCharNum_ = 1;
 
-    TagManager::setProjectPath(szProjectPath_);
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
-
     init();
     createPropertyList();
     updatePropertyModel();
@@ -90,7 +89,10 @@ void ElementMovingText::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    ProjectData *pObj = getProjectDataObj();
+    if(pObj != Q_NULLPTR) {
+        pObj->getAllTagName(tagNames_);
+    }
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

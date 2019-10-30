@@ -10,8 +10,9 @@ int ElementPicture::iLastIndex_ = 1;
 
 ElementPicture::ElementPicture(const QString &szProjPath,
                                const QString &szProjName,
-                               QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                               QtVariantPropertyManager *propertyMgr,
+                               ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("Picture_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;

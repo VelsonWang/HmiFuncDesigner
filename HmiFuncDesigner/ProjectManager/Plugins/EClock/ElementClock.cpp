@@ -1,7 +1,7 @@
 ﻿#include "ElementClock.h"
 #include "Helper.h"
 #include "XMLObject.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
 #include "variantmanager.h"
@@ -13,8 +13,9 @@ int ElementClock::iLastIndex_ = 1;
 
 ElementClock::ElementClock(const QString &szProjPath,
                            const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                           QtVariantPropertyManager *propertyMgr,
+                           ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("Clock_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -32,7 +33,6 @@ ElementClock::ElementClock(const QString &szProjPath,
     showWeek_ = false;
     showOnInitial_ = true;
 
-    TagManager::setProjectPath(szProjectPath_);
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
 

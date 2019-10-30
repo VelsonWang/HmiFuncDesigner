@@ -8,7 +8,7 @@
 #include <QRect>
 #include "ConfigUtils.h"
 #include "Helper.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 
 static const int MaxTableColumns = 2;
 
@@ -575,7 +575,7 @@ void TagFuncEditDialog::GetElementProperty(PFuncObjectItem pFuncObj) {
             argName = QString("var%1").arg(i + 1);
             argItem = m_pVariantManager->addProperty(
                         QtVariantPropertyManager::enumTypeId(), argName);
-            TagManager::getAllTagName(m_strProjectPath, m_varsList, "ALL");
+            ProjectData::getInstance()->getAllTagName(m_varsList, "ALL");
             argItem->setAttribute(QLatin1String("enumNames"), m_varsList);
             if (m_varsList.indexOf(m_pCurFuncObj->argList.at(i).arg) != -1) {
                 argItem->setValue(m_varsList.indexOf(m_pCurFuncObj->argList.at(i).arg));

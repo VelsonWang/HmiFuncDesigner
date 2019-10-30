@@ -1,5 +1,5 @@
-#ifndef _PROJECTDATA_H
-#define _PROJECTDATA_H
+#ifndef _PROJECTDATA_H_
+#define _PROJECTDATA_H_
 
 #include <QMutex>
 #include <QObject>
@@ -18,14 +18,19 @@ class ProjectDataSQLiteDatabase;
 
 class ProjectData
 {
-
 public:
+    explicit ProjectData();
+    ~ProjectData();
+
     static ProjectData* getInstance();
     static void releaseInstance();
     // 创建或打开工程数据
     bool createOrOpenProjectData(const QString &projPath, const QString &projName);
     // 获取工程数据文件路径
     QString getDBPath() const;
+
+    //获取工程所有变量的名称
+    void getAllTagName(QStringList &varList, const QString &type = "ALL");
 
 public:
     static ProjectDataSQLiteDatabase *dbData_;
@@ -42,15 +47,10 @@ public:
     TagIO tagIO_; // 设备标签变量
     TagIOGroup tagIOGroup_; // 设备标签变量组
 
-private:
-    explicit ProjectData();
-    ~ProjectData();
-
 private:  
     static ProjectData *instance_;
     static QMutex mutex_;
     QString dbPath_;
-    Q_DISABLE_COPY(ProjectData)
 };
 
 

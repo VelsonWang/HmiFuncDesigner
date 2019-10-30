@@ -1,9 +1,0 @@
-{
-    "DevVarTabArray": [
-        {
-            "name": "TCPIPModbus",
-            "pageid": 0,
-            "type": "WorkNode"
-        }
-    ]
-}

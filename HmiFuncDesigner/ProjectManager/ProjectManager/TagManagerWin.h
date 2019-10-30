@@ -4,7 +4,7 @@
 #include "ChildBase.h"
 #include "TagFuncEditDialog.h"
 #include "../../Public/Public.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include <QList>
 #include <QString>
 #include <QWidget>

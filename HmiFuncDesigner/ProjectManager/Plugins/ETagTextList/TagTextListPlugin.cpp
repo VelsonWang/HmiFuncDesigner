@@ -91,7 +91,8 @@ QString TagTextListPlugin::getElementIDString()
  */
 Element* TagTextListPlugin::createElement(const QString &szProjPath,
                                           const QString &szProjName,
-                                          QtVariantPropertyManager *propertyMgr)
+                                          QtVariantPropertyManager *propertyMgr,
+                                          ProjectData *pProjDataObj)
 {
-    return new ElementTagTextList(szProjPath, szProjName, propertyMgr);
+    return new ElementTagTextList(szProjPath, szProjName, propertyMgr, pProjDataObj);
 }

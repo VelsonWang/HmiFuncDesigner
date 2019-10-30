@@ -1,18 +1,19 @@
 ﻿#include "ElementIndicationLamp.h"
 #include "ProjectData.h"
-#include "TagManager.h"
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
 #include "variantmanager.h"
 #include "editbasicpropertydialog.h"
+#include <QDebug>
 
 int ElementIndicationLamp::iLastIndex_ = 1;
 
 ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath,
                                              const QString &szProjName,
-                                             QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                                             QtVariantPropertyManager *propertyMgr,
+                                             ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("IndicationLamp_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -23,15 +24,11 @@ ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath,
     stateOnInitial_ = false;
     showNoScale_ = false;
     showOnInitial_ = true;
-    TagManager::setProjectPath(szProjectPath_);
     init();
     elementWidth = 80;
     elementHeight = 80;
     createPropertyList();
     updatePropertyModel();
-
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
 }
 
 void ElementIndicationLamp::regenerateElementId()
@@ -90,8 +87,12 @@ void ElementIndicationLamp::createPropertyList()
 
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
-    tagNames_.clear();
-    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    ProjectData *pObj = getProjectDataObj();
+    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << (pObj==Q_NULLPTR);
+    if(pObj != Q_NULLPTR) {
+        pObj->getAllTagName(tagNames_);
+        qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__  << tagNames_;
+    }
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

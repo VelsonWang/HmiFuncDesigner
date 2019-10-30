@@ -91,7 +91,8 @@ QString ELinePlugin::getElementIDString()
  */
 Element* ELinePlugin::createElement(const QString &szProjPath,
                                     const QString &szProjName,
-                                    QtVariantPropertyManager *propertyMgr)
+                                    QtVariantPropertyManager *propertyMgr,
+                                    ProjectData *pProjDataObj)
 {
-    return new ElementLine(szProjPath, szProjName, propertyMgr);
+    return new ElementLine(szProjPath, szProjName, propertyMgr, pProjDataObj);
 }

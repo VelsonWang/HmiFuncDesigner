@@ -91,7 +91,8 @@ QString JarShapePlugin::getElementIDString()
  */
 Element* JarShapePlugin::createElement(const QString &szProjPath,
                                        const QString &szProjName,
-                                       QtVariantPropertyManager *propertyMgr)
+                                       QtVariantPropertyManager *propertyMgr,
+                                       ProjectData *pProjDataObj)
 {
-    return new ElementJarShape(szProjPath, szProjName, propertyMgr);
+    return new ElementJarShape(szProjPath, szProjName, propertyMgr, pProjDataObj);
 }

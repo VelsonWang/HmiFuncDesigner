@@ -11,7 +11,7 @@
 #include "variantdata.h"
 #include "Helper.h"
 #include "ProjectMgrUtils.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>

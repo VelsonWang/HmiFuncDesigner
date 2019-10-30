@@ -1,5 +1,5 @@
 ﻿#include "ElementRect.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "variantmanager.h"
 #include "editbasicpropertydialog.h"
 
@@ -7,8 +7,9 @@ int ElementRect::iLastIndex_ = 1;
 
 ElementRect::ElementRect(const QString &szProjPath,
                          const QString &szProjName,
-                         QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                         QtVariantPropertyManager *propertyMgr,
+                         ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("Rect_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -19,7 +20,6 @@ ElementRect::ElementRect(const QString &szProjPath,
     borderWidth_ = 1;
     borderColor_ = Qt::black;
     showOnInitial_ = true;
-    TagManager::setProjectPath(szProjectPath_);
     init();
     createPropertyList();
     updatePropertyModel();
@@ -76,7 +76,10 @@ void ElementRect::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    ProjectData *pObj = getProjectDataObj();
+    if(pObj != Q_NULLPTR) {
+        pObj->getAllTagName(tagNames_);
+    }
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

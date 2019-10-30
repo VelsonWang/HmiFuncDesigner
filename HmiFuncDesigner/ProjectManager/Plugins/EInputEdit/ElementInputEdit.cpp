@@ -1,5 +1,5 @@
 ﻿#include "ElementInputEdit.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "variantmanager.h"
 #include "editbasicpropertydialog.h"
 
@@ -7,8 +7,9 @@ int ElementInputEdit::iLastIndex_ = 1;
 
 ElementInputEdit::ElementInputEdit(const QString &szProjPath,
                                    const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                                   QtVariantPropertyManager *propertyMgr,
+                                   ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("InputEdit_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -24,7 +25,6 @@ ElementInputEdit::ElementInputEdit(const QString &szProjPath,
     enableOnInitial_ = true;
     inputPassword_ = false;
     showOnInitial_ = true;
-    TagManager::setProjectPath(szProjectPath_);
     init();
     elementWidth = 80;
     elementHeight = 26;
@@ -87,7 +87,10 @@ void ElementInputEdit::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    ProjectData *pObj = getProjectDataObj();
+    if(pObj != Q_NULLPTR) {
+        pObj->getAllTagName(tagNames_);
+    }
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

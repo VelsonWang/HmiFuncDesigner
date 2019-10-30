@@ -91,7 +91,8 @@ QString PicturePlugin::getElementIDString()
  */
 Element* PicturePlugin::createElement(const QString &szProjPath,
                                       const QString &szProjName,
-                                      QtVariantPropertyManager *propertyMgr)
+                                      QtVariantPropertyManager *propertyMgr,
+                                      ProjectData *pProjDataObj)
 {
-    return new ElementPicture(szProjPath, szProjName, propertyMgr);
+    return new ElementPicture(szProjPath, szProjName, propertyMgr, pProjDataObj);
 }

@@ -1,6 +1,6 @@
 ﻿#include "DrawMainWindow.h"
 #include "Helper.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include "ProjectInfoManager.h"
 #include "ProjectData.h"
@@ -56,7 +56,6 @@ DrawMainWindow::DrawMainWindow(const QString &szProjPath,
 
     Helper::WidgetMoveCenter(this);
 
-    TagManager::setProjectPath(szProjPath_);
     DrawListUtils::setProjectPath(szProjPath_);
 
     listWidgetGraphPages->setContextMenuPolicy(Qt::DefaultContextMenu);

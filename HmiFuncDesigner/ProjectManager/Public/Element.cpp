@@ -1,14 +1,15 @@
 ﻿#include "Element.h"
-#include <QDebug>
-
+#include "ProjectData.h"
 
 Element::Element(const QString &szProjPath,
                  const QString &szProjName,
-                 QtVariantPropertyManager *propertyMgr)
+                 QtVariantPropertyManager *propertyMgr,
+                 ProjectData *pProjDataObj)
     : elementId(""),
       szProjectPath_(szProjPath),
       szProjectName_(szProjName),
-      variantPropertyManager_(propertyMgr)
+      variantPropertyManager_(propertyMgr),
+      pProjectData_(pProjDataObj)
 {
 }
 
@@ -332,7 +333,6 @@ void Element::RestrictedRectangularRegion()
     scene()->update();
 }
 
-
 void Element::addProperty(QtVariantProperty *property, const QString &id, bool bAddToList)
 {
     if(bAddToList) {
@@ -354,3 +354,8 @@ void Element::clearProperties()
     idToProperty_.clear();
 }
 
+
+ProjectData *Element::getProjectDataObj()
+{
+    return pProjectData_;
+}

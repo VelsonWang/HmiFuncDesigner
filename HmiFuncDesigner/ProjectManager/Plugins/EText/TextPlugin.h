@@ -33,7 +33,8 @@ public:
     // 创建元素
     Element* createElement(const QString &szProjPath,
                            const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr) Q_DECL_OVERRIDE;
+                           QtVariantPropertyManager *propertyMgr,
+                           ProjectData *pProjDataObj) Q_DECL_OVERRIDE;
 
     /////////////////////<plugin operation>////////////////////////////
 

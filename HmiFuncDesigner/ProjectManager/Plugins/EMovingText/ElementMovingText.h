@@ -14,7 +14,8 @@ class ElementMovingText : public Element
 public:
     explicit ElementMovingText(const QString &szProjPath,
                                const QString &szProjName,
-                               QtVariantPropertyManager *propertyMgr);
+                               QtVariantPropertyManager *propertyMgr,
+                               ProjectData *pProjDataObj);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;

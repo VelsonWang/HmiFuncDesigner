@@ -8,8 +8,9 @@ int ElementArrow::iLastIndex_ = 1;
 
 ElementArrow::ElementArrow(const QString &szProjPath,
                            const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr),
+                           QtVariantPropertyManager *propertyMgr,
+                           ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj),
       arrowSize(10)
 {
     elementId = QString(tr("Arrow_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));

@@ -91,7 +91,8 @@ QString TextPlugin::getElementIDString()
  */
 Element* TextPlugin::createElement(const QString &szProjPath,
                                    const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr)
+                                   QtVariantPropertyManager *propertyMgr,
+                                   ProjectData *pProjDataObj)
 {
-    return new ElementText(szProjPath, szProjName, propertyMgr);
+    return new ElementText(szProjPath, szProjName, propertyMgr, pProjDataObj);
 }

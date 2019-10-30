@@ -14,7 +14,6 @@ SUBDIRS   = \
     qscintilla \
 #    Lua \
 #    Ftp \
-    TagManager \
     ProjectDataUtils
 
 

@@ -3,7 +3,7 @@
 #include "Helper.h"
 #include "XMLObject.h"
 #include "Element.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
 #include <QListWidget>
@@ -498,7 +498,7 @@ void FunctionEditorDialog::createPropertyList()
             } else if(pArgItem->type == "TAGLIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 tagNames_.clear();
-                TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+                ProjectData::getInstance()->getAllTagName(tagNames_);
                 property->setAttribute(QLatin1String("enumNames"), tagNames_);
                 if(pArgItem->value == "")
                     pArgItem->value = tagNames_.at(0);

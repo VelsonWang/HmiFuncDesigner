@@ -91,7 +91,8 @@ QString IndicationLampPlugin::getElementIDString()
  */
 Element* IndicationLampPlugin::createElement(const QString &szProjPath,
                                              const QString &szProjName,
-                                             QtVariantPropertyManager *propertyMgr)
+                                             QtVariantPropertyManager *propertyMgr,
+                                             ProjectData *pProjDataObj)
 {
-    return new ElementIndicationLamp(szProjPath, szProjName, propertyMgr);
+    return new ElementIndicationLamp(szProjPath, szProjName, propertyMgr, pProjDataObj);
 }

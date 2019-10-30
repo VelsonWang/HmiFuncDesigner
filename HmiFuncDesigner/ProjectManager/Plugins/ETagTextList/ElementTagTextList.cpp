@@ -1,7 +1,7 @@
 ﻿#include "ElementTagTextList.h"
 #include "Helper.h"
 #include "XMLObject.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
 #include "variantmanager.h"
@@ -14,8 +14,9 @@ int ElementTagTextList::iLastIndex_ = 1;
 
 ElementTagTextList::ElementTagTextList(const QString &szProjPath,
                                        const QString &szProjName,
-                                       QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                                       QtVariantPropertyManager *propertyMgr,
+                                       ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("TagTextList_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -29,10 +30,8 @@ ElementTagTextList::ElementTagTextList(const QString &szProjPath,
     borderColor_ = Qt::black;
     showOnInitial_ = true;
 
-    TagManager::setProjectPath(szProjectPath_);
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
-
     init();
     createPropertyList();
     updatePropertyModel();
@@ -88,7 +87,10 @@ void ElementTagTextList::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    ProjectData *pObj = getProjectDataObj();
+    if(pObj != Q_NULLPTR) {
+        pObj->getAllTagName(tagNames_);
+    }
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

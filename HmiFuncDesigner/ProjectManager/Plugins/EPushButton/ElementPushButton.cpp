@@ -1,6 +1,6 @@
 ﻿#include "ElementPushButton.h"
 #include "PubTool.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
 #include "Helper.h"
@@ -17,8 +17,9 @@ int ElementPushButton::iLastIndex_ = 1;
 
 ElementPushButton::ElementPushButton(const QString &szProjPath,
                                      const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                                     QtVariantPropertyManager *propertyMgr,
+                                     ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("PushButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -41,7 +42,6 @@ ElementPushButton::ElementPushButton(const QString &szProjPath,
     showOnInitial_ = true;
     transparent_ = false;
     script_ = "";
-    TagManager::setProjectPath(szProjectPath_);
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
 

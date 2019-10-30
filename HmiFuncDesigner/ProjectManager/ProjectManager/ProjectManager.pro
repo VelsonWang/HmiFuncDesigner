@@ -31,7 +31,6 @@ CONFIG(debug, debug|release) { #debug
         LIBS += -L$$LINK_LIBRARY_PATH -lCsvd
         LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
         LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowserd
-        LIBS += -L$$LINK_LIBRARY_PATH -lTagManagerd
         LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
         LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
     }
@@ -40,7 +39,6 @@ CONFIG(debug, debug|release) { #debug
         LIBS += -L$$LINK_LIBRARY_PATH -lCsv
         LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
         LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
-        LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
         LIBS += -L$$LINK_LIBRARY_PATH -lUtils
         LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
     }
@@ -50,7 +48,6 @@ else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lCsv
     LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
     LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
-    LIBS += -L$$LINK_LIBRARY_PATH -lTagManager
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
     LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }

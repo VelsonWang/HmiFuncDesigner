@@ -8,7 +8,6 @@
 #include "SystemParametersWin.h"
 #include "ChildBase.h"
 #include "ChildForm.h"
-#include "DBVarGroup.h"
 
 namespace Ui {
 class MainWindow;

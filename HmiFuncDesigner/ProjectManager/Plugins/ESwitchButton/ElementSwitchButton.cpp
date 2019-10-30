@@ -1,6 +1,6 @@
 ﻿#include "ElementSwitchButton.h"
 #include "PubTool.h"
-#include "TagManager.h"
+#include "ProjectData.h"
 #include "DrawListUtils.h"
 #include "ElementIDHelper.h"
 #include "Helper.h"
@@ -18,8 +18,9 @@ int ElementSwitchButton::iLastIndex_ = 1;
 
 ElementSwitchButton::ElementSwitchButton(const QString &szProjPath,
                                          const QString &szProjName,
-                                         QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+                                         QtVariantPropertyManager *propertyMgr,
+                                         ProjectData *pProjDataObj)
+    : Element(szProjPath, szProjName, propertyMgr, pProjDataObj)
 {
     elementId = QString(tr("SwitchButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -46,7 +47,6 @@ ElementSwitchButton::ElementSwitchButton(const QString &szProjPath,
     setPictureFile_ = "";
     resetText_ = tr("关");
     setText_ = tr("开");
-    TagManager::setProjectPath(szProjectPath_);
     DrawListUtils::setProjectPath(szProjectPath_);
     ElementIDHelper::setProjectPath(szProjectPath_);
 
@@ -114,7 +114,10 @@ void ElementSwitchButton::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    TagManager::getAllTagName(TagManager::getProjectPath(), tagNames_);
+    ProjectData *pObj = getProjectDataObj();
+    if(pObj != Q_NULLPTR) {
+        pObj->getAllTagName(tagNames_);
+    }
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 
