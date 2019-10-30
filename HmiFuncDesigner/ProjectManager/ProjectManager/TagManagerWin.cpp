@@ -67,6 +67,9 @@ TagManagerWin::~TagManagerWin()
 
 void TagManagerWin::init(const QString &itemName)
 {   
+    SetTitle(itemName);
+    load(m_strItemName);
+
     if(m_strItemName == tr("设备变量")) {
         ui->stackedWidget->setCurrentWidget(ui->pageTagIO);
     } else if(m_strItemName == tr("中间变量")) {
@@ -74,21 +77,6 @@ void TagManagerWin::init(const QString &itemName)
     } else if(m_strItemName == tr("系统变量")) {
         ui->stackedWidget->setCurrentWidget(ui->pageTagSys);
     }
-
-    if(m_strCurTagType != itemName) {
-        if(!m_strCurTagType.isEmpty()) {
-            SetTitle(m_strCurTagType);
-            save();
-        }
-
-        SetTitle(itemName);
-        load(m_strItemName);
-    }
-
-    if(itemName.indexOf(tr("设备变量-")) > -1)
-        SetTitle(itemName);
-
-    //m_variableTableView->horizontalHeader()->setHighlightSections(false);  // 当表格只有一行的时候，则表头会出现塌陷问题
 }
 
 void TagManagerWin::SetTitle(const QString &t)
@@ -108,7 +96,7 @@ void TagManagerWin::load(const QString &it)
 {
     if(it == "设备变量") {
         // 刷新设备变量表
-        this->updateTableTagIO(it);
+        this->updateTableTagIO();
     } else if(it == "中间变量") {
         // 刷新中间变量表
         this->updateTableTagTmp();
@@ -224,52 +212,13 @@ void TagManagerWin::onTagAdd()
 */
 void TagManagerWin::onTagAppend()
 {
-#if 0
     if(m_strItemName == tr("设备变量")) {
-        if(pTagIOTableModel->rowCount() < 1)
-            return;
-
-        TagIOItem prevItem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
-        TagIOItem newItem;
-
-        int id = 1;
-        int iPos = 0;
-        QString szVarTmp = "";
-        QString szTmp = "0";
-
-        prevItem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
-        szVarTmp = prevItem.m_sTagID;
-        if(szVarTmp.startsWith("io.")) {
-            iPos = szVarTmp.lastIndexOf(".");
-            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
-            id = szTmp.toInt() + 1;
-        }
-
-        newItem.m_sTagID =  QString("%1%2")
-                .arg(szVarTmp.left(iPos + 1))
-                .arg(QString::number(id));
-
-        newItem.m_sDataType = tr("模拟量");
-        // 获取前一行的Name
-        QString lastVarName = prevItem.m_sName;
-        QString str = "var";
-        if(lastVarName.indexOf("var") > -1) {
-            int len = lastVarName.size();
-            QString subStr = lastVarName.right(len - 3);
-            int idx = subStr.toInt();
-            str = QString("var%1").arg(idx+1);
-        }
-        newItem.m_sName = str;
-        newItem.m_sDescription = tr("描述");
-        newItem.m_sUnit = "mA";
-        pTagIOTableModel->AppendRow(newItem);
-    } else
-#endif
-        if(m_strItemName == "中间变量") {
-            // 追加中间变量
-            appendTagTmp();
-        }
-
+        // 追加设备变量
+        appendTagIO();
+    } else if(m_strItemName == "中间变量") {
+        // 追加中间变量
+        appendTagTmp();
+    }
 }
 
 
@@ -278,39 +227,13 @@ void TagManagerWin::onTagAppend()
 */
 void TagManagerWin::onTagRowCopy()
 {
-#if 0
-    QModelIndex ModelIndex = m_variableTableView->selectionModel()->currentIndex();
-    int row = ModelIndex.row();
-    int column = ModelIndex.column();
-
-    if(row < 0 || column < 0)
-        return;
-
     if(m_strItemName == tr("设备变量")) {
-        TagIOItem curitem = pTagIOTableModel->GetRow(row);
-        TagIOItem lastitem = pTagIOTableModel->GetRow(pTagIOTableModel->rowCount()-1);
-
-        int id = 1;
-        int iPos = 0;
-        QString szVarTmp = "";
-        QString szTmp = "0";
-
-        szVarTmp = lastitem.m_sTagID;
-        if(szVarTmp.startsWith("io.")) {
-            iPos = szVarTmp.lastIndexOf(".");
-            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
-            id = szTmp.toInt() + 1;
-        }
-
-        curitem.m_sTagID =  QString("%1%2").arg(szVarTmp.left(iPos + 1)).arg(QString::number(id));
-
-        pTagIOTableModel->AppendRow(curitem);
-    } else
-#endif
-        if(m_strItemName == tr("中间变量")) {
-            // 拷贝选中中间变量
-            copyCurTagTmp();
-        }
+        // 拷贝选中设备变量
+        copyCurTagIO();
+    } else if(m_strItemName == tr("中间变量")) {
+        // 拷贝选中中间变量
+        copyCurTagTmp();
+    }
 }
 
 /*
@@ -328,50 +251,13 @@ void TagManagerWin::onTagColCopy()
 */
 void TagManagerWin::onTagModify()
 {
-#if 0
-    QStringList sl;
-    int rowIndex = m_variableTableView->currentIndex().row();
-
     if(m_strItemName == tr("设备变量")) {
-        VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
-        pDlg->setWindowTitle(tr("编辑设备变量"));
-        TagIOItem item = pTagIOTableModel->GetRow(rowIndex);
-
-        if(item.m_sDataType == tr("模拟量"))
-            pDlg->SetVariableType(VariableEditDialog::AI);
-        else if(item.m_sDataType == tr("数字量"))
-            pDlg->SetVariableType(VariableEditDialog::DI);
-        else
-            pDlg->SetVariableType(VariableEditDialog::NONE);
-
-        sl << item.m_sDataType << item.m_sName << item.m_sDescription << item.m_sUnit;
-        pDlg->SetBasicSetting(sl);
-
-        // Removes the tab at position index from this stack of widgets.
-        // The page widget itself is not deleted.
-        pDlg->RemoveTab(1); // 隐藏数据属性页
-        pDlg->SetDataAttribuyeString(item.m_sIOConnect);
-        pDlg->SetAlarmString(item.m_sAlarm);
-        pDlg->SetSaveDiskString(item.m_sArchiveFile);
-
-        if(pDlg->exec() == QDialog::Accepted) {
-            QStringList sl = pDlg->GetBasicSetting();
-            item.m_sDataType = sl.at(0);
-            item.m_sName = sl.at(1);
-            item.m_sDescription = sl.at(2);
-            item.m_sUnit = sl.at(3);
-            item.m_sIOConnect = pDlg->GetIOConnectString();
-            item.m_sAlarm = pDlg->GetAlarmString();
-            item.m_sArchiveFile = pDlg->GetSaveDiskString();
-            pTagIOTableModel->UpdateRow(rowIndex, item);
-        }
-        delete pDlg;
-    } else
-#endif
-        if(m_strItemName == tr("中间变量")) {
-            // 修改选中中间变量
-            modifyCurTagTmp();
-        }
+        // 修改选中设备变量
+        modifyCurTagIO();
+    } else if(m_strItemName == tr("中间变量")) {
+        // 修改选中中间变量
+        modifyCurTagTmp();
+    }
 }
 
 /*
@@ -379,33 +265,13 @@ void TagManagerWin::onTagModify()
 */
 void TagManagerWin::onTagDelete()
 {
-#if 0
-    QItemSelectionModel *pItemSelectionModel = m_variableTableView->selectionModel();
-    QModelIndexList modelIndexList = pItemSelectionModel->selectedIndexes();
-    QMap<int, int> rowMap;
-    foreach (QModelIndex index, modelIndexList) {
-        rowMap.insert(index.row(), 0);
-    }
-    int rowToDel;
-    QMapIterator<int, int> rowMapIterator(rowMap);
-    rowMapIterator.toBack();
-    while (rowMapIterator.hasPrevious()) {
-        rowMapIterator.previous();
-        rowToDel = rowMapIterator.key();
-        if(m_strItemName == tr("设备变量")) {
-            pTagIOTableModel->removeRow(rowToDel);
-        } else if(m_strItemName == tr("中间变量")) {
-            pTagTmpTableModel->removeRow(rowToDel);
-        }
-    }
-#endif
     if(m_strItemName == tr("设备变量")) {
-
+        // 删除选中设备变量
+        deleteCurTagIO();
     } else if(m_strItemName == tr("中间变量")) {
         // 删除选中中间变量
         deleteCurTagTmp();
     }
-
 }
 
 
@@ -466,11 +332,10 @@ void TagManagerWin::initialTableTagSys()
     ui->tableTagSys->setHorizontalHeaderLabels(headerLabels);
     ui->tableTagSys->horizontalHeader()->setSectionsClickable(false);
     ui->tableTagSys->horizontalHeader()->setStretchLastSection(false);
-    //ui->tableTagSys->horizontalHeader()->setHighlightSections(true);
+    //ui->tableTagSys->horizontalHeader()->setHighlightSections(true); // 当表格只有一行的时候，则表头会出现塌陷问题
     ui->tableTagSys->setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->tableTagSys->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableTagSys->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableTagSys->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     /*ui->tableTagSys->horizontalHeader()->setStyleSheet(
                 "QHeaderView::section{"
                 "background:rgb(72,161,229); "
@@ -550,9 +415,6 @@ void TagManagerWin::initialTableTagTmp()
     ui->tableTagTmp->horizontalHeader()->setStretchLastSection(false);
     //ui->tableTagTmp->horizontalHeader()->setHighlightSections(true);
     ui->tableTagTmp->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    //ui->tableTagTmp->setSelectionBehavior(QAbstractItemView::SelectRows);
-    //ui->tableTagTmp->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableTagTmp->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     /*ui->tableTagTmp->horizontalHeader()->setStyleSheet(
                 "QHeaderView::section{"
                 "background:rgb(72,161,229); "
@@ -1059,7 +921,6 @@ void TagManagerWin::initialTableTagIO()
     ui->tableTagIO->setEditTriggers(QAbstractItemView::NoEditTriggers);
     //ui->tableTagIO->setSelectionBehavior(QAbstractItemView::SelectRows);
     //ui->tableTagIO->setSelectionMode(QAbstractItemView::SingleSelection);
-    ui->tableTagIO->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
     /*ui->tableTagIO->horizontalHeader()->setStyleSheet(
                 "QHeaderView::section{"
                 "background:rgb(72,161,229); "
@@ -1068,24 +929,24 @@ void TagManagerWin::initialTableTagIO()
     ui->tableTagIO->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableTagIO->horizontalHeader()->show();
     ui->tableTagIO->verticalHeader()->show();
-    ui->tableTagIO->setColumnWidth(0, 80);
+    ui->tableTagIO->setColumnWidth(0, 120);
     ui->tableTagIO->setColumnWidth(1, 120);
     ui->tableTagIO->setColumnWidth(2, 200);
-    ui->tableTagIO->setColumnWidth(3, 120);
+    ui->tableTagIO->setColumnWidth(3, 140);
     ui->tableTagIO->setColumnWidth(4, 80);
-    ui->tableTagIO->setColumnWidth(5, 80);
+    ui->tableTagIO->setColumnWidth(5, 180);
     ui->tableTagIO->setColumnWidth(6, 80);
     ui->tableTagIO->setColumnWidth(7, 80);
     ui->tableTagIO->setColumnWidth(8, 80);
-    ui->tableTagIO->setColumnWidth(9, 140);
+    ui->tableTagIO->setColumnWidth(9, 180);
     ui->tableTagIO->setColumnWidth(10, 80);
     ui->tableTagIO->setColumnWidth(11, 80);
     ui->tableTagIO->setColumnWidth(12, 80);
     ui->tableTagIO->setColumnWidth(13, 80);
     ui->tableTagIO->setColumnWidth(14, 200);
 
-    ui->tableTagIO->setAlternatingRowColors(true);
-    ui->tableTagIO->setFocusPolicy(Qt::NoFocus);
+    //ui->tableTagIO->setAlternatingRowColors(true);
+    //ui->tableTagIO->setFocusPolicy(Qt::NoFocus);
 
     QString styleSheet = "QTableWidget{background-color: rgb(242,242,242);"
                          "alternate-background-color: white;"
@@ -1173,6 +1034,8 @@ int TagManagerWin::tableTagIOAddRow()
         cboDeviceNamePtr->setCurrentIndex(0);
         getRegTypeByDeviceName(cboDeviceNamePtr->currentText(), listReg, listType);
     }
+    connect(cboDeviceNamePtr, &QComboBox::currentTextChanged,
+            this, &TagManagerWin::onDeviceNameTextChanged);
     ui->tableTagIO->setCellWidget(iRowCount, 3, cboDeviceNamePtr);
 
     QTableWidgetItem *pItemDeviceAddr = new QTableWidgetItem("1");
@@ -1229,6 +1092,43 @@ int TagManagerWin::tableTagIOAddRow()
     return iRowCount;
 }
 
+/**
+ * @brief TagManagerWin::onDeviceNameTextChanged
+ * @details 设备名称修改时，修改本行的数据类型组合框和寄存器类型组合框
+ * @param name 设备名称
+ */
+void TagManagerWin::onDeviceNameTextChanged(const QString &name)
+{
+    int iSelectedRow = ui->tableTagIO->currentRow();
+    if(iSelectedRow >= 0) {
+        TagIODBItem * pTagIO = getTagIOObjByRow(iSelectedRow);
+
+        QStringList listReg;
+        QStringList listType;
+        getRegTypeByDeviceName(name, listReg, listType);
+
+        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iSelectedRow, 5));
+        if(pCbo != Q_NULLPTR) {
+            pCbo->clear();
+            pCbo->addItems(listReg);
+            if(pCbo->count()>0)
+                pCbo->setCurrentText(pTagIO->m_szRegisterArea);
+        }
+
+        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iSelectedRow, 9));
+        if(pCbo != Q_NULLPTR) {
+            pCbo->clear();
+            pCbo->addItems(listType);
+            if(pCbo->count()>0)
+                pCbo->setCurrentText(pTagIO->m_szDataType);
+        }
+
+        if(pTagIO != Q_NULLPTR) {
+            delete pTagIO;
+            pTagIO = Q_NULLPTR;
+        }
+    }
+}
 
 /**
  * @brief TagManagerWin::getTagIOIdNumValue
@@ -1240,18 +1140,20 @@ int TagManagerWin::getTagIOIdNumValue(int iRow)
 {
     int iRowCnt = ui->tableTagIO->rowCount();
     int id = 0;
-    int iPos = -1;
-    QString szVarTmp = "";
-    QString szTmp = "0";
     if(iRowCnt > 0) {
+        int iPos = -1;
+        QString szVarTmp = "";
+        QString szTmp = "0";
         QTableWidgetItem *pItemID = ui->tableTagIO->item(iRow, 0);
         if(pItemID != Q_NULLPTR) {
             szVarTmp = pItemID->text();
         }
         if(szVarTmp.startsWith("io.")) {
             iPos = szVarTmp.lastIndexOf(".");
-            szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
-            id = szTmp.toInt();
+            if(iPos >= 0) {
+                szTmp = szVarTmp.right(szVarTmp.length() - iPos - 1);
+                id = szTmp.toInt();
+            }
         }
     }
     return id;
@@ -1260,14 +1162,13 @@ int TagManagerWin::getTagIOIdNumValue(int iRow)
 /**
  * @brief TagManagerWin::updateTableTagIO
  * @details 刷新设备变量表
- * @param szGroupName 变量组名称 如："IO设备[缺省]"
  */
-void TagManagerWin::updateTableTagIO(const QString &szGroupName)
+void TagManagerWin::updateTableTagIO()
 {
     TagIO &tagIO = ProjectData::getInstance()->tagIO_;
     TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
     QString szGroup = tagIOGroup.getGroupNameByShowName(ProjectData::getInstance()->dbData_,
-                                                        szGroupName);
+                                                        m_IOVariableListWhat);
     if(szGroup == QString())
         return;
     tagIO.load(ProjectData::getInstance()->dbData_);
@@ -1446,73 +1347,17 @@ void TagManagerWin::setTagIOObjByRow(int iRow, TagIODBItem *pObj)
 void TagManagerWin::saveTableTagIO()
 {
     int iRowCount = ui->tableTagIO->rowCount();
+    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
     for(int i=0; i<iRowCount; i++) {
-        TagIODBItem * pTagTmp = new TagIODBItem();
-        QTableWidgetItem *pItemID = ui->tableTagIO->item(i, 0);
-        if(pItemID != Q_NULLPTR) {
-            pTagTmp->m_szTagID = pItemID->text();
+        TagIODBItem * pTagIO = getTagIOObjByRow(i);
+        tagIO.saveTagIODBItem(ProjectData::getInstance()->dbData_, pTagIO);
+        if(pTagIO != Q_NULLPTR) {
+            delete pTagIO;
+            pTagIO = Q_NULLPTR;
         }
-        QTableWidgetItem *pItemName = ui->tableTagIO->item(i, 1);
-        if(pItemName != Q_NULLPTR) {
-            pTagTmp->m_szName = pItemName->text();
-        }
-        QTableWidgetItem *pItemDescription = ui->tableTagIO->item(i, 2);
-        if(pItemDescription != Q_NULLPTR) {
-            pTagTmp->m_szDescription = pItemDescription->text();
-        }
-        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 3));
-        if(pCbo != Q_NULLPTR) {
-            pTagTmp->m_szDeviceName = pCbo->currentText();
-        }
-        QTableWidgetItem *pItemDeviceAddr = ui->tableTagIO->item(i, 4);
-        if(pItemDeviceAddr != Q_NULLPTR) {
-            pTagTmp->m_szDeviceAddr = pItemDeviceAddr->text();
-        }
-        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 5));
-        if(pCbo != Q_NULLPTR) {
-            pTagTmp->m_szRegisterArea = pCbo->currentText();
-        }
-        QTableWidgetItem *pItemRegisterAddr = ui->tableTagIO->item(i, 6);
-        if(pItemRegisterAddr != Q_NULLPTR) {
-            pTagTmp->m_szRegisterAddr = pItemRegisterAddr->text();
-        }
-        QTableWidgetItem *pItemAddrOffset = ui->tableTagIO->item(i, 7);
-        if(pItemAddrOffset != Q_NULLPTR) {
-            pTagTmp->m_szAddrOffset = pItemAddrOffset->text();
-        }
-        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 8));
-        if(pCbo != Q_NULLPTR) {
-            pTagTmp->m_szReadWriteType = pCbo->currentText();
-        }
-        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(i, 9));
-        if(pCbo != Q_NULLPTR) {
-            pTagTmp->m_szDataType = pCbo->currentText();
-        }
-        QTableWidgetItem *pItemInitVal = ui->tableTagIO->item(i, 10);
-        if(pItemInitVal != Q_NULLPTR) {
-            pTagTmp->m_szInitVal = pItemInitVal->text();
-        }
-        QTableWidgetItem *pItemMinVal = ui->tableTagIO->item(i, 11);
-        if(pItemMinVal != Q_NULLPTR) {
-            pTagTmp->m_szMinVal = pItemMinVal->text();
-        }
-        QTableWidgetItem *pItemMaxVal = ui->tableTagIO->item(i, 12);
-        if(pItemMaxVal != Q_NULLPTR) {
-            pTagTmp->m_szMaxVal = pItemMaxVal->text();
-        }
-        QTableWidgetItem *pItemScale = ui->tableTagIO->item(i, 13);
-        if(pItemScale != Q_NULLPTR) {
-            pTagTmp->m_szScale = pItemScale->text();
-        }
-        QTableWidgetItem *pItemProjectConverter = ui->tableTagIO->item(i, 14);
-        if(pItemProjectConverter != Q_NULLPTR) {
-            pTagTmp->m_szProjectConverter = pItemProjectConverter->text();
-        }
-
-        if(pTagTmp != Q_NULLPTR) {
-            delete pTagTmp;
-            pTagTmp = Q_NULLPTR;
-        }
+    }
+    foreach(QString szTagId, m_listTagIODeleteRows) {
+        tagIO.del(ProjectData::getInstance()->dbData_, szTagId);
     }
 }
 
@@ -1620,11 +1465,21 @@ void TagManagerWin::createTagIO()
     if(szGroup == QString())
         return;
 
+    // 判断是否已经建立通讯设备
+    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    deviceInfo.load(ProjectData::getInstance()->dbData_);
+    if(deviceInfo.listDeviceInfoObject_.count() < 1) {
+        QMessageBox::warning(this,
+                             tr("提示"),
+                             QString(tr("不存在通讯设备，请先新建通讯设备！")));
+        return;
+    }
+
     TagIOEditDialog *pDlg = new TagIOEditDialog(m_strProjectName, this);
     if(pDlg->exec() == QDialog::Accepted) {
         int num = pDlg->createTagNum();
         int iOffset = pDlg->addrOffset();
-        int iRowCnt = ui->tableTagTmp->rowCount();
+        int iRowCnt = ui->tableTagIO->rowCount();
         int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
         for(int i=0; i<num; i++) {
             TagIODBItem * pTagIO = new TagIODBItem();
@@ -1658,6 +1513,174 @@ void TagManagerWin::createTagIO()
     }
     delete pDlg;
 }
+
+/**
+ * @brief TagManagerWin::appendTagIO
+ * @details 追加设备变量
+ */
+void TagManagerWin::appendTagIO()
+{
+    int iRowCnt = ui->tableTagIO->rowCount();
+    if(iRowCnt < 1)
+        return;
+
+    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+    QString szGroup = tagIOGroup.getGroupNameByShowName(ProjectData::getInstance()->dbData_,
+                                                        m_IOVariableListWhat);
+    if(szGroup == QString())
+        return;
+
+    int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+    TagIODBItem * pNewTagIO = new TagIODBItem();
+    pNewTagIO->m_szTagID = QString("io.%1.%2").arg(szGroup).arg(QString::number(id));
+    pNewTagIO->m_szGroupName = szGroup;
+    pNewTagIO->m_szName = "";
+    pNewTagIO->m_szDescription = "";
+    pNewTagIO->m_szDeviceName = "";
+    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 3));
+    if(pCbo != Q_NULLPTR) {
+        pNewTagIO->m_szDeviceName = pCbo->currentText();
+    }
+    pNewTagIO->m_szDeviceAddr = "1";
+    pNewTagIO->m_szRegisterArea = "";
+    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 5));
+    if(pCbo != Q_NULLPTR) {
+        pNewTagIO->m_szRegisterArea = pCbo->currentText();
+    }
+    pNewTagIO->m_szRegisterAddr = "0";
+    pNewTagIO->m_szAddrOffset = "0";
+    pNewTagIO->m_szReadWriteType = "";
+    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 8));
+    if(pCbo != Q_NULLPTR) {
+        pNewTagIO->m_szReadWriteType = pCbo->currentText();
+    }
+    pNewTagIO->m_szDataType  = "";
+    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 9));
+    if(pCbo != Q_NULLPTR) {
+        pNewTagIO->m_szDataType = pCbo->currentText();
+    }
+    pNewTagIO->m_szInitVal  = "0";
+    pNewTagIO->m_szMinVal  = "";
+    pNewTagIO->m_szMaxVal  = "";
+    pNewTagIO->m_szScale  = "1";
+    pNewTagIO->m_szProjectConverter  = "";
+
+    int iRow = tableTagIOAddRow();
+    setTagIOObjByRow(iRow, pNewTagIO);
+
+    if(pNewTagIO != Q_NULLPTR) {
+        delete pNewTagIO;
+        pNewTagIO = Q_NULLPTR;
+    }
+}
+
+
+/**
+ * @brief TagManagerWin::copyCurTagIO
+ * @details 拷贝选中设备变量
+ */
+void TagManagerWin::copyCurTagIO()
+{
+    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+    QString szGroup = tagIOGroup.getGroupNameByShowName(ProjectData::getInstance()->dbData_,
+                                                        m_IOVariableListWhat);
+    if(szGroup == QString())
+        return;
+
+    int iSelectedRow = m_iTableTagIOSelectedRow;
+    if(iSelectedRow >= 0) {
+        TagIODBItem * pNewTagIO = getTagIOObjByRow(iSelectedRow);
+        int iRowCnt = ui->tableTagIO->rowCount();
+        int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+        pNewTagIO->m_szTagID = QString("io.%1.%2").arg(szGroup).arg(QString::number(id));
+        int iRow = tableTagIOAddRow();
+        setTagIOObjByRow(iRow, pNewTagIO);
+        if(pNewTagIO != Q_NULLPTR) {
+            delete pNewTagIO;
+            pNewTagIO = Q_NULLPTR;
+        }
+    }
+}
+
+
+/**
+ * @brief TagManagerWin::modifyCurTagIO
+ * @details 修改选中设备变量
+ */
+void TagManagerWin::modifyCurTagIO()
+{
+    int iSelectedRow = m_iTableTagIOSelectedRow;
+    if(iSelectedRow >= 0) {
+        TagIODBItem *pTagIO = getTagIOObjByRow(iSelectedRow);
+
+        TagIOEditDialog *pDlg = new TagIOEditDialog(m_strProjectName, this);
+        pDlg->setWindowTitle(tr("编辑设备变量"));
+        pDlg->hideCreateNumUI();
+        pDlg->setTagName(pTagIO->m_szName);
+        pDlg->setTagDesc(pTagIO->m_szDescription);
+        pDlg->setDeviceName(pTagIO->m_szDeviceName);
+        pDlg->setDeviceAddr(pTagIO->m_szDeviceAddr);
+        pDlg->setRegSection(pTagIO->m_szRegisterArea);
+        pDlg->setRegAddr(pTagIO->m_szRegisterAddr);
+        pDlg->setRegAddrOffset(pTagIO->m_szAddrOffset);
+        pDlg->setTypeReadWrite(pTagIO->m_szReadWriteType);
+        pDlg->setDataType(pTagIO->m_szDataType);
+        pDlg->setTagInitValue(pTagIO->m_szInitVal);
+        pDlg->setTagMinValue(pTagIO->m_szMinVal);
+        pDlg->setTagMaxValue(pTagIO->m_szMaxVal);
+        pDlg->setScale(pTagIO->m_szScale);
+        if(pDlg->exec() == QDialog::Accepted) {
+            pTagIO->m_szName = pDlg->tagName();
+            pTagIO->m_szDescription = pDlg->tagDesc();
+            pTagIO->m_szDeviceName = pDlg->deviceName();
+            pTagIO->m_szDeviceAddr = pDlg->deviceAddr();
+            pTagIO->m_szRegisterArea = pDlg->regSection();
+            pTagIO->m_szRegisterAddr = pDlg->regAddr();
+            pTagIO->m_szAddrOffset = pDlg->regAddrOffset();
+            pTagIO->m_szReadWriteType = pDlg->typeReadWrite();
+            pTagIO->m_szDataType = pDlg->dataType();
+            pTagIO->m_szInitVal  = pDlg->tagInitValue();
+            pTagIO->m_szMinVal  = pDlg->tagMinValue();
+            pTagIO->m_szMaxVal  = pDlg->tagMaxValue();
+            pTagIO->m_szScale  = pDlg->scale();
+            setTagIOObjByRow(iSelectedRow, pTagIO);
+        }
+        delete pDlg;
+
+        if(pTagIO != Q_NULLPTR) {
+            delete pTagIO;
+            pTagIO = Q_NULLPTR;
+        }
+    }
+}
+
+
+/**
+ * @brief TagManagerWin::deleteCurTagIO
+ * @details 删除选中设备变量
+ */
+void TagManagerWin::deleteCurTagIO()
+{
+    m_listTagIODeleteRows.clear();
+    QList<QTableWidgetItem *> pSelectItems = ui->tableTagIO->selectedItems();
+    QMap<int, int> rowMap;
+    foreach (QTableWidgetItem *pItem, pSelectItems) {
+        rowMap.insert(pItem->row(), 0);
+    }
+    int rowToDel;
+    QMapIterator<int, int> rowMapIterator(rowMap);
+    rowMapIterator.toBack();
+    while (rowMapIterator.hasPrevious()) {
+        rowMapIterator.previous();
+        rowToDel = rowMapIterator.key();
+        QTableWidgetItem *pItemID = ui->tableTagIO->item(rowToDel, 0);
+        if(pItemID != Q_NULLPTR) {
+            m_listTagIODeleteRows << pItemID->text();
+        }
+        ui->tableTagIO->removeRow(rowToDel);
+    }
+}
+
 
 void TagManagerWin::on_tableTagIO_itemPressed(QTableWidgetItem *item)
 {
@@ -1711,75 +1734,48 @@ void TagManagerWin::on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item)
 
 void TagManagerWin::on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item)
 {
-#if 0
-    QStringList sl;
-    int rowIndex = index.row();
-    int columnIndex = index.column();
-
-    if(m_strItemName == tr("设备变量")) {
-        TagIOItem item = pTagIOTableModel->GetRow(rowIndex);
-        if(columnIndex == pTagIOTableModel->Column::IOConnect ||
-                columnIndex == pTagIOTableModel->Column::Alarm ||
-                columnIndex == pTagIOTableModel->Column::ArchiveFile) {
-            VariableEditDialog *pDlg = new VariableEditDialog(m_strProjectName, this);
-            pDlg->setWindowTitle(tr("编辑设备变量"));
-            sl << item.m_sDataType << item.m_sName << item.m_sDescription << item.m_sUnit;
-
-            // 单元格数据有可能已经改变
-            if(item.m_sDataType == tr("模拟量"))
-                pDlg->SetVariableType(VariableEditDialog::AI);
-            else if(item.m_sDataType == tr("数字量"))
-                pDlg->SetVariableType(VariableEditDialog::DI);
-            else
-                pDlg->SetVariableType(VariableEditDialog::NONE);
-            pDlg->SetBasicSetting(sl);
-
-            // Removes the tab at position index from this stack of widgets.
-            // The page widget itself is not deleted.
-            pDlg->RemoveTab(0); // 隐藏基本设置页
-            pDlg->RemoveTab(0); // 隐藏数据属性页
-            if(columnIndex == pTagIOTableModel->Column::IOConnect)
-                pDlg->SetCurrentTabIndex(4-2); // IO连接页
-            else if(columnIndex == pTagIOTableModel->Column::Alarm)
-                pDlg->SetCurrentTabIndex(3-2); // 报警页
-            else if(columnIndex == pTagIOTableModel->Column::ArchiveFile)
-                pDlg->SetCurrentTabIndex(2-2); // 存盘页
-
-            pDlg->SetIOConnectString(item.m_sIOConnect);
-            pDlg->SetAlarmString(item.m_sAlarm);
-            pDlg->SetSaveDiskString(item.m_sArchiveFile);
-
-            if(pDlg->exec() == QDialog::Accepted) {
-                QStringList sl = pDlg->GetBasicSetting();
-                item.m_sDataType = sl.at(0);
-                item.m_sName = sl.at(1);
-                item.m_sDescription = sl.at(2);
-                item.m_sUnit = sl.at(3);
-                item.m_sIOConnect = pDlg->GetIOConnectString();
-                item.m_sAlarm = pDlg->GetAlarmString();
-                item.m_sArchiveFile = pDlg->GetSaveDiskString();
-                pTagIOTableModel->UpdateRow(rowIndex, item);
-            }
-            delete pDlg;
-        } else if(columnIndex == pTagIOTableModel->Column::ProjectConverter) {
-            TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_strProjectName), this);
-            pDlg->SetData(item.m_sProjectConverter);
-            if(pDlg->exec() == QDialog::Accepted) {
-                item.m_sProjectConverter = pDlg->GetData();
-                pTagIOTableModel->UpdateRow(rowIndex, item);
-            }
-            delete pDlg;
-        } else if(columnIndex == pTagIOTableModel->Column::Comments) {
-            CommentsDialog *pDlg = new CommentsDialog(this);
-            pDlg->setCommentsText(item.m_sComments);
-            if(pDlg->exec() == QDialog::Accepted) {
-                item.m_sComments = pDlg->getCommentsText();
-                pTagIOTableModel->UpdateRow(rowIndex, item);
-            }
-            delete pDlg;
+    int iColumn = item->column();
+    int iRow = item->row();
+    m_iTableTagIOSelectedRow = iRow;
+    if(iColumn > 0 && iColumn < 14) {
+        // 修改选中设备变量
+        modifyCurTagIO();
+    } else if(iColumn == 14) {
+        TagIODBItem *pTagIO = getTagIOObjByRow(iRow);
+        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_strProjectName), this);
+        pDlg->SetData(pTagIO->m_szProjectConverter);
+        if(pDlg->exec() == QDialog::Accepted) {
+            pTagIO->m_szProjectConverter = pDlg->GetData();
+            setTagIOObjByRow(iRow, pTagIO);
         }
-    } else
-#endif
+        delete pDlg;
+        if(pTagIO != Q_NULLPTR) {
+            delete pTagIO;
+            pTagIO = Q_NULLPTR;
+        }
+    }
 }
 
+void TagManagerWin::on_tableTagIO_cellClicked(int row, int column)
+{
+    Q_UNUSED(column)
+    m_iTableTagIOSelectedRow = row;
+}
 
+void TagManagerWin::on_tableTagIO_cellDoubleClicked(int row, int column)
+{
+    Q_UNUSED(column)
+    m_iTableTagIOSelectedRow = row;
+}
+
+void TagManagerWin::on_tableTagTmp_cellClicked(int row, int column)
+{
+    Q_UNUSED(column)
+    m_iTableTagTmpSelectedRow = row;
+}
+
+void TagManagerWin::on_tableTagTmp_cellDoubleClicked(int row, int column)
+{
+    Q_UNUSED(column)
+    m_iTableTagTmpSelectedRow = row;
+}

@@ -135,6 +135,11 @@ private:
         Q_UNUSED(logContext)
     }
 
+public:
+    // 日志是否记录文件名，函数名称，代码行信息
+    // true-记录, false-不记录
+    static bool bShowFileFuncLine_;
+
 private:
     int version_;
     int line_;

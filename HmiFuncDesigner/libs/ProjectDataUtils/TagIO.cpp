@@ -44,7 +44,7 @@ bool TagIO::load(ProjectDataSQLiteDatabase *pDB)
         TagIODBItem *pObj = new TagIODBItem();
         pObj->m_szTagID = rec.value("tagid").toString();
         pObj->m_szGroupName = rec.value("group_name").toString();
-        pObj->m_szName = rec.value("name").toString();
+        pObj->m_szName = rec.value("tag_name").toString();
         pObj->m_szDescription = rec.value("description").toString();
         pObj->m_szDeviceName = rec.value("dev_name").toString();
         pObj->m_szDeviceAddr = rec.value("dev_addr").toString();
@@ -79,7 +79,7 @@ bool TagIO::save(ProjectDataSQLiteDatabase *pDB)
     pDB->beginTransaction();
     for(int i=0; i<listTagIODBItem_.count(); i++) {
         TagIODBItem *pObj = listTagIODBItem_.at(i);
-        query.prepare("update t_tag_io set group_name = :group, name = :name, "
+        query.prepare("update t_tag_io set group_name = :group, tag_name = :name, "
                       "description = :desc, dev_name = :devName, dev_addr = :devAddr, "
                       "reg_area = :regArea, reg_addr = :regAddr, addr_offset = :offset, "
                       "rw_type = :rw, data_type = :dtype, init_val = :init, "
@@ -122,7 +122,7 @@ bool TagIO::insert(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
 {
     QStringList keyList, valueList;
 
-    keyList << "tagid" <<"group_name" <<  "name" << "description" << "dev_name"
+    keyList << "tagid" <<"group_name" <<  "tag_name" << "description" << "dev_name"
             << "dev_addr" << "reg_area" << "reg_addr" << "addr_offset"
             << "rw_type" << "data_type" << "init_val" << "min_val"
             << "max_val" << "scale"<< "converter";
@@ -159,6 +159,12 @@ bool TagIO::del(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
     return pDB->deleteRecord("t_tag_io", QString("tagid='%1'").arg(pObj->m_szTagID));
 }
 
+bool TagIO::del(ProjectDataSQLiteDatabase *pDB, const QString &id)
+{
+    return pDB->deleteRecord("t_tag_io", QString("tagid='%1'").arg(id));
+}
+
+
 bool TagIO::delAll(ProjectDataSQLiteDatabase *pDB)
 {
     return pDB->deleteRecord("t_tag_io");
@@ -170,7 +176,7 @@ bool TagIO::update(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
     QSqlQuery query(pDB->db_);
     bool ret = false;
 
-    query.prepare("update t_tag_io set group_name = :group, name = :name, "
+    query.prepare("update t_tag_io set group_name = :group, tag_name = :name, "
                   "description = :desc, dev_name = :devName, dev_addr = :devAddr, "
                   "reg_area = :regArea, reg_addr = :regAddr, addr_offset = :offset, "
                   "rw_type = :rw, data_type = :dtype, init_val = :init, "
@@ -206,7 +212,7 @@ bool TagIO::update(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
     return ret;
 }
 
-TagIODBItem *TagIO::getTagTmpDBItemByID(const QString &id)
+TagIODBItem *TagIO::getTagIODBItemByID(const QString &id)
 {
     for(int i=0; i<listTagIODBItem_.count(); i++) {
         TagIODBItem *pObj = listTagIODBItem_.at(i);
@@ -216,7 +222,7 @@ TagIODBItem *TagIO::getTagTmpDBItemByID(const QString &id)
     return Q_NULLPTR;
 }
 
-TagIODBItem *TagIO::getTagTmpDBItemByName(const QString &name)
+TagIODBItem *TagIO::getTagIODBItemByName(const QString &name)
 {
     for(int i=0; i<listTagIODBItem_.count(); i++) {
         TagIODBItem *pObj = listTagIODBItem_.at(i);
@@ -233,7 +239,7 @@ int TagIO::getLastInsertId(ProjectDataSQLiteDatabase *pDB)
 }
 
 
-bool TagIO::saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
+bool TagIO::saveTagIODBItem(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
 {
     bool ret = false;
     if(pDB->getRowCount("t_tag_io", QString("tagid='%1'").arg(pObj->m_szTagID))) {

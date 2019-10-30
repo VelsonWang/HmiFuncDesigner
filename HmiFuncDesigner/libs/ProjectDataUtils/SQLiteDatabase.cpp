@@ -37,8 +37,8 @@ bool SQLiteDatabase::openDatabase()
     } catch(...) {
         LogError(QString("Open Database Failed Exception!"));
         return false;
-	}
-	return true;
+    }
+    return true;
 }
 
 bool SQLiteDatabase::closeDatabase()
@@ -52,15 +52,15 @@ bool SQLiteDatabase::closeDatabase()
 bool SQLiteDatabase::isOpenDatabase()
 {
     QSqlQuery query(db_);
-	bool ret = false;
+    bool ret = false;
     try {
         ret = query.exec("select CURRENT_TIMESTAMP");
         if(!ret) ret = openDatabase();
     } catch (...) {
         LogError(QString("Open Database: %1 Failed Exception!").arg(name_));
-		return false;
-	}
-	return ret;
+        return false;
+    }
+    return ret;
 }
 
 bool SQLiteDatabase::createDatabase() { return true; }
@@ -76,15 +76,18 @@ int SQLiteDatabase::createTable(const QString &table,
     int count = fieldList.count();
     
     if(table.isEmpty() || count == 0 || count != typeList.count()) {
-        LogError(QString("create table: %1 failed!").arg(table));
+        LogError(QString("create table: %1 failed! fieldNum: %2 typeNum: %3")
+                 .arg(table)
+                 .arg(QString::number(fieldList.count()))
+                 .arg(QString::number(typeList.count())));
         return 0;
-	}
+    }
 
     query.exec(QString("select count(*) from sqlite_master where type='table' and name='%1'").arg(table));
 
-  if (!query.next() || (query.value(0).toInt() == 0)) {
-    for (int i = 0; i < fieldList.count(); ++i)
-      key += fieldList.at(i) + " " + typeList.at(i) + ",";
+    if (!query.next() || (query.value(0).toInt() == 0)) {
+        for (int i = 0; i < fieldList.count(); ++i)
+            key += fieldList.at(i) + " " + typeList.at(i) + ",";
 
         if(index.isEmpty()) key.chop(1);
         else key += QString("index(%1)").arg(index);
@@ -98,10 +101,10 @@ int SQLiteDatabase::createTable(const QString &table,
         QStringList oldFieldList,oldTypeList;
         query.exec(QString("pragma table_info (%1)").arg(table));
 
-    while (query.next()) {
-      oldFieldList << query.record().value("name").toString();
-      oldTypeList << query.record().value("Type").toString();
-    }
+        while (query.next()) {
+            oldFieldList << query.record().value("name").toString();
+            oldTypeList << query.record().value("Type").toString();
+        }
 
         for(int i=0;i<count;i++) {
             pos = oldFieldList.indexOf(fieldList.at(i));
@@ -112,7 +115,7 @@ int SQLiteDatabase::createTable(const QString &table,
                     return 0;
                 }
                 ret = 2;
-            } 
+            }
         }
         return ret;
     }
@@ -134,18 +137,18 @@ bool SQLiteDatabase::insertOrUpdateRecord(const QString &table,
         return false;
     }
 
-  for (int i = 0; i < count; ++i) {
-    key += keyList.at(i) + ",";
-    value += "'" + valueList.at(i) + "',";
-  }
-  key.chop(1);
-  value.chop(1);
+    for (int i = 0; i < count; ++i) {
+        key += keyList.at(i) + ",";
+        value += "'" + valueList.at(i) + "',";
+    }
+    key.chop(1);
+    value.chop(1);
 
     sql = QString("replace into %1(%2) value(%3)")
             .arg(table)
             .arg(key)
             .arg(value);
-  
+
     try {
         if(!query.exec(sql)) {
             LogError(QString("insert record to %1 failed! %2, error: %3")

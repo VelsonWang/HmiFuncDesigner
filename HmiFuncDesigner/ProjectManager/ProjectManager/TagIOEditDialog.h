@@ -64,6 +64,8 @@ public:
     QString scale() const;
     void setScale(const QString &szScale);
 
+    void hideCreateNumUI();
+
 private slots:
     void on_btnOk_clicked();
     void on_btnCancel_clicked();

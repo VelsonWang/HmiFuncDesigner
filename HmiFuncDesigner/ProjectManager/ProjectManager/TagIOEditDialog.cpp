@@ -28,8 +28,9 @@ TagIOEditDialog::TagIOEditDialog(QString projName, QWidget *parent) :
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         ui->cboDeviceName->addItem(pObj->szDeviceName_);
     }
-    if(ui->cboDeviceName->count()>0)
+    if(ui->cboDeviceName->count() > 0) {
         ui->cboDeviceName->setCurrentIndex(0);
+    }
 
     ui->tabBaseLayout->addStretch();
 
@@ -43,6 +44,7 @@ TagIOEditDialog::~TagIOEditDialog()
 {
     delete ui;
 }
+
 
 void TagIOEditDialog::on_btnOk_clicked()
 {
@@ -61,6 +63,7 @@ void TagIOEditDialog::on_btnOk_clicked()
     m_szTagInitValue = ui->editIOInitValue->text();
     m_szTagMinValue = ui->editIOMinValue->text();
     m_szTagMaxValue = ui->editIOMaxValue->text();
+    m_szScale = ui->editIOScale->text();
 
     int iRegAddr = m_szRegAddr.toInt(&ok);
     if(!ok)
@@ -307,4 +310,7 @@ void TagIOEditDialog::setCreateTagNum(int iNum)
     ui->spinBoxCreateTagNum->setValue(iNum);
 }
 
-
+void TagIOEditDialog::hideCreateNumUI()
+{
+    ui->groupBoxCreateNum->hide();
+}

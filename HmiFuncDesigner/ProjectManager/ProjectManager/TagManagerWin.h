@@ -98,7 +98,7 @@ private:
     // 获取指定行设备变量id数值部分
     int getTagIOIdNumValue(int iRow);
     // 刷新设备变量表
-    void updateTableTagIO(const QString &szGroupName);
+    void updateTableTagIO();
     // 保存设备变量表
     void saveTableTagIO();
     // 设备变量表变量导出至CSV文件
@@ -111,6 +111,14 @@ private:
     void setTagIOObjByRow(int iRow, TagIODBItem *pObj);
     // 创建设备变量
     void createTagIO();
+    // 追加设备变量
+    void appendTagIO();
+    // 拷贝选中设备变量
+    void copyCurTagIO();
+    // 修改选中设备变量
+    void modifyCurTagIO();
+    // 删除选中设备变量
+    void deleteCurTagIO();
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
@@ -132,6 +140,11 @@ private slots:
     void on_tableTagTmp_itemPressed(QTableWidgetItem *item);
     void on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item);
     void on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item);
+    void on_tableTagIO_cellClicked(int row, int column);
+    void on_tableTagIO_cellDoubleClicked(int row, int column);
+    void on_tableTagTmp_cellClicked(int row, int column);
+    void on_tableTagTmp_cellDoubleClicked(int row, int column);
+    void onDeviceNameTextChanged(const QString &name);
 
 private:
     Ui::TagManagerWin *ui; 
@@ -139,6 +152,7 @@ private:
     int m_iTableTagTmpSelectedRow = -1;
     int m_iTableTagIOSelectedRow = -1;
     QStringList m_listTagTmpDeleteRows;
+    QStringList m_listTagIODeleteRows;
 };
 
 #endif // TAGMANAGERWIN_H

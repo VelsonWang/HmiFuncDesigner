@@ -20,14 +20,15 @@ public:
     bool insert(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj);
     bool insert(ProjectDataSQLiteDatabase *pDB, QList<TagIODBItem *> &pObjs);
     bool del(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj);
+    bool del(ProjectDataSQLiteDatabase *pDB, const QString &id);
     bool delAll(ProjectDataSQLiteDatabase *pDB);
     bool update(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj);
 
-    TagIODBItem *getTagTmpDBItemByID(const QString &id);
-    TagIODBItem *getTagTmpDBItemByName(const QString &name);
+    TagIODBItem *getTagIODBItemByID(const QString &id);
+    TagIODBItem *getTagIODBItemByName(const QString &name);
     int getLastInsertId(ProjectDataSQLiteDatabase *pDB);
 
-    bool saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj);
+    bool saveTagIODBItem(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj);
 
 public:
     QList<TagIODBItem *> listTagIODBItem_;

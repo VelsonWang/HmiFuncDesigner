@@ -298,7 +298,7 @@ bool ProjectDataSQLiteDatabase::createTableTagIO()
     QStringList keyList, valueList;
     int ret = 0;
 
-    keyList << "tagid" << "group_name" << "name" << "description"
+    keyList << "tagid" << "group_name" << "tag_name" << "description"
             << "dev_name" << "dev_addr" << "reg_area" << "reg_addr"
             << "addr_offset" << "rw_type" << "data_type" << "init_val"
             << "min_val" << "max_val" << "scale"<< "converter";
@@ -306,7 +306,7 @@ bool ProjectDataSQLiteDatabase::createTableTagIO()
     valueList << "varchar(16) not null primary key" << "varchar(16)" << "varchar(32)" << "varchar(32)"
               << "varchar(32)" << "varchar(8)" << "varchar(32)" << "varchar(8)"
               << "varchar(8)" << "varchar(8)" << "varchar(32)" << "varchar(32)"
-              << "varchar(32)" << "varchar(32)" << "varchar(8)" "varchar(4096)";
+              << "varchar(32)" << "varchar(32)" << "varchar(8)" << "varchar(4096)";
 
     ret = createTable("t_tag_io", keyList, valueList, "");
     if(ret == 1) {

@@ -32,12 +32,12 @@ void DrawListUtils::loadDrawList(const QString &path) {
     QDomDocument doc;
 
     if(!file.open(QIODevice::ReadOnly|QIODevice::Text)) {
-        qDebug("Failed to open file for reading.");
+        qDebug("Failed to open file: DrawList.xml for reading.");
         return;
     }
 
     if(!doc.setContent(&file)) {
-        qDebug("Failed to parse the file into a DOM tree.");
+        qDebug("Failed to parse the file: DrawList.xml into a DOM tree.");
         file.close();
         return;
     }

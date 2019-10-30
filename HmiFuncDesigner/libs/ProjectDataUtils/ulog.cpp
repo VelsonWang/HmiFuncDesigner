@@ -259,6 +259,7 @@ QString ULog::getSystemInfo() {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+bool QLogHelper::bShowFileFuncLine_ = false;
 
 QLogHelper::QLogHelper(const char *fileName, int lineNumber, const char *functionName)
        : version_(1)
@@ -277,7 +278,11 @@ void QLogHelper::writelogToLocal(ELogLevel logtype, const QString &log)
             .arg(line_)
             .arg(threadText);
 
-    ULog::getInstance()->addLog(logtype, filter+log);
+    if(bShowFileFuncLine_) {
+        ULog::getInstance()->addLog(logtype, filter+log);
+    } else {
+        ULog::getInstance()->addLog(logtype, log);
+    }
 }
 
 
