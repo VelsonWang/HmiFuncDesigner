@@ -10,22 +10,23 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    QString sProjectPath = "";
-    if(argc == 2)
-    {
-        sProjectPath = argv[1];
+
+    QString szProjectPath = "";
+    if(argc == 2) {
+        szProjectPath = argv[1];
     }
 
-  if (sProjectPath == "") {
-    QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
-    sProjectPath = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
-  }
+    if (szProjectPath == "") {
+        QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
+        szProjectPath = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
+    }
 
-  if (sProjectPath == "") qApp->exit();
+    if (szProjectPath == "")
+        qApp->exit();
 
-  MainWindow w(sProjectPath);
-  w.show();
-  w.ShowFirstPage();
+    MainWindow w(szProjectPath);
+    w.show();
+    w.ShowFirstPage();
 
-  return a.exec();
+    return a.exec();
 }

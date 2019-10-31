@@ -6,15 +6,19 @@
 #include <QTableView>
 #include <QVBoxLayout>
 #include <QContextMenuEvent>
-#include "Tag.h"
+#include "RtdbTag.h"
 
 class MdiChildWindow : public QWidget
 {
     Q_OBJECT
 public:
-    explicit MdiChildWindow(QList<TagItem *> tagList, QString tittle = QString(), QWidget *parent = nullptr);
+    explicit MdiChildWindow(QList<TagItem *> tagList,
+                            QString tittle = QString(),
+                            QWidget *parent = nullptr);
     ~MdiChildWindow();
-    void SetTagLogicValueAndStatus(QString id, QString logicValue, QString status);
+    void SetTagLogicValueAndStatus(QString id,
+                                   QString logicValue,
+                                   QString status);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);

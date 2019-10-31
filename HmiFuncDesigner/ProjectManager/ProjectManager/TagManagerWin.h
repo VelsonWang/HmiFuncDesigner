@@ -133,7 +133,8 @@ public slots:
     void onTagDelete();
 
 public:
-    QString m_IOVariableListWhat;
+    QString m_IOTagListWhat;
+    QString m_szCurIOGroupName;
 
 private slots:
     void on_tableTagIO_itemPressed(QTableWidgetItem *item);

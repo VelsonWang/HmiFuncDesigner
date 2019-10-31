@@ -2,21 +2,20 @@
 #include "ui_MainWindow.h"
 #include "MdiChildWindow.h"
 #include "RtdbConnectDialog.h"
-#include "CommandLineParser.h"
 #include "../Public/Public.h"
+#include "ProjectData.h"
 #include <QApplication>
 #include <QSettings>
 #include <QFile>
 #include <QFileInfo>
 #include <QDir>
-#include <QJsonObject>
-#include <QJsonDocument>
 #include <QScopedPointer>
-#include <QJsonArray>
-#include <QJsonObject>
 #include <QMessageBox>
 #include <QEventLoop>
 #include <QMutexLocker>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 #include <QDebug>
 
 #define PERIOD    (1000)
@@ -34,7 +33,7 @@ MainWindow::MainWindow(QString projPath, QWidget *parent) :
 {
     ui->setupUi(this);
     ReadSettings();
-    Load(DATA_SAVE_FORMAT);
+    Load();
     InitWindow();
     m_networkAccessManager = new QNetworkAccessManager(this);
     connect(m_networkAccessManager, SIGNAL(finished(QNetworkReply*)),
@@ -45,8 +44,7 @@ MainWindow::~MainWindow()
 {
     delete ui;
     QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
-    while (iter != mMapIoTagList.end())
-    {
+    while (iter != mMapIoTagList.end()) {
         QString sItemName = iter.key();
         QList<TagItem *> itemList = iter.value();
         qDeleteAll(itemList);
@@ -58,8 +56,7 @@ MainWindow::~MainWindow()
     qDeleteAll(mSysTagList);
     mSysTagList.clear();
 
-    if(timer_ != nullptr)
-    {
+    if(timer_ != nullptr) {
         if(timer_->isActive()) timer_->stop();
         delete timer_;
         timer_ = nullptr;
@@ -86,16 +83,13 @@ void MainWindow::InitTreeViewUi()
     pTreeItemRoot->appendRow(pTreeIoItem);
 
     QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
-    while (iter != mMapIoTagList.end())
-    {
+    while (iter != mMapIoTagList.end()) {
         QString sItemName = iter.key();
         QList<TagItem *> itemList = iter.value();
-        if(itemList.count() > 0)
-        {
+        if(itemList.count() > 0) {
             int tableCnt = itemList.count()/64;
             if(itemList.count()%64) tableCnt++;
-            for(int i=0; i<tableCnt; i++)
-            {
+            for(int i=0; i<tableCnt; i++) {
                 QString name = "IO设备-" + sItemName;
                 if(i*64+63<itemList.count()) name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+64);
                 else name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+itemList.count()%64);
@@ -110,12 +104,10 @@ void MainWindow::InitTreeViewUi()
     pTreeTmpItem = CreateTreeItem(tr("中间变量"));
     pTreeItemRoot->appendRow(pTreeTmpItem);
 
-    if(mTmpTagList.count() > 0)
-    {
+    if(mTmpTagList.count() > 0) {
         int tableTmpCnt = mTmpTagList.count()/64;
         if(mTmpTagList.count()%64) tableTmpCnt++;
-        for(int i=0; i<tableTmpCnt; i++)
-        {
+        for(int i=0; i<tableTmpCnt; i++) {
             QString name = "中间变量";
             if(i*64+63<mTmpTagList.count()) name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+64);
             else name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+mTmpTagList.count()%64);
@@ -126,12 +118,10 @@ void MainWindow::InitTreeViewUi()
     pTreeSysItem = CreateTreeItem(tr("系统变量"));
     pTreeItemRoot->appendRow(pTreeSysItem);
 
-    if(mSysTagList.count() > 0)
-    {
+    if(mSysTagList.count() > 0) {
         int tableSysCnt = mSysTagList.count()/64;
         if(mSysTagList.count()%64) tableSysCnt++;
-        for(int i=0; i<tableSysCnt; i++)
-        {
+        for(int i=0; i<tableSysCnt; i++) {
             QString name = "系统变量";
             if(i*64+63<mSysTagList.count()) name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+64);
             else name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+mSysTagList.count()%64);
@@ -155,7 +145,8 @@ MdiChildWindow* MainWindow::ActiveMdiChild()
 
 void MainWindow::SetActiveSubWindow(MdiChildWindow *window)
 {
-    if(!window) return;
+    if(!window)
+        return;
     window->showMaximized();
     ui->mdiArea->setActiveSubWindow(0);//Activates the subwindow window. If window is 0, any current active window is deactivated.
     ui->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
@@ -171,8 +162,7 @@ MdiChildWindow* MainWindow::GetActiveSubWindow()
 
 MdiChildWindow* MainWindow::FindMdiChild(const QString &windowTitle)
 {
-    foreach(QMdiSubWindow* window, ui->mdiArea->subWindowList())
-    {
+    foreach(QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
         MdiChildWindow * pChildWin = qobject_cast<MdiChildWindow *>(window->widget());
         if(pChildWin->windowTitle() == windowTitle)
             return pChildWin;
@@ -183,8 +173,7 @@ MdiChildWindow* MainWindow::FindMdiChild(const QString &windowTitle)
 
 QMdiSubWindow* MainWindow::FindMdiSubWindow(const QString &windowTitle)
 {
-    foreach(QMdiSubWindow* window, ui->mdiArea->subWindowList())
-    {
+    foreach(QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
         MdiChildWindow * pChildWin = qobject_cast<MdiChildWindow *>(window->widget());
         if(pChildWin->windowTitle() == windowTitle)
             return window;
@@ -231,82 +220,115 @@ void MainWindow::InitWindow()
     InitTreeViewUi();
 }
 
-
-QJsonObject MainWindow::LoadJsonObjectFromFile(SaveFormat saveFormat, QString f)
+/**
+ * @brief MainWindow::getProjectName
+ * @details 获取工程名称
+ * @param szProjectPath
+ * @return
+ */
+QString MainWindow::getProjectName(const QString &szProjectPath)
 {
-    QFile loadFile(f);
-    if (!loadFile.open(QIODevice::ReadOnly)) return QJsonObject();
-    QByteArray loadData = loadFile.readAll();
-    QJsonDocument loadDoc(saveFormat == Json ? QJsonDocument::fromJson(loadData) : QJsonDocument::fromBinaryData(loadData));
-    loadFile.close();
-    return loadDoc.object();
+    QFileInfo srcFileInfo(szProjectPath);
+    QString szProjName = "";
+    if (srcFileInfo.isDir()) {
+        QDir sourceDir(szProjectPath);
+        QDir::Filters filters = QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System;
+        QStringList fileNames = sourceDir.entryList(filters);
+        foreach (const QString &fileName, fileNames) {
+            if(fileName.endsWith("pdt")) {
+                QFileInfo info(fileName);
+                szProjName = info.baseName();
+            }
+
+        }
+    }
+
+    return szProjName;
 }
 
-
-bool MainWindow::Load(SaveFormat saveFormat)
+bool MainWindow::Load()
 {
-    if(mProjectPath == "") return false;
+    if(mProjectPath == "")
+        return false;
 
     QDir projDir(mProjectPath);
-    if(!projDir.exists()) return false;
+    if(!projDir.exists())
+        return false;
 
-    //-----------------系统变量------------------//
-    QJsonObject jsonSysTags = LoadJsonObjectFromFile(saveFormat, mProjectPath + "/SysVarList.odb");
-    if(jsonSysTags != QJsonObject())
-    {
-        QJsonArray tagSysArray = jsonSysTags["SysVarArray"].toArray();
-        for (int i = 0; i < tagSysArray.size(); ++i)
-        {
-            QJsonObject jsonObj = tagSysArray[i].toObject();
+    QString szProjName = getProjectName(mProjectPath);
+
+    if(szProjName == "") {
+        QMessageBox::information(this, tr("提示"), tr("未找到工程文件！"));
+        return false;
+    } else {
+        ProjectData::getInstance()->createOrOpenProjectData(mProjectPath, szProjName);
+
+        //-----------------系统变量------------------//
+        TagSys &tagSys = ProjectData::getInstance()->tagSys_;
+        tagSys.load(ProjectData::getInstance()->dbData_);
+
+        foreach (TagSysDBItem * itemTagSys, tagSys.listTagSysDBItem_) {
             TagItem *pItem = new TagItem();
-            pItem->mId = jsonObj["sID"].toString();
-            pItem->mName = jsonObj["sName"].toString();
-            pItem->mDescription = jsonObj["sDescription"].toString();
+            pItem->mId = itemTagSys->m_szTagID;
+            pItem->mName = itemTagSys->m_szName;
+            pItem->mDescription = itemTagSys->m_szDescription;
             mSysTagList.append(pItem);
         }
-    }
 
-    //-----------------中间变量------------------//
-    QJsonObject jsonTmpTags = LoadJsonObjectFromFile(saveFormat, mProjectPath + "/TmpVarList.odb");
-    if(jsonTmpTags != QJsonObject())
-    {
-        QJsonArray TmpVarArray = jsonTmpTags["TmpVarArray"].toArray();
-        for (int i = 0; i < TmpVarArray.size(); ++i)
-        {
-            QJsonObject jsonObj = TmpVarArray[i].toObject();
+        qDeleteAll(tagSys.listTagSysDBItem_);
+        tagSys.listTagSysDBItem_.clear();
+
+        //-----------------中间变量------------------//
+        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+        tagTmp.load(ProjectData::getInstance()->dbData_);
+
+        foreach (TagTmpDBItem * itemTagTmp, tagTmp.listTagTmpDBItem_) {
             TagItem *pItem = new TagItem();
-            pItem->mId = jsonObj["sID"].toString();
-            pItem->mName = jsonObj["sName"].toString();
-            pItem->mDescription = jsonObj["sDescription"].toString();
-            mTmpTagList.append(pItem);
+            pItem->mId = itemTagTmp->m_szTagID;
+            pItem->mName = itemTagTmp->m_szName;
+            pItem->mDescription = itemTagTmp->m_szDescription;
+            mTmpTagList.append(pItem);;
         }
-    }
-    //-----------------设备变量------------------//
-    QJsonObject jsonDBVarList = LoadJsonObjectFromFile(saveFormat, mProjectPath + "/DBVarList.odb");
-    if(jsonDBVarList != QJsonObject())
-    {
-        QJsonArray DevVarTabArray = jsonDBVarList["DevVarTabArray"].toArray();
-        for (int i = 0; i < DevVarTabArray.size(); ++i)
-        {
-            QJsonObject jsonObj = DevVarTabArray[i].toObject();
-            QString sTableName = jsonObj["name"].toString();
-            mMapIoTagPageGroupId[sTableName]=jsonObj["pageid"].toInt();
-            mIoTagTableNameList.append(sTableName);
-            QJsonObject jsonIoTags = LoadJsonObjectFromFile(saveFormat, mProjectPath + "/DevVarList-" + sTableName + ".odb");
-            if(jsonIoTags == QJsonObject()) return false;
-            QJsonArray IOVarArray = jsonIoTags["IOVarArray"].toArray();
-            for (int i = 0; i < IOVarArray.size(); ++i)
-            {
-                QJsonObject jsonObj = IOVarArray[i].toObject();
+
+        qDeleteAll(tagTmp.listTagTmpDBItem_);
+        tagTmp.listTagTmpDBItem_.clear();
+
+        //-----------------设备变量------------------//
+
+        TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+        tagIOGroup.load(ProjectData::getInstance()->dbData_);
+        tagIO.load(ProjectData::getInstance()->dbData_);
+
+        foreach (TagIOGroupDBItem * itemTagIOGroup, tagIOGroup.listTagIOGroupDBItem_) {
+            QString szGroup = itemTagIOGroup->m_szGroupName;
+            foreach (TagIODBItem * itemTagIO, tagIO.listTagIODBItem_) {
+                if(szGroup != itemTagIO->m_szGroupName)
+                    continue;
+                QString sTableName = itemTagIOGroup->m_szShowName;
+                mMapIoTagPageGroupId[sTableName] = itemTagIOGroup->m_id;
+                mIoTagTableNameList.append(sTableName);
                 TagItem *pItem = new TagItem();
-                pItem->mId = jsonObj["sID"].toString();
-                pItem->mName = jsonObj["sName"].toString();
-                pItem->mDescription = jsonObj["sDescription"].toString();
-                pItem->mDeviceInfo = jsonObj["sIOConnect"].toString();
+                pItem->mId = itemTagIO->m_szTagID;
+                pItem->mName = itemTagIO->m_szName;
+                pItem->mDescription = itemTagIO->m_szDescription;
+                QString szIOInfo = itemTagIO->m_szDeviceAddr;
+                szIOInfo = szIOInfo + ", " + itemTagIO->m_szRegisterArea;
+                szIOInfo = szIOInfo + ", " + itemTagIO->m_szRegisterAddr;
+                szIOInfo = szIOInfo + ", " + itemTagIO->m_szAddrOffset;
+                szIOInfo = szIOInfo + ", " + itemTagIO->m_szReadWriteType;
+                szIOInfo = szIOInfo + ", " + itemTagIO->m_szDataType;
+                pItem->mDeviceInfo = szIOInfo;
                 mMapIoTagList[sTableName].append(pItem);
             }
         }
+
+        qDeleteAll(tagIO.listTagIODBItem_);
+        tagIO.listTagIODBItem_.clear();
+        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
+        tagIOGroup.listTagIOGroupDBItem_.clear();
     }
+
     return true;
 }
 
@@ -321,16 +343,12 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
     QString winTittle = item->text();
     if(!winTittle.endsWith(")")) return;
 
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList())
-    {
+    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
         MdiChildWindow *pChildWin = qobject_cast<MdiChildWindow *>(window->widget());
-        if(pChildWin->windowTitle() == winTittle)
-        {
+        if(pChildWin->windowTitle() == winTittle) {
             SetActiveSubWindow(pChildWin);
             return;
-        }
-        else
-        {
+        } else {
             if(bConnectStatus_ && timer_ != nullptr)
                 if(timer_->isActive()) timer_->stop();
             window->close();
@@ -338,11 +356,9 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
     }
 
     QList<TagItem *> tagList = QList<TagItem *>();
-    if(winTittle.indexOf("IO设备") > -1)
-    {
+    if(winTittle.indexOf("IO设备") > -1) {
         QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
-        while (iter != mMapIoTagList.end())
-        {
+        while (iter != mMapIoTagList.end()) {
             if(winTittle.indexOf(iter.key()) > -1) tagList = iter.value();
             ++iter;
         }
@@ -364,26 +380,20 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
 void MainWindow::ShowFirstPage()
 {
     QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
-    while (iter != mMapIoTagList.end())
-    {
+    while (iter != mMapIoTagList.end()) {
         QString sItemName = iter.key();
         QList<TagItem *> itemList = iter.value();
-        if(itemList.count() > 0)
-        {
+        if(itemList.count() > 0) {
             int tableCnt = itemList.count()/64;
             if(itemList.count()%64) tableCnt++;
-            for(int i=0; i<tableCnt; i++)
-            {
+            for(int i=0; i<tableCnt; i++) {
                 QString name = "IO设备-" + sItemName;
                 if(i*64+63<itemList.count()) name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+64);
                 else name += QString(" (%1-%2)").arg(i*64+1).arg(i*64+itemList.count()%64);
-                if(i==0)
-                {
+                if(i==0) {
                     QMap<QString, QList<TagItem *>>::const_iterator it = mMapIoTagList.begin();
-                    while (it != mMapIoTagList.end())
-                    {
-                        if(name.indexOf(it.key()) > -1)
-                        {
+                    while (it != mMapIoTagList.end()) {
+                        if(name.indexOf(it.key()) > -1) {
                             MdiChildWindow* pMdiChildWindow = new MdiChildWindow(it.value(), name, this);
                             connect(pMdiChildWindow,SIGNAL(writeRtdbTag(QString)),this,SLOT(writeRtdbTag(QString)));
                             ui->mdiArea->addSubWindow(pMdiChildWindow);
@@ -409,9 +419,9 @@ void MainWindow::on_actionConnect_triggered()
     if(bConnectStatus_) dlg->SetConnectStatus(tr("连接状态：已连接"));
     else dlg->SetConnectStatus(tr("连接状态：连接关闭"));
 
-    if(dlg->exec() == QDialog::Accepted)
-    {
-        if(bConnectStatus_) return;
+    if(dlg->exec() == QDialog::Accepted) {
+        if(bConnectStatus_)
+            return;
 
         port_ = 60000;
         ip_ = dlg->GetIPAddress();
@@ -422,11 +432,8 @@ void MainWindow::on_actionConnect_triggered()
         timer_ = new QTimer();
         timer_->start(PERIOD);
         connect(timer_, SIGNAL(timeout()), this, SLOT(timeout()));
-    }
-    else
-    {
-        if(dlg->GetOption() == 0)
-        {
+    } else {
+        if(dlg->GetOption() == 0) {
             bConnectStatus_ = false;
             ui->statusBar->showMessage(tr("未连接..."));
         }
@@ -442,10 +449,8 @@ void MainWindow::on_actionClose_triggered()
 
 void MainWindow::timeout()
 {
-    if(!bConnectStatus_)
-    {
-        if(timer_ != nullptr)
-        {
+    if(!bConnectStatus_) {
+        if(timer_ != nullptr) {
             if(timer_->isActive()) timer_->stop();
             delete timer_;
             timer_ = nullptr;
@@ -461,11 +466,9 @@ void MainWindow::timeout()
     if(windowTitle == "") return;
 
     QList<TagItem *> tagList = QList<TagItem *>();
-    if(windowTitle.indexOf("IO设备") > -1)
-    {
+    if(windowTitle.indexOf("IO设备") > -1) {
         QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
-        while (iter != mMapIoTagList.end())
-        {
+        while (iter != mMapIoTagList.end()) {
             if(windowTitle.indexOf(iter.key()) > -1) tagList = iter.value();
             ++iter;
         }
@@ -522,8 +525,7 @@ void MainWindow::timeout()
 */
 void MainWindow::writeRtdbTag(QString cmdline)
 {
-    if(!bConnectStatus_)
-    {
+    if(!bConnectStatus_) {
         QMessageBox::information(this, tr("提示"), tr("未连接实时数据库！"));
         return;
     }
@@ -569,16 +571,13 @@ void MainWindow::finished(QNetworkReply *reply)
     QVariant statusCodeV = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute);
     QVariant redirectionTargetUrl = reply->attribute(QNetworkRequest::RedirectionTargetAttribute);
 
-    if (reply->error() == QNetworkReply::NoError)
-    {
+    if (reply->error() == QNetworkReply::NoError) {
         QByteArray bytes = reply->readAll();
         QJsonParseError err;
         QJsonDocument doc = QJsonDocument::fromJson(bytes, &err);
-        if (err.error == QJsonParseError::NoError && doc.isObject())
-        {
+        if (err.error == QJsonParseError::NoError && doc.isObject()) {
             QMutexLocker locker(&mutex_);
-            if(reply->url().path().toUpper() == "/READ")
-            {
+            if(reply->url().path().toUpper() == "/READ") {
                 const QJsonObject jsonDocObj = doc.object();
                 QString szStartID = jsonDocObj["StartID"].toString();
                 int id = 0;
@@ -592,11 +591,9 @@ void MainWindow::finished(QNetworkReply *reply)
                 if(windowTitle == "") return;
 
                 QList<TagItem *> tagList = QList<TagItem *>();
-                if(windowTitle.indexOf("IO设备") > -1)
-                {
+                if(windowTitle.indexOf("IO设备") > -1) {
                     QMap<QString, QList<TagItem *>>::const_iterator iter = mMapIoTagList.begin();
-                    while (iter != mMapIoTagList.end())
-                    {
+                    while (iter != mMapIoTagList.end()) {
                         if(windowTitle.indexOf(iter.key()) > -1) tagList = iter.value();
                         ++iter;
                     }
@@ -637,15 +634,12 @@ void MainWindow::finished(QNetworkReply *reply)
                     QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
                     QString datVal = jsonObj[szTagID].toString();
 
-                    if(id >= idStart && id <= idEnd)
-                    {
+                    if(id >= idStart && id <= idEnd) {
                         pMdiChildWindow->SetTagLogicValueAndStatus(szTagID, datVal, "");
                     }
                     id++;
                 }
-            }
-            else if(reply->url().path().toUpper() == "/WRITE")
-            {
+            } else if(reply->url().path().toUpper() == "/WRITE") {
                 const QJsonObject jsonDocObj = doc.object();
                 int startID = jsonDocObj["StartID"].toInt();
                 int number = jsonDocObj["Number"].toInt();
@@ -658,9 +652,7 @@ void MainWindow::finished(QNetworkReply *reply)
             }
             else ;
         }
-    }
-    else
-    {
+    } else {
         // handle errors here
     }
 

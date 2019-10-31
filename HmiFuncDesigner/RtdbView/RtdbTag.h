@@ -1,5 +1,5 @@
-#ifndef TAG_H
-#define TAG_H
+#ifndef RTDB_TAG_H
+#define RTDB_TAG_H
 
 #include <QObject>
 #include <QAbstractTableModel>
@@ -79,4 +79,4 @@ private:
 
 
 
-#endif // TAG_H
+#endif // RTDB_TAG_H

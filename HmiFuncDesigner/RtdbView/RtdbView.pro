@@ -23,30 +23,31 @@ DEFINES += QT_DEPRECATED_WARNINGS
 CONFIG(debug, debug|release) { #debug
     win32 {
         LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
+        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
     }
     unix {
         LIBS += -L$$LINK_LIBRARY_PATH -lUtils
+        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
     }
 }
 else { # release
     LIBS += -L$$LINK_LIBRARY_PATH -lUtils
+    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
 }
 
 SOURCES += main.cpp\
         MainWindow.cpp \
     MdiChildWindow.cpp \
-    Tag.cpp \
     RtdbConnectDialog.cpp \
-    CommandLineParser.cpp \
-    GetRtdbWriteValueDialog.cpp
+    GetRtdbWriteValueDialog.cpp \
+    RtdbTag.cpp
 
 HEADERS  += MainWindow.h \
     MdiChildWindow.h \
-    Tag.h \
     ../Public/Public.h \
     RtdbConnectDialog.h \
-    CommandLineParser.h \
-    GetRtdbWriteValueDialog.h
+    GetRtdbWriteValueDialog.h \
+    RtdbTag.h
 
 FORMS    += MainWindow.ui \
     RtdbConnectDialog.ui \

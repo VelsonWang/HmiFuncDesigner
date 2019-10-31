@@ -41,10 +41,8 @@ private:
     void InitWindow(); // 初始化窗口
     void InitTreeViewUi();
     QStandardItem *CreateTreeItem(const QString name);
-
-    QJsonObject LoadJsonObjectFromFile(SaveFormat saveFormat, QString f);
-    bool Load(SaveFormat saveFormat);
-
+    bool Load();
+    QString getProjectName(const QString &szProjectPath);
 
 protected:
     void closeEvent(QCloseEvent *event);
