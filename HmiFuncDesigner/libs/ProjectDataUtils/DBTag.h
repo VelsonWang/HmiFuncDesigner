@@ -1,5 +1,5 @@
-#ifndef TAG_H
-#define TAG_H
+#ifndef DB_TAG_H
+#define DB_TAG_H
 
 #include <QString>
 
@@ -215,4 +215,4 @@ struct TagIOGroupDBItem
     QString m_szShowName = "";
 };
 
-#endif // TAG_H
+#endif // DB_TAG_H

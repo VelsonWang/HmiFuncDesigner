@@ -16,7 +16,7 @@
 #include <QNetworkReply>
 #include <QMutex>
 #include "MdiChildWindow.h"
-#include "Tag.h"
+#include "DBTag.h"
 
 namespace Ui {
 class MainWindow;

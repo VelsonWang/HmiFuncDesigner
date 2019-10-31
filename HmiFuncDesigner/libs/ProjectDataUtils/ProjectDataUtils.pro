@@ -25,6 +25,7 @@ SOURCES += \
 
 
 HEADERS += \
+    $$PWD/DBTag.h \
     $$PWD/TagSys.h \
     $$PWD/TagTmp.h \
     $$PWD/TagIO.h \
@@ -38,7 +39,7 @@ HEADERS += \
     $$PWD/DatabaseSetting.h \
     $$PWD/UserAuthority.h \
     $$PWD/DeviceInfo.h \
-    $$PWD/PictureResourceManager.h \
-    $$PWD/Tag.h
+    $$PWD/PictureResourceManager.h
+
 
 

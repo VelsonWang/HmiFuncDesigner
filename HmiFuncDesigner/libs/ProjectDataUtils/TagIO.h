@@ -4,7 +4,7 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
-#include "Tag.h"
+#include "DBTag.h"
 
 class ProjectDataSQLiteDatabase;
 

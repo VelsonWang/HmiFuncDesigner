@@ -23,13 +23,16 @@ CONFIG -= app_bundle
 CONFIG += C++11
 
 # 开启SOAP服务
-DEFINES += USE_SOAP_SERVICE
+#DEFINES += USE_SOAP_SERVICE
+
+# 开启ftp服务
+#DEFINES += USE_FTP_SERVICE
 
 include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
-include(../QFtpServer/QFtpServer.pri)
+#include(../QFtpServer/QFtpServer.pri)
 include(../Views/Views.pri)
-include(../SOAP/server/SOAPServer.pri)
+#include(../SOAP/server/SOAPServer.pri)
 
 INCLUDEPATH += $$_PRO_FILE_PWD_ \
                Vendor \
@@ -85,7 +88,6 @@ win32 {
 SOURCES += \
     MessageTransfer.cpp \
     SerialPortReMapping.cpp \
-    Service/MemoryMessageService.cpp \
     Vendor/SIEMENS_S7_200/S7_200.cpp \
     Vendor/SIEMENS_S7_200/S7_200Device.cpp \
     qextserial/qextserialport.cpp \
@@ -121,8 +123,6 @@ SOURCES += \
 HEADERS  += \
     MessageTransfer.h \
     SerialPortReMapping.h \
-    Service/MemoryMessageService.h \
-    Service/MessageCmd.h \
     Vendor/SIEMENS_S7_200/S7_200.h \
     Vendor/SIEMENS_S7_200/S7_200Device.h \
     qextserial/qextserialport_global.h \
@@ -183,10 +183,6 @@ HEADERS  += \
     $$PWD/Vendor/IVendor.h \
     $$PWD/Port/ComPort.h \
     $$PWD/Port/IPort.h
-
-##################################################################
-# dependency libev-dev
-unix:include($$PWD/eventdispatcher_libev/eventdispatcher_libev.pri)
 
 FORMS +=
 

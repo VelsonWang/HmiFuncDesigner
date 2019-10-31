@@ -5,11 +5,9 @@
 #include "httpserver.h"
 #include "VersionInfo.h"
 #include "Log.h"
-#include "ftpserver.h"
 #include "Global.h"
 #include "ConfigUtils.h"
 #include "edncrypt.h"
-#include "gSOAPServer.h"
 #include "MainWindow.h"
 #include "MemoryMessageService.h"
 #include <QApplication>
@@ -20,57 +18,16 @@
 #include <QTextStream>
 #include <iostream>
 
-
-#ifndef Q_OS_WIN
-#include "eventdispatcher_libev/eventdispatcher_libev.h"
+#ifdef USE_FTP_SERVICE
+#include "ftpserver.h"
 #endif
 
-void customMessageHandler(QtMsgType type,
-                          const QMessageLogContext &context,
-                          const QString & msg) {
-    QString txt;
-    switch (type) {
-    //调试信息提示
-    case QtDebugMsg:
-        //            txt = QString("%1: Debug: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-        //                    .arg(context.file).arg(context.line).arg(context.function).arg(msg);
-        txt = msg;
-        break;
+#ifdef USE_SOAP_SERVICE
+#include "gSOAPServer.h"
+#endif
 
-        //一般的warning提示
-    case QtWarningMsg:
-        txt = QString("%1:Warning: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-                .arg(context.file)
-                .arg(context.line)
-                .arg(context.function)
-                .arg(msg);
-        break;
-        //严重错误提示
-    case QtCriticalMsg:
-        txt = QString("%1:Critical: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-                .arg(context.file)
-                .arg(context.line)
-                .arg(context.function)
-                .arg(msg);
-        break;
-        //致命错误提示
-    case QtFatalMsg:
-        txt = QString("%1:Fatal: at:%2,%3 on %4; %5").arg(QTime::currentTime().toString("hh:mm:ss.zzz"))
-                .arg(context.file)
-                .arg(context.line)
-                .arg(context.function)
-                .arg(msg);
-        abort();
-    }
-    QFile outFile(QString("%1/%2.txt").arg(QDir::currentPath())
-                  .arg(QDate::currentDate().toString("yyyy-MM-dd")));
-    outFile.open(QIODevice::WriteOnly | QIODevice::Append);
-    QTextStream ts(&outFile);
-    ts << txt << endl;
-}
-
-QString getSystemInfo() {
-
+QString getSystemInfo()
+{
     QString s = "\n";
     s.append(QString("Build:%1 Version:%2\n").arg(GIT_HASH).arg(VER_FILE));
     s.append("System Info: \n");
@@ -115,43 +72,25 @@ QString getSystemInfo() {
     return s;
 }
 
+
 int main(int argc, char *argv[])
 {
-    int ret = 0;
-    //    qInstallMessageHandler(customMessageHandler);
-#ifndef Q_OS_WIN
-    //QCoreApplication::setEventDispatcher(new EventDispatcherLibEv());
-#endif
     QApplication app(argc, argv);
 
     QString strInput = "";
     QString configPath = "";
-#if 0
-    //////////////////////////////////////////////////////////////////////////////
-    /// connect database
-    configPath = QApplication::applicationDirPath() + "/setting.ini";
-    QString databaseName = ConfigUtils::getCfgStr(configPath, "Database", "DatabaseName", "runtimedb");
-    strInput = ConfigUtils::getCfgStr(configPath, "Database", "UserName", "");
-    QString mysqlUserName = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
-    strInput = ConfigUtils::getCfgStr(configPath, "Database", "PassWord", "");
-    QString mysqlPassword = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
-    QString hostname = ConfigUtils::getCfgStr(configPath, "Database", "HostName", "127.0.0.1");
-    int mysqlPort = ConfigUtils::getCfgInt(configPath, "Database", "Port", 3306);
 
-    //////////////////////////////////////////////////////////////////////////////
-#endif
     LogInfo(getSystemInfo());
     LogInfo("start SCADARunTime!");
 
-
     //////////////////////////////////////////////////////////////////////////////
-    /// start http server
+    ///  启动http服务
     HttpServer httpServer;
     httpServer.init(60000);
 
-
+#ifdef USE_FTP_SERVICE
     //////////////////////////////////////////////////////////////////////////////
-    /// start ftp server
+    ///  启动ftp服务
     strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "UserName", "admin");
     const QString &userName = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
     strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "PassWord", "admin");
@@ -169,7 +108,7 @@ int main(int argc, char *argv[])
     } else {
         LogInfo("Failed to start FtpServer.");
     }
-
+#endif
 
     //////////////////////////////////////////////////////////////////////////////
 
@@ -215,11 +154,7 @@ int main(int argc, char *argv[])
     /// 启动定时任务
     TimerTask *pTimerTask = new TimerTask();
 
-    // 启动共享内存消息服务
-    MemoryMessageService service;
-    service.start();
-
-    ret = app.exec();
+    int ret = app.exec();
 
 #ifdef USE_SOAP_SERVICE
     gSOAPServer.exitService();

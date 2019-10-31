@@ -1,9 +1,0 @@
-*.a
-*.o
-*.moc
-*.prl
-*.pro.user
-moc_*.cpp
-Makefile
-Makefile.*
-/tests/tst_*

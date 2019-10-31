@@ -28,7 +28,7 @@
 #include <QVBoxLayout>
 #include <QTableWidgetItem>
 #include "ProjectData.h"
-#include "Tag.h"
+#include "DBTag.h"
 #include "TagSys.h"
 #include <QDir>
 #include <QFile>

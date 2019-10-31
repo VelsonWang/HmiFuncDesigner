@@ -93,7 +93,7 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
         } else if(sProtocol.toUpper() == QString("MODBUSASCII")) {
             ModbusASCIIDevice *pMbAsciiDevice = new ModbusASCIIDevice();
             pMbAsciiDevice->LoadData(sDeviceName);
-            m_VendorList.append(pMbAsciiDevice);           
+            m_VendorList.append(pMbAsciiDevice);
         } else if(sProtocol.toUpper() == QString("TCPIPMODBUS")) {
             TCPIPModbusDevice *pMbTcpipDevice = new TCPIPModbusDevice();
             pMbTcpipDevice->LoadData(sDeviceName);
@@ -120,96 +120,214 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
 
     // load tags and create rtdb
     //-----------------系统变量------------------//
-    QJsonObject jsonSysTags = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/SysVarList.odb");
-    if(jsonSysTags != QJsonObject()) {
-        QJsonArray tagSysArray = jsonSysTags["SysVarArray"].toArray();
-        for (int i = 0; i < tagSysArray.size(); ++i) {
-            QJsonObject jsonObj = tagSysArray[i].toObject();
-            SysDataTag *pSysTag = new SysDataTag();
-            pSysTag->LoadData(jsonObj);
-            DBTagObject* pDBSysTagObject = new DBTagObject(pSysTag->mId, pSysTag->mType, READ_WRIE, 0,
-                                                        QVariant(), TYPE_SYSTEM, pSysTag);
-            RealTimeDB::rtdb.insert(pSysTag->mId, pDBSysTagObject);
-            RealTimeDB::varNameMapId.insert(("系统变量." + pSysTag->mName), pSysTag->mId);
+    TagSys &tagSys = ProjectData::getInstance()->tagSys_;
+    tagSys.load(ProjectData::getInstance()->dbData_);
 
-            pDBSysTagObject->addListener(new DBTagObject_Event_Listener());
-        }
+    foreach (TagSysDBItem * itemTagSys, tagSys.listTagSysDBItem_) {
+        SysDataTag *pSysTag = new SysDataTag();
+        pSysTag->mId = itemTagSys->m_szTagID;
+        pSysTag->mType = TYPE_STRING;
+        pSysTag->mName = itemTagSys->m_szName;
+        pSysTag->mDescription = itemTagSys->m_szDescription;
+        pSysTag->mUnit = itemTagSys->m_szUnit;
+        pSysTag->mProjectConverter = itemTagSys->m_szProjectConverter;
+        pSysTag->mComments = itemTagSys->m_szComments;
+        pSysTag->m_Function.LoadFuncObjects(pSysTag->mProjectConverter);
+
+        DBTagObject* pDBSysTagObject = new DBTagObject(pSysTag->mId, pSysTag->mType, READ_WRIE, 0,
+                                                       QVariant(), TYPE_SYSTEM, pSysTag);
+        RealTimeDB::rtdb.insert(pSysTag->mId, pDBSysTagObject);
+        RealTimeDB::varNameMapId.insert((QObject::tr("系统变量.") + pSysTag->mName + "[" + pSysTag->mId + "]"), pSysTag->mId);
+
+        pDBSysTagObject->addListener(new DBTagObject_Event_Listener());
     }
+
+    qDeleteAll(tagSys.listTagSysDBItem_);
+    tagSys.listTagSysDBItem_.clear();
 
     //-----------------中间变量------------------//
-    QJsonObject jsonTmpTags = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/TmpVarList.odb");
-    if(jsonTmpTags != QJsonObject()) {
-        QJsonArray TmpVarArray = jsonTmpTags["TmpVarArray"].toArray();
-        for (int i = 0; i < TmpVarArray.size(); ++i) {
-            QJsonObject jsonObj = TmpVarArray[i].toObject();
-            TmpDataTag *pTmpTag = new TmpDataTag();
-            pTmpTag->LoadData(jsonObj);
-            DBTagObject* pDBTmpTagObject = new DBTagObject(pTmpTag->mId, pTmpTag->mType, READ_WRIE, 0,
-                                                        QVariant(), TYPE_TMP, pTmpTag);
-            RealTimeDB::rtdb.insert(pTmpTag->mId, pDBTmpTagObject);
-            RealTimeDB::varNameMapId.insert(("中间变量." + pTmpTag->mName), pTmpTag->mId);
+    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+    tagTmp.load(ProjectData::getInstance()->dbData_);
 
-            pDBTmpTagObject->addListener(new DBTagObject_Event_Listener());
-        }
+    foreach (TagTmpDBItem * itemTagTmp, tagTmp.listTagTmpDBItem_) {
+        TmpDataTag *pTmpTag = new TmpDataTag();
+        pTmpTag->mId = itemTagTmp->m_szTagID;
+        pTmpTag->mType = TYPE_STRING;
+        pTmpTag->mName = itemTagTmp->m_szName;
+        pTmpTag->mDescription = itemTagTmp->m_szDescription;
+        pTmpTag->mUnit = "";
+        pTmpTag->mProjectConverter = itemTagTmp->m_szProjectConverter;
+        pTmpTag->mComments = "";
+        pTmpTag->m_Function.LoadFuncObjects(pTmpTag->mProjectConverter);
+
+        QString tmp = itemTagTmp->m_szMaxVal;
+        if(tmp == "") pTmpTag->mMaxValue = 0;
+        else pTmpTag->mMaxValue = tmp.toDouble();
+
+        tmp = itemTagTmp->m_szMinVal;
+        if(tmp == "") pTmpTag->mMinValue = 0;
+        else pTmpTag->mMinValue = tmp.toDouble();
+
+        tmp = itemTagTmp->m_szInitVal;
+        if(tmp == "") pTmpTag->mInitializeValue = 0;
+        else pTmpTag->mInitializeValue = tmp.toDouble();
+
+        DBTagObject* pDBTmpTagObject = new DBTagObject(pTmpTag->mId, pTmpTag->mType, READ_WRIE, 0,
+                                                       QVariant(), TYPE_TMP, pTmpTag);
+        RealTimeDB::rtdb.insert(pTmpTag->mId, pDBTmpTagObject);
+        RealTimeDB::varNameMapId.insert((QObject::tr("中间变量.") + pTmpTag->mName + "[" + pTmpTag->mId + "]"), pTmpTag->mId);
+
+        pDBTmpTagObject->addListener(new DBTagObject_Event_Listener());
     }
+
+    qDeleteAll(tagTmp.listTagTmpDBItem_);
+    tagTmp.listTagTmpDBItem_.clear();
 
     //-----------------设备变量------------------//
-    QJsonObject jsonDBVarList = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/DBVarList.odb");
-    if(jsonDBVarList != QJsonObject()) {
-        QJsonArray DevVarTabArray = jsonDBVarList["DevVarTabArray"].toArray();
-        //qDebug() << "DevVarTabArray.size() " << DevVarTabArray.size();
-        for (int i = 0; i < DevVarTabArray.size(); ++i) {
-            QJsonObject jsonObj = DevVarTabArray[i].toObject();
-            QJsonObject jsonIoTags = LoadJsonObjectFromFile(saveFormat, m_sProjectPath + "/DevVarList-" + jsonObj["name"].toString()+ ".odb");
-            if(jsonIoTags == QJsonObject())
-                return false;
-            QString devVarTabName = jsonObj["name"].toString();
-            QJsonArray IOVarArray = jsonIoTags["IOVarArray"].toArray();
-            //qDebug() << "IOVarArray.size() " << IOVarArray.size();
-            for (int i = 0; i < IOVarArray.size(); ++i)
-            {
-                QJsonObject jsonObj = IOVarArray[i].toObject();
-                IoDataTag *pIoDataTag = new IoDataTag();
-                pIoDataTag->LoadData(jsonObj);
-                DBTagObject* pDBIoTagObject = new DBTagObject(pIoDataTag->mId, pIoDataTag->mType, READ_WRIE, pIoDataTag->mLength,
-                                                                    QVariant(), TYPE_IO, pIoDataTag);
-                RealTimeDB::rtdb.insert(pIoDataTag->mId, pDBIoTagObject);
-                RealTimeDB::varNameMapId.insert(("设备变量." + devVarTabName + "." + pIoDataTag->mName), pIoDataTag->mId);
-                IOTag *pIOTag = new IOTag();
-                pIOTag->SetTagID(pIoDataTag->mId);
-                pIOTag->SetDeviceName(pIoDataTag->mDeviceName);
-                pIOTag->SetPermissionType(pIoDataTag->mPermissionType);
-                pIOTag->SetDeviceAddress(pIoDataTag->mDeviceAddress);
-                pIOTag->SetRegisterArea(pIoDataTag->mRegisterArea);
-                pIOTag->SetRegisterAddress(pIoDataTag->mRegisterAddress);
-                pIOTag->SetDataType(pIoDataTag->mDataType);
-                pIOTag->SetOffset(pIoDataTag->mOffset);
-                pIOTag->SetMaxValue(pIoDataTag->mMaxValue);
-                pIOTag->SetMinValue(pIoDataTag->mMinValue);
-                pIOTag->SetInitializeValue(pIoDataTag->mInitializeValue);
-                pIOTag->SetScale(pIoDataTag->mScale);
-                pIOTag->SetInFrameAddress(pIoDataTag->mInFrameAddress);
-                int bufLen = (pIoDataTag->mLength > 8) ? pIoDataTag->mLength : 8;
-                pIOTag->SetTagBufferLength(bufLen);
-                pIOTag->SetDBTagObject(pDBIoTagObject);
+    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+    tagIOGroup.load(ProjectData::getInstance()->dbData_);
+    tagIO.load(ProjectData::getInstance()->dbData_);
 
-                IVendor *pVendor = FindVendor(pIoDataTag->mDeviceName);
-                if(pVendor != Q_NULLPTR) {
-                    pVendor->AddIOTagToDeviceTagList(pIOTag);
-                    pDBIoTagObject->pVendor = pVendor;
-                }
+    foreach (TagIOGroupDBItem * itemTagIOGroup, tagIOGroup.listTagIOGroupDBItem_) {
+        QString szGroup = itemTagIOGroup->m_szGroupName;
+        foreach (TagIODBItem * itemTagIO, tagIO.listTagIODBItem_) {
+            if(szGroup != itemTagIO->m_szGroupName)
+                continue;
+            QString sTableName = itemTagIOGroup->m_szShowName;
 
-                pDBIoTagObject->addListener(new DBTagObject_Event_Listener());
+            IoDataTag *pIoDataTag = new IoDataTag();
+
+            pIoDataTag->mId = itemTagIO->m_szTagID;
+            pIoDataTag->mName = itemTagIO->m_szName;
+            pIoDataTag->mDescription = itemTagIO->m_szDescription;
+            pIoDataTag->mUnit = "";
+            pIoDataTag->mProjectConverter = itemTagIO->m_szProjectConverter;
+            pIoDataTag->mComments ="";
+            pIoDataTag->mDeviceName = itemTagIO->m_szDeviceName;
+
+            QString tmp = itemTagIO->m_szReadWriteType;
+            pIoDataTag->mPermissionType = READ_WRIE;
+            if(tmp == QObject::tr("只读")) {
+                pIoDataTag->mPermissionType = READ;
+            } else if(tmp == QObject::tr("只写")) {
+                pIoDataTag->mPermissionType = WRIE;
+            } else if(tmp == QObject::tr("读写")) {
+                pIoDataTag->mPermissionType = READ_WRIE;
             }
+
+            tmp = itemTagIO->m_szDeviceAddr;
+            pIoDataTag->mDeviceAddress = tmp.toInt();
+
+            tmp = itemTagIO->m_szMaxVal;
+            pIoDataTag->mMaxValue = tmp.toDouble();
+
+            pIoDataTag->mRegisterArea = itemTagIO->m_szRegisterArea;
+
+            tmp = itemTagIO->m_szMinVal;
+            pIoDataTag->mMinValue = tmp.toDouble();
+
+            tmp = itemTagIO->m_szRegisterAddr;
+            pIoDataTag->mRegisterAddress = tmp.toInt();
+
+            tmp = itemTagIO->m_szInitVal;
+            pIoDataTag->mInitializeValue = tmp.toDouble();
+
+            tmp = itemTagIO->m_szDataType;
+            if(tmp == "Bit1开关量") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_BOOL;
+                pIoDataTag->mLength = 1;
+            } else if(tmp == "Char8位有符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_INT8;
+                pIoDataTag->mLength = 1;
+            } else if(tmp == "Byte8位无符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_UINT8;
+                pIoDataTag->mLength = 1;
+            } else if(tmp == "Short16位有符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_INT16;
+                pIoDataTag->mLength = 2;
+            } else if(tmp == "Word16位无符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_UINT16;
+                pIoDataTag->mLength = 2;
+            } else if(tmp == "ASCII2个字符") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_ASCII2CHAR;
+                pIoDataTag->mLength = 2;
+            } else if(tmp == "Long32位有符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_INT32;
+                pIoDataTag->mLength = 4;
+            } else if(tmp == "Dword32位无符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_UINT32;
+                pIoDataTag->mLength = 4;
+            } else if(tmp == "Float单精度浮点数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_FLOAT;
+                pIoDataTag->mLength = 4;
+            } else if(tmp == "String字符串") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_STRING;
+                pIoDataTag->mLength = 256;
+            } else if(tmp == "Double双精度浮点数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_DOUBLE;
+                pIoDataTag->mLength = 8;
+            } else if(tmp == "BCD") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_BCD;
+                pIoDataTag->mLength = 8;
+            } else if(tmp == "LongLong64位有符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_INT64;
+                pIoDataTag->mLength = 8;
+            } else if(tmp == "DwordDword64位无符号数") {
+                pIoDataTag->mType = pIoDataTag->mDataType = TYPE_UINT64;
+                pIoDataTag->mLength = 8;
+            }
+
+            tmp = itemTagIO->m_szScale;
+            pIoDataTag->mScale = tmp.toDouble();
+
+            tmp = itemTagIO->m_szAddrOffset;
+            pIoDataTag->mOffset = tmp.toInt();
+
+            pIoDataTag->m_Function.LoadFuncObjects(itemTagIO->m_szProjectConverter);
+
+            DBTagObject* pDBIoTagObject = new DBTagObject(pIoDataTag->mId, pIoDataTag->mType, READ_WRIE, pIoDataTag->mLength,
+                                                          QVariant(), TYPE_IO, pIoDataTag);
+            RealTimeDB::rtdb.insert(pIoDataTag->mId, pDBIoTagObject);
+            RealTimeDB::varNameMapId.insert((QObject::tr("设备变量.") + pIoDataTag->mName + "[" + pIoDataTag->mId + "]"), pIoDataTag->mId);
+            IOTag *pIOTag = new IOTag();
+            pIOTag->SetTagID(pIoDataTag->mId);
+            pIOTag->SetDeviceName(pIoDataTag->mDeviceName);
+            pIOTag->SetPermissionType(pIoDataTag->mPermissionType);
+            pIOTag->SetDeviceAddress(pIoDataTag->mDeviceAddress);
+            pIOTag->SetRegisterArea(pIoDataTag->mRegisterArea);
+            pIOTag->SetRegisterAddress(pIoDataTag->mRegisterAddress);
+            pIOTag->SetDataType(pIoDataTag->mDataType);
+            pIOTag->SetOffset(pIoDataTag->mOffset);
+            pIOTag->SetMaxValue(pIoDataTag->mMaxValue);
+            pIOTag->SetMinValue(pIoDataTag->mMinValue);
+            pIOTag->SetInitializeValue(pIoDataTag->mInitializeValue);
+            pIOTag->SetScale(pIoDataTag->mScale);
+            int bufLen = (pIoDataTag->mLength > 8) ? pIoDataTag->mLength : 8;
+            pIOTag->SetTagBufferLength(bufLen);
+            pIOTag->SetDBTagObject(pDBIoTagObject);
+
+            IVendor *pVendor = FindVendor(pIoDataTag->mDeviceName);
+            if(pVendor != Q_NULLPTR) {
+                pVendor->AddIOTagToDeviceTagList(pIOTag);
+                pDBIoTagObject->pVendor = pVendor;
+            }
+
+            pDBIoTagObject->addListener(new DBTagObject_Event_Listener());
         }
     }
+
+    qDeleteAll(tagIO.listTagIODBItem_);
+    tagIO.listTagIODBItem_.clear();
+    qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
+    tagIOGroup.listTagIOGroupDBItem_.clear();
 
     //-----------------加载JavaScript------------------//
     if(m_pRunScript == Q_NULLPTR)
         m_pRunScript = new RunScript(m_sProjectPath);
     m_pRunScript->loadScriptObjects();
 
-//    RealTimeDB::debugShowNameMapId();
+    //    RealTimeDB::debugShowNameMapId();
 
     return true;
 }
