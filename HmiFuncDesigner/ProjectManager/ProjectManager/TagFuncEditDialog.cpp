@@ -12,17 +12,15 @@
 
 static const int MaxTableColumns = 2;
 
-FuncModel::FuncModel(QObject *parent) : QAbstractTableModel(parent) {}
+FuncModel::FuncModel(QObject *parent)
+    : QAbstractTableModel(parent)
+{
+
+}
 
 FuncModel::~FuncModel()
 {
-    while(m_FuncList.size()) {
-        PFuncObjectItem pObj = m_FuncList.takeFirst();
-        if(pObj != Q_NULLPTR) {
-            delete pObj;
-            pObj = Q_NULLPTR;
-        }
-    }
+
 }
 
 Qt::ItemFlags FuncModel::flags(const QModelIndex &index) const
@@ -56,8 +54,7 @@ QVariant FuncModel::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant FuncModel::headerData(int section, Qt::Orientation orientation,
-                               int role) const
+QVariant FuncModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role != Qt::DisplayRole) return QVariant();
     if (orientation == Qt::Horizontal) {
@@ -83,8 +80,7 @@ int FuncModel::columnCount(const QModelIndex &index) const
     return index.isValid() ? 0 : MaxTableColumns;
 }
 
-bool FuncModel::setData(const QModelIndex &index, const QVariant &value,
-                        int role)
+bool FuncModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
     Q_UNUSED(value)
     if (!index.isValid() || role != Qt::EditRole || index.row() < 0 ||
@@ -225,11 +221,19 @@ void FuncModel::DownRow(int row)
 
 //////////////////////////////////////////////////////////////////
 
-FuncTableView::FuncTableView(QWidget *parent) : QTableView(parent) {}
+FuncTableView::FuncTableView(QWidget *parent)
+    : QTableView(parent)
+{
 
-FuncTableView::~FuncTableView() {}
+}
 
-void FuncTableView::mousePressEvent(QMouseEvent *event) {
+FuncTableView::~FuncTableView()
+{
+
+}
+
+void FuncTableView::mousePressEvent(QMouseEvent *event)
+{
     if (event->button() == Qt::LeftButton || event->button() == Qt::RightButton) {
         QModelIndex idx = indexAt(event->pos());
         if (!idx.isValid()) {
@@ -242,7 +246,9 @@ void FuncTableView::mousePressEvent(QMouseEvent *event) {
 ///////////////////////////////////////////////////////////////////
 
 TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
-    : QDialog(parent), m_strProjectPath(projectPath) {
+    : QDialog(parent),
+      m_strProjectPath(projectPath)
+{
     this->setWindowTitle(tr("工程转换"));
 
     m_pSplitterMain = new SplitterForm(Qt::Vertical, this);
@@ -349,16 +355,14 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
     QHBoxLayout *hLayoutBtn = new QHBoxLayout();
     hLayoutBtn->setContentsMargins(1, 1, 1, 1);
     hLayoutBtn->setObjectName(QStringLiteral("hLayoutBtn"));
-    QSpacerItem *horizontalSpacer_2 =
-            new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem *horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hLayoutBtn->addItem(horizontalSpacer_2);
 
     QToolButton *btnAdd = new QToolButton(widgetBottom);
     btnAdd->setObjectName(QStringLiteral("btnAdd"));
     btnAdd->setText(tr("添加"));
     QIcon icon;
-    icon.addFile(QStringLiteral(":/images1/add_light.png"), QSize(),
-                 QIcon::Normal, QIcon::Off);
+    icon.addFile(QStringLiteral(":/images1/add_light.png"), QSize(), QIcon::Normal, QIcon::Off);
     btnAdd->setIcon(icon);
     btnAdd->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     connect(btnAdd, SIGNAL(clicked(bool)), this, SLOT(on_btnAdd_clicked()));
@@ -368,23 +372,20 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
     btnDel->setObjectName(QStringLiteral("btnDel"));
     btnDel->setText(tr("删除"));
     QIcon icon1;
-    icon1.addFile(QStringLiteral(":/images1/del_light.png"), QSize(),
-                  QIcon::Normal, QIcon::Off);
+    icon1.addFile(QStringLiteral(":/images1/del_light.png"), QSize(), QIcon::Normal, QIcon::Off);
     btnDel->setIcon(icon1);
     btnDel->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     connect(btnDel, SIGNAL(clicked(bool)), this, SLOT(on_btnDel_clicked()));
     hLayoutBtn->addWidget(btnDel);
 
-    QSpacerItem *horizontalSpacer_3 =
-            new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem *horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hLayoutBtn->addItem(horizontalSpacer_3);
 
     QToolButton *btnUp = new QToolButton(widgetBottom);
     btnUp->setObjectName(QStringLiteral("btnUp"));
     btnUp->setText(tr("上移"));
     QIcon icon2;
-    icon2.addFile(QStringLiteral(":/images1/up.png"), QSize(), QIcon::Normal,
-                  QIcon::Off);
+    icon2.addFile(QStringLiteral(":/images1/up.png"), QSize(), QIcon::Normal, QIcon::Off);
     btnUp->setIcon(icon2);
     btnUp->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     connect(btnUp, SIGNAL(clicked(bool)), this, SLOT(on_btnUp_clicked()));
@@ -394,23 +395,20 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
     btnDown->setObjectName(QStringLiteral("btnDown"));
     btnDown->setText(tr("下移"));
     QIcon icon3;
-    icon3.addFile(QStringLiteral(":/images1/down.png"), QSize(), QIcon::Normal,
-                  QIcon::Off);
+    icon3.addFile(QStringLiteral(":/images1/down.png"), QSize(), QIcon::Normal, QIcon::Off);
     btnDown->setIcon(icon3);
     btnDown->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     connect(btnDown, SIGNAL(clicked(bool)), this, SLOT(on_btnDown_clicked()));
     hLayoutBtn->addWidget(btnDown);
 
-    QSpacerItem *horizontalSpacer_5 =
-            new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem *horizontalSpacer_5 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hLayoutBtn->addItem(horizontalSpacer_5);
 
     QToolButton *btnOk = new QToolButton(widgetBottom);
     btnOk->setObjectName(QStringLiteral("btnOk"));
     btnOk->setText(tr("确定"));
     QIcon icon4;
-    icon4.addFile(QStringLiteral(":/images1/Finish.png"), QSize(), QIcon::Normal,
-                  QIcon::Off);
+    icon4.addFile(QStringLiteral(":/images1/Finish.png"), QSize(), QIcon::Normal, QIcon::Off);
     btnOk->setIcon(icon4);
     btnOk->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     connect(btnOk, SIGNAL(clicked(bool)), this, SLOT(on_btnOk_clicked()));
@@ -420,15 +418,13 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
     btnCancel->setObjectName(QStringLiteral("btnCancel"));
     btnCancel->setText(tr("取消"));
     QIcon icon5;
-    icon5.addFile(QStringLiteral(":/images1/Cancel.png"), QSize(), QIcon::Normal,
-                  QIcon::Off);
+    icon5.addFile(QStringLiteral(":/images1/Cancel.png"), QSize(), QIcon::Normal, QIcon::Off);
     btnCancel->setIcon(icon5);
     btnCancel->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     connect(btnCancel, SIGNAL(clicked(bool)), this, SLOT(on_btnCancel_clicked()));
     hLayoutBtn->addWidget(btnCancel);
 
-    QSpacerItem *horizontalSpacer_6 =
-            new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+    QSpacerItem *horizontalSpacer_6 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
     hLayoutBtn->addItem(horizontalSpacer_6);
 
     widgetBottom->setLayout(hLayoutBtn);
@@ -442,24 +438,27 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
     this->resize(screenWidth / 2, screenHeight / 2);
 }
 
-TagFuncEditDialog::~TagFuncEditDialog() {
+TagFuncEditDialog::~TagFuncEditDialog()
+{
     m_varsList.clear();
     delete m_pTreeViewFunc;
     delete m_pTextDesc;
     delete m_pVariantFactory;
     delete m_pVariantManager;
     delete m_pPropertyEditor;
-    delete m_pfuncItemModel;
     delete m_funcTableView;
+    delete m_pfuncItemModel;
     qDeleteAll(m_supportFuncList);
     m_supportFuncList.clear();
 }
 
-void TagFuncEditDialog::resizeEvent(QResizeEvent *e) {
+void TagFuncEditDialog::resizeEvent(QResizeEvent *e)
+{
     m_pSplitterMain->resize(e->size());
 }
 
-void TagFuncEditDialog::TreeViewInit() {
+void TagFuncEditDialog::TreeViewInit()
+{
     m_groupFuncNameList.clear();
     m_pTreeViewFunc->setHeaderHidden(true);
     m_pTreeViewItemModel = new QStandardItemModel();
@@ -478,8 +477,7 @@ void TagFuncEditDialog::TreeViewInit() {
     for (int i = 0; i < sFuncTypeList.count(); i++) {
         QString sFuncTypeOne = sFuncTypeList.at(i).trimmed();
         QString key = sFuncTypeOne.left(sFuncTypeOne.indexOf("-"));
-        QString nameTmp = sFuncTypeOne.right(sFuncTypeOne.length() -
-                                             sFuncTypeOne.indexOf("-") - 1);
+        QString nameTmp = sFuncTypeOne.right(sFuncTypeOne.length() - sFuncTypeOne.indexOf("-") - 1);
         QString name = QString::fromLocal8Bit(nameTmp.toLatin1());
         // qDebug()<< key << "  " << name;
         m_groupFuncNameList.append(name);
@@ -487,15 +485,9 @@ void TagFuncEditDialog::TreeViewInit() {
         itemFuncTypeOne->setEditable(false);
 
         QString strSecName = key;
-        int funcCount =
-                ConfigUtils::getCfgStr(iniFileName, strSecName, "Func-count", "0")
-                .toInt();
-        int descCount =
-                ConfigUtils::getCfgStr(iniFileName, strSecName, "Desc-count", "0")
-                .toInt();
-        int argsCount =
-                ConfigUtils::getCfgStr(iniFileName, strSecName, "Args-count", "0")
-                .toInt();
+        int funcCount = ConfigUtils::getCfgStr(iniFileName, strSecName, "Func-count", "0").toInt();
+        int descCount = ConfigUtils::getCfgStr(iniFileName, strSecName, "Desc-count", "0").toInt();
+        int argsCount = ConfigUtils::getCfgStr(iniFileName, strSecName, "Args-count", "0").toInt();
         if (funcCount != (descCount + descCount + argsCount) / 3) {
             QMessageBox::critical(this, tr("提示"), tr("功能定义文件配置错误！"));
             return;
@@ -516,15 +508,13 @@ void TagFuncEditDialog::TreeViewInit() {
         for (int i = 0; i < descCount; i++) {
             TFuncObject *pFuncObj = m_supportFuncList.at(i);
             strIdent = QString("Desc-%1").arg(i + 1);
-            QString strDesc =
-                    ConfigUtils::getCfgStr(iniFileName, strSecName, strIdent, "");
+            QString strDesc = ConfigUtils::getCfgStr(iniFileName, strSecName, strIdent, "");
             pFuncObj->desc = QString::fromLocal8Bit(strDesc.toLatin1());
         }
         for (int i = 0; i < argsCount; i++) {
             TFuncObject *pFuncObj = m_supportFuncList.at(i);
             strIdent = QString("Args-%1").arg(i + 1);
-            pFuncObj->args_type =
-                    ConfigUtils::getCfgStr(iniFileName, strSecName, strIdent, "");
+            pFuncObj->args_type = ConfigUtils::getCfgStr(iniFileName, strSecName, strIdent, "");
         }
         for (int i = 0; i < funcCount; i++) {
             TFuncObject *pFuncObj = m_supportFuncList.at(i);
@@ -541,19 +531,19 @@ void TagFuncEditDialog::TreeViewInit() {
     m_pTreeViewFunc->expandAll();
 }
 
-void TagFuncEditDialog::UpdateExpandState() {
+void TagFuncEditDialog::UpdateExpandState()
+{
     QList<QtBrowserItem *> list = m_pPropertyEditor->topLevelItems();
     QListIterator<QtBrowserItem *> it(list);
     while (it.hasNext()) {
         QtBrowserItem *item = it.next();
         QtProperty *prop = item->property();
-        m_mapIdToExpanded[m_mapPropertyToId[prop]] =
-                m_pPropertyEditor->isExpanded(item);
+        m_mapIdToExpanded[m_mapPropertyToId[prop]] = m_pPropertyEditor->isExpanded(item);
     }
 }
 
-void TagFuncEditDialog::AddProperty(QtVariantProperty *property,
-                                    const QString &id) {
+void TagFuncEditDialog::AddProperty(QtVariantProperty *property, const QString &id)
+{
     m_mapPropertyToId[property] = id;
     m_mapIdToProperty[id] = property;
     QtBrowserItem *item = m_pPropertyEditor->addProperty(property);
@@ -564,11 +554,11 @@ void TagFuncEditDialog::AddProperty(QtVariantProperty *property,
 /*
 * 获取元素属性
 */
-void TagFuncEditDialog::GetElementProperty(PFuncObjectItem pFuncObj) {
+void TagFuncEditDialog::GetElementProperty(PFuncObjectItem pFuncObj)
+{
     UpdateExpandState();
 
-    QMap<QtProperty *, QString>::ConstIterator itProp =
-            m_mapPropertyToId.constBegin();
+    QMap<QtProperty *, QString>::ConstIterator itProp = m_mapPropertyToId.constBegin();
     while (itProp != m_mapPropertyToId.constEnd()) {
         delete itProp.key();
         itProp++;
@@ -590,13 +580,12 @@ void TagFuncEditDialog::GetElementProperty(PFuncObjectItem pFuncObj) {
     // qDebug() << m_pCurFuncObj->name << m_pCurFuncObj->argList.count() <<
     // m_pCurFuncObj->event;
     int argCount = m_pCurFuncObj->argList.count();
-    QtVariantProperty *argItem = NULL;
+    QtVariantProperty *argItem = Q_NULLPTR;
     QString argName = "";
     for (int i = 0; i < argCount; i++) {
         if (m_pCurFuncObj->argList.at(i).type == "V") {
             argName = QString("var%1").arg(i + 1);
-            argItem = m_pVariantManager->addProperty(
-                        QtVariantPropertyManager::enumTypeId(), argName);
+            argItem = m_pVariantManager->addProperty(QtVariantPropertyManager::enumTypeId(), argName);
             ProjectData::getInstance()->getAllTagName(m_varsList, "ALL");
             argItem->setAttribute(QLatin1String("enumNames"), m_varsList);
             if (m_varsList.indexOf(m_pCurFuncObj->argList.at(i).arg) != -1) {
@@ -630,7 +619,8 @@ void TagFuncEditDialog::GetElementProperty(PFuncObjectItem pFuncObj) {
 * 插槽：功能函数属性值改变
 */
 void TagFuncEditDialog::FuncPropertyValueChanged(QtProperty *property,
-                                                 const QVariant &value) {
+                                                 const QVariant &value)
+{
     if (!m_pCurFuncObj) return;
 
     if (!m_mapPropertyToId.contains(property)) return;
@@ -664,8 +654,10 @@ void TagFuncEditDialog::FuncPropertyValueChanged(QtProperty *property,
 /*
 * 功能事件被单击
 */
-void TagFuncEditDialog::FuncTableViewClicked(const QModelIndex &index) {
-    if (!index.isValid() || index.row() < 0) return;
+void TagFuncEditDialog::FuncTableViewClicked(const QModelIndex &index)
+{
+    if (!index.isValid() || index.row() < 0)
+        return;
     PFuncObjectItem pFuncObj = m_pfuncItemModel->GetRow(index.row());
     GetElementProperty(pFuncObj);
 }
@@ -673,7 +665,8 @@ void TagFuncEditDialog::FuncTableViewClicked(const QModelIndex &index) {
 /*
 * 功能函数被单击
 */
-void TagFuncEditDialog::on_treeViewFunc_clicked(const QModelIndex &index) {
+void TagFuncEditDialog::on_treeViewFunc_clicked(const QModelIndex &index)
+{
     QStandardItem *item = m_pTreeViewItemModel->itemFromIndex(index);
     foreach (TFuncObject *pFuncObj, m_supportFuncList) {
         if (pFuncObj->name.trimmed() == item->text()) {
@@ -687,8 +680,10 @@ void TagFuncEditDialog::on_treeViewFunc_clicked(const QModelIndex &index) {
 /*
 * 获取函数名和参数
 */
-bool TagFuncEditDialog::GetFuncNameArgs(QString funcString, QString &funcName,
-                                        QList<TArgItem> &argList) {
+bool TagFuncEditDialog::GetFuncNameArgs(QString funcString,
+                                        QString &funcName,
+                                        QList<TArgItem> &argList)
+{
     if (funcString == "") return false;
     funcName = funcString.left(funcString.indexOf("("));
     QString strArgs =
@@ -729,7 +724,8 @@ bool TagFuncEditDialog::GetFuncNameArgs(QString funcString, QString &funcName,
 */
 void TagFuncEditDialog::on_treeViewFunc_doubleClicked(const QModelIndex &index)
 {
-    if (!index.isValid() || index.row() < 0) return;
+    if (!index.isValid() || index.row() < 0)
+        return;
     QStandardItem *item = m_pTreeViewItemModel->itemFromIndex(index);
     if (m_groupFuncNameList.indexOf(item->text()) == -1) {
         PFuncObjectItem pfuncItem = new FuncObjectItem();

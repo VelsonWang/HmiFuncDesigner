@@ -353,6 +353,7 @@ void TagManagerWin::initialTableTagSys()
 
     ui->tableTagSys->setAlternatingRowColors(true);
     ui->tableTagSys->setFocusPolicy(Qt::NoFocus);
+    ui->tableTagSys->setWordWrap(false);
 
     QString styleSheet = "QTableWidget{background-color: rgb(242,242,242);"
                          "alternate-background-color: white;"
@@ -432,6 +433,7 @@ void TagManagerWin::initialTableTagTmp()
     ui->tableTagTmp->setColumnWidth(6, 100);
     ui->tableTagTmp->setColumnWidth(7, 200);
 
+    ui->tableTagTmp->setWordWrap(false);
     //ui->tableTagTmp->setAlternatingRowColors(true);
     //ui->tableTagTmp->setFocusPolicy(Qt::NoFocus);
 
@@ -945,6 +947,7 @@ void TagManagerWin::initialTableTagIO()
     ui->tableTagIO->setColumnWidth(13, 80);
     ui->tableTagIO->setColumnWidth(14, 200);
 
+    ui->tableTagIO->setWordWrap(false);
     //ui->tableTagIO->setAlternatingRowColors(true);
     //ui->tableTagIO->setFocusPolicy(Qt::NoFocus);
 
