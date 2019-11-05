@@ -47,7 +47,11 @@ dependencyList = $$join(dependencyList, ",$$escape_expand(\\n)")
 dependencyList = "\"Dependencies\" : [$$escape_expand(\\n)$$dependencyList$$escape_expand(\\n)    ]"
 
 
-DESTDIR = $$INSTALL_DRAWAPPLICATION_PLUGIN_PATH
+win32 {
+    DLLDESTDIR = $$INSTALL_DRAWAPPLICATION_PLUGIN_PATH
+}
+
+DESTDIR = $$LINK_DRAWAPPLICATION_PLUGIN_PATH
 
 LIBS += -L$$DESTDIR
 INCLUDEPATH += $$OUT_PWD
