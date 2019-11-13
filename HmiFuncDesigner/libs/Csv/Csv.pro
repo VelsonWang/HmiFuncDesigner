@@ -32,11 +32,4 @@ HEADERS += \
     contentiterator.h \
     symbols.h
 
-unix {
-    # settings for command "make install"
-#    libheaders.path = /usr/local/include/qtcsv/
-#    libheaders.files = $$PWD/include/*.h
 
-#    target.path = /usr/local/lib
-#    INSTALLS += target libheaders
-}

@@ -2,9 +2,6 @@
 #message("variable _PRO_FILE_ is: $$_PRO_FILE_")
 #message("variable _PRO_FILE_PWD_ is:$$_PRO_FILE_PWD_")
 
-#target.path = $$INSTALL_LIBRARY_PATH
-#INSTALLS += target
-
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
 include(HmiFuncDesigner.pri)

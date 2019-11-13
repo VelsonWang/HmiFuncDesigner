@@ -1,22 +1,10 @@
 
 include(../../DrawApplicationPlugin.pri)
 
-CONFIG(debug, debug|release) { #debug
-    win32 {
-        LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowserd
-        LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
-    }
-    unix {
-        LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
-        LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
-    }
-} else { # release
-    LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
-    LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
-    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
-}
+LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
+
 
 SOURCES += EArrowPlugin.cpp \
     ../../Public/Element.cpp \

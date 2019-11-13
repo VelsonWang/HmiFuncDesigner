@@ -58,26 +58,17 @@ INCLUDEPATH += \
     $$LIBRARY_SRC_PATH/libs/Utils \
     $$LIBRARY_SRC_PATH/libs/ProjectDataUtils
 
+LIB_SUFFIX=""
 CONFIG(debug, debug|release) { #debug
     win32 {
-        LIBS += -L$$LINK_LIBRARY_PATH -ledncryptd
-        LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
-        LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
-    }
-    unix {
-        LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
-        LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
-        LIBS += -L$$LINK_LIBRARY_PATH -lUtils
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
+        LIB_SUFFIX=d
     }
 }
-else { # release
-    LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt
-    LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
-    LIBS += -L$$LINK_LIBRARY_PATH -lUtils
-    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
-}
+
+LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
 win32 {
     LIBS += -lpthread -lwsock32 -lws2_32

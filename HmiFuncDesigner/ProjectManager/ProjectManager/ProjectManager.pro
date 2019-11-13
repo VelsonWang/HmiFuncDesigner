@@ -24,33 +24,20 @@ include($$PWD/../DrawApplication/DrawApplication.pri)
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
-
+LIB_SUFFIX=""
 CONFIG(debug, debug|release) { #debug
     win32 {
-        LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtilsd
-        LIBS += -L$$LINK_LIBRARY_PATH -lCsvd
-        LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}d
-        LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowserd
-        LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
-    }
-    unix {
-        LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
-        LIBS += -L$$LINK_LIBRARY_PATH -lCsv
-        LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
-        LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
-        LIBS += -L$$LINK_LIBRARY_PATH -lUtils
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
+        LIB_SUFFIX=d
     }
 }
-else { # release
-    LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils
-    LIBS += -L$$LINK_LIBRARY_PATH -lCsv
-    LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}
-    LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser
-    LIBS += -L$$LINK_LIBRARY_PATH -lUtils
-    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
-}
+
+LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
+
 
 SOURCES += main.cpp\
         MainWindow.cpp \

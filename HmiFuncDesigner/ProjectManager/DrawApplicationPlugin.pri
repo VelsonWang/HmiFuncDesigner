@@ -56,6 +56,13 @@ DESTDIR = $$LINK_DRAWAPPLICATION_PLUGIN_PATH
 LIBS += -L$$DESTDIR
 INCLUDEPATH += $$OUT_PWD
 
+LIB_SUFFIX=""
+CONFIG(debug, debug|release) { #debug
+    win32 {
+        LIB_SUFFIX=d
+    }
+}
+
 # copy the plugin spec
 isEmpty(TARGET) {
     error("qtcreatorplugin.pri: You must provide a TARGET")

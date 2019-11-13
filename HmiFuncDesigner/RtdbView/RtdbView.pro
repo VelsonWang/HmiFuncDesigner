@@ -20,20 +20,16 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+LIB_SUFFIX=""
 CONFIG(debug, debug|release) { #debug
     win32 {
-        LIBS += -L$$LINK_LIBRARY_PATH -lUtilsd
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtilsd
-    }
-    unix {
-        LIBS += -L$$LINK_LIBRARY_PATH -lUtils
-        LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
+        LIB_SUFFIX=d
     }
 }
-else { # release
-    LIBS += -L$$LINK_LIBRARY_PATH -lUtils
-    LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils
-}
+
+LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
+
 
 SOURCES += main.cpp\
         MainWindow.cpp \
