@@ -116,6 +116,7 @@ void ElementSwitchButton::createPropertyList()
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
     ProjectData::getInstance()->getAllTagName(tagNames_);
+    if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
 

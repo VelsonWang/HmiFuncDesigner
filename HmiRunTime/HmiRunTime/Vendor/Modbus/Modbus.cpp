@@ -190,11 +190,9 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
             pIOTag->setBlockReadTagId("block");
             pIOTag->setReadBlockReadTagSuccess(false);
             pIOTag->setBlockReadTag(Q_NULLPTR);
-            int iLen = 0;
-            if(iMax < CM0X_MAX) {
-                iLen = iMax;
-            } else {
-                iLen = iMax % CM0X_MAX;
+            int iLen = iMax - iMin + 1;
+            if(iMax > CM0X_MAX) {
+                iLen = (iMax - iMin + 1) % CM0X_MAX;
             }
             int bufLen = iLen / 8;
             if(iLen % 8) bufLen++;
@@ -205,7 +203,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
                 IOTag* pChangeTag = vecCm0x.at(i);
                 int iChangeTagAddr = pChangeTag->GetRegisterAddress() + pChangeTag->GetOffset();
                 int iChangeTagLen = pChangeTag->GetDataTypeLength();
-                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+1)) {
+                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+2)) {
                     pChangeTag->setBlockReadTagId(szTagId);
                     pChangeTag->setReadBlockReadTagSuccess(false);
                     pChangeTag->setBlockReadTag(pIOTag);
@@ -248,11 +246,9 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
             pIOTag->setBlockReadTagId("block");
             pIOTag->setReadBlockReadTagSuccess(false);
             pIOTag->setBlockReadTag(Q_NULLPTR);
-            int iLen = 0;
-            if(iMax < CM1X_MAX) {
-                iLen = iMax;
-            } else {
-                iLen = iMax % CM1X_MAX;
+            int iLen = iMax - iMin + 1;
+            if(iMax > CM1X_MAX) {
+                iLen = (iMax - iMin + 1) % CM1X_MAX;
             }
             int bufLen = iLen / 8;
             if(iLen % 8) bufLen++;
@@ -263,7 +259,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
                 IOTag* pChangeTag = vecCm1x.at(i);
                 int iChangeTagAddr = pChangeTag->GetRegisterAddress() + pChangeTag->GetOffset();
                 int iChangeTagLen = pChangeTag->GetDataTypeLength();
-                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+1)) {
+                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+2)) {
                     pChangeTag->setBlockReadTagId(szTagId);
                     pChangeTag->setReadBlockReadTagSuccess(false);
                     pChangeTag->setBlockReadTag(pIOTag);
@@ -306,11 +302,9 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
             pIOTag->setBlockReadTagId("block");
             pIOTag->setReadBlockReadTagSuccess(false);
             pIOTag->setBlockReadTag(Q_NULLPTR);
-            int iLen = 0;
-            if(iMax < CM3X_MAX) {
-                iLen = iMax;
-            } else {
-                iLen = iMax % CM3X_MAX;
+            int iLen = iMax - iMin + 1;
+            if(iMax > CM3X_MAX) {
+                iLen = (iMax - iMin + 1) % CM3X_MAX;
             }
             int bufLen = (iLen + 1) * 2;
             pIOTag->SetTagBufferLength(bufLen);
@@ -320,7 +314,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
                 IOTag* pChangeTag = vecCm3x.at(i);
                 int iChangeTagAddr = pChangeTag->GetRegisterAddress() + pChangeTag->GetOffset();
                 int iChangeTagLen = pChangeTag->GetDataTypeLength();
-                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+2)) {
+                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+4)) {
                     pChangeTag->setBlockReadTagId(szTagId);
                     pChangeTag->setReadBlockReadTagSuccess(false);
                     pChangeTag->setBlockReadTag(pIOTag);
@@ -363,11 +357,9 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
             pIOTag->setBlockReadTagId("block");
             pIOTag->setReadBlockReadTagSuccess(false);
             pIOTag->setBlockReadTag(Q_NULLPTR);
-            int iLen = 0;
-            if(iMax < CM4X_MAX) {
-                iLen = iMax;
-            } else {
-                iLen = iMax % CM4X_MAX;
+            int iLen = iMax - iMin + 1;
+            if(iMax > CM4X_MAX) {
+                iLen = (iMax - iMin + 1) % CM4X_MAX;
             }
             int bufLen = (iLen + 1) * 2;
             pIOTag->SetTagBufferLength(bufLen);
@@ -377,7 +369,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
                 IOTag* pChangeTag = vecCm4x.at(i);
                 int iChangeTagAddr = pChangeTag->GetRegisterAddress() + pChangeTag->GetOffset();
                 int iChangeTagLen = pChangeTag->GetDataTypeLength();
-                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+2)) {
+                if(iChangeTagAddr >= iStartAddr && (iChangeTagAddr+iChangeTagLen) <= (iStartAddr+iLen+4)) {
                     pChangeTag->setBlockReadTagId(szTagId);
                     pChangeTag->setReadBlockReadTagSuccess(false);
                     pChangeTag->setBlockReadTag(pIOTag);
@@ -388,8 +380,8 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
 
     /*
     qDebug() << "------------------------------------";
-    for (int i = 0; i < mReadList.size(); ++i) {
-        IOTag* pTag = mReadList.at(i);
+    for (int i = 0; i < listRead.size(); ++i) {
+        IOTag* pTag = listRead.at(i);
         qDebug() << pTag->GetTagID()
                  << pTag->getBlockReadTagId()
                  << pTag->GetRegisterArea()

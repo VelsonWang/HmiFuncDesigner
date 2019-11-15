@@ -1,7 +1,7 @@
 TEMPLATE=lib
 CONFIG += qt dll qtpropertybrowser-buildlib
 mac:CONFIG += absolute_library_soname
-win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release build_all
+#win32|mac:!wince*:!win32-msvc:!macx-xcode:CONFIG += debug_and_release build_all
 include(../src/qtpropertybrowser.pri)
 TARGET = $$QTPROPERTYBROWSER_LIBNAME
 DESTDIR = $$QTPROPERTYBROWSER_LIBDIR
@@ -9,8 +9,8 @@ DESTDIR = $$QTPROPERTYBROWSER_LIBDIR
 INSTALL_LIBRARY_PATH = $$OUT_PWD/../../../../HmiFuncDesignerBin/bin
 
 win32 {
-    DLLDESTDIR = $$IDE_APP_PATH
-    QMAKE_DISTCLEAN += $$IDE_APP_PATH/$${QTPROPERTYBROWSER_LIBNAME}.dll
+    DLLDESTDIR = $$INSTALL_LIBRARY_PATH
+    QMAKE_DISTCLEAN += $$INSTALL_LIBRARY_PATH/$${QTPROPERTYBROWSER_LIBNAME}.dll
 }
 #target.path = $$DESTDIR
 target.path = $$INSTALL_LIBRARY_PATH
