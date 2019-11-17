@@ -79,7 +79,7 @@ void ElementIndicationLamp::paint(QPainter *painter)
             painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
             painter->drawImage(elementRect, scaleImage);
         }
-    }else{
+    } else {
         painter->save();
         qreal fHalfWidth = elementRect.width()/2;
         qreal fHalfHeight = elementRect.height()/2;
@@ -87,12 +87,12 @@ void ElementIndicationLamp::paint(QPainter *painter)
         QRadialGradient radialGradient(fHalfWidth, fHalfHeight, fRadius, fHalfWidth, fHalfHeight);
         // 创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,
         // 如果需要对称那么中心坐标和焦点坐标要一致
-        if(stateOnInitial_){
+        if(bVal) {
             radialGradient.setColorAt(0, Qt::yellow);
             radialGradient.setColorAt(0.8, Qt::blue); // 设置50%处的半径为蓝色
-        }else{
+        } else {
             radialGradient.setColorAt(0, Qt::black);
-            radialGradient.setColorAt(0.8, Qt::white); // 设置50%处的半径为蓝色
+            radialGradient.setColorAt(0.8, Qt::white); // 设置50%处的半径为白色
         }
 
         radialGradient.setColorAt(1, Qt::darkGray);

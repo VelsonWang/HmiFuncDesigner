@@ -111,7 +111,7 @@ int ComPort::read(unsigned char *buf, int len, int ms)
         if((time.elapsed() - start) > ms) {
             if(len > buf_.size()) len = buf_.size();
         } else {
-            QThread::msleep(1);
+            QThread::msleep(20);
         }
     }
 
