@@ -156,7 +156,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
         }
     }
 
-    if(vecCm0x.size() > 0) {
+    if(vecCm0x.size() > 1) {
         int iMin = CM0X_MAX;
         int iMax = 0;
         for (int i = 0; i < vecCm0x.size(); ++i) {
@@ -212,7 +212,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
         }
     }
 
-    if(vecCm1x.size() > 0) {
+    if(vecCm1x.size() > 1) {
         int iMin = CM1X_MAX;
         int iMax = 0;
         for (int i = 0; i < vecCm1x.size(); ++i) {
@@ -268,7 +268,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
         }
     }
 
-    if(vecCm3x.size() > 0) {
+    if(vecCm3x.size() > 1) {
         int iMin = CM3X_MAX;
         int iMax = 0;
         for (int i = 0; i < vecCm3x.size(); ++i) {
@@ -323,7 +323,7 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
         }
     }
 
-    if(vecCm4x.size() > 0) {
+    if(vecCm4x.size() > 1) {
         int iMin = CM4X_MAX;
         int iMax = 0;
         for (int i = 0; i < vecCm4x.size(); ++i) {

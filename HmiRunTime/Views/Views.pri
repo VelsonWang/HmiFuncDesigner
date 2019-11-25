@@ -25,7 +25,8 @@ INCLUDEPATH += \
     $$PWD/Elements/EMovingText \
     $$PWD/Elements/ETagTextList \
     $$PWD/Elements/EValueStick \
-    $$PWD/Elements/EJarShape
+    $$PWD/Elements/EJarShape \
+    $$PWD/Elements/EComboBox
 
 SOURCES += \
     $$PWD/GraphPage.cpp \
@@ -68,7 +69,9 @@ SOURCES += \
     $$PWD/Elements/EValueStick/ElementValueStick.cpp \
     $$PWD/Elements/EValueStick/EValueStick.cpp \
     $$PWD/Elements/EJarShape/ElementJarShape.cpp \
-    $$PWD/Elements/EJarShape/EJarShape.cpp
+    $$PWD/Elements/EJarShape/EJarShape.cpp \
+    $$PWD/Elements/EComboBox/ElementComboBox.cpp \
+    $$PWD/Elements/EComboBox/EComboBox.cpp
 
 HEADERS += \
     $$PWD/GraphPage.h \
@@ -114,7 +117,9 @@ HEADERS += \
     $$PWD/Elements/EValueStick/ElementValueStick.h \
     $$PWD/Elements/EValueStick/EValueStick.h \
     $$PWD/Elements/EJarShape/ElementJarShape.h \
-    $$PWD/Elements/EJarShape/EJarShape.h
+    $$PWD/Elements/EJarShape/EJarShape.h \
+    $$PWD/Elements/EComboBox/ElementComboBox.h \
+    $$PWD/Elements/EComboBox/EComboBox.h
 
 FORMS += \
     $$PWD/SoftKeyboard/InputMethodAlphabet.ui \

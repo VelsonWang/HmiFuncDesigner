@@ -17,5 +17,6 @@ SUBDIRS += \
     EMovingText \
     ETagTextList \
     EValueStick \
-    EJarShape
+    EJarShape \
+    EComboBox
 

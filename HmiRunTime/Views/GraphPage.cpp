@@ -23,6 +23,7 @@
 #include "ETagTextList/ETagTextList.h"
 #include "EValueStick/EValueStick.h"
 #include "EJarShape/EJarShape.h"
+#include "EComboBox/EComboBox.h"
 
 
 template<template<typename T> class S, typename T>
@@ -84,6 +85,7 @@ void registerCreateObjectFunc()
     REGISTER_CREATEOR(QObject::tr("变量文本列表"), TagTextListItemType, "TagTextList", ETagTextList);
     REGISTER_CREATEOR(QObject::tr("数值棒图"), ValueStickItemType, "ValueStick", EValueStick);
     REGISTER_CREATEOR(QObject::tr("罐形容器"), JarShapeItemType, "JarShape", EJarShape);
+    REGISTER_CREATEOR(QObject::tr("下拉菜单列表"), ComboBoxItemType, "ComboBox", EComboBox);
 }
 
 GraphPage::GraphPage(const QRectF &rect, QWidget *parent)

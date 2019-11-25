@@ -579,6 +579,7 @@ void TagManagerWin::saveTableTagTmp()
     foreach(QString szTagId, m_listTagTmpDeleteRows) {
         tagTmp.del(ProjectData::getInstance()->dbData_, szTagId);
     }
+    m_listTagTmpDeleteRows.clear();
 }
 
 /**
@@ -1369,6 +1370,7 @@ void TagManagerWin::saveTableTagIO()
     foreach(QString szTagId, m_listTagIODeleteRows) {
         tagIO.del(ProjectData::getInstance()->dbData_, szTagId);
     }
+    m_listTagIODeleteRows.clear();
 }
 
 
