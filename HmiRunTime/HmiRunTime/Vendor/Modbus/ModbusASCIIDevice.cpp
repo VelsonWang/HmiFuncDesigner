@@ -226,6 +226,9 @@ bool ModbusASCIIDevice::ReadIOTag(IOTag* pTag)
                     if(modbusAscii_.readData(pTag) != 1)
                         return false;
                 }
+            } else {
+                if(modbusAscii_.readData(pTag) != 1)
+                    return false;
             }
             if(pDBTagObject != Q_NULLPTR)
                 pDBTagObject->SetData(pTag->pReadBuf);

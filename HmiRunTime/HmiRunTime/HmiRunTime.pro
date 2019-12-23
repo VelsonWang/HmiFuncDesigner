@@ -77,6 +77,7 @@ win32 {
 }
 
 SOURCES += \
+    DB/ShareMemory.c \
     MessageTransfer.cpp \
     SerialPortReMapping.cpp \
     Vendor/SIEMENS_S7_200/S7_200.cpp \
@@ -112,6 +113,7 @@ SOURCES += \
 
 
 HEADERS  += \
+    DB/ShareMemory.h \
     MessageTransfer.h \
     SerialPortReMapping.h \
     Vendor/SIEMENS_S7_200/S7_200.h \

@@ -227,6 +227,9 @@ bool ModbusRTUDevice::ReadIOTag(IOTag* pTag)
                     if(modbusRTU_.readData(pTag) != 1)
                         return false;
                 }
+            } else {
+                if(modbusRTU_.readData(pTag) != 1)
+                    return false;
             }
             if(pDBTagObject != Q_NULLPTR)
                 pDBTagObject->SetData(pTag->pReadBuf);

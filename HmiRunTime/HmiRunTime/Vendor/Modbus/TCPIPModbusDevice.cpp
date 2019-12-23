@@ -233,6 +233,9 @@ bool TCPIPModbusDevice::ReadIOTag(IOTag* pTag)
                     if(TCPIPModbus_.readData(pTag) != 1)
                         return false;
                 }
+            } else {
+                if(TCPIPModbus_.readData(pTag) != 1)
+                    return false;
             }
             if(pDBTagObject != Q_NULLPTR)
                 pDBTagObject->SetData(pTag->pReadBuf);
