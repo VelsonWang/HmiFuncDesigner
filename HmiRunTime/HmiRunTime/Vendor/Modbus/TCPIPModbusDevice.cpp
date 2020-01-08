@@ -163,8 +163,9 @@ bool TCPIPModbusDevice::WriteIOTags()
         if(!mbIsRunning)
             return false;
 
-        IOTag* pTag = mWriteQueue.dequeue();
+        IOTag* pTag = mWriteQueue.head();
         WriteIOTag(pTag);
+		mWriteQueue.dequeue();
     }
     return true;
 }

@@ -63,7 +63,7 @@ quint16 TCPIPModbus::makeMessagePackage(quint8 *pSendData,
     if(RW_flag == FLAG_READ)
     {
         //计算返回报文长度
-        tmpLen = pTag->GetDataTypeLength() + 3; // 3 = 一个设备地址 + 一个功能码 + 一个计数
+		tmpLen = tmpUnit * 2 + 3; // 3 = 一个设备地址 + 一个功能码 + 一个计数
         tempBuffer_[mesPi++] = tmpUnit >> 8;
         tempBuffer_[mesPi++] = tmpUnit;
     }
