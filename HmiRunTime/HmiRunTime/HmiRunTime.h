@@ -12,7 +12,7 @@
 #include <QScriptEngine>
 #include <QScriptValue>
 #include <QMutex>
-#include "IVendor.h"
+#include "Vendor.h"
 #include "RealTimeDB.h"
 #include "PortThread.h"
 #include "RunScript.h"
@@ -28,7 +28,7 @@ public:
     void Start();
     void Stop();
     void AddPortName(const QString name);
-    IVendor *FindVendor(const QString name);
+    Vendor *FindVendor(const QString name);
     QJsonObject LoadJsonObjectFromFile(SaveFormat saveFormat, QString f);
     // 发送消息到消息服务
     static void doMessage(QString msg);
@@ -56,7 +56,7 @@ private:
 private:
     static QString m_sProjectPath;
     QStringList m_listPortName;
-    QList<IVendor *> m_VendorList;
+    QList<Vendor *> m_VendorList;
     QList<PortThread *> m_listPortThread;
     static RunScript *m_pRunScript;
 };

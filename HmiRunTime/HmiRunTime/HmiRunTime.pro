@@ -34,22 +34,20 @@ include(../HttpServer/HttpServer.pri)
 include(../Views/Views.pri)
 #include(../SOAP/server/SOAPServer.pri)
 
-INCLUDEPATH += $$_PRO_FILE_PWD_ \
-               Vendor \
-               Port \
-               qextserial \
-               Public \
-               DB \
-               Tag \
-               Vendor \
-               Vendor/Modbus \
-               Vendor/Mitsubishi \
-               Vendor/SIEMENS_S7_200 \
-               Event \
-               Script \
-               Log \
-               Socket \
-               Service
+INCLUDEPATH += \
+    $$_PRO_FILE_PWD_ \
+    Vendor \
+    Port \
+    qextserial \
+    Public \
+    DB \
+    Tag \
+    Event \
+    Script \
+    Log \
+    Socket \
+    Service \
+    ../Vendors/IVendorPlugin
 
 LIBRARY_SRC_PATH = $$_PRO_FILE_PWD_/../../HmiFuncDesigner
 INCLUDEPATH += \
@@ -77,47 +75,46 @@ win32 {
 }
 
 SOURCES += \
+    main.cpp \
+    tcpserver.cpp \
+    tcpsocket.cpp \
+    threadhandle.cpp \
+    Port/ComPort.cpp \
     DB/ShareMemory.c \
     MessageTransfer.cpp \
     SerialPortReMapping.cpp \
-    Vendor/SIEMENS_S7_200/S7_200.cpp \
-    Vendor/SIEMENS_S7_200/S7_200Device.cpp \
+    Vendor.cpp \
+    VendorPluginManager.cpp \
     qextserial/qextserialport.cpp \
     DB/DBTagObject.cpp \
     DB/RealTimeDB.cpp \
     Tag/Tag.cpp \
     HmiRunTime.cpp \
-    Vendor/Modbus/ModbusRTU.cpp \
-    Vendor/IOTag.cpp \
-    Vendor/Modbus/ModbusRTUDevice.cpp \
-    Vendor/VendorPrivate.cpp \
+    Tag/IOTag.cpp \
     TimerTask.cpp \
     PortThread.cpp \
-    Vendor/Modbus/ModbusASCII.cpp \
-    Vendor/Modbus/ModbusASCIIDevice.cpp \
-    Vendor/Modbus/TCPIPModbus.cpp \
-    Vendor/Modbus/TCPIPModbusDevice.cpp \
     Port/NetPort.cpp \
     Tag/Function.cpp \
     Event/Event.cpp \
     Script/JavaScript.cpp \
     Script/RunScript.cpp \
     SysRuntimeEvent.cpp \
-    Vendor/DataPack.cpp \
-    Vendor/Modbus/Modbus.cpp \
     Log/Log.cpp \
     MessageQueue/MessageQueue.cpp \
-    Public/Global.cpp \
-    Vendor/Mitsubishi/MitsubishiDevice.cpp \
-    Vendor/Mitsubishi/Mitsubishi.cpp
+    Public/Global.cpp
 
 
 HEADERS  += \
+    tcpserver.h \
+    tcpsocket.h \
+    threadhandle.h \
+    IVendor.h \
+    Port/ComPort.h \
+    Port/IPort.h \
     DB/ShareMemory.h \
     MessageTransfer.h \
     SerialPortReMapping.h \
-    Vendor/SIEMENS_S7_200/S7_200.h \
-    Vendor/SIEMENS_S7_200/S7_200Device.h \
+    VendorPluginManager.h \
     qextserial/qextserialport_global.h \
     qextserial/qextserialport.h \
     DB/DBTagObject.h \
@@ -125,17 +122,10 @@ HEADERS  += \
     Tag/Tag.h \
     Public/public.h \
     HmiRunTime.h \
-    Vendor/Modbus/ModbusRTU.h \
-    Vendor/IOTag.h \
-    Vendor/Modbus/ModbusRTUDevice.h \
-    Vendor/VendorPrivate.h \
+    Tag/IOTag.h \
     TimerTask.h \
     PortThread.h \
-    Vendor/Modbus/ModbusASCII.h \
-    Vendor/Modbus/ModbusASCIIDevice.h \
     Public/PublicFunction.h \
-    Vendor/Modbus/TCPIPModbus.h \
-    Vendor/Modbus/TCPIPModbusDevice.h \
     Port/NetPort.h \
     Event/Event.h \
     Tag/Function.h \
@@ -144,14 +134,10 @@ HEADERS  += \
     FileTansfer.h \
     SysRuntimeEvent.h \
     Singleton.h \
-    Vendor/DataPack.h \
-    Vendor/Modbus/Modbus.h \
     Log/Log.h \
     VersionInfo.h \
     MessageQueue/MessageQueue.h \
     Public/Global.h \
-    Vendor/Mitsubishi/MitsubishiDevice.h \
-    Vendor/Mitsubishi/Mitsubishi.h \
     Socket/xsocket.hpp
 
 win32 {
@@ -162,22 +148,6 @@ unix {
      SOURCES += qextserial/qextserialport_unix.cpp
 }
 
-SOURCES += $$PWD/main.cpp\
-    $$PWD/tcpserver.cpp \
-    $$PWD/tcpsocket.cpp \
-    $$PWD/threadhandle.cpp \
-    $$PWD/Port/ComPort.cpp \
-
-
-HEADERS  += \
-    $$PWD/tcpserver.h \
-    $$PWD/tcpsocket.h \
-    $$PWD/threadhandle.h \
-    $$PWD/Vendor/IVendor.h \
-    $$PWD/Port/ComPort.h \
-    $$PWD/Port/IPort.h
-
-FORMS +=
 
 DISTFILES += \
     setting.ini

@@ -6,7 +6,7 @@
 #include <QList>
 #include <QThread>
 #include <QSemaphore>
-#include "IVendor.h"
+#include "Vendor.h"
 
 class PortThread : public QThread
 {
@@ -14,7 +14,7 @@ class PortThread : public QThread
 public:
     PortThread(QString name);
     ~PortThread();
-    void AddVendor(IVendor *pVendor);
+    void AddVendor(Vendor *pVendor);
     // 是否运行
     bool IsRunning();
     // 启动
@@ -27,7 +27,7 @@ protected:
 
 private:
     bool mbIsRunning;
-    QList<IVendor *> m_VendorList;
+    QList<Vendor *> m_VendorList;
     QString m_name;
 };
 

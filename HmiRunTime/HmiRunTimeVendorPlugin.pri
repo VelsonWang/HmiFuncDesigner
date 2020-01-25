@@ -15,20 +15,7 @@ plugin_deps = $$QTC_PLUGIN_DEPENDS
 plugin_test_deps = $$QTC_TEST_DEPENDS
 plugin_recmds = $$QTC_PLUGIN_RECOMMENDS
 
-#include(QStudioSCADA.pri)
-
-defineReplace(qtLibraryName) {
-   unset(LIBRARY_NAME)
-   LIBRARY_NAME = $$1
-   CONFIG(debug, debug|release) {
-      !debug_and_release|build_pass {
-          mac:RET = $$member(LIBRARY_NAME, 0)_debug
-              else:win32:RET = $$member(LIBRARY_NAME, 0)d
-      }
-   }
-   isEmpty(RET):RET = $$LIBRARY_NAME
-   return($$RET)
-}
+include(HmiRunTime.pri)
 
 defineReplace(dependencyName) {
     dependencies_file =
@@ -60,7 +47,11 @@ dependencyList = $$join(dependencyList, ",$$escape_expand(\\n)")
 dependencyList = "\"Dependencies\" : [$$escape_expand(\\n)$$dependencyList$$escape_expand(\\n)    ]"
 
 
-DESTDIR = $$_PRO_FILE_PWD_/../../../RuntimeBin/Vendor
+DESTDIR = $$LINK_PLUGIN_PATH
+
+win32 {
+    DLLDESTDIR = $$INSTALL_DEVICE_PLUGIN_PATH
+}
 
 LIBS += -L$$DESTDIR
 INCLUDEPATH += $$OUT_PWD

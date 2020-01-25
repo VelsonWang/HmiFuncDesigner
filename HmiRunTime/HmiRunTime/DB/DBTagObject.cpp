@@ -1,7 +1,6 @@
 #include "DBTagObject.h"
 #include "HmiRunTime.h"
 
-
 DBTagObject::DBTagObject()
 {
     mId = "";
@@ -44,7 +43,7 @@ void DBTagObject::SetData(QVariant v, bool bReadFromDevice)
     }
     mData = v;
     if(!bReadFromDevice)
-    {       
+    {
         mDataWrite = v;
     }
     else
@@ -448,6 +447,7 @@ QByteArray DBTagObject::GetWriteDataBytes()
             dat = mDataWrite.toByteArray();
         }break;
     }
+
     return dat;
 }
 

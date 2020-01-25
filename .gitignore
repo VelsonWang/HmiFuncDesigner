@@ -43,6 +43,7 @@ HmiRunTimeBin/platforms/
 HmiRunTimeBin/styles/
 HmiRunTimeBin/translations/
 HmiRunTimeBin/sqldrivers/
+HmiRunTimeBin/Vendors/
 HmiRunTimeBin/*.exe
 HmiRunTimeBin/*.dll
 

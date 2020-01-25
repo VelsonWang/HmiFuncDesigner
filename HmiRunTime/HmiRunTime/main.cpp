@@ -10,6 +10,7 @@
 #include "edncrypt.h"
 #include "MainWindow.h"
 #include "MemoryMessageService.h"
+#include "VendorPluginManager.h"
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
@@ -161,6 +162,9 @@ int main(int argc, char *argv[])
 #endif
 
     delete pTimerTask;
+
+    // 释放插件对象
+    VendorPluginManager::getInstance()->releasePlugin();
 
     return ret;
 }

@@ -4,11 +4,11 @@
 #include <QObject>
 #include <QVariant>
 #include "public.h"
-#include "IVendor.h"
+#include "Vendor.h"
 #include "../Event/Event.h"
 #include "../Tag/Tag.h"
 
-class IVendor;
+class Vendor;
 
 struct DBTagObjectPrivate
 {
@@ -45,7 +45,7 @@ public:
     TPermissionType mPermission; // 读写权限
     qint32 mLength; // 长度
     TDBTagObjectPrivate mPrivate; // 存放标签属性对象
-    IVendor *pVendor;
+    Vendor *pVendor;
 
 private:
     QVariant mData; // 变量数据(read from device)

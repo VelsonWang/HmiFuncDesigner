@@ -1,10 +1,5 @@
 ﻿#include "HmiRunTime.h"
 #include "public.h"
-#include "ModbusRTUDevice.h"
-#include "ModbusASCIIDevice.h"
-#include "TCPIPModbusDevice.h"
-#include "MitsubishiDevice.h"
-#include "S7_200Device.h"
 #include "DBTagObject.h"
 #include "RealTimeDB.h"
 #include "Tag.h"
@@ -15,6 +10,9 @@
 #include "MainWindow.h"
 #include "ProjectInfoManager.h"
 #include "ProjectData.h"
+#include "VendorPluginManager.h"
+#include "ComPort.h"
+#include "NetPort.h"
 #include <QTextStream>
 #include <QTextCodec>
 #include <QMutexLocker>
@@ -85,35 +83,55 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
         QString sPortType = pObj->szDeviceType_;
         QString sDeviceName = pObj->szDeviceName_;
 
-        qDebug()<< "Protocol is" <<sProtocol.toUpper();
-        if(sProtocol.toUpper() == QString("MODBUSRTU")) {
-            ModbusRTUDevice *pMbRTUDevice = new ModbusRTUDevice();
-            pMbRTUDevice->LoadData(sDeviceName);
-            m_VendorList.append(pMbRTUDevice);
-        } else if(sProtocol.toUpper() == QString("MODBUSASCII")) {
-            ModbusASCIIDevice *pMbAsciiDevice = new ModbusASCIIDevice();
-            pMbAsciiDevice->LoadData(sDeviceName);
-            m_VendorList.append(pMbAsciiDevice);
-        } else if(sProtocol.toUpper() == QString("TCPIPMODBUS")) {
-            TCPIPModbusDevice *pMbTcpipDevice = new TCPIPModbusDevice();
-            pMbTcpipDevice->LoadData(sDeviceName);
-            m_VendorList.append(pMbTcpipDevice);
-        } else if(sProtocol.toUpper() == QString("FXPROTOCOL")) {
-            MitsubishiDevice *pMitsubishiDevice = new MitsubishiDevice();
-            pMitsubishiDevice->LoadData(sDeviceName);
-            m_VendorList.append(pMitsubishiDevice);
-        } else if(sProtocol.toUpper() == QString("S7_200")) {
-            S7_200Device *pS7_200Device = new S7_200Device();
-            pS7_200Device->LoadData(sDeviceName);
-            m_VendorList.append(pS7_200Device);
+        qDebug()<< "Protocol: " <<sProtocol
+                << " PortType:" << sPortType
+                << " DeviceName:" << sDeviceName;
+
+        Vendor *pVendorObj = new Vendor();
+        IVendorPlugin *pVendorPluginObj = VendorPluginManager::getInstance()->getPlugin(sProtocol);
+        if(pVendorPluginObj != Q_NULLPTR) {
+            pVendorObj->m_pVendorPluginObj = pVendorPluginObj;
+        }
+        m_VendorList.append(pVendorObj);
+
+        if(sPortType == "COM") {
+            ComPort* pComPortObj = new ComPort();
+            pVendorObj->m_pPortObj = pComPortObj;
+            ComDevicePrivate *pComDevicePrivateObj = new ComDevicePrivate();
+            if (pComDevicePrivateObj->LoadData(sDeviceName)) {
+                QStringList comArgs;
+                comArgs << QString().number(pComDevicePrivateObj->m_iBaudrate);
+                comArgs << QString().number(pComDevicePrivateObj->m_iDatabit);
+                comArgs << pComDevicePrivateObj->m_sVerifybit;
+                comArgs << QString().number(pComDevicePrivateObj->m_fStopbit);
+
+                if(!pComPortObj->open(pComDevicePrivateObj->m_sPortNumber, comArgs)) {
+                    LogError("ComPort open fail!");
+                }
+            }
+            pVendorObj->m_pVendorPrivateObj = pComDevicePrivateObj;
+        } else if(sPortType == "NET") {
+            NetPort* pNetPortObj = new NetPort();
+            pVendorObj->m_pPortObj = pNetPortObj;
+            NetDevicePrivate* pNetDevicePrivateObj = new NetDevicePrivate();
+            if (pNetDevicePrivateObj->LoadData(sDeviceName)) {
+                QStringList netArgs;
+                netArgs << pNetDevicePrivateObj->m_sIpAddress;
+                netArgs << QString().number(pNetDevicePrivateObj->m_iPort);
+
+                if(!pNetPortObj->open("Net", netArgs)) {
+                    Log4Qt::Logger::logger("Run_Logger")->error("NetPort open fail!");
+                    LogError("NetPort open fail!");
+                }
+            }
         }
     }
 
     /////////////////////////////////////////////
 
     // 查找已使用的端口名称并添加至列表
-    foreach (IVendor *pVendor, m_VendorList) {
-        AddPortName(pVendor->GetPortName());
+    foreach (Vendor *pVendor, m_VendorList) {
+        AddPortName(pVendor->getPortName());
     }
 
     /////////////////////////////////////////////
@@ -307,9 +325,9 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
             pIOTag->SetTagBufferLength(bufLen);
             pIOTag->SetDBTagObject(pDBIoTagObject);
 
-            IVendor *pVendor = FindVendor(pIoDataTag->mDeviceName);
+            Vendor *pVendor = FindVendor(pIoDataTag->mDeviceName);
             if(pVendor != Q_NULLPTR) {
-                pVendor->AddIOTagToDeviceTagList(pIOTag);
+                pVendor->addIOTagToDeviceTagList(pIOTag);
                 pDBIoTagObject->pVendor = pVendor;
             }
 
@@ -351,13 +369,13 @@ bool HmiRunTime::Unload()
 
 
 void HmiRunTime::Start()
-{ 
+{
     foreach (QString name, m_listPortName)
     {
         PortThread *pPortThread = new PortThread(name);
-        foreach (IVendor *pVendor, m_VendorList)
+        foreach (Vendor *pVendor, m_VendorList)
         {
-            if(name == pVendor->GetPortName())
+            if(name == pVendor->getPortName())
                 pPortThread->AddVendor(pVendor);
         }
         m_listPortThread.append(pPortThread);
@@ -411,13 +429,13 @@ void HmiRunTime::Stop()
 }
 
 
-IVendor *HmiRunTime::FindVendor(const QString name)
+Vendor *HmiRunTime::FindVendor(const QString name)
 {
-    IVendor *ret = Q_NULLPTR;
+    Vendor *ret = Q_NULLPTR;
     for (int i = 0; i < m_VendorList.size(); ++i)
     {
         ret = m_VendorList.at(i);
-        if (ret->GetDeviceName() == name)
+        if (ret->getDeviceName() == name)
             break;
     }
     return ret;

@@ -113,8 +113,8 @@ void RealTimeDB::SetData(const QString &id, QVariant dat)
 
     if(pTag->pVendor != nullptr)
     {
-        IOTag *pIOTag = pTag->pVendor->FindIOTagByID(id);
-        pTag->pVendor->AddIOTagToDeviceTagWriteQueue(pIOTag);
+        IOTag *pIOTag = pTag->pVendor->findIOTagByID(id);
+        pTag->pVendor->addIOTagToDeviceTagWriteQueue(pIOTag);
     }
 }
 
@@ -131,8 +131,8 @@ void RealTimeDB::SetTypeAndData(const QString &id, TTagDataType type, QVariant d
         pTag->mType = type;
         if(pTag->pVendor != nullptr)
         {
-            IOTag *pIOTag = pTag->pVendor->FindIOTagByID(id);
-            pTag->pVendor->AddIOTagToDeviceTagWriteQueue(pIOTag);
+            IOTag *pIOTag = pTag->pVendor->findIOTagByID(id);
+            pTag->pVendor->addIOTagToDeviceTagWriteQueue(pIOTag);
         }
     }
 }
@@ -199,10 +199,10 @@ void RealTimeDB::SetDataString(const QString &id, const QString &dat)
     }
     pTag->SetData(val, false);
 
-    if(pTag->pVendor != nullptr)
+    if(pTag->pVendor != Q_NULLPTR)
     {
-        IOTag *pIOTag = pTag->pVendor->FindIOTagByID(id);
-        pTag->pVendor->AddIOTagToDeviceTagWriteQueue(pIOTag);
+        IOTag *pIOTag = pTag->pVendor->findIOTagByID(id);      
+        pTag->pVendor->addIOTagToDeviceTagWriteQueue(pIOTag);
     }
 }
 
