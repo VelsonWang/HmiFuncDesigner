@@ -28,7 +28,7 @@ ComPort::~ComPort()
  * @brief ComPort::open
  * @param port "ttyUSBx", "ttySx", "COMx"
  * @param args ["9600","N","8","1"]
- * @return
+ * @return true-成功, false-失败
  */
 bool ComPort::open(QString port, QStringList args)
 {
@@ -95,6 +95,22 @@ bool ComPort::open(QString port, QStringList args)
 }
 
 
+
+/**
+ * @brief ComPort::reOpen
+ * @return true-成功, false-失败
+ */
+bool ComPort::reOpen()
+{
+    if(serialPortPtr_->isOpen()) {
+        serialPortPtr_->close();
+        if(!serialPortPtr_->open(QIODevice::ReadWrite))
+            return false;
+    }
+    return true;
+}
+
+
 int ComPort::read(unsigned char *buf, int len, int ms)
 {
     long start;
@@ -151,3 +167,7 @@ bool ComPort::close()
 }
 
 
+TPortType ComPort::getPortType()
+{
+    return PORT_SERIAL;
+}

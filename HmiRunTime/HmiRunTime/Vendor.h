@@ -131,6 +131,8 @@ public:
     bool close();
     // 获取端口名称
     QString getPortName();
+    // 设备端口重新连接
+    bool reconnect();
 
 public:
     quint8 readBuf[512] = {0};
@@ -144,10 +146,12 @@ public:
     QQueue<IOTag *> m_writeQueue;
     QList<IOTag *> m_readList;
     bool m_bIsRunning = false;
-    qint32 m_iFailCnt = 0; // 通信失败次数
     QMutex m_mutexWrite;
     IVendorPlugin *m_pVendorPluginObj = Q_NULLPTR;
     VendorPrivate *m_pVendorPrivateObj = Q_NULLPTR;
+    bool m_bOnlineStatus = false; // true-在线, false-离线
+    bool m_bOffLine = false; // 通讯失败次数大于通信失败重试次数视为离线
+    qint64 m_iStartOffLineTime = 0; // 离线起始时间
 };
 
 

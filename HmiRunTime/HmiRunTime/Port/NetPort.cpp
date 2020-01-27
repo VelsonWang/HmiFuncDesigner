@@ -3,21 +3,27 @@
 #include "Public/PublicFunction.h"
 #include <QThread>
 
-NetPort::NetPort() {
+NetPort::NetPort()
+{
     //init only required for windows, no-op on *nix
     net::init();
 }
 
 
-NetPort::~NetPort() {
-
+NetPort::~NetPort()
+{
+    net::uninit();
 }
 
 
-/*
-*
-*/
-bool NetPort::open(QString port, QStringList args) {
+/**
+ * @brief NetPort::open
+ * @param port
+ * @param args
+ * @return true-成功, false-失败
+ */
+bool NetPort::open(QString port, QStringList args)
+{
     if(port == "" || args.length() != 2)
         return false;
 
@@ -35,13 +41,41 @@ bool NetPort::open(QString port, QStringList args) {
 
     endpoint_.set(ip_.toStdString(), port_, net::af::inet);
     sock_.setnonblocking(true);
-    sock_.connect(endpoint_);
+    int iRet = sock_.connect(endpoint_);
 
-    return true;
+    return (iRet == 0);
+}
+
+/**
+ * @brief NetPort::reOpen
+ * @return true-成功, false-失败
+ */
+bool NetPort::reOpen()
+{
+    if(sock_.good()) {
+        sock_.close();
+        sock_.shutdown(net::shut::rdwr);
+    }
+    //inetV4 socket
+    sock_.init(net::af::inet, net::sock::stream);
+
+    //make sure socket creation and binding did not fail
+    if( !sock_.good() )	{
+        std::cerr << "error creating socket" << std::endl;
+        return false;
+    }
+
+    endpoint_.set(ip_.toStdString(), port_, net::af::inet);
+    sock_.setnonblocking(true);
+
+    int iRet = sock_.connect(endpoint_);
+
+    return (iRet == 0);
 }
 
 
-int NetPort::read(unsigned char *buf, int len, int ms) {
+int NetPort::read(unsigned char *buf, int len, int ms)
+{
     long start;
 
     QTime time;
@@ -77,7 +111,8 @@ int NetPort::read(unsigned char *buf, int len, int ms) {
     return len;
 }
 
-int NetPort::write(unsigned char *buf, int len, int ms) {
+int NetPort::write(unsigned char *buf, int len, int ms)
+{
 #if 0
     qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
@@ -87,8 +122,14 @@ int NetPort::write(unsigned char *buf, int len, int ms) {
 }
 
 
-bool NetPort::close() {
+bool NetPort::close()
+{
+    sock_.close();
     return true;
 }
 
+TPortType NetPort::getPortType()
+{
+    return PORT_NET;
+}
 

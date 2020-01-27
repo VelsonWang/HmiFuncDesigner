@@ -54,7 +54,7 @@ static bool _wsaInitDone = false;
 #define SHUT_WR	SD_SEND
 #define SHUT_RDWR SD_BOTH
 #endif
-
+#include <ctime>
 
 namespace net {
 
@@ -65,6 +65,15 @@ inline void init()	{
 		WSAStartup(MAKEWORD(2,2), &_wsaData);
 		_wsaInitDone = true;
 	}
+#endif
+}
+
+inline void uninit()	{
+//no-op on *nix
+#ifdef _WIN32
+    if( _wsaInitDone ) {
+        WSACleanup();
+    }
 #endif
 }
 
@@ -275,7 +284,46 @@ struct socket {
 	}
 
 	int connect( const endpoint ep )	{
-		return ::connect( fd, ep.data(), ep.size() );
+#ifndef _WIN32
+        return ::connect( fd, ep.data(), ep.size() );
+#else
+        int start_tick = (int)(std::clock()*1000/ CLOCKS_PER_SEC);
+        int error_code;
+        while (1)
+        {
+            if (::connect( fd, ep.data(), ep.size() ) == SOCKET_ERROR)
+            {
+                error_code = WSAGetLastError();
+                //std::cout << "connect error code is " << error_code << std::endl;
+                if (error_code == WSAEWOULDBLOCK || error_code == WSAEINVAL)
+                {
+                    if(error_code == WSAEINVAL) {
+                        int now_tick = (int)(std::clock()*1000/ CLOCKS_PER_SEC);
+                        if((now_tick - start_tick)> 3000) {
+                            std::cout << "connect error code is " << error_code << std::endl;
+                            std::cout << "connect timeout."<< std::endl;
+                            break;
+                        }
+                    }
+                    continue;
+                }
+                //当连接一次后需要判断是否已经连接.不然会报10056错误
+                else if (error_code == WSAEISCONN)
+                {
+                    break;
+                }
+                else
+                {
+                    std::cout << "connect error code is " << error_code << std::endl;
+                    closesocket(fd);
+                    WSACleanup();
+                    return SOCKET_ERROR;
+                }
+            }
+            break;
+        }
+        return 0;
+#endif
 	}
 
 	std::size_t sendto( const char* data, std::size_t len, endpoint ep )	{

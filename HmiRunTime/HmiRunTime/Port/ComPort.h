@@ -18,9 +18,11 @@ public:
 
 public:
     bool open(QString port, QStringList args);
+    bool reOpen();
     int read(unsigned char *buf, int len, int ms);
     int write(unsigned char *buf, int len, int ms);
     bool close();
+    TPortType getPortType();
 
 private:
     QextSerialPort *serialPortPtr_;

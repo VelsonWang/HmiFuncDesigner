@@ -124,6 +124,7 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
                     LogError("NetPort open fail!");
                 }
             }
+            pVendorObj->m_pVendorPrivateObj = pNetDevicePrivateObj;
         }
     }
 

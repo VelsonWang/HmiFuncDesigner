@@ -8,7 +8,6 @@ SUBDIRS   = \
     Utils \
     edncrypt \
     Csv \
-    PluginManager \
     DrawUtils \
     qtpropertybrowser \
     qscintilla \
