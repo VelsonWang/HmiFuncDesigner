@@ -35,8 +35,8 @@
 #include <QPluginLoader>
 #include <QMessageBox>
 #include "IDevicePlugin.h"
+#include "TableviewDelegate.h"
 #include <QDebug>
-
 
 TagManagerWin::TagManagerWin(QWidget *parent,
                              const QString &itemName,
@@ -451,16 +451,7 @@ void TagManagerWin::initialTableTagTmp()
 
     //ui->tableTagTmp->setStyleSheet(styleSheet);
     ui->tableTagTmp->clearSelection();
-}
 
-
-/**
- * @brief TagManagerWin::tableTagTmpAddRow
- * @details 中间变量表新增一行
- * @return 新增的行号
- */
-int TagManagerWin::tableTagTmpAddRow()
-{
     QStringList listDataType;
     listDataType << tr("Bit1开关量")
                  << tr("Char8位有符号数")
@@ -476,6 +467,18 @@ int TagManagerWin::tableTagTmpAddRow()
                  << tr("BCD")
                  << tr("LongLong64位有符号数")
                  << tr("DwordDword64位无符号数");
+    TableViewComboBoxDelegate *m_pDelegate = new TableViewComboBoxDelegate(listDataType, false, ui->tableTagTmp);
+    ui->tableTagTmp->setItemDelegateForColumn(3, m_pDelegate);
+}
+
+
+/**
+ * @brief TagManagerWin::tableTagTmpAddRow
+ * @details 中间变量表新增一行
+ * @return 新增的行号
+ */
+int TagManagerWin::tableTagTmpAddRow()
+{
 #define XX(item) \
     item->setFlags(item->flags() | Qt::ItemIsEditable);
 
@@ -484,26 +487,31 @@ int TagManagerWin::tableTagTmpAddRow()
 
     QTableWidgetItem *pItemID = new QTableWidgetItem("");
     ui->tableTagTmp->setItem(iRowCount, 0, pItemID);
+
     QTableWidgetItem *pItemName = new QTableWidgetItem("");
     XX(pItemName);
     ui->tableTagTmp->setItem(iRowCount, 1, pItemName);
+
     QTableWidgetItem *pItemDescription = new QTableWidgetItem("");
     XX(pItemDescription);
     ui->tableTagTmp->setItem(iRowCount, 2, pItemDescription);
-    QComboBox* cboPtr = new QComboBox();
-    cboPtr->clear();
-    cboPtr->addItems(listDataType);
-    cboPtr->setCurrentText("");
-    ui->tableTagTmp->setCellWidget(iRowCount, 3, cboPtr);
+
+    QTableWidgetItem *pItemDataType = new QTableWidgetItem("");
+    XX(pItemDataType);
+    ui->tableTagTmp->setItem(iRowCount, 3, pItemDataType);
+
     QTableWidgetItem *pItemInitVal = new QTableWidgetItem("");
     XX(pItemInitVal);
     ui->tableTagTmp->setItem(iRowCount, 4, pItemInitVal);
+
     QTableWidgetItem *pItemMinVal = new QTableWidgetItem("");
     XX(pItemMinVal);
     ui->tableTagTmp->setItem(iRowCount, 5, pItemMinVal);
+
     QTableWidgetItem *pItemMaxVal = new QTableWidgetItem("");
     XX(pItemMaxVal);
     ui->tableTagTmp->setItem(iRowCount, 6, pItemMaxVal);
+
     QTableWidgetItem *pItemProjectConverter = new QTableWidgetItem("");
     ui->tableTagTmp->setItem(iRowCount, 7, pItemProjectConverter);
 
@@ -678,6 +686,7 @@ void TagManagerWin::createTagTmp()
             pTagTmp->m_szMinVal = pDlg->tagMinValue();
             pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
             pTagTmp->m_szProjectConverter = "";
+
             int iRow = tableTagTmpAddRow();
             setTagTmpObjByRow(iRow, pTagTmp);
 
@@ -708,9 +717,9 @@ void TagManagerWin::appendTagTmp()
     pNewTagTmp->m_szName = "";
     pNewTagTmp->m_szDescription = "";
     pNewTagTmp->m_szDataType = "";
-    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRowCnt - 1, 3));
-    if(pCbo != Q_NULLPTR) {
-        pNewTagTmp->m_szDataType = pCbo->currentText();
+    QTableWidgetItem *pItemDataType = ui->tableTagTmp->item(iRowCnt - 1, 3);
+    if(pItemDataType != Q_NULLPTR) {
+        pNewTagTmp->m_szDataType = pItemDataType->text();
     }
     pNewTagTmp->m_szInitVal = "0";
     pNewTagTmp->m_szMinVal = "";
@@ -751,9 +760,9 @@ TagTmpDBItem *TagManagerWin::getTagTmpObjByRow(int iRow)
     if(pItemDescription != Q_NULLPTR) {
         pNewTagTmp->m_szDescription = pItemDescription->text();
     }
-    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRow, 3));
-    if(pCbo != Q_NULLPTR) {
-        pNewTagTmp->m_szDataType = pCbo->currentText();
+    QTableWidgetItem *pItemDataType = ui->tableTagTmp->item(iRow, 3);
+    if(pItemDataType != Q_NULLPTR) {
+        pNewTagTmp->m_szDataType = pItemDataType->text();
     }
     QTableWidgetItem *pItemInitVal = ui->tableTagTmp->item(iRow, 4);
     if(pItemInitVal != Q_NULLPTR) {
@@ -800,9 +809,9 @@ void TagManagerWin::setTagTmpObjByRow(int iRow, TagTmpDBItem *pObj)
     if(pItemDescription != Q_NULLPTR) {
         pItemDescription->setText(pObj->m_szDescription);
     }
-    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagTmp->cellWidget(iRow, 3));
-    if(pCbo != Q_NULLPTR) {
-        pCbo->setCurrentText(pObj->m_szDataType);
+    QTableWidgetItem *pItemDataType = ui->tableTagTmp->item(iRow, 3);
+    if(pItemDataType != Q_NULLPTR) {
+        pItemDataType->setText(pObj->m_szDataType);
     }
     QTableWidgetItem *pItemInitVal = ui->tableTagTmp->item(iRow, 4);
     if(pItemInitVal != Q_NULLPTR) {
@@ -939,21 +948,21 @@ void TagManagerWin::initialTableTagIO()
     ui->tableTagIO->verticalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
     ui->tableTagIO->horizontalHeader()->show();
     ui->tableTagIO->verticalHeader()->show();
-    ui->tableTagIO->setColumnWidth(0, 120);
+    ui->tableTagIO->setColumnWidth(0, 100);
     ui->tableTagIO->setColumnWidth(1, 120);
     ui->tableTagIO->setColumnWidth(2, 200);
-    ui->tableTagIO->setColumnWidth(3, 140);
-    ui->tableTagIO->setColumnWidth(4, 80);
-    ui->tableTagIO->setColumnWidth(5, 180);
+    ui->tableTagIO->setColumnWidth(3, 100);
+    ui->tableTagIO->setColumnWidth(4, 70);
+    ui->tableTagIO->setColumnWidth(5, 120);
     ui->tableTagIO->setColumnWidth(6, 80);
-    ui->tableTagIO->setColumnWidth(7, 80);
-    ui->tableTagIO->setColumnWidth(8, 80);
-    ui->tableTagIO->setColumnWidth(9, 180);
+    ui->tableTagIO->setColumnWidth(7, 60);
+    ui->tableTagIO->setColumnWidth(8, 70);
+    ui->tableTagIO->setColumnWidth(9, 120);
     ui->tableTagIO->setColumnWidth(10, 80);
     ui->tableTagIO->setColumnWidth(11, 80);
     ui->tableTagIO->setColumnWidth(12, 80);
-    ui->tableTagIO->setColumnWidth(13, 80);
-    ui->tableTagIO->setColumnWidth(14, 200);
+    ui->tableTagIO->setColumnWidth(13, 50);
+    ui->tableTagIO->setColumnWidth(14, 180);
 
     ui->tableTagIO->setWordWrap(false);
     //ui->tableTagIO->setAlternatingRowColors(true);
@@ -966,6 +975,24 @@ void TagManagerWin::initialTableTagIO()
 
     //ui->tableTagIO->setStyleSheet(styleSheet);
     ui->tableTagIO->clearSelection();
+
+    // 设备名称委托
+    TableViewComboBoxDelegate *m_pDeviceNameDelegate = new TableViewComboBoxDelegate(QStringList(), false, ui->tableTagIO);
+    ui->tableTagIO->setItemDelegateForColumn(3, m_pDeviceNameDelegate);
+
+    // 寄存区类型委托
+    TableViewComboBoxDelegate *m_pRegisterAreaDelegate = new TableViewComboBoxDelegate(QStringList(), false, ui->tableTagIO);
+    ui->tableTagIO->setItemDelegateForColumn(5, m_pRegisterAreaDelegate);
+
+    QStringList listDataType;
+    listDataType << tr("只读") << tr("只写") << tr("读写");
+    // 寄存区类型委托
+    TableViewComboBoxDelegate *m_pReadWriteTypeDelegate = new TableViewComboBoxDelegate(listDataType, false, ui->tableTagIO);
+    ui->tableTagIO->setItemDelegateForColumn(8, m_pReadWriteTypeDelegate);
+
+    // 数据类型委托
+    TableViewComboBoxDelegate *m_pDataTypeDelegate = new TableViewComboBoxDelegate(QStringList(), false, ui->tableTagIO);
+    ui->tableTagIO->setItemDelegateForColumn(9, m_pDataTypeDelegate);
 }
 
 
@@ -1031,34 +1058,17 @@ int TagManagerWin::tableTagIOAddRow()
     XX(pItemName);
     ui->tableTagIO->setItem(iRowCount, 2, pItemDescription);
 
-    QComboBox *cboDeviceNamePtr = new QComboBox();
-    cboDeviceNamePtr->clear();
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    deviceInfo.load(ProjectData::getInstance()->dbData_);
-    for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-        cboDeviceNamePtr->addItem(pObj->szDeviceName_);
-    }
-    QStringList listReg;
-    QStringList listType;
-    if(cboDeviceNamePtr->count()>0) {
-        cboDeviceNamePtr->setCurrentIndex(0);
-        getRegTypeByDeviceName(cboDeviceNamePtr->currentText(), listReg, listType);
-    }
-    connect(cboDeviceNamePtr, &QComboBox::currentTextChanged,
-            this, &TagManagerWin::onDeviceNameTextChanged);
-    ui->tableTagIO->setCellWidget(iRowCount, 3, cboDeviceNamePtr);
+    QTableWidgetItem *pItemDeviceName = new QTableWidgetItem("");
+    XX(pItemDeviceName);
+    ui->tableTagIO->setItem(iRowCount, 3, pItemDeviceName);
 
     QTableWidgetItem *pItemDeviceAddr = new QTableWidgetItem("1");
     XX(pItemDeviceAddr);
     ui->tableTagIO->setItem(iRowCount, 4, pItemDeviceAddr);
 
-    QComboBox *cboRegisterAreaPtr = new QComboBox();
-    cboRegisterAreaPtr->clear();
-    cboRegisterAreaPtr->addItems(listReg);
-    if(cboRegisterAreaPtr->count()>0)
-        cboRegisterAreaPtr->setCurrentIndex(0);
-    ui->tableTagIO->setCellWidget(iRowCount, 5, cboRegisterAreaPtr);
+    QTableWidgetItem *pItemRegisterArea = new QTableWidgetItem("");
+    XX(pItemRegisterArea);
+    ui->tableTagIO->setItem(iRowCount, 5, pItemRegisterArea);
 
     QTableWidgetItem *pItemRegisterAddr = new QTableWidgetItem("0");
     XX(pItemRegisterAddr);
@@ -1068,20 +1078,13 @@ int TagManagerWin::tableTagIOAddRow()
     XX(pItemAddrOffset);
     ui->tableTagIO->setItem(iRowCount, 7, pItemAddrOffset);
 
-    QComboBox *cboReadWriteTypePtr = new QComboBox();
-    cboReadWriteTypePtr->clear();
-    cboReadWriteTypePtr->addItem(tr("只读"));
-    cboReadWriteTypePtr->addItem(tr("只写"));
-    cboReadWriteTypePtr->addItem(tr("读写"));
-    cboReadWriteTypePtr->setCurrentIndex(0);
-    ui->tableTagIO->setCellWidget(iRowCount, 8, cboReadWriteTypePtr);
+    QTableWidgetItem *pItemReadWriteType = new QTableWidgetItem("");
+    XX(pItemReadWriteType);
+    ui->tableTagIO->setItem(iRowCount, 8, pItemReadWriteType);
 
-    QComboBox *cboDataTypePtr = new QComboBox();
-    cboDataTypePtr->clear();
-    cboDataTypePtr->addItems(listType);
-    if(cboDataTypePtr->count()>0)
-        cboDataTypePtr->setCurrentIndex(0);
-    ui->tableTagIO->setCellWidget(iRowCount, 9, cboDataTypePtr);
+    QTableWidgetItem *pItemDataType = new QTableWidgetItem("");
+    XX(pItemDataType);
+    ui->tableTagIO->setItem(iRowCount, 9, pItemDataType);
 
     QTableWidgetItem *pItemInitVal = new QTableWidgetItem("0");
     XX(pItemInitVal);
@@ -1103,43 +1106,6 @@ int TagManagerWin::tableTagIOAddRow()
     return iRowCount;
 }
 
-/**
- * @brief TagManagerWin::onDeviceNameTextChanged
- * @details 设备名称修改时，修改本行的数据类型组合框和寄存器类型组合框
- * @param name 设备名称
- */
-void TagManagerWin::onDeviceNameTextChanged(const QString &name)
-{
-    int iSelectedRow = ui->tableTagIO->currentRow();
-    if(iSelectedRow >= 0) {
-        TagIODBItem * pTagIO = getTagIOObjByRow(iSelectedRow);
-
-        QStringList listReg;
-        QStringList listType;
-        getRegTypeByDeviceName(name, listReg, listType);
-
-        QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iSelectedRow, 5));
-        if(pCbo != Q_NULLPTR) {
-            pCbo->clear();
-            pCbo->addItems(listReg);
-            if(pCbo->count()>0)
-                pCbo->setCurrentText(pTagIO->m_szRegisterArea);
-        }
-
-        pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iSelectedRow, 9));
-        if(pCbo != Q_NULLPTR) {
-            pCbo->clear();
-            pCbo->addItems(listType);
-            if(pCbo->count()>0)
-                pCbo->setCurrentText(pTagIO->m_szDataType);
-        }
-
-        if(pTagIO != Q_NULLPTR) {
-            delete pTagIO;
-            pTagIO = Q_NULLPTR;
-        }
-    }
-}
 
 /**
  * @brief TagManagerWin::getTagIOIdNumValue
@@ -1180,6 +1146,7 @@ void TagManagerWin::updateTableTagIO()
 
     if(m_szCurIOGroupName == QString())
         return;
+
     tagIO.load(ProjectData::getInstance()->dbData_);
 
     ui->tableTagIO->clearContents();
@@ -1222,17 +1189,17 @@ TagIODBItem *TagManagerWin::getTagIOObjByRow(int iRow)
     if(pItemDescription != Q_NULLPTR) {
         pObj->m_szDescription = pItemDescription->text();
     }
-    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 3));
-    if(pCbo != Q_NULLPTR) {
-        pObj->m_szDeviceName = pCbo->currentText();
+    QTableWidgetItem *pItemDeviceName = ui->tableTagIO->item(iRow, 3);
+    if(pItemDeviceName != Q_NULLPTR) {
+        pObj->m_szDeviceName = pItemDeviceName->text();
     }
     QTableWidgetItem *pItemDeviceAddr = ui->tableTagIO->item(iRow, 4);
     if(pItemDeviceAddr != Q_NULLPTR) {
         pObj->m_szDeviceAddr = pItemDeviceAddr->text();
     }
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 5));
-    if(pCbo != Q_NULLPTR) {
-        pObj->m_szRegisterArea = pCbo->currentText();
+    QTableWidgetItem *pItemRegisterArea = ui->tableTagIO->item(iRow, 5);
+    if(pItemRegisterArea != Q_NULLPTR) {
+        pObj->m_szRegisterArea = pItemRegisterArea->text();
     }
     QTableWidgetItem *pItemRegisterAddr = ui->tableTagIO->item(iRow, 6);
     if(pItemRegisterAddr != Q_NULLPTR) {
@@ -1242,13 +1209,13 @@ TagIODBItem *TagManagerWin::getTagIOObjByRow(int iRow)
     if(pItemAddrOffset != Q_NULLPTR) {
         pObj->m_szAddrOffset = pItemAddrOffset->text();
     }
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 8));
-    if(pCbo != Q_NULLPTR) {
-        pObj->m_szReadWriteType = pCbo->currentText();
+    QTableWidgetItem *pItemReadWriteType = ui->tableTagIO->item(iRow, 8);
+    if(pItemReadWriteType != Q_NULLPTR) {
+        pObj->m_szReadWriteType = pItemReadWriteType->text();
     }
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 9));
-    if(pCbo != Q_NULLPTR) {
-        pObj->m_szDataType = pCbo->currentText();
+    QTableWidgetItem *pItemDataType = ui->tableTagIO->item(iRow, 9);
+    if(pItemDataType != Q_NULLPTR) {
+        pObj->m_szDataType = pItemDataType->text();
     }
     QTableWidgetItem *pItemInitVal = ui->tableTagIO->item(iRow, 10);
     if(pItemInitVal != Q_NULLPTR) {
@@ -1300,17 +1267,17 @@ void TagManagerWin::setTagIOObjByRow(int iRow, TagIODBItem *pObj)
     if(pItemDescription != Q_NULLPTR) {
         pItemDescription->setText(pObj->m_szDescription);
     }
-    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 3));
-    if(pCbo != Q_NULLPTR) {
-        pCbo->setCurrentText(pObj->m_szDeviceName);
+    QTableWidgetItem *pItemDeviceName = ui->tableTagIO->item(iRow, 3);
+    if(pItemDeviceName != Q_NULLPTR) {
+        pItemDeviceName->setText(pObj->m_szDeviceName);
     }
     QTableWidgetItem *pItemDeviceAddr = ui->tableTagIO->item(iRow, 4);
     if(pItemDeviceAddr != Q_NULLPTR) {
         pItemDeviceAddr->setText(pObj->m_szDeviceAddr);
     }
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 5));
-    if(pCbo != Q_NULLPTR) {
-        pCbo->setCurrentText(pObj->m_szRegisterArea);
+    QTableWidgetItem *pItemRegisterArea = ui->tableTagIO->item(iRow, 5);
+    if(pItemRegisterArea != Q_NULLPTR) {
+        pItemRegisterArea->setText(pObj->m_szRegisterArea);
     }
     QTableWidgetItem *pItemRegisterAddr = ui->tableTagIO->item(iRow, 6);
     if(pItemRegisterAddr != Q_NULLPTR) {
@@ -1320,13 +1287,13 @@ void TagManagerWin::setTagIOObjByRow(int iRow, TagIODBItem *pObj)
     if(pItemAddrOffset != Q_NULLPTR) {
         pItemAddrOffset->setText(pObj->m_szAddrOffset);
     }
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 8));
-    if(pCbo != Q_NULLPTR) {
-        pCbo->setCurrentText(pObj->m_szReadWriteType);
+    QTableWidgetItem *pItemReadWriteType = ui->tableTagIO->item(iRow, 8);
+    if(pItemReadWriteType != Q_NULLPTR) {
+        pItemReadWriteType->setText(pObj->m_szReadWriteType);
     }
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRow, 9));
-    if(pCbo != Q_NULLPTR) {
-        pCbo->setCurrentText(pObj->m_szDataType);
+    QTableWidgetItem *pItemDataType = ui->tableTagIO->item(iRow, 9);
+    if(pItemDataType != Q_NULLPTR) {
+        pItemDataType->setText(pObj->m_szDataType);
     }
     QTableWidgetItem *pItemInitVal = ui->tableTagIO->item(iRow, 10);
     if(pItemInitVal != Q_NULLPTR) {
@@ -1542,27 +1509,27 @@ void TagManagerWin::appendTagIO()
     pNewTagIO->m_szName = "";
     pNewTagIO->m_szDescription = "";
     pNewTagIO->m_szDeviceName = "";
-    QComboBox *pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 3));
-    if(pCbo != Q_NULLPTR) {
-        pNewTagIO->m_szDeviceName = pCbo->currentText();
+    QTableWidgetItem *pItemDeviceName = ui->tableTagIO->item(iRowCnt - 1, 3);
+    if(pItemDeviceName != Q_NULLPTR) {
+        pNewTagIO->m_szDeviceName = pItemDeviceName->text();
     }
     pNewTagIO->m_szDeviceAddr = "1";
     pNewTagIO->m_szRegisterArea = "";
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 5));
-    if(pCbo != Q_NULLPTR) {
-        pNewTagIO->m_szRegisterArea = pCbo->currentText();
+    QTableWidgetItem *pItemRegisterArea = ui->tableTagIO->item(iRowCnt - 1, 5);
+    if(pItemRegisterArea != Q_NULLPTR) {
+        pNewTagIO->m_szRegisterArea = pItemRegisterArea->text();
     }
     pNewTagIO->m_szRegisterAddr = "0";
     pNewTagIO->m_szAddrOffset = "0";
     pNewTagIO->m_szReadWriteType = "";
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 8));
-    if(pCbo != Q_NULLPTR) {
-        pNewTagIO->m_szReadWriteType = pCbo->currentText();
+    QTableWidgetItem *pItemReadWriteType = ui->tableTagIO->item(iRowCnt - 1, 8);
+    if(pItemReadWriteType != Q_NULLPTR) {
+        pNewTagIO->m_szReadWriteType = pItemReadWriteType->text();
     }
     pNewTagIO->m_szDataType  = "";
-    pCbo = dynamic_cast<QComboBox *>(ui->tableTagIO->cellWidget(iRowCnt - 1, 9));
-    if(pCbo != Q_NULLPTR) {
-        pNewTagIO->m_szDataType = pCbo->currentText();
+    QTableWidgetItem *pItemDataType = ui->tableTagIO->item(iRowCnt - 1, 9);
+    if(pItemDataType != Q_NULLPTR) {
+        pNewTagIO->m_szDataType = pItemDataType->text();
     }
     pNewTagIO->m_szInitVal  = "0";
     pNewTagIO->m_szMinVal  = "";
@@ -1689,8 +1656,43 @@ void TagManagerWin::on_tableTagIO_itemPressed(QTableWidgetItem *item)
     int iColumn = item->column();
     int iRow = item->row();
     m_iTableTagIOSelectedRow = iRow;
-    if(iColumn > 0 && iColumn < 14 && iColumn != 3 &&
-            iColumn != 5 && iColumn != 8 && iColumn != 9) {
+    if(iColumn > 0 && iColumn < 14) {
+        if(iColumn == 3) { // 设备名
+            QAbstractItemDelegate *pDelegateObj = ui->tableTagIO->itemDelegateForColumn(3);
+            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
+            if(pComboBoxDelegateObj != Q_NULLPTR) {
+                QStringList szListDevNames;
+                DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+                deviceInfo.load(ProjectData::getInstance()->dbData_);
+                for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+                    DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+                    szListDevNames.append(pObj->szDeviceName_);
+                }
+                pComboBoxDelegateObj->setItems(szListDevNames);
+            }
+        }
+        else if(iColumn == 5) { // 寄存器区
+            QAbstractItemDelegate *pDelegateObj = ui->tableTagIO->itemDelegateForColumn(5);
+            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
+            TagIODBItem *pTagIOObj = getTagIOObjByRow(iRow);
+            if(pComboBoxDelegateObj != Q_NULLPTR && pTagIOObj != Q_NULLPTR) {
+                QStringList listReg;
+                QStringList listType;
+                getRegTypeByDeviceName(pTagIOObj->m_szDeviceName, listReg, listType);
+                pComboBoxDelegateObj->setItems(listReg);
+            }
+        }
+        else if(iColumn == 9) { // 数据类型
+            QAbstractItemDelegate *pDelegateObj = ui->tableTagIO->itemDelegateForColumn(9);
+            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
+            TagIODBItem *pTagIOObj = getTagIOObjByRow(iRow);
+            if(pComboBoxDelegateObj != Q_NULLPTR && pTagIOObj != Q_NULLPTR) {
+                QStringList listReg;
+                QStringList listType;
+                getRegTypeByDeviceName(pTagIOObj->m_szDeviceName, listReg, listType);
+                pComboBoxDelegateObj->setItems(listType);
+            }
+        }
         ui->tableTagIO->editItem(item);
     }
 }
@@ -1700,7 +1702,7 @@ void TagManagerWin::on_tableTagTmp_itemPressed(QTableWidgetItem *item)
     int iColumn = item->column();
     int iRow = item->row();
     m_iTableTagTmpSelectedRow = iRow;
-    if(iColumn > 0 && iColumn < 7 && iColumn != 3) {
+    if(iColumn > 0 && iColumn < 7) {
         ui->tableTagTmp->editItem(item);
     }
 }
@@ -1781,3 +1783,8 @@ void TagManagerWin::on_tableTagTmp_cellDoubleClicked(int row, int column)
     Q_UNUSED(column)
     m_iTableTagTmpSelectedRow = row;
 }
+
+
+
+
+

@@ -45,6 +45,7 @@ SOURCES += main.cpp\
     SystemParametersWin.cpp \
     NetSettingDialog.cpp \
     DatabaseSettingDialog.cpp \
+    TableviewDelegate.cpp \
     TagIOEditDialog.cpp \
     TagManagerWin.cpp \
     TagTmpEditDialog.cpp \
@@ -81,6 +82,7 @@ HEADERS  += MainWindow.h \
     SystemParametersWin.h \
     NetSettingDialog.h \
     DatabaseSettingDialog.h \
+    TableviewDelegate.h \
     TagIOEditDialog.h \
     TagManagerWin.h \
     TagTmpEditDialog.h \

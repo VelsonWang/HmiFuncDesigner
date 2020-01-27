@@ -105,6 +105,7 @@ SOURCES += \
 
 
 HEADERS  += \
+    Vendor.h \
     tcpserver.h \
     tcpsocket.h \
     threadhandle.h \

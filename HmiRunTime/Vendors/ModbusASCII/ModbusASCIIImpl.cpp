@@ -179,8 +179,9 @@ bool ModbusASCIIImpl::messageCheck(quint8 *inBuf, qint16 bufLen)
  */
 bool ModbusASCIIImpl::isCanWrite(IOTag* pTag)
 {
-    if(getCpuMem(pTag->GetRegisterArea()) == CM_1x)
+    if(getCpuMem(pTag->GetRegisterArea()) == CM_1x) {
         return false;
+    }
     else if(getCpuMem(pTag->GetRegisterArea()) == CM_3x) {
         return false;
     }
@@ -210,10 +211,13 @@ int ModbusASCIIImpl::writeData(IOTag* pTag)
     if(getPort() != nullptr)
         resultlen = getPort()->read(readDataBuffer_, revLen, 1000);
 
-    if(resultlen == revLen && messageCheck(readDataBuffer_, resultlen))
+    if(resultlen != revLen)
+        return 0;
+
+    if(messageCheck(readDataBuffer_, revLen))
         return 1;
 
-    return 0;
+    return 0; 
 }
 
 
@@ -280,6 +284,12 @@ int ModbusASCIIImpl::readData(IOTag* pTag)
         if(resultlen != revLen)
             return -2;
     }
+
+    memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8));
+    memcpy(tempBuffer_, readDataBuffer_, revLen);
+
+    MakeAsiiToCode(tempBuffer_ + 1, readDataBuffer_, revLen);
+    revLen = (revLen - 3) / 2;
 
     if(!messageCheck(readDataBuffer_, revLen))
         return 0;

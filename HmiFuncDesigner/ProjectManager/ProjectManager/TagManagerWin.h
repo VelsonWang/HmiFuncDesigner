@@ -12,6 +12,8 @@
 #include <QTableWidgetItem>
 #include <QStringList>
 #include <QVBoxLayout>
+#include <QComboBox>
+#include <QMap>
 
 //////////////////////////////////////////////////////////
 
@@ -30,8 +32,8 @@ class TagManagerWin : public ChildBase
 
 public:
     explicit TagManagerWin(QWidget *parent = Q_NULLPTR,
-                                const QString &itemName = "",
-                                const QString &projName = "");
+                           const QString &itemName = "",
+                           const QString &projName = "");
     ~TagManagerWin();
 
     void init(const QString &itemName = "");
@@ -145,7 +147,6 @@ private slots:
     void on_tableTagIO_cellDoubleClicked(int row, int column);
     void on_tableTagTmp_cellClicked(int row, int column);
     void on_tableTagTmp_cellDoubleClicked(int row, int column);
-    void onDeviceNameTextChanged(const QString &name);
 
 private:
     Ui::TagManagerWin *ui; 
