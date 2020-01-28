@@ -1,5 +1,4 @@
 ﻿#include "DataPack.h"
-
 #include <string.h>
 
 quint32 AddCheckSum(quint8 *pBuf, quint32 len)

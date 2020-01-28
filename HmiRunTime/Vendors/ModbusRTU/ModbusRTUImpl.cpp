@@ -1,8 +1,7 @@
 ﻿#include "ModbusRTUImpl.h"
 #include "DataPack.h"
-
 #include "../../HmiRunTime/Public/PublicFunction.h"
-#include <QDebug>
+
 
 const quint8 auchCRCHi[] =
 {

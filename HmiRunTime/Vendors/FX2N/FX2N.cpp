@@ -1,109 +1,156 @@
 #include "FX2N.h"
+#include "../../HmiRunTime/Vendor.h"
 
-
-
-FX2N::FX2N() {
-
-}
-
-
-/**
- * @brief FX2N::GetDeviceTypeName
- * @details 获取设备类型名称
- * @return
- */
-QString FX2N::GetDeviceTypeName() {
-    return QString(tr("串口设备"));
-}
-
-
-/**
- * @brief FX2N::GetDeviceSupportProtocol
- * @details 获取设备支持的所有协议
- * @return
- */
-QStringList FX2N::GetDeviceSupportProtocol() {
-    QStringList list;
-    list << "FxProtocol";
-    return list;
-}
-
-/**
- * @brief FX2N::GetDeviceSupportRegisterArea
- * @details 获取设备支持的所有寄存器区
- * @return
- */
-QStringList FX2N::GetDeviceSupportRegisterArea() {
-    QStringList list;
-    list << tr("X")
-         << tr("Y")
-         << tr("M")
-         << tr("S")
-         << tr("D")
-         << tr("T")
-         << tr("C16")
-         << tr("C32");
-    return list;
-}
-
-/**
- * @brief FX2N::GetDeviceSupportDataType
- * @details 获取设备支持的所有数据类型
- * @return
- */
-QStringList FX2N::GetDeviceSupportDataType()
+FX2N::FX2N()
 {
-    QStringList list;
-    list << tr("Bit1开关量")
-         << tr("Char8位有符号数")
-         << tr("Byte8位无符号数")
-         << tr("Short16位有符号数")
-         << tr("Word16位无符号数")
-         << tr("ASCII2个字符")
-         << tr("Long32位有符号数")
-         << tr("Dword32位无符号数")
-         << tr("Float单精度浮点数")
-         << tr("String字符串")
-         << tr("Double双精度浮点数")
-         << tr("BCD");
-    return list;
+
 }
 
-/**
- * @brief FX2N::GetRegisterAreaLimit
- * @details 获取寄存器区地址的下限和上限
- * @param areaName 寄存器区名称
- * @param lowerLimit 寄存器区地址下限
- * @param upperLimit 寄存器区地址上限
- */
-void FX2N::GetRegisterAreaLimit(const QString &areaName,
-                                     quint32 &lowerLimit,
-                                     quint32 &upperLimit) {
-    lowerLimit = 0;
-    upperLimit = 0;
-    if(areaName == tr("X")) {
-        lowerLimit = 0;
-        upperLimit = 177;
-    } else if(areaName == tr("Y")) {
-        lowerLimit = 0;
-        upperLimit = 177;
-    } else if(areaName == tr("M")) {
-        lowerLimit = 0;
-        upperLimit = 1023;
-    } else if(areaName == tr("S")) {
-        lowerLimit = 9;
-        upperLimit = 999;
-    } else if(areaName == tr("D")) {
-        lowerLimit = 0;
-        upperLimit = 0xFFFF;
-    } else if(areaName == tr("T")) {
-        lowerLimit = 0;
-        upperLimit = 511;
-    } else if(areaName == tr("C16")) {
-        lowerLimit = 0;
-        upperLimit = 199;
-    } else if(areaName == tr("C32")) {
-        lowerLimit = 200;
-        upperLimit = 255;
-    }
+
+FX2N::~FX2N()
+{
+
 }
+
+
+/**
+ * @brief FX2N::initailizeDevice
+ * @details 初始化设备
+ * @param pObj 设备描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::initailizeDevice(void* pObj)
+{
+    Vendor* pVendorObj = (Vendor*)(pObj);
+    if(pVendorObj) {
+
+    }
+    return true;
+}
+
+
+/**
+ * @brief FX2N::connectDevice
+ * @details 连接设备
+ * @param pObj 设备描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::connectDevice(void* pObj)
+{
+    (void)pObj;
+    return true;
+}
+
+
+/**
+ * @brief FX2N::disconnectDevice
+ * @details 断开设备连接
+ * @param pObj 设备描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::disconnectDevice(void* pObj)
+{
+    (void)pObj;
+    return true;
+}
+
+
+/**
+ * @brief FX2N::unInitailizeDevice
+ * @details 反初始化设备
+ * @param pObj 设备描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::unInitailizeDevice(void* pObj)
+{
+    (void)pObj;
+    return true;
+}
+
+
+/**
+ * @brief FX2N::beforeWriteIOTag
+ * @details 写变量前处理
+ * @param pTag 变量描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::beforeWriteIOTag(IOTag* pTag)
+{
+    (void)pTag;
+    return true;
+}
+
+
+/**
+ * @brief FX2N::writeIOTag
+ * @details 写变量
+ * @param pPort 端口操作接口
+ * @param pTag 变量描述对象
+ * @return 0-失败, 1-成功
+ */
+int FX2N::writeIOTag(IPort *pPort, IOTag* pTag)
+{
+    m_mitsubishiImplObj.setPort(pPort);
+    if(!m_mitsubishiImplObj.isCanWrite(pTag)) return 1;
+    return m_mitsubishiImplObj.writeData(pTag);
+}
+
+
+/**
+ * @brief FX2N::afterWriteIOTag
+ * @details 写变量后处理
+ * @param pTag 变量描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::afterWriteIOTag(IOTag* pTag)
+{
+    (void)pTag;
+    return true;
+}
+
+
+
+/**
+ * @brief FX2N::beforeReadIOTag
+ * @details 读变量前处理
+ * @param pTag 变量描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::beforeReadIOTag(IOTag* pTag)
+{
+    (void)pTag;
+    return true;
+}
+
+
+/**
+ * @brief FX2N::readIOTag
+ * @details 读变量
+ * @param pPort 端口操作接口
+ * @param pTag 变量描述对象
+ * @return 0-失败, 1-成功
+ */
+int FX2N::readIOTag(IPort *pPort, IOTag* pTag)
+{
+    m_mitsubishiImplObj.setPort(pPort);
+    if(!m_mitsubishiImplObj.isCanRead(pTag)) return 1;
+    return m_mitsubishiImplObj.readData(pTag);
+}
+
+
+/**
+ * @brief FX2N::afterReadIOTag
+ * @details 读变量后处理
+ * @param pTag 变量描述对象
+ * @return false-失败, true-成功
+ */
+bool FX2N::afterReadIOTag(IOTag* pTag)
+{
+    (void)pTag;
+    return true;
+}
+
+
+
+
+

@@ -1,8 +1,6 @@
 ﻿#include "ModbusASCIIImpl.h"
 #include "DataPack.h"
-
 #include "../../HmiRunTime/Public/PublicFunction.h"
-#include <QDebug>
 
 ModbusASCIIImpl::ModbusASCIIImpl()
 {

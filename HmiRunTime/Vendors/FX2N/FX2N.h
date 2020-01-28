@@ -2,30 +2,47 @@
 #define FX2N_H
 
 #include <QObject>
-#include "../IDevicePlugin/IDevicePlugin.h"
+#include "../IVendorPlugin/IVendorPlugin.h"
+#include "MitsubishiImpl.h"
 
-
-class FX2N : public QObject, IDevicePlugin
+class FX2N : public QObject, IVendorPlugin
 {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID DevicePluginInterface_iid FILE "FX2N.json")
-    Q_INTERFACES(IDevicePlugin)
+    Q_INTERFACES(IVendorPlugin)
 
 public:
     FX2N();
+    ~FX2N();
 
-    // 获取设备类型名称
-    QString GetDeviceTypeName() Q_DECL_OVERRIDE;
-    // 获取设备支持的所有协议
-    QStringList GetDeviceSupportProtocol() Q_DECL_OVERRIDE;
-    // 获取设备支持的所有寄存器区
-    QStringList GetDeviceSupportRegisterArea() Q_DECL_OVERRIDE;
-    // 获取设备支持的所有数据类型
-    QStringList GetDeviceSupportDataType() Q_DECL_OVERRIDE;
-    // 获取寄存器区地址的下限和上限
-    void GetRegisterAreaLimit(const QString &areaName,
-                              quint32 &lowerLimit,
-                              quint32 &upperLimit) Q_DECL_OVERRIDE;
+    // 初始化设备
+    bool initailizeDevice(void* pObj) Q_DECL_OVERRIDE;
+    // 连接设备
+    bool connectDevice(void* pObj) Q_DECL_OVERRIDE;
+    // 断开设备连接
+    bool disconnectDevice(void* pObj) Q_DECL_OVERRIDE;
+    // 反初始化设备
+    bool unInitailizeDevice(void* pObj) Q_DECL_OVERRIDE;
+
+    // 写变量前处理
+    bool beforeWriteIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+    // 写变量
+    int writeIOTag(IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
+    // 写变量后处理
+    bool afterWriteIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+
+    // 读变量前处理
+    bool beforeReadIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+    // 读变量
+    int readIOTag(IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
+    // 读变量后处理
+    bool afterReadIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+
+private:
+    MitsubishiImpl m_mitsubishiImplObj;
 };
+
+
+
 
 #endif // FX2N_H

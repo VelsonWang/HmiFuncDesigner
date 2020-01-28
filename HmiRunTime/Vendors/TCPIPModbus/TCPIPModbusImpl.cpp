@@ -1,8 +1,7 @@
 ﻿#include "TCPIPModbusImpl.h"
 #include "DataPack.h"
-
 #include "../../HmiRunTime/Public/PublicFunction.h"
-#include <QDebug>
+
 
 TCPIPModbusImpl::TCPIPModbusImpl()
 {
