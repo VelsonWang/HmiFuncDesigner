@@ -24,7 +24,7 @@ QString S7_200::GetDeviceTypeName() {
  */
 QStringList S7_200::GetDeviceSupportProtocol() {
     QStringList list;
-    list << "PPI";
+    list << "S7_200_PPI";
     return list;
 }
 
