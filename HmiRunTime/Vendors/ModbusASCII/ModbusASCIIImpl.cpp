@@ -62,31 +62,29 @@ quint16 ModbusASCIIImpl::makeMessagePackage(quint8 *pSendData,
             tempBuffer_[mesPi++] = tmpUnit;
             tempBuffer_[mesPi++] = byteCount;
         }
-
         if(cm == CM_3x || cm == CM_4x) {
             switch(pTag->GetDataType()) {
             case TYPE_INT16:
             case TYPE_UINT16: {
-                RecoverSelfData(pTag->pWriteBuf, 2);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 2);
+                RecoverSelfData(&tempBuffer_[mesPi], 2);
                 mesPi += 2;
-
             }break;
             case TYPE_INT32:
             case TYPE_UINT32:
             case TYPE_FLOAT: {
-                RecoverSelfData(pTag->pWriteBuf, 4);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 4);
+                RecoverSelfData(&tempBuffer_[mesPi], 4);
                 mesPi += 4;
             }break;
             case TYPE_DOUBLE: {
-                RecoverSelfData(pTag->pWriteBuf, 8);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 8);
+                RecoverSelfData(&tempBuffer_[mesPi], 8);
                 mesPi += 8;
             }break;
             case TYPE_ASCII2CHAR: {
-                RecoverSelfData(pTag->pWriteBuf, 2);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 2);
+                RecoverSelfData(&tempBuffer_[mesPi], 2);
                 mesPi += 2;
             }break;
             case TYPE_STRING: {
@@ -106,15 +104,15 @@ quint16 ModbusASCIIImpl::makeMessagePackage(quint8 *pSendData,
             }break;
             case TYPE_INT16:
             case TYPE_UINT16: {
-                RecoverSelfData(pTag->pWriteBuf, 2);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 2);
+                RecoverSelfData(&tempBuffer_[mesPi], 2);
                 mesPi += 2;
             }break;
             case TYPE_INT32:
             case TYPE_UINT32:
             case TYPE_FLOAT: {
-                RecoverSelfData(pTag->pWriteBuf, 4);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 4);
+                RecoverSelfData(&tempBuffer_[mesPi], 4);
                 mesPi += 4;
             }break;
             }
@@ -214,6 +212,11 @@ int ModbusASCIIImpl::writeData(IOTag* pTag)
     if(resultlen != revLen)
         return 0;
 
+    memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8));
+    memcpy(tempBuffer_, readDataBuffer_, revLen);
+    MakeAsiiToCode(tempBuffer_ + 1, readDataBuffer_, revLen);
+    revLen = (revLen - 3) / 2;
+
     if(messageCheck(readDataBuffer_, revLen))
         return 1;
 
@@ -260,15 +263,19 @@ int ModbusASCIIImpl::readData(IOTag* pTag)
 
     if(cm == CM_0x || cm == CM_1x) {
         if(getPort() != nullptr)
-            resultlen = getPort()->read(readDataBuffer_, 3, 1000);
+            resultlen = getPort()->read(readDataBuffer_, 7, 1000);
 
-        if(resultlen != 3)
+        if(resultlen != 7)
             return -2;
 
-        if(getPort() != nullptr)
-            resultlen = getPort()->read(&readDataBuffer_[3], readDataBuffer_[2] + 2, 1000);
+        quint8 len = 0;
+        MakeAsiiToCode(&readDataBuffer_[5], &len, 1);
 
-        if(resultlen != readDataBuffer_[2] + 2)
+        // len * 2 + 4 --> len * 2 + (1byte lrc) * 2 + 0x0d + 0x0a
+        if(getPort() != nullptr)
+            resultlen = getPort()->read(&readDataBuffer_[7], len * 2 + 4, 1000);
+
+        if(resultlen != len * 2 + 4)
             return -2;
 
         if(pTag->GetDataType() == TYPE_BOOL) {
@@ -285,15 +292,13 @@ int ModbusASCIIImpl::readData(IOTag* pTag)
             return -2;
     }
 
-    memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8));
+    memset(tempBuffer_, 0, sizeof(tempBuffer_)/sizeof(quint8 ));
     memcpy(tempBuffer_, readDataBuffer_, revLen);
 
     MakeAsiiToCode(tempBuffer_ + 1, readDataBuffer_, revLen);
     revLen = (revLen - 3) / 2;
 
-    if(!messageCheck(readDataBuffer_, revLen))
-        return 0;
-
+    if(!messageCheck(readDataBuffer_, revLen)) return 0;
     memset(tempBuffer_, 0, sizeof(tempBuffer_)/sizeof(quint8 ));
 
     // 返回数据的处理

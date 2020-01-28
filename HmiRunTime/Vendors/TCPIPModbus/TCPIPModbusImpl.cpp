@@ -78,25 +78,25 @@ quint16 TCPIPModbusImpl::makeMessagePackage(quint8 *pSendData,
             switch(pTag->GetDataType()) {
             case TYPE_INT16:
             case TYPE_UINT16: {
-                RecoverSelfData(pTag->pWriteBuf, 2);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 2);
+                RecoverSelfData(&tempBuffer_[mesPi], 2);
                 mesPi += 2;
             }break;
             case TYPE_INT32:
             case TYPE_UINT32:
             case TYPE_FLOAT: {
-                RecoverSelfData(pTag->pWriteBuf, 4);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 4);
+                RecoverSelfData(&tempBuffer_[mesPi], 4);
                 mesPi += 4;
             }break;
             case TYPE_DOUBLE: {
-                RecoverSelfData(pTag->pWriteBuf, 8);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 8);
+                RecoverSelfData(&tempBuffer_[mesPi], 8);
                 mesPi += 8;
             }break;
             case TYPE_ASCII2CHAR: {
-                RecoverSelfData(pTag->pWriteBuf, 2);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 2);
+                RecoverSelfData(&tempBuffer_[mesPi], 2);
                 mesPi += 2;
             }break;
             case TYPE_STRING: {
@@ -116,15 +116,15 @@ quint16 TCPIPModbusImpl::makeMessagePackage(quint8 *pSendData,
             }break;
             case TYPE_INT16:
             case TYPE_UINT16: {
-                RecoverSelfData(pTag->pWriteBuf, 2);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 2);
+                RecoverSelfData(&tempBuffer_[mesPi], 2);
                 mesPi += 2;
             }break;
             case TYPE_INT32:
             case TYPE_UINT32:
             case TYPE_FLOAT: {
-                RecoverSelfData(pTag->pWriteBuf, 4);
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 4);
+                RecoverSelfData(&tempBuffer_[mesPi], 4);
                 mesPi += 4;
             }break;
             }

@@ -508,18 +508,18 @@ void Modbus::insertBlockReadTagToReadList(QList<IOTag *> &listRead)
 			}
         }
     }
-
-    //qDebug() << "------------------------------------";
-    //for (int i = 0; i < listRead.size(); ++i) {
-    //    IOTag* pTag = listRead.at(i);
-    //    qDebug() << pTag->GetTagID()
-    //             << pTag->getBlockReadTagId()
-    //             << pTag->GetRegisterArea()
-    //             << pTag->GetRegisterAddress()
-    //             << pTag->GetOffset()
-    //             << pTag->GetDataTypeLength();
-    //}
-
+#if 0
+    qDebug() << "------------------------------------";
+    for (int i = 0; i < listRead.size(); ++i) {
+        IOTag* pTag = listRead.at(i);
+        qDebug() << pTag->GetTagID()
+                 << pTag->getBlockReadTagId()
+                 << pTag->GetRegisterArea()
+                 << pTag->GetRegisterAddress()
+                 << pTag->GetOffset()
+                 << pTag->GetDataTypeLength();
+    }
+#endif
     vecCm0x.clear();
     vecCm1x.clear();
     vecCm3x.clear();

@@ -54,11 +54,14 @@ static bool _wsaInitDone = false;
 #define SHUT_WR	SD_SEND
 #define SHUT_RDWR SD_BOTH
 #endif
+
 #include <ctime>
+#include <thread>
+#include <chrono>
 
 namespace net {
 
-inline void init()	{
+inline void init() {
 //no-op on *nix
 #ifdef _WIN32
 	if( !_wsaInitDone ) {
@@ -68,7 +71,7 @@ inline void init()	{
 #endif
 }
 
-inline void uninit()	{
+inline void uninit() {
 //no-op on *nix
 #ifdef _WIN32
     if( _wsaInitDone ) {
@@ -285,35 +288,50 @@ struct socket {
 
 	int connect( const endpoint ep )	{
 #ifndef _WIN32
-        return ::connect( fd, ep.data(), ep.size() );
+        for (;;) {
+            int ret = ::connect( fd, ep.data(), ep.size() );
+            if (ret == 0) {
+                std::cout << "connect to server successfully." << std::endl;
+                close(clientfd);
+                return 0;
+            } else if (ret == -1) {
+                if (errno == EINTR) {
+                    //connect 动作被信号中断，重试connect
+                    std::cout << "connecting interruptted by signal, try again." << std::endl;
+                    continue;
+                } else if (errno == EINPROGRESS) {
+                    //连接正在尝试中
+                    break;
+                } else {
+                    //真的出错了，
+                    close(clientfd);
+                    return -1;
+                }
+            }
+        }
+        return 0;
 #else
         int start_tick = (int)(std::clock()*1000/ CLOCKS_PER_SEC);
         int error_code;
-        while (1)
-        {
-            if (::connect( fd, ep.data(), ep.size() ) == SOCKET_ERROR)
-            {
+        for (;;) {
+            if (::connect( fd, ep.data(), ep.size() ) == SOCKET_ERROR) {
                 error_code = WSAGetLastError();
                 //std::cout << "connect error code is " << error_code << std::endl;
-                if (error_code == WSAEWOULDBLOCK || error_code == WSAEINVAL)
-                {
+                if (error_code == WSAEWOULDBLOCK || error_code == WSAEINVAL) {
                     if(error_code == WSAEINVAL) {
-                        int now_tick = (int)(std::clock()*1000/ CLOCKS_PER_SEC);
-                        if((now_tick - start_tick)> 3000) {
+                        int now_tick = (int)(std::clock()*1000 / CLOCKS_PER_SEC);
+                        if((now_tick - start_tick) > 3000) {
                             std::cout << "connect error code is " << error_code << std::endl;
                             std::cout << "connect timeout."<< std::endl;
                             break;
+                        } else {
+                            std::this_thread::sleep_for(std::chrono::milliseconds(10));
                         }
                     }
                     continue;
-                }
-                //当连接一次后需要判断是否已经连接.不然会报10056错误
-                else if (error_code == WSAEISCONN)
-                {
+                } else if (error_code == WSAEISCONN) { //当连接一次后需要判断是否已经连接.不然会报10056错误
                     break;
-                }
-                else
-                {
+                } else {
                     std::cout << "connect error code is " << error_code << std::endl;
                     closesocket(fd);
                     WSACleanup();
