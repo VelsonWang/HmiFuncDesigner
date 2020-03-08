@@ -75,8 +75,9 @@ bool TCPIPModbus::unInitailizeDevice(void* pObj)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::beforeWriteIOTag(IOTag* pTag)
+bool TCPIPModbus::beforeWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -89,11 +90,11 @@ bool TCPIPModbus::beforeWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int TCPIPModbus::writeIOTag(IPort *pPort, IOTag* pTag)
+int TCPIPModbus::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_TCPIPModbusImplObj.setPort(pPort);
-    if(!m_TCPIPModbusImplObj.isCanWrite(pTag)) return 1;
-    return m_TCPIPModbusImplObj.writeData(pTag);
+    if(!m_TCPIPModbusImplObj.isCanWrite(pObj, pTag)) return 1;
+    return m_TCPIPModbusImplObj.writeData(pObj, pTag);
 }
 
 
@@ -103,8 +104,9 @@ int TCPIPModbus::writeIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::afterWriteIOTag(IOTag* pTag)
+bool TCPIPModbus::afterWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -117,8 +119,9 @@ bool TCPIPModbus::afterWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::beforeReadIOTag(IOTag* pTag)
+bool TCPIPModbus::beforeReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -131,11 +134,11 @@ bool TCPIPModbus::beforeReadIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int TCPIPModbus::readIOTag(IPort *pPort, IOTag* pTag)
+int TCPIPModbus::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_TCPIPModbusImplObj.setPort(pPort);
-    if(!m_TCPIPModbusImplObj.isCanRead(pTag)) return 1;
-    return m_TCPIPModbusImplObj.readData(pTag);
+    if(!m_TCPIPModbusImplObj.isCanRead(pObj, pTag)) return 1;
+    return m_TCPIPModbusImplObj.readData(pObj, pTag);
 }
 
 
@@ -145,8 +148,9 @@ int TCPIPModbus::readIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::afterReadIOTag(IOTag* pTag)
+bool TCPIPModbus::afterReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }

@@ -312,7 +312,7 @@ IPort *SiemensS7_200Impl::getPort()
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
-bool SiemensS7_200Impl::isCanWrite(IOTag* pTag)
+bool SiemensS7_200Impl::isCanWrite(void* pObj, IOTag* pTag)
 {
     qint32 iDataLen = pTag->GetDataTypeLength();
     if((iDataLen > MAX_WRITE_DATA_LEN) || (iDataLen == 0))
@@ -346,7 +346,7 @@ bool SiemensS7_200Impl::isCanWrite(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败, 1-成功
  */
-int SiemensS7_200Impl::writeData(IOTag* pTag)
+int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
 {
     int iCommTimeout = 1000;
     memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
@@ -405,13 +405,13 @@ int SiemensS7_200Impl::writeData(IOTag* pTag)
     stWDataUnit.byVailableType = 0x04;
 
     if(getCpuMem(pTag->GetRegisterArea()) == CM_T) {
-        stWDataUnit.byDataType = 0x04;
+        stWDataUnit.byDataType = 0x1F;
         stWDataUnit.wVailableBitLen = 8 * 5;
         wTemp = 5;
         dwTemp = pTag->GetRegisterAddress() + pTag->GetOffset();
         RecoverData(pVarVailableData, writeDataBuffer_ + 3, 2);
     } else if(getCpuMem(pTag->GetRegisterArea()) == CM_C) {
-        stWDataUnit.byDataType = 0x04;
+        stWDataUnit.byDataType = 0x1E;
         stWDataUnit.wVailableBitLen = 8 * 3;
         wTemp = 3;
         dwTemp = pTag->GetRegisterAddress() + pTag->GetOffset();
@@ -586,7 +586,7 @@ int SiemensS7_200Impl::writeData(IOTag* pTag)
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
-bool SiemensS7_200Impl::isCanRead(IOTag* pTag)
+bool SiemensS7_200Impl::isCanRead(void* pObj, IOTag* pTag)
 {
     if(getCpuMem(pTag->GetRegisterArea()) == CM_NON)
         return false;
@@ -601,7 +601,7 @@ bool SiemensS7_200Impl::isCanRead(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int SiemensS7_200Impl::readData(IOTag* pTag)
+int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
 {
     int iCommTimeout = 1000;
     // 发送数据结构

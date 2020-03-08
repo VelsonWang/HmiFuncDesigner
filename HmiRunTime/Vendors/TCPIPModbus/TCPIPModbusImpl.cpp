@@ -1,7 +1,7 @@
 ﻿#include "TCPIPModbusImpl.h"
 #include "DataPack.h"
 #include "../../HmiRunTime/Public/PublicFunction.h"
-
+#include "../../HmiRunTime/Vendor.h"
 
 TCPIPModbusImpl::TCPIPModbusImpl()
 {
@@ -15,9 +15,10 @@ TCPIPModbusImpl::~TCPIPModbusImpl()
 
 
 quint16 TCPIPModbusImpl::makeMessagePackage(quint8 *pSendData,
-                                      IOTag* pTag,
-                                      TModbus_ReadWrite RW_flag,
-                                      quint16 *retVarLen)
+                                            void* pObj,
+                                            IOTag* pTag,
+                                            TModbus_ReadWrite RW_flag,
+                                            quint16 *retVarLen)
 {
     quint16 mesPi = 0;
     quint32 tmpDataPos = 0;
@@ -30,8 +31,20 @@ quint16 TCPIPModbusImpl::makeMessagePackage(quint8 *pSendData,
 
     mesPi=0;
 
-    tempBuffer_[mesPi++] = 0x00; //transaction identifier
-    tempBuffer_[mesPi++] = 0x00; //transaction identifier
+    Vendor* pVendorObj = (Vendor*)(pObj);
+    quint16 iTransIdentifier = 0;
+    if(pVendorObj) {
+        iTransIdentifier = pVendorObj->m_extraData[0] + pVendorObj->m_extraData[1] * 256;
+        iTransIdentifier = (iTransIdentifier + 1) % 65536;
+    }
+
+    tempBuffer_[mesPi++] = (iTransIdentifier >> 8) & 0xFF; //transaction identifier
+    tempBuffer_[mesPi++] = iTransIdentifier & 0xFF; //transaction identifier
+
+    if(pVendorObj) {
+        pVendorObj->m_extraData[0] =  tempBuffer_[1];
+        pVendorObj->m_extraData[1] =  tempBuffer_[0];
+    }
 
     tempBuffer_[mesPi++] = 0x00; //protocol identifier
     tempBuffer_[mesPi++] = 0x00; //protocol identifier
@@ -157,7 +170,7 @@ quint16 TCPIPModbusImpl::makeMessagePackage(quint8 *pSendData,
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
-bool TCPIPModbusImpl::isCanWrite(IOTag* pTag)
+bool TCPIPModbusImpl::isCanWrite(void* pObj, IOTag* pTag)
 {
     if(getCpuMem(pTag->GetRegisterArea()) == CM_1x)
         return false;
@@ -174,23 +187,26 @@ bool TCPIPModbusImpl::isCanWrite(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int TCPIPModbusImpl::writeData(IOTag* pTag)
+int TCPIPModbusImpl::writeData(void* pObj, IOTag* pTag)
 {
+    Vendor* pVendorObj = (Vendor*)(pObj);
+
     quint16 msgLen = 0, revLen = 0;
 
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
-    msgLen = makeMessagePackage(writeDataBuffer_, pTag, FLAG_WRITE, &revLen);
+    msgLen = makeMessagePackage(pVendorObj->writeBuf, pObj, pTag, FLAG_WRITE, &revLen);
 
     if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, msgLen, 1000);
+        getPort()->write(pVendorObj->writeBuf, msgLen, 1000);
 
     int resultlen = 0;
     if(getPort() != nullptr)
-        resultlen = getPort()->read(readDataBuffer_, revLen, 1000);
+        resultlen = getPort()->read(pVendorObj->readBuf, revLen, 1000);
 
-    if(resultlen == revLen && readDataBuffer_[0] == writeDataBuffer_[0])
+    if(resultlen == revLen && pVendorObj->readBuf[0] == pVendorObj->writeBuf[0] &&
+            pVendorObj->readBuf[1] == pVendorObj->writeBuf[1] && pVendorObj->readBuf[7] == pVendorObj->writeBuf[7])
         return 1;
 
     return 0;
@@ -203,7 +219,7 @@ int TCPIPModbusImpl::writeData(IOTag* pTag)
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
-bool TCPIPModbusImpl::isCanRead(IOTag* pTag)
+bool TCPIPModbusImpl::isCanRead(void* pObj, IOTag* pTag)
 {
     Q_UNUSED(pTag)
     return true;
@@ -216,48 +232,51 @@ bool TCPIPModbusImpl::isCanRead(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int TCPIPModbusImpl::readData(IOTag* pTag)
+int TCPIPModbusImpl::readData(void* pObj, IOTag* pTag)
 {
     quint16 retSize = 0, msgLen = 0, revLen = 0;
     qint16 i = 0, j = 0;
     quint32 wDataLen = 0;
+    Vendor* pVendorObj = (Vendor*)(pObj);
 
     TModbus_CPUMEM cm = getCpuMem(pTag->GetRegisterArea());
 
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
-    msgLen = makeMessagePackage(writeDataBuffer_, pTag, FLAG_READ, &revLen);
+    msgLen = makeMessagePackage(pVendorObj->writeBuf, pObj, pTag, FLAG_READ, &revLen);
 
     if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, msgLen, 1000);
+        getPort()->write(pVendorObj->writeBuf, msgLen, 1000);
 
     int resultlen = 0;
 
     if(cm == CM_0x || cm == CM_1x) {
         if(getPort() != nullptr)
-            resultlen = getPort()->read(readDataBuffer_, 9, 1000);
+            resultlen = getPort()->read(pVendorObj->readBuf, 9, 1000);
 
-        if(resultlen != 9)
+        if(!(resultlen == 9 && pVendorObj->readBuf[0] == pVendorObj->writeBuf[0] &&
+             pVendorObj->readBuf[1] == pVendorObj->writeBuf[1] && pVendorObj->readBuf[7] == pVendorObj->writeBuf[7]))
             return -2;
 
         if(getPort() != nullptr)
-            resultlen = getPort()->read(&readDataBuffer_[9], readDataBuffer_[8], 1000);
+            resultlen = getPort()->read(&pVendorObj->readBuf[9], pVendorObj->readBuf[8], 1000);
 
-        if(resultlen != readDataBuffer_[8])
+        if(resultlen != pVendorObj->readBuf[8])
             return -2;
 
         if(pTag->GetDataType() == TYPE_BOOL) {
-            if(readDataBuffer_[8] > 1) {
-                revLen = revLen + readDataBuffer_[8] - 1;
+            if(pVendorObj->readBuf[8] > 1) {
+                revLen = revLen + pVendorObj->readBuf[8] - 1;
             }
         }
     } else {
 
         if(getPort() != nullptr)
-            resultlen = getPort()->read(readDataBuffer_, revLen, 1000);
+            resultlen = getPort()->read(pVendorObj->readBuf, revLen, 1000);
 
-        if(resultlen != revLen)
+        if(!(resultlen == revLen && pVendorObj->readBuf[0] == pVendorObj->writeBuf[0] &&
+             pVendorObj->readBuf[1] == pVendorObj->writeBuf[1] && pVendorObj->readBuf[7] == pVendorObj->writeBuf[7]))
             return -2;
     }
 
@@ -266,62 +285,62 @@ int TCPIPModbusImpl::readData(IOTag* pTag)
     // 返回数据的处理
     if(pTag->GetDataType() == TYPE_BOOL) {
         retSize = 1;
-        pTag->pReadBuf[0] = readDataBuffer_[9] & 0x01;
+        pTag->pReadBuf[0] = pVendorObj->readBuf[9] & 0x01;
         wDataLen = retSize;
     } else if(pTag->GetDataType() == TYPE_INT16 || pTag->GetDataType() == TYPE_UINT16) {
         if(getFuncode(pTag, FLAG_READ) == 0x03 || getFuncode(pTag, FLAG_READ) == 0x04) {
-            pTag->pReadBuf[0] = readDataBuffer_[10];
-            pTag->pReadBuf[1] = readDataBuffer_[9];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[10];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[9];
         } else {
-            pTag->pReadBuf[0] = readDataBuffer_[9];
-            pTag->pReadBuf[1] = readDataBuffer_[10];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[9];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[10];
         }
 
         wDataLen=2;
     } else if(pTag->GetDataType() == TYPE_UINT32 || pTag->GetDataType() == TYPE_INT32 ||
               pTag->GetDataType() == TYPE_FLOAT) {
         if(getFuncode(pTag, FLAG_READ) == 0x03 || getFuncode(pTag, FLAG_READ) == 0x04) {
-            pTag->pReadBuf[0] = readDataBuffer_[10];
-            pTag->pReadBuf[1] = readDataBuffer_[9];
-            pTag->pReadBuf[2] = readDataBuffer_[12];
-            pTag->pReadBuf[3] = readDataBuffer_[11];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[10];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[9];
+            pTag->pReadBuf[2] = pVendorObj->readBuf[12];
+            pTag->pReadBuf[3] = pVendorObj->readBuf[11];
         } else {
-            pTag->pReadBuf[0] = readDataBuffer_[9];
-            pTag->pReadBuf[1] = readDataBuffer_[10];
-            pTag->pReadBuf[2] = readDataBuffer_[11];
-            pTag->pReadBuf[3] = readDataBuffer_[12];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[9];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[10];
+            pTag->pReadBuf[2] = pVendorObj->readBuf[11];
+            pTag->pReadBuf[3] = pVendorObj->readBuf[12];
         }
         wDataLen = 4;
     } else if(pTag->GetDataType() == TYPE_UINT8 || pTag->GetDataType() == TYPE_INT8) {
-        retSize = readDataBuffer_[8];
+        retSize = pVendorObj->readBuf[8];
 
         if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
             j = retSize-1;
             for(i=0; i<retSize; i++)
-                *(pTag->pReadBuf + (j--)) = readDataBuffer_[9+i];
+                *(pTag->pReadBuf + (j--)) = pVendorObj->readBuf[9+i];
         } else {
             j = retSize/2-1;
             for(i=0;i<retSize;i++,j--) {
-                *(pTag->pReadBuf + 2 * j) = readDataBuffer_[9+i];
+                *(pTag->pReadBuf + 2 * j) = pVendorObj->readBuf[9+i];
                 i++;
-                *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[9+i];
+                *(pTag->pReadBuf + 2 * j + 1) = pVendorObj->readBuf[9+i];
             }
         }
 
         wDataLen = retSize;
     } else if(pTag->GetDataType() == TYPE_BYTES) {
-        retSize = readDataBuffer_[8];
+        retSize = pVendorObj->readBuf[8];
 
         if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
             j = 0;
             for(i=0; i<retSize; i++)
-                *(pTag->pReadBuf + (j++)) = readDataBuffer_[9+i];
+                *(pTag->pReadBuf + (j++)) = pVendorObj->readBuf[9+i];
         } else {
             j = 0;
             for(i=0;i<retSize;i++,j++) {
-                *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[9+i];
+                *(pTag->pReadBuf + 2 * j + 1) = pVendorObj->readBuf[9+i];
                 i++;
-                *(pTag->pReadBuf + 2 * j) = readDataBuffer_[9+i];
+                *(pTag->pReadBuf + 2 * j) = pVendorObj->readBuf[9+i];
             }
         }
 

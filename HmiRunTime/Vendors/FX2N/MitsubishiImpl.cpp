@@ -169,7 +169,7 @@ IPort *MitsubishiImpl::getPort()
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
-bool MitsubishiImpl::isCanWrite(IOTag* pTag)
+bool MitsubishiImpl::isCanWrite(void* pObj, IOTag* pTag)
 {
     if(getCpuMem(pTag->GetRegisterArea()) == CM_X)
         return false;
@@ -188,7 +188,7 @@ bool MitsubishiImpl::isCanWrite(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败, 1-成功
  */
-int MitsubishiImpl::writeData(IOTag* pTag)
+int MitsubishiImpl::writeData(void* pObj, IOTag* pTag)
 {
     static int iFirstFlag = 1;
     quint16 wAddress = getBeginAddrAsCpuMem(getCpuMem(pTag->GetRegisterArea()), pTag->GetDataType());
@@ -267,7 +267,7 @@ int MitsubishiImpl::writeData(IOTag* pTag)
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
-bool MitsubishiImpl::isCanRead(IOTag* pTag)
+bool MitsubishiImpl::isCanRead(void* pObj, IOTag* pTag)
 {
     Q_UNUSED(pTag)
     return true;
@@ -280,7 +280,7 @@ bool MitsubishiImpl::isCanRead(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败, 1-成功
  */
-int MitsubishiImpl::readData(IOTag* pTag)
+int MitsubishiImpl::readData(void* pObj, IOTag* pTag)
 {
     static int iFirstFlag = 1;
     quint16 wAddress = getBeginAddrAsCpuMem(getCpuMem(pTag->GetRegisterArea()), pTag->GetDataType());

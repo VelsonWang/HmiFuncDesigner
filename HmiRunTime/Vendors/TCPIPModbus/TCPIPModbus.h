@@ -26,18 +26,18 @@ public:
     bool unInitailizeDevice(void* pObj) Q_DECL_OVERRIDE;
 
     // 写变量前处理
-    bool beforeWriteIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+    bool beforeWriteIOTag(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
     // 写变量
-    int writeIOTag(IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
+    int writeIOTag(void* pObj, IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
     // 写变量后处理
-    bool afterWriteIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+    bool afterWriteIOTag(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
 
     // 读变量前处理
-    bool beforeReadIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+    bool beforeReadIOTag(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
     // 读变量
-    int readIOTag(IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
+    int readIOTag(void* pObj, IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
     // 读变量后处理
-    bool afterReadIOTag(IOTag* pTag) Q_DECL_OVERRIDE;
+    bool afterReadIOTag(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
 
 private:
     TCPIPModbusImpl m_TCPIPModbusImplObj;

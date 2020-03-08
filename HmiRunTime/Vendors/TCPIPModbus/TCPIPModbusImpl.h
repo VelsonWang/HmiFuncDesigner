@@ -16,14 +16,15 @@ public:
     ~TCPIPModbusImpl();
 
 public:
-    bool isCanWrite(IOTag* pTag);
-    int writeData(IOTag* pTag);
-    bool isCanRead(IOTag* pTag);
-    int readData(IOTag* pTag);
+    bool isCanWrite(void* pObj, IOTag* pTag);
+    int writeData(void* pObj, IOTag* pTag);
+    bool isCanRead(void* pObj, IOTag* pTag);
+    int readData(void* pObj, IOTag* pTag);
 
 private:
     // 生成modbus报文
     quint16 makeMessagePackage(quint8 *pSendData,
+                               void* pObj,
                                IOTag* pTag,
                                TModbus_ReadWrite RW_flag,
                                quint16 *retVarLen);

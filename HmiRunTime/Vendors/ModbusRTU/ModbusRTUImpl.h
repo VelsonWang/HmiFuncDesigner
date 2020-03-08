@@ -19,10 +19,10 @@ public:
     quint16 crc16(quint8 *pbuf, qint32 len);
     bool messageCheck(quint8 *inBuf, qint16 bufLen);
 
-    bool isCanWrite(IOTag* pTag);
-    int writeData(IOTag* pTag);
-    bool isCanRead(IOTag* pTag);
-    int readData(IOTag* pTag);
+    bool isCanWrite(void* pObj, IOTag* pTag);
+    int writeData(void* pObj, IOTag* pTag);
+    bool isCanRead(void* pObj, IOTag* pTag);
+    int readData(void* pObj, IOTag* pTag);
 
 private:
     // 生成modbus报文

@@ -173,7 +173,7 @@ bool ModbusASCIIImpl::messageCheck(quint8 *inBuf, qint16 bufLen)
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
-bool ModbusASCIIImpl::isCanWrite(IOTag* pTag)
+bool ModbusASCIIImpl::isCanWrite(void* pObj, IOTag* pTag)
 {
     if(getCpuMem(pTag->GetRegisterArea()) == CM_1x) {
         return false;
@@ -191,7 +191,7 @@ bool ModbusASCIIImpl::isCanWrite(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int ModbusASCIIImpl::writeData(IOTag* pTag)
+int ModbusASCIIImpl::writeData(void* pObj, IOTag* pTag)
 {
     quint16 msgLen = 0, revLen = 0;
 
@@ -228,7 +228,7 @@ int ModbusASCIIImpl::writeData(IOTag* pTag)
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
-bool ModbusASCIIImpl::isCanRead(IOTag* pTag)
+bool ModbusASCIIImpl::isCanRead(void* pObj, IOTag* pTag)
 {
     Q_UNUSED(pTag)
     return true;
@@ -241,7 +241,7 @@ bool ModbusASCIIImpl::isCanRead(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int ModbusASCIIImpl::readData(IOTag* pTag)
+int ModbusASCIIImpl::readData(void* pObj, IOTag* pTag)
 {
     quint16 retSize = 0, msgLen = 0, revLen = 0;
     qint16 i = 0, j = 0;

@@ -232,8 +232,8 @@ bool Vendor::writeIOTag(IOTag* pTag)
                 QByteArray baWriteDat = pDBTagObject->GetWriteDataBytes();
                 memcpy(pTag->pWriteBuf, baWriteDat.data(), baWriteDat.size());
             }
-            m_pVendorPluginObj->beforeWriteIOTag(pTag);
-            if(m_pVendorPluginObj->writeIOTag(m_pPortObj, pTag) != 1) {
+            m_pVendorPluginObj->beforeWriteIOTag(this, pTag);
+            if(m_pVendorPluginObj->writeIOTag(this, m_pPortObj, pTag) != 1) {
                 qint32 iRetryTimes = 0;
                 do {
                     LogInfo(QString("device[%1] try to write tag[id: %2] again! %3/%4")
@@ -242,11 +242,11 @@ bool Vendor::writeIOTag(IOTag* pTag)
                             .arg(QString::number(iRetryTimes+1))
                             .arg(QString::number(RETRY_TIMES)));
                     iRetryTimes++;
-                    if(m_pVendorPluginObj->writeIOTag(m_pPortObj, pTag) == 1) break;
+                    if(m_pVendorPluginObj->writeIOTag(this, m_pPortObj, pTag) == 1) break;
                 } while(iRetryTimes < RETRY_TIMES);
                 if(iRetryTimes >= RETRY_TIMES) return false;
             }
-            m_pVendorPluginObj->afterWriteIOTag(pTag);
+            m_pVendorPluginObj->afterWriteIOTag(this, pTag);
         }
     }
     return true;
@@ -315,10 +315,10 @@ bool Vendor::readIOTag(IOTag* pTag)
         memset((void*)pTag->pReadBuf, 0, pTag->mLength);
         DBTagObject *pDBTagObject = (DBTagObject *)pTag->GetDBTagObject();
         if(m_pVendorPluginObj != Q_NULLPTR && m_pPortObj != Q_NULLPTR) {
-            m_pVendorPluginObj->beforeReadIOTag(pTag);
+            m_pVendorPluginObj->beforeReadIOTag(this, pTag);
 
             if(pTag->getBlockReadTagId() == "block") { // 块读取变量
-                if(m_pVendorPluginObj->readIOTag(m_pPortObj, pTag) != 1) {
+                if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) != 1) {
                     qint32 iRetryTimes = 0;
                     do {
                         LogInfo(QString("device[%1] try to read tag[id: %2] again! %3/%4")
@@ -327,7 +327,7 @@ bool Vendor::readIOTag(IOTag* pTag)
                                 .arg(QString::number(iRetryTimes+1))
                                 .arg(QString::number(RETRY_TIMES)));
                         iRetryTimes++;
-                        if(m_pVendorPluginObj->readIOTag(m_pPortObj, pTag) == 1) break;
+                        if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) break;
                     } while(iRetryTimes < RETRY_TIMES);
                     if(iRetryTimes >= RETRY_TIMES) {
                         pTag->setReadBlockReadTagSuccess(false);
@@ -358,7 +358,7 @@ bool Vendor::readIOTag(IOTag* pTag)
                         }
 
                     } else {
-                        if(m_pVendorPluginObj->readIOTag(m_pPortObj, pTag) != 1) {
+                        if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) != 1) {
                             qint32 iRetryTimes = 0;
                             do {
                                 LogInfo(QString("device[%1] try to read tag[id: %2] again! %3/%4")
@@ -367,13 +367,13 @@ bool Vendor::readIOTag(IOTag* pTag)
                                         .arg(QString::number(iRetryTimes+1))
                                         .arg(QString::number(RETRY_TIMES)));
                                 iRetryTimes++;
-                                if(m_pVendorPluginObj->readIOTag(m_pPortObj, pTag) == 1) break;
+                                if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) break;
                             } while(iRetryTimes < RETRY_TIMES);
                             if(iRetryTimes >= RETRY_TIMES) return false;
                         }
                     }
                 } else {
-                    if(m_pVendorPluginObj->readIOTag(m_pPortObj, pTag) != 1) {
+                    if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) != 1) {
                         qint32 iRetryTimes = 0;
                         do {
                             LogInfo(QString("device[%1] try to read tag[id: %2] again! %3/%4")
@@ -382,7 +382,7 @@ bool Vendor::readIOTag(IOTag* pTag)
                                     .arg(QString::number(iRetryTimes+1))
                                     .arg(QString::number(RETRY_TIMES)));
                             iRetryTimes++;
-                            if(m_pVendorPluginObj->readIOTag(m_pPortObj, pTag) == 1) break;
+                            if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) break;
                         } while(iRetryTimes < RETRY_TIMES);
                         if(iRetryTimes >= RETRY_TIMES) return false;
                     }
@@ -391,7 +391,7 @@ bool Vendor::readIOTag(IOTag* pTag)
                     pDBTagObject->SetData(pTag->pReadBuf);
             }
 
-            m_pVendorPluginObj->afterReadIOTag(pTag);
+            m_pVendorPluginObj->afterReadIOTag(this, pTag);
         }
     }
     return true;

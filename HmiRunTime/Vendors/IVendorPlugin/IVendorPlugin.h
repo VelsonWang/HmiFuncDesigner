@@ -24,18 +24,18 @@ public:
     virtual bool unInitailizeDevice(void* pObj) = 0;
 
     // 写变量前处理
-    virtual bool beforeWriteIOTag(IOTag* pTag) = 0;
+    virtual bool beforeWriteIOTag(void* pObj, IOTag* pTag) = 0;
     // 写变量
-    virtual int writeIOTag(IPort *pPort, IOTag* pTag) = 0;
+    virtual int writeIOTag(void* pObj, IPort *pPort, IOTag* pTag) = 0;
     // 写变量后处理
-    virtual bool afterWriteIOTag(IOTag* pTag) = 0;
+    virtual bool afterWriteIOTag(void* pObj, IOTag* pTag) = 0;
 
     // 读变量前处理
-    virtual bool beforeReadIOTag(IOTag* pTag) = 0;
+    virtual bool beforeReadIOTag(void* pObj, IOTag* pTag) = 0;
     // 读变量
-    virtual int readIOTag(IPort *pPort, IOTag* pTag) = 0;
+    virtual int readIOTag(void* pObj, IPort *pPort, IOTag* pTag) = 0;
     // 读变量后处理
-    virtual bool afterReadIOTag(IOTag* pTag) = 0;
+    virtual bool afterReadIOTag(void* pObj, IOTag* pTag) = 0;
 };
 
 

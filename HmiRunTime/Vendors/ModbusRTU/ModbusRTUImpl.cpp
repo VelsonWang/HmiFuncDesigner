@@ -227,7 +227,7 @@ bool ModbusRTUImpl::messageCheck(quint8 *inBuf, qint16 bufLen)
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
-bool ModbusRTUImpl::isCanWrite(IOTag* pTag)
+bool ModbusRTUImpl::isCanWrite(void* pObj, IOTag* pTag)
 {
     if(getCpuMem(pTag->GetRegisterArea()) == CM_1x)
         return false;
@@ -244,7 +244,7 @@ bool ModbusRTUImpl::isCanWrite(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int ModbusRTUImpl::writeData(IOTag* pTag)
+int ModbusRTUImpl::writeData(void* pObj, IOTag* pTag)
 {
     quint16 msgLen = 0, revLen = 0;
 
@@ -273,7 +273,7 @@ int ModbusRTUImpl::writeData(IOTag* pTag)
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
-bool ModbusRTUImpl::isCanRead(IOTag* pTag)
+bool ModbusRTUImpl::isCanRead(void* pObj, IOTag* pTag)
 {
     Q_UNUSED(pTag)
     return true;
@@ -286,7 +286,7 @@ bool ModbusRTUImpl::isCanRead(IOTag* pTag)
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
-int ModbusRTUImpl::readData(IOTag* pTag)
+int ModbusRTUImpl::readData(void* pObj, IOTag* pTag)
 {
     quint16 retSize = 0, msgLen = 0, revLen = 0;
     qint16 i = 0, j = 0;

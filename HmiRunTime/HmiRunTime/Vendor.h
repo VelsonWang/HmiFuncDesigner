@@ -14,7 +14,7 @@
 #include "public.h"
 
 class IOTag;
-
+class IVendorPlugin;
 
 class VendorPrivate
 {
@@ -137,6 +137,7 @@ public:
 public:
     quint8 readBuf[512] = {0};
     quint8 writeBuf[512] = {0};
+    unsigned char m_extraData[32] = {0}; // 变量私有数据
 
     void clearReadBuffer();
     void clearWriteBuffer();

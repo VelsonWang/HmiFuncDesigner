@@ -75,7 +75,7 @@ bool ModbusASCII::unInitailizeDevice(void* pObj)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusASCII::beforeWriteIOTag(IOTag* pTag)
+bool ModbusASCII::beforeWriteIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -89,11 +89,11 @@ bool ModbusASCII::beforeWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int ModbusASCII::writeIOTag(IPort *pPort, IOTag* pTag)
+int ModbusASCII::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_ModbusASCIIImplObj.setPort(pPort);
-    if(!m_ModbusASCIIImplObj.isCanWrite(pTag)) return 1;
-    return m_ModbusASCIIImplObj.writeData(pTag);
+    if(!m_ModbusASCIIImplObj.isCanWrite(pObj, pTag)) return 1;
+    return m_ModbusASCIIImplObj.writeData(pObj, pTag);
 }
 
 
@@ -103,7 +103,7 @@ int ModbusASCII::writeIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusASCII::afterWriteIOTag(IOTag* pTag)
+bool ModbusASCII::afterWriteIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -117,7 +117,7 @@ bool ModbusASCII::afterWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusASCII::beforeReadIOTag(IOTag* pTag)
+bool ModbusASCII::beforeReadIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -131,11 +131,11 @@ bool ModbusASCII::beforeReadIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int ModbusASCII::readIOTag(IPort *pPort, IOTag* pTag)
+int ModbusASCII::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_ModbusASCIIImplObj.setPort(pPort);
-    if(!m_ModbusASCIIImplObj.isCanRead(pTag)) return 1;
-    return m_ModbusASCIIImplObj.readData(pTag);
+    if(!m_ModbusASCIIImplObj.isCanRead(pObj, pTag)) return 1;
+    return m_ModbusASCIIImplObj.readData(pObj, pTag);
 }
 
 
@@ -145,7 +145,7 @@ int ModbusASCII::readIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusASCII::afterReadIOTag(IOTag* pTag)
+bool ModbusASCII::afterReadIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;

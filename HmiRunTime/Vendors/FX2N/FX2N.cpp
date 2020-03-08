@@ -74,7 +74,7 @@ bool FX2N::unInitailizeDevice(void* pObj)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool FX2N::beforeWriteIOTag(IOTag* pTag)
+bool FX2N::beforeWriteIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -88,11 +88,11 @@ bool FX2N::beforeWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int FX2N::writeIOTag(IPort *pPort, IOTag* pTag)
+int FX2N::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_mitsubishiImplObj.setPort(pPort);
-    if(!m_mitsubishiImplObj.isCanWrite(pTag)) return 1;
-    return m_mitsubishiImplObj.writeData(pTag);
+    if(!m_mitsubishiImplObj.isCanWrite(pObj, pTag)) return 1;
+    return m_mitsubishiImplObj.writeData(pObj, pTag);
 }
 
 
@@ -102,7 +102,7 @@ int FX2N::writeIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool FX2N::afterWriteIOTag(IOTag* pTag)
+bool FX2N::afterWriteIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -116,7 +116,7 @@ bool FX2N::afterWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool FX2N::beforeReadIOTag(IOTag* pTag)
+bool FX2N::beforeReadIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -130,11 +130,11 @@ bool FX2N::beforeReadIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int FX2N::readIOTag(IPort *pPort, IOTag* pTag)
+int FX2N::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_mitsubishiImplObj.setPort(pPort);
-    if(!m_mitsubishiImplObj.isCanRead(pTag)) return 1;
-    return m_mitsubishiImplObj.readData(pTag);
+    if(!m_mitsubishiImplObj.isCanRead(pObj, pTag)) return 1;
+    return m_mitsubishiImplObj.readData(pObj, pTag);
 }
 
 
@@ -144,7 +144,7 @@ int FX2N::readIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool FX2N::afterReadIOTag(IOTag* pTag)
+bool FX2N::afterReadIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;

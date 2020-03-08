@@ -74,7 +74,7 @@ bool S7_200::unInitailizeDevice(void* pObj)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool S7_200::beforeWriteIOTag(IOTag* pTag)
+bool S7_200::beforeWriteIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -88,11 +88,11 @@ bool S7_200::beforeWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int S7_200::writeIOTag(IPort *pPort, IOTag* pTag)
+int S7_200::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_siemensS7_200ImplImplObj.setPort(pPort);
-    if(!m_siemensS7_200ImplImplObj.isCanWrite(pTag)) return 1;
-    return m_siemensS7_200ImplImplObj.writeData(pTag);
+    if(!m_siemensS7_200ImplImplObj.isCanWrite(pObj, pTag)) return 1;
+    return m_siemensS7_200ImplImplObj.writeData(pObj, pTag);
 }
 
 
@@ -102,7 +102,7 @@ int S7_200::writeIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool S7_200::afterWriteIOTag(IOTag* pTag)
+bool S7_200::afterWriteIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -116,7 +116,7 @@ bool S7_200::afterWriteIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool S7_200::beforeReadIOTag(IOTag* pTag)
+bool S7_200::beforeReadIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;
@@ -130,11 +130,11 @@ bool S7_200::beforeReadIOTag(IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int S7_200::readIOTag(IPort *pPort, IOTag* pTag)
+int S7_200::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 {
     m_siemensS7_200ImplImplObj.setPort(pPort);
-    if(!m_siemensS7_200ImplImplObj.isCanRead(pTag)) return 1;
-    return m_siemensS7_200ImplImplObj.readData(pTag);
+    if(!m_siemensS7_200ImplImplObj.isCanRead(pObj, pTag)) return 1;
+    return m_siemensS7_200ImplImplObj.readData(pObj, pTag);
 }
 
 
@@ -144,7 +144,7 @@ int S7_200::readIOTag(IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool S7_200::afterReadIOTag(IOTag* pTag)
+bool S7_200::afterReadIOTag(void* pObj, IOTag* pTag)
 {
     (void)pTag;
     return true;

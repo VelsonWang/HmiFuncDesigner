@@ -19,10 +19,10 @@ public:
     void setPort(IPort *pPort);
     IPort *getPort();
 
-    bool isCanWrite(IOTag* pTag);
-    int writeData(IOTag* pTag);
-    bool isCanRead(IOTag* pTag);
-    int readData(IOTag* pTag);
+    bool isCanWrite(void* pObj, IOTag* pTag);
+    int writeData(void* pObj, IOTag* pTag);
+    bool isCanRead(void* pObj, IOTag* pTag);
+    int readData(void* pObj, IOTag* pTag);
 
 private:
     IPort *iFacePort_;
