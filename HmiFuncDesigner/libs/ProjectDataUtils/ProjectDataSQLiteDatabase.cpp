@@ -153,11 +153,13 @@ bool ProjectDataSQLiteDatabase::createTableDeviceInfo()
 
     keyList << "id" << "type" << "name" << "frame_length"
             << "protocol" << "link" << "state_var" << "frame_time_period"
-            << "ctrl_var" << "dynamic_optimization" << "remote_port" << "port_parameters";
+            << "ctrl_var" << "dynamic_optimization" << "remote_port" << "port_parameters"
+            << "properties";
 
     valueList << autoincrement << "varchar(8)" << "varchar(64)" << "int"
               << "varchar(64)" << "varchar(32)" << "int" << "int"
-              << "int" << "int" << "int" << "varchar(512)";
+              << "int" << "int" << "int" << "varchar(512)"
+              << "varchar(512)";
 
     ret = createTable("t_device_info", keyList, valueList, "");
     if(ret == 1) {

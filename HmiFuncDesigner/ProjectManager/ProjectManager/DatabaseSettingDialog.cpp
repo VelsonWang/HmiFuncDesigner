@@ -10,6 +10,7 @@ DatabaseSettingDialog::DatabaseSettingDialog(QWidget *parent, QString ProjectPat
     m_ProjectPath(ProjectPath)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
 }
 
 DatabaseSettingDialog::~DatabaseSettingDialog()

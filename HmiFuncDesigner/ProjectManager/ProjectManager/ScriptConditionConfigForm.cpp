@@ -10,6 +10,7 @@ ScriptConditionConfigForm::ScriptConditionConfigForm(QString projectPath, QWidge
     ui(new Ui::ScriptConditionConfigForm)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->btnOk->setFocus();
     ui->btnOk->setDefault(true);
 }

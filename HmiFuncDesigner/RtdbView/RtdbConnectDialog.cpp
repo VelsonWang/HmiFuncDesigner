@@ -9,6 +9,7 @@ RtdbConnectDialog::RtdbConnectDialog(QWidget *parent) :
     ui(new Ui::RtdbConnectDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     setWindowTitle(tr("实时数据库连接"));
 
     QString strFile = Helper::AppDir() + "/Config/Current.ini";

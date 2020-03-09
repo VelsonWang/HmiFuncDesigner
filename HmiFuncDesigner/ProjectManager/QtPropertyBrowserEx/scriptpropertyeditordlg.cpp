@@ -21,7 +21,7 @@ ScriptPropertyEditorDlg::ScriptPropertyEditorDlg(QWidget *parent, QStringList ev
       ui(new Ui::ScriptPropertyEditorDlg) {
     ui->setupUi(this);
     this->setWindowTitle(tr("JavaScript脚本编辑器"));
-
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     mapNameToShowName_.clear();
     mapShowNameToName_.clear();
     supportEvents_.clear();

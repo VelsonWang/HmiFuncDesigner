@@ -7,6 +7,7 @@ NewVariableGroupDialog::NewVariableGroupDialog(QWidget *parent) :
     m_GroupName("")
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
 }
 
 NewVariableGroupDialog::~NewVariableGroupDialog()

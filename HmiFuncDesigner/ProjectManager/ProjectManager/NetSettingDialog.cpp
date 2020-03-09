@@ -12,6 +12,7 @@ NetSettingDialog::NetSettingDialog(QWidget *parent, QString ProjectPath) :
     m_ProjectPath(ProjectPath)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
 }
 
 NetSettingDialog::~NetSettingDialog()

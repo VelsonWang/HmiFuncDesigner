@@ -12,8 +12,10 @@
 #include "ui_DeviceListDialog.h"
 
 DeviceListDialog::DeviceListDialog(QString stype, QWidget *parent)
-    : QDialog(parent), ui(new Ui::DeviceListDialog) {
+    : QDialog(parent), ui(new Ui::DeviceListDialog)
+{
   ui->setupUi(this);
+  this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
   m_DeviceName = "";
   m_strPortType = stype;
   // qDebug()<<"PortType: "<<m_strPortType;

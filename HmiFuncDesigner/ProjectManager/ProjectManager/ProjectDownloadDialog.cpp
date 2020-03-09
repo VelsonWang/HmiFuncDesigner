@@ -19,6 +19,7 @@ ProjectDownloadDialog::ProjectDownloadDialog(QWidget *parent, QString projName) 
     fileSize_(0)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     fileBuf_.clear();
     ui->progressBar->setValue(0);
     ui->labelAddress->setText(getRuntimeIp());

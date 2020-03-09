@@ -111,3 +111,66 @@ void S7_200::GetRegisterAreaLimit(const QString &areaName,
         upperLimit = 62;
     }
 }
+
+///
+/// \brief S7_200::getDefaultDeviceProperty
+/// \details 获取设备默认属性
+/// \param properties
+///
+void S7_200::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    properties.clear();
+}
+
+
+///
+/// \brief S7_200::getDefaultDevicePropertyDataType
+/// \details 获取设备默认属性数据类型
+/// \param properties_type
+///
+void S7_200::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
+{
+    properties_type.clear();
+
+}
+
+
+///
+/// \brief S7_200::devicePropertiesToString
+/// \details 保存属性为字符串
+/// \param properties 属性
+/// \return 属性字符串
+///
+QString S7_200::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
+{
+    Q_UNUSED(properties)
+    return QString();
+}
+
+
+///
+/// \brief S7_200::devicePropertiesFromString
+/// \details 从字符串加载属性
+/// \param szProperty 属性字符串
+/// \param properties 属性
+///
+void S7_200::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
+{
+    Q_UNUSED(szProperty)
+    Q_UNUSED(properties)
+}
+
+
+///
+/// \brief S7_200::setDeviceProperty
+/// \details 设置设备属性
+/// \param properties
+///
+void S7_200::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    m_properties.clear();
+    m_properties.append(properties);
+}
+
+
+

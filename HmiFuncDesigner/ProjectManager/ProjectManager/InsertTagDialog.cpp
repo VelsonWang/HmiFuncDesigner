@@ -8,7 +8,7 @@ InsertTagDialog::InsertTagDialog(QString projectPath, QWidget *parent) :
     ui(new Ui::InsertTagDialog)
 {
     ui->setupUi(this);
-
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_varsList.clear();
     ProjectData::getInstance()->getAllTagName(m_varsList, "IO");
     for(QString varName : m_varsList) {

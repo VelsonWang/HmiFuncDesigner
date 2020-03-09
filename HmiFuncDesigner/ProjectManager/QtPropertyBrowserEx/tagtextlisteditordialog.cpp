@@ -15,6 +15,7 @@ TagTextListEditorDialog::TagTextListEditorDialog(QWidget *parent)
       ui(new Ui::TagTextListEditorDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     initUi();
 }
 

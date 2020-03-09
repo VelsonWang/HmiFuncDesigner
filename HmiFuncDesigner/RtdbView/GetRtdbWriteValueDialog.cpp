@@ -8,6 +8,7 @@ GetRtdbWriteValueDialog::GetRtdbWriteValueDialog(TagItem *tag, QWidget *parent) 
     ui(new Ui::GetRtdbWriteValueDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_sWriteValue = "";
 
     QString info = "变量信息:\n";

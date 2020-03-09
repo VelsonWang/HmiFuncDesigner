@@ -7,7 +7,7 @@ InsertTagDlg::InsertTagDlg(QWidget *parent)
       ui(new Ui::InsertTagDlg)
 {
     ui->setupUi(this);
-
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_varsList.clear();
     ProjectData::getInstance()->getAllTagName(m_varsList, "IO");
     for(QString varName : m_varsList) {

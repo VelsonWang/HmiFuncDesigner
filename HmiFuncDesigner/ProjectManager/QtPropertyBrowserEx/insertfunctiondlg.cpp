@@ -15,9 +15,10 @@
 InsertFunctionDlg::InsertFunctionDlg(QWidget* parent)
     : QDialog(parent),
       m_strSelectedFuncName(""),
-      ui(new Ui::InsertFunctionDlg) {
+      ui(new Ui::InsertFunctionDlg)
+{
     ui->setupUi(this);
-
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     treeWidgetInit();
 }
 

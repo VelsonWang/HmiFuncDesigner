@@ -25,6 +25,7 @@ ProjectUploadDialog::ProjectUploadDialog(QWidget *parent, QString projName) :
     fileSize_(0)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     fileBuf_.clear();
     this->configProjPath = projName;
     ui->progressBar->setValue(0);

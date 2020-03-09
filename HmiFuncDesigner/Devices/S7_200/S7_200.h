@@ -26,6 +26,20 @@ public:
     void GetRegisterAreaLimit(const QString &areaName,
                               quint32 &lowerLimit,
                               quint32 &upperLimit) Q_DECL_OVERRIDE;
+
+    // 获取设备默认属性
+    void getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+    // 获取设备默认属性数据类型
+    void getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type) Q_DECL_OVERRIDE;
+    // 保存属性为字符串
+    QString devicePropertiesToString(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+    // 从字符串加载属性
+    void devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+    // 设置设备属性
+    void setDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+
+private:
+    QVector<QPair<QString, QString>> m_properties; // 插件私有属性
 };
 
 #endif // S7_200_H

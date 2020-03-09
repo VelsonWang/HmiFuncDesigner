@@ -10,6 +10,7 @@ EditBasicPropertyDialog::EditBasicPropertyDialog(QWidget *parent) :
     ui(new Ui::EditBasicPropertyDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     szSelectedTag_ = "";
     jarShape_ = "";
     upperLimitValue_ = 0.0;

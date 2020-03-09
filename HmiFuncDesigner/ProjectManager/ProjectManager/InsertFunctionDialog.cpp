@@ -14,10 +14,11 @@
 InsertFunctionDialog::InsertFunctionDialog(QWidget* parent)
     : QDialog(parent),
       m_strSelectedFuncName(""),
-      ui(new Ui::InsertFunctionDialog) {
-  ui->setupUi(this);
-
-  treeWidgetInit();
+      ui(new Ui::InsertFunctionDialog)
+{
+    ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
+    treeWidgetInit();
 }
 
 InsertFunctionDialog::~InsertFunctionDialog() { delete ui; }

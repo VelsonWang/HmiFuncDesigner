@@ -14,13 +14,18 @@
 #include <QSettings>
 #include <QFile>
 #include <QPluginLoader>
-
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
+#include "variantmanager.h"
+#include "variantfactory.h"
+#include "DevicePluginLoader.h"
 
 NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NewComDeviceDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->editProtocol->setReadOnly(true);
     for(int idx=1; idx<33;idx++)
     {
@@ -58,6 +63,22 @@ NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
     ui->editTimeout->setText("50");
 
     m_dev.szDeviceType_ = "COM";
+
+    VariantManager *pVariantManager  = new VariantManager(this);
+    m_pVariantPropertyManager = pVariantManager;
+
+    connect(m_pVariantPropertyManager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+            this, SLOT(onPropertyValueChanged(QtProperty *, const QVariant &)));
+
+    m_pVariantEditorFactory = new VariantFactory(this);
+
+    m_pPropertyEditor = new QtTreePropertyBrowser(ui->tabPropertySetting);
+    m_pPropertyEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_pPropertyEditor->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
+    m_pPropertyEditor->setFactoryForManager(m_pVariantPropertyManager, m_pVariantEditorFactory);
+    pVariantManager->setPropertyEditor(m_pPropertyEditor);
+    ui->vLayoutPropertyEditor->addWidget(m_pPropertyEditor);
+
 }
 
 NewComDeviceDialog::~NewComDeviceDialog()
@@ -93,6 +114,14 @@ continueFind:
         }
 
         ui->editDeviceName->setText(devName);
+
+        QString pluginName = devName;
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+        if (pDevPluginObj) {
+            pDevPluginObj->getDefaultDeviceProperty(m_properties);
+            pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
+        }
+        this->updatePropertyEditor();
     }
 }
 
@@ -101,32 +130,15 @@ continueFind:
 */
 void NewComDeviceDialog::on_btnProtocolSelect_clicked()
 {
-    QString pluginNmae = ui->editDeviceName->text();
-    if(pluginNmae.indexOf("_") >= 0)
-        pluginNmae = pluginNmae.left(pluginNmae.indexOf("_"));
-
-    QDir pluginsDir(Helper::AppDir());
-    pluginsDir.cdUp();
-    pluginsDir.cd("deviceplugins");
-    foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-        if(fileName.indexOf(pluginNmae) == -1)
-            continue;
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (plugin) {
-            IDevicePlugin *iDevPlugin = qobject_cast<IDevicePlugin *>(plugin);
-            if (iDevPlugin) {
-                SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
-                pDlg->SetProtocolList(iDevPlugin->GetDeviceSupportProtocol());
-                if(pDlg->exec() == QDialog::Accepted) {
-                    ui->editProtocol->setText(pDlg->GetProtocolName());
-                }
-            } else {
-                QMessageBox::critical(this, tr("系统错误"), tr("插件加载失败！\n") + fileName);
-            }
+    QString pluginName = ui->editDeviceName->text();
+    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+    if (pDevPluginObj) {
+        SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
+        pDlg->SetProtocolList(pDevPluginObj->GetDeviceSupportProtocol());
+        if(pDlg->exec() == QDialog::Accepted) {
+            ui->editProtocol->setText(pDlg->GetProtocolName());
         }
     }
-
 }
 
 /*
@@ -183,8 +195,7 @@ QString NewComDeviceDialog::GetDeviceName() const
 
 void NewComDeviceDialog::load(int id)
 {
-    if(id < 0)
-        return;
+    if(id < 0) return;
 
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
     deviceInfo.load(ProjectData::getInstance()->dbData_);
@@ -223,7 +234,20 @@ void NewComDeviceDialog::load(int id)
     m_dev.szVerifybit_ = comDev.szVerifybit_;
     ui->editTimeout->setText(QString::number(comDev.iTimeout_));
     m_dev.iTimeout_ = comDev.iTimeout_;
+
+    QString pluginName = pObj->szDeviceName_;
+    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+    if (pDevPluginObj) {
+        if(pObj->szProperties_ == "") {
+            pDevPluginObj->getDefaultDeviceProperty(m_properties);
+        } else {
+            pDevPluginObj->devicePropertiesFromString(pObj->szProperties_, m_properties);
+        }
+        pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
+    }
+    this->updatePropertyEditor();
 }
+
 
 void NewComDeviceDialog::save(int id)
 {
@@ -271,7 +295,135 @@ void NewComDeviceDialog::save(int id)
     m_dev.iTimeout_ = ui->editTimeout->text().toInt();
 
     pObj->szPortParameters_ = comDev.toString();
+
+    QString pluginName = pObj->szDeviceName_;
+    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+    if (pDevPluginObj) {
+        pObj->szProperties_ = pDevPluginObj->devicePropertiesToString(m_properties);
+    }
+
     deviceInfo.update(ProjectData::getInstance()->dbData_, pObj);
 }
+
+
+void NewComDeviceDialog::addProperty(QtVariantProperty *property, const QString &id, bool bAddToList)
+{
+    if(bAddToList) {
+        m_listProp.append(property);
+    }
+    m_propertyToId[property] = id;
+    m_idToProperty[id] = property;
+}
+
+
+void NewComDeviceDialog::clearProperties()
+{
+    QMap<QtProperty *, QString>::ConstIterator itProp = m_propertyToId.constBegin();
+    while (itProp != m_propertyToId.constEnd()) {
+        delete itProp.key();
+        itProp++;
+    }
+    m_propertyToId.clear();
+    m_idToProperty.clear();
+}
+
+void NewComDeviceDialog::createPropertyList()
+{
+    m_listProp.clear();
+    clearProperties();
+
+    QtVariantProperty *property = Q_NULLPTR;
+    if(m_properties.count() != m_prop_type.count())
+        return;
+
+    for (int i = 0; i < m_properties.size(); ++i) {
+        QString szKey = m_properties[i].first;
+        QString szValue = m_properties[i].second;
+        QString szType = m_prop_type[i].second;
+        if(szType == QString("int")) {
+            property = m_pVariantPropertyManager->addProperty(QVariant::Int, szKey);
+            property->setAttribute(QLatin1String("minimum"), 0);
+            property->setAttribute(QLatin1String("maximum"), 99999);
+            addProperty(property, szKey);
+        }
+        else if(szType == QString("bool")) {
+            property = m_pVariantPropertyManager->addProperty(QVariant::Bool, szKey);
+            addProperty(property, szKey);
+        }
+    }
+}
+
+QString NewComDeviceDialog::getValue2ByValue1(const QString &szVal1,
+                                              QVector<QPair<QString, QString>>& properties)
+{
+    for (int i = 0; i < properties.size(); ++i) {
+        if (properties[i].first == szVal1) {
+            return properties[i].second;
+        }
+    }
+    return "";
+}
+
+
+void NewComDeviceDialog::setValue2ByValue1(const QString &szVal1,
+                                           const QString &szVal2,
+                                           QVector<QPair<QString, QString>>& properties)
+{
+    for (int i = 0; i < properties.size(); ++i) {
+        if (properties[i].first == szVal1) {
+            properties[i].second = szVal2;
+        }
+    }
+}
+
+
+void NewComDeviceDialog::onPropertyValueChanged(QtProperty *property, const QVariant &value)
+{
+    if(m_properties.count() != m_prop_type.count())
+        return;
+
+    QString id = m_propertyToId[property];
+    QString szType = getValue2ByValue1(id, m_prop_type);
+    if(szType == QString("int")) {
+        setValue2ByValue1(id, value.toString(), m_properties);
+    }
+    else if(szType == QString("bool")) {
+        bool val = value.toBool();
+        QString szVal = val ? "true" : "false";
+        setValue2ByValue1(id, szVal, m_properties);
+    }
+}
+
+void NewComDeviceDialog::updatePropertyModel()
+{
+    QtVariantProperty *property = Q_NULLPTR;
+
+    for (int i = 0; i < m_properties.size(); ++i) {
+        QString szKey = m_properties[i].first;
+        QString szValue = m_properties[i].second;
+        property = m_idToProperty[szKey];
+        if(property != Q_NULLPTR) {
+            property->setValue(szValue);
+        }
+    }
+}
+
+///
+/// \brief NewComDeviceDialog::updatePropertyEditor
+/// \details 更新PropertyEditor数据
+///
+void NewComDeviceDialog::updatePropertyEditor()
+{
+    createPropertyList();
+    updatePropertyModel();
+
+    QListIterator<QtProperty*> iter(m_listProp);
+    while (iter.hasNext()) {
+        m_pPropertyEditor->addProperty(iter.next());
+    }
+}
+
+
+
 
 

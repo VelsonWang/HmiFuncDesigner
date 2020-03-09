@@ -193,7 +193,7 @@ void Vendor::addIOTagToDeviceTagList(IOTag* pTag)
 void Vendor::addIOTagToDeviceTagWriteQueue(IOTag* pTag)
 {
     QMutexLocker locker(&m_mutexWrite);
-    m_writeQueue.enqueue(pTag);
+    if(!m_writeQueue.contains(pTag)) m_writeQueue.enqueue(pTag);
 }
 
 

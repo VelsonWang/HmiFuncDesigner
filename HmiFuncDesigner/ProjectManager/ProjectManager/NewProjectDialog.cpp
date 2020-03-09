@@ -18,9 +18,10 @@
 NewProjectDialog::NewProjectDialog(QWidget *parent, QString projPath)
     : QDialog(parent),
       ui(new Ui::NewProjectDialog),
-      projectPath_(projPath) {
+      projectPath_(projPath)
+{
     ui->setupUi(this);
-
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->editProjectName->setText("demo1");
     ui->editProjectDescription->setText("demo1 project");
     ui->editStationNumber->setText("0");

@@ -5,11 +5,13 @@
 #include <QSqlRecord>
 #include <QSqlError>
 
-DeviceInfo::DeviceInfo() {
+DeviceInfo::DeviceInfo()
+{
     listDeviceInfoObject_.clear();
 }
 
-DeviceInfo::~DeviceInfo() {
+DeviceInfo::~DeviceInfo()
+{
     qDeleteAll(listDeviceInfoObject_);
     listDeviceInfoObject_.clear();
 }
@@ -20,7 +22,8 @@ DeviceInfo::~DeviceInfo() {
  * @param pDB 数据库对象
  * @return true-成功, false-失败
  */
-bool DeviceInfo::load(ProjectDataSQLiteDatabase *pDB) {
+bool DeviceInfo::load(ProjectDataSQLiteDatabase *pDB)
+{
     QSqlQuery query(pDB->db_);
     QSqlRecord rec;
 
@@ -50,6 +53,7 @@ bool DeviceInfo::load(ProjectDataSQLiteDatabase *pDB) {
         pObj->bDynamicOptimization_ = rec.value("dynamic_optimization").toInt() > 0 ? true : false;
         pObj->iRemotePort_ = rec.value("remote_port").toInt();
         pObj->szPortParameters_ = rec.value("port_parameters").toString();
+        pObj->szProperties_ = rec.value("properties").toString();
         listDeviceInfoObject_.append(pObj);
     }
 
@@ -73,7 +77,7 @@ bool DeviceInfo::save(ProjectDataSQLiteDatabase *pDB) {
         query.prepare("update t_device_info set type = :type, "
                       "name = :name, frame_length = :flen, protocol = :pro, link = :link, "
                       "state_var = :state, frame_time_period = :fperiod, ctrl_var = :ctrl, dynamic_optimization = :dyn, "
-                      "remote_port = :remote, port_parameters = :param where id = :id");
+                      "remote_port = :remote, port_parameters = :param, properties = :prop where id = :id");
 
         query.bindValue(":id", pObj->iID_);
         query.bindValue(":type", pObj->szDeviceType_);
@@ -87,6 +91,7 @@ bool DeviceInfo::save(ProjectDataSQLiteDatabase *pDB) {
         query.bindValue(":dyn", pObj->bDynamicOptimization_ ? 1 : 0);
         query.bindValue(":remote", pObj->iRemotePort_);
         query.bindValue(":param", pObj->szPortParameters_);
+        query.bindValue(":prop", pObj->szProperties_);
 
         ret = query.exec();
         if(!ret) {
@@ -111,10 +116,10 @@ bool DeviceInfo::insert(ProjectDataSQLiteDatabase *pDB,
     query.prepare("insert into t_device_info (type, "
                   "name, frame_length, protocol, link, "
                   "state_var, frame_time_period, ctrl_var, dynamic_optimization, "
-                  "remote_port, port_parameters) values (:type, "
+                  "remote_port, port_parameters, properties) values (:type, "
                   ":name, :flen, :pro, :link, "
                   ":state, :fperiod, :ctrl, :dyn, "
-                  ":remote, :param)");
+                  ":remote, :param, :prop)");
 
     query.bindValue(":id", pObj->iID_);
     query.bindValue(":type", pObj->szDeviceType_);
@@ -128,6 +133,7 @@ bool DeviceInfo::insert(ProjectDataSQLiteDatabase *pDB,
     query.bindValue(":dyn", pObj->bDynamicOptimization_ ? 1 : 0);
     query.bindValue(":remote", pObj->iRemotePort_);
     query.bindValue(":param", pObj->szPortParameters_);
+    query.bindValue(":prop", pObj->szProperties_);
 
     ret = query.exec();
     if(!ret) {
@@ -191,7 +197,7 @@ bool DeviceInfo::update(ProjectDataSQLiteDatabase *pDB,
     query.prepare("update t_device_info set type = :type, "
                   "name = :name, frame_length = :flen, protocol = :pro, link = :link, "
                   "state_var = :state, frame_time_period = :fperiod, ctrl_var = :ctrl, dynamic_optimization = :dyn, "
-                  "remote_port = :remote, port_parameters = :param where id = :id");
+                  "remote_port = :remote, port_parameters = :param, properties = :prop where id = :id");
 
     query.bindValue(":id", pObj->iID_);
     query.bindValue(":type", pObj->szDeviceType_);
@@ -205,6 +211,7 @@ bool DeviceInfo::update(ProjectDataSQLiteDatabase *pDB,
     query.bindValue(":dyn", pObj->bDynamicOptimization_ ? 1 : 0);
     query.bindValue(":remote", pObj->iRemotePort_);
     query.bindValue(":param", pObj->szPortParameters_);
+    query.bindValue(":prop", pObj->szProperties_);
 
     ret = query.exec();
     if(!ret) {
