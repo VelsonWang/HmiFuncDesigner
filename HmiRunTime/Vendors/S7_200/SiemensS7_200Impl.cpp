@@ -1,6 +1,7 @@
 ﻿#include "SiemensS7_200Impl.h"
 #include "DataPack.h"
 #include "../../HmiRunTime/Public/PublicFunction.h"
+#include "../../HmiRunTime/Vendor.h"
 #include <string.h>
 #include <QObject>
 #include <QThread>
@@ -282,14 +283,11 @@ static TCPUMEM getCpuMem(const QString &szRegisterArea)
 
 SiemensS7_200Impl::SiemensS7_200Impl() : iFacePort_(nullptr)
 {
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
 }
 
 
 SiemensS7_200Impl::~SiemensS7_200Impl()
 {
-
 }
 
 
@@ -309,11 +307,13 @@ IPort *SiemensS7_200Impl::getPort()
 /**
  * @brief SiemensS7_200Impl::isCanWrite
  * @details 判断该变量定义属性是否可以写
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
 bool SiemensS7_200Impl::isCanWrite(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     qint32 iDataLen = pTag->GetDataTypeLength();
     if((iDataLen > MAX_WRITE_DATA_LEN) || (iDataLen == 0))
         return false;
@@ -343,14 +343,18 @@ bool SiemensS7_200Impl::isCanWrite(void* pObj, IOTag* pTag)
 /**
  * @brief SiemensS7_200Impl::writeData
  * @details 写一个变量值到plc设备
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败, 1-成功
  */
 int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     int iCommTimeout = 1000;
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+
+    Vendor* pVendorObj = (Vendor*)(pObj);
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
     // 发送数据结构
     TWDataUnit stWDataUnit = {0x00, 0x0E, 0x00, 0x05, 0x01, 0x12, 0x0A, 0x10, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, Q_NULLPTR};
@@ -370,7 +374,7 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
     quint8 aDatabuf[512];
 
     memset(aDatabuf, 0, 512);
-    memset(writeDataBuffer_, 0, MAX_TRANS_DATA_LEN);
+    memset(pVendorObj->writeBuf, 0, MAX_TRANS_DATA_LEN);
 
     stWriteData.pDU = (quint8 *)&stWDataUnit;
 
@@ -409,13 +413,13 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
         stWDataUnit.wVailableBitLen = 8 * 5;
         wTemp = 5;
         dwTemp = pTag->GetRegisterAddress() + pTag->GetOffset();
-        RecoverData(pVarVailableData, writeDataBuffer_ + 3, 2);
+        RecoverData(pVarVailableData, pVendorObj->writeBuf + 3, 2);
     } else if(getCpuMem(pTag->GetRegisterArea()) == CM_C) {
         stWDataUnit.byDataType = 0x1E;
         stWDataUnit.wVailableBitLen = 8 * 3;
         wTemp = 3;
         dwTemp = pTag->GetRegisterAddress() + pTag->GetOffset();
-        RecoverData(pVarVailableData, writeDataBuffer_ + 1, 2);
+        RecoverData(pVarVailableData, pVendorObj->writeBuf + 1, 2);
     } else if(pTag->GetDataType() == TYPE_BOOL) {
         stWDataUnit.byDataType = 0x01;
         stWDataUnit.byVailableType = 0x03;
@@ -423,28 +427,28 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
         wTemp = 1;
         dwTemp = pTag->GetRegisterAddress() * 8 + pTag->GetOffset();
 
-        if(*(quint8 *)pVarVailableData) writeDataBuffer_[0] = 0x01;
-        else writeDataBuffer_[0] = 0x00;
+        if(*(quint8 *)pVarVailableData) pVendorObj->writeBuf[0] = 0x01;
+        else pVendorObj->writeBuf[0] = 0x00;
     } else if(pTag->GetDataType() == TYPE_INT8 || pTag->GetDataType() == TYPE_UINT8) {
         stWDataUnit.byDataType = 0x02;
         wTemp = (quint16)pTag->GetDataTypeLength();
         dwTemp = (pTag->GetRegisterAddress() + pTag->GetOffset()) * 8;
         stWDataUnit.wWriteDataLen = pTag->GetDataTypeLength();
         stWDataUnit.wVailableBitLen = 8 * pTag->GetDataTypeLength();
-        memcpy(writeDataBuffer_, pVarVailableData, stWDataUnit.wWriteDataLen);
+        memcpy(pVendorObj->writeBuf, pVarVailableData, stWDataUnit.wWriteDataLen);
     } else if(pTag->GetDataType() == TYPE_INT16 || pTag->GetDataType() == TYPE_UINT16) {
         stWDataUnit.byDataType = 0x04;
         wTemp = 2;
         dwTemp = (pTag->GetRegisterAddress() + pTag->GetOffset()) * 8;
         stWDataUnit.wVailableBitLen = 8 * 2;
-        RecoverData(pVarVailableData, writeDataBuffer_, 2);
+        RecoverData(pVarVailableData, pVendorObj->writeBuf, 2);
     } else if(pTag->GetDataType() == TYPE_INT32 || pTag->GetDataType() == TYPE_UINT32 ||
             pTag->GetDataType() == TYPE_FLOAT) {
         stWDataUnit.byDataType = 0x06;
         wTemp = 4;
         dwTemp = (pTag->GetRegisterAddress() + pTag->GetOffset()) * 8;
         stWDataUnit.wVailableBitLen = 8 * 4;
-        RecoverData(pVarVailableData, writeDataBuffer_, 4);
+        RecoverData(pVarVailableData, pVendorObj->writeBuf, 4);
     }
 
     // 设置数据长度参数
@@ -464,7 +468,7 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
     stWDataUnit.dwAddr += dwTemp;
 
     // 设置发送有效数据所在地址
-    stWDataUnit.pVailableData = writeDataBuffer_;
+    stWDataUnit.pVailableData = pVendorObj->writeBuf;
 
     // 写申请命令帧打包完毕，开始发送到PLC
     // 一边计算校验和
@@ -488,18 +492,18 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
     if(getPort() != Q_NULLPTR)
         getPort()->write(aDatabuf, 37+wTemp, iCommTimeout);
 
-    memset(readDataBuffer_, 0, 512);
+    memset(pVendorObj->readBuf, 0, 512);
 
     // 等待plc应答
     int resultlen = 0;
     if(getPort() != Q_NULLPTR)
-        resultlen = getPort()->read(readDataBuffer_, 1, iCommTimeout);
+        resultlen = getPort()->read(pVendorObj->readBuf, 1, iCommTimeout);
 
     if(resultlen != 1)
         return 0;
 
     // 判断对方接收确认数据正确性
-    if(readDataBuffer_[0] == 0xE5 || readDataBuffer_[0] == 0x10) {
+    if(pVendorObj->readBuf[0] == 0xE5 || pVendorObj->readBuf[0] == 0x10) {
         dwTemp = 0;
         do
         {
@@ -529,28 +533,28 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
             if(getPort() != Q_NULLPTR)
                 getPort()->write((quint8 *)&stWriteAck, 6, iCommTimeout);
 
-            memset(readDataBuffer_, 0, 512);
+            memset(pVendorObj->readBuf, 0, 512);
             QThread::msleep(WRITE_DELAY);
 
             if(getPort() != Q_NULLPTR)
-                resultlen = getPort()->read(readDataBuffer_, 1, iCommTimeout);
+                resultlen = getPort()->read(pVendorObj->readBuf, 1, iCommTimeout);
 
             if(resultlen != 1)
                 return 0;
 
-        } while(readDataBuffer_[0] == 0xE5);
+        } while(pVendorObj->readBuf[0] == 0xE5);
 
         // 等待plc应答申请数据
         // 计算应答数据长度
         wTemp = WRITE_REPLAY_LEN;
         if(getPort() != Q_NULLPTR)
-            resultlen = getPort()->read(readDataBuffer_ + 1, WRITE_REPLAY_LEN - 1, iCommTimeout);
+            resultlen = getPort()->read(pVendorObj->readBuf + 1, WRITE_REPLAY_LEN - 1, iCommTimeout);
 
         if(resultlen != (WRITE_REPLAY_LEN - 1))
             return 0;
 
-        memcpy(&WriteRetData, readDataBuffer_, 9);
-        memcpy(&WRetDataUnit, readDataBuffer_ + 9, sizeof(TWRetDataUnit));
+        memcpy(&WriteRetData, pVendorObj->readBuf, 9);
+        memcpy(&WRetDataUnit, pVendorObj->readBuf + 9, sizeof(TWRetDataUnit));
         // 将写应答数据结构序列化
         Series_WRetDataUnit(&WRetDataUnit);
 
@@ -558,15 +562,15 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
             return 0;
 
         // 判别申请数据
-        byTemp = *(readDataBuffer_ + wTemp - 2);
-        _byTemp = *(readDataBuffer_ + wTemp - 1);
+        byTemp = *(pVendorObj->readBuf + wTemp - 2);
+        _byTemp = *(pVendorObj->readBuf + wTemp - 1);
 
         if((WriteRetData.bySD4 != 0x68) || (WriteRetData._bySD4 != 0x68)
                 || (WriteRetData.byFC != 0x08) || (_byTemp != 0x16))
             return 0;
 
         // 检查校验和
-        dwTemp = AddCheckSum(readDataBuffer_ + 4, wTemp - 4 - 2);
+        dwTemp = AddCheckSum(pVendorObj->readBuf + 4, wTemp - 4 - 2);
         if((dwTemp & 0xFF) != byTemp)
             return 0;
 
@@ -583,11 +587,13 @@ int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
 /**
  * @brief SiemensS7_200Impl::isCanRead
  * @details 判断该变量定义属性是否可以读
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
 bool SiemensS7_200Impl::isCanRead(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     if(getCpuMem(pTag->GetRegisterArea()) == CM_NON)
         return false;
 
@@ -598,11 +604,13 @@ bool SiemensS7_200Impl::isCanRead(void* pObj, IOTag* pTag)
 /**
  * @brief SiemensS7_200Impl::readData
  * @details 从plc设备读一个变量
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
 int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     int iCommTimeout = 1000;
     // 发送数据结构
     TRDataUnit stRDataUnit = {0x00, 0x00, 0x00, 0x04, 0x00, Q_NULLPTR};
@@ -622,8 +630,9 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
     qint32 iTemp;
     quint32 dwTemp=0 ,nLen=0;
 
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    Vendor* pVendorObj = (Vendor*)(pObj);
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
     stReadData.pDU = (quint8 *)&stRDataUnit;
 
@@ -653,16 +662,16 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
     stRDataUnit.dwReserved = g_Count + (g_Count*256);
     stRDataUnit.dwReserved = ReverseDwordByte(stRDataUnit.dwReserved);
 
-    memcpy(writeDataBuffer_, (quint8 *)&stReadData, 9);
+    memcpy(pVendorObj->writeBuf, (quint8 *)&stReadData, 9);
 
     // 填写数据块
     stRDataUnit.wMsgLen = 14;
     stRDataUnit.byMsgGroup = 1;
 
     Series_RDataUnit(&stRDataUnit);
-    memcpy(writeDataBuffer_+9, (quint8 *)&stRDataUnit, 10);
+    memcpy(pVendorObj->writeBuf+9, (quint8 *)&stRDataUnit, 10);
 
-    // 将分组消息组合放在writeDataBuffer_缓冲区中
+    // 将分组消息组合放在pVendorObj->writeBuf缓冲区中
     wTemp = 0;
     iTemp = sizeof(TRDataMsgUnit);
     nLen = iTemp;
@@ -711,30 +720,30 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
     stRDataMsgUnit.dwAddr += dwTemp;
 
     Series_RDataMsgUnit(&stRDataMsgUnit);
-    memcpy(writeDataBuffer_ + 19, &stRDataMsgUnit, iTemp);
+    memcpy(pVendorObj->writeBuf + 19, &stRDataMsgUnit, iTemp);
 
     // 记录返回有效数据长度
     wRDataLen = wTemp;
 
     dwTemp = 0;
-    dwTemp += AddCheckSum(writeDataBuffer_+4, 15+nLen);
+    dwTemp += AddCheckSum(pVendorObj->writeBuf+4, 15+nLen);
 
-    writeDataBuffer_[19 + nLen] = (quint8)(dwTemp & 0xFF);  // FC
-    writeDataBuffer_[20 + nLen] = 0x16;                    // ED
+    pVendorObj->writeBuf[19 + nLen] = (quint8)(dwTemp & 0xFF);  // FC
+    pVendorObj->writeBuf[20 + nLen] = 0x16;                    // ED
 
     if(getPort() != Q_NULLPTR)
-        getPort()->write(writeDataBuffer_, nLen + 21, iCommTimeout);
+        getPort()->write(pVendorObj->writeBuf, nLen + 21, iCommTimeout);
 
-    memset(readDataBuffer_, 0, 512);
+    memset(pVendorObj->readBuf, 0, 512);
     int resultlen = 0;
     if(getPort() != Q_NULLPTR)
-        resultlen = getPort()->read(readDataBuffer_, 1, iCommTimeout);
+        resultlen = getPort()->read(pVendorObj->readBuf, 1, iCommTimeout);
 
     if(resultlen != 1)
         return 0;
 
     // 判断对方接收确认数据正确性
-    if(readDataBuffer_[0] == 0xE5 || readDataBuffer_[0] == 0x10) {
+    if(pVendorObj->readBuf[0] == 0xE5 || pVendorObj->readBuf[0] == 0x10) {
         dwTemp = 0;
         do
         {
@@ -767,22 +776,22 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
 
             // 等待plc应答申请数据
             if(getPort() != Q_NULLPTR)
-                resultlen = getPort()->read(readDataBuffer_, 1, iCommTimeout);
+                resultlen = getPort()->read(pVendorObj->readBuf, 1, iCommTimeout);
 
             if(resultlen != 1) return 0;
-        } while(readDataBuffer_[0] == 0xE5);
+        } while(pVendorObj->readBuf[0] == 0xE5);
 
         // 等待plc应答申请数据
         if(getPort() != Q_NULLPTR)
-            resultlen = getPort()->read(readDataBuffer_ + 1, 3, iCommTimeout);
+            resultlen = getPort()->read(pVendorObj->readBuf + 1, 3, iCommTimeout);
 
         if(resultlen != 3)
             return 0;
 
-        byTemp = *(readDataBuffer_ + 1);
+        byTemp = *(pVendorObj->readBuf + 1);
 
         if(getPort() != Q_NULLPTR)
-            resultlen = getPort()->read(readDataBuffer_ + 4, (size_t)byTemp + 2, iCommTimeout);
+            resultlen = getPort()->read(pVendorObj->readBuf + 4, (size_t)byTemp + 2, iCommTimeout);
 
         if(resultlen != (byTemp + 2))
             return 0;
@@ -790,9 +799,9 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
         // 计算数据帧长度
         wTemp = (quint16)byTemp + 2 + 4;
 
-        memcpy(&ReadRetData, readDataBuffer_, 9);
-        memcpy(&RRetDataUnit, readDataBuffer_ + 9, sizeof(TRRetDataUnit));
-        pVailableRecData = readDataBuffer_ + 9 + sizeof(TRRetDataUnit);
+        memcpy(&ReadRetData, pVendorObj->readBuf, 9);
+        memcpy(&RRetDataUnit, pVendorObj->readBuf + 9, sizeof(TRRetDataUnit));
+        pVailableRecData = pVendorObj->readBuf + 9 + sizeof(TRRetDataUnit);
         // 将写读应答数据包序列化
         Series_RRetDataUnit(&RRetDataUnit);
 
@@ -803,15 +812,15 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
             return 0;
 
         // 获取帧尾标记和校验和
-        byTemp = *(readDataBuffer_ + wTemp - 2);
-        _byTemp = *(readDataBuffer_ + wTemp - 1);
+        byTemp = *(pVendorObj->readBuf + wTemp - 2);
+        _byTemp = *(pVendorObj->readBuf + wTemp - 1);
 
         if(ReadRetData.bySD4 != 0x68 || ReadRetData._bySD4 != 0x68 ||
            ReadRetData.byFC != 0x08 || _byTemp != 0x16)
             return 0;
 
         // 检查校验和
-        dwTemp = AddCheckSum(readDataBuffer_ + 4, wTemp - 4 - 2);
+        dwTemp = AddCheckSum(pVendorObj->readBuf + 4, wTemp - 4 - 2);
         if((dwTemp & 0x00FF) != byTemp)
             return -2;
 
@@ -830,44 +839,44 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
             byTemp = 0x09;
             wRDataLen = 5;
             if(pTag->GetDataType() == TYPE_BOOL) {
-                if((*pVailableRecData & 0x02) == 0x02) writeDataBuffer_[0] = 1;
-                else writeDataBuffer_[0] = 0;
+                if((*pVailableRecData & 0x02) == 0x02) pVendorObj->writeBuf[0] = 1;
+                else pVendorObj->writeBuf[0] = 0;
             } else {
-                RecoverData(pVailableRecData + 3, writeDataBuffer_, 2);
+                RecoverData(pVailableRecData + 3, pVendorObj->writeBuf, 2);
             }
         } else if(getCpuMem(pTag->GetRegisterArea()) == CM_C) {
             byTemp = 0x09;
             wRDataLen = 3;
             if(pTag->GetDataType() == TYPE_BOOL) {
-                if((*pVailableRecData & 0x10) == 0x10) writeDataBuffer_[0] = 1;
-                else writeDataBuffer_[0] = 0;
+                if((*pVailableRecData & 0x10) == 0x10) pVendorObj->writeBuf[0] = 1;
+                else pVendorObj->writeBuf[0] = 0;
             } else {
-                RecoverData(pVailableRecData + 1, writeDataBuffer_, 2);
+                RecoverData(pVailableRecData + 1, pVendorObj->writeBuf, 2);
             }
         } else if(getCpuMem(pTag->GetRegisterArea()) == CM_HC) {
             byTemp = 0x09;
             wRDataLen = 5;
-            RecoverData(pVailableRecData + 1, writeDataBuffer_, 4);
+            RecoverData(pVailableRecData + 1, pVendorObj->writeBuf, 4);
         } else if(pTag->GetDataType() == TYPE_BOOL) {
             byTemp = 0x03;
             wRDataLen = 1;
-            if(*pVailableRecData) writeDataBuffer_[0] = 1;
-            else writeDataBuffer_[0] = 0;
+            if(*pVailableRecData) pVendorObj->writeBuf[0] = 1;
+            else pVendorObj->writeBuf[0] = 0;
         } else if(pTag->GetDataType() == TYPE_INT8 || pTag->GetDataType() == TYPE_UINT8) {
             wRDataLen = pTag->GetDataTypeLength() * 8;
-            memcpy(writeDataBuffer_, pVailableRecData, pTag->GetDataTypeLength());
+            memcpy(pVendorObj->writeBuf, pVailableRecData, pTag->GetDataTypeLength());
         } else if(pTag->GetDataType() == TYPE_INT16 || pTag->GetDataType() == TYPE_UINT16) {
             wRDataLen = 2 * 8;
-            RecoverData(pVailableRecData, writeDataBuffer_, 2);
+            RecoverData(pVailableRecData, pVendorObj->writeBuf, 2);
         } else if(pTag->GetDataType() == TYPE_INT32 || pTag->GetDataType() == TYPE_UINT32 ||
                   pTag->GetDataType() == TYPE_FLOAT) {
             wRDataLen = 4 * 8;
-            RecoverData(pVailableRecData, writeDataBuffer_, 4);
+            RecoverData(pVailableRecData, pVendorObj->writeBuf, 4);
         }
 
         // 拷贝数据到变量数据存放区
         wTemp = (quint16)pTag->GetDataTypeLength();
-        memcpy(pTag->pReadBuf, writeDataBuffer_, wTemp);
+        memcpy(pTag->pReadBuf, pVendorObj->writeBuf, wTemp);
 
         // 消息组数据指针移动到下一组消息头
         if((wRDataLen & 0x07) == 0) wRDataLen = wRDataLen / 8;

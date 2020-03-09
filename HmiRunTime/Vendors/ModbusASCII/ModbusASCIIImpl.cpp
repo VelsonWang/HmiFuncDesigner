@@ -1,6 +1,7 @@
 ﻿#include "ModbusASCIIImpl.h"
 #include "DataPack.h"
 #include "../../HmiRunTime/Public/PublicFunction.h"
+#include "../../HmiRunTime/Vendor.h"
 
 ModbusASCIIImpl::ModbusASCIIImpl()
 {
@@ -170,11 +171,13 @@ bool ModbusASCIIImpl::messageCheck(quint8 *inBuf, qint16 bufLen)
 /**
  * @brief ModbusASCIIImpl::isCanWrite
  * @details 判断该变量定义属性是否可以写
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
 bool ModbusASCIIImpl::isCanWrite(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     if(getCpuMem(pTag->GetRegisterArea()) == CM_1x) {
         return false;
     }
@@ -188,34 +191,37 @@ bool ModbusASCIIImpl::isCanWrite(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusASCIIImpl::writeData
  * @details 写一个变量值到plc设备
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
 int ModbusASCIIImpl::writeData(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     quint16 msgLen = 0, revLen = 0;
 
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    Vendor* pVendorObj = (Vendor*)(pObj);
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
-    msgLen = makeMessagePackage(writeDataBuffer_, pTag, FLAG_WRITE, &revLen);
+    msgLen = makeMessagePackage(pVendorObj->writeBuf, pTag, FLAG_WRITE, &revLen);
 
     if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, msgLen, 1000);
+        getPort()->write(pVendorObj->writeBuf, msgLen, 1000);
 
     int resultlen = 0;
     if(getPort() != nullptr)
-        resultlen = getPort()->read(readDataBuffer_, revLen, 1000);
+        resultlen = getPort()->read(pVendorObj->readBuf, revLen, 1000);
 
     if(resultlen != revLen)
         return 0;
 
     memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8));
-    memcpy(tempBuffer_, readDataBuffer_, revLen);
-    MakeAsiiToCode(tempBuffer_ + 1, readDataBuffer_, revLen);
+    memcpy(tempBuffer_, pVendorObj->readBuf, revLen);
+    MakeAsiiToCode(tempBuffer_ + 1, pVendorObj->readBuf, revLen);
     revLen = (revLen - 3) / 2;
 
-    if(messageCheck(readDataBuffer_, revLen))
+    if(messageCheck(pVendorObj->readBuf, revLen))
         return 1;
 
     return 0; 
@@ -225,11 +231,13 @@ int ModbusASCIIImpl::writeData(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusASCIIImpl::isCanRead
  * @details 判断该变量定义属性是否可以读
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
 bool ModbusASCIIImpl::isCanRead(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     Q_UNUSED(pTag)
     return true;
 }
@@ -238,126 +246,129 @@ bool ModbusASCIIImpl::isCanRead(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusASCIIImpl::readData
  * @details 从plc设备读一个变量
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
 int ModbusASCIIImpl::readData(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     quint16 retSize = 0, msgLen = 0, revLen = 0;
     qint16 i = 0, j = 0;
     quint32 wDataLen = 0;
 
     TModbus_CPUMEM cm = getCpuMem(pTag->GetRegisterArea());
 
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    Vendor* pVendorObj = (Vendor*)(pObj);
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
-    msgLen = makeMessagePackage(writeDataBuffer_, pTag, FLAG_READ, &revLen);
+    msgLen = makeMessagePackage(pVendorObj->writeBuf, pTag, FLAG_READ, &revLen);
 
     if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, msgLen, 1000);
+        getPort()->write(pVendorObj->writeBuf, msgLen, 1000);
 
     int resultlen = 0;
 
     if(cm == CM_0x || cm == CM_1x) {
         if(getPort() != nullptr)
-            resultlen = getPort()->read(readDataBuffer_, 7, 1000);
+            resultlen = getPort()->read(pVendorObj->readBuf, 7, 1000);
 
         if(resultlen != 7)
             return -2;
 
         quint8 len = 0;
-        MakeAsiiToCode(&readDataBuffer_[5], &len, 1);
+        MakeAsiiToCode(&pVendorObj->readBuf[5], &len, 1);
 
         // len * 2 + 4 --> len * 2 + (1byte lrc) * 2 + 0x0d + 0x0a
         if(getPort() != nullptr)
-            resultlen = getPort()->read(&readDataBuffer_[7], len * 2 + 4, 1000);
+            resultlen = getPort()->read(&pVendorObj->readBuf[7], len * 2 + 4, 1000);
 
         if(resultlen != len * 2 + 4)
             return -2;
 
         if(pTag->GetDataType() == TYPE_BOOL) {
-            if(readDataBuffer_[2] > 1) {
-                revLen = revLen + readDataBuffer_[2] - 1;
+            if(pVendorObj->readBuf[2] > 1) {
+                revLen = revLen + pVendorObj->readBuf[2] - 1;
             }
         }
     } else {
 
         if(getPort() != nullptr)
-            resultlen = getPort()->read(readDataBuffer_, revLen, 1000);
+            resultlen = getPort()->read(pVendorObj->readBuf, revLen, 1000);
 
         if(resultlen != revLen)
             return -2;
     }
 
     memset(tempBuffer_, 0, sizeof(tempBuffer_)/sizeof(quint8 ));
-    memcpy(tempBuffer_, readDataBuffer_, revLen);
+    memcpy(tempBuffer_, pVendorObj->readBuf, revLen);
 
-    MakeAsiiToCode(tempBuffer_ + 1, readDataBuffer_, revLen);
+    MakeAsiiToCode(tempBuffer_ + 1, pVendorObj->readBuf, revLen);
     revLen = (revLen - 3) / 2;
 
-    if(!messageCheck(readDataBuffer_, revLen)) return 0;
+    if(!messageCheck(pVendorObj->readBuf, revLen)) return 0;
     memset(tempBuffer_, 0, sizeof(tempBuffer_)/sizeof(quint8 ));
 
     // 返回数据的处理
     if(pTag->GetDataType() == TYPE_BOOL) {
         retSize = 1;
-        pTag->pReadBuf[0] = readDataBuffer_[3] & 0x01;
+        pTag->pReadBuf[0] = pVendorObj->readBuf[3] & 0x01;
         wDataLen = retSize;
     } else if(pTag->GetDataType() == TYPE_INT16 || pTag->GetDataType() == TYPE_UINT16) {
         if(getFuncode(pTag, FLAG_READ) == 0x03 || getFuncode(pTag, FLAG_READ) == 0x04) {
-            pTag->pReadBuf[0] = readDataBuffer_[4];
-            pTag->pReadBuf[1] = readDataBuffer_[3];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[4];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[3];
         } else {
-            pTag->pReadBuf[0] = readDataBuffer_[3];
-            pTag->pReadBuf[1] = readDataBuffer_[4];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[3];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[4];
         }
 
         wDataLen=2;
     } else if(pTag->GetDataType() == TYPE_UINT32 || pTag->GetDataType() == TYPE_INT32 ||
             pTag->GetDataType() == TYPE_FLOAT) {
         if(getFuncode(pTag, FLAG_READ) == 0x03 || getFuncode(pTag, FLAG_READ) == 0x04) {
-            pTag->pReadBuf[0] = readDataBuffer_[4];
-            pTag->pReadBuf[1] = readDataBuffer_[3];
-            pTag->pReadBuf[2] = readDataBuffer_[6];
-            pTag->pReadBuf[3] = readDataBuffer_[5];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[4];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[3];
+            pTag->pReadBuf[2] = pVendorObj->readBuf[6];
+            pTag->pReadBuf[3] = pVendorObj->readBuf[5];
         } else {
-            pTag->pReadBuf[0] = readDataBuffer_[3];
-            pTag->pReadBuf[1] = readDataBuffer_[4];
-            pTag->pReadBuf[2] = readDataBuffer_[5];
-            pTag->pReadBuf[3] = readDataBuffer_[6];
+            pTag->pReadBuf[0] = pVendorObj->readBuf[3];
+            pTag->pReadBuf[1] = pVendorObj->readBuf[4];
+            pTag->pReadBuf[2] = pVendorObj->readBuf[5];
+            pTag->pReadBuf[3] = pVendorObj->readBuf[6];
         }
         wDataLen = 4;
     } else if(pTag->GetDataType() == TYPE_UINT8 || pTag->GetDataType() == TYPE_INT8) {
-        retSize = readDataBuffer_[2];
+        retSize = pVendorObj->readBuf[2];
 
         if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
             j = retSize-1;
             for(i=0; i<retSize; i++)
-                *(pTag->pReadBuf + (j--)) = readDataBuffer_[3+i];
+                *(pTag->pReadBuf + (j--)) = pVendorObj->readBuf[3+i];
         } else {
             j = retSize/2-1;
             for(i=0;i<retSize;i++,j--) {
-                *(pTag->pReadBuf + 2 * j) = readDataBuffer_[3+i];
+                *(pTag->pReadBuf + 2 * j) = pVendorObj->readBuf[3+i];
                 i++;
-                *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[3+i];
+                *(pTag->pReadBuf + 2 * j + 1) = pVendorObj->readBuf[3+i];
             }
         }
 
         wDataLen = retSize;
     } else if(pTag->GetDataType() == TYPE_BYTES) {
-        retSize = readDataBuffer_[2];
+        retSize = pVendorObj->readBuf[2];
 
         if(getFuncode(pTag, FLAG_READ) == 0x01 || getFuncode(pTag, FLAG_READ) == 0x02) {
             j = 0;
             for(i=0; i<retSize; i++)
-                *(pTag->pReadBuf + (j++)) = readDataBuffer_[3+i];
+                *(pTag->pReadBuf + (j++)) = pVendorObj->readBuf[3+i];
         } else {
             j = 0;
             for(i=0;i<retSize;i++,j++) {
-                *(pTag->pReadBuf + 2 * j + 1) = readDataBuffer_[3+i];
+                *(pTag->pReadBuf + 2 * j + 1) = pVendorObj->readBuf[3+i];
                 i++;
-                *(pTag->pReadBuf + 2 * j) = readDataBuffer_[3+i];
+                *(pTag->pReadBuf + 2 * j) = pVendorObj->readBuf[3+i];
             }
         }
 

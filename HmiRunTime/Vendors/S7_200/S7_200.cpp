@@ -71,11 +71,13 @@ bool S7_200::unInitailizeDevice(void* pObj)
 /**
  * @brief S7_200::beforeWriteIOTag
  * @details 写变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool S7_200::beforeWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -84,6 +86,7 @@ bool S7_200::beforeWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief S7_200::writeIOTag
  * @details 写变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -99,11 +102,13 @@ int S7_200::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief S7_200::afterWriteIOTag
  * @details 写变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool S7_200::afterWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -113,11 +118,13 @@ bool S7_200::afterWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief S7_200::beforeReadIOTag
  * @details 读变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool S7_200::beforeReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -126,6 +133,7 @@ bool S7_200::beforeReadIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief S7_200::readIOTag
  * @details 读变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -141,11 +149,13 @@ int S7_200::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief S7_200::afterReadIOTag
  * @details 读变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool S7_200::afterReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }

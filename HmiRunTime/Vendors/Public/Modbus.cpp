@@ -5,8 +5,6 @@ Modbus::Modbus(QObject *parent)
     : QObject(parent),
       iFacePort_(nullptr)
 {
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
 }
 
 Modbus::~Modbus()

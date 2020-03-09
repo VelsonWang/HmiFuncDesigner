@@ -72,6 +72,7 @@ bool TCPIPModbus::unInitailizeDevice(void* pObj)
 /**
  * @brief TCPIPModbus::beforeWriteIOTag
  * @details 写变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
@@ -86,6 +87,7 @@ bool TCPIPModbus::beforeWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief TCPIPModbus::writeIOTag
  * @details 写变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -101,6 +103,7 @@ int TCPIPModbus::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief TCPIPModbus::afterWriteIOTag
  * @details 写变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
@@ -116,6 +119,7 @@ bool TCPIPModbus::afterWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief TCPIPModbus::beforeReadIOTag
  * @details 读变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
@@ -130,6 +134,7 @@ bool TCPIPModbus::beforeReadIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief TCPIPModbus::readIOTag
  * @details 读变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -145,6 +150,7 @@ int TCPIPModbus::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief TCPIPModbus::afterReadIOTag
  * @details 读变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */

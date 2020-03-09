@@ -167,11 +167,13 @@ quint16 TCPIPModbusImpl::makeMessagePackage(quint8 *pSendData,
 /**
  * @brief TCPIPModbusImpl::isCanWrite
  * @details 判断该变量定义属性是否可以写
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
 bool TCPIPModbusImpl::isCanWrite(void* pObj, IOTag* pTag)
 {
+    Q_UNUSED(pObj)
     if(getCpuMem(pTag->GetRegisterArea()) == CM_1x)
         return false;
     else if(getCpuMem(pTag->GetRegisterArea()) == CM_3x) {
@@ -184,6 +186,7 @@ bool TCPIPModbusImpl::isCanWrite(void* pObj, IOTag* pTag)
 /**
  * @brief TCPIPModbusImpl::writeData
  * @details 写一个变量值到plc设备
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */
@@ -216,11 +219,13 @@ int TCPIPModbusImpl::writeData(void* pObj, IOTag* pTag)
 /**
  * @brief TCPIPModbusImpl::isCanRead
  * @details 判断该变量定义属性是否可以读
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
 bool TCPIPModbusImpl::isCanRead(void* pObj, IOTag* pTag)
 {
+    Q_UNUSED(pObj)
     Q_UNUSED(pTag)
     return true;
 }
@@ -229,6 +234,7 @@ bool TCPIPModbusImpl::isCanRead(void* pObj, IOTag* pTag)
 /**
  * @brief TCPIPModbusImpl::readData
  * @details 从plc设备读一个变量
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败,1-成功
  */

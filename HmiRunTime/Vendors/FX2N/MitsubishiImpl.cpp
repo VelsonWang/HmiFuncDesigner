@@ -1,6 +1,7 @@
 ﻿#include "MitsubishiImpl.h"
 #include "DataPack.h"
 #include "../../HmiRunTime/Public/PublicFunction.h"
+#include "../../HmiRunTime/Vendor.h"
 #include <string.h>
 #include <QObject>
 
@@ -139,14 +140,11 @@ static TCPUMEM getCpuMem(const QString &szRegisterArea)
 
 MitsubishiImpl::MitsubishiImpl() : iFacePort_(nullptr)
 {
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
 }
 
 
 MitsubishiImpl::~MitsubishiImpl()
 {
-
 }
 
 
@@ -166,11 +164,13 @@ IPort *MitsubishiImpl::getPort()
 /**
  * @brief MitsubishiImpl::isCanWrite
  * @details 判断该变量定义属性是否可以写
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可写，true-可写
  */
 bool MitsubishiImpl::isCanWrite(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     if(getCpuMem(pTag->GetRegisterArea()) == CM_X)
         return false;
     else if(getCpuMem(pTag->GetRegisterArea()) == CM_C32) {
@@ -185,76 +185,79 @@ bool MitsubishiImpl::isCanWrite(void* pObj, IOTag* pTag)
 /**
  * @brief MitsubishiImpl::writeData
  * @details 写一个变量值到plc设备
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败, 1-成功
  */
 int MitsubishiImpl::writeData(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     static int iFirstFlag = 1;
     quint16 wAddress = getBeginAddrAsCpuMem(getCpuMem(pTag->GetRegisterArea()), pTag->GetDataType());
     size_t len = 0;
     int resultlen = 0;
+    Vendor* pVendorObj = (Vendor*)(pObj);
 
     if(iFirstFlag) {
-        writeDataBuffer_[0] = 0x05;
+        pVendorObj->writeBuf[0] = 0x05;
         if(getPort() != nullptr)
-            getPort()->write(writeDataBuffer_, 1, 1000);
+            getPort()->write(pVendorObj->writeBuf, 1, 1000);
 
         resultlen = 0;
         if(getPort() != nullptr)
-            resultlen = getPort()->read(readDataBuffer_, 1, 5000);
-        if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
+            resultlen = getPort()->read(pVendorObj->readBuf, 1, 5000);
+        if(!(resultlen == 1 && pVendorObj->readBuf[0] == 0x06))
             return false;
         iFirstFlag = 0;
     }
 
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
-    writeDataBuffer_[len++] = 0x02;
+    pVendorObj->writeBuf[len++] = 0x02;
     if(pTag->GetDataType() == TYPE_BOOL) {
         if(pTag->pWriteBuf[0])
-            writeDataBuffer_[len++] = 0x37;
+            pVendorObj->writeBuf[len++] = 0x37;
         else
-            writeDataBuffer_[len++] = 0x38;
+            pVendorObj->writeBuf[len++] = 0x38;
         wAddress = wAddress * 8 + pTag->GetRegisterAddress() + pTag->GetOffset();
         RecoverSelfData((quint8 *)&wAddress, 2);
-        makeAddress(wAddress, writeDataBuffer_ + len);
+        makeAddress(wAddress, pVendorObj->writeBuf + len);
         len += 4;
-        writeDataBuffer_[len++] = 0x03;
-        *(quint8 *)(writeDataBuffer_ + len) = (quint8)AddCheckSum(writeDataBuffer_ + 1, len - 1);
-        MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, 1);
+        pVendorObj->writeBuf[len++] = 0x03;
+        *(quint8 *)(pVendorObj->writeBuf + len) = (quint8)AddCheckSum(pVendorObj->writeBuf + 1, len - 1);
+        MakeCodeToAsii(pVendorObj->writeBuf + len, pVendorObj->writeBuf + len, 1);
         len += 2;
     } else {
         quint16 wDataLen;
-        writeDataBuffer_[1] = 0x31;
+        pVendorObj->writeBuf[1] = 0x31;
         wAddress += MitsubishiImpl_GetAddressOffset(getCpuMem(pTag->GetRegisterArea()), (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()));
-        makeAddress(wAddress, writeDataBuffer_ + 2);
+        makeAddress(wAddress, pVendorObj->writeBuf + 2);
         len = 8;
         wDataLen = (quint16)pTag->GetDataTypeLength();
-        memcpy(writeDataBuffer_ + len, pTag->pWriteBuf, wDataLen);
-        MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, wDataLen);
-        makeDatalen(wDataLen, writeDataBuffer_ + 6);
+        memcpy(pVendorObj->writeBuf + len, pTag->pWriteBuf, wDataLen);
+        MakeCodeToAsii(pVendorObj->writeBuf + len, pVendorObj->writeBuf + len, wDataLen);
+        makeDatalen(wDataLen, pVendorObj->writeBuf + 6);
 
         len += wDataLen * 2;
-        writeDataBuffer_[len] = 0x03;
+        pVendorObj->writeBuf[len] = 0x03;
         len += 1;
 
-        *(quint8 *)(writeDataBuffer_ + len) = (quint8)AddCheckSum(writeDataBuffer_ + 1, len - 1);
-        MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, 1);
+        *(quint8 *)(pVendorObj->writeBuf + len) = (quint8)AddCheckSum(pVendorObj->writeBuf + 1, len - 1);
+        MakeCodeToAsii(pVendorObj->writeBuf + len, pVendorObj->writeBuf + len, 1);
         len += 2;
     }
 
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
     if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, len, 1000);
+        getPort()->write(pVendorObj->writeBuf, len, 1000);
 
     resultlen = 0;
     if(getPort() != nullptr)
-        resultlen = getPort()->read(readDataBuffer_, 1, 1000);
+        resultlen = getPort()->read(pVendorObj->readBuf, 1, 1000);
 
-    if(resultlen == 1 && readDataBuffer_[0] == 0x06)
+    if(resultlen == 1 && pVendorObj->readBuf[0] == 0x06)
         return 1;
 
     return 0;
@@ -264,11 +267,13 @@ int MitsubishiImpl::writeData(void* pObj, IOTag* pTag)
 /**
  * @brief MitsubishiImpl::isCanRead
  * @details 判断该变量定义属性是否可以读
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return false-不可读，true-可读
  */
 bool MitsubishiImpl::isCanRead(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     Q_UNUSED(pTag)
     return true;
 }
@@ -277,11 +282,13 @@ bool MitsubishiImpl::isCanRead(void* pObj, IOTag* pTag)
 /**
  * @brief MitsubishiImpl::readData
  * @details 从plc设备读一个变量
+ * @param pObj 设备描述对象
  * @param pTag 设备变量
  * @return 0-失败, 1-成功
  */
 int MitsubishiImpl::readData(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     static int iFirstFlag = 1;
     quint16 wAddress = getBeginAddrAsCpuMem(getCpuMem(pTag->GetRegisterArea()), pTag->GetDataType());
     size_t len = 0;
@@ -289,70 +296,71 @@ int MitsubishiImpl::readData(void* pObj, IOTag* pTag)
     quint8 byCheckSum = 0;
     quint8 *pVailableData;
     int resultlen = 0;
+    Vendor* pVendorObj = (Vendor*)(pObj);
 
     if(iFirstFlag) {
-        writeDataBuffer_[0] = 0x05;
+        pVendorObj->writeBuf[0] = 0x05;
         if(getPort() != nullptr)
-            getPort()->write(writeDataBuffer_, 1, 1000);
+            getPort()->write(pVendorObj->writeBuf, 1, 1000);
 
         resultlen = 0;
         if(getPort() != nullptr)
-            resultlen = getPort()->read(readDataBuffer_, 1, 5000);
-        if(!(resultlen == 1 && readDataBuffer_[0] == 0x06))
+            resultlen = getPort()->read(pVendorObj->readBuf, 1, 5000);
+        if(!(resultlen == 1 && pVendorObj->readBuf[0] == 0x06))
             return false;
         iFirstFlag = 0;
     }
 
-    memset(writeDataBuffer_, 0, sizeof(writeDataBuffer_)/sizeof(quint8));
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
-    writeDataBuffer_[len++] = 0x02;
-    writeDataBuffer_[len++] = 0x30;
+    pVendorObj->writeBuf[len++] = 0x02;
+    pVendorObj->writeBuf[len++] = 0x30;
 
     if(pTag->GetDataType() == TYPE_BOOL) {
         wAddress += (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()) / 8;
-        makeAddress(wAddress, writeDataBuffer_ + len);
+        makeAddress(wAddress, pVendorObj->writeBuf + len);
         wDataLen = getboolBlockByte((quint32)(pTag->GetRegisterAddress() + pTag->GetOffset()), pTag->GetDataTypeLength());
     } else {
         wAddress += MitsubishiImpl_GetAddressOffset(getCpuMem(pTag->GetRegisterArea()), (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()));
-        makeAddress(wAddress, writeDataBuffer_ + len);
+        makeAddress(wAddress, pVendorObj->writeBuf + len);
         wDataLen = (quint16)pTag->GetDataTypeLength();
     }
 
     len += 4;
-    makeDatalen(wDataLen, writeDataBuffer_ + len);
+    makeDatalen(wDataLen, pVendorObj->writeBuf + len);
     len += 2;
 
-    writeDataBuffer_[len] = 0x03;
+    pVendorObj->writeBuf[len] = 0x03;
     len += 1;
 
-    *(quint8 *)(writeDataBuffer_ + len) = (quint8)AddCheckSum(writeDataBuffer_ + 1, len - 1);
-    MakeCodeToAsii(writeDataBuffer_ + len, writeDataBuffer_ + len, 1);
+    *(quint8 *)(pVendorObj->writeBuf + len) = (quint8)AddCheckSum(pVendorObj->writeBuf + 1, len - 1);
+    MakeCodeToAsii(pVendorObj->writeBuf + len, pVendorObj->writeBuf + len, 1);
     len += 2;
 
-    memset(readDataBuffer_, 0, sizeof(readDataBuffer_)/sizeof(quint8));
+    memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
     if(getPort() != nullptr)
-        getPort()->write(writeDataBuffer_, len, 1000);
+        getPort()->write(pVendorObj->writeBuf, len, 1000);
 
     resultlen = 0;
     if(getPort() != nullptr)
-        resultlen = getPort()->read(readDataBuffer_, 4 + wDataLen * 2, 1000);
+        resultlen = getPort()->read(pVendorObj->readBuf, 4 + wDataLen * 2, 1000);
     if(resultlen != (4 + wDataLen * 2))
         return -2;
 
-    if((readDataBuffer_[0] != 0x02) || (readDataBuffer_[1 + wDataLen * 2] != 0x03))
+    if((pVendorObj->readBuf[0] != 0x02) || (pVendorObj->readBuf[1 + wDataLen * 2] != 0x03))
         return 0;
 
-    byCheckSum = (quint8)AddCheckSum(readDataBuffer_ + 1, wDataLen * 2 + 1);
-    pVailableData = readDataBuffer_ + 2 + wDataLen * 2;
+    byCheckSum = (quint8)AddCheckSum(pVendorObj->readBuf + 1, wDataLen * 2 + 1);
+    pVailableData = pVendorObj->readBuf + 2 + wDataLen * 2;
     MakeAsiiToCode(pVailableData, pVailableData, 1);
     if(byCheckSum != *pVailableData)
         return 0;
 
-    MakeAsiiToCode(readDataBuffer_ + 1, readDataBuffer_ + 1, wDataLen);
+    MakeAsiiToCode(pVendorObj->readBuf + 1, pVendorObj->readBuf + 1, wDataLen);
 
-    pVailableData = readDataBuffer_ + 1;
+    pVailableData = pVendorObj->readBuf + 1;
 
     if(pTag->GetDataType() == TYPE_BOOL) {
         int byteAddr = (quint16)(pTag->GetRegisterAddress() + pTag->GetOffset()) / 8;

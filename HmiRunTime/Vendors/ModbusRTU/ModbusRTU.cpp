@@ -71,11 +71,13 @@ bool ModbusRTU::unInitailizeDevice(void* pObj)
 /**
  * @brief ModbusRTU::beforeWriteIOTag
  * @details 写变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusRTU::beforeWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -84,6 +86,7 @@ bool ModbusRTU::beforeWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusRTU::writeIOTag
  * @details 写变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -99,11 +102,13 @@ int ModbusRTU::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief ModbusRTU::afterWriteIOTag
  * @details 写变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusRTU::afterWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -113,11 +118,13 @@ bool ModbusRTU::afterWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusRTU::beforeReadIOTag
  * @details 读变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusRTU::beforeReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -126,6 +133,7 @@ bool ModbusRTU::beforeReadIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusRTU::readIOTag
  * @details 读变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -141,11 +149,13 @@ int ModbusRTU::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief ModbusRTU::afterReadIOTag
  * @details 读变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusRTU::afterReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }

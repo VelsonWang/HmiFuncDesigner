@@ -72,11 +72,13 @@ bool ModbusASCII::unInitailizeDevice(void* pObj)
 /**
  * @brief ModbusASCII::beforeWriteIOTag
  * @details 写变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusASCII::beforeWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -85,6 +87,7 @@ bool ModbusASCII::beforeWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusASCII::writeIOTag
  * @details 写变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -100,11 +103,13 @@ int ModbusASCII::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief ModbusASCII::afterWriteIOTag
  * @details 写变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusASCII::afterWriteIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -114,11 +119,13 @@ bool ModbusASCII::afterWriteIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusASCII::beforeReadIOTag
  * @details 读变量前处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusASCII::beforeReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }
@@ -127,6 +134,7 @@ bool ModbusASCII::beforeReadIOTag(void* pObj, IOTag* pTag)
 /**
  * @brief ModbusASCII::readIOTag
  * @details 读变量
+ * @param pObj 设备描述对象
  * @param pPort 端口操作接口
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
@@ -142,11 +150,13 @@ int ModbusASCII::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
 /**
  * @brief ModbusASCII::afterReadIOTag
  * @details 读变量后处理
+ * @param pObj 设备描述对象
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
 bool ModbusASCII::afterReadIOTag(void* pObj, IOTag* pTag)
 {
+    (void)pObj;
     (void)pTag;
     return true;
 }

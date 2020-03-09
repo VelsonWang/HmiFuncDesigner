@@ -65,8 +65,6 @@ signals:
 public slots:
 
 public:
-    quint8 readDataBuffer_[512] = {0};
-    quint8 writeDataBuffer_[512] = {0};
     quint8 tempBuffer_[512] = {0};
 
 private:
