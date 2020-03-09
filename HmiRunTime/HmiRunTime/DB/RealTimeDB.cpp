@@ -1,5 +1,4 @@
-﻿
-#include <QDateTime>
+﻿#include <QDateTime>
 #include <QDate>
 #include <QTime>
 #include "RealTimeDB.h"

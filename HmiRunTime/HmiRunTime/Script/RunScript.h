@@ -15,7 +15,7 @@
 class RunScriptTask : public QRunnable
 {
 public:
-    RunScriptTask(QScriptEngine *engine, QString script);
+    RunScriptTask(QString script);
     ~RunScriptTask();
 
 private:
@@ -77,7 +77,6 @@ private slots:
     void timeout();
 
 private:
-    QScriptEngine *m_pScriptEngine;
     QString m_sProjectPath;
     QThreadPool m_threadPool;
     QList<QString> m_runOnStartList;
