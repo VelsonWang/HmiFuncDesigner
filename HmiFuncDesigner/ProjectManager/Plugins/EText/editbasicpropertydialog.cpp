@@ -7,6 +7,7 @@ EditBasicPropertyDialog::EditBasicPropertyDialog(QWidget *parent) :
     ui(new Ui::EditBasicPropertyDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->editTagSelected->setReadOnly(true);
     this->setWindowTitle(tr("编辑基本属性"));
 }

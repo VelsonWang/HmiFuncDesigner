@@ -86,3 +86,116 @@ void TCPIPModbus::GetRegisterAreaLimit(const QString &areaName,
         upperLimit = 0xFFFF;
     }
 }
+
+///
+/// \brief TCPIPModbus::getDefaultDeviceProperty
+/// \details 获取设备默认属性
+/// \param properties
+///
+void TCPIPModbus::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    properties.clear();
+    properties.append(qMakePair(tr("设备ID"), QString("1")));
+    properties.append(qMakePair(tr("内存地址起始位为0"), QString("true")));
+    properties.append(qMakePair(tr("写线圈功能码为15"), QString("false")));
+    properties.append(qMakePair(tr("写寄存器功能码为16"), QString("false")));
+    properties.append(qMakePair(tr("8位逆序"), QString("false")));
+    properties.append(qMakePair(tr("16位低字节在前高字节在后"), QString("false")));
+    properties.append(qMakePair(tr("32位低字节在前高字节在后"), QString("false")));
+    properties.append(qMakePair(tr("64位低字节在前高字节在后"), QString("false")));
+}
+
+
+///
+/// \brief TCPIPModbus::getDefaultDevicePropertyDataType
+/// \details 获取设备默认属性数据类型
+/// \param properties_type
+///
+void TCPIPModbus::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
+{
+    properties_type.clear();
+    properties_type.append(qMakePair(tr("设备ID"), QString("int")));
+    properties_type.append(qMakePair(tr("内存地址起始位为0"), QString("bool")));
+    properties_type.append(qMakePair(tr("写线圈功能码为15"), QString("bool")));
+    properties_type.append(qMakePair(tr("写寄存器功能码为16"), QString("bool")));
+    properties_type.append(qMakePair(tr("8位逆序"), QString("bool")));
+    properties_type.append(qMakePair(tr("16位低字节在前高字节在后"), QString("bool")));
+    properties_type.append(qMakePair(tr("32位低字节在前高字节在后"), QString("bool")));
+    properties_type.append(qMakePair(tr("64位低字节在前高字节在后"), QString("bool")));
+}
+
+
+
+///
+/// \brief TCPIPModbus::devicePropertiesToString
+/// \details 保存属性为字符串
+/// \param properties 属性
+/// \return 属性字符串
+///
+QString TCPIPModbus::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
+{
+    QStringList szListProperties;
+    szListProperties << QString(tr("id=%1")).arg(getValue2ByValue1(tr("设备ID"), properties));
+    szListProperties << QString(tr("startAddrBit=%1")).arg(getValue2ByValue1(tr("内存地址起始位为0"), properties));
+    szListProperties << QString(tr("writeCoilFn=%1")).arg(getValue2ByValue1(tr("写线圈功能码为15"), properties));
+    szListProperties << QString(tr("writeRegFn=%1")).arg(getValue2ByValue1(tr("写寄存器功能码为16"), properties));
+    szListProperties << QString(tr("addr8=%1")).arg(getValue2ByValue1(tr("8位逆序"), properties));
+    szListProperties << QString(tr("addr16=%1")).arg(getValue2ByValue1(tr("16位低字节在前高字节在后"), properties));
+    szListProperties << QString(tr("addr32=%1")).arg(getValue2ByValue1(tr("32位低字节在前高字节在后"), properties));
+    szListProperties << QString(tr("addr64=%1")).arg(getValue2ByValue1(tr("64位低字节在前高字节在后"), properties));
+    return szListProperties.join("|");
+}
+
+
+///
+/// \brief TCPIPModbus::devicePropertiesFromString
+/// \details 从字符串加载属性
+/// \param szProperty 属性字符串
+/// \param properties 属性
+///
+void TCPIPModbus::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
+{
+    properties.clear();
+
+    QStringList szListProperties = szProperty.split('|');
+    foreach(QString szProp, szListProperties) {
+        QStringList szListKeyVal = szProp.split('=');
+        if(szListKeyVal.size() == 2) {
+            if(szListKeyVal.at(0) == "id") {
+                properties.append(qMakePair(tr("设备ID"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "startAddrBit") {
+                properties.append(qMakePair(tr("内存地址起始位为0"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "writeCoilFn") {
+                properties.append(qMakePair(tr("写线圈功能码为15"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "writeRegFn") {
+                properties.append(qMakePair(tr("写寄存器功能码为16"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "addr8") {
+                properties.append(qMakePair(tr("8位逆序"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "addr16") {
+                properties.append(qMakePair(tr("16位低字节在前高字节在后"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "addr32") {
+                properties.append(qMakePair(tr("32位低字节在前高字节在后"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "addr64") {
+                properties.append(qMakePair(tr("64位低字节在前高字节在后"), szListKeyVal.at(1)));
+            }
+        }
+    }
+}
+
+
+
+///
+/// \brief TCPIPModbus::setDeviceProperty
+/// \details 设置设备属性
+/// \param properties
+///
+void TCPIPModbus::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    m_properties.clear();
+    m_properties.append(properties);
+    QString szVal = getValue2ByValue1(tr("内存地址起始位为0"), m_properties);
+    m_bStartAddrBit0 = (szVal.toLower() == "true") ? true : false;
+}
+
+
+

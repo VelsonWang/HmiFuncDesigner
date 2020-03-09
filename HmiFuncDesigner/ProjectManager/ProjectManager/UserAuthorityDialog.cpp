@@ -168,7 +168,7 @@ UserAuthorityDialog::UserAuthorityDialog(QWidget *parent, const QString &Project
     szProjectPath_(ProjectPath)
 {
     ui->setupUi(this);
-
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     pUserModel_ = new TagUserTableModel(this);
     ui->tableViewUser->verticalHeader()->hide();
 }

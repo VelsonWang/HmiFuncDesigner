@@ -1,10 +1,9 @@
-
 #ifndef IDEVICEPLUGIN_H
 #define IDEVICEPLUGIN_H
 
-
 #include <QStringList>
-
+#include <QVector>
+#include <QPair>
 
 /*
 * 注意本类不要派生自QObject
@@ -26,6 +25,27 @@ public:
     virtual void GetRegisterAreaLimit(const QString &areaName,
                                       quint32 &lowerLimit,
                                       quint32 &upperLimit) = 0;
+
+
+    // 获取设备默认属性
+    virtual void getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties) = 0;
+    // 获取设备默认属性数据类型
+    virtual void getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type) = 0;
+    // 保存属性为字符串
+    virtual QString devicePropertiesToString(QVector<QPair<QString, QString>>& properties) = 0;
+    // 从字符串加载属性
+    virtual void devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties) = 0;
+    // 设置设备属性
+    virtual void setDeviceProperty(QVector<QPair<QString, QString>>& properties) = 0;
+
+    QString getValue2ByValue1(const QString &szVal1, QVector<QPair<QString, QString>>& properties) {
+        for (int i = 0; i < properties.size(); ++i) {
+            QPair<QString, QString> pair = properties[i];
+            if (pair.first == szVal1)
+                return pair.second;
+        }
+        return "";
+    }
 };
 
 

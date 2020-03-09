@@ -19,6 +19,7 @@ TagIOEditDialog::TagIOEditDialog(QString projName, QWidget *parent) :
     devPlugin_(nullptr)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->tabWidget->setCurrentIndex(0);
 
     // 已经建立设备列表

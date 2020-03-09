@@ -19,6 +19,7 @@ FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events)
       iSelectedCurRow_(-1)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     this->setWindowTitle(tr("功能操作编辑"));
 
     mapNameToShowName_.clear();

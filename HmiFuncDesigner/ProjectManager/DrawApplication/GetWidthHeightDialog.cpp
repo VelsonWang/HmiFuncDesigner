@@ -8,6 +8,7 @@ GetWidthHeightDialog::GetWidthHeightDialog(QWidget *parent) :
     iHeight_(0)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->spinBoxWidth->setRange(0, 65536);
     ui->spinBoxHeight->setRange(0, 65536);
 }

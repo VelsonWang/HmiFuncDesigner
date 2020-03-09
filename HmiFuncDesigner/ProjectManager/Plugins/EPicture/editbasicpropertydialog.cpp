@@ -11,6 +11,7 @@ EditBasicPropertyDialog::EditBasicPropertyDialog(QWidget *parent) :
     ui(new Ui::EditBasicPropertyDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     filePicture_ = "";
     showNoScale_ = false;
     borderWidth_ = 0;

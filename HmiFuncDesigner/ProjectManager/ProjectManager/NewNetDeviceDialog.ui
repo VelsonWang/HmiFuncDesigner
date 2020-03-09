@@ -19,7 +19,7 @@
      <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="tab">
+     <widget class="QWidget" name="tabBasicSetting">
       <attribute name="title">
        <string>基本设置</string>
       </attribute>
@@ -225,7 +225,13 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2">
+     <widget class="QWidget" name="tabPropertySetting">
+      <attribute name="title">
+       <string> 设备属性</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="vLayoutPropertyEditor"/>
+     </widget>
+     <widget class="QWidget" name="tabPortSetting">
       <attribute name="title">
        <string>端口配置</string>
       </attribute>

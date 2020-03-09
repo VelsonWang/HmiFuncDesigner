@@ -7,6 +7,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->lblVersion->setText(QString("工程管理器 V%1").arg(VER_FILE));
 }
 

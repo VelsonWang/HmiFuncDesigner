@@ -6,6 +6,7 @@ SelectProtocolDialog::SelectProtocolDialog(QWidget *parent) :
     ui(new Ui::SelectProtocolDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_strProtocolName = "";
 }
 

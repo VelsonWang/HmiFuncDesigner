@@ -80,7 +80,7 @@ isEmpty(IDE_BUILD_TREE) {
     IDE_BUILD_TREE ~= s,$$re_escape($$sub_dir)$,,
 }
 #message("IDE_BUILD_TREE is: $$IDE_BUILD_TREE")
-IDE_APP_PATH = $$IDE_BUILD_TREE/..HmiFuncDesignerBin/bin
+IDE_APP_PATH = $$IDE_BUILD_TREE/../HmiFuncDesignerBin/bin
 #message("IDE_APP_PATH is: $$IDE_APP_PATH")
 osx {
 

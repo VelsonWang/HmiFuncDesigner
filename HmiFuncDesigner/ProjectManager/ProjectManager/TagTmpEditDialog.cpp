@@ -7,6 +7,7 @@ TagTmpEditDialog::TagTmpEditDialog(QWidget *parent)
       ui(new Ui::TagTmpEditDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->tabWidget->setCurrentIndex(0);
 
     QStringList listDataType;

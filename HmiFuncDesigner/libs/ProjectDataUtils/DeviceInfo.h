@@ -45,6 +45,7 @@ public:
         bDynamicOptimization_ = obj.bDynamicOptimization_;
         iRemotePort_ = obj.iRemotePort_;
         szPortParameters_ = obj.szPortParameters_;
+        szProperties_ = obj.szProperties_;
     }
 
 public:
@@ -60,6 +61,7 @@ public:
     bool bDynamicOptimization_;
     int iRemotePort_;
     QString szPortParameters_;
+    QString szProperties_; // 设备私有属性
 };
 
 class ComDevice : public DeviceInfoObject

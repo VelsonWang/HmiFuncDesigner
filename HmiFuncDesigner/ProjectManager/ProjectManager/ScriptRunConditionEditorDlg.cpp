@@ -10,6 +10,7 @@ ScriptRunConditionEditorDlg::ScriptRunConditionEditorDlg(QString projectPath, QW
     ui(new Ui::ScriptRunConditionEditorDlg)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
 }
 
 ScriptRunConditionEditorDlg::~ScriptRunConditionEditorDlg()

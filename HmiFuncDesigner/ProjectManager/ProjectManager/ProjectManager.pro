@@ -40,6 +40,7 @@ LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
 
 SOURCES += main.cpp\
+    DevicePluginLoader.cpp \
         MainWindow.cpp \
     NewProjectDialog.cpp \
     SystemParametersWin.cpp \
@@ -77,6 +78,7 @@ SOURCES += main.cpp\
     widget/QQuickInputLineEdit.cpp
 
 HEADERS  += MainWindow.h \
+    DevicePluginLoader.h \
     NewProjectDialog.h \
     ../Public/Public.h \
     SystemParametersWin.h \

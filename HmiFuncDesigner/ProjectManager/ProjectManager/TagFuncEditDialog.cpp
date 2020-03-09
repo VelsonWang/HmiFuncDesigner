@@ -250,7 +250,7 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
       m_strProjectPath(projectPath)
 {
     this->setWindowTitle(tr("工程转换"));
-
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_pSplitterMain = new SplitterForm(Qt::Vertical, this);
     SplitterForm *splitterUp = new SplitterForm(Qt::Horizontal, m_pSplitterMain);
 

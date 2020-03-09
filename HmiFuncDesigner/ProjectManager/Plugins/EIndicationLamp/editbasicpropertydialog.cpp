@@ -9,6 +9,7 @@ EditBasicPropertyDialog::EditBasicPropertyDialog(QWidget *parent) :
     ui(new Ui::EditBasicPropertyDialog)
 {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     szSelectedTag_ = "";
     stateOnInitial_ = false;
     resetFileIndicationLamp_ = "";

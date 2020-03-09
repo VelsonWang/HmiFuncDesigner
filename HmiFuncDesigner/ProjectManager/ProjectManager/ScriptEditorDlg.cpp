@@ -26,6 +26,7 @@ ScriptEditorDlg::ScriptEditorDlg(QString projectPath, QWidget *parent)
       m_strProjectPath(projectPath),
       ui(new Ui::ScriptEditorDlg) {
     ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     this->setWindowTitle(tr("JavaScript脚本编辑器"));
 
     ///////////////////////////////>>////////////////

@@ -13,6 +13,7 @@
 TagColorListEditorDialog::TagColorListEditorDialog(QWidget *parent)
     : QDialog(parent), ui(new Ui::TagColorListEditorDialog) {
   ui->setupUi(this);
+  this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
   initUi();
 }
 

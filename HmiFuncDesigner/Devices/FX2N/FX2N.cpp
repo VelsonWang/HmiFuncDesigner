@@ -107,3 +107,79 @@ void FX2N::GetRegisterAreaLimit(const QString &areaName,
         upperLimit = 255;
     }
 }
+
+
+
+///
+/// \brief FX2N::getDefaultDeviceProperty
+/// \details 获取设备默认属性
+/// \param properties
+///
+void FX2N::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    properties.clear();
+}
+
+
+///
+/// \brief FX2N::getDefaultDevicePropertyDataType
+/// \details 获取设备默认属性数据类型
+/// \param properties_type
+///
+void FX2N::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
+{
+    properties_type.clear();
+}
+
+
+///
+/// \brief FX2N::devicePropertiesToString
+/// \details 保存属性为字符串
+/// \param properties 属性
+/// \return 属性字符串
+///
+QString FX2N::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
+{
+    Q_UNUSED(properties)
+    return QString();
+}
+
+
+///
+/// \brief FX2N::devicePropertiesFromString
+/// \details 从字符串加载属性
+/// \param szProperty 属性字符串
+/// \param properties 属性
+///
+void FX2N::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
+{
+    Q_UNUSED(szProperty)
+    Q_UNUSED(properties)
+}
+
+
+///
+/// \brief FX2N::setDeviceProperty
+/// \details 设置设备属性
+/// \param properties
+///
+void FX2N::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    m_properties.clear();
+    m_properties.append(properties);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
