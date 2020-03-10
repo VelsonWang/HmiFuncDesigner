@@ -24,6 +24,7 @@ const int TagTextListItemType = QGraphicsItem::UserType + 47;
 const int ValueStickItemType = QGraphicsItem::UserType + 48;
 const int JarShapeItemType = QGraphicsItem::UserType + 49;
 const int ComboBoxItemType = QGraphicsItem::UserType + 50;
+const int AnalogClockItemType = QGraphicsItem::UserType + 51;
 
 enum {
     GRAPHPAGE_ID,

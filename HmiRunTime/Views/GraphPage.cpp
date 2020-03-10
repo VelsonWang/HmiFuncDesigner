@@ -24,7 +24,7 @@
 #include "EValueStick/EValueStick.h"
 #include "EJarShape/EJarShape.h"
 #include "EComboBox/EComboBox.h"
-
+#include "EAnalogClock/EAnalogClock.h"
 
 template<template<typename T> class S, typename T>
 T min(const S<T> &sequence)
@@ -86,6 +86,7 @@ void registerCreateObjectFunc()
     REGISTER_CREATEOR(QObject::tr("数值棒图"), ValueStickItemType, "ValueStick", EValueStick);
     REGISTER_CREATEOR(QObject::tr("罐形容器"), JarShapeItemType, "JarShape", EJarShape);
     REGISTER_CREATEOR(QObject::tr("下拉菜单列表"), ComboBoxItemType, "ComboBox", EComboBox);
+    REGISTER_CREATEOR(QObject::tr("模拟时钟"), AnalogClockItemType, "AnalogClock", EAnalogClock);
 }
 
 GraphPage::GraphPage(const QRectF &rect, QWidget *parent)

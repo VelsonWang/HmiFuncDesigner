@@ -18,5 +18,6 @@ SUBDIRS += \
     ETagTextList \
     EValueStick \
     EJarShape \
-    EComboBox
+    EComboBox \
+    EAnalogClock
 

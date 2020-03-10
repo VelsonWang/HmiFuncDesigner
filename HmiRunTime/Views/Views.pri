@@ -26,8 +26,9 @@ INCLUDEPATH += \
     $$PWD/Elements/ETagTextList \
     $$PWD/Elements/EValueStick \
     $$PWD/Elements/EJarShape \
-    $$PWD/Elements/EComboBox
-
+    $$PWD/Elements/EComboBox \
+    $$PWD/Elements/EAnalogClock
+	
 SOURCES += \
     $$PWD/GraphPage.cpp \
     $$PWD/GraphPageManager.cpp \
@@ -71,8 +72,10 @@ SOURCES += \
     $$PWD/Elements/EJarShape/ElementJarShape.cpp \
     $$PWD/Elements/EJarShape/EJarShape.cpp \
     $$PWD/Elements/EComboBox/ElementComboBox.cpp \
-    $$PWD/Elements/EComboBox/EComboBox.cpp
-
+    $$PWD/Elements/EComboBox/EComboBox.cpp \
+    $$PWD/Elements/EAnalogClock/ElementAnalogClock.cpp \
+    $$PWD/Elements/EAnalogClock/EAnalogClock.cpp
+	
 HEADERS += \
     $$PWD/GraphPage.h \
     $$PWD/GraphPageManager.h \
@@ -119,7 +122,9 @@ HEADERS += \
     $$PWD/Elements/EJarShape/ElementJarShape.h \
     $$PWD/Elements/EJarShape/EJarShape.h \
     $$PWD/Elements/EComboBox/ElementComboBox.h \
-    $$PWD/Elements/EComboBox/EComboBox.h
+    $$PWD/Elements/EComboBox/EComboBox.h \
+    $$PWD/Elements/EAnalogClock/ElementAnalogClock.h \
+    $$PWD/Elements/EAnalogClock/EAnalogClock.h
 
 FORMS += \
     $$PWD/SoftKeyboard/InputMethodAlphabet.ui \
