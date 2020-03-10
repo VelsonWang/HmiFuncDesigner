@@ -92,6 +92,9 @@ quint16 ModbusASCIIImpl::makeMessagePackage(quint8 *pSendData,
             case TYPE_BCD: {
 
             }break;
+            default: {
+
+            }break;
             }
         } else {
             switch(pTag->GetDataType()) {
@@ -113,6 +116,9 @@ quint16 ModbusASCIIImpl::makeMessagePackage(quint8 *pSendData,
                 memcpy(&tempBuffer_[mesPi], pTag->pWriteBuf, 4);
                 RecoverSelfData(&tempBuffer_[mesPi], 4);
                 mesPi += 4;
+            }break;
+            default: {
+
             }break;
             }
 

@@ -60,6 +60,24 @@ public:
     // 加入块读变量至待读变量标签列表
     void insertBlockReadTagToReadList(QList<IOTag *> &listRead);
 
+    // 依据规则修改缓冲区内数据
+    void modbusChangeData(bool bAddr8, bool bAddr16, bool bAddr32,
+                          bool bAddr64, quint8* pData, quint32 iLen);
+    // 内存地址起始位是否为0
+    bool isStartAddrBit(void *pObj);
+    // 写线圈功能码是否为15
+    bool isWriteCoilFn(void *pObj);
+    // 写寄存器功能码为是否16
+    bool isWriteRegFn(void *pObj);
+    // 是否8位逆序
+    bool isAddr8(void *pObj);
+    // 是否16位低字节在前高字节在后
+    bool isAddr16(void *pObj);
+    // 是否32位低字节在前高字节在后
+    bool isAddr32(void *pObj);
+    // 是否64位低字节在前高字节在后
+    bool isAddr64(void *pObj);
+
 signals:
 
 public slots:

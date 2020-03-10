@@ -23,6 +23,26 @@ VendorPrivate::VendorPrivate()
 }
 
 
+
+///
+/// \brief VendorPrivate::parsePropertiesFromString
+/// \details 从字符串解析设备私有属性
+/// \param szProperty 属性字符串
+/// \param properties 属性
+///
+void VendorPrivate::parsePropertiesFromString(const QString &szProperty, QMap<QString, QVariant> &mapProperties)
+{
+    mapProperties.clear();
+    QStringList szListProperties = szProperty.split('|');
+    foreach(QString szProp, szListProperties) {
+        QStringList szListKeyVal = szProp.split('=');
+        if(szListKeyVal.size() == 2) {
+            mapProperties.insert(szListKeyVal.at(0), szListKeyVal.at(1));
+        }
+    }
+    qDebug() << mapProperties;
+}
+
 /*
 * 从文件读取配置数据
 */
@@ -41,6 +61,7 @@ bool ComDevicePrivate::LoadData(const QString &devName)
     m_iCtrlVar = pObj->iCtrlVar_;
     m_bDynamicOptimization = pObj->bDynamicOptimization_;
     m_iRemotePort = pObj->iRemotePort_;
+    parsePropertiesFromString(pObj->szProperties_, m_mapProperties);
     m_sDeviceType = "COM";
 
     ComDevice comDev;
@@ -76,6 +97,7 @@ bool NetDevicePrivate::LoadData(const QString &devName)
     m_iCtrlVar = pObj->iCtrlVar_;
     m_bDynamicOptimization = pObj->bDynamicOptimization_;
     m_iRemotePort = pObj->iRemotePort_;
+    parsePropertiesFromString(pObj->szProperties_, m_mapProperties);
     m_sDeviceType = "NET";
 
     NetDevice netDev;

@@ -189,5 +189,10 @@ inline quint16 crc16(quint16 crc, quint8 a)
     return crc;
 }
 
+inline quint8 byteSwitchHigh4bitLow4bit(quint8 dat)
+{
+    quint8 tmp = ((dat & 0xF0) >> 4) | ((dat & 0x0F) << 4);
+    return tmp;
+}
 
 #endif // PUBLIC_FUNCTION_H

@@ -8,6 +8,7 @@
 #include <QMutex>
 #include <QQueue>
 #include <QList>
+#include <QMap>
 #include "IVendorPlugin.h"
 #include "IOTag.h"
 #include "IPort.h"
@@ -20,6 +21,7 @@ class VendorPrivate
 {
 public:
     VendorPrivate();
+    void parsePropertiesFromString(const QString &szProperty, QMap<QString, QVariant> &mapProperties);
 
 public:
     QString m_sDeviceType;
@@ -32,7 +34,7 @@ public:
     int m_iCtrlVar;
     bool m_bDynamicOptimization;
     int m_iRemotePort;
-
+    QMap<QString, QVariant> m_mapProperties; // 设备私有属性
 };
 
 //-----------------------------------------------------------------------------
