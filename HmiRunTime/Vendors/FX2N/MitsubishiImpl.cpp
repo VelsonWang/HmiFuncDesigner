@@ -201,11 +201,11 @@ int MitsubishiImpl::writeData(void* pObj, IOTag* pTag)
     if(iFirstFlag) {
         pVendorObj->writeBuf[0] = 0x05;
         if(getPort() != nullptr)
-            getPort()->write(pVendorObj->writeBuf, 1, 1000);
+            getPort()->write(pVendorObj->writeBuf, 1, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
 
         resultlen = 0;
         if(getPort() != nullptr)
-            resultlen = getPort()->read(pVendorObj->readBuf, 1, 5000);
+            resultlen = getPort()->read(pVendorObj->readBuf, 1, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
         if(!(resultlen == 1 && pVendorObj->readBuf[0] == 0x06))
             return false;
         iFirstFlag = 0;
@@ -251,11 +251,11 @@ int MitsubishiImpl::writeData(void* pObj, IOTag* pTag)
     memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
     if(getPort() != nullptr)
-        getPort()->write(pVendorObj->writeBuf, len, 1000);
+        getPort()->write(pVendorObj->writeBuf, len, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
 
     resultlen = 0;
     if(getPort() != nullptr)
-        resultlen = getPort()->read(pVendorObj->readBuf, 1, 1000);
+        resultlen = getPort()->read(pVendorObj->readBuf, 1, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
 
     if(resultlen == 1 && pVendorObj->readBuf[0] == 0x06)
         return 1;
@@ -301,11 +301,11 @@ int MitsubishiImpl::readData(void* pObj, IOTag* pTag)
     if(iFirstFlag) {
         pVendorObj->writeBuf[0] = 0x05;
         if(getPort() != nullptr)
-            getPort()->write(pVendorObj->writeBuf, 1, 1000);
+            getPort()->write(pVendorObj->writeBuf, 1, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
 
         resultlen = 0;
         if(getPort() != nullptr)
-            resultlen = getPort()->read(pVendorObj->readBuf, 1, 5000);
+            resultlen = getPort()->read(pVendorObj->readBuf, 1, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
         if(!(resultlen == 1 && pVendorObj->readBuf[0] == 0x06))
             return false;
         iFirstFlag = 0;
@@ -341,11 +341,11 @@ int MitsubishiImpl::readData(void* pObj, IOTag* pTag)
     memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
     if(getPort() != nullptr)
-        getPort()->write(pVendorObj->writeBuf, len, 1000);
+        getPort()->write(pVendorObj->writeBuf, len, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
 
     resultlen = 0;
     if(getPort() != nullptr)
-        resultlen = getPort()->read(pVendorObj->readBuf, 4 + wDataLen * 2, 1000);
+        resultlen = getPort()->read(pVendorObj->readBuf, 4 + wDataLen * 2, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
     if(resultlen != (4 + wDataLen * 2))
         return -2;
 
@@ -376,3 +376,17 @@ int MitsubishiImpl::readData(void* pObj, IOTag* pTag)
 
 
 
+
+///
+/// \brief MitsubishiImpl::convertIOTagBytesToNativeBytes
+/// \details 变量字节序转换为当前主机字节序
+/// \param pObj 设备描述对象
+/// \param pTag 变量描述对象
+/// \return true-成功, false-失败
+///
+bool MitsubishiImpl::convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag)
+{
+    (void)pObj;
+    (void)pTag;
+    return true;
+}

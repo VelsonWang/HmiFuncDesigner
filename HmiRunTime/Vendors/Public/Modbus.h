@@ -43,7 +43,7 @@ public:
 
     TModbus_CPUMEM getCpuMem(const QString &szRegisterArea);
     //获取功能码
-    quint8 getFuncode(IOTag* pTag, TModbus_ReadWrite rw_flag);
+    quint8 getFuncode(void* pObj, IOTag* pTag, TModbus_ReadWrite rw_flag);
     // 获得寄存器个数
     quint16 getRegNum(IOTag* pTag);
     // 生成modbus报文
@@ -77,6 +77,9 @@ public:
     bool isAddr32(void *pObj);
     // 是否64位低字节在前高字节在后
     bool isAddr64(void *pObj);
+
+    // 变量字节序转换为当前主机字节序
+    bool convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag);
 
 signals:
 

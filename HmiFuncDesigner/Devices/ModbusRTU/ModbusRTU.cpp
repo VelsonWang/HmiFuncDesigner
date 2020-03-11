@@ -95,7 +95,9 @@ void ModbusRTU::GetRegisterAreaLimit(const QString &areaName,
 void ModbusRTU::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
-    properties.append(qMakePair(tr("设备ID"), QString("1")));
+    properties.append(qMakePair(tr("通信失败重试次数n次"), QString("3")));
+    properties.append(qMakePair(tr("通信超时时间n毫秒"), QString("1000")));
+    properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("15000")));
     properties.append(qMakePair(tr("内存地址起始位为0"), QString("true")));
     properties.append(qMakePair(tr("写线圈功能码为15"), QString("false")));
     properties.append(qMakePair(tr("写寄存器功能码为16"), QString("false")));
@@ -114,7 +116,9 @@ void ModbusRTU::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& prope
 void ModbusRTU::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
 {
     properties_type.clear();
-    properties_type.append(qMakePair(tr("设备ID"), QString("int")));
+    properties_type.append(qMakePair(tr("通信失败重试次数n次"), QString("int")));
+    properties_type.append(qMakePair(tr("通信超时时间n毫秒"), QString("int")));
+    properties_type.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("int")));
     properties_type.append(qMakePair(tr("内存地址起始位为0"), QString("bool")));
     properties_type.append(qMakePair(tr("写线圈功能码为15"), QString("bool")));
     properties_type.append(qMakePair(tr("写寄存器功能码为16"), QString("bool")));
@@ -135,7 +139,9 @@ void ModbusRTU::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>
 QString ModbusRTU::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
 {
     QStringList szListProperties;
-    szListProperties << QString(tr("id=%1")).arg(getValue2ByValue1(tr("设备ID"), properties));
+    szListProperties << QString(tr("retryTimes=%1")).arg(getValue2ByValue1(tr("通信失败重试次数n次"), properties));
+    szListProperties << QString(tr("commTimeout=%1")).arg(getValue2ByValue1(tr("通信超时时间n毫秒"), properties));
+    szListProperties << QString(tr("commResumeTime=%1")).arg(getValue2ByValue1(tr("尝试恢复通讯间隔时间n毫秒"), properties));
     szListProperties << QString(tr("startAddrBit=%1")).arg(getValue2ByValue1(tr("内存地址起始位为0"), properties));
     szListProperties << QString(tr("writeCoilFn=%1")).arg(getValue2ByValue1(tr("写线圈功能码为15"), properties));
     szListProperties << QString(tr("writeRegFn=%1")).arg(getValue2ByValue1(tr("写寄存器功能码为16"), properties));
@@ -161,8 +167,12 @@ void ModbusRTU::devicePropertiesFromString(const QString &szProperty, QVector<QP
     foreach(QString szProp, szListProperties) {
         QStringList szListKeyVal = szProp.split('=');
         if(szListKeyVal.size() == 2) {
-            if(szListKeyVal.at(0) == "id") {
-                properties.append(qMakePair(tr("设备ID"), szListKeyVal.at(1)));
+            if(szListKeyVal.at(0) == "retryTimes") {
+                properties.append(qMakePair(tr("通信失败重试次数n次"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "commTimeout") {
+                properties.append(qMakePair(tr("通信超时时间n毫秒"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "commResumeTime") {
+                properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), szListKeyVal.at(1)));
             } else if(szListKeyVal.at(0) == "startAddrBit") {
                 properties.append(qMakePair(tr("内存地址起始位为0"), szListKeyVal.at(1)));
             } else if(szListKeyVal.at(0) == "writeCoilFn") {
@@ -182,19 +192,5 @@ void ModbusRTU::devicePropertiesFromString(const QString &szProperty, QVector<QP
     }
 }
 
-
-
-///
-/// \brief ModbusRTU::setDeviceProperty
-/// \details 设置设备属性
-/// \param properties
-///
-void ModbusRTU::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
-{
-    m_properties.clear();
-    m_properties.append(properties);
-    QString szVal = getValue2ByValue1(tr("内存地址起始位为0"), m_properties);
-    m_bStartAddrBit0 = (szVal.toLower() == "true") ? true : false;
-}
 
 

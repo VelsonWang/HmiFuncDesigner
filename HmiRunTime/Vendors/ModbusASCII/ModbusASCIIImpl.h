@@ -27,6 +27,7 @@ public:
 private:
     // 生成modbus报文
     quint16 makeMessagePackage(quint8 *pSendData,
+                               void* pObj,
                                IOTag* pTag,
                                TModbus_ReadWrite RW_flag,
                                quint16 *retVarLen);

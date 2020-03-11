@@ -44,11 +44,12 @@ TModbus_CPUMEM Modbus::getCpuMem(const QString &szRegisterArea)
 /**
  * @brief getFuncode
  * @details 获取功能码
+ * @param pObj 设备描述对象
  * @param pTag 变量对象
  * @param rw_flag 1-读, 2-写
  * @return 功能码
  */
-quint8 Modbus::getFuncode(IOTag* pTag, TModbus_ReadWrite rw_flag)
+quint8 Modbus::getFuncode(void* pObj, IOTag* pTag, TModbus_ReadWrite rw_flag)
 {
     quint8 byRet = 0;
     TModbus_CPUMEM cm = getCpuMem(pTag->GetRegisterArea());
@@ -74,7 +75,8 @@ quint8 Modbus::getFuncode(IOTag* pTag, TModbus_ReadWrite rw_flag)
         switch(cm) {
         case CM_0x:
             if(pTag->GetDataTypeLength() == 1) {
-                byRet = 0x05;
+                if(isWriteCoilFn(pObj)) byRet = 0x0F;
+                else byRet = 0x05;
             } else {
                 byRet = 0x0F;
             }
@@ -87,7 +89,8 @@ quint8 Modbus::getFuncode(IOTag* pTag, TModbus_ReadWrite rw_flag)
             break;
         case CM_4x:
             if(pTag->GetDataTypeLength() == 2) {
-                byRet = 0x06;
+                if(isWriteRegFn(pObj)) byRet = 0x10;
+                else byRet = 0x06;
             } else {
                 byRet = 0x10;
             }
@@ -737,5 +740,21 @@ bool Modbus::isAddr64(void *pObj)
 }
 
 
+
+
+///
+/// \brief Modbus::convertIOTagBytesToNativeBytes
+/// \details 变量字节序转换为当前主机字节序
+/// \param pObj 设备描述对象
+/// \param pTag 变量描述对象
+/// \return true-成功, false-失败
+///
+bool Modbus::convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag)
+{
+    quint32 iLen = static_cast<quint32>(pTag->GetDataTypeLength());
+    TModbus_CPUMEM cm = getCpuMem(pTag->GetRegisterArea());
+    if(cm == CM_3x || cm == CM_4x) modbusChangeData(isAddr8(pObj), isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->pReadBuf, iLen);
+    return true;
+}
 
 

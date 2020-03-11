@@ -30,10 +30,13 @@ public:
     QString m_sProtocol;
     QString m_sLink;
     int m_iStateVar;
-    int m_iFrameTimePeriod;
+    int m_iFrameTimePeriod; // 帧间隔
     int m_iCtrlVar;
     bool m_bDynamicOptimization;
     int m_iRemotePort;
+    int m_iRetryTimes; // 通信失败重试次数
+    int m_iCommTimeout; // 通信超时时间
+    int m_iCommResumeTime; // 尝试恢复通讯间隔时间
     QMap<QString, QVariant> m_mapProperties; // 设备私有属性
 };
 

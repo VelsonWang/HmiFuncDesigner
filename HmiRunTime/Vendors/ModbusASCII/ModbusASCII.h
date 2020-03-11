@@ -14,7 +14,7 @@ class ModbusASCII : public QObject, IVendorPlugin
 
 public:
     ModbusASCII();
-    ~ModbusASCII();
+    ~ModbusASCII() Q_DECL_OVERRIDE;
 
     // 初始化设备
     bool initailizeDevice(void* pObj) Q_DECL_OVERRIDE;
@@ -38,6 +38,9 @@ public:
     int readIOTag(void* pObj, IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
     // 读变量后处理
     bool afterReadIOTag(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
+
+    // 变量字节序转换为当前主机字节序
+    bool convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
 
 private:
     ModbusASCIIImpl m_ModbusASCIIImplObj;

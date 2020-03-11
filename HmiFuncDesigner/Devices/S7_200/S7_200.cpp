@@ -2,7 +2,8 @@
 
 
 
-S7_200::S7_200() {
+S7_200::S7_200()
+{
 
 }
 
@@ -12,7 +13,8 @@ S7_200::S7_200() {
  * @details 获取设备类型名称
  * @return
  */
-QString S7_200::GetDeviceTypeName() {
+QString S7_200::GetDeviceTypeName()
+{
     return QString(tr("串口设备"));
 }
 
@@ -22,7 +24,8 @@ QString S7_200::GetDeviceTypeName() {
  * @details 获取设备支持的所有协议
  * @return
  */
-QStringList S7_200::GetDeviceSupportProtocol() {
+QStringList S7_200::GetDeviceSupportProtocol()
+{
     QStringList list;
     list << "S7_200_PPI";
     return list;
@@ -33,7 +36,8 @@ QStringList S7_200::GetDeviceSupportProtocol() {
  * @details 获取设备支持的所有寄存器区
  * @return
  */
-QStringList S7_200::GetDeviceSupportRegisterArea() {
+QStringList S7_200::GetDeviceSupportRegisterArea()
+{
     QStringList list;
     list << tr("V")
          << tr("I")
@@ -79,7 +83,8 @@ QStringList S7_200::GetDeviceSupportDataType()
  */
 void S7_200::GetRegisterAreaLimit(const QString &areaName,
                                      quint32 &lowerLimit,
-                                     quint32 &upperLimit) {
+                                     quint32 &upperLimit)
+{
     lowerLimit = 0;
     upperLimit = 0;
     if(areaName == tr("V")) {
@@ -120,6 +125,9 @@ void S7_200::GetRegisterAreaLimit(const QString &areaName,
 void S7_200::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
+    properties.append(qMakePair(tr("通信失败重试次数n次"), QString("3")));
+    properties.append(qMakePair(tr("通信超时时间n毫秒"), QString("1000")));
+    properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("15000")));
 }
 
 
@@ -131,7 +139,9 @@ void S7_200::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properti
 void S7_200::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
 {
     properties_type.clear();
-
+    properties_type.append(qMakePair(tr("通信失败重试次数n次"), QString("int")));
+    properties_type.append(qMakePair(tr("通信超时时间n毫秒"), QString("int")));
+    properties_type.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("int")));
 }
 
 
@@ -143,8 +153,11 @@ void S7_200::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& 
 ///
 QString S7_200::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
 {
-    Q_UNUSED(properties)
-    return QString();
+    QStringList szListProperties;
+    szListProperties << QString(tr("retryTimes=%1")).arg(getValue2ByValue1(tr("通信失败重试次数n次"), properties));
+    szListProperties << QString(tr("commTimeout=%1")).arg(getValue2ByValue1(tr("通信超时时间n毫秒"), properties));
+    szListProperties << QString(tr("commResumeTime=%1")).arg(getValue2ByValue1(tr("尝试恢复通讯间隔时间n毫秒"), properties));
+    return szListProperties.join("|");
 }
 
 
@@ -156,21 +169,23 @@ QString S7_200::devicePropertiesToString(QVector<QPair<QString, QString>>& prope
 ///
 void S7_200::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
 {
-    Q_UNUSED(szProperty)
-    Q_UNUSED(properties)
+    properties.clear();
+
+    QStringList szListProperties = szProperty.split('|');
+    foreach(QString szProp, szListProperties) {
+        QStringList szListKeyVal = szProp.split('=');
+        if(szListKeyVal.size() == 2) {
+            if(szListKeyVal.at(0) == "retryTimes") {
+                properties.append(qMakePair(tr("通信失败重试次数n次"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "commTimeout") {
+                properties.append(qMakePair(tr("通信超时时间n毫秒"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "commResumeTime") {
+                properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), szListKeyVal.at(1)));
+            }
+        }
+    }
 }
 
-
-///
-/// \brief S7_200::setDeviceProperty
-/// \details 设置设备属性
-/// \param properties
-///
-void S7_200::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
-{
-    m_properties.clear();
-    m_properties.append(properties);
-}
 
 
 

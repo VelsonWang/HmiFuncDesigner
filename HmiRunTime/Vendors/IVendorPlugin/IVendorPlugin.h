@@ -36,6 +36,9 @@ public:
     virtual int readIOTag(void* pObj, IPort *pPort, IOTag* pTag) = 0;
     // 读变量后处理
     virtual bool afterReadIOTag(void* pObj, IOTag* pTag) = 0;
+
+    // 变量字节序转换为当前主机字节序
+    virtual bool convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag) = 0;
 };
 
 

@@ -13,7 +13,7 @@ class FX2N : public QObject, IVendorPlugin
 
 public:
     FX2N();
-    ~FX2N();
+    ~FX2N() Q_DECL_OVERRIDE;
 
     // 初始化设备
     bool initailizeDevice(void* pObj) Q_DECL_OVERRIDE;
@@ -37,6 +37,9 @@ public:
     int readIOTag(void* pObj, IPort *pPort, IOTag* pTag) Q_DECL_OVERRIDE;
     // 读变量后处理
     bool afterReadIOTag(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
+
+    // 变量字节序转换为当前主机字节序
+    bool convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag) Q_DECL_OVERRIDE;
 
 private:
     MitsubishiImpl m_mitsubishiImplObj;

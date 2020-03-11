@@ -349,10 +349,9 @@ bool SiemensS7_200Impl::isCanWrite(void* pObj, IOTag* pTag)
  */
 int SiemensS7_200Impl::writeData(void* pObj, IOTag* pTag)
 {
-    (void)pObj;
-    int iCommTimeout = 1000;
-
     Vendor* pVendorObj = (Vendor*)(pObj);
+    int iCommTimeout = pVendorObj->m_pVendorPrivateObj->m_iCommTimeout;
+
     memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
     memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
@@ -610,8 +609,8 @@ bool SiemensS7_200Impl::isCanRead(void* pObj, IOTag* pTag)
  */
 int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
 {
-    (void)pObj;
-    int iCommTimeout = 1000;
+    Vendor* pVendorObj = (Vendor*)(pObj);
+    int iCommTimeout = pVendorObj->m_pVendorPrivateObj->m_iCommTimeout;
     // 发送数据结构
     TRDataUnit stRDataUnit = {0x00, 0x00, 0x00, 0x04, 0x00, Q_NULLPTR};
     TRDataMsgUnit stRDataMsgUnit = {0x12, 0x0A, 0x10, 0x00, 0x00, 0x00, 0x00};
@@ -630,7 +629,6 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
     qint32 iTemp;
     quint32 dwTemp=0 ,nLen=0;
 
-    Vendor* pVendorObj = (Vendor*)(pObj);
     memset(pVendorObj->writeBuf, 0, sizeof(pVendorObj->writeBuf)/sizeof(quint8));
     memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf)/sizeof(quint8));
 
@@ -890,5 +888,19 @@ int SiemensS7_200Impl::readData(void* pObj, IOTag* pTag)
     return 0;
 }
 
+
+///
+/// \brief SiemensS7_200Impl::convertIOTagBytesToNativeBytes
+/// \details 变量字节序转换为当前主机字节序
+/// \param pObj 设备描述对象
+/// \param pTag 变量描述对象
+/// \return true-成功, false-失败
+///
+bool SiemensS7_200Impl::convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag)
+{
+    (void)pObj;
+    (void)pTag;
+    return true;
+}
 
 

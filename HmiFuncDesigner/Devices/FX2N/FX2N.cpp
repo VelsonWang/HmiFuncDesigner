@@ -118,6 +118,9 @@ void FX2N::GetRegisterAreaLimit(const QString &areaName,
 void FX2N::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
+    properties.append(qMakePair(tr("通信失败重试次数n次"), QString("3")));
+    properties.append(qMakePair(tr("通信超时时间n毫秒"), QString("1000")));
+    properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("15000")));
 }
 
 
@@ -129,6 +132,9 @@ void FX2N::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties
 void FX2N::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
 {
     properties_type.clear();
+    properties_type.append(qMakePair(tr("通信失败重试次数n次"), QString("int")));
+    properties_type.append(qMakePair(tr("通信超时时间n毫秒"), QString("int")));
+    properties_type.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("int")));
 }
 
 
@@ -140,10 +146,12 @@ void FX2N::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& pr
 ///
 QString FX2N::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
 {
-    Q_UNUSED(properties)
-    return QString();
+    QStringList szListProperties;
+    szListProperties << QString(tr("retryTimes=%1")).arg(getValue2ByValue1(tr("通信失败重试次数n次"), properties));
+    szListProperties << QString(tr("commTimeout=%1")).arg(getValue2ByValue1(tr("通信超时时间n毫秒"), properties));
+    szListProperties << QString(tr("commResumeTime=%1")).arg(getValue2ByValue1(tr("尝试恢复通讯间隔时间n毫秒"), properties));
+    return szListProperties.join("|");
 }
-
 
 ///
 /// \brief FX2N::devicePropertiesFromString
@@ -153,21 +161,24 @@ QString FX2N::devicePropertiesToString(QVector<QPair<QString, QString>>& propert
 ///
 void FX2N::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
 {
-    Q_UNUSED(szProperty)
-    Q_UNUSED(properties)
+    properties.clear();
+
+    QStringList szListProperties = szProperty.split('|');
+    foreach(QString szProp, szListProperties) {
+        QStringList szListKeyVal = szProp.split('=');
+        if(szListKeyVal.size() == 2) {
+            if(szListKeyVal.at(0) == "retryTimes") {
+                properties.append(qMakePair(tr("通信失败重试次数n次"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "commTimeout") {
+                properties.append(qMakePair(tr("通信超时时间n毫秒"), szListKeyVal.at(1)));
+            } else if(szListKeyVal.at(0) == "commResumeTime") {
+                properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), szListKeyVal.at(1)));
+            }
+        }
+    }
 }
 
 
-///
-/// \brief FX2N::setDeviceProperty
-/// \details 设置设备属性
-/// \param properties
-///
-void FX2N::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
-{
-    m_properties.clear();
-    m_properties.append(properties);
-}
 
 
 

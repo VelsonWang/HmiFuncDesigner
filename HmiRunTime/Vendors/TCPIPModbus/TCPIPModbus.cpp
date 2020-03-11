@@ -162,6 +162,18 @@ bool TCPIPModbus::afterReadIOTag(void* pObj, IOTag* pTag)
 }
 
 
+///
+/// \brief TCPIPModbus::convertIOTagBytesToNativeBytes
+/// \details 变量字节序转换为当前主机字节序
+/// \param pObj 设备描述对象
+/// \param pTag 变量描述对象
+/// \return true-成功, false-失败
+///
+bool TCPIPModbus::convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag)
+{
+    return m_TCPIPModbusImplObj.convertIOTagBytesToNativeBytes(pObj, pTag);
+}
+
 
 
 

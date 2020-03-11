@@ -35,8 +35,6 @@ public:
     virtual QString devicePropertiesToString(QVector<QPair<QString, QString>>& properties) = 0;
     // 从字符串加载属性
     virtual void devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties) = 0;
-    // 设置设备属性
-    virtual void setDeviceProperty(QVector<QPair<QString, QString>>& properties) = 0;
 
     QString getValue2ByValue1(const QString &szVal1, QVector<QPair<QString, QString>>& properties) {
         for (int i = 0; i < properties.size(); ++i) {

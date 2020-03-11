@@ -95,6 +95,10 @@ QString RealTimeDB::GetDataString(const QString &id)
         {
             val.toString();
         }break;
+        default:
+        {
+
+        }break;
     }
     return ret;
 }
@@ -195,6 +199,10 @@ void RealTimeDB::SetDataString(const QString &id, const QString &dat)
         {
             val = QVariant(dat);
         }break;
+        default:
+        {
+
+        }break;
     }
     pTag->SetData(val, false);
 
@@ -263,6 +271,10 @@ void RealTimeDB::SetDataStringInner(const QString &id, const QString &dat)
         case TYPE_BCD:
         {
             val = QVariant(dat);
+        }break;
+        default:
+        {
+
         }break;
     }
     pTag->SetData(val, false);

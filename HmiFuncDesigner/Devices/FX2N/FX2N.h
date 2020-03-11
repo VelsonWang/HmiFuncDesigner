@@ -35,8 +35,6 @@ public:
     QString devicePropertiesToString(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
     // 从字符串加载属性
     void devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
-    // 设置设备属性
-    void setDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
 
 private:
     QVector<QPair<QString, QString>> m_properties; // 插件私有属性

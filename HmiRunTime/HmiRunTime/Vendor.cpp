@@ -9,14 +9,6 @@
 #include <QDateTime>
 #include <QDebug>
 
-//-----------------------------------------------------------------------------
-
-#define RETRY_TIMES    (3)  // 通讯失败尝试次数
-#define RECOVERY_INTERVAL    (10000) // 断线之后尝试恢复重新连接时间间隔N毫秒
-
-//-----------------------------------------------------------------------------
-
-
 VendorPrivate::VendorPrivate()
 {
 
@@ -40,7 +32,7 @@ void VendorPrivate::parsePropertiesFromString(const QString &szProperty, QMap<QS
             mapProperties.insert(szListKeyVal.at(0), szListKeyVal.at(1));
         }
     }
-    qDebug() << mapProperties;
+    //qDebug() << mapProperties;
 }
 
 /*
@@ -62,6 +54,9 @@ bool ComDevicePrivate::LoadData(const QString &devName)
     m_bDynamicOptimization = pObj->bDynamicOptimization_;
     m_iRemotePort = pObj->iRemotePort_;
     parsePropertiesFromString(pObj->szProperties_, m_mapProperties);
+    m_iRetryTimes = m_mapProperties.value("retryTimes").toInt();
+    m_iCommTimeout = m_mapProperties.value("commTimeout").toInt();
+    m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt();
     m_sDeviceType = "COM";
 
     ComDevice comDev;
@@ -98,6 +93,9 @@ bool NetDevicePrivate::LoadData(const QString &devName)
     m_bDynamicOptimization = pObj->bDynamicOptimization_;
     m_iRemotePort = pObj->iRemotePort_;
     parsePropertiesFromString(pObj->szProperties_, m_mapProperties);
+    m_iRetryTimes = m_mapProperties.value("retryTimes").toInt();
+    m_iCommTimeout = m_mapProperties.value("commTimeout").toInt();
+    m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt();
     m_sDeviceType = "NET";
 
     NetDevice netDev;
@@ -262,11 +260,11 @@ bool Vendor::writeIOTag(IOTag* pTag)
                             .arg(this->getDeviceName())
                             .arg(pTag->GetTagID())
                             .arg(QString::number(iRetryTimes+1))
-                            .arg(QString::number(RETRY_TIMES)));
+                            .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes)));
                     iRetryTimes++;
                     if(m_pVendorPluginObj->writeIOTag(this, m_pPortObj, pTag) == 1) break;
-                } while(iRetryTimes < RETRY_TIMES);
-                if(iRetryTimes >= RETRY_TIMES) return false;
+                } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
+                if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) return false;
             }
             m_pVendorPluginObj->afterWriteIOTag(this, pTag);
         }
@@ -283,7 +281,7 @@ bool Vendor::writeIOTag(IOTag* pTag)
 bool Vendor::writeIOTags()
 {
     if(this->m_bOffLine) {
-        if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > RECOVERY_INTERVAL) {
+        if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
             if(this->reconnect() == false) {
                 this->m_bOffLine = true;
                 this->m_bOnlineStatus = false;
@@ -347,11 +345,11 @@ bool Vendor::readIOTag(IOTag* pTag)
                                 .arg(this->getDeviceName())
                                 .arg(pTag->GetTagID())
                                 .arg(QString::number(iRetryTimes+1))
-                                .arg(QString::number(RETRY_TIMES)));
+                                .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes)));
                         iRetryTimes++;
                         if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) break;
-                    } while(iRetryTimes < RETRY_TIMES);
-                    if(iRetryTimes >= RETRY_TIMES) {
+                    } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
+                    if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) {
                         pTag->setReadBlockReadTagSuccess(false);
                         return false;
                     }
@@ -377,6 +375,8 @@ bool Vendor::readIOTag(IOTag* pTag)
                         } else {
                             int iByteAddr = (iRegAddr-iBlockRegAddr)*2;
                             memcpy((void *)&pTag->pReadBuf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], iDataTypeLength);
+                            // 根据不同协议调整字节顺序
+                            m_pVendorPluginObj->convertIOTagBytesToNativeBytes(this, pTag);
                         }
 
                     } else {
@@ -387,11 +387,11 @@ bool Vendor::readIOTag(IOTag* pTag)
                                         .arg(this->getDeviceName())
                                         .arg(pTag->GetTagID())
                                         .arg(QString::number(iRetryTimes+1))
-                                        .arg(QString::number(RETRY_TIMES)));
+                                        .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes)));
                                 iRetryTimes++;
                                 if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) break;
-                            } while(iRetryTimes < RETRY_TIMES);
-                            if(iRetryTimes >= RETRY_TIMES) return false;
+                            } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
+                            if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) return false;
                         }
                     }
                 } else {
@@ -402,11 +402,11 @@ bool Vendor::readIOTag(IOTag* pTag)
                                     .arg(this->getDeviceName())
                                     .arg(pTag->GetTagID())
                                     .arg(QString::number(iRetryTimes+1))
-                                    .arg(QString::number(RETRY_TIMES)));
+                                    .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes)));
                             iRetryTimes++;
                             if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) break;
-                        } while(iRetryTimes < RETRY_TIMES);
-                        if(iRetryTimes >= RETRY_TIMES) return false;
+                        } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
+                        if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) return false;
                     }
                 }
                 if(pDBTagObject != Q_NULLPTR)
@@ -428,7 +428,7 @@ bool Vendor::readIOTag(IOTag* pTag)
 bool Vendor::readIOTags()
 {
     if(this->m_bOffLine) {
-        if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > RECOVERY_INTERVAL) {
+        if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
             if(this->reconnect() == false) {
                 this->m_bOffLine = true;
                 this->m_bOnlineStatus = false;
