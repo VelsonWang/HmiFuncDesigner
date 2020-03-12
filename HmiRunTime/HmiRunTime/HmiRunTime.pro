@@ -28,6 +28,9 @@ CONFIG += C++11
 # 开启ftp服务
 #DEFINES += USE_FTP_SERVICE
 
+#去除UNICODE字符编码
+DEFINES -= UNICODE
+
 include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
 #include(../QFtpServer/QFtpServer.pri)
@@ -80,7 +83,7 @@ SOURCES += \
     tcpsocket.cpp \
     threadhandle.cpp \
     Port/ComPort.cpp \
-    DB/ShareMemory.c \
+    DB/ShareMemory.cpp \
     MessageTransfer.cpp \
     SerialPortReMapping.cpp \
     Vendor.cpp \

@@ -1,59 +1,46 @@
-#ifndef SHAREMEMORY_H
-#define SHAREMEMORY_H
+#ifndef __SHAREMEMORY_H__
+#define __SHAREMEMORY_H__
 
-#include <QtGlobal>
-
-#ifdef Q_OS_LINUX
-#include <sys/mman.h>
-#include <stdlib.h>  
+#include <iostream>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string>
 #include <string.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <termios.h>
-#include <asm/ioctls.h>
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <sys/time.h>
-#include <time.h>
-#include <signal.h>
-#endif
 
-#ifdef Q_OS_WIN
+#ifdef _WIN32
 #include <windows.h>
-#include <stdio.h>
+#else
+#include<sys/types.h>
+#include<sys/shm.h>
 #endif
 
-#define SHM_MODE (SHM_R | SHM_W | IPC_CREAT) 
+struct SharememoryHandle;
 
-#ifdef Q_OS_WIN
-#define MAX_NUM             12000
-#endif
+class Sharememory
+{
+public:
+    Sharememory();
+    Sharememory(std::string name);
+    ~Sharememory();
 
-#ifdef Q_OS_LINUX
-#define MAX_NUM             4000
-#endif
+    std::string getName();
 
-#define MAX_SYSITEM         200
-#define MAX_STRUCT          5
-#define MAX_STRUCT_DOWN     5
-#define MAX_STRUCT_UP       5
+    void setName(std::string name);
 
-#ifdef Q_OS_WIN
-#define STATION_SIZE        200000      // 一个站点所占用的大小200000 bytes 未使用的空间作为备用
-#endif
+    bool create(unsigned int size);
 
-#ifdef Q_OS_LINUX
-#define SHMDBKEYRTRAM_RT    1829503351  //811047
-#define STATION_SIZE        70000
-#endif
+    void* open();
 
+    void destroy();
 
+private:
+    void init();
+    void release();
+    void resetHandle();
 
-int openRamRealTimeDB(); // 打开实时数据库
-
-
+private:
+    std::string name;
+    SharememoryHandle *handle;
+};
 
 #endif
