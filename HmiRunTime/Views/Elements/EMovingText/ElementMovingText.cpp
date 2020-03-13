@@ -96,9 +96,9 @@ void ElementMovingText::drawMovingText(QPainter *painter)
     // 已关联变量, 使用属性：变量文本列表
     if(szTagSelected_ != "") {
         QString szTagValue = "#";
-        QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if (szTagID != "") {
-            szTagValue = RealTimeDB::GetDataString(szTagID);
+            szTagValue = RealTimeDB::instance()->GetDataString(szTagID);
         } else {
             szTagValue = "#";
         }

@@ -153,10 +153,17 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
         pSysTag->mComments = itemTagSys->m_szComments;
         pSysTag->m_Function.LoadFuncObjects(pSysTag->mProjectConverter);
 
-        DBTagObject* pDBSysTagObject = new DBTagObject(pSysTag->mId, pSysTag->mType, READ_WRIE, 0,
-                                                       QVariant(), TYPE_SYSTEM, pSysTag);
-        RealTimeDB::rtdb.insert(pSysTag->mId, pDBSysTagObject);
-        RealTimeDB::varNameMapId.insert((QObject::tr("系统变量.") + pSysTag->mName + "[" + pSysTag->mId + "]"), pSysTag->mId);
+        PDBTagObject pEmptyDBTagObj = RealTimeDB::instance()->getEmptyDBTagObject();
+        DBTagObject* pDBSysTagObject = new DBTagObject(pEmptyDBTagObj,
+                                                       pSysTag->mId,
+                                                       pSysTag->mType,
+                                                       READ_WRIE,
+                                                       0,
+                                                       TYPE_SYSTEM,
+                                                       pSysTag);
+
+        RealTimeDB::instance()->rtdb.insert(pSysTag->mId, pDBSysTagObject);
+        RealTimeDB::instance()->varNameMapId.insert((QObject::tr("系统变量.") + pSysTag->mName + "[" + pSysTag->mId + "]"), pSysTag->mId);
 
         pDBSysTagObject->addListener(new DBTagObject_Event_Listener());
     }
@@ -191,10 +198,17 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
         if(tmp == "") pTmpTag->mInitializeValue = 0;
         else pTmpTag->mInitializeValue = tmp.toDouble();
 
-        DBTagObject* pDBTmpTagObject = new DBTagObject(pTmpTag->mId, pTmpTag->mType, READ_WRIE, 0,
-                                                       QVariant(), TYPE_TMP, pTmpTag);
-        RealTimeDB::rtdb.insert(pTmpTag->mId, pDBTmpTagObject);
-        RealTimeDB::varNameMapId.insert((QObject::tr("中间变量.") + pTmpTag->mName + "[" + pTmpTag->mId + "]"), pTmpTag->mId);
+        PDBTagObject pEmptyDBTagObj = RealTimeDB::instance()->getEmptyDBTagObject();
+        DBTagObject* pDBTmpTagObject = new DBTagObject(pEmptyDBTagObj,
+                                                       pTmpTag->mId,
+                                                       pTmpTag->mType,
+                                                       READ_WRIE,
+                                                       0,
+                                                       TYPE_TMP,
+                                                       pTmpTag);
+
+        RealTimeDB::instance()->rtdb.insert(pTmpTag->mId, pDBTmpTagObject);
+        RealTimeDB::instance()->varNameMapId.insert((QObject::tr("中间变量.") + pTmpTag->mName + "[" + pTmpTag->mId + "]"), pTmpTag->mId);
 
         pDBTmpTagObject->addListener(new DBTagObject_Event_Listener());
     }
@@ -305,10 +319,18 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
 
             pIoDataTag->m_Function.LoadFuncObjects(itemTagIO->m_szProjectConverter);
 
-            DBTagObject* pDBIoTagObject = new DBTagObject(pIoDataTag->mId, pIoDataTag->mType, READ_WRIE, pIoDataTag->mLength,
-                                                          QVariant(), TYPE_IO, pIoDataTag);
-            RealTimeDB::rtdb.insert(pIoDataTag->mId, pDBIoTagObject);
-            RealTimeDB::varNameMapId.insert((QObject::tr("设备变量.") + pIoDataTag->mName + "[" + pIoDataTag->mId + "]"), pIoDataTag->mId);
+            PDBTagObject pEmptyDBTagObj = RealTimeDB::instance()->getEmptyDBTagObject();
+            DBTagObject* pDBIoTagObject = new DBTagObject(pEmptyDBTagObj,
+                                                          pIoDataTag->mId,
+                                                          pIoDataTag->mType,
+                                                          READ_WRIE,
+                                                          pIoDataTag->mLength,
+                                                          TYPE_IO,
+                                                          pIoDataTag);
+
+            RealTimeDB::instance()->rtdb.insert(pIoDataTag->mId, pDBIoTagObject);
+            RealTimeDB::instance()->varNameMapId.insert((QObject::tr("设备变量.") + pIoDataTag->mName + "[" + pIoDataTag->mId + "]"), pIoDataTag->mId);
+
             IOTag *pIOTag = new IOTag();
             pIOTag->SetTagID(pIoDataTag->mId);
             pIOTag->SetDeviceName(pIoDataTag->mDeviceName);
@@ -329,7 +351,7 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
             Vendor *pVendor = FindVendor(pIoDataTag->mDeviceName);
             if(pVendor != Q_NULLPTR) {
                 pVendor->addIOTagToDeviceTagList(pIOTag);
-                pDBIoTagObject->pVendor = pVendor;
+                pDBIoTagObject->m_pVendor = pVendor;
             }
 
             pDBIoTagObject->addListener(new DBTagObject_Event_Listener());
@@ -357,8 +379,7 @@ bool HmiRunTime::Unload()
     qDeleteAll(m_VendorList);
     m_VendorList.clear();
 
-    qDeleteAll(RealTimeDB::rtdb);
-    RealTimeDB::rtdb.clear();
+    RealTimeDB::instance()->rtdb.clear();
 
     qDeleteAll(m_listPortThread);
     m_listPortThread.clear();

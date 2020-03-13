@@ -1,11 +1,11 @@
 
 #include "Event.h"
 
-RuntimeEvent::RuntimeEvent(void *pObj, TEvent e, QVariant data)
+RuntimeEvent::RuntimeEvent(void *pObj, TEvent e, void *pDataObj)
 {
     m_pObj = pObj;
     m_type = e;
-    m_data = data;
+    m_pDataObj = pDataObj;
 }
 
 RuntimeEvent::~RuntimeEvent()
@@ -13,9 +13,9 @@ RuntimeEvent::~RuntimeEvent()
 
 }
 
-QVariant RuntimeEvent::getData()
+void *RuntimeEvent::getData()
 {
-    return m_data;
+    return m_pDataObj;
 }
 
 void *RuntimeEvent::getObj()

@@ -14,10 +14,8 @@ TimerTask::TimerTask(QObject *parent) :
 
 TimerTask::~TimerTask()
 {
-    if(timer)
-    {
-         if(timer->isActive())
-              timer->stop();
+    if(timer) {
+         if(timer->isActive()) timer->stop();
          delete timer;
          timer = nullptr;
     }
@@ -42,25 +40,37 @@ void TimerTask::timerUpdate()
     QString szTagID = "";
     // 系统变量--年
     szTagID = "sys.1";
-    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)date.year()));
+    TAny year;
+    year.t_uint16 = static_cast<quint16>(date.year());
+    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, year);
 
     // 系统变量--月
     szTagID = "sys.2";
-    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)date.month()));
+    TAny month;
+    month.t_uint16 = static_cast<quint16>(date.month());
+    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, month);
 
     // 系统变量--日
     szTagID = "sys.3";
-    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)date.day()));
+    TAny day;
+    day.t_uint16 = static_cast<quint16>(date.day());
+    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, day);
 
     // 系统变量--时
     szTagID = "sys.4";
-    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)time.hour()));
+    TAny hour;
+    hour.t_uint16 = static_cast<quint16>(time.hour());
+    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, hour);
 
     // 系统变量--分
     szTagID = "sys.5";
-    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)time.minute()));
+    TAny minute;
+    minute.t_uint16 = static_cast<quint16>(time.minute());
+    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, minute);
 
     // 系统变量--秒
     szTagID = "sys.6";
-    RealTimeDB::SetTypeAndData(szTagID, TYPE_UINT16, QVariant((qint16)time.second()));
+    TAny second;
+    second.t_uint16 = static_cast<quint16>(time.second());
+    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, second);
 }

@@ -116,7 +116,7 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
         QString szFileIndicationLamp_ = QString();
         QString szTagID = "";
         if (szTagSelected_ != "") {
-            szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+            szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         }
 
         if(bShowContentText_) { // 文本+背景
@@ -135,7 +135,7 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
 
             bool bVal = false;
             if(szTagID != -1) {
-                bVal = RealTimeDB::GetDataString(szTagID).toInt() > 0 ? true : false;
+                bVal = RealTimeDB::instance()->GetDataString(szTagID).toInt() > 0 ? true : false;
                 // 执行功能脚本
                 execScriptFunction(bVal);
                 if(bVal) {
@@ -177,7 +177,7 @@ void ElementSwitchButton::drawSwitchButton(QPainter *painter)
             QString szPictureFile = QString();
             bool bVal = false;
             if(szTagID != -1) {
-                bVal = RealTimeDB::GetDataString(szTagID).toInt() > 0 ? true : false;
+                bVal = RealTimeDB::instance()->GetDataString(szTagID).toInt() > 0 ? true : false;
                 // 执行功能脚本
                 execScriptFunction(bVal);
                 if(bVal) {
@@ -226,9 +226,9 @@ void ElementSwitchButton::mousePressEvent(QMouseEvent *event)
             mousePoint.y() >= (elementYPos)) {
         QString szTagID = "";
         if (!isSelected_ && szTagSelected_ != "") {
-            szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+            szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
             if (szTagID != -1) {
-                RealTimeDB::SetDataString(szTagID, bLastTagVal_ ? "0" : "1");
+                RealTimeDB::instance()->SetDataString(szTagID, bLastTagVal_ ? "0" : "1");
             }
         }
         isSelected_ = true;
@@ -403,13 +403,13 @@ void ElementSwitchButton::readFromXml(const QXmlStreamAttributes &attributes)
 
     QString szTagID = "";
     if (szTagSelected_ != "") {
-        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if (szTagID != -1) {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(szTagID, "1");
+                RealTimeDB::instance()->SetDataString(szTagID, "1");
                 bLastTagVal_ = true;
             } else {
-                RealTimeDB::SetDataString(szTagID, "0");
+                RealTimeDB::instance()->SetDataString(szTagID, "0");
                 bLastTagVal_ = false;
             }
         }
@@ -503,13 +503,13 @@ void ElementSwitchButton::readData(QDataStream &in)
 
     QString szTagID = "";
     if (szTagSelected_ != "") {
-        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if (szTagID != -1) {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(szTagID, "1");
+                RealTimeDB::instance()->SetDataString(szTagID, "1");
                 bLastTagVal_ = true;
             } else {
-                RealTimeDB::SetDataString(szTagID, "0");
+                RealTimeDB::instance()->SetDataString(szTagID, "0");
                 bLastTagVal_ = false;
             }
         }
@@ -599,13 +599,13 @@ QDataStream &operator>>(QDataStream &in,ElementSwitchButton &ele)
 
     QString szTagID = "";
     if (ele.szTagSelected_ != "") {
-        szTagID = RealTimeDB::getIdByTagName(ele.szTagSelected_);
+        szTagID = RealTimeDB::instance()->getIdByTagName(ele.szTagSelected_);
         if (szTagID != -1) {
             if(ele.stateOnInitial_) {
-                RealTimeDB::SetDataString(szTagID, "1");
+                RealTimeDB::instance()->SetDataString(szTagID, "1");
                 ele.bLastTagVal_ = true;
             } else {
-                RealTimeDB::SetDataString(szTagID, "0");
+                RealTimeDB::instance()->SetDataString(szTagID, "0");
                 ele.bLastTagVal_ = false;
             }
         }

@@ -58,11 +58,11 @@ void ElementIndicationLamp::paint(QPainter *painter)
     QString szFileIndicationLamp_ = QString();
     QString szTagID = "";
     if (szTagSelected_ != "") {
-        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
     }
     bool bVal = false;
     if(szTagID != "") {
-        bVal = RealTimeDB::GetDataString(szTagID).toInt() > 0 ? true : false;
+        bVal = RealTimeDB::instance()->GetDataString(szTagID).toInt() > 0 ? true : false;
         szFileIndicationLamp_ = bVal ? setFileIndicationLamp_ : resetFileIndicationLamp_;
     }
 
@@ -191,12 +191,12 @@ void ElementIndicationLamp::readFromXml(const QXmlStreamAttributes &attributes)
 
     QString szTagID = "";
     if (szTagSelected_ != "") {
-        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if (szTagID != "") {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(szTagID, "1");
+                RealTimeDB::instance()->SetDataString(szTagID, "1");
             } else {
-                RealTimeDB::SetDataString(szTagID, "0");
+                RealTimeDB::instance()->SetDataString(szTagID, "0");
             }
         }
     }
@@ -246,12 +246,12 @@ void ElementIndicationLamp::readData(QDataStream &in)
 
     QString szTagID = "";
     if (szTagSelected_ != "") {
-        szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if (szTagID != -1) {
             if(stateOnInitial_) {
-                RealTimeDB::SetDataString(szTagID, "1");
+                RealTimeDB::instance()->SetDataString(szTagID, "1");
             } else {
-                RealTimeDB::SetDataString(szTagID, "0");
+                RealTimeDB::instance()->SetDataString(szTagID, "0");
             }
         }
     }
@@ -302,12 +302,12 @@ QDataStream &operator>>(QDataStream &in,ElementIndicationLamp &lamp)
 
     QString szTagID = "";
     if (lamp.szTagSelected_ != "") {
-        szTagID = RealTimeDB::getIdByTagName(lamp.szTagSelected_);
+        szTagID = RealTimeDB::instance()->getIdByTagName(lamp.szTagSelected_);
         if (szTagID != "") {
             if(lamp.stateOnInitial_) {
-                RealTimeDB::SetDataString(szTagID, "1");
+                RealTimeDB::instance()->SetDataString(szTagID, "1");
             } else {
-                RealTimeDB::SetDataString(szTagID, "0");
+                RealTimeDB::instance()->SetDataString(szTagID, "0");
             }
         }
     }

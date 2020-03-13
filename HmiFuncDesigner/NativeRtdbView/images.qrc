@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+		<file>images/offline.png</file>
+        <file>images/online.png</file>
+		<file>images/pm_rtdb.png</file>
+		<file>images/rtview_clearview.png</file>
+		<file>images/rtview_ctlview.png</file>
+        <file>images/rtview_exit.png</file>
+        <file>images/rtview_print.png</file>
+    </qresource>
+</RCC>

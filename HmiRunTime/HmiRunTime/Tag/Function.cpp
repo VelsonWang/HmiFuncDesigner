@@ -18,8 +18,7 @@ void Function::LoadFuncObjects(const QString projectConverter)
     if(projectConverter == "")
         return;
     QStringList strObjList = projectConverter.split(';');
-    for(int i=0; i<strObjList.size(); i++)
-    {
+    for(int i=0; i<strObjList.size(); i++) {
         QStringList strObjTmpList = strObjList.at(i).split('-');
         if(strObjTmpList.size() != 2)
             continue;
@@ -28,12 +27,10 @@ void Function::LoadFuncObjects(const QString projectConverter)
         pfuncItem->name = funcString.left(funcString.indexOf("("));
         QString strArgs = (funcString.mid(funcString.indexOf("(") + 1, funcString.indexOf(")") - funcString.indexOf("(") - 1)).trimmed();
 
-        if(strArgs.length()>0)
-        {
+        if(strArgs.length()>0) {
             QStringList tmpList;
             tmpList = strArgs.split(',');
-            for(int i=0; i<tmpList.count();i++)
-            {
+            for(int i=0; i<tmpList.count();i++) {
                 TArgItem item;
                 item.arg = tmpList.at(i);
                 if(item.arg.indexOf("变量")>-1)
@@ -56,10 +53,9 @@ void Function::LoadFuncObjects(const QString projectConverter)
 bool Function::SetValueToVariable(RuntimeEvent e, QString var1, QString value)
 {
     Q_UNUSED(e)
-    QString szTagID = RealTimeDB::getIdByTagName(var1);
-    if(szTagID != "")
-    {
-        RealTimeDB::SetDataString(szTagID, value);
+    QString szTagID = RealTimeDB::instance()->getIdByTagName(var1);
+    if(szTagID != "") {
+        RealTimeDB::instance()->SetDataString(szTagID, value);
     }
     return true;
 }
@@ -70,11 +66,10 @@ bool Function::SetValueToVariable(RuntimeEvent e, QString var1, QString value)
 bool Function::SetVariableToVariable(RuntimeEvent e, QString var1, QString var2)
 {
     Q_UNUSED(e)
-    QString szTagID1 = RealTimeDB::getIdByTagName(var1);
-    QString szTagID2 = RealTimeDB::getIdByTagName(var2);
-    if(szTagID1 != "" && szTagID2 != "")
-    {
-        RealTimeDB::SetDataString(szTagID1, RealTimeDB::GetDataString(szTagID2));
+    QString szTagID1 = RealTimeDB::instance()->getIdByTagName(var1);
+    QString szTagID2 = RealTimeDB::instance()->getIdByTagName(var2);
+    if(szTagID1 != "" && szTagID2 != "") {
+        RealTimeDB::instance()->SetDataString(szTagID1, RealTimeDB::instance()->GetDataString(szTagID2));
     }
     return true;
 }
@@ -84,13 +79,11 @@ bool Function::SetVariableToVariable(RuntimeEvent e, QString var1, QString var2)
 */
 bool Function::GetVariableValue(RuntimeEvent e, QString var1)
 {
-    QString szTagID = RealTimeDB::getIdByTagName(var1);
-    if(szTagID != "")
-    {
+    QString szTagID = RealTimeDB::instance()->getIdByTagName(var1);
+    if(szTagID != "") {
         DBTagObject* pThisTag = (DBTagObject*)e.getObj();
-        if(pThisTag != nullptr)
-        {
-            RealTimeDB::SetDataStringInner(pThisTag->mId, RealTimeDB::GetDataString(szTagID));
+        if(pThisTag != nullptr) {
+            RealTimeDB::instance()->SetDataStringInner(pThisTag->m_pDBTagObject->szID, RealTimeDB::instance()->GetDataString(szTagID));
         }
     }
     return true;
@@ -99,38 +92,31 @@ bool Function::GetVariableValue(RuntimeEvent e, QString var1)
 bool Function::ExecFunctions(RuntimeEvent e)
 {
     QString sEvent = "";
-    switch(e.getType())
-    {
-        case BEFORE_READ:
-        {
+    switch(e.getType()) {
+        case BEFORE_READ: {
            sEvent = "变量被读取前";
         }
         break;
-        case VALUE_CHANGE:
-        {
+        case VALUE_CHANGE: {
            sEvent = "变量值被修改";
         }
         break;
+        default:{
+
+        } break;
     }
     //qDebug() << "event:" << sEvent;
     if(sEvent == "")
         return false;
 
-    for (int i = 0; i < m_listFuncObject.size(); ++i)
-    {
+    for (int i = 0; i < m_listFuncObject.size(); ++i) {
         PFuncObjectItem pFuncObjItem = m_listFuncObject.at(i);
-        if(pFuncObjItem->event == sEvent)
-        {
-            if(pFuncObjItem->name == "SetValueToVariable")
-            {
+        if(pFuncObjItem->event == sEvent) {
+            if(pFuncObjItem->name == "SetValueToVariable") {
                 return SetValueToVariable(e, pFuncObjItem->argList.at(0).arg, pFuncObjItem->argList.at(1).arg);
-            }
-            else if(pFuncObjItem->name == "SetVariableToVariable")
-            {
+            } else if(pFuncObjItem->name == "SetVariableToVariable") {
                 return SetVariableToVariable(e, pFuncObjItem->argList.at(0).arg, pFuncObjItem->argList.at(1).arg);
-            }
-            else if(pFuncObjItem->name == "GetVariableValue")
-            {
+            } else if(pFuncObjItem->name == "GetVariableValue") {
                 return GetVariableValue(e, pFuncObjItem->argList.at(0).arg);
             }
         }

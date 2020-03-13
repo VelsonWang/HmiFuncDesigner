@@ -79,9 +79,9 @@ void ElementInputEdit::paint(QPainter *painter)
  */
 void ElementInputEdit::refreshTagValue()
 {
-    QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+    QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
     if(szTagID != "") {
-        elementText = RealTimeDB::GetDataString(szTagID);
+        elementText = RealTimeDB::instance()->GetDataString(szTagID);
     }else {
         elementText = "#";
     }
@@ -240,9 +240,9 @@ void ElementInputEdit::enterPressed()
     bInEditMode_ = false;
     elementText = inputLineEdit_->text();
     if(szTagSelected_ != "") {
-        QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if(szTagID != "") {
-            RealTimeDB::SetDataString(szTagID, elementText);
+            RealTimeDB::instance()->SetDataString(szTagID, elementText);
         }
     }
     inputLineEdit_->setText("");

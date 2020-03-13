@@ -78,9 +78,9 @@ void ElementText::refreshTagValue()
 		return;
 	}
 
-    QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+    QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
     if (szTagID != "") {
-        elementText = RealTimeDB::GetDataString(szTagID);
+        elementText = RealTimeDB::instance()->GetDataString(szTagID);
     } else {
 		elementText = "#";
 	}

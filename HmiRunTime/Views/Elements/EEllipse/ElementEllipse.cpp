@@ -48,9 +48,9 @@ void ElementEllipse::paint(QPainter *painter) {
         if(szTagSelected_ != "" && bEnable_) {
             QString szTagValue = "";
             if(tagColorList_.size()) {
-                QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+                QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
                 if(szTagID != "") {
-                    szTagValue = RealTimeDB::GetDataString(szTagID);
+                    szTagValue = RealTimeDB::instance()->GetDataString(szTagID);
                 } else {
                     szTagValue = "#";
                 }

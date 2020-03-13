@@ -17,6 +17,7 @@
 #include "PortThread.h"
 #include "RunScript.h"
 
+
 class HmiRunTime : public QObject
 {
     Q_OBJECT
@@ -59,6 +60,7 @@ private:
     QList<Vendor *> m_VendorList;
     QList<PortThread *> m_listPortThread;
     static RunScript *m_pRunScript;
+
 };
 
 extern HmiRunTime *g_pHmiRunTime;

@@ -27,8 +27,7 @@ void HttpServer::init(int port)
 {
     // start http server
     bool ret = server_->listen(port);
-    if (!ret)
-    {
+    if (!ret) {
         qDebug() << "start local http server failed " << port;
     }
 }
@@ -40,8 +39,7 @@ void HttpServer::on_request_finished(QNetworkReply* rep)
     QByteArray body = rep->readAll();
     qDebug() << "reply [ " << url << " ] : " << QString(body);
 
-    if (rep->error() != QNetworkReply::NoError)
-    {
+    if (rep->error() != QNetworkReply::NoError) {
         qDebug() << "network error: " << rep->errorString();
         return;
     }
@@ -49,8 +47,7 @@ void HttpServer::on_request_finished(QNetworkReply* rep)
     // parse body
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(body, &err);
-    if (err.error != QJsonParseError::NoError && doc.isObject())
-    {
+    if (err.error != QJsonParseError::NoError && doc.isObject()) {
         qDebug() << "parse reply body error: " << err.errorString() << " " << QString(body);
         return;
     }
@@ -68,8 +65,7 @@ void HttpServer::on_new_request(QHttpRequest * req, QHttpResponse * rep)
     //qDebug() << "new request: " << path;
 
     // check request method
-    if (req->method() != QHttpRequest::HTTP_POST)
-    {
+    if (req->method() != QHttpRequest::HTTP_POST) {
         rep->writeHead(QHttpResponse::STATUS_METHOD_NOT_ALLOWED);
         rep->end();
         mutex_.unlock();
@@ -95,8 +91,7 @@ void HttpServer::on_request_end()
     // parse request body
     QJsonParseError err;
     QJsonDocument doc = QJsonDocument::fromJson(request_body_, &err);
-    if (err.error != QJsonParseError::NoError || !doc.isObject())
-    {
+    if (err.error != QJsonParseError::NoError || !doc.isObject()) {
         response_->writeHead(QHttpResponse::STATUS_BAD_REQUEST);
         response_->end();
         mutex_.unlock();
@@ -107,8 +102,7 @@ void HttpServer::on_request_end()
 
     QJsonObject retJsonObj;
 
-    if (path == "/READ")
-    {
+    if (path == "/READ") {
         const QJsonObject jsonDocObj = doc.object();
         QString szStartID = jsonDocObj["StartID"].toString();
         int number = jsonDocObj["Number"].toInt();
@@ -129,19 +123,16 @@ void HttpServer::on_request_end()
         szTmp = szTagIDTmp.right(szTagIDTmp.length() - iPos - 1);
         int id = szTmp.toInt();
 
-        for(int i=0; i<number; i++)
-        {
+        for(int i=0; i<number; i++) {
             QJsonObject jsonObj;
             //qDebug() << szTagID << RealTimeDB::GetDataString(szTagID);
             QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
-            jsonObj[szTagID] = RealTimeDB::GetDataString(szTagID);
+            jsonObj[szTagID] = RealTimeDB::instance()->GetDataString(szTagID);
             tagArray.append(jsonObj);
             id++;
         }
         retJsonObj["TagArray"] = tagArray;
-    }
-    else if (path == "/WRITE")
-    {
+    } else if (path == "/WRITE") {
         const QJsonObject jsonDocObj = doc.object();
         QString szStartID = jsonDocObj["StartID"].toString();
         int number = jsonDocObj["Number"].toInt();
@@ -159,7 +150,7 @@ void HttpServer::on_request_end()
         for (int i = 0; i < tagArray.size(); ++i) {
             QJsonObject jsonObj = tagArray[i].toObject();
             QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
-            RealTimeDB::SetDataString(szTagID, jsonObj[szTagID].toString());
+            RealTimeDB::instance()->SetDataString(szTagID, jsonObj[szTagID].toString());
             id++;
         }
         retJsonObj["StartID"] = szStartID;

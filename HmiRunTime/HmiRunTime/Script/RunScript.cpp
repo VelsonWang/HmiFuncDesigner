@@ -126,10 +126,10 @@ bool RunScript::loadScriptObjects()
             QString leftOpt = listOpt.at(0);
             QString rightOpt = listOpt.at(1);
             if(rightOpt.indexOf("变量") != -1) {
-                pScriptObject->tagIdLeft = RealTimeDB::getIdByTagName(leftOpt);
-                pScriptObject->tagIdRight = RealTimeDB::getIdByTagName(rightOpt);
+                pScriptObject->tagIdLeft = RealTimeDB::instance()->getIdByTagName(leftOpt);
+                pScriptObject->tagIdRight = RealTimeDB::instance()->getIdByTagName(rightOpt);
             } else {
-                pScriptObject->tagIdLeft = RealTimeDB::getIdByTagName(leftOpt);
+                pScriptObject->tagIdLeft = RealTimeDB::instance()->getIdByTagName(leftOpt);
                 pScriptObject->tagIdRight = "";
                 if(rightOpt != "")
                     pScriptObject->dRight = rightOpt.toDouble();
@@ -202,12 +202,12 @@ bool RunScript::runOnConditionScripts(const QString &tagId)
         TConditionScriptObject *pScriptObject = m_runOnConditionList.at(i);
         //qDebug() << pScriptObject->tagIdLeft << pScriptObject->opt << pScriptObject->tagIdRight << pScriptObject->dRight;
         if(tagId == pScriptObject->tagIdLeft || tagId == pScriptObject->tagIdRight) {
-            double dLeft = RealTimeDB::GetDataString(pScriptObject->tagIdLeft).toDouble();
+            double dLeft = RealTimeDB::instance()->GetDataString(pScriptObject->tagIdLeft).toDouble();
             double dRight = 0.0;
             if(pScriptObject->tagIdRight == "") {
                 dRight = pScriptObject->dRight;
             } else {
-                dRight = RealTimeDB::GetDataString(pScriptObject->tagIdRight).toDouble();
+                dRight = RealTimeDB::instance()->GetDataString(pScriptObject->tagIdRight).toDouble();
             }
             bool result = false;
             if(pScriptObject->opt == "==") {

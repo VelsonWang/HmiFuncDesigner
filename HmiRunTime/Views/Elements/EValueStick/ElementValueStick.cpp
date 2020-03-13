@@ -280,9 +280,9 @@ void ElementValueStick::drawValueStick(QPainter *painter)
     // 已关联变量
     if ( szTagSelected_ != "" ) {
 
-        QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if (szTagID != "") {
-            szTagValue = RealTimeDB::GetDataString(szTagID);
+            szTagValue = RealTimeDB::instance()->GetDataString(szTagID);
         } else {
             szTagValue = "#";
         }

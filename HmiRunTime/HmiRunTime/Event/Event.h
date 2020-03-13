@@ -21,18 +21,18 @@ typedef EventType TEvent;
 class RuntimeEvent
 {
 public:
-    RuntimeEvent(void *pObj, TEvent e, QVariant data);
+    RuntimeEvent(void *pObj, TEvent e, void *pDataObj);
     ~RuntimeEvent();
 
 public:
 
-    QVariant getData();
+    void *getData();
     void *getObj();
     TEvent getType();
 
 private:
     TEvent m_type;
-    QVariant m_data;
+    void *m_pDataObj;
     void *m_pObj;
 };
 

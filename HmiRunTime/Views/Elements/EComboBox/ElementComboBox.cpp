@@ -107,9 +107,9 @@ void ElementComboBox::drawComboBox(QPainter *painter)
     QRectF rect(elementRect_.toRect());
     if(szTagSelected_ != "") {
         QString szTagValue = "#";
-        QString szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+        QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
         if (szTagID != "") {
-            szTagValue = RealTimeDB::GetDataString(szTagID);
+            szTagValue = RealTimeDB::instance()->GetDataString(szTagID);
         } else {
             szTagValue = "#";
         }
@@ -207,14 +207,14 @@ void ElementComboBox::mousePressEvent(QMouseEvent *event)
             int pressID = (mousePoint.y()-(elementYPos+elementHeight))/elementHeight;
             pressID = pressID + (iPage_-1) * maxPage_;
             if (szTagSelected_ != "") {
-                szTagID = RealTimeDB::getIdByTagName(szTagSelected_);
+                szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
                 if(pressID < comboBox_.size()) {
                     QString szValueColor = comboBox_.at(pressID);
                     QStringList listValueColor = szValueColor.split(":");
                     if(listValueColor.size() > 1) {
                         QString pressString = listValueColor.at(0);
                         if (szTagID != -1) {
-                            RealTimeDB::SetDataString(szTagID, pressString);
+                            RealTimeDB::instance()->SetDataString(szTagID, pressString);
                         }
                     }
                 }
