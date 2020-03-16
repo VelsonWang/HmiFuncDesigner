@@ -1,5 +1,4 @@
-﻿#include "tcpserver.h"
-#include "HmiRunTime.h"
+﻿#include "HmiRunTime.h"
 #include "public.h"
 #include "TimerTask.h"
 #include "httpserver.h"
@@ -19,9 +18,7 @@
 #include <QTextStream>
 #include <iostream>
 
-#ifdef USE_FTP_SERVICE
-#include "ftpserver.h"
-#endif
+
 
 #ifdef USE_SOAP_SERVICE
 #include "gSOAPServer.h"
@@ -89,28 +86,6 @@ int main(int argc, char *argv[])
     HttpServer httpServer;
     httpServer.init(60000);
 
-#ifdef USE_FTP_SERVICE
-    //////////////////////////////////////////////////////////////////////////////
-    ///  启动ftp服务
-    strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "UserName", "admin");
-    const QString &userName = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
-    strInput = ConfigUtils::getCfgStr(configPath, "FtpServer", "PassWord", "admin");
-    const QString &password = EDncrypt::Dncrypt(strInput, AES, KEY_CODE);
-    QStorageInfo storageRoot = QStorageInfo::root();
-    const QString &rootPath = "/"; //storageRoot.rootPath();
-    quint32 port = ConfigUtils::getCfgInt(configPath, "FtpServer", "Port", 60001);
-
-    FtpServer ftpServer(&app, rootPath, port, userName, password, false, false);
-    if (ftpServer.isListening()) {
-        QString ftpServerInfo = QString("\nFtpServer Listening at %1:%2").arg(FtpServer::lanIp()).arg(port);
-        ftpServerInfo += QString("\nFtpServer User: %1").arg(userName);
-        ftpServerInfo += QString("\nFtpServer Password: %1").arg(password);
-        LogInfo(ftpServerInfo);
-    } else {
-        LogInfo("Failed to start FtpServer.");
-    }
-#endif
-
     //////////////////////////////////////////////////////////////////////////////
 
     QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
@@ -139,10 +114,6 @@ int main(int argc, char *argv[])
     if(!projSaveDir.exists()) {
         projSaveDir.mkpath(projSavePath);
     }
-
-
-    TcpServer ser(&runTime);
-    ser.listen(QHostAddress::Any, 6000);
 
     ///////////////////////////////////////////////////////////////////////////
     /// 启动SOAP服务

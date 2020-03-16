@@ -1,4 +1,3 @@
-
 QT += core
 QT += gui
 QT += widgets
@@ -25,15 +24,13 @@ CONFIG += C++11
 # 开启SOAP服务
 #DEFINES += USE_SOAP_SERVICE
 
-# 开启ftp服务
-#DEFINES += USE_FTP_SERVICE
+
 
 #去除UNICODE字符编码
 DEFINES -= UNICODE
 
 include(../log4qt/log4qt.pri)
 include(../HttpServer/HttpServer.pri)
-#include(../QFtpServer/QFtpServer.pri)
 include(../Views/Views.pri)
 #include(../SOAP/server/SOAPServer.pri)
 
@@ -79,9 +76,6 @@ win32 {
 
 SOURCES += \
     main.cpp \
-    tcpserver.cpp \
-    tcpsocket.cpp \
-    threadhandle.cpp \
     Port/ComPort.cpp \
     DB/ShareMemory.cpp \
     MessageTransfer.cpp \
@@ -109,9 +103,6 @@ SOURCES += \
 
 HEADERS  += \
     Vendor.h \
-    tcpserver.h \
-    tcpsocket.h \
-    threadhandle.h \
     IVendor.h \
     Port/ComPort.h \
     Port/IPort.h \

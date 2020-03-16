@@ -4,7 +4,7 @@
 #include <QTcpServer>
 #include <QHash>
 #include "tcpsocket.h"
-#include "HmiRunTime.h"
+//#include "HmiRunTime.h"
 
 //继承QTCPSERVER以实现多线程TCPscoket的服务器。
 //如果socket的信息处理直接处理的话，很多新建的信号和槽是用不到的

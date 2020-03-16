@@ -1,7 +1,7 @@
 ﻿#ifndef TCPSOCKET_H
 #define TCPSOCKET_H
 
-#include "FileTansfer.h"
+#include "filetansfer.h"
 #include <QTcpSocket>
 #include <QQueue>
 #include <QFutureWatcher>
