@@ -95,9 +95,9 @@ TAny DBTagObject::GetWriteData()
 QByteArray DBTagObject::GetWriteDataBytes()
 {
     QByteArray dat;
-    dat.resize(m_pDBTagObject->mLength);
-    for(int i=0; i<m_pDBTagObject->mLength; i++)
+    for(int i=0; i<m_pDBTagObject->mLength; i++) {
         dat.append(static_cast<char>(m_pDBTagObject->wData.t_bytes[i]));
+    }
     return dat;
 }
 

@@ -215,18 +215,26 @@ void RealTimeDB::SetDataString(const QString &id, const QString &dat)
     case TYPE_VARIANT: {
         memcpy(any.t_bytes, dat.toStdString().c_str(), pTag->m_pDBTagObject->mLength);
     }break;
-    case TYPE_BOOL:
-    case TYPE_INT8:
-    case TYPE_INT16:
-    case TYPE_INT32: {
-        qint32 iVal = dat.toInt();
-        memcpy(any.t_bytes, (void *)&iVal, pTag->m_pDBTagObject->mLength);
+    case TYPE_BOOL: {
+        any.t_bool = static_cast<quint8>(dat.toUInt());
     }break;
-    case TYPE_UINT8:
-    case TYPE_UINT16:
+    case TYPE_INT8: {
+        any.t_int8 = static_cast<qint8>(dat.toInt());
+    }break;
+    case TYPE_INT16: {
+        any.t_int16 = static_cast<qint16>(dat.toInt());
+    }break;
+    case TYPE_INT32: {
+        any.t_int32 = static_cast<qint32>(dat.toInt());
+    }break;
+    case TYPE_UINT8: {
+        any.t_uint8 = static_cast<quint8>(dat.toUInt());
+    }break;
+    case TYPE_UINT16: {
+        any.t_uint16 = static_cast<quint16>(dat.toUInt());
+    }break;
     case TYPE_UINT32: {
-        quint32 iVal = dat.toUInt();
-        memcpy(any.t_bytes, (void *)&iVal, pTag->m_pDBTagObject->mLength);
+        any.t_uint32 = static_cast<quint32>(dat.toUInt());
     }break;
     case TYPE_INT64: {
         any.t_int64 = dat.toLongLong();
@@ -253,6 +261,7 @@ void RealTimeDB::SetDataString(const QString &id, const QString &dat)
 
     }break;
     }
+
     pTag->SetData(any, false);
 
     if(pTag->m_pVendor != Q_NULLPTR) {
@@ -277,18 +286,26 @@ void RealTimeDB::SetDataStringInner(const QString &id, const QString &dat)
     case TYPE_VARIANT: {
         memcpy(any.t_bytes, dat.toStdString().c_str(), pTag->m_pDBTagObject->mLength);
     }break;
-    case TYPE_BOOL:
-    case TYPE_INT8:
-    case TYPE_INT16:
-    case TYPE_INT32: {
-        qint32 iVal = dat.toInt();
-        memcpy(any.t_bytes, (void *)&iVal, pTag->m_pDBTagObject->mLength);
+    case TYPE_BOOL: {
+        any.t_bool = static_cast<quint8>(dat.toUInt());
     }break;
-    case TYPE_UINT8:
-    case TYPE_UINT16:
+    case TYPE_INT8: {
+        any.t_int8 = static_cast<qint8>(dat.toInt());
+    }break;
+    case TYPE_INT16: {
+        any.t_int16 = static_cast<qint16>(dat.toInt());
+    }break;
+    case TYPE_INT32: {
+        any.t_int32 = static_cast<qint32>(dat.toInt());
+    }break;
+    case TYPE_UINT8: {
+        any.t_uint8 = static_cast<quint8>(dat.toUInt());
+    }break;
+    case TYPE_UINT16: {
+        any.t_uint16 = static_cast<quint16>(dat.toUInt());
+    }break;
     case TYPE_UINT32: {
-        quint32 iVal = dat.toUInt();
-        memcpy(any.t_bytes, (void *)&iVal, pTag->m_pDBTagObject->mLength);
+        any.t_uint32 = static_cast<quint32>(dat.toUInt());
     }break;
     case TYPE_INT64: {
         any.t_int64 = dat.toLongLong();
