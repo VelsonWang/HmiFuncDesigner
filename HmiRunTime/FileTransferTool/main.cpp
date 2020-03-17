@@ -4,7 +4,7 @@
 #include "ConfigUtils.h"
 #include "Helper.h"
 #include "edncrypt.h"
-#include "../HmiRunTime/Public/Global.h"
+#include "../HmiRunTimeData/HmiRunTimeData/Public/Global.h"
 
 #ifdef USE_FTP_SERVICE
 #include "ftpserver.h"

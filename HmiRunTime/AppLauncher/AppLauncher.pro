@@ -26,6 +26,8 @@ CONFIG(debug, debug|release) { #debug
 
 LIBRARY_SRC_PATH = $$clean_path($$IDE_APP_PATH/../HmiFuncDesigner)
 LINK_LIBRARY_PATH = $$clean_path($$IDE_APP_PATH/../lib)
+#message("LIBRARY_SRC_PATH: "$$LIBRARY_SRC_PATH)
+#message("LINK_LIBRARY_PATH: "$$LINK_LIBRARY_PATH)
 
 INCLUDEPATH += $$LIBRARY_SRC_PATH/libs/Utils
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
@@ -38,5 +40,8 @@ HEADERS += \
         applauncher.h
 
 FORMS +=
+
+DISTFILES += \
+    applauncher.ini
 
 

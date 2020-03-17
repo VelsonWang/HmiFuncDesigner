@@ -43,7 +43,7 @@ private:
         QProcess *proc;
     };
 
-    QMap<qint64 , RunningApp> runningApps;
+    QMap<qint64, RunningApp> runningApps;
     QStringList runningList;
     QTimer m_tmrCheckProcess;
 };

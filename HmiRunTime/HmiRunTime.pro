@@ -3,6 +3,6 @@ TEMPLATE = subdirs
 SUBDIRS += \
     AppLauncher \
     FileTransferTool \
-    Vendors \
-    HmiRunTime
+    HmiRunTimeData \
+    HmiRunTimeView
 

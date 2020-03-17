@@ -89,11 +89,12 @@ osx {
 }
 
 INCLUDEPATH += \
-    $$IDE_SOURCE_TREE/HmiRunTime/Public \
-    $$IDE_SOURCE_TREE/HmiRunTime/Port \
-    $$IDE_SOURCE_TREE/HmiRunTime/Tag \
-    $$IDE_SOURCE_TREE/Vendors/Public \
-    $$IDE_SOURCE_TREE/Vendors/IVendorPlugin
+    $$IDE_SOURCE_TREE/HmiRunTimeData \
+    $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Public \
+    $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Port \
+    $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Tag \
+    $$IDE_SOURCE_TREE/HmiRunTimeData/Vendors/Public \
+    $$IDE_SOURCE_TREE/HmiRunTimeData/Vendors/IVendorPlugin
 	
 
 QTC_PLUGIN_DIRS_FROM_ENVIRONMENT = $$(QTC_PLUGIN_DIRS)
