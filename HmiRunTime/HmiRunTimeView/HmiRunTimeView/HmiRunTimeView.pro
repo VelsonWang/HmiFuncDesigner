@@ -4,6 +4,7 @@ QT += widgets
 QT += network
 QT += script
 QT += sql
+QT += xml
 
 TARGET_BIN_PATH = $$clean_path($$_PRO_FILE_PWD_/../../../HmiRunTimeBin)
 LINK_LIBRARY_PATH = $$clean_path($$_PRO_FILE_PWD_/../../../lib)
@@ -30,7 +31,6 @@ CONFIG += C++11
 DEFINES -= UNICODE
 
 include(../../log4qt/log4qt.pri)
-include(../Views/Views.pri)
 
 INCLUDEPATH += \
     $$_PRO_FILE_PWD_ \
@@ -75,6 +75,13 @@ win32 {
 }
 
 SOURCES += \
+    ../Public/Element.cpp \
+    ../Public/ElementGroup.cpp \
+    ../Public/PubTool.cpp \
+    GraphPage.cpp \
+    GraphPageManager.cpp \
+    MainWindow.cpp \
+    ViewElementPluginManager.cpp \
     main.cpp \
     DB/ShareMemory.cpp \
     MessageTransfer.cpp \
@@ -86,13 +93,19 @@ SOURCES += \
     Script/RunScript.cpp \
     SysRuntimeEvent.cpp \
     Log/Log.cpp \
-    MessageQueue/MessageQueue.cpp \
     Public/Global.cpp
 
 
 HEADERS  += \
+    ../Public/Element.h \
+    ../Public/ElementGroup.h \
+    ../Public/PubTool.h \
+    ../Public/PublicDefine.h \
+    GraphPage.h \
+    GraphPageManager.h \
     IVendor.h \
     DB/ShareMemory.h \
+    MainWindow.h \
     MessageTransfer.h \
     DB/RealTimeDB.h \
     Public/public.h \
@@ -107,9 +120,8 @@ HEADERS  += \
     Singleton.h \
     Log/Log.h \
     VersionInfo.h \
-    MessageQueue/MessageQueue.h \
     Public/Global.h \
-    Socket/xsocket.hpp
+    ViewElementPluginManager.h
 
 win32 {
      SOURCES +=

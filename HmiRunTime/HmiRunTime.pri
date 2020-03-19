@@ -76,16 +76,20 @@ osx {
 
     isEmpty(IDE_OUTPUT_PATH): IDE_OUTPUT_PATH = $$clean_path($$IDE_BUILD_TREE)
     #message("IDE_OUTPUT_PATH is: $$IDE_OUTPUT_PATH")
-    IDE_LIBRARY_PATH = $$clean_path($$IDE_BUILD_TREE/lib)
+    IDE_LIBRARY_PATH = $$clean_path($$IDE_BUILD_TREE/../lib)
     #message("IDE_LIBRARY_PATH is: $$IDE_LIBRARY_PATH")
     IDE_PLUGIN_PATH  = $$clean_path($$IDE_LIBRARY_PATH/plugins)
     #message("IDE_PLUGIN_PATH is: $$IDE_PLUGIN_PATH")
     LINK_LIBRARY_PATH = $$clean_path($$IDE_LIBRARY_PATH)
     #message("LINK_LIBRARY_PATH is: $$LINK_LIBRARY_PATH")
-    LINK_PLUGIN_PATH  = $$clean_path($$LINK_LIBRARY_PATH/plugins)
-    #message("LINK_PLUGIN_PATH is: $$LINK_PLUGIN_PATH")
+    LINK_DEVICE_PLUGIN_PATH  = $$clean_path($$LINK_LIBRARY_PATH/Vendors)
+    #message("LINK_DEVICE_PLUGIN_PATH is: $$LINK_DEVICE_PLUGIN_PATH")
     INSTALL_DEVICE_PLUGIN_PATH  = $$clean_path($$IDE_APP_PATH/Vendors)
     #message("INSTALL_DEVICE_PLUGIN_PATH is: $$INSTALL_DEVICE_PLUGIN_PATH")
+    LINK_VIEW_ELEMENT_PLUGIN_PATH  = $$clean_path($$LINK_LIBRARY_PATH/ViewElements)
+    #message("LINK_VIEW_ELEMENT_PLUGIN_PATH is: $$LINK_VIEW_ELEMENT_PLUGIN_PATH")
+    INSTALL_VIEW_ELEMENT_PLUGIN_PATH  = $$clean_path($$IDE_APP_PATH/ViewElements)
+    #message("INSTALL_VIEW_ELEMENT_PLUGIN_PATH is: $$INSTALL_VIEW_ELEMENT_PLUGIN_PATH")
 }
 
 INCLUDEPATH += \

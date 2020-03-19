@@ -47,7 +47,7 @@ dependencyList = $$join(dependencyList, ",$$escape_expand(\\n)")
 dependencyList = "\"Dependencies\" : [$$escape_expand(\\n)$$dependencyList$$escape_expand(\\n)    ]"
 
 
-DESTDIR = $$LINK_PLUGIN_PATH
+DESTDIR = $$LINK_DEVICE_PLUGIN_PATH
 
 win32 {
     DLLDESTDIR = $$INSTALL_DEVICE_PLUGIN_PATH
