@@ -46,6 +46,7 @@ HmiRunTimeBin/sqldrivers/
 HmiRunTimeBin/Vendors/
 HmiRunTimeBin/*.exe
 HmiRunTimeBin/*.dll
+HmiRunTimeBin/ViewElements/
 
 third/
 
