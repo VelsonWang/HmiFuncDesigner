@@ -214,6 +214,9 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
     if(pPluginObj != nullptr) {
         Element *ele = pPluginObj->createElement(this);
         if(ele != Q_NULLPTR) {
+            connect(ele, &Element::notifyExecScriptFunction, this, &GraphPage::onExecScriptFunction);
+            connect(ele, &Element::notifyExecScriptText, this, &GraphPage::onExecScriptText);
+            ele->setRealTimeDB(RealTimeDB::instance());
             ele->setProjectPath(projpath_);
             ele->setClickPosition(position);
             last = ele;
@@ -267,6 +270,9 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select)
         if(pPluginObj != nullptr) {
             Element *ele = pPluginObj->createElement(this);
             if(ele != Q_NULLPTR) {
+                connect(ele, &Element::notifyExecScriptFunction, this, &GraphPage::onExecScriptFunction);
+                connect(ele, &Element::notifyExecScriptText, this, &GraphPage::onExecScriptText);
+                ele->setRealTimeDB(RealTimeDB::instance());
                 ele->setProjectPath(projpath_);
                 ele->readData(in);
                 copyList.insert(copyList.end(), ele);
@@ -350,6 +356,9 @@ void GraphPage::readGraphPageTag(QXmlStreamReader &xml)
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        connect(ele, &Element::notifyExecScriptFunction, this, &GraphPage::onExecScriptFunction);
+                        connect(ele, &Element::notifyExecScriptText, this, &GraphPage::onExecScriptText);
+                        ele->setRealTimeDB(RealTimeDB::instance());
                         ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         elementList_.append(ele);
@@ -454,6 +463,9 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml)
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
+                        connect(ele, &Element::notifyExecScriptFunction, this, &GraphPage::onExecScriptFunction);
+                        connect(ele, &Element::notifyExecScriptText, this, &GraphPage::onExecScriptText);
+                        ele->setRealTimeDB(RealTimeDB::instance());
                         ele->setProjectPath(projpath_);
                         ele->readFromXml(xml.attributes());
                         elementList_.append(ele);
@@ -564,3 +576,24 @@ QDataStream &operator>>(QDataStream &in,GraphPage &page)
     return in;
 }
 
+/**
+ * @brief GraphPage::onExecScriptFunction
+ * @details 执行脚本功能
+ * @param szFuncList 脚本文本列表
+ * @param szMatchEvent 匹配事件
+ */
+void GraphPage::onExecScriptFunction(const QStringList &szFuncList, const QString &szMatchEvent)
+{
+    HmiRunTime::execScriptFunction(szFuncList, szMatchEvent);
+}
+
+/**
+ * @brief GraphPage::notifyExecScriptText
+ * @details 执行脚本文本
+ * @param szScriptText 脚本文本
+ * @param szMatchEvent 匹配事件
+ */
+void GraphPage::onExecScriptText(const QString &szScriptText, const QString &szMatchEvent)
+{
+    HmiRunTime::execScriptText(szScriptText, szMatchEvent);
+}

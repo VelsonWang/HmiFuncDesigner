@@ -26,6 +26,7 @@ public:
     virtual QString getElementIDString() = 0;
     // 创建元素
     virtual Element* createElement(QWidget *owner=0) = 0;
+
 };
 
 

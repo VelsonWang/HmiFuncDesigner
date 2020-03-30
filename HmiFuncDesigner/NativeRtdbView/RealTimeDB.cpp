@@ -11,18 +11,12 @@
 RealTimeDB::RealTimeDB(QObject *parent) :
     QObject(parent)
 {
-    // 为实时数据创建共享内存
     m_rtdbSharememory.setName("runtime.rtdb");
-    if(m_rtdbSharememory.create(sizeof(TDBTagObject) * MAX_DBTAGOBJECT)) {
-        qDebug() << "create sharememory[runtime.rtdb] success!";
+    m_pDBTagObjectBaseAddr = (PDBTagObject)m_rtdbSharememory.open();
+    if(NULL == m_pDBTagObjectBaseAddr) {
+        qDebug() << "get sharememory[runtime.rtdb] pointer fail!";
     } else {
-        qDebug() << "create sharememory[runtime.rtdb] fail!";
-        m_pDBTagObjectBaseAddr = (PDBTagObject)m_rtdbSharememory.open();
-        if(NULL == m_pDBTagObjectBaseAddr) {
-            qDebug() << "get sharememory[runtime.rtdb] pointer fail!";
-        } else {
-            qDebug() << "get sharememory[runtime.rtdb] pointer success!";
-        }
+        qDebug() << "get sharememory[runtime.rtdb] pointer success!";
     }
 }
 

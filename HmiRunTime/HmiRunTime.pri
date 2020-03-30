@@ -51,6 +51,12 @@ defineReplace(stripSrcDir) {
     return($$relative_path($$absolute_path($$1, $$OUT_PWD), $$_PRO_FILE_PWD_))
 }
 
+LIB_SUFFIX=""
+CONFIG(debug, debug|release) { #debug
+    win32 {
+        LIB_SUFFIX=d
+    }
+}
 
 isEmpty(IDE_LIBRARY_BASENAME) {
     IDE_LIBRARY_BASENAME = libs

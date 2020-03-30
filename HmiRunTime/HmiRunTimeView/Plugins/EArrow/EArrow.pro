@@ -1,5 +1,6 @@
 include(../../HmiRunTimeViewPlugin.pri)
 
+
 SOURCES += EArrowPlugin.cpp \
     ../../Public/Element.cpp \
     ElementArrow.cpp

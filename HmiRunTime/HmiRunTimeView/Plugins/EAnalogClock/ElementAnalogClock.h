@@ -1,57 +1,40 @@
 ﻿#ifndef ELEMENTANALOGCLOCK_H
 #define ELEMENTANALOGCLOCK_H
 
-#include "PublicDefine.h"
-#include "Element.h"
+#include "../../Public/PublicDefine.h"
+#include "../../Public/Element.h"
 #include <QPainter>
 #include <QDataStream>
-#include <QGraphicsSceneMouseEvent>
 
 class ElementAnalogClock : public Element
 {
     Q_OBJECT
 
 public:
-    explicit ElementAnalogClock(const QString &szProjPath,
-                          const QString &szProjName,
-                          QtVariantPropertyManager *propertyMgr);
+    explicit ElementAnalogClock();
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(QtProperty *property, const QVariant &value) override;
-    void updatePropertyModel() override;
-    void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
     void readFromXml(const QXmlStreamAttributes &) override;
-    void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
-    void regenerateElementId() override;
-    void release() override; // 释放占用的资源
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
-    int type() const override {
+    int type() const {
         return AnalogClockItemType;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementAnalogClock &textItem);
     friend QDataStream &operator>>(QDataStream &in, ElementAnalogClock &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
 
 private:
     void drawAnalogClock(QPainter *painter);
-    void getSupportEvents(QStringList &listValue);
 
 private:
-    QStringList tagNames_;
-
-private:
-    static int iLastIndex_;
     QRectF elementRect_;
     // 时钟间隔
     double period_;
@@ -67,6 +50,8 @@ private:
     QColor borderColor_;
     // 初始可见性
     bool showOnInitial_;
+
+    qint64 iLastMSecs_;
 };
 
-#endif // ELEMENTCLOCK_H
+#endif // ELEMENTANALOGCLOCK_H

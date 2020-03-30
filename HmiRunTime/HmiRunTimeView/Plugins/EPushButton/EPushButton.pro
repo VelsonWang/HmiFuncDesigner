@@ -1,37 +1,22 @@
-
-include(../../DrawApplicationPlugin.pri)
-include(../../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
-
-LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
-
+include(../../HmiRunTimeViewPlugin.pri)
 
 SOURCES += \
     ../../Public/Element.cpp \
-    ElementPushButton.cpp \
-    PushButtonPlugin.cpp \
     ../../Public/PubTool.cpp \
-    editbasicpropertydialog.cpp
+    ../../Public/RealTimeDB.cpp \
+    ElementPushButton.cpp \
+    EPushButtonPlugin.cpp
 
 HEADERS += \
-    ../../Public/PublicDefine.h \
-    ../../Public/PublicDefine.h \
-    ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
-    ../../Public/Element.h \
-    ElementPushButton.h \
-    PushButtonPlugin.h \
     ../../Public/PubTool.h \
-    editbasicpropertydialog.h
+    ../../Public/PublicDefine.h \
+    ../../IHmiRunTimeViewPlugin/IHmiRunTimeViewPlugin.h \
+    ../../Public/Element.h \
+    ../../Public/RealTimeDB.h \
+    ElementPushButton.h \
+    EPushButtonPlugin.h
 
 DISTFILES += PushButton.json
 
-RESOURCES += \
-    images.qrc
-
-FORMS += \
-    editbasicpropertydialog.ui
 
 

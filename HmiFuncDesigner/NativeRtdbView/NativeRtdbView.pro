@@ -36,15 +36,13 @@ SOURCES += main.cpp\
         MainWindow.cpp \
     GetRtdbWriteValueDialog.cpp \
     RtdbTag.cpp \
-    RealTimeDB.cpp \
-    ShareMemory.cpp
+    RealTimeDB.cpp
 
 HEADERS  += MainWindow.h \
     ../Public/Public.h \
     GetRtdbWriteValueDialog.h \
     RtdbTag.h \
-    RealTimeDB.h \
-    ShareMemory.h
+    RealTimeDB.h
 
 FORMS    += MainWindow.ui \
     GetRtdbWriteValueDialog.ui

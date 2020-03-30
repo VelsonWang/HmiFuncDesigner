@@ -1,10 +1,9 @@
 ﻿#ifndef TEXTITEM_HPP
 #define TEXTITEM_HPP
 
-#include "PublicDefine.h"
-#include "Element.h"
 #include <QPainter>
 #include <QDataStream>
+#include "../../Public/Element.h"
 
 class ElementText : public Element
 {
@@ -21,10 +20,8 @@ public:
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseReleaseEvent(QMouseEvent *event) override;
 
-    enum {Type = TextItemType};
-
     int type() const {
-        return Type;
+        return TextItemType;
     }
 
     friend QDataStream &operator>>(QDataStream &in, ElementText &textItem);

@@ -59,3 +59,5 @@ Element* ELinePlugin::createElement(QWidget *owner)
     pEle->setOwnerWidget(owner);
     return pEle;
 }
+
+

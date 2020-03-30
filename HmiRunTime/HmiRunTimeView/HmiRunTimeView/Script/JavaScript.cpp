@@ -1,5 +1,5 @@
 #include "JavaScript.h"
-#include "../DB/RealTimeDB.h"
+#include "../../Public/RealTimeDB.h"
 #include "MainWindow.h"
 
 #include <QMenu>

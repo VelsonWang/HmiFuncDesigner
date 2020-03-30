@@ -1,8 +1,9 @@
 ﻿#include "ElementEllipse.h"
-#include "RealTimeDB.h"
+#include "../../Public/RealTimeDB.h"
 #include <QDebug>
 
-ElementEllipse::ElementEllipse() {
+ElementEllipse::ElementEllipse()
+{
     elementId = tr("Ellipse");
     internalElementType = tr("Ellipse");
     fillColor_ = Qt::white;
@@ -13,29 +14,34 @@ ElementEllipse::ElementEllipse() {
     init();
 }
 
-QRectF ElementEllipse::boundingRect() const {
+QRectF ElementEllipse::boundingRect() const
+{
     qreal extra = 5;
     QRectF rect = elementRect.toRect();
     return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
-QPainterPath ElementEllipse::shape() const {
+QPainterPath ElementEllipse::shape() const
+{
     QPainterPath path;
     path.addEllipse(elementRect);
     return path;
 }
 
-void ElementEllipse::setClickPosition(QPointF position) {
+void ElementEllipse::setClickPosition(QPointF position)
+{
     elementXPos = position.x();
     elementYPos = position.y();
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementEllipse::updateBoundingElement() {
+void ElementEllipse::updateBoundingElement()
+{
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementEllipse::paint(QPainter *painter) {
+void ElementEllipse::paint(QPainter *painter)
+{
     if(!showOnInitial_ || !bShow_) {
         return;
     }
@@ -48,9 +54,9 @@ void ElementEllipse::paint(QPainter *painter) {
         if(szTagSelected_ != "" && bEnable_) {
             QString szTagValue = "";
             if(tagColorList_.size()) {
-                QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
+                QString szTagID = pRtdbObj_->getIdByTagName(szTagSelected_);
                 if(szTagID != "") {
-                    szTagValue = RealTimeDB::instance()->GetDataString(szTagID);
+                    szTagValue = pRtdbObj_->GetDataString(szTagID);
                 } else {
                     szTagValue = "#";
                 }
@@ -78,19 +84,23 @@ void ElementEllipse::paint(QPainter *painter) {
     painter->restore();
 }
 
-void ElementEllipse::mouseMoveEvent(QMouseEvent *event) {
+void ElementEllipse::mouseMoveEvent(QMouseEvent *event)
+{
     Q_UNUSED(event)
 }
 
-void ElementEllipse::mousePressEvent(QMouseEvent *event) {
+void ElementEllipse::mousePressEvent(QMouseEvent *event)
+{
     Q_UNUSED(event)
 }
 
-void ElementEllipse::mouseReleaseEvent(QMouseEvent *event) {
+void ElementEllipse::mouseReleaseEvent(QMouseEvent *event)
+{
     Q_UNUSED(event)
 }
 
-void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
+void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes)
+{
     if (attributes.hasAttribute("elementId")) {
         setElementId(attributes.value("elementId").toString());
     }
@@ -160,7 +170,8 @@ void ElementEllipse::readFromXml(const QXmlStreamAttributes &attributes) {
     updateBoundingElement();
 }
 
-void ElementEllipse::readData(QDataStream &in) {
+void ElementEllipse::readData(QDataStream &in)
+{
     QString id;
     qreal xpos;
     qreal ypos;
@@ -208,7 +219,8 @@ void ElementEllipse::readData(QDataStream &in) {
     this->updateBoundingElement();
 }
 
-QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse) {
+QDataStream &operator>>(QDataStream &in,ElementEllipse &ellipse)
+{
     QString id;
     qreal xpos;
     qreal ypos;

@@ -145,6 +145,16 @@ QWidget *Element::getOwnerWidget() {
     return this->ownerWidget_;
 }
 
+/**
+ * @brief Element::setRealTimeDB
+ * @details设置实时数据库对象
+ * @param pRtdbObj 实时数据库描述对象
+ */
+void Element::setRealTimeDB(RealTimeDB *pRtdbObj)
+{
+    pRtdbObj_ = pRtdbObj;
+}
+
 
 /**
  * @brief Element::hideElement

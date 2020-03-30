@@ -74,14 +74,14 @@ int main(int argc, char *argv[])
     LogInfo("start SCADARunTime!");
 
     QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
-    if(argc == 2) {
-        projPath = argv[1];
-    }
+    if(argc == 2) projPath = argv[1];
 
     QDir dir(projPath);
-    if (!dir.exists())
-    {
-        dir.mkpath(projPath);
+    if (!dir.exists()) dir.mkpath(projPath);
+
+    if(!RealTimeDB::instance()->m_memStatus) {
+        QMessageBox::information(Q_NULLPTR, QObject::tr("提示"), QObject::tr("打开共享内存失败！"));
+        return -1;
     }
 
     HmiRunTime runTime(projPath);

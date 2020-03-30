@@ -16,17 +16,16 @@ public:
 
     /////////////////////<plugin operation>////////////////////////////
 
-
     // 初始化
-    virtual void initialize() Q_DECL_OVERRIDE;
+    void initialize() Q_DECL_OVERRIDE;
     // 获取元素名称
-    virtual QString getElementName() Q_DECL_OVERRIDE;
+    QString getElementName() Q_DECL_OVERRIDE;
     // 获取元素ID
-    virtual int getElementID() Q_DECL_OVERRIDE;
+    int getElementID() Q_DECL_OVERRIDE;
     // 获取元素ID String
-    virtual QString getElementIDString() Q_DECL_OVERRIDE;
+    QString getElementIDString() Q_DECL_OVERRIDE;
     // 创建元素
-    virtual Element* createElement(QWidget *owner=0) Q_DECL_OVERRIDE;
+    Element* createElement(QWidget *owner=0) Q_DECL_OVERRIDE;
 
     /////////////////////<plugin operation>////////////////////////////
 

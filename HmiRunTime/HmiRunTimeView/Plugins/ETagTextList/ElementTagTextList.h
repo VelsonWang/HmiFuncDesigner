@@ -1,59 +1,41 @@
 ﻿#ifndef ELEMENTTAGTEXTLIST_H
 #define ELEMENTTAGTEXTLIST_H
 
-#include "PublicDefine.h"
-#include "Element.h"
+#include "../../Public/Element.h"
 #include <QPainter>
 #include <QDataStream>
-#include <QGraphicsSceneMouseEvent>
+#include <QRect>
+
 
 class ElementTagTextList : public Element
 {
     Q_OBJECT
 
 public:
-    explicit ElementTagTextList(const QString &szProjPath,
-                                const QString &szProjName,
-                                QtVariantPropertyManager *propertyMgr);
+    explicit ElementTagTextList();
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(QtProperty *property, const QVariant &value) override;
-    void updatePropertyModel() override;
-    void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
     void readFromXml(const QXmlStreamAttributes &) override;
-    void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
-    void regenerateElementId() override;
-    void release() override; // 释放占用的资源
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
-    int type() const override {
+    int type() const {
         return TagTextListItemType;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementTagTextList &textItem);
     friend QDataStream &operator>>(QDataStream &in, ElementTagTextList &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
 
 private:
     void drawTagTextList(QPainter *painter);
 
 private:
-    QStringList tagNames_;
-    QStringList hAlignList_;
-    QStringList vAlignList_;
-
-private:
-    static int iLastIndex_;
     QRectF elementRect_;
     // 关联的变量
     QString szTagSelected_;

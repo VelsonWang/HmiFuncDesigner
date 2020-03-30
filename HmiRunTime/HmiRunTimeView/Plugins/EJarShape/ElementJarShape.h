@@ -1,61 +1,46 @@
 ﻿#ifndef ELEMENTJARSHAPE_H
 #define ELEMENTJARSHAPE_H
 
-#include "PublicDefine.h"
-#include "Element.h"
+#include "../../Public/Element.h"
 #include <QPainter>
 #include <QDataStream>
-#include <QGraphicsSceneMouseEvent>
+#include <QRect>
+
 
 class ElementJarShape : public Element
 {
     Q_OBJECT
 
 public:
-    explicit ElementJarShape(const QString &szProjPath,
-                             const QString &szProjName,
-                             QtVariantPropertyManager *propertyMgr);
+    explicit ElementJarShape();
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(QtProperty *property, const QVariant &value) override;
-    void updatePropertyModel() override;
-    void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
     void readFromXml(const QXmlStreamAttributes &) override;
-    void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
-    void regenerateElementId() override;
-    void release() override; // 释放占用的资源
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
-    int type() const override {
+    int type() const {
         return JarShapeItemType;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementJarShape &textItem);
     friend QDataStream &operator>>(QDataStream &in, ElementJarShape &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event)  override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
 
 private:
     void drawJarShape(QPainter *painter);
 
 private:
-    QStringList tagNames_;
-
-private:
     static int iLastIndex_;
-    QRectF elementRect;
+    QRectF elementRect_;
 
-	// 关联的变量
-	QString szTagSelected_;
+    // 关联的变量
+    QString szTagSelected_;
     // 罐形容器标题
     QString jarShape_;
     // 字体
@@ -78,6 +63,7 @@ private:
     int scaleNum_;
     // 初始可见性
     bool showOnInitial_;
+
 };
 
 

@@ -1,6 +1,6 @@
 ﻿#include "ElementText.h"
-#include "PubTool.h"
-#include "RealTimeDB.h"
+#include "../../Public/PubTool.h"
+#include "../../Public/RealTimeDB.h"
 #include <QDebug>
 
 ElementText::ElementText() :
@@ -78,9 +78,9 @@ void ElementText::refreshTagValue()
 		return;
 	}
 
-    QString szTagID = RealTimeDB::instance()->getIdByTagName(szTagSelected_);
+    QString szTagID = pRtdbObj_->getIdByTagName(szTagSelected_);
     if (szTagID != "") {
-        elementText = RealTimeDB::instance()->GetDataString(szTagID);
+        elementText = pRtdbObj_->GetDataString(szTagID);
     } else {
 		elementText = "#";
 	}

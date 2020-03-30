@@ -1,54 +1,36 @@
 ﻿#ifndef ELEMENTVALUESTICK_H
 #define ELEMENTVALUESTICK_H
 
-#include "PublicDefine.h"
-#include "Element.h"
+#include "../../Public/Element.h"
 #include <QPainter>
 #include <QDataStream>
-#include <QGraphicsSceneMouseEvent>
+#include <QRect>
+
 
 class ElementValueStick : public Element
 {
     Q_OBJECT
 
 public:
-    explicit ElementValueStick(const QString &szProjPath,
-                               const QString &szProjName,
-                               QtVariantPropertyManager *propertyMgr);
+    explicit ElementValueStick();
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(QtProperty *property, const QVariant &value) override;
-    void updatePropertyModel() override;
-    void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
     void readFromXml(const QXmlStreamAttributes &) override;
-    void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
-    void regenerateElementId() override;
-    void release() override; // 释放占用的资源
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
-    QString getDirString(const QString& szDir) const;
-    void setDirString(const QString& szDir, QString& szDirSet);
-
-    QString getPosString(const QString& szPos) const;
-    void setPosString(const QString& szPos, QString& szPosSet);
-
-    int type() const override {
+    int type() const {
         return ValueStickItemType;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementValueStick &textItem);
     friend QDataStream &operator>>(QDataStream &in, ElementValueStick &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event)  override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
 
 private:
     void drawValueStick(QPainter *painter);
@@ -66,16 +48,10 @@ private:
                          QString scalePosition);
 
 private:
-    QStringList tagNames_;
-    QStringList scaleDirList_;
-    QStringList scalePosList_;
+    QRectF elementRect_;
 
-private:
-    static int iLastIndex_;
-    QRectF elementRect;
-
-	// 关联的变量
-	QString szTagSelected_;
+    // 关联的变量
+    QString szTagSelected_;
     // 刻度最大值。
     double maxValue_;
     // 刻度最小值。
@@ -101,5 +77,6 @@ private:
     // 初始可见性
     bool showOnInitial_;
 };
+
 
 #endif // ELEMENTVALUESTICK_H

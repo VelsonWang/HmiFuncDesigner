@@ -95,6 +95,10 @@ signals:
 private slots:
     // 画面刷新
     void refreshGraphPage();
+    // 执行脚本功能
+    void onExecScriptFunction(const QStringList &szFuncList, const QString &szMatchEvent);
+    // 执行脚本文本
+    void onExecScriptText(const QString &szScriptText, const QString &szMatchEvent);
 
 private:
     QString projpath_;

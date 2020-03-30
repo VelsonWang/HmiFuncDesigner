@@ -53,8 +53,15 @@ win32 {
     DLLDESTDIR = $$INSTALL_VIEW_ELEMENT_PLUGIN_PATH
 }
 
+
+LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 LIBS += -L$$DESTDIR
+
+INCLUDEPATH += $$clean_path($$IDE_BUILD_TREE/../HmiFuncDesigner/libs/Utils)
+INCLUDEPATH += $$clean_path($$IDE_BUILD_TREE/../HmiFuncDesigner/libs/ProjectDataUtils)
 INCLUDEPATH += $$OUT_PWD
+
 
 # copy the plugin spec
 isEmpty(TARGET) {

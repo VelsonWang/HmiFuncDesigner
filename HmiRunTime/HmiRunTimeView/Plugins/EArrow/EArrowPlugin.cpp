@@ -60,3 +60,5 @@ Element* EArrowPlugin::createElement(QWidget *owner)
     pEle->setOwnerWidget(owner);
     return pEle;
 }
+
+

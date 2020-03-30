@@ -1,65 +1,45 @@
 ﻿#ifndef ELEMENTMOVINGTEXT_H
 #define ELEMENTMOVINGTEXT_H
 
-#include "PublicDefine.h"
-#include "Element.h"
+#include "../../Public/Element.h"
 #include <QPainter>
 #include <QDataStream>
-#include <QGraphicsSceneMouseEvent>
+#include <QRect>
+
 
 class ElementMovingText : public Element
 {
     Q_OBJECT
 
 public:
-    explicit ElementMovingText(const QString &szProjPath,
-                               const QString &szProjName,
-                               QtVariantPropertyManager *propertyMgr);
+    explicit ElementMovingText();
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(QtProperty *property, const QVariant &value) override;
-    void updatePropertyModel() override;
-    void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
     void readFromXml(const QXmlStreamAttributes &) override;
-    void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
-    void regenerateElementId() override;
-    void release() override; // 释放占用的资源
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
-    QString getMoveDirString(const QString& szAlign) const;
-    void setMoveDirString(const QString& szAlign, QString& szAlignSet);
-
-    int type() const override {
+    int type() const {
         return MovingTextItemType;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementMovingText &textItem);
     friend QDataStream &operator>>(QDataStream &in, ElementMovingText &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
 
 private:
     void drawMovingText(QPainter *painter);
 
 private:
-    QStringList tagNames_;
-    QStringList moveDirList_;
-
-private:
-    static int iLastIndex_;
     QRectF elementRect_;
     // 关联的变量
     QString szTagSelected_;
-    // 变量文本列表
+    // 填充颜色列表
     QStringList tagTextList_;
     // 移动方向
     QString szMoveDir_;
@@ -79,6 +59,16 @@ private:
     QColor borderColor_;
     // 初始可见性
     bool showOnInitial_;
+
+    qint64 iLastMSecs_;
+    // 文本矩形区域x
+    int iPos_;
+    // 文本矩形区域
+    QRect textRect_;
+    // 单个字符移动宽度
+    int iOneCharWidth_;
+    // 当前移动的字符串
+    QString szMovingText_;
 };
 
 

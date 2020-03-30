@@ -1,21 +1,15 @@
 ﻿#include "ElementInputEdit.h"
-#include "ProjectData.h"
-#include "variantmanager.h"
-#include "editbasicpropertydialog.h"
+#include "../../SoftKeyboard/InputMethodNumber.h"
+#include "../../SoftKeyboard/InputMethodAlphabet.h"
+#include "../../Public/RealTimeDB.h"
+#include <QDebug>
 
-int ElementInputEdit::iLastIndex_ = 1;
-
-ElementInputEdit::ElementInputEdit(const QString &szProjPath,
-                                   const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementInputEdit::ElementInputEdit()
 {
-    elementId = QString(tr("InputEdit_%1").arg(iLastIndex_, 4, 10, QChar('0')));
-    iLastIndex_++;
+    elementId = QString(tr("InputEdit"));
     internalElementType = tr("InputEdit");
-    elementIcon = QIcon(":/images/InputEdit.png");
-    szHAlign_ = tr("左对齐");
-    szVAlign_ = tr("居中对齐");
+    szHAlign_ = QString("left");
+    szVAlign_ = QString("center");
     backgroundColor_ = Qt::white;
     transparentBackground_ = false;
     borderWidth_ = 2;
@@ -24,29 +18,19 @@ ElementInputEdit::ElementInputEdit(const QString &szProjPath,
     enableOnInitial_ = true;
     inputPassword_ = false;
     showOnInitial_ = true;
-    init();
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     elementWidth = 80;
     elementHeight = 26;
     elementText = tr("输入编辑框");
-    createPropertyList();
-    updatePropertyModel();
+    inputLineEdit_ = nullptr;
+    bInEditMode_ = false;
 }
 
-void ElementInputEdit::regenerateElementId()
+ElementInputEdit::~ElementInputEdit()
 {
-    elementId = QString(tr("InputEdit_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
-    this->updatePropertyModel();
-}
-
-/**
- * @brief ElementInputEdit::release
- * @details 释放占用的资源
- */
-void ElementInputEdit::release()
-{
-    ProjectData::releaseInstance();
+    if(inputLineEdit_ != nullptr) {
+        delete inputLineEdit_;
+        inputLineEdit_ = nullptr;
+    }
 }
 
 QRectF ElementInputEdit::boundingRect() const
@@ -60,309 +44,14 @@ QPainterPath ElementInputEdit::shape() const
 {
     QPainterPath path;
     path.addRect(elementRect);
-
-    if (isSelected()) {
-        path.addRect(QRectF(elementRect.topLeft() - QPointF(3,3),elementRect.topLeft() + QPointF(3,3)));
-        path.addRect(QRectF(elementRect.bottomRight() - QPointF(3,3),elementRect.bottomRight() + QPointF(3,3)));
-    }
-
     return path;
-}
-
-void ElementInputEdit::createPropertyList()
-{
-    propList.clear();
-    clearProperties();
-
-    QtVariantProperty *property = Q_NULLPTR;
-
-    // ID
-    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
-    property->setAttribute(QLatin1String("readOnly"), true);
-    addProperty(property, QLatin1String("id"));
-
-    // 允许编辑输入
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("允许编辑输入"));
-    addProperty(property, QLatin1String("enableEdit"));
-
-    // 选择变量
-    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
-    tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
-    if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
-    property->setAttribute(QLatin1String("enumNames"), tagNames_);
-    addProperty(property, QLatin1String("tag"));
-
-    // 文本
-    property = variantPropertyManager_->addProperty(QVariant::String, tr("文本"));
-    addProperty(property, QLatin1String("text"));
-
-    // 水平对齐
-    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("水平对齐"));
-    hAlignList_.clear();
-    hAlignList_ << tr("左对齐") << tr("居中对齐") << tr("右对齐");
-    property->setAttribute(QLatin1String("enumNames"), hAlignList_);
-    addProperty(property, QLatin1String("hAlign"));
-
-    // 垂直对齐
-    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("垂直对齐"));
-    vAlignList_.clear();
-    vAlignList_ << tr("上对齐") << tr("居中对齐") << tr("下对齐");
-    property->setAttribute(QLatin1String("enumNames"), vAlignList_);
-    addProperty(property, QLatin1String("vAlign"));
-
-    // 背景颜色
-    property = variantPropertyManager_->addProperty(QVariant::Color, tr("背景颜色"));
-    addProperty(property, QLatin1String("background"));
-
-    // 透明背景颜色
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("透明背景颜色"));
-    addProperty(property, QLatin1String("transparent"));
-
-    // 字体
-    property = variantPropertyManager_->addProperty(QVariant::Font, tr("字体"));
-    addProperty(property, QLatin1String("font"));
-
-    // 文本颜色
-    property = variantPropertyManager_->addProperty(QVariant::Color, tr("文本颜色"));
-    addProperty(property, QLatin1String("textColor"));
-
-    // 边框宽度
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("边框宽度"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("borderWidth"));
-
-    // 边框颜色
-    property = variantPropertyManager_->addProperty(QVariant::Color, tr("边框颜色"));
-    addProperty(property, QLatin1String("borderColor"));
-
-    // 密码输入
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("密码输入"));
-    addProperty(property, QLatin1String("inputPassword"));
-
-    // 初始有效性
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始有效性"));
-    addProperty(property, QLatin1String("enableOnInitial"));
-
-    // 初始可见性
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
-    addProperty(property, QLatin1String("showOnInitial"));
-
-    // 坐标 X
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("xCoord"));
-
-    // 坐标 Y
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("yCoord"));
-
-    // Z 值
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
-    property->setAttribute(QLatin1String("minimum"), -1000);
-    property->setAttribute(QLatin1String("maximum"), 1000);
-    addProperty(property, QLatin1String("zValue"));
-
-    // 宽度
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("width"));
-
-    // 高度
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("height"));
-
-    // 旋转角度
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("角度"));
-    property->setAttribute(QLatin1String("minimum"), -360);
-    property->setAttribute(QLatin1String("maximum"), 360);
-    addProperty(property, QLatin1String("angle"));
-}
-
-void ElementInputEdit::updateElementProperty(QtProperty *property, const QVariant &value)
-{
-    QString id = propertyToId_[property];
-
-    if (id == QLatin1String("id")) {
-        elementId = value.toString();
-    } else if (id == QLatin1String("enableEdit")) {
-        enableEdit_ = value.toBool();
-    } else if (id == QLatin1String("tag")) {
-        szTagSelected_ = tagNames_.at(value.toInt());
-    } else if (id == QLatin1String("text")) {
-        elementText = value.toString();
-    } else if (id == QLatin1String("hAlign")) {
-        szHAlign_ = hAlignList_.at(value.toInt());
-    } else if (id == QLatin1String("vAlign")) {
-        szVAlign_ = vAlignList_.at(value.toInt());
-    } else if (id == QLatin1String("background")) {
-        backgroundColor_ = value.value<QColor>();
-    } else if (id == QLatin1String("transparent")) {
-        transparentBackground_ = value.toBool();
-    } else if (id == QLatin1String("font")) {
-        font_ = value.value<QFont>();
-    } else if (id == QLatin1String("textColor")) {
-        textColor = value.value<QColor>();
-    } else if (id == QLatin1String("borderWidth")) {
-        borderWidth_ = value.toInt();
-    } else if (id == QLatin1String("borderColor")) {
-        borderColor_ = value.value<QColor>();
-    } else if (id == QLatin1String("inputPassword")) {
-        inputPassword_ = value.toBool();
-    } else if (id == QLatin1String("enableOnInitial")) {
-        enableOnInitial_ = value.toBool();
-    } else if (id == QLatin1String("showOnInitial")) {
-        showOnInitial_ = value.toBool();
-    } else if (id == QLatin1String("xCoord")) {
-        elementXPos = value.toInt();
-        setElementXPos(elementXPos);
-    } else if (id == QLatin1String("yCoord")) {
-        elementYPos = value.toInt();
-        setElementYPos(elementYPos);
-    } else if (id == QLatin1String("zValue")) {
-        elementZValue = value.toInt();
-        setZValue(elementZValue);
-    } else if (id == QLatin1String("width")) {
-        elementWidth = value.toInt();
-        updateBoundingElement();
-    } else if (id == QLatin1String("height")) {
-        elementHeight = value.toInt();
-        updateBoundingElement();
-    } else if (id == QLatin1String("angle")) {
-        elemAngle = value.toInt();
-        setAngle(elemAngle);
-    }
-
-    scene()->update();
-    update();
-}
-
-void ElementInputEdit::updatePropertyModel()
-{
-    QtVariantProperty *property = Q_NULLPTR;
-
-    property = idToProperty_[QLatin1String("id")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementId);
-    }
-
-    property = idToProperty_[QLatin1String("enableEdit")];
-    if(property != Q_NULLPTR) {
-        property->setValue(enableEdit_);
-    }
-
-    property = idToProperty_[QLatin1String("tag")];
-    if(property != Q_NULLPTR) {
-        property->setValue(tagNames_.indexOf(szTagSelected_));
-    }
-
-    property = idToProperty_[QLatin1String("text")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementText);
-    }
-
-    property = idToProperty_[QLatin1String("hAlign")];
-    if(property != Q_NULLPTR) {
-        property->setValue(hAlignList_.indexOf(szHAlign_));
-    }
-
-    property = idToProperty_[QLatin1String("vAlign")];
-    if(property != Q_NULLPTR) {
-        property->setValue(vAlignList_.indexOf(szVAlign_));
-    }
-
-    property = idToProperty_[QLatin1String("background")];
-    if(property != Q_NULLPTR) {
-        property->setValue(backgroundColor_);
-    }
-
-    property = idToProperty_[QLatin1String("transparent")];
-    if(property != Q_NULLPTR) {
-        property->setValue(transparentBackground_);
-    }
-
-    property = idToProperty_[QLatin1String("font")];
-    if(property != Q_NULLPTR) {
-        property->setValue(font_);
-    }
-
-    property = idToProperty_[QLatin1String("textColor")];
-    if(property != Q_NULLPTR) {
-        property->setValue(textColor);
-    }
-
-    property = idToProperty_[QLatin1String("borderWidth")];
-    if(property != Q_NULLPTR) {
-        property->setValue(borderWidth_);
-    }
-
-    property = idToProperty_[QLatin1String("borderColor")];
-    if(property != Q_NULLPTR) {
-        property->setValue(borderColor_);
-    }
-
-    property = idToProperty_[QLatin1String("inputPassword")];
-    if(property != Q_NULLPTR) {
-        property->setValue(inputPassword_);
-    }
-
-    property = idToProperty_[QLatin1String("enableOnInitial")];
-    if(property != Q_NULLPTR) {
-        property->setValue(enableOnInitial_);
-    }
-
-    property = idToProperty_[QLatin1String("showOnInitial")];
-    if(property != Q_NULLPTR) {
-        property->setValue(showOnInitial_);
-    }
-
-    property = idToProperty_[QLatin1String("xCoord")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementXPos);
-    }
-
-    property = idToProperty_[QLatin1String("yCoord")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementYPos);
-    }
-
-    property = idToProperty_[QLatin1String("zValue")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementZValue);
-    }
-
-    property = idToProperty_[QLatin1String("width")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementWidth);
-    }
-
-    property = idToProperty_[QLatin1String("height")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementHeight);
-    }
-
-    property = idToProperty_[QLatin1String("angle")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elemAngle);
-    }
 }
 
 void ElementInputEdit::setClickPosition(QPointF position)
 {
-    prepareGeometryChange();
     elementXPos = static_cast<int>(position.x());
     elementYPos = static_cast<int>(position.y());
-    setX(elementXPos);
-    setY(elementYPos);
     elementRect.setRect(0, 0, elementWidth, elementHeight);
-    updatePropertyModel();
 }
 
 void ElementInputEdit::updateBoundingElement()
@@ -370,32 +59,37 @@ void ElementInputEdit::updateBoundingElement()
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementInputEdit::paint(QPainter *painter,
-                             const QStyleOptionGraphicsItem *option,
-                             QWidget *widget)
+void ElementInputEdit::paint(QPainter *painter)
 {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
-
-    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-
+    if(!showOnInitial_ || !bShow_) {
+        return;
+    }
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
+    painter->rotate(elemAngle);
     drawInputEdit(painter);
+    painter->restore();
+}
 
-    if (isSelected()) {
-        painter->setPen(QPen(borderColor));
-        painter->setBrush(Qt::NoBrush);
-        painter->drawRect(boundingRect());
-
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementRect.topLeft() - QPointF(3,3),elementRect.topLeft() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementRect.bottomRight() - QPointF(3,3),elementRect.bottomRight() + QPointF(3,3)));
+/**
+ * @brief ElementInputEdit::refreshTagValue
+ * @details 刷新变量值
+ */
+void ElementInputEdit::refreshTagValue()
+{
+    QString szTagID = pRtdbObj_->getIdByTagName(szTagSelected_);
+    if(szTagID != "") {
+        elementText = pRtdbObj_->GetDataString(szTagID);
+    }else {
+        elementText = "#";
     }
 }
 
 void ElementInputEdit::drawInputEdit(QPainter *painter)
 {
+    refreshTagValue();
     // 绘制边框
     if(borderWidth_ > 0) {
         painter->setPen(QPen(borderColor_, borderWidth_, Qt::SolidLine));
@@ -419,216 +113,154 @@ void ElementInputEdit::drawInputEdit(QPainter *painter)
     painter->setFont(font_);
 
     int hFlags = Qt::AlignLeft;
-    if(szHAlign_ == tr("左对齐")) {
+    if(szHAlign_ == QString("left")) {
         hFlags = Qt::AlignLeft;
-    } else if(szHAlign_ == tr("居中对齐")) {
+    } else if(szHAlign_ == QString("center")) {
         hFlags = Qt::AlignHCenter;
-    } else if(szHAlign_ == tr("右对齐")) {
+    } else if(szHAlign_ == QString("right")) {
         hFlags = Qt::AlignRight;
     }
 
     int vFlags = Qt::AlignVCenter;
-    if(szVAlign_ == tr("上对齐")) {
+    if(szVAlign_ == QString("top")) {
         vFlags = Qt::AlignTop;
-    } else if(szVAlign_ == tr("居中对齐")) {
+    } else if(szVAlign_ == QString("center")) {
         vFlags = Qt::AlignVCenter;
-    } else if(szVAlign_ == tr("下对齐")) {
+    } else if(szVAlign_ == QString("bottom")) {
         vFlags = Qt::AlignBottom;
     }
 
     QRectF rect1(elementRect.toRect());
     QRectF textRect = rect1.normalized().adjusted(borderWidth_, borderWidth_, -borderWidth_, -borderWidth_);
-    QString szDrawText = elementText;
+    QString szDrawText = "";
     if(inputPassword_) {
         int iLen = elementText.length();
         szDrawText = "";
         for(int i=0; i<iLen; i++) {
             szDrawText.append(QChar('*'));
         }
-    }
-    painter->drawText(textRect, hFlags|vFlags, szDrawText);
-}
-
-void ElementInputEdit::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    QPointF mousePoint = event->pos();
-
-    if (resizing) {
-        setCursor(Qt::SizeFDiagCursor);
-        switch (rd) {
-        case RdBottomRight:
-            elementRect.setBottomRight(mousePoint);
-            elementWidth = static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x()));
-            elementHeight = static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y()));
-            break;
-        case RdTopLeft:
-            elementRect.setTopLeft(mousePoint);
-            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
-            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
-            updateBoundingElement();
-            break;
-        case RdNone:
-            QGraphicsObject::mouseMoveEvent(event);
-            break;
+    } else {
+        if(szTagSelected_ == "") {
+            elementText = "";
         }
-    } else {
-        QGraphicsObject::mouseMoveEvent(event);
-        // 限制矩形区域
-        RestrictedRectangularRegion();
+        szDrawText = elementText;
     }
-
-    scene()->update();
+    if(!bInEditMode_)
+        painter->drawText(textRect, hFlags|vFlags, szDrawText);
 }
 
-void ElementInputEdit::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void ElementInputEdit::mouseMoveEvent(QMouseEvent *event)
 {
+    Q_UNUSED(event)
+}
+
+void ElementInputEdit::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    if(!enableOnInitial_ || !enableEdit_ || !bShow_ || !bEnable_) {
+        return;
+    }
+
+    QWidget *pOwner = getOwnerWidget();
     QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
+    if (mousePoint.x() <= (elementXPos + elementWidth) &&
+            mousePoint.x() >= (elementXPos) &&
+            mousePoint.y() <= (elementYPos + elementHeight) &&
+            mousePoint.y() >= (elementYPos)) {
+        bInEditMode_ = true;
+        QString szTmpElementText = elementText;
+        elementText = "";
+        if(pOwner != nullptr) {
+            pOwner->update();
+        }
 
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
-}
-
-
-/**
- * @brief ElementInputEdit::mouseDoubleClickEvent
- * @details 文本编辑控件元素单击时弹出基本属性编辑对话框
- * @param event
- */
-void ElementInputEdit::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
-{
-    EditBasicPropertyDialog dlg;
-    dlg.setText(elementText);
-    dlg.setSelectedTag(szTagSelected_);
-    if(dlg.exec() == QDialog::Accepted) {
-        elementText = dlg.text();
-        szTagSelected_ = dlg.selectedTag();
-
-        // 更新属性表
-        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
-        if(pVariantManager != Q_NULLPTR) {
-            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
-            if(pPropertyEditor != Q_NULLPTR) {
-                pPropertyEditor->clear();
-                this->updatePropertyModel();
-                QListIterator<QtProperty*> iter(this->getPropertyList());
-                while (iter.hasNext()) {
-                    pPropertyEditor->addProperty(iter.next());
-                }
+        if(enableEdit_ && szTagSelected_ != "") {
+            InputMethodAlphabet::instance()->setVisible(false);
+            InputMethodNumber::instance()->setVisible(false);
+            connect(InputMethodAlphabet::instance(), SIGNAL(enterPressed()),
+                    this, SLOT(enterPressed()));
+            connect(InputMethodNumber::instance(), SIGNAL(enterPressed()),
+                    this, SLOT(enterPressed()));
+            if(inputPassword_) {
+                InputMethodAlphabet::instance()->init("control", "silvery", 14, 14);
+                InputMethodNumber::instance()->unInstallInputMethod();
+                InputMethodAlphabet::instance()->installInputMethod();
+            } else {
+                InputMethodNumber::instance()->init("silvery", 14);
+                InputMethodAlphabet::instance()->unInstallInputMethod();
+                InputMethodNumber::instance()->installInputMethod();
             }
+
+            if(inputLineEdit_ == nullptr) {
+                if(pOwner != nullptr) {
+                    inputLineEdit_ = new InputLineEdit(pOwner);
+                    inputLineEdit_->move(elementXPos+borderWidth_/2, elementYPos+borderWidth_/2);
+                    inputLineEdit_->resize(elementWidth-borderWidth_, elementHeight-borderWidth_);
+                    inputLineEdit_->setText(szTmpElementText);
+                    inputLineEdit_->setFocus();
+                    inputLineEdit_->show();
+                }
+            } else {
+                inputLineEdit_->setText(szTmpElementText);
+                inputLineEdit_->setFocus();
+                inputLineEdit_->show();
+            }
+        } 
+    } else {
+        if(enableEdit_ && szTagSelected_ != "") {
+            disconnect(InputMethodAlphabet::instance(), SIGNAL(enterPressed()),
+                       this, SLOT(enterPressed()));
+            disconnect(InputMethodNumber::instance(), SIGNAL(enterPressed()),
+                       this, SLOT(enterPressed()));
         }
 
-        scene()->update();
-        update();
+        if(inputLineEdit_ != nullptr) {
+            inputLineEdit_->setText("");
+            inputLineEdit_->hide();
+        }
+
+        if(pOwner != nullptr && bInEditMode_) {
+            pOwner->setFocus();
+        }
+
+        bInEditMode_ = false;
     }
-    QGraphicsObject::mouseDoubleClickEvent(event);
 }
 
-
-
-void ElementInputEdit::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+void ElementInputEdit::mouseReleaseEvent(QMouseEvent *event)
 {
-    setCursor(Qt::ArrowCursor);
-    elementXPos = static_cast<int>(pos().x());
-    elementYPos = static_cast<int>(pos().y());
-    updatePropertyModel();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
+    Q_UNUSED(event)
+    if(!enableOnInitial_ || !bShow_ || !bEnable_) {
+        return;
     }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
 }
 
-void ElementInputEdit::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+void ElementInputEdit::enterPressed()
 {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
+    bInEditMode_ = false;
+    elementText = inputLineEdit_->text();
+    if(szTagSelected_ != "") {
+        QString szTagID = pRtdbObj_->getIdByTagName(szTagSelected_);
+        if(szTagID != "") {
+            pRtdbObj_->SetDataString(szTagID, elementText);
+        }
     }
-
-    QGraphicsObject::hoverEnterEvent(event);
+    inputLineEdit_->setText("");
+    inputLineEdit_->hide();
 }
 
-void ElementInputEdit::writeAsXml(QXmlStreamWriter &writer)
+void ElementInputEdit::closePressed()
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("enableEdit", enableEdit_?"true":"false");
-    writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("elementtext",elementText);
-    writer.writeAttribute("halign", getHAlignString(szHAlign_));
-    writer.writeAttribute("valign", getVAlignString(szVAlign_));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("inputPassword", inputPassword_?"true":"false");
-    writer.writeAttribute("enableOnInitial", enableOnInitial_?"true":"false");
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeEndElement();
+    bInEditMode_ = false;
+    inputLineEdit_->setText("");
+    inputLineEdit_->hide();
 }
 
 void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes)
 {
     if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
+        QString szTagID = attributes.value("elementId").toString();
+        setElementId(szTagID);
     }
 
     if (attributes.hasAttribute("enableEdit")) {
@@ -652,7 +284,7 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes)
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {
@@ -669,12 +301,12 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes)
 
     if (attributes.hasAttribute("halign")) {
         QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
+        this->szHAlign_ = align;
     }
 
     if (attributes.hasAttribute("valign")) {
         QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
+        this->szVAlign_ = align;
     }
 
     if (attributes.hasAttribute("backgroundColor")) {
@@ -735,33 +367,8 @@ void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes)
     }
 
     updateBoundingElement();
-    updatePropertyModel();
 }
 
-void ElementInputEdit::writeData(QDataStream &out)
-{
-    out << this->elementId
-        << this->enableEdit_
-        << this->szTagSelected_
-        << this->x()
-        << this->y()
-        << this->zValue()
-        << this->elementWidth
-        << this->elementHeight
-        << this->elementText
-        << this->getHAlignString(szHAlign_)
-        << this->getVAlignString(szVAlign_)
-        << this->backgroundColor_
-        << this->transparentBackground_
-        << this->textColor
-        << this->font_.toString()
-        << this->borderWidth_
-        << this->borderColor_
-        << this->inputPassword_
-        << this->enableOnInitial_
-        << this->showOnInitial_
-        << this->elemAngle;
-}
 
 void ElementInputEdit::readData(QDataStream &in)
 {
@@ -810,10 +417,6 @@ void ElementInputEdit::readData(QDataStream &in)
        >> angle;
 
     this->setElementId(id);
-    int index = getIndexFromIDString(id);
-    if(iLastIndex_ < index) {
-        iLastIndex_ = index;
-    }
     this->enableEdit_ = enableEdit;
     this->szTagSelected_ = szTagSelected;
     this->setElementXPos(static_cast<int>(xpos));
@@ -822,8 +425,8 @@ void ElementInputEdit::readData(QDataStream &in)
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->elementText = text;
-    this->setHAlignString(hAlign, szHAlign_);
-    this->setVAlignString(vAlign, szVAlign_);
+    this->szHAlign_ = hAlign;
+    this->szVAlign_ = vAlign;
     this->backgroundColor_ = backgroundColor;
     this->transparentBackground_ = transparentBackground;
     this->textColor = textColor;
@@ -835,34 +438,8 @@ void ElementInputEdit::readData(QDataStream &in)
     this->showOnInitial_ = showOnInitial;
     this->setAngle(angle);
     this->updateBoundingElement();
-    this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out, const ElementInputEdit &edit)
-{
-    out << edit.elementId
-        << edit.enableEdit_
-        << edit.szTagSelected_
-        << edit.x()
-        << edit.y()
-        << edit.zValue()
-        << edit.elementWidth
-        << edit.elementHeight
-        << edit.elementText
-        << edit.getHAlignString(edit.szHAlign_)
-        << edit.getVAlignString(edit.szVAlign_)
-        << edit.backgroundColor_
-        << edit.transparentBackground_
-        << edit.textColor
-        << edit.font_.toString()
-        << edit.borderWidth_
-        << edit.borderColor_
-        << edit.inputPassword_
-        << edit.enableOnInitial_
-        << edit.showOnInitial_
-        << edit.elemAngle;
-    return out;
-}
 
 QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit)
 {
@@ -911,10 +488,6 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit)
        >> angle;
 
     edit.setElementId(id);
-    int index = edit.getIndexFromIDString(id);
-    if(edit.iLastIndex_ < index) {
-        edit.iLastIndex_ = index;
-    }
     edit.enableEdit_ = enableEdit;
     edit.szTagSelected_ = szTagSelected;
     edit.setElementXPos(static_cast<int>(xpos));
@@ -923,8 +496,8 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit)
     edit.setElementWidth(width);
     edit.setElementHeight(height);
     edit.elementText = text;
-    edit.setHAlignString(hAlign, edit.szHAlign_);
-    edit.setVAlignString(vAlign, edit.szVAlign_);
+    edit.szHAlign_ = hAlign;
+    edit.szVAlign_ = vAlign;
     edit.backgroundColor_ = backgroundColor;
     edit.transparentBackground_ = transparentBackground;
     edit.textColor = textColor;
@@ -936,7 +509,6 @@ QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit)
     edit.showOnInitial_ = showOnInitial;
     edit.setAngle(angle);
     edit.updateBoundingElement();
-    edit.updatePropertyModel();
 
     return in;
 }

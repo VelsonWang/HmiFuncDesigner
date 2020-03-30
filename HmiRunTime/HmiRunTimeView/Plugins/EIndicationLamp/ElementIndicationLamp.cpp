@@ -1,306 +1,42 @@
 ﻿#include "ElementIndicationLamp.h"
-#include "ProjectData.h"
+#include "../../Public/RealTimeDB.h"
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-#include "variantmanager.h"
-#include "editbasicpropertydialog.h"
 #include <QDebug>
 
-int ElementIndicationLamp::iLastIndex_ = 1;
-
-ElementIndicationLamp::ElementIndicationLamp(const QString &szProjPath,
-                                             const QString &szProjName,
-                                             QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementIndicationLamp::ElementIndicationLamp()
 {
-    elementId = QString(tr("IndicationLamp_%1").arg(iLastIndex_, 4, 10, QChar('0')));
-    iLastIndex_++;
+    elementId = tr("指示灯");
     internalElementType = tr("IndicationLamp");
-    elementIcon = QIcon(":/images/IndicationLamp.png");
     resetFileIndicationLamp_ = "";
     setFileIndicationLamp_ = "";
     stateOnInitial_ = false;
     showNoScale_ = false;
     showOnInitial_ = true;
     init();
-
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
-
-    elementWidth = 80;
-    elementHeight = 80;
-    createPropertyList();
-    updatePropertyModel();
-}
-
-void ElementIndicationLamp::regenerateElementId()
-{
-    elementId = QString(tr("IndicationLamp_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
-    this->updatePropertyModel();
-}
-
-/**
- * @brief ElementIndicationLamp::release
- * @details 释放占用的资源
- */
-void ElementIndicationLamp::release()
-{
-    if(resetFileIndicationLamp_ != "") {
-        PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-        picResMgr_.del(ProjectData::getInstance()->dbData_, resetFileIndicationLamp_);
-    }
-    if(setFileIndicationLamp_ != "") {
-        PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-        picResMgr_.del(ProjectData::getInstance()->dbData_, setFileIndicationLamp_);
-    }
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementIndicationLamp::boundingRect() const
 {
     qreal extra = 5;
     QRectF rect(elementRect.toRect());
-    return rect.normalized().adjusted(-extra,-extra,extra,extra);
+    return rect.normalized().adjusted(-extra, -extra, extra, extra);
 }
 
 QPainterPath ElementIndicationLamp::shape() const
 {
     QPainterPath path;
     path.addRect(elementRect);
-
-    if (isSelected()) {
-        path.addRect(QRectF(elementRect.topLeft() - QPointF(3, 3), elementRect.topLeft() + QPointF(3, 3)));
-        path.addRect(QRectF(elementRect.bottomRight() - QPointF(3, 3), elementRect.bottomRight() + QPointF(3, 3)));
-    }
-
     return path;
 }
 
-void ElementIndicationLamp::createPropertyList()
-{
-    propList.clear();
-    clearProperties();
-
-    QtVariantProperty *property = Q_NULLPTR;
-
-    // ID
-    property = variantPropertyManager_->addProperty(QVariant::String, tr("ID"));
-    property->setAttribute(QLatin1String("readOnly"), true);
-    addProperty(property, QLatin1String("id"));
-
-    // 选择变量
-    property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
-    tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
-    if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
-    property->setAttribute(QLatin1String("enumNames"), tagNames_);
-    addProperty(property, QLatin1String("tag"));
-
-    // 初始状态
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始状态"));
-    addProperty(property, QLatin1String("stateOnInitial"));
-
-    // 复位图片
-    property = variantPropertyManager_->addProperty(VariantManager::filePathTypeId(), tr("选择复位图片"));
-    property->setAttribute(QLatin1String("filter"), "image files (*.png *.jpg *.jpeg *.bmp)");
-    addProperty(property, QLatin1String("resetPicture"));
-
-    // 置位图片
-    property = variantPropertyManager_->addProperty(VariantManager::filePathTypeId(), tr("选择置位图片"));
-    property->setAttribute(QLatin1String("filter"), "image files (*.png *.jpg *.jpeg *.bmp)");
-    addProperty(property, QLatin1String("setPicture"));
-
-    // 原尺寸显示
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("原尺寸显示"));
-    addProperty(property, QLatin1String("showNoScale"));
-
-    // 初始可见性
-    property = variantPropertyManager_->addProperty(QVariant::Bool, tr("初始可见性"));
-    addProperty(property, QLatin1String("showOnInitial"));
-
-    // 坐标 X
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 X"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("xCoord"));
-
-    // 坐标 Y
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("坐标 Y"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("yCoord"));
-
-    // Z 值
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("Z 值"));
-    property->setAttribute(QLatin1String("minimum"), -1000);
-    property->setAttribute(QLatin1String("maximum"), 1000);
-    addProperty(property, QLatin1String("zValue"));
-
-    // 宽度
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("宽度"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("width"));
-
-    // 高度
-    property = variantPropertyManager_->addProperty(QVariant::Int, tr("高度"));
-    property->setAttribute(QLatin1String("minimum"), 0);
-    property->setAttribute(QLatin1String("maximum"), 5000);
-    addProperty(property, QLatin1String("height"));
-}
-
-void ElementIndicationLamp::updateElementProperty(QtProperty *property, const QVariant &value)
-{
-    QString id = propertyToId_[property];
-
-    if (id == QLatin1String("id")) {
-        elementId = value.toString();
-    } else if (id == QLatin1String("tag")) {
-        szTagSelected_ = tagNames_.at(value.toInt());
-    } else if (id == QLatin1String("stateOnInitial")) {
-        stateOnInitial_ = value.toBool();
-    } else if (id == QLatin1String("resetPicture")) {
-        QString szTmpName = value.toString();
-        QFileInfo infoSrc(szTmpName);
-        if(infoSrc.exists()) {
-            QString picturePath = getProjectPath() + "/Pictures";
-            QDir dir(picturePath);
-            if(!dir.exists())
-                dir.mkpath(picturePath);
-            QString fileDes = picturePath + "/" + infoSrc.fileName();
-            QFileInfo infoDes(fileDes);
-            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-            if(resetFileIndicationLamp_ != "" && resetFileIndicationLamp_ != infoSrc.fileName()) {
-                picResMgr_.del(ProjectData::getInstance()->dbData_, resetFileIndicationLamp_);
-            }
-            if(!infoDes.exists()) {
-                QFile::copy(szTmpName, fileDes);
-            }
-            resetFileIndicationLamp_ = infoSrc.fileName();
-            picResMgr_.add(ProjectData::getInstance()->dbData_, resetFileIndicationLamp_);
-            updatePropertyModel();
-        }
-    } else if (id == QLatin1String("setPicture")) {
-        QString szTmpName = value.toString();
-        QFileInfo infoSrc(szTmpName);
-        if(infoSrc.exists()) {
-            QString picturePath = getProjectPath() + "/Pictures";
-            QDir dir(picturePath);
-            if(!dir.exists())
-                dir.mkpath(picturePath);
-            QString fileDes = picturePath + "/" + infoSrc.fileName();
-            QFileInfo infoDes(fileDes);
-            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-            if(setFileIndicationLamp_ != "" && setFileIndicationLamp_ != infoSrc.fileName()) {
-                picResMgr_.del(ProjectData::getInstance()->dbData_, setFileIndicationLamp_);
-            }
-            if(!infoDes.exists()) {
-                QFile::copy(szTmpName, fileDes);
-            }
-            setFileIndicationLamp_ = infoSrc.fileName();
-            picResMgr_.add(ProjectData::getInstance()->dbData_, setFileIndicationLamp_);
-            updatePropertyModel();
-        }
-    } else if (id == QLatin1String("showNoScale")) {
-        showNoScale_ = value.toBool();
-    } else if (id == QLatin1String("showOnInitial")) {
-        showOnInitial_ = value.toBool();
-    } else if (id == QLatin1String("xCoord")) {
-        elementXPos = value.toInt();
-        setElementXPos(elementXPos);
-    } else if (id == QLatin1String("yCoord")) {
-        elementYPos = value.toInt();
-        setElementYPos(elementYPos);
-    } else if (id == QLatin1String("zValue")) {
-        elementZValue = value.toInt();
-        setZValue(elementZValue);
-    } else if (id == QLatin1String("width")) {
-        elementWidth = value.toInt();
-        updateBoundingElement();
-    } else if (id == QLatin1String("height")) {
-        elementHeight = value.toInt();
-        updateBoundingElement();
-    }
-
-    scene()->update();
-    update();
-}
-
-void ElementIndicationLamp::updatePropertyModel()
-{
-    QtVariantProperty *property = Q_NULLPTR;
-
-    property = idToProperty_[QLatin1String("id")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementId);
-    }
-
-    property = idToProperty_[QLatin1String("tag")];
-    if(property != Q_NULLPTR) {
-        property->setValue(tagNames_.indexOf(szTagSelected_));
-    }
-
-    property = idToProperty_[QLatin1String("stateOnInitial")];
-    if(property != Q_NULLPTR) {
-        property->setValue(stateOnInitial_);
-    }
-
-    property = idToProperty_[QLatin1String("resetPicture")];
-    if(property != Q_NULLPTR) {
-        property->setValue(resetFileIndicationLamp_);
-    }
-
-    property = idToProperty_[QLatin1String("setPicture")];
-    if(property != Q_NULLPTR) {
-        property->setValue(setFileIndicationLamp_);
-    }
-
-    property = idToProperty_[QLatin1String("showNoScale")];
-    if(property != Q_NULLPTR) {
-        property->setValue(showNoScale_);
-    }
-
-    property = idToProperty_[QLatin1String("showOnInitial")];
-    if(property != Q_NULLPTR) {
-        property->setValue(showOnInitial_);
-    }
-
-    property = idToProperty_[QLatin1String("xCoord")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementXPos);
-    }
-
-    property = idToProperty_[QLatin1String("yCoord")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementYPos);
-    }
-
-    property = idToProperty_[QLatin1String("zValue")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementZValue);
-    }
-
-    property = idToProperty_[QLatin1String("width")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementWidth);
-    }
-
-    property = idToProperty_[QLatin1String("height")];
-    if(property != Q_NULLPTR) {
-        property->setValue(elementHeight);
-    }
-}
 
 void ElementIndicationLamp::setClickPosition(QPointF position)
 {
-    prepareGeometryChange();
-    elementXPos = static_cast<int>(position.x());
-    elementYPos = static_cast<int>(position.y());
-    setX(elementXPos);
-    setY(elementYPos);
+    elementXPos = position.x();
+    elementYPos = position.y();
     elementRect.setRect(0, 0, elementWidth, elementHeight);
-    updatePropertyModel();
 }
 
 void ElementIndicationLamp::updateBoundingElement()
@@ -308,18 +44,26 @@ void ElementIndicationLamp::updateBoundingElement()
     elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
-void ElementIndicationLamp::paint(QPainter *painter,
-                           const QStyleOptionGraphicsItem *option,
-                           QWidget *widget)
+void ElementIndicationLamp::paint(QPainter *painter)
 {
-    Q_UNUSED(option)
-    Q_UNUSED(widget)
+    if(!showOnInitial_ || !bShow_) {
+        return;
+    }
+
+    painter->save();
+    painter->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->translate(QPoint(elementXPos, elementYPos));
 
     QString szFileIndicationLamp_ = QString();
-    if(stateOnInitial_) {
-        szFileIndicationLamp_ = setFileIndicationLamp_;
-    } else {
-        szFileIndicationLamp_ = resetFileIndicationLamp_;
+    QString szTagID = "";
+    if (szTagSelected_ != "") {
+        szTagID = pRtdbObj_->getIdByTagName(szTagSelected_);
+    }
+    bool bVal = false;
+    if(szTagID != "") {
+        bVal = pRtdbObj_->GetDataString(szTagID).toInt() > 0 ? true : false;
+        szFileIndicationLamp_ = bVal ? setFileIndicationLamp_ : resetFileIndicationLamp_;
     }
 
     if(szFileIndicationLamp_ != QString()) {
@@ -330,14 +74,12 @@ void ElementIndicationLamp::paint(QPainter *painter,
             if(showNoScale_) {
                 scaleImage = image;
             } else {
-                scaleImage = image.scaled(static_cast<int>(elementRect.width()),
-                                          static_cast<int>(elementRect.height()),
-                                          Qt::IgnoreAspectRatio);
+                scaleImage = image.scaled((int)elementRect.width(), (int)elementRect.height(), Qt::IgnoreAspectRatio);
             }
             painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
             painter->drawImage(elementRect, scaleImage);
         }
-    }else{
+    } else {
         painter->save();
         qreal fHalfWidth = elementRect.width()/2;
         qreal fHalfHeight = elementRect.height()/2;
@@ -345,12 +87,12 @@ void ElementIndicationLamp::paint(QPainter *painter,
         QRadialGradient radialGradient(fHalfWidth, fHalfHeight, fRadius, fHalfWidth, fHalfHeight);
         // 创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,
         // 如果需要对称那么中心坐标和焦点坐标要一致
-        if(stateOnInitial_){
+        if(bVal) {
             radialGradient.setColorAt(0, Qt::yellow);
             radialGradient.setColorAt(0.8, Qt::blue); // 设置50%处的半径为蓝色
-        }else{
+        } else {
             radialGradient.setColorAt(0, Qt::black);
-            radialGradient.setColorAt(0.8, Qt::white); // 设置50%处的半径为蓝色
+            radialGradient.setColorAt(0.8, Qt::white); // 设置50%处的半径为白色
         }
 
         radialGradient.setColorAt(1, Qt::darkGray);
@@ -364,193 +106,29 @@ void ElementIndicationLamp::paint(QPainter *painter,
         painter->restore();
     }
 
-    painter->setPen(QPen(Qt::gray, 1, Qt::DashDotLine));
-    painter->drawRect(elementRect);
-
-    if (isSelected()) {
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementRect.topLeft() - QPointF(3, 3), elementRect.topLeft() + QPointF(3, 3)));
-        painter->drawRect(QRectF(elementRect.bottomRight() - QPointF(3, 3), elementRect.bottomRight() + QPointF(3, 3)));
-    }
+    painter->restore();
 }
 
-void ElementIndicationLamp::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+void ElementIndicationLamp::mouseMoveEvent(QMouseEvent *event)
 {
-    QPointF mousePoint = event->pos();
-    if (resizing) {
-        setCursor(Qt::SizeFDiagCursor);
-        switch (rd) {
-        case RdBottomRight:
-            elementRect.setBottomRight(mousePoint);
-            elementWidth = static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x()));
-            elementHeight = static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y()));
-            break;
-        case RdTopLeft:
-            elementRect.setTopLeft(mousePoint);
-            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
-            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
-            updateBoundingElement();
-            break;
-        case RdNone:
-            QGraphicsObject::mouseMoveEvent(event);
-            break;
-        }
-
-        scene()->update();
-        return;
-    } else {
-        QGraphicsObject::mouseMoveEvent(event);
-        // 限制矩形区域
-        RestrictedRectangularRegion();
-    }
+    Q_UNUSED(event)
 }
 
-void ElementIndicationLamp::mousePressEvent(QGraphicsSceneMouseEvent *event)
+void ElementIndicationLamp::mousePressEvent(QMouseEvent *event)
 {
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
+    Q_UNUSED(event)
 }
 
-
-/**
- * @brief ElementIndicationLamp::mouseDoubleClickEvent
- * @details 指示灯控件元素单击时弹出基本属性编辑对话框
- * @param event
- */
-void ElementIndicationLamp::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+void ElementIndicationLamp::mouseReleaseEvent(QMouseEvent *event)
 {
-    EditBasicPropertyDialog dlg;
-    dlg.setSelectedTag(szTagSelected_);
-    dlg.setStateOnInitial(stateOnInitial_);
-    dlg.setResetFileIndicationLamp(resetFileIndicationLamp_);
-    dlg.setSetFileIndicationLamp(setFileIndicationLamp_);
-    if(dlg.exec() == QDialog::Accepted) {
-        szTagSelected_ = dlg.selectedTag();
-        stateOnInitial_ = dlg.stateOnInitial();
-        resetFileIndicationLamp_ = dlg.resetFileIndicationLamp();
-        setFileIndicationLamp_ = dlg.setFileIndicationLamp();
-
-        // 更新属性表
-        VariantManager *pVariantManager = dynamic_cast<VariantManager *>(variantPropertyManager_);
-        if(pVariantManager != Q_NULLPTR) {
-            QtTreePropertyBrowser *pPropertyEditor = pVariantManager->getPropertyEditor();
-            if(pPropertyEditor != Q_NULLPTR) {
-                pPropertyEditor->clear();
-                this->updatePropertyModel();
-                QListIterator<QtProperty*> iter(this->getPropertyList());
-                while (iter.hasNext()) {
-                    pPropertyEditor->addProperty(iter.next());
-                }
-            }
-        }
-
-        scene()->update();
-        update();
-    }
-    QGraphicsObject::mouseDoubleClickEvent(event);
-}
-
-
-
-void ElementIndicationLamp::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    setCursor(Qt::ArrowCursor);
-    elementXPos = static_cast<int>(pos().x());
-    elementYPos = static_cast<int>(pos().y());
-    updatePropertyModel();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
-}
-
-void ElementIndicationLamp::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect.topLeft();
-    QPointF bottomRight = elementRect.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
-}
-
-void ElementIndicationLamp::writeAsXml(QXmlStreamWriter &writer)
-{
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-    writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("stateOnInitial", stateOnInitial_?"true":"false");
-    writer.writeAttribute("resetPicture", resetFileIndicationLamp_);
-    writer.writeAttribute("setPicture", setFileIndicationLamp_);
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeAttribute("showNoScale", showNoScale_?"true":"false");
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeEndElement();
+    Q_UNUSED(event)
 }
 
 void ElementIndicationLamp::readFromXml(const QXmlStreamAttributes &attributes)
 {
     if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
+        QString szTagID = attributes.value("elementId").toString();
+        setElementId(szTagID);
     }
 
     if (attributes.hasAttribute("tag")) {
@@ -582,7 +160,7 @@ void ElementIndicationLamp::readFromXml(const QXmlStreamAttributes &attributes)
     }
 
     if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
+        setElementZValue(attributes.value("z").toString().toInt());
     }
 
     if (attributes.hasAttribute("width")) {
@@ -610,23 +188,18 @@ void ElementIndicationLamp::readFromXml(const QXmlStreamAttributes &attributes)
     }
 
     updateBoundingElement();
-    updatePropertyModel();
-}
 
-void ElementIndicationLamp::writeData(QDataStream &out)
-{
-    out << this->elementId
-        << this->szTagSelected_
-        << this->stateOnInitial_
-        << this->resetFileIndicationLamp_
-        << this->setFileIndicationLamp_
-        << this->x()
-        << this->y()
-        << this->zValue()
-        << this->elementWidth
-        << this->elementHeight
-        << this->showNoScale_
-        << this->showOnInitial_;
+    QString szTagID = "";
+    if (szTagSelected_ != "") {
+        szTagID = pRtdbObj_->getIdByTagName(szTagSelected_);
+        if (szTagID != "") {
+            if(stateOnInitial_) {
+                pRtdbObj_->SetDataString(szTagID, "1");
+            } else {
+                pRtdbObj_->SetDataString(szTagID, "0");
+            }
+        }
+    }
 }
 
 void ElementIndicationLamp::readData(QDataStream &in)
@@ -658,45 +231,34 @@ void ElementIndicationLamp::readData(QDataStream &in)
        >> showOnInitial;
 
     this->setElementId(id);
-    int index = getIndexFromIDString(id);
-    if(iLastIndex_ < index) {
-        iLastIndex_ = index;
-    }
     this->szTagSelected_ = szTagSelected;
     this->stateOnInitial_ = stateOnInitial;
     this->resetFileIndicationLamp_ = resetPic;
     this->setFileIndicationLamp_ = setPic;
-    this->setElementXPos(static_cast<int>(xpos));
-    this->setElementYPos(static_cast<int>(ypos));
-    this->setElementZValue(static_cast<int>(zvalue));
+    this->setElementXPos(xpos);
+    this->setElementYPos(ypos);
+    this->setElementZValue(zvalue);
     this->setElementWidth(width);
     this->setElementHeight(height);
     this->showNoScale_ = showNoScale;
     this->showOnInitial_ = showOnInitial;
     this->updateBoundingElement();
-    this->updatePropertyModel();
+
+    QString szTagID = "";
+    if (szTagSelected_ != "") {
+        szTagID = pRtdbObj_->getIdByTagName(szTagSelected_);
+        if (szTagID != -1) {
+            if(stateOnInitial_) {
+                pRtdbObj_->SetDataString(szTagID, "1");
+            } else {
+                pRtdbObj_->SetDataString(szTagID, "0");
+            }
+        }
+    }
 }
 
 
-QDataStream &operator<<(QDataStream &out,const ElementIndicationLamp &lamp)
-{
-    out << lamp.elementId
-        << lamp.szTagSelected_
-        << lamp.stateOnInitial_
-        << lamp.resetFileIndicationLamp_
-        << lamp.setFileIndicationLamp_
-        << lamp.x()
-        << lamp.y()
-        << lamp.zValue()
-        << lamp.elementWidth
-        << lamp.elementHeight
-        << lamp.showNoScale_
-        << lamp.showOnInitial_;
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementIndicationLamp &lamp)
+QDataStream &operator>>(QDataStream &in,ElementIndicationLamp &lamp)
 {
     QString id;
     QString szTagSelected;
@@ -725,23 +287,29 @@ QDataStream &operator>>(QDataStream &in, ElementIndicationLamp &lamp)
        >> showOnInitial;
 
     lamp.setElementId(id);
-    int index = lamp.getIndexFromIDString(id);
-    if(lamp.iLastIndex_ < index) {
-        lamp.iLastIndex_ = index;
-    }
     lamp.szTagSelected_ = szTagSelected;
     lamp.stateOnInitial_ = stateOnInitial;
     lamp.resetFileIndicationLamp_ = resetPic;
     lamp.setFileIndicationLamp_ = setPic;
-    lamp.setElementXPos(static_cast<int>(xpos));
-    lamp.setElementYPos(static_cast<int>(ypos));
-    lamp.setElementZValue(static_cast<int>(zvalue));
+    lamp.setElementXPos(xpos);
+    lamp.setElementYPos(ypos);
+    lamp.setElementZValue(zvalue);
     lamp.setElementWidth(width);
     lamp.setElementHeight(height);
     lamp.showNoScale_ = showNoScale;
     lamp.showOnInitial_ = showOnInitial;
     lamp.updateBoundingElement();
-    lamp.updatePropertyModel();
 
+    QString szTagID = "";
+    if (lamp.szTagSelected_ != "") {
+        szTagID = lamp.pRtdbObj_->getIdByTagName(lamp.szTagSelected_);
+        if (szTagID != "") {
+            if(lamp.stateOnInitial_) {
+                lamp.pRtdbObj_->SetDataString(szTagID, "1");
+            } else {
+                lamp.pRtdbObj_->SetDataString(szTagID, "0");
+            }
+        }
+    }
     return in;
 }

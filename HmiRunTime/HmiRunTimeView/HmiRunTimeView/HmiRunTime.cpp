@@ -10,6 +10,7 @@
 #include <QTextStream>
 #include <QTextCodec>
 #include <QMutexLocker>
+#include <QMessageBox>
 #include <QDebug>
 
 HmiRunTime *g_pHmiRunTime = Q_NULLPTR;

@@ -4,49 +4,33 @@
 #include <QGraphicsSceneEvent>
 #include <QPainter>
 #include <QDataStream>
-#include "Element.h"
+#include "../../Public/Element.h"
 
 class ElementRect : public Element
 {
     Q_OBJECT
 public:
-    ElementRect(const QString &szProjPath,
-                const QString &szProjName,
-                QtVariantPropertyManager *propertyMgr);
+    ElementRect();
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
-    void updateElementProperty(QtProperty *property, const QVariant &value) override;
-    void updatePropertyModel() override;
-    void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &writer) override;
     void readFromXml(const QXmlStreamAttributes &) override;
-    void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
-    void regenerateElementId() override;
-    void release() override; // 释放占用的资源
+    void paint(QPainter *painter) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
-    int type() const override {
+    int type() const {
         return RectItemType;
     }
 
-    friend QDataStream &operator<<(QDataStream &out,const ElementRect &rect);
     friend QDataStream &operator>>(QDataStream &in,ElementRect &rect);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-    QRectF boundingRect() const override;
-    QPainterPath shape() const override;
+    QRectF boundingRect() const;
+    QPainterPath shape() const;
 
 private:
-    QStringList tagNames_;
-
-private:
-    static int iLastIndex_;
     QRectF elementRect;
     // 关联的变量
     QString szTagSelected_;
@@ -54,6 +38,8 @@ private:
     QStringList tagColorList_;
     // 填充颜色
     QColor fillColor_;
+    // 上一次填充颜色
+    QColor lastFillColor_;
     // 是否填充颜色
     bool isFill_;
     // 边框宽度

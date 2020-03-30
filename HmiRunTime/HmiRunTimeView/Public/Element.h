@@ -6,6 +6,7 @@
 #include <QMouseEvent>
 #include <QWidget>
 #include "PublicDefine.h"
+#include "RealTimeDB.h"
 #include <QXmlStreamWriter>
 #include <QXmlStreamAttributes>
 #include <QTimer>
@@ -62,6 +63,8 @@ public:
     void setOwnerWidget(QWidget *owner);
     // 获取元素所属窗口
     QWidget *getOwnerWidget();
+    // 设置实时数据库对象
+    void setRealTimeDB(RealTimeDB *pRtdbObj);
 
     // 隐藏控件
     void hideElement();
@@ -97,10 +100,15 @@ protected:
     bool bShow_; // 显示
     bool bEnable_; // 生效
     QTimer blinkTimer_;  // 闪烁定时器
+    RealTimeDB *pRtdbObj_ = Q_NULLPTR;
 
 signals:
     void elementMoved(QPointF);
     void elementResized(int,int,QPointF);
+    // 执行脚本功能
+    void notifyExecScriptFunction(const QStringList &szFuncList, const QString &szMatchEvent);
+    // 执行脚本文本
+    void notifyExecScriptText(const QString &szScriptText, const QString &szMatchEvent);
 
 private slots:
     virtual void blinkTimeOut();

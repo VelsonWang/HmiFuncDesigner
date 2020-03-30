@@ -292,7 +292,7 @@ struct socket {
             int ret = ::connect( fd, ep.data(), ep.size() );
             if (ret == 0) {
                 std::cout << "connect to server successfully." << std::endl;
-                close(clientfd);
+                close(fd);
                 return 0;
             } else if (ret == -1) {
                 if (errno == EINTR) {
@@ -304,7 +304,7 @@ struct socket {
                     break;
                 } else {
                     //真的出错了，
-                    close(clientfd);
+                    close(fd);
                     return -1;
                 }
             }

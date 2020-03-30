@@ -1,31 +1,22 @@
-
-include(../../DrawApplicationPlugin.pri)
-include(../../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
-
-LIBS += -L$$IDE_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
-
+include(../../HmiRunTimeViewPlugin.pri)
 
 SOURCES += \
     ../../Public/Element.cpp \
+    ../../Public/PubTool.cpp \
+    ../../Public/RealTimeDB.cpp \
     ElementClock.cpp \
-    ClockPlugin.cpp
+    EClockPlugin.cpp
 
 HEADERS += \
+    ../../Public/PubTool.h \
     ../../Public/PublicDefine.h \
-    ../../Public/PublicDefine.h \
-    ../../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
+    ../../IHmiRunTimeViewPlugin/IHmiRunTimeViewPlugin.h \
     ../../Public/Element.h \
+    ../../Public/RealTimeDB.h \
     ElementClock.h \
-    ClockPlugin.h
+    EClockPlugin.h
 
 DISTFILES += EClock.json
-
-RESOURCES += \
-    images.qrc
 
 
 

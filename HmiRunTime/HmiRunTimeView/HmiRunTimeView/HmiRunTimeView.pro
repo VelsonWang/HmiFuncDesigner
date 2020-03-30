@@ -45,7 +45,7 @@ INCLUDEPATH += \
     Log \
     Socket \
     Service \
-    ../Vendors/IVendorPlugin
+    ../Public
 
 LIBRARY_SRC_PATH = $$clean_path($$_PRO_FILE_PWD_/../../../HmiFuncDesigner)
 #message("LIBRARY_SRC_PATH: "$$LIBRARY_SRC_PATH)
@@ -83,9 +83,8 @@ SOURCES += \
     MainWindow.cpp \
     ViewElementPluginManager.cpp \
     main.cpp \
-    DB/ShareMemory.cpp \
     MessageTransfer.cpp \
-    DB/RealTimeDB.cpp \
+    ../Public/RealTimeDB.cpp \
     HmiRunTime.cpp \
     Tag/Function.cpp \
     Event/Event.cpp \
@@ -104,10 +103,9 @@ HEADERS  += \
     GraphPage.h \
     GraphPageManager.h \
     IVendor.h \
-    DB/ShareMemory.h \
     MainWindow.h \
     MessageTransfer.h \
-    DB/RealTimeDB.h \
+    ../Public/RealTimeDB.h \
     Public/public.h \
     HmiRunTime.h \
     Public/PublicFunction.h \

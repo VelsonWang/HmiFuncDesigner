@@ -10,10 +10,14 @@ QT += sql
 CONFIG -= shared dll
 CONFIG += staticlib
 
+#去除UNICODE字符编码
+DEFINES -= UNICODE
+
 SOURCES += \
     ConfigUtils.cpp \
     Helper.cpp \
     MiscUtils.cpp \
+    ShareMemory.cpp \
     StyleSheetHelper.cpp \
     TimeElapsed.cpp \
     XMLObject.cpp
@@ -23,6 +27,7 @@ HEADERS += \
     Helper.h \
     MiscUtils.h \
     ObjectCreator.h \
+    ShareMemory.h \
     Singleton.h \
     StyleSheetHelper.h \
     TimeElapsed.h \

@@ -79,7 +79,6 @@ win32 {
 SOURCES += \
     main.cpp \
     Port/ComPort.cpp \
-    DB/ShareMemory.cpp \
     MessageTransfer.cpp \
     SerialPortReMapping.cpp \
     Vendor.cpp \
@@ -106,7 +105,6 @@ HEADERS  += \
     IVendor.h \
     Port/ComPort.h \
     Port/IPort.h \
-    DB/ShareMemory.h \
     MessageTransfer.h \
     SerialPortReMapping.h \
     VendorPluginManager.h \
