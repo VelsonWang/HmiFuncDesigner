@@ -39,7 +39,7 @@ void DBTagObject::SetData(TAny v, bool bReadFromDevice)
     if(m_pDBTagObject->rData != v) {
         // 发送更新事件到消息服务
         QString msg = QString("%1 %2").arg("VALUE_CHANGE").arg(m_pDBTagObject->szID);
-        HmiRunTime::doMessage(msg);
+        //HmiRunTime::doMessage(msg);
     }
     m_pDBTagObject->rData = v;
     if(!bReadFromDevice) {
@@ -64,7 +64,7 @@ void DBTagObject::SetData(unsigned char* buffer)
     if(m_pDBTagObject->rData != oldData) {
         // 发送更新事件到消息服务
         QString msg = QString("%1 %2").arg("VALUE_CHANGE").arg(m_pDBTagObject->szID);
-        HmiRunTime::doMessage(msg);
+        //HmiRunTime::doMessage(msg);
     }
 }
 

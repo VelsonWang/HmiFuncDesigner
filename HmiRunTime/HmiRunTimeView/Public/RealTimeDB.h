@@ -8,6 +8,9 @@
 #include <QString>
 #include "ShareMemory.h"
 
+
+#define MAX_DBTAGOBJECT    (5000) // 共享内存创建的最大个数
+
 //------------------------------------------------------------------------------
 
 //////////////////////////////////////////
@@ -77,6 +80,7 @@ typedef struct tagDBTagObject
     quint8 iPermission; // 读写权限
     qint32 mLength; // 长度
     quint8 byWriteToVendor; // 标记需要写入PLC，仪器等设备
+    quint8 byUpdateFromVendor; // 标记已从PLC，仪器等设备采集更新
     TAny rData; // 变量数据(read from device)
     TAny wData; // 变量数据(write to device)
 } __attribute__ ((packed)) TDBTagObject, *PDBTagObject;
@@ -107,20 +111,16 @@ public:
     QString GetDataString(const QString &id);
     void SetDataString(const QString &id, const QString &dat);
 
-    ///
-    /// \brief RealTimeDB::getEmptyDBTagObject
-    /// \details 从共享内查找指定ID的DBTagObject对象
-    /// \return DBTagObject对象
-    ///
+    // 从共享内查找指定ID的DBTagObject对象
     PDBTagObject getDBTagObject(const QString &szID);
 
 public:
     bool m_memStatus = true;
     QMap<QString, QString> varNameMapId;
+    PDBTagObject m_pDBTagObjectBaseAddr = Q_NULLPTR;
 
 private:
     Sharememory m_rtdbSharememory;
-    PDBTagObject m_pDBTagObjectBaseAddr = Q_NULLPTR;
 };
 
 

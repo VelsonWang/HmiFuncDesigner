@@ -5,8 +5,8 @@
 /// \brief The SaveFormat enum
 ///
 enum SaveFormat {
-        Json = 0,
-        Binary
+    Json = 0,
+    Binary
 };
 
 #define DATA_SAVE_FORMAT    (Json)

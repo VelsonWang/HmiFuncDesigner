@@ -1,7 +1,8 @@
 ﻿#include "RunScript.h"
 #include "JavaScript.h"
 #include "Log.h"
-#include "../DB/RealTimeDB.h"
+#include "../../Public/RealTimeDB.h"
+#include "../HmiRunTime.h"
 #include <QTextCodec>
 #include <QTextStream>
 #include <QDebug>
@@ -37,7 +38,35 @@ void RunScriptTask::run()
     }
 }
 
-//////////////////////////////////////////////////////////////
+//------------------------------------------------------------------------------
+
+
+RunOnConditionScriptTask::RunOnConditionScriptTask()
+{
+}
+
+RunOnConditionScriptTask::~RunOnConditionScriptTask()
+{
+}
+
+void RunOnConditionScriptTask::run()
+{
+    while(RealTimeDB::instance()->m_memStatus) {
+        if(RealTimeDB::instance()->m_pDBTagObjectBaseAddr == Q_NULLPTR) return;
+        for(int i=0; i<MAX_DBTAGOBJECT; i++) {
+            PDBTagObject pObj = (PDBTagObject)&RealTimeDB::instance()->m_pDBTagObjectBaseAddr[i];
+            if(pObj->byUpdateFromVendor) {
+                // 发送更新事件到消息服务
+                QString msg = QString("%1 %2").arg("VALUE_CHANGE").arg(pObj->szID);
+                HmiRunTime::doMessage(msg);
+            }
+        }
+        QThread::msleep(1);
+    }
+}
+
+
+//------------------------------------------------------------------------------
 
 RunScript::RunScript(QString projectPath, QObject *parent) :
     QObject(parent),
@@ -48,6 +77,8 @@ RunScript::RunScript(QString projectPath, QObject *parent) :
     m_runOnPeriodList.clear();
     m_runOnConditionList.clear();
     m_threadPool.setMaxThreadCount(32);
+
+    m_threadPool.start(new RunOnConditionScriptTask());
 }
 
 

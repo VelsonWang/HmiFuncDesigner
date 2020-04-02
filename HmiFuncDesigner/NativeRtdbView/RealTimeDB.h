@@ -74,6 +74,7 @@ typedef struct tagDBTagObject
     quint8 iPermission; // 读写权限
     qint32 mLength; // 长度
     quint8 byWriteToVendor; // 标记需要写入PLC，仪器等设备
+    quint8 byUpdateFromVendor; // 标记已从PLC，仪器等设备采集更新
     TAny rData; // 变量数据(read from device)
     TAny wData; // 变量数据(write to device)
 } __attribute__ ((packed)) TDBTagObject, *PDBTagObject;

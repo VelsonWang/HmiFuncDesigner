@@ -15,28 +15,24 @@ Function::~Function()
 void Function::LoadFuncObjects(const QString projectConverter)
 {
     m_listFuncObject.clear();
-    if(projectConverter == "")
-        return;
+    if(projectConverter == "") return;
     QStringList strObjList = projectConverter.split(';');
     for(int i=0; i<strObjList.size(); i++) {
         QStringList strObjTmpList = strObjList.at(i).split('-');
-        if(strObjTmpList.size() != 2)
-            continue;
+        if(strObjTmpList.size() != 2) continue;
         PFuncObjectItem pfuncItem = new FuncObjectItem();
         QString funcString = strObjTmpList.at(0);
         pfuncItem->name = funcString.left(funcString.indexOf("("));
         QString strArgs = (funcString.mid(funcString.indexOf("(") + 1, funcString.indexOf(")") - funcString.indexOf("(") - 1)).trimmed();
 
-        if(strArgs.length()>0) {
+        if(strArgs.length() > 0) {
             QStringList tmpList;
             tmpList = strArgs.split(',');
             for(int i=0; i<tmpList.count();i++) {
                 TArgItem item;
                 item.arg = tmpList.at(i);
-                if(item.arg.indexOf("变量")>-1)
-                    item.type = "V";
-                else
-                    item.type = "C";
+                if(item.arg.indexOf("变量")>-1) item.type = "V";
+                else item.type = "C";
                 pfuncItem->argList.append(item);
             }
         }
@@ -106,8 +102,7 @@ bool Function::ExecFunctions(RuntimeEvent e)
         } break;
     }
     //qDebug() << "event:" << sEvent;
-    if(sEvent == "")
-        return false;
+    if(sEvent == "") return false;
 
     for (int i = 0; i < m_listFuncObject.size(); ++i) {
         PFuncObjectItem pFuncObjItem = m_listFuncObject.at(i);

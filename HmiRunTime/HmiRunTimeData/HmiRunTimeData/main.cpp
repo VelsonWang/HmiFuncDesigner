@@ -7,7 +7,6 @@
 #include "Global.h"
 #include "ConfigUtils.h"
 #include "edncrypt.h"
-#include "MemoryMessageService.h"
 #include "VendorPluginManager.h"
 #include <QApplication>
 #include <QDebug>
@@ -79,7 +78,7 @@ int main(int argc, char *argv[])
     QString configPath = "";
 
     LogInfo(getSystemInfo());
-    LogInfo("start SCADARunTime!");
+    LogInfo("start HmiRunTimeData!");
 
     //////////////////////////////////////////////////////////////////////////////
     ///  启动http服务
@@ -88,18 +87,13 @@ int main(int argc, char *argv[])
 
     //////////////////////////////////////////////////////////////////////////////
 
-    QString projPath = QCoreApplication::applicationDirPath() + "/RunProject";
-    if(argc == 2) {
-        projPath = argv[1];
-    }
+    QString szProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
+    if(argc == 2) szProjPath = argv[1];
 
-    QDir dir(projPath);
-    if (!dir.exists())
-    {
-        dir.mkpath(projPath);
-    }
+    QDir dir(szProjPath);
+    if (!dir.exists()) dir.mkpath(szProjPath);
 
-    HmiRunTime runTime(projPath);
+    HmiRunTime runTime(szProjPath);
     runTime.Load(DATA_SAVE_FORMAT);
 
     runTime.Start();
@@ -109,9 +103,7 @@ int main(int argc, char *argv[])
 
     QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
     QDir projSaveDir(projSavePath);
-    if(!projSaveDir.exists()) {
-        projSaveDir.mkpath(projSavePath);
-    }
+    if(!projSaveDir.exists()) projSaveDir.mkpath(projSavePath);
 
     ///////////////////////////////////////////////////////////////////////////
     /// 启动SOAP服务

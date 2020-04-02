@@ -418,24 +418,6 @@ QJsonObject HmiRunTime::LoadJsonObjectFromFile(SaveFormat saveFormat, QString f)
     return loadDoc.object();
 }
 
-/**
- * @brief HmiRunTime::doMessage
- * @details 处理消息
- * @param msg
- */
-void HmiRunTime::doMessage(QString msg)
-{
-    if(msg.indexOf(QString("VALUE_CHANGE")) != -1)
-    {
-        QString tagId = msg.replace(QString("VALUE_CHANGE "), QString(""));
-        // 运行条件运行脚本
-        //if(m_pRunScript == Q_NULLPTR) {
-            //m_pRunScript = new RunScript(m_sProjectPath);
-        //}
-        //m_pRunScript->runOnConditionScripts(tagId);
-    }
-}
-
 
 bool HmiRunTime::event(QEvent *event)
 {

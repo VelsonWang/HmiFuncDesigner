@@ -24,8 +24,7 @@ NetPort::~NetPort()
  */
 bool NetPort::open(QString port, QStringList args)
 {
-    if(port == "" || args.length() != 2)
-        return false;
+    if(port == "" || args.length() != 2) return false;
 
     ip_ = args.at(0);
     port_ = args.at(1).toInt();
@@ -41,9 +40,8 @@ bool NetPort::open(QString port, QStringList args)
 
     endpoint_.set(ip_.toStdString(), port_, net::af::inet);
     sock_.setnonblocking(true);
-    int iRet = sock_.connect(endpoint_);
 
-    return (iRet == 0);
+    return (sock_.connect(endpoint_) == 0);
 }
 
 /**
@@ -52,10 +50,9 @@ bool NetPort::open(QString port, QStringList args)
  */
 bool NetPort::reOpen()
 {
-    if(sock_.good()) {
-        sock_.close();
-        sock_.shutdown(net::shut::rdwr);
-    }
+    sock_.close();
+    sock_.shutdown(net::shut::rdwr);
+
     //inetV4 socket
     sock_.init(net::af::inet, net::sock::stream);
 
@@ -68,9 +65,7 @@ bool NetPort::reOpen()
     endpoint_.set(ip_.toStdString(), port_, net::af::inet);
     sock_.setnonblocking(true);
 
-    int iRet = sock_.connect(endpoint_);
-
-    return (iRet == 0);
+    return (sock_.connect(endpoint_) == 0);
 }
 
 
@@ -92,8 +87,7 @@ int NetPort::read(unsigned char *buf, int len, int ms)
         readLen += iLen;
 
         if((time.elapsed() - start) > ms) {
-            if(len > byteArray.size())
-                len = byteArray.size();
+            if(len > byteArray.size()) len = byteArray.size();
             break;
         } else {
             QThread::msleep(1);
@@ -117,8 +111,7 @@ int NetPort::write(unsigned char *buf, int len, int ms)
     qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
     Q_UNUSED(ms)
-    std::size_t sendLen = sock_.send((const char* )buf, (std::size_t)len);
-    return (int)sendLen;
+    return (int)sock_.send((const char* )buf, (std::size_t)len);
 }
 
 

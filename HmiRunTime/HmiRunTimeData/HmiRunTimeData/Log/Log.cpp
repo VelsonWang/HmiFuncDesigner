@@ -2,39 +2,45 @@
 #include <QCoreApplication>
 #include <QThread>
 
-Log::Log(QObject *parent) :
-    QObject(parent) {
-
+Log::Log(QObject *parent) : QObject(parent)
+{
     QString configPath = QCoreApplication::applicationDirPath() + "/log4j.properties";
     Log4Qt::PropertyConfigurator::configure(configPath);
 }
 
-Log::~Log() {
+Log::~Log()
+{
 
 }
 
-Log* Log::instance() {
+Log* Log::instance()
+{
     static Log log;
     return &log;
 }
 
-void Log::debug(const QString &log) {
+void Log::debug(const QString &log)
+{
     logger()->debug(log);
 }
 
-void Log::info(const QString &log) {
+void Log::info(const QString &log)
+{
     logger()->info(log);
 }
 
-void Log::warn(const QString &log) {
+void Log::warn(const QString &log)
+{
     logger()->warn(log);
 }
 
-void Log::error(const QString &log) {
+void Log::error(const QString &log)
+{
     logger()->error(log);
 }
 
-void Log::fatal(const QString &log) {
+void Log::fatal(const QString &log)
+{
     logger()->fatal(log);
 }
 

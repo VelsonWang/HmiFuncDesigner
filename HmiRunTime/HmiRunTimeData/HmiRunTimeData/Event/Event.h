@@ -14,7 +14,6 @@ enum EventType
     NONE = 0,
     BEFORE_READ,
     VALUE_CHANGE,
-
 };
 typedef EventType TEvent;
 

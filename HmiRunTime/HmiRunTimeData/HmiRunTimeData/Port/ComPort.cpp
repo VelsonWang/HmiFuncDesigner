@@ -9,7 +9,7 @@
 
 ComPort::ComPort()
 {
-    serialPortPtr_ = nullptr;
+    serialPortPtr_ = Q_NULLPTR;
     buf_.clear();
 }
 
@@ -17,9 +17,9 @@ ComPort::ComPort()
 ComPort::~ComPort()
 {
     close();
-    if(serialPortPtr_ != nullptr) {
+    if(serialPortPtr_ != Q_NULLPTR) {
         delete serialPortPtr_;
-        serialPortPtr_ = nullptr;
+        serialPortPtr_ = Q_NULLPTR;
     }
 }
 
@@ -32,8 +32,7 @@ ComPort::~ComPort()
  */
 bool ComPort::open(QString port, QStringList args)
 {
-    if(port == "" || args.length() != 4)
-        return false;
+    if(port == "" || args.length() != 4) return false;
 
     QString szSerialPortName = Singleton<SerialPortReMapping>::instance().getSerialPortName(port);
 
@@ -88,10 +87,7 @@ bool ComPort::open(QString port, QStringList args)
     //设置延时
     serialPortPtr_->setTimeout(TIME_OUT);
 
-    if(!serialPortPtr_->open(QIODevice::ReadWrite))
-        return false;
-
-    return true;
+    return serialPortPtr_->open(QIODevice::ReadWrite);
 }
 
 
@@ -104,8 +100,7 @@ bool ComPort::reOpen()
 {
     if(serialPortPtr_->isOpen()) {
         serialPortPtr_->close();
-        if(!serialPortPtr_->open(QIODevice::ReadWrite))
-            return false;
+        return serialPortPtr_->open(QIODevice::ReadWrite);
     }
     return true;
 }
@@ -131,9 +126,7 @@ int ComPort::read(unsigned char *buf, int len, int ms)
         }
     }
 
-    for(int i=0; i<len; i++) {
-        buf[i] = buf_[i];
-    }
+    for(int i=0; i<len; i++) buf[i] = buf_[i];
 #if 0
     qDebug()<< "read: " << hexToString(buf_.data(), len);
 #endif
@@ -157,7 +150,7 @@ int ComPort::write(unsigned char *buf, int len, int /*ms*/)
 bool ComPort::close()
 {
     buf_.clear();
-    if(serialPortPtr_ != nullptr) {
+    if(serialPortPtr_ != Q_NULLPTR) {
         if(serialPortPtr_->isOpen()) {
             serialPortPtr_->close();
             return true;

@@ -86,7 +86,6 @@ SOURCES += \
     MessageTransfer.cpp \
     ../Public/RealTimeDB.cpp \
     HmiRunTime.cpp \
-    Tag/Function.cpp \
     Event/Event.cpp \
     Script/JavaScript.cpp \
     Script/RunScript.cpp \
@@ -110,7 +109,6 @@ HEADERS  += \
     HmiRunTime.h \
     Public/PublicFunction.h \
     Event/Event.h \
-    Tag/Function.h \
     Script/JavaScript.h \
     Script/RunScript.h \
     FileTansfer.h \

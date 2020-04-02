@@ -28,8 +28,6 @@ public:
     void AddPortName(const QString name);
     Vendor *FindVendor(const QString name);
     QJsonObject LoadJsonObjectFromFile(SaveFormat saveFormat, QString f);
-    // 发送消息到消息服务
-    static void doMessage(QString msg);
 
 signals:
 

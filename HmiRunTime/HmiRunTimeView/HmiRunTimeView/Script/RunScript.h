@@ -28,6 +28,22 @@ private:
     Q_DISABLE_COPY(RunScriptTask)
 };
 
+//------------------------------------------------------------------------------
+
+class RunOnConditionScriptTask : public QRunnable
+{
+public:
+    RunOnConditionScriptTask();
+    ~RunOnConditionScriptTask();
+
+private:
+    void run();
+
+    Q_DISABLE_COPY(RunOnConditionScriptTask)
+};
+
+//------------------------------------------------------------------------------
+
 typedef struct tagPeriodScriptObject
 {
     QString scriptText;

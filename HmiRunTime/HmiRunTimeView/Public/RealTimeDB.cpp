@@ -8,7 +8,6 @@
 #include <cstring>
 #include <QDebug>
 
-#define MAX_DBTAGOBJECT    (5000) // 共享内存创建的最大个数
 
 RealTimeDB::RealTimeDB(QObject *parent) :
     QObject(parent)

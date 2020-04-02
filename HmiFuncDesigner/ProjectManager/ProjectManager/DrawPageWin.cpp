@@ -338,7 +338,7 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
     }
 
     if(pDrawMainWindow_ == Q_NULLPTR) {
-        pDrawMainWindow_ = new DrawMainWindow(szProjPath_, szProjName_, item->text());
+        pDrawMainWindow_ = new DrawMainWindow(szProjPath_, szProjName_, item->text(), this);
         pDrawMainWindow_->openGraphPage(szProjPath_, szProjName_, item->text());
         pDrawMainWindow_->show();
     }
