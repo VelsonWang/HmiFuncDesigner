@@ -457,6 +457,10 @@ bool Vendor::readIOTags()
             this->m_bOffLine = false;
             this->m_iStartOffLineTime = 0;
             this->m_bOnlineStatus = true;
+			if(m_pVendorPrivateObj != Q_NULLPTR) {
+                if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0)
+                    QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
+            }
         } else {
             if(this->m_bOffLine == false) {
                 LogInfo(QString("device[%1] start off line! time: %2 ms").arg(this->getDeviceName()).arg(QString::number(QDateTime::currentMSecsSinceEpoch())));
