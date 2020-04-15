@@ -39,7 +39,9 @@ quint16 ModbusASCIIImpl::makeMessagePackage(quint8 *pSendData,
     int iRegisterAddress = pTag->GetRegisterAddress();
     int iOffset = pTag->GetOffset();
     tmpDataPos = iRegisterAddress + iOffset;
-    if(pVendorObj != Q_NULLPTR && this->isStartAddrBit(pVendorObj) == false) tmpDataPos -= 1;
+    if(pVendorObj != Q_NULLPTR && this->isStartAddrBit(pVendorObj) == false) {
+        if(tmpDataPos > 0) tmpDataPos -= 1;
+    }
 
     //开始地址
     tempBuffer_[mesPi++] = tmpDataPos >> 8;

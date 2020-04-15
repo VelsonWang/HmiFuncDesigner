@@ -92,6 +92,7 @@ PDBTagObject RealTimeDB::getDBTagObject(const QString &szID)
 TAny RealTimeDB::GetData(const QString &id)
 {
     TAny any;
+	memset(&any,0,sizeof(any));
     DBTagObject* pTag = rtdb[id];
     if(pTag != nullptr)
         return pTag->GetData();

@@ -457,10 +457,6 @@ bool Vendor::readIOTags()
             this->m_bOffLine = false;
             this->m_iStartOffLineTime = 0;
             this->m_bOnlineStatus = true;
-			if(m_pVendorPrivateObj != Q_NULLPTR) {
-                if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0)
-                    QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
-            }
         } else {
             if(this->m_bOffLine == false) {
                 LogInfo(QString("device[%1] start off line! time: %2 ms").arg(this->getDeviceName()).arg(QString::number(QDateTime::currentMSecsSinceEpoch())));
@@ -471,7 +467,7 @@ bool Vendor::readIOTags()
             }
         }
 
-        if(pTag->getBlockReadTagId() == "block") { // 块读取变量
+        if(pTag->getBlockReadTagId() == "block" || m_readList.size() == 1) { // 块读取变量或者只有一个变量
             if(m_pVendorPrivateObj != Q_NULLPTR) {
                 if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0)
                     QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));

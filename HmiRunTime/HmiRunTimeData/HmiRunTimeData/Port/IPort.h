@@ -14,6 +14,7 @@ enum _PortType {
 };
 typedef enum _PortType TPortType;
 
+class QThread;
 class IPort
 {
 public:
