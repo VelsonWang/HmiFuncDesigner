@@ -15,7 +15,7 @@ public:
     ModbusASCII();
 
     // 获取设备类型名称
-    QString GetDeviceTypeName();
+    QString GetDeviceTypeName() Q_DECL_OVERRIDE;
     // 获取设备支持的所有协议
     QStringList GetDeviceSupportProtocol() Q_DECL_OVERRIDE;
     // 获取设备支持的所有寄存器区
@@ -35,9 +35,12 @@ public:
     QString devicePropertiesToString(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
     // 从字符串加载属性
     void devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+    // 设置设备属性
+    void setDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
 
 private:
     QVector<QPair<QString, QString>> m_properties; // 插件私有属性
+    bool m_bStartAddrBit0 = true; // 内存地址起始位为0
 };
 
 #endif // ModbusASCII_H

@@ -79,6 +79,21 @@ void TagIOEditDialog::on_btnOk_clicked()
     quint32 upperLimit;
     QString area = ui->cboRegisterSection->currentText();
     if(devPlugin_ != nullptr) {
+        DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+        deviceInfo.load(ProjectData::getInstance()->dbData_);
+        DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByName(m_szDeviceName);
+
+        QVector<QPair<QString, QString>> m_properties;
+        if(pObj != Q_NULLPTR) {
+            if(pObj->szProperties_ == "") {
+                devPlugin_->getDefaultDeviceProperty(m_properties);
+            } else {
+                devPlugin_->devicePropertiesFromString(pObj->szProperties_, m_properties);
+            }
+        }
+        // 设置设备属性
+        devPlugin_->setDeviceProperty(m_properties);
+        // 获取寄存器区地址的下限和上限
         devPlugin_->GetRegisterAreaLimit(area, lowerLimit, upperLimit);
         if((iRegAddr + iOffset) < lowerLimit || (iRegAddr + iOffset) > upperLimit) {
             QMessageBox::warning(this,

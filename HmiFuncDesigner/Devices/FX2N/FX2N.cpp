@@ -178,6 +178,16 @@ void FX2N::devicePropertiesFromString(const QString &szProperty, QVector<QPair<Q
     }
 }
 
+///
+/// \brief FX2N::setDeviceProperty
+/// \details 设置设备属性
+/// \param properties
+///
+void FX2N::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    m_properties.clear();
+    m_properties.append(properties);
+}
 
 
 

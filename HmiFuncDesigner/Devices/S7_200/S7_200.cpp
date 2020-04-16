@@ -187,5 +187,16 @@ void S7_200::devicePropertiesFromString(const QString &szProperty, QVector<QPair
 }
 
 
+///
+/// \brief S7_200::setDeviceProperty
+/// \details 设置设备属性
+/// \param properties
+///
+void S7_200::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    m_properties.clear();
+    m_properties.append(properties);
+}
+
 
 

@@ -85,6 +85,7 @@ void ModbusRTU::GetRegisterAreaLimit(const QString &areaName,
         lowerLimit = 0x0000;
         upperLimit = 0xFFFF;
     }
+    if(!m_bStartAddrBit0) lowerLimit++;
 }
 
 ///
@@ -192,5 +193,18 @@ void ModbusRTU::devicePropertiesFromString(const QString &szProperty, QVector<QP
     }
 }
 
+
+///
+/// \brief ModbusRTU::setDeviceProperty
+/// \details 设置设备属性
+/// \param properties
+///
+void ModbusRTU::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    m_properties.clear();
+    m_properties.append(properties);
+    QString szVal = getValue2ByValue1(tr("内存地址起始位为0"), m_properties);
+    m_bStartAddrBit0 = (szVal.toLower() == "true") ? true : false;
+}
 
 

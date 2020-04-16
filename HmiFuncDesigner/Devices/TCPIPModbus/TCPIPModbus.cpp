@@ -85,6 +85,7 @@ void TCPIPModbus::GetRegisterAreaLimit(const QString &areaName,
         lowerLimit = 0x0000;
         upperLimit = 0xFFFF;
     }
+    if(!m_bStartAddrBit0) lowerLimit++;
 }
 
 ///
@@ -192,5 +193,18 @@ void TCPIPModbus::devicePropertiesFromString(const QString &szProperty, QVector<
     }
 }
 
+
+///
+/// \brief TCPIPModbus::setDeviceProperty
+/// \details 设置设备属性
+/// \param properties
+///
+void TCPIPModbus::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
+{
+    m_properties.clear();
+    m_properties.append(properties);
+    QString szVal = getValue2ByValue1(tr("内存地址起始位为0"), m_properties);
+    m_bStartAddrBit0 = (szVal.toLower() == "true") ? true : false;
+}
 
 
