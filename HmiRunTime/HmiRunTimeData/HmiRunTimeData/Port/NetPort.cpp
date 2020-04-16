@@ -13,8 +13,7 @@ NetPort::NetPort(QString sIp,int tPort)
 
 NetPort::~NetPort()
 {
- 	if(client)
-	{
+    if(client) {
 		client->close();
 		delete client;
 		client = NULL;
@@ -23,14 +22,12 @@ NetPort::~NetPort()
 
 QTcpSocket* NetPort::getSocket()
 {
-	if(client)
-	{
+    if(client) {
 		client->close();
 		delete client;
 		client = NULL;
 	}
-	if(!client)
-	{
+    if(!client) {
 		client = new QTcpSocket();
 		client->setReadBufferSize(10000);
 	}
@@ -45,18 +42,12 @@ QTcpSocket* NetPort::getSocket()
  */
 bool NetPort::open(QString port, QStringList args)
 {
-    if(port == "" || args.length() != 2)
-        return false;
-
+    if(port == "" || args.length() != 2) return false;
     ip_ = args.at(0);
     port_ = args.at(1).toInt();
-	getSocket();
-	client->connectToHost(QHostAddress(ip_), port_);
-	if(client->waitForConnected(1000))
-	{
-		return true;
-	}
-	return false;
+    // 本函数在主线程调用！！！
+    // 为避免跨线程调用QTcpSocket，在这里先不创建对象, 对象的创建放在线程中
+    return true;
 }
 
 /**
@@ -68,19 +59,12 @@ bool NetPort::reOpen()
 	getSocket();
 	client->close();
 	client->connectToHost(QHostAddress(ip_), port_);
-	if (client->waitForConnected(1000))
-	{
-		return true;
-	}
-	return false;
+    return client->waitForConnected(1000);
 }
 
 int NetPort::read(unsigned char *buf, int len, int ms)
 {
-	if (!client)
-	{
-		return 0;
-	}
+    if (!client) reOpen();
     long start;
 
     QTime time;
@@ -92,18 +76,15 @@ int NetPort::read(unsigned char *buf, int len, int ms)
 	int iAvailable;
 	while (iNeed > 0) {
 		iAvailable = client->bytesAvailable();
-		if(iAvailable)
-		{
+        if(iAvailable) {
 			iAvailable = (iAvailable > iNeed) ? iNeed : iAvailable;
 			//qDebug() << "read Begin";
 			byteArray.append(client->read(iAvailable));
 			//qDebug() << "read End";
 			iNeed -= iAvailable;
 		}
-		if ((time.elapsed() - start) > ms)
-		{
-			if (byteArray.size() < len)
-			{
+        if ((time.elapsed() - start) > ms) {
+            if (byteArray.size() < len) {
 				len = byteArray.size();
 			}
 			break;
@@ -116,12 +97,9 @@ int NetPort::read(unsigned char *buf, int len, int ms)
 	}
 
 #if 0
-	if(len)
-	{
+    if(len) {
 		qDebug() << "read: " << hexToString(byteArray.data(), len); 
-	}
-	else
-	{
+    } else {
 		qDebug() << "read: 0 byes";
 	}
 #endif
@@ -131,41 +109,22 @@ int NetPort::read(unsigned char *buf, int len, int ms)
 
 int NetPort::write(unsigned char *buf, int len, int ms)
 {
-	if(!client)
-	{
-		return 0;
-	}
+    if(!client) reOpen();
 #if 0
     qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
     Q_UNUSED(ms)
-	//qDebug() << "read clearn Begin";
-	int iAvailable = client->bytesAvailable();
-	if(iAvailable)
-	{
-		client->readAll();
-	}
-	//qDebug() << "read clearn End";
-	//qDebug() << "write Begin";
+    int iAvailable = client->bytesAvailable();
+    if(iAvailable) client->readAll();
 	len = client->write((const char*)buf,len);
-	//qDebug() << "write End";
-	//qDebug() << "waitForReadyRead Begin";
-	if(client->waitForReadyRead(ms))
-	{
-		//qDebug() << "waitForReadyRead End 1";
-		return len;
-	}
-	//qDebug() << "waitForReadyRead End 0";
+    if(client->waitForReadyRead(ms)) return len;
 	return 0;
 }
 
 
 bool NetPort::close()
 {
-	if (client)
-	{
-		client->close();
-	}
+    if (client) client->close();
     return true;
 }
 

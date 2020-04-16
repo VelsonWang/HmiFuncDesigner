@@ -98,15 +98,14 @@ bool HmiRunTime::Load(SaveFormat saveFormat)
                 }
             }
             pVendorObj->m_pVendorPrivateObj = pComDevicePrivateObj;
-        } else if(sPortType == "NET") {
-            NetPort* pNetPortObj = new NetPort();
-            pVendorObj->m_pPortObj = pNetPortObj;
+        } else if(sPortType == "NET") {   
             NetDevicePrivate* pNetDevicePrivateObj = new NetDevicePrivate();
             if (pNetDevicePrivateObj->LoadData(sDeviceName)) {
                 QStringList netArgs;
                 netArgs << pNetDevicePrivateObj->m_sIpAddress;
                 netArgs << QString().number(pNetDevicePrivateObj->m_iPort);
-
+                NetPort* pNetPortObj = new NetPort(pNetDevicePrivateObj->m_sIpAddress, pNetDevicePrivateObj->m_iPort);
+                pVendorObj->m_pPortObj = pNetPortObj;
                 if(!pNetPortObj->open("Net", netArgs)) {
                     Log4Qt::Logger::logger("Run_Logger")->error("NetPort open fail!");
                     LogError("NetPort open fail!");
