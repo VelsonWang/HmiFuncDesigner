@@ -8,6 +8,7 @@ NetPort::NetPort(QString sIp,int tPort)
  	client = NULL;
 	port_ = tPort;
 	ip_ = sIp;
+    if(sIp.toLower() == "localhost") ip_ = "127.0.0.1";
 }
 
 
@@ -44,6 +45,7 @@ bool NetPort::open(QString port, QStringList args)
 {
     if(port == "" || args.length() != 2) return false;
     ip_ = args.at(0);
+    if(args.at(0).toLower() == "localhost") ip_ = "127.0.0.1";
     port_ = args.at(1).toInt();
     // 本函数在主线程调用！！！
     // 为避免跨线程调用QTcpSocket，在这里先不创建对象, 对象的创建放在线程中

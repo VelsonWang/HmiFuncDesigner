@@ -38,7 +38,8 @@ enum eTagDataType
 typedef enum eTagDataType TTagDataType;
 
 //------------------------------------------------------------------------------
-
+#pragma pack(push)
+#pragma pack(1)
 typedef union any
 {
 #define MAX_LEN    (64)
@@ -71,8 +72,11 @@ typedef union any
     }
 
 #undef MAX_LEN
-} __attribute__ ((packed)) TAny;
+} TAny;
+#pragma pack(pop)
 
+#pragma pack(push)
+#pragma pack(1)
 typedef struct tagDBTagObject
 {
     char szID[32]; // 变量ID
@@ -83,7 +87,8 @@ typedef struct tagDBTagObject
     quint8 byUpdateFromVendor; // 标记已从PLC，仪器等设备采集更新
     TAny rData; // 变量数据(read from device)
     TAny wData; // 变量数据(write to device)
-} __attribute__ ((packed)) TDBTagObject, *PDBTagObject;
+} TDBTagObject, *PDBTagObject;
+#pragma pack(pop)
 
 //------------------------------------------------------------------------------
 
