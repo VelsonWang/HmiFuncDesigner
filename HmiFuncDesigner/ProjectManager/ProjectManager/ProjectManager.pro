@@ -7,7 +7,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 QT += script
 QT += sql
 
-TARGET = project
+TARGET = ProjectManager
 TEMPLATE = app
 
 DESTDIR = $$IDE_BIN_PATH
