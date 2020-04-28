@@ -1,5 +1,4 @@
 ﻿#include "MessageTransfer.h"
-#include <QWidget>
 #include <QTimer>
 #include <QThread>
 #include <QDataStream>
@@ -8,13 +7,13 @@
 
 const char* MessageTransfer::ack = "ack";
 
-MessageTransfer::MessageTransfer(bool bServer) {
-    socketName = "HmiRunTime.MessageService";
+MessageTransfer::MessageTransfer(bool bServer, const QString szServerName) {
+    socketName = szServerName;
     if(bServer) {
         server = new QLocalServer(this);
         server->listen(socketName);
         QObject::connect(server, SIGNAL(newConnection()), SLOT(receiveConnection()));
-        qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "socketName: " << socketName;
+        //qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "socketName: " << socketName;
     }
 }
 
@@ -26,7 +25,7 @@ MessageTransfer::~MessageTransfer() {
 
 bool MessageTransfer::sendMessage(const QString &message, int timeout)
 {
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "message: " << message;
+    //qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "message: " << message;
     QLocalSocket socket;
     bool connOk = false;
     for(int i = 0; i < 2; i++) {
@@ -83,7 +82,7 @@ void MessageTransfer::receiveConnection() {
     socket->waitForBytesWritten(1000);
     socket->waitForDisconnected(1000); // make sure client reads ack
     delete socket;
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "messageReceived: " << message;
+    //qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "messageReceived: " << message;
     emit messageReceived(message); //### (might take a long time to return)
 }
 

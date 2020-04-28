@@ -79,7 +79,6 @@ win32 {
 SOURCES += \
     main.cpp \
     Port/ComPort.cpp \
-    MessageTransfer.cpp \
     SerialPortReMapping.cpp \
     Vendor.cpp \
     VendorPluginManager.cpp \
@@ -105,7 +104,6 @@ HEADERS  += \
     IVendor.h \
     Port/ComPort.h \
     Port/IPort.h \
-    MessageTransfer.h \
     SerialPortReMapping.h \
     VendorPluginManager.h \
     qextserial/qextserialport_global.h \
