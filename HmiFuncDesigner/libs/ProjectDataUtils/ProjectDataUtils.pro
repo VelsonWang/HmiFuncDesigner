@@ -7,6 +7,9 @@ QT += sql
 CONFIG -= shared dll
 CONFIG += staticlib
 
+INCLUDEPATH += orm/core \
+    orm/utils
+
 SOURCES += \
     $$PWD/TagSys.cpp \
     $$PWD/TagTmp.cpp \
@@ -21,7 +24,14 @@ SOURCES += \
     $$PWD/DatabaseSetting.cpp \
     $$PWD/UserAuthority.cpp \
     $$PWD/DeviceInfo.cpp \
-    $$PWD/PictureResourceManager.cpp
+    $$PWD/PictureResourceManager.cpp \
+    orm/core/databaseconfiguration.cpp \
+    orm/core/existingobjectsavestate.cpp \
+    orm/core/introspection.cpp \
+    orm/core/newobjectsavestate.cpp \
+    orm/core/qpersistantobject.cpp \
+    orm/core/qtpersistence.cpp \
+    orm/utils/inflection.cpp
 
 
 HEADERS += \
@@ -39,7 +49,18 @@ HEADERS += \
     $$PWD/DatabaseSetting.h \
     $$PWD/UserAuthority.h \
     $$PWD/DeviceInfo.h \
-    $$PWD/PictureResourceManager.h
+    $$PWD/PictureResourceManager.h \
+    orm/core/databaseconfiguration_p.h \
+    orm/core/existingobjectsavestate.h \
+    orm/core/introspection.h \
+    orm/core/newobjectsavestate.h \
+    orm/core/objectloader.h \
+    orm/core/objectsavestate.h \
+    orm/core/qpersistantobject.h \
+    orm/core/qpersistantobject_p.h \
+    orm/core/qtpersistence.h \
+    orm/utils/inflection.h \
+    orm/utils/inflection_p.h
 
 
 
