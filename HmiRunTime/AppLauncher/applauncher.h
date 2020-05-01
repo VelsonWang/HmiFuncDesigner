@@ -24,6 +24,7 @@ public:
 
 public slots:
     void criticalKill(const QString &szAppName);
+    void onMessageReceived(const QString &szMsg);
 
 private slots:
     void timeToCheckProcess();

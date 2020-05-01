@@ -12,7 +12,7 @@ class MessageTransfer : public QObject
     Q_OBJECT
 
 public:
-    MessageTransfer(bool bServer = false);
+    MessageTransfer(bool bServer = false, const QString szServerName = "HmiRunTime.MessageService");
     ~MessageTransfer();
 
     bool sendMessage(const QString &message, int timeout);

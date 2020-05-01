@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "GraphPage.h"
+#include "GraphPageView.h"
 
 class GraphPageManager : public QObject
 {

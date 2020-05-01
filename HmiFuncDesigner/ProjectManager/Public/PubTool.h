@@ -50,6 +50,29 @@ public:
 
     inline static QRect InflateRect(QRect &rect, int offset);
     inline static QRect DeflateRect(QRect &rect, int offset);
+
+public:
+    static void draw3DRect(QPainter& pnt, QColor& col, int x, int y, int w, int h, bool up);
+    static void draw3DRect(QPainter& pnt, const QColor& colLight, const QColor& colDark, int x, int y, int w, int h, bool up);
+    static void drawRectangle(QPainter& pnt, const QRect& rc, const QColor& pen, const QColor& brush);
+    static void drawTriangle(QPainter& pnt, const QPoint& pt0, const QPoint& pt1, const QPoint& pt2, const QColor& color);
+
+    static void drawGradientFill(QPainter& pnt, const QRect& rect, const QColor& crFrom, const QColor& crTo, bool bHorz);
+
+    static QRgb lightColor(QRgb clr, int nTint);
+    static QRgb darkColor(QRgb clr, int nShade);
+
+    static void RGBtoHSL(QRgb clr, double& h, double& s, double& l);
+
+    static QRgb HSLtoRGB(double h, double s, double l);
+
+    static QRgb blendColors(QRgb crA, QRgb crB, double fAmountA);
+
+private:
+    static double HueToRGB(double temp1, double temp2, double temp3);
+    static int HueToRGB(int m1, int m2, int h);
+    static QLinearGradient generateGradient(const QRect& rect, const QColor& crFrom, const QColor& crTo, bool bHorz);
+
 };
 
 

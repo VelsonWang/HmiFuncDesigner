@@ -1,8 +1,10 @@
 #include <QApplication>
 #include <QDebug>
+#include <QObject>
 #include "applauncher.h"
 #include "ConfigUtils.h"
 #include "Helper.h"
+#include "MessageTransfer.h"
 
 QString g_szAppFileTransferTool = ""; // 工程文件传输工具文件
 QString g_szAppHmiRunTimeData = ""; // 数据采集程序文件
@@ -24,11 +26,6 @@ void getApplicationFiles()
     }
 }
 
-//
-// TODO
-// 后期加入进程监控...
-//
-
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
@@ -45,6 +42,10 @@ int main(int argc, char *argv[])
 
     // Step-3 启动进程：画面视图
     appLauncher.execute(g_szAppHmiRunTimeView, QStringList());
+
+    // Step-4 开启消息服务
+    MessageTransfer server(true);
+    QObject::connect(&server, &MessageTransfer::messageReceived, &appLauncher, &AppLauncher::onMessageReceived);
 
     return app.exec();
 }

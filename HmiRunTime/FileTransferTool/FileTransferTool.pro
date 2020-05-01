@@ -41,6 +41,7 @@ LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt$${LIB_SUFFIX}
 
 #include(../QFtpServer/QFtpServer.pri)
+include(../MessageTransfer/MessageTransfer.pri)
 
 SOURCES += \
         main.cpp \

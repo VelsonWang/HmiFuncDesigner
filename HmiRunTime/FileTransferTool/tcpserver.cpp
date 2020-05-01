@@ -1,7 +1,6 @@
 ﻿#include "tcpserver.h"
 #include "threadhandle.h"
-//#include "HmiRunTime.h"
-//#include "SysRuntimeEvent.h"
+#include "MessageTransfer.h"
 
 TcpServer::TcpServer(QObject *parent, int numConnections) :
     QTcpServer(parent)
@@ -62,9 +61,6 @@ void TcpServer::clear()
 
 void TcpServer::reStartRuntime()
 {
-    //if(g_pHmiRunTime != Q_NULLPTR)
-    {
-        //SysRuntimeEvent runtimeEv(static_cast<QEvent::Type>(EV_RestartRuntime));
-        //QCoreApplication::sendEvent(g_pHmiRunTime, &runtimeEv);
-    }
+    MessageTransfer client;
+    client.sendMessage("download_project", 1000);
 }

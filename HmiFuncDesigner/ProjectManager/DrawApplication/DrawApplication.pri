@@ -41,6 +41,7 @@ SOURCES += \
     $$PWD/GetWidthHeightDialog.cpp \
 #    main.cpp \
     $$PWD/GraphPage.cpp \
+	$$PWD/GraphPageView.cpp \
     $$PWD/GraphPageManager.cpp \
     $$PWD/UndoCommand.cpp \
     $$PWD/ElementLibraryWidget.cpp \
@@ -58,6 +59,7 @@ HEADERS  += \
     $$PWD/DrawMainWindow.h \
     $$PWD/GetWidthHeightDialog.h \
     $$PWD/GraphPage.h \
+	$$PWD/GraphPageView.h \
     $$PWD/GraphPageManager.h \
     $$PWD/UndoCommand.h \
     $$PWD/ElementLibraryWidget.h \

@@ -5,6 +5,7 @@
 #include <QDir>
 #include <QApplication>
 #include <QMessageBox>
+#include <QThread>
 #include <QDebug>
 
 
@@ -193,4 +194,44 @@ void AppLauncher::timeToCheckProcess()
         qDebug() << QString("process [id: %1 name: %2]").arg(it.key(), 8, 10, QChar('0')).arg(app.name);
     }
     qDebug() << "----------------------------------------";
+}
+
+extern QString g_szAppFileTransferTool; // 工程文件传输工具文件
+extern QString g_szAppHmiRunTimeData; // 数据采集程序文件
+extern QString g_szAppHmiRunTimeView; // 画面视图程序文件
+
+void AppLauncher::onMessageReceived(const QString &szMsg)
+{
+    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "messageReceived: " << szMsg;
+    if(szMsg.toLower() == "download_project") {
+        criticalKill(g_szAppHmiRunTimeData);
+        int iCnt = 0;
+        while (isRunning(g_szAppHmiRunTimeData)) {
+            QThread::msleep(100);
+            iCnt++;
+            if(iCnt > 50) {
+                qDebug() << "stop application: " << g_szAppHmiRunTimeData << " fail!";
+                break;
+            }
+        }
+        if(!isRunning(g_szAppHmiRunTimeData)) {
+            execute(g_szAppHmiRunTimeData, QStringList());
+        }
+
+        //----------------------------------------------------------------------
+
+        criticalKill(g_szAppHmiRunTimeView);
+        iCnt = 0;
+        while (isRunning(g_szAppHmiRunTimeView)) {
+            QThread::msleep(100);
+            iCnt++;
+            if(iCnt > 50) {
+                qDebug() << "stop application: " << g_szAppHmiRunTimeView << " fail!";
+                break;
+            }
+        }
+        if(!isRunning(g_szAppHmiRunTimeView)) {
+            execute(g_szAppHmiRunTimeView, QStringList());
+        }
+    }
 }

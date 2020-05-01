@@ -32,6 +32,8 @@ LINK_LIBRARY_PATH = $$clean_path($$IDE_APP_PATH/../lib)
 INCLUDEPATH += $$LIBRARY_SRC_PATH/libs/Utils
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 
+include(../MessageTransfer/MessageTransfer.pri)
+
 SOURCES += \
         applauncher.cpp \
         main.cpp
