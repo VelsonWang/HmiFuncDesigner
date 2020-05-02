@@ -56,7 +56,7 @@ private:
     bool isGraphPageOpen(const QString &filename);
 
     bool createDocument(GraphPage *graphPage,
-                        GraphPageView *view,
+                        QGraphicsView *view,
                         const QString &filename);
     // 创建空的画面页
     void createEmptyGraphpage(const QString &projPath,
@@ -74,7 +74,7 @@ public slots:
     void propertyValueChanged(QtProperty *property, const QVariant &value);
 
 private slots:
-    GraphPageView *createTabView();
+    QGraphicsView *createTabView();
     void slotShowGraphObj(bool);
     void slotShowTreeObj(bool);
     void slotShowPropEditor(bool);
@@ -157,7 +157,7 @@ private:
     QAction *downLayerAction_; // 下移一层
 
     GraphPage *currentGraphPage_;
-    GraphPageView *currentView_;
+    QGraphicsView *currentView_;
 
     QTabWidget *graphPageTabWidget_;
     ObjectsTreeView *objTree_;

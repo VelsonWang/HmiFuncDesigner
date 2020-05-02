@@ -313,7 +313,7 @@ void DrawMainWindow::openGraphPage(const QString &szProjPath,
         QString fileName = szProjPath + "/" + szPageId + ".drw";
 
         if (fileName.toLower().endsWith(".drw")) {
-            GraphPageView *view = createTabView();
+            QGraphicsView *view = createTabView();
 
             if (graphPageTabWidget_->indexOf(view) != -1) {
                 delete view;
@@ -327,14 +327,14 @@ void DrawMainWindow::openGraphPage(const QString &szProjPath,
 
             if(szPageId == szPageName) {
                 currentGraphPage_ = graphPage;
-                currentView_ = dynamic_cast<GraphPageView *>(view);
+                currentView_ = dynamic_cast<QGraphicsView *>(view);
             }
 
             graphPage->setProjectPath(szProjPath);
             graphPage->setProjectName(szProjName);
             graphPage->setGridVisible(gridVisible_);
             graphPage->loadAsXML(fileName);
-            view->setFixedSizeEx(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+            view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szPageId + ".drw");
             graphPage->setGraphPageId(szPageId);
             graphPage->fillGraphPagePropertyModel();
@@ -411,7 +411,7 @@ bool DrawMainWindow::isGraphPageOpen(const QString &filename)
 
 void DrawMainWindow::addNewGraphPage()
 {
-    GraphPageView *view = createTabView();
+    QGraphicsView *view = createTabView();
 
     if (graphPageTabWidget_->indexOf(view) != -1) {
         delete view;
@@ -424,8 +424,8 @@ void DrawMainWindow::addNewGraphPage()
     graphPage->setGridVisible(gridVisible_);
     currentGraphPage_ = graphPage;
     view->setScene(graphPage);
-    view->setFixedSizeEx(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    currentView_ = dynamic_cast<GraphPageView *>(view);
+    view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+    currentView_ = dynamic_cast<QGraphicsView *>(view);
     QString title = fixedWindowTitle(view);
     graphPage->setFileName(title + ".drw");
     graphPage->setGraphPageId(title);
@@ -467,9 +467,9 @@ void DrawMainWindow::disconnectGraphPage(GraphPage *graphPage)
     disconnect(graphPage, SIGNAL(GraphPageSaved()), this, SLOT(slotUpdateActions()));
 }
 
-GraphPageView *DrawMainWindow::createTabView()
+QGraphicsView *DrawMainWindow::createTabView()
 {
-    GraphPageView *view = new GraphPageView();
+    QGraphicsView *view = new QGraphicsView();
     view->setDragMode(QGraphicsView::RubberBandDrag);
     view->setCacheMode(QGraphicsView::CacheBackground);
     view->setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
@@ -484,12 +484,7 @@ void DrawMainWindow::slotUpdateActions()
     static const QIcon unsaved(":/DrawAppImages/filesave.png");
 
     for (int i = 0; i < graphPageTabWidget_->count(); i++) {
-        GraphPageView *view = dynamic_cast<GraphPageView*>(graphPageTabWidget_->widget(i));
-        GraphPage *scene = dynamic_cast<GraphPage *>(view->scene());
-        view->setFixedSizeEx(scene->getGraphPageWidth(), scene->getGraphPageHeight());
-        if (!scene->selectedItems().isEmpty()) {
-            view->setPageItem(dynamic_cast<QGraphicsObject*>(scene->selectedItems().first()));
-        }
+        QGraphicsView *view = dynamic_cast<QGraphicsView*>(graphPageTabWidget_->widget(i));
         if (!dynamic_cast<GraphPage *>(view->scene())->undoStack()->isClean() ||
             dynamic_cast<GraphPage *>(view->scene())->getUnsavedFlag()) {
             graphPageTabWidget_->setTabIcon(graphPageTabWidget_->indexOf(view), unsaved);
@@ -529,7 +524,7 @@ void DrawMainWindow::slotChangeGraphPage(int GraphPageNum)
         dynamic_cast<GraphPage *>(view->scene())->setActive(false);
     }
 
-    currentView_ = dynamic_cast<GraphPageView *>(graphPageTabWidget_->widget(GraphPageNum));
+    currentView_ = dynamic_cast<QGraphicsView *>(graphPageTabWidget_->widget(GraphPageNum));
     currentGraphPage_ = dynamic_cast<GraphPage *>(currentView_->scene());
     currentGraphPage_->setActive(true);
     //currentGraphPage_->fillGraphPagePropertyModel();
@@ -686,7 +681,7 @@ void DrawMainWindow::slotEditOpen()
 #endif
     if (filename.toLower().endsWith(".drw")) {
 
-        GraphPageView *view = createTabView();
+        QGraphicsView *view = createTabView();
 
         if (graphPageTabWidget_->indexOf(view) != -1) {
             delete view;
@@ -699,7 +694,7 @@ void DrawMainWindow::slotEditOpen()
         } 
 
         currentGraphPage_ = graphPage;
-        currentView_ = dynamic_cast<GraphPageView *>(view);
+        currentView_ = dynamic_cast<QGraphicsView *>(view);
         graphPage->setProjectPath(szProjPath_);
         graphPage->setProjectName(szProjName_);
         graphPage->loadAsXML(filename);
@@ -714,7 +709,7 @@ void DrawMainWindow::slotEditOpen()
 }
 
 bool DrawMainWindow::createDocument(GraphPage *graphPage,
-                                GraphPageView *view,
+                                QGraphicsView *view,
                                 const QString &filename)
 {
     if (isGraphPageOpen(filename)) {
@@ -729,7 +724,7 @@ bool DrawMainWindow::createDocument(GraphPage *graphPage,
 
     graphPage->setGridVisible(gridVisible_);
     view->setScene(graphPage);
-    view->setFixedSizeEx(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+    view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
     graphPageTabWidget_->addTab(view, graphPage->getGraphPageId());
     graphPageTabWidget_->setCurrentWidget(view);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
@@ -846,7 +841,7 @@ void DrawMainWindow::slotZoomIn()
     }
     if (currentView_ != nullptr) {
         currentView_->scale(1.25, 1.25);
-        currentView_->setFixedSizeEx(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
+        currentView_->setFixedSize(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
     }
 }
 
@@ -861,7 +856,7 @@ void DrawMainWindow::slotZoomOut()
     }
     if (currentView_ != nullptr) {
         currentView_->scale(1/1.25, 1/1.25);
-        currentView_->setFixedSizeEx(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
+        currentView_->setFixedSize(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
     }
 }
 
@@ -1109,7 +1104,7 @@ reInput:
         QString fileName = szProjPath_ + "/" + szGraphPageName + ".drw";
 
         if (fileName.toLower().endsWith(".drw")) {
-            GraphPageView *view = createTabView();
+            QGraphicsView *view = createTabView();
 
             if (graphPageTabWidget_->indexOf(view) != -1) {
                 delete view;
@@ -1122,11 +1117,11 @@ reInput:
             }
 
             currentGraphPage_ = graphPage;
-            currentView_ = dynamic_cast<GraphPageView *>(view);
+            currentView_ = dynamic_cast<QGraphicsView *>(view);
             graphPage->setProjectPath(szProjPath_);
             graphPage->setProjectName(szProjName_);
             graphPage->loadAsXML(fileName);
-            view->setFixedSizeEx(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+            view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szGraphPageName + ".drw");
             graphPage->setGraphPageId(szGraphPageName);
         }
@@ -1264,7 +1259,7 @@ reGetNum:
     file.copy(szPasteFileName);
 
     if (szPasteFileName.toLower().endsWith(".drw")) {
-        GraphPageView *view = createTabView();
+        QGraphicsView *view = createTabView();
 
         if (graphPageTabWidget_->indexOf(view) != -1) {
             delete view;
@@ -1277,11 +1272,11 @@ reGetNum:
         }
 
         currentGraphPage_ = graphPage;
-        currentView_ = dynamic_cast<GraphPageView *>(view);
+        currentView_ = dynamic_cast<QGraphicsView *>(view);
         graphPage->setProjectPath(szProjPath_);
         graphPage->setProjectName(szProjName_);
         graphPage->loadAsXML(szPasteFileName);
-        view->setFixedSizeEx(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
+        view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         graphPage->setFileName(strDrawPageName + ".drw");
         graphPage->setGraphPageId(strDrawPageName);
     }
