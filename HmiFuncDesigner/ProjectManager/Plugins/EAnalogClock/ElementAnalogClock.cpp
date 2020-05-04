@@ -57,20 +57,10 @@ void ElementAnalogClock::release()
 QRectF ElementAnalogClock::boundingRect() const
 {
     qreal extra = 5;
-    QRectF rect(elementRect_.toRect());
+    QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra,-extra,extra,extra);
 }
 
-QPainterPath ElementAnalogClock::shape() const
-{
-    QPainterPath path;
-    path.addRect(elementRect_);
-    if (isSelected()) {
-        path.addRect(QRectF(elementRect_.topLeft() - QPointF(3,3), elementRect_.topLeft() + QPointF(3,3)));
-        path.addRect(QRectF(elementRect_.bottomRight() - QPointF(3,3), elementRect_.bottomRight() + QPointF(3,3)));
-    }
-    return path;
-}
 
 void ElementAnalogClock::createPropertyList()
 {
@@ -271,13 +261,13 @@ void ElementAnalogClock::setClickPosition(QPointF position)
     elementYPos = static_cast<int>(position.y());
     setX(elementXPos);
     setY(elementYPos);
-    elementRect_.setRect(0,0,elementWidth,elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
 void ElementAnalogClock::updateBoundingElement()
 {
-    elementRect_.setRect(0, 0, elementWidth, elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementAnalogClock::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -290,7 +280,7 @@ void ElementAnalogClock::paint(QPainter *painter, const QStyleOptionGraphicsItem
     // 背景色不透明显示
     if(!transparentBackground_) {
         QBrush brush(backgroundColor_);
-        painter->fillRect(elementRect_, brush);
+        painter->fillRect(elementRect, brush);
     }
 
     // 绘制时钟
@@ -300,19 +290,10 @@ void ElementAnalogClock::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setPen(QPen(borderColor_, borderWidth_));
     painter->setBrush(Qt::NoBrush);
     if(borderWidth_ > 0)
-        painter->drawRect(elementRect_);
+        painter->drawRect(elementRect);
 
-    if (isSelected()) {
-        painter->setPen(QPen(borderColor));
-        painter->setBrush(Qt::NoBrush);
-        painter->drawRect(boundingRect());
-
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementRect_.topLeft() - QPointF(3,3), elementRect_.topLeft() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementRect_.bottomRight() - QPointF(3,3), elementRect_.bottomRight() + QPointF(3,3)));
-    }
+    // 绘制选中状态
+    paintSelected(painter, borderWidth_);
 }
 
 
@@ -324,12 +305,12 @@ void ElementAnalogClock::drawAnalogClock(QPainter *painter)
     QColor minuteColor(0, 127, 127, 191);
     QColor secondColor(127, 127, 0, 191);
 
-    int iMin = qMin(elementRect_.width(), elementRect_.height());
-    int iMax = qMax(elementRect_.width(), elementRect_.height());
+    int iMin = qMin(elementRect.width(), elementRect.height());
+    int iMax = qMax(elementRect.width(), elementRect.height());
     QTime time = QTime::currentTime();
 
     painter->setRenderHint(QPainter::Antialiasing);
-    painter->translate(elementRect_.width() / 2, elementRect_.height() / 2);
+    painter->translate(elementRect.width() / 2, elementRect.height() / 2);
     //painter->scale(1.0 * iMin / iMax, 1.0 * iMin / iMax);
 
     // 绘制时针
@@ -397,113 +378,6 @@ void ElementAnalogClock::drawAnalogClock(QPainter *painter)
     painter->restore();
 }
 
-void ElementAnalogClock::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    QPointF mousePoint = event->pos();
-
-    if (resizing) {
-        setCursor(Qt::SizeFDiagCursor);
-
-        switch (rd) {
-        case RdBottomRight:
-            elementRect_.setBottomRight(mousePoint);
-            elementWidth = static_cast<int>(qAbs(elementRect_.topLeft().x() - elementRect_.bottomRight().x()));
-            elementHeight = static_cast<int>(qAbs(elementRect_.topLeft().y() - elementRect_.bottomRight().y()));
-            break;
-        case RdTopLeft:
-            elementRect_.setTopLeft(mousePoint);
-            setElementXPos(static_cast<int>(mapToScene(elementRect_.topLeft()).x()));
-            setElementYPos(static_cast<int>(mapToScene(elementRect_.topLeft()).y()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect_.topLeft()).x() - mapToScene(elementRect_.bottomRight()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect_.topLeft()).y() - mapToScene(elementRect_.bottomRight()).y())));
-            updateBoundingElement();
-            break;
-        case RdNone:
-            QGraphicsObject::mouseMoveEvent(event);
-            break;
-        }
-
-        scene()->update();
-        return;
-    } else {
-        QGraphicsObject::mouseMoveEvent(event);
-        // 限制矩形区域
-        RestrictedRectangularRegion();
-    }
-}
-
-void ElementAnalogClock::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect_.topLeft();
-    QPointF bottomRight = elementRect_.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
-}
-
-void ElementAnalogClock::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    setCursor(Qt::ArrowCursor);
-    elementXPos = static_cast<int>(pos().x());
-    elementYPos = static_cast<int>(pos().y());
-    updatePropertyModel();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
-}
-
-void ElementAnalogClock::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect_.topLeft();
-    QPointF bottomRight = elementRect_.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
-}
 
 void ElementAnalogClock::writeAsXml(QXmlStreamWriter &writer)
 {

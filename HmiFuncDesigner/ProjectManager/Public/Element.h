@@ -87,6 +87,18 @@ public:
     void RestrictedRectangularRegion();
 
 protected:
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent* event) override;
+    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
+    // 绘制选中状态
+    virtual void paintSelected(QPainter *painter, int iLineWidth);
+
+
+protected:
     QString elementId;
     QColor backgroundColor;
     QColor signBackgroundColor;
@@ -114,11 +126,18 @@ protected:
     QRectF handleBottom;
     QList<QtProperty*> propList;
 
-    enum ResizeDirection
-    {
-        RdBottomRight,
-        RdTopLeft,
-        RdNone
+    QRectF elementRect;
+
+    enum ResizeDirection {
+        ResizeNone,
+        ResizeLeft,
+        ResizeRight,
+        ResizeTop,
+        ResizeBottom,
+        ResizeTopLeft,
+        ResizeBottomLeft,
+        ResizeTopRight,
+        ResizeBottomRight,
     };
 
     ResizeDirection rd;

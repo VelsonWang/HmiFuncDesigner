@@ -35,13 +35,8 @@ public:
     friend QDataStream &operator>>(QDataStream &in, ElementAnalogClock &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
 
 private:
     void drawAnalogClock(QPainter *painter);
@@ -52,7 +47,6 @@ private:
 
 private:
     static int iLastIndex_;
-    QRectF elementRect_;
     // 时钟间隔
     double period_;
     // 选择功能

@@ -33,14 +33,9 @@ public:
     friend QDataStream &operator>>(QDataStream &in,ElementIndicationLamp &IndicationLamp);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
 
 private:
     QStringList tagNames_;
@@ -55,9 +50,6 @@ private:
     QString resetFileIndicationLamp_;
     // 置位图片
     QString setFileIndicationLamp_;
-
-    QRectF elementRect;
-
     // 原尺寸显示
     bool showNoScale_;
     // 初始可见性

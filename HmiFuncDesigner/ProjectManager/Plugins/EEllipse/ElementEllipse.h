@@ -33,13 +33,8 @@ public:
     friend QDataStream &operator>>(QDataStream &in,ElementEllipse &rect);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
 
 private:
     QStringList tagNames_;
@@ -60,8 +55,6 @@ private:
     QColor borderColor_;
     // 初始可见性
     bool showOnInitial_;
-
-    QRectF elementRect;  
 };
 
 #endif // ELEMENTELLIPSE_H

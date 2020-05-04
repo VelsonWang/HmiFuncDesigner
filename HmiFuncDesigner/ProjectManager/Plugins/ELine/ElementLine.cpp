@@ -41,13 +41,12 @@ QRectF ElementLine::boundingRect() const
     const qreal x2 = elementLine.p2().x();
     const qreal y1 = elementLine.p1().y();
     const qreal y2 = elementLine.p2().y();
-    qreal lx = qMin(x1,x2);
-    qreal rx = qMax(x1,x2);
-    qreal ty = qMin(y1,y2);
-    qreal by = qMax(y1,y2);
+    qreal lx = qMin(x1, x2);
+    qreal rx = qMax(x1, x2);
+    qreal ty = qMin(y1, y2);
+    qreal by = qMax(y1, y2);
 
-    return QRectF(lx, ty, rx - lx, by - ty).normalized()
-            .adjusted(-extra, -extra, extra, extra);;
+    return QRectF(lx, ty, rx - lx, by - ty).normalized().adjusted(-extra, -extra, extra, extra);;
 }
 
 void ElementLine::createPropertyList()
@@ -197,12 +196,14 @@ void ElementLine::setClickPosition(QPointF position)
     prepareGeometryChange();
     setElementXPos(static_cast<int>(position.x()));
     setElementYPos(static_cast<int>(position.y()));
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
     elementLine.setLine(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
 void ElementLine::updateBoundingElement()
 {
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
     elementLine.setLine(0, 0, elementWidth, elementHeight);
 }
 
@@ -216,99 +217,10 @@ void ElementLine::paint(QPainter *painter,
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
     painter->setPen(QPen(borderColor_, borderWidth_));
     painter->drawLine(elementLine);
-
-    if (isSelected()) {
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementLine.p1() - QPointF(3,3),elementLine.p1() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementLine.p2() - QPointF(3,3),elementLine.p2() + QPointF(3,3)));
-    }
+    // 绘制选中状态
+    paintSelected(painter, borderWidth_);
 }
 
-void ElementLine::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    if (resizing) {
-        setCursor(Qt::SizeFDiagCursor);
-        QPointF mousePoint = event->pos();
-        switch (rd) {
-        case RdBottomRight:
-            elementLine.setP2(mousePoint);
-            elementWidth = static_cast<int>(qAbs(elementLine.p1().x() - elementLine.p2().x()));
-            elementHeight = static_cast<int>(qAbs(elementLine.p1().y() - elementLine.p2().y()));
-            break;
-        case RdTopLeft:
-            elementLine.setP1(mousePoint);
-            setElementXPos(static_cast<int>(mapToScene(elementLine.p1()).x()));
-            setElementYPos(static_cast<int>(mapToScene(elementLine.p1()).y()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementLine.p1()).x() - mapToScene(elementLine.p2()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementLine.p1()).y() - mapToScene(elementLine.p2()).y())));
-            updateBoundingElement();
-            break;
-        case RdNone:
-            QGraphicsObject::mouseMoveEvent(event);
-            break;
-        }
-
-        scene()->update();
-        return;
-    } else {
-        QGraphicsObject::mouseMoveEvent(event);
-        // 限制矩形区域
-        RestrictedRectangularRegion();
-    }
-}
-
-void ElementLine::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF pp1 = elementLine.p1();
-    QPointF pp2 = elementLine.p2();
-
-    if (mousePoint.x() <= (pp1.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (pp1.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (pp1.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (pp1.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (pp2.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (pp2.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (pp2.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (pp2.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
-}
-
-void ElementLine::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    setCursor(Qt::ArrowCursor);
-    elementXPos = static_cast<int>(pos().x());
-    elementYPos = static_cast<int>(pos().y());
-    updatePropertyModel();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
-}
 
 void ElementLine::writeAsXml(QXmlStreamWriter &writer)
 {

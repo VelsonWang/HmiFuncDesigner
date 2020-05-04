@@ -58,20 +58,11 @@ void ElementTagTextList::release()
 QRectF ElementTagTextList::boundingRect() const
 {
     qreal extra = 5;
-    QRectF rect(elementRect_.toRect());
+    QRectF rect(elementRect.toRect());
     return rect.normalized().adjusted(-extra,-extra,extra,extra);
 }
 
-QPainterPath ElementTagTextList::shape() const
-{
-    QPainterPath path;
-    path.addRect(elementRect_);
-    if (isSelected()) {
-        path.addRect(QRectF(elementRect_.topLeft() - QPointF(3,3), elementRect_.topLeft() + QPointF(3,3)));
-        path.addRect(QRectF(elementRect_.bottomRight() - QPointF(3,3), elementRect_.bottomRight() + QPointF(3,3)));
-    }
-    return path;
-}
+
 
 void ElementTagTextList::createPropertyList()
 {
@@ -330,13 +321,13 @@ void ElementTagTextList::setClickPosition(QPointF position)
     elementYPos = static_cast<int>(position.y());
     setX(elementXPos);
     setY(elementYPos);
-    elementRect_.setRect(0,0,elementWidth,elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
     updatePropertyModel();
 }
 
 void ElementTagTextList::updateBoundingElement()
 {
-    elementRect_.setRect(0, 0, elementWidth, elementHeight);
+    elementRect.setRect(0, 0, elementWidth, elementHeight);
 }
 
 void ElementTagTextList::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -349,7 +340,7 @@ void ElementTagTextList::paint(QPainter *painter, const QStyleOptionGraphicsItem
     // 背景色不透明显示
     if(!transparentBackground_) {
         QBrush brush(backgroundColor_);
-        painter->fillRect(elementRect_, brush);
+        painter->fillRect(elementRect, brush);
     }
 
     // 绘制文本
@@ -359,19 +350,10 @@ void ElementTagTextList::paint(QPainter *painter, const QStyleOptionGraphicsItem
     painter->setPen(QPen(borderColor_, borderWidth_));
     painter->setBrush(Qt::NoBrush);
     if(borderWidth_ > 0)
-        painter->drawRect(elementRect_);
+        painter->drawRect(elementRect);
 
-    if (isSelected()) {
-        painter->setPen(QPen(borderColor));
-        painter->setBrush(Qt::NoBrush);
-        painter->drawRect(boundingRect());
-
-        setCursor(Qt::SizeAllCursor);
-        painter->setBrush(Qt::red);
-        painter->setPen(Qt::red);
-        painter->drawRect(QRectF(elementRect_.topLeft() - QPointF(3,3), elementRect_.topLeft() + QPointF(3,3)));
-        painter->drawRect(QRectF(elementRect_.bottomRight() - QPointF(3,3), elementRect_.bottomRight() + QPointF(3,3)));
-    }
+    // 绘制选中状态
+    paintSelected(painter, borderWidth_);
 }
 
 void ElementTagTextList::drawTagTextList(QPainter *painter)
@@ -398,78 +380,10 @@ void ElementTagTextList::drawTagTextList(QPainter *painter)
         vFlags = Qt::AlignBottom;
     }
 
-    QRectF rect(elementRect_.toRect());
+    QRectF rect(elementRect.toRect());
     QRectF textRect = rect.normalized().adjusted(borderWidth_, borderWidth_, -borderWidth_, -borderWidth_);
 
     painter->drawText(textRect, hFlags|vFlags, elementText);
-}
-
-void ElementTagTextList::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    QPointF mousePoint = event->pos();
-
-    if (resizing) {
-        setCursor(Qt::SizeFDiagCursor);
-
-        switch (rd) {
-        case RdBottomRight:
-            elementRect_.setBottomRight(mousePoint);
-            elementWidth = static_cast<int>(qAbs(elementRect_.topLeft().x() - elementRect_.bottomRight().x()));
-            elementHeight = static_cast<int>(qAbs(elementRect_.topLeft().y() - elementRect_.bottomRight().y()));
-            break;
-        case RdTopLeft:
-            elementRect_.setTopLeft(mousePoint);
-            setElementXPos(static_cast<int>(mapToScene(elementRect_.topLeft()).x()));
-            setElementYPos(static_cast<int>(mapToScene(elementRect_.topLeft()).y()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect_.topLeft()).x() - mapToScene(elementRect_.bottomRight()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect_.topLeft()).y() - mapToScene(elementRect_.bottomRight()).y())));
-            updateBoundingElement();
-            break;
-        case RdNone:
-            QGraphicsObject::mouseMoveEvent(event);
-            break;
-        }
-
-        scene()->update();
-        return;
-    } else {
-        QGraphicsObject::mouseMoveEvent(event);
-        // 限制矩形区域
-        RestrictedRectangularRegion();
-    }
-}
-
-void ElementTagTextList::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect_.topLeft();
-    QPointF bottomRight = elementRect_.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = RdTopLeft;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = RdBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    } else {
-        resizing = false;
-        rd = RdNone;
-    }
-
-    oldPos = pos();
-    oldWidth = elementWidth;
-    oldHeight = elementHeight;
-
-    QGraphicsObject::mousePressEvent(event);
 }
 
 
@@ -521,47 +435,6 @@ void ElementTagTextList::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
         update();
     }
     QGraphicsObject::mouseDoubleClickEvent(event);
-}
-
-
-void ElementTagTextList::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
-{
-    setCursor(Qt::ArrowCursor);
-    elementXPos = static_cast<int>(pos().x());
-    elementYPos = static_cast<int>(pos().y());
-    updatePropertyModel();
-
-    if (oldPos != pos()) {
-        emit elementMoved(oldPos);
-    }
-
-    if (resizing) {
-        emit elementResized(oldWidth,oldHeight,oldPos);
-    }
-
-    QGraphicsObject::mouseReleaseEvent(event);
-}
-
-void ElementTagTextList::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    QPointF mousePoint = event->pos();
-    QPointF mouseHandler = QPointF(3,3);
-    QPointF topLeft = elementRect_.topLeft();
-    QPointF bottomRight = elementRect_.bottomRight();
-
-    if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-        mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-        mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-        mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    } else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        setCursor(Qt::SizeFDiagCursor);
-    }
-
-    QGraphicsObject::hoverEnterEvent(event);
 }
 
 

@@ -33,18 +33,12 @@ public:
     friend QDataStream &operator>>(QDataStream &in,ElementPicture &Picture);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
 
 private:
     static int iLastIndex_;
-    QRectF elementRect;
     QString filePicture_;
     // 原尺寸显示
     bool showNoScale_;

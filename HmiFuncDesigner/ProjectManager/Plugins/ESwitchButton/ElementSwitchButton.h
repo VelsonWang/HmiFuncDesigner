@@ -36,14 +36,9 @@ public:
     friend QDataStream &operator>>(QDataStream &in, ElementSwitchButton &textItem);
 
 protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) override;
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
     QRectF boundingRect() const override;
-    QPainterPath shape() const override;
 
 private:
     void drawSwitchButton(QPainter *painter);
@@ -60,7 +55,6 @@ private:
 
 private:
     static int iLastIndex_;
-    QRectF elementRect;
     QStringList funcs_;
     // 关联的变量
     QString szTagSelected_;

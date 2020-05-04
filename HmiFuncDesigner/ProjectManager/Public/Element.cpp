@@ -1,4 +1,6 @@
 ﻿#include "Element.h"
+#include <QGraphicsSceneHoverEvent>
+#include <QPainter>
 
 Element::Element(const QString &szProjPath,
                  const QString &szProjName,
@@ -143,7 +145,7 @@ void Element::init()
 
     setSelected(true);
 
-    rd = RdNone;
+    rd = ResizeNone;
 }
 
 void Element::setBlocked(bool blocked)
@@ -350,4 +352,325 @@ void Element::clearProperties()
     propertyToId_.clear();
     idToProperty_.clear();
 }
+
+
+void Element::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    update();
+    QGraphicsObject::hoverEnterEvent(event);
+}
+
+
+void Element::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    setCursor(QCursor(Qt::ArrowCursor));
+    scene()->update(sceneBoundingRect());
+    update();
+    QGraphicsObject::hoverLeaveEvent(event);
+}
+
+
+void Element::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if(this->isSelected()) {
+        QPointF mousePoint = event->pos();
+        QPointF mouseHandler = QPointF(5, 5);
+        QPointF topLeft = elementRect.topLeft();
+        QPointF topRight = elementRect.topRight();
+        QPointF bottomLeft = elementRect.bottomLeft();
+        QPointF bottomRight = elementRect.bottomRight();
+
+        // resize top
+        if (mousePoint.x() >= (topLeft.x() + mouseHandler.x()) &&
+                mousePoint.x() <= (topRight.x() - mouseHandler.x()) &&
+                mousePoint.y() >= (topLeft.y() - mouseHandler.y()) &&
+                mousePoint.y() <= (topLeft.y() + mouseHandler.y())) {
+            setCursor(Qt::SizeVerCursor);
+        }
+        // resize bottom
+        else if (mousePoint.x() >= (bottomLeft.x() + mouseHandler.x()) &&
+                 mousePoint.x() <= (bottomRight.x() - mouseHandler.x()) &&
+                 mousePoint.y() >= (bottomLeft.y() - mouseHandler.y()) &&
+                 mousePoint.y() <= (bottomLeft.y() + mouseHandler.y())) {
+            setCursor(Qt::SizeVerCursor);
+        }
+        // resize left
+        else if (mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
+                 mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
+                 mousePoint.y() >= (topLeft.y() + mouseHandler.y()) &&
+                 mousePoint.y() <= (bottomLeft.y() - mouseHandler.y())) {
+            setCursor(Qt::SizeHorCursor);
+        }
+        // resize right
+        else if (mousePoint.x() >= (topRight.x() - mouseHandler.x()) &&
+                 mousePoint.x() <= (topRight.x() + mouseHandler.x()) &&
+                 mousePoint.y() >= (topRight.y() + mouseHandler.y()) &&
+                 mousePoint.y() <= (bottomRight.y() - mouseHandler.y())) {
+            setCursor(Qt::SizeHorCursor);
+        }
+        // resize top left
+        else if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
+                 mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
+                 mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
+                 mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
+            setCursor(Qt::SizeFDiagCursor);
+        }
+        // resize bottom right
+        else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+                 mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
+                 mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
+                 mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
+            setCursor(Qt::SizeFDiagCursor);
+        }
+        // resize bottom left
+        else if (mousePoint.x() <= (bottomLeft.x() + mouseHandler.x()) &&
+                 mousePoint.x() >= (bottomLeft.x() - mouseHandler.x()) &&
+                 mousePoint.y() >= (bottomLeft.y() - mouseHandler.y()) &&
+                 mousePoint.y() <= (bottomLeft.y() + mouseHandler.y())) {
+            setCursor(Qt::SizeBDiagCursor);
+        }
+        // resize top right
+        else if (mousePoint.x() <= (topRight.x() + mouseHandler.x()) &&
+                 mousePoint.x() >= (topRight.x() - mouseHandler.x()) &&
+                 mousePoint.y() >= (topRight.y() - mouseHandler.y()) &&
+                 mousePoint.y() <= (topRight.y() + mouseHandler.y())) {
+            setCursor(Qt::SizeBDiagCursor);
+        }
+        else {
+            setCursor(Qt::ArrowCursor);
+        }
+    }
+    QGraphicsObject::hoverMoveEvent(event);
+}
+
+void Element::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (!isSelected()){
+        QGraphicsItem::mouseMoveEvent(event);
+        return;
+    }
+
+    QPointF mousePoint = event->pos();
+
+    if (resizing) {
+        switch (rd) {
+        case ResizeLeft:
+            elementRect.setLeft(mousePoint.x());
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.topRight()).x())));
+            break;
+        case ResizeRight:
+            elementRect.setRight(mousePoint.x());
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.topRight()).x())));
+            break;
+        case ResizeTop:
+            elementRect.setTop(mousePoint.y());
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomLeft()).y())));
+            break;
+        case ResizeBottom:
+            elementRect.setBottom(mousePoint.y());
+            setElementHeight(static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomLeft().y())));
+            break;
+        case ResizeTopLeft:
+            elementRect.setTopLeft(mousePoint);
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.bottomLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topRight()).y() - mapToScene(elementRect.bottomRight()).y())));
+            break;
+        case ResizeBottomLeft:
+            elementRect.setBottomLeft(mousePoint);
+            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
+            break;
+        case ResizeBottomRight:
+            elementRect.setBottomRight(mousePoint);
+            setElementWidth(static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x())));
+            setElementHeight(static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y())));
+            break;
+        case ResizeTopRight:
+            elementRect.setTopRight(mousePoint);
+            setElementYPos(static_cast<int>(mapToScene(elementRect.topRight()).y()));
+            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
+            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
+            break;
+        case ResizeNone:
+            QGraphicsObject::mouseMoveEvent(event);
+            break;
+        }
+
+        scene()->update();
+        return;
+    } else {
+        QGraphicsObject::mouseMoveEvent(event);
+        // 限制矩形区域
+        RestrictedRectangularRegion();
+    }
+}
+
+void Element::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    QPointF mousePoint = event->pos();
+    QPointF mouseHandler = QPointF(5, 5);
+    QPointF topLeft = elementRect.topLeft();
+    QPointF topRight = elementRect.topRight();
+    QPointF bottomLeft = elementRect.bottomLeft();
+    QPointF bottomRight = elementRect.bottomRight();
+
+    // resize top
+    if (mousePoint.x() >= (topLeft.x() + mouseHandler.x()) &&
+            mousePoint.x() <= (topRight.x() - mouseHandler.x()) &&
+            mousePoint.y() >= (topLeft.y() - mouseHandler.y()) &&
+            mousePoint.y() <= (topLeft.y() + mouseHandler.y())) {
+        rd = ResizeTop;
+        resizing = true;
+        setCursor(Qt::SizeVerCursor);
+    }
+    // resize bottom
+    else if (mousePoint.x() >= (bottomLeft.x() + mouseHandler.x()) &&
+             mousePoint.x() <= (bottomRight.x() - mouseHandler.x()) &&
+             mousePoint.y() >= (bottomLeft.y() - mouseHandler.y()) &&
+             mousePoint.y() <= (bottomLeft.y() + mouseHandler.y())) {
+        rd = ResizeBottom;
+        resizing = true;
+        setCursor(Qt::SizeVerCursor);
+    }
+    // resize left
+    else if (mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
+             mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
+             mousePoint.y() >= (topLeft.y() + mouseHandler.y()) &&
+             mousePoint.y() <= (bottomLeft.y() - mouseHandler.y())) {
+        rd = ResizeLeft;
+        resizing = true;
+        setCursor(Qt::SizeHorCursor);
+    }
+    // resize right
+    else if (mousePoint.x() >= (topRight.x() - mouseHandler.x()) &&
+             mousePoint.x() <= (topRight.x() + mouseHandler.x()) &&
+             mousePoint.y() >= (topRight.y() + mouseHandler.y()) &&
+             mousePoint.y() <= (bottomRight.y() - mouseHandler.y())) {
+        rd = ResizeRight;
+        resizing = true;
+        setCursor(Qt::SizeHorCursor);
+    }
+    // resize top left
+    else if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
+             mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
+             mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
+             mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
+        rd = ResizeTopLeft;
+        resizing = true;
+        setCursor(Qt::SizeFDiagCursor);
+    }
+    // resize bottom right
+    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
+             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
+             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
+             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
+        rd = ResizeBottomRight;
+        resizing = true;
+        setCursor(Qt::SizeFDiagCursor);
+    }
+    // resize bottom left
+    else if (mousePoint.x() <= (bottomLeft.x() + mouseHandler.x()) &&
+             mousePoint.x() >= (bottomLeft.x() - mouseHandler.x()) &&
+             mousePoint.y() >= (bottomLeft.y() - mouseHandler.y()) &&
+             mousePoint.y() <= (bottomLeft.y() + mouseHandler.y())) {
+        rd = ResizeBottomLeft;
+        resizing = true;
+        setCursor(Qt::SizeBDiagCursor);
+    }
+    // resize top right
+    else if (mousePoint.x() <= (topRight.x() + mouseHandler.x()) &&
+             mousePoint.x() >= (topRight.x() - mouseHandler.x()) &&
+             mousePoint.y() >= (topRight.y() - mouseHandler.y()) &&
+             mousePoint.y() <= (topRight.y() + mouseHandler.y())) {
+        rd = ResizeTopRight;
+        resizing = true;
+        setCursor(Qt::SizeBDiagCursor);
+    }
+    else {
+        setCursor(Qt::ArrowCursor);
+        resizing = false;
+        rd = ResizeNone;
+    }
+
+    oldPos = pos();
+    oldWidth = elementWidth;
+    oldHeight = elementHeight;
+
+    QGraphicsObject::mousePressEvent(event);
+}
+
+
+void Element::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    QGraphicsObject::mouseDoubleClickEvent(event);
+}
+
+
+
+void Element::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    setCursor(Qt::ArrowCursor);
+    elementXPos = static_cast<int>(pos().x());
+    elementYPos = static_cast<int>(pos().y());
+    updatePropertyModel();
+
+    if (oldPos != pos()) {
+        emit elementMoved(oldPos);
+    }
+
+    if (resizing) {
+        emit elementResized(oldWidth, oldHeight, oldPos);
+    }
+    resizing = false;
+    rd = ResizeNone;
+
+    QGraphicsObject::mouseReleaseEvent(event);
+}
+
+/**
+ * @brief Element::paintSelected
+ * @details 绘制选中状态
+ * @param painter
+ * @param iLineWidth 线宽
+ */
+void Element::paintSelected(QPainter *painter, int iLineWidth)
+{
+    if (isSelected()) {
+        painter->save();
+
+        painter->setBrush(Qt::NoBrush);
+
+        QPen pen(Qt::red, iLineWidth, Qt::DashLine);
+        painter->setPen(pen);
+        QRectF rect = elementRect.adjusted(-1, -1, 1, 1);
+        painter->drawRect(rect);
+
+        QPen pen2(Qt::red, iLineWidth, Qt::SolidLine);
+        painter->setPen(pen2);
+        QPointF pt = QPointF(3, 3);
+
+        painter->drawRect(QRectF(rect.topLeft() - pt, rect.topLeft() + pt));
+        QPointF ptMid = QPointF(rect.left() + rect.width() / 2, rect.top());
+        painter->drawRect(QRectF(ptMid - pt, ptMid + pt));
+        painter->drawRect(QRectF(rect.topRight() - pt, rect.topRight() + pt));
+
+        ptMid = QPointF(rect.left(), rect.top() + rect.height() / 2);
+        painter->drawRect(QRectF(ptMid - pt, ptMid + pt));
+        ptMid = QPointF(rect.right(), rect.top() + rect.height() / 2);
+        painter->drawRect(QRectF(ptMid - pt, ptMid + pt));
+
+        painter->drawRect(QRectF(rect.bottomLeft() - pt, rect.bottomLeft() + pt));
+        ptMid = QPointF(rect.left() + rect.width() / 2, rect.bottom());
+        painter->drawRect(QRectF(ptMid - pt, ptMid + pt));
+        painter->drawRect(QRectF(rect.bottomRight() - pt, rect.bottomRight() + pt));
+
+        painter->restore();
+    }
+}
+
 
