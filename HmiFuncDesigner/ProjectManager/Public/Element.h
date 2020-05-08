@@ -129,18 +129,15 @@ protected:
     QRectF elementRect;
 
     enum ResizeDirection {
-        ResizeNone,
-        ResizeLeft,
-        ResizeRight,
-        ResizeTop,
-        ResizeBottom,
-        ResizeTopLeft,
-        ResizeBottomLeft,
-        ResizeTopRight,
-        ResizeBottomRight,
+        ResizeNone = 0,
+        ResizeLeft = 1,
+        ResizeRight = 2,
+        ResizeTop = 4,
+        ResizeBottom = 8,
+        AllDirections = 15,
     };
 
-    ResizeDirection rd;
+    quint32 rd;
 
     QString szProjectPath_; // 工程路径
     QString szProjectName_; // 工程名称

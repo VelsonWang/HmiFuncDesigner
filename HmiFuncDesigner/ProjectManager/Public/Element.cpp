@@ -453,52 +453,26 @@ void Element::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QPointF mousePoint = event->pos();
 
     if (resizing) {
-        switch (rd) {
-        case ResizeLeft:
+        if(rd & ResizeLeft) {
             elementRect.setLeft(mousePoint.x());
             setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
             setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.topRight()).x())));
-            break;
-        case ResizeRight:
+        }
+
+        if(rd & ResizeRight) {
             elementRect.setRight(mousePoint.x());
             setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.topRight()).x())));
-            break;
-        case ResizeTop:
+        }
+
+        if(rd & ResizeTop) {
             elementRect.setTop(mousePoint.y());
             setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
             setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomLeft()).y())));
-            break;
-        case ResizeBottom:
+        }
+
+        if(rd & ResizeBottom) {
             elementRect.setBottom(mousePoint.y());
             setElementHeight(static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomLeft().y())));
-            break;
-        case ResizeTopLeft:
-            elementRect.setTopLeft(mousePoint);
-            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
-            setElementYPos(static_cast<int>(mapToScene(elementRect.topLeft()).y()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.bottomLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topRight()).y() - mapToScene(elementRect.bottomRight()).y())));
-            break;
-        case ResizeBottomLeft:
-            elementRect.setBottomLeft(mousePoint);
-            setElementXPos(static_cast<int>(mapToScene(elementRect.topLeft()).x()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
-            break;
-        case ResizeBottomRight:
-            elementRect.setBottomRight(mousePoint);
-            setElementWidth(static_cast<int>(qAbs(elementRect.topLeft().x() - elementRect.bottomRight().x())));
-            setElementHeight(static_cast<int>(qAbs(elementRect.topLeft().y() - elementRect.bottomRight().y())));
-            break;
-        case ResizeTopRight:
-            elementRect.setTopRight(mousePoint);
-            setElementYPos(static_cast<int>(mapToScene(elementRect.topRight()).y()));
-            setElementWidth(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).x() - mapToScene(elementRect.bottomRight()).x())));
-            setElementHeight(static_cast<int>(qAbs(mapToScene(elementRect.topLeft()).y() - mapToScene(elementRect.bottomRight()).y())));
-            break;
-        case ResizeNone:
-            QGraphicsObject::mouseMoveEvent(event);
-            break;
         }
 
         scene()->update();
@@ -519,82 +493,65 @@ void Element::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QPointF bottomLeft = elementRect.bottomLeft();
     QPointF bottomRight = elementRect.bottomRight();
 
+    rd = ResizeNone;
+    resizing = false;
+
     // resize top
-    if (mousePoint.x() >= (topLeft.x() + mouseHandler.x()) &&
-            mousePoint.x() <= (topRight.x() - mouseHandler.x()) &&
+    if (mousePoint.x() >= (topLeft.x() + 0) &&
+            mousePoint.x() <= (topRight.x() - 0) &&
             mousePoint.y() >= (topLeft.y() - mouseHandler.y()) &&
             mousePoint.y() <= (topLeft.y() + mouseHandler.y())) {
-        rd = ResizeTop;
+        rd |= ResizeTop;
         resizing = true;
-        setCursor(Qt::SizeVerCursor);
     }
+
     // resize bottom
-    else if (mousePoint.x() >= (bottomLeft.x() + mouseHandler.x()) &&
-             mousePoint.x() <= (bottomRight.x() - mouseHandler.x()) &&
+    if (mousePoint.x() >= (bottomLeft.x() + 0) &&
+             mousePoint.x() <= (bottomRight.x() - 0) &&
              mousePoint.y() >= (bottomLeft.y() - mouseHandler.y()) &&
              mousePoint.y() <= (bottomLeft.y() + mouseHandler.y())) {
-        rd = ResizeBottom;
+        rd |= ResizeBottom;
         resizing = true;
-        setCursor(Qt::SizeVerCursor);
     }
+
     // resize left
-    else if (mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
+    if (mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
              mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-             mousePoint.y() >= (topLeft.y() + mouseHandler.y()) &&
-             mousePoint.y() <= (bottomLeft.y() - mouseHandler.y())) {
-        rd = ResizeLeft;
+             mousePoint.y() >= (topLeft.y() + 0) &&
+             mousePoint.y() <= (bottomLeft.y() - 0)) {
+        rd |= ResizeLeft;
         resizing = true;
-        setCursor(Qt::SizeHorCursor);
     }
+
     // resize right
-    else if (mousePoint.x() >= (topRight.x() - mouseHandler.x()) &&
+    if (mousePoint.x() >= (topRight.x() - mouseHandler.x()) &&
              mousePoint.x() <= (topRight.x() + mouseHandler.x()) &&
-             mousePoint.y() >= (topRight.y() + mouseHandler.y()) &&
-             mousePoint.y() <= (bottomRight.y() - mouseHandler.y())) {
-        rd = ResizeRight;
+             mousePoint.y() >= (topRight.y() + 0) &&
+             mousePoint.y() <= (bottomRight.y() - 0)) {
+        rd |= ResizeRight;
         resizing = true;
+    }
+
+    switch (rd) {
+    case ResizeRight:
+    case ResizeLeft:
         setCursor(Qt::SizeHorCursor);
-    }
-    // resize top left
-    else if (mousePoint.x() <= (topLeft.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (topLeft.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (topLeft.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (topLeft.y() - mouseHandler.y())) {
-        rd = ResizeTopLeft;
-        resizing = true;
+        break;
+    case ResizeBottom:
+    case ResizeTop:
+        setCursor(Qt::SizeVerCursor);
+        break;
+    case ResizeRight | ResizeBottom:
+    case ResizeLeft  | ResizeTop:
         setCursor(Qt::SizeFDiagCursor);
-    }
-    // resize bottom right
-    else if (mousePoint.x() <= (bottomRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomRight.x() - mouseHandler.x()) &&
-             mousePoint.y() <= (bottomRight.y() + mouseHandler.y()) &&
-             mousePoint.y() >= (bottomRight.y() - mouseHandler.y())) {
-        rd = ResizeBottomRight;
-        resizing = true;
-        setCursor(Qt::SizeFDiagCursor);
-    }
-    // resize bottom left
-    else if (mousePoint.x() <= (bottomLeft.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (bottomLeft.x() - mouseHandler.x()) &&
-             mousePoint.y() >= (bottomLeft.y() - mouseHandler.y()) &&
-             mousePoint.y() <= (bottomLeft.y() + mouseHandler.y())) {
-        rd = ResizeBottomLeft;
-        resizing = true;
+        break;
+    case ResizeLeft  | ResizeBottom:
+    case ResizeRight | ResizeTop:
         setCursor(Qt::SizeBDiagCursor);
-    }
-    // resize top right
-    else if (mousePoint.x() <= (topRight.x() + mouseHandler.x()) &&
-             mousePoint.x() >= (topRight.x() - mouseHandler.x()) &&
-             mousePoint.y() >= (topRight.y() - mouseHandler.y()) &&
-             mousePoint.y() <= (topRight.y() + mouseHandler.y())) {
-        rd = ResizeTopRight;
-        resizing = true;
-        setCursor(Qt::SizeBDiagCursor);
-    }
-    else {
+        break;
+    default:
         setCursor(Qt::ArrowCursor);
-        resizing = false;
-        rd = ResizeNone;
+        break;
     }
 
     oldPos = pos();
