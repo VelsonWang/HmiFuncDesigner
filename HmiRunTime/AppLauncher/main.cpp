@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QDebug>
 #include <QObject>
+#include <QFile>
 #include "applauncher.h"
 #include "ConfigUtils.h"
 #include "Helper.h"

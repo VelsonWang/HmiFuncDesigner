@@ -77,22 +77,26 @@ void DrawMainWindow::initView()
     elementWidget_ = new ElementLibraryWidget();
     this->ElemetsLayout->addWidget(elementWidget_);
 
-    VariantManager *pVariantManager  = new VariantManager(this);
-    variantPropertyManager_ = pVariantManager;
-
-    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-            this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
-
     variantEditorFactory_ = new VariantFactory(this);
 
-    propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
+    //propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
+    propertyEditor_ = new QtTreePropertyBrowser(this);
     propertyEditor_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     propertyEditor_->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
     //propertyEditor_->setColumnWidth(0, 60);
     //propertyEditor_->setColumnWidth(1, 200);
-    propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
-    pVariantManager->setPropertyEditor(propertyEditor_);
+
+
     this->PropertyLayout->addWidget(propertyEditor_);
+
+    VariantManager *pVariantManager  = new VariantManager(this);
+    variantPropertyManager_ = pVariantManager;
+    pVariantManager->setPropertyEditor(propertyEditor_);
+    propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
+
+    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+            this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
+
 
     objTree_ = new ObjectsTreeView();
     this->ObjectTreeLayout->addWidget(objTree_);

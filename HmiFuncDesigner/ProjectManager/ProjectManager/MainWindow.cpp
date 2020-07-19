@@ -410,6 +410,11 @@ void MainWindow::initWindow() {
     ui->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     ui->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
+//    ui->mdiArea->setLineWidth(3);
+//    ui->mdiArea->setFrameShape(QFrame::Panel);
+//    ui->mdiArea->setFrameShadow(QFrame::Sunken);
+//    ui->mdiArea->setViewMode(QMdiArea::TabbedView);
+
     ui->statusBar->showMessage(tr("欢迎使用HmiFuncDesigner组态系统"));
 }
 

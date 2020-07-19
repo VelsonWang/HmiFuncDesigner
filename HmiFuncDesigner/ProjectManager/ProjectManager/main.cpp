@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
         return !app.sendMessage("project manager start " + app.applicationDirPath());
 
     app.setOrganizationName("JasonWangCtd");
-    app.setApplicationName("SCADA ProjectManager");
-    app.setApplicationDisplayName("SCADA ProjectManager");
+    app.setApplicationName("ProjectManager");
+    app.setApplicationDisplayName("ProjectManager");
     app.setApplicationVersion(QString("V%1").arg(VER_FILE));
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
