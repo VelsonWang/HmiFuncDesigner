@@ -64,10 +64,10 @@ void PortThread::Stop()
             }
         }
     }
-		while(state != __Thread_Stop)
-		{
-			Sleep(10);
-		}    
+    while(state != __Thread_Stop)
+    {
+        this->msleep(5);
+    }
     this->wait();
 }
 
