@@ -1,4 +1,4 @@
-#ifndef PORTTHREAD_H
+﻿#ifndef PORTTHREAD_H
 #define PORTTHREAD_H
 
 #include <QObject>
@@ -7,6 +7,12 @@
 #include <QThread>
 #include <QSemaphore>
 #include "Vendor.h"
+
+enum __ThreadState
+{
+	__Thread_Stop,
+	__Thread_Runing,
+};
 
 class PortThread : public QThread
 {
@@ -21,7 +27,7 @@ public:
     void Start();
     // 停止
     void Stop();
-
+	__ThreadState state;
 protected:
     void run();
 

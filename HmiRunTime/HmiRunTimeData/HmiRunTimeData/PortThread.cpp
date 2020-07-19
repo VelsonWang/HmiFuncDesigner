@@ -1,12 +1,12 @@
-#include "PortThread.h"
+﻿#include "PortThread.h"
 #include <RealTimeDB.h>
 #include <QDebug>
-
 
 PortThread::PortThread(QString name)
 {
     m_name = name;
     mbIsRunning = false;
+    state = __Thread_Stop;
 }
 
 PortThread::~PortThread()
@@ -45,6 +45,7 @@ void PortThread::Start()
             }
         }
     }
+   	state = __Thread_Runing; 
     this->start();
 }
 
@@ -63,6 +64,10 @@ void PortThread::Stop()
             }
         }
     }
+		while(state != __Thread_Stop)
+		{
+			Sleep(10);
+		}    
     this->wait();
 }
 
@@ -74,12 +79,13 @@ void PortThread::run()
         RealTimeDB::instance()->addNeedWriteTagToDeviceWriteQueue();
         foreach (Vendor *pVendor, m_VendorList) {
             if(!mbIsRunning)
-                return;
+                break;
             if(pVendor != Q_NULLPTR) {
                 pVendor->doLoop();
             }
         }
         this->msleep(5);
     }
+    state = __Thread_Stop;
 }
 
