@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QDateTime>
 #include <QDate>
+#include <QFile>
 
 int ElementAnalogClock::iLastIndex_ = 1;
 
