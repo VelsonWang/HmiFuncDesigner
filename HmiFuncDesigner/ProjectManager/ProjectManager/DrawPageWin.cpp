@@ -20,8 +20,7 @@
 DrawPageWin::DrawPageWin(QWidget *parent, const QString &itemName,
                          const QString &projName)
     : ChildBase(parent, itemName, projName),
-      ui(new Ui::DrawPageWin),
-      pDrawMainWindow_(Q_NULLPTR)
+      ui(new Ui::DrawPageWin)
 {
     ui->setupUi(this);
     this->setWindowTitle(itemName);
@@ -331,7 +330,9 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
         NewDrawPage();
         return;
     }
+    QMessageBox::information(this, tr("提示"), tr("code DrawMainWindow need add!!!"));
 
+#if 0
     if(pDrawMainWindow_ != Q_NULLPTR) {
         delete pDrawMainWindow_;
         pDrawMainWindow_ = Q_NULLPTR;
@@ -342,7 +343,7 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
         pDrawMainWindow_->openGraphPage(szProjPath_, szProjName_, item->text());
         pDrawMainWindow_->show();
     }
-
+#endif
 }
 
 

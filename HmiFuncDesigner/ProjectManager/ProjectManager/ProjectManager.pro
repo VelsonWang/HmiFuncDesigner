@@ -17,10 +17,11 @@ INCLUDEPATH += ./widget
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
 INCLUDEPATH += $$PWD/../../libs/qscintilla
+INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
-include($$PWD/../DrawApplication/DrawApplication.pri)
+include($$PWD/../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -38,10 +39,9 @@ LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
-
 SOURCES += main.cpp\
     DevicePluginLoader.cpp \
-        MainWindow.cpp \
+    MainWindow.cpp \
     NewProjectDialog.cpp \
     SystemParametersWin.cpp \
     NetSettingDialog.cpp \
@@ -75,7 +75,22 @@ SOURCES += main.cpp\
     ProjectMgrUtils.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
-    widget/QQuickInputLineEdit.cpp
+    widget/QQuickInputLineEdit.cpp \
+#    $$PWD/DrawMainWindow.cpp \
+    $$PWD/GetWidthHeightDialog.cpp \
+    $$PWD/GraphPage.cpp \
+    $$PWD/GraphPageManager.cpp \
+    $$PWD/UndoCommand.cpp \
+    $$PWD/ElementLibraryWidget.cpp \
+    $$PWD/ObjectsTreeView.cpp \
+    $$PWD/ElementLibraryListWidget.cpp \
+    $$PWD/ElementLibraryListWidgetItem.cpp \
+    $$PWD/ElementSimpleListWidget.cpp \
+    $$PWD/GraphPageTreeView.cpp \
+    $$PWD/../Public/PubTool.cpp \
+    $$PWD/../Public/Element.cpp \
+    $$PWD/../Public/ElementGroup.cpp \
+    $$PWD/PluginManager.cpp
 
 HEADERS  += MainWindow.h \
     DevicePluginLoader.h \
@@ -114,7 +129,25 @@ HEADERS  += MainWindow.h \
     ProjectMgrUtils.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
-    widget/QQuickInputLineEdit.h
+    widget/QQuickInputLineEdit.h \
+#    $$PWD/DrawMainWindow.h \
+    $$PWD/GetWidthHeightDialog.h \
+    $$PWD/GraphPage.h \
+    $$PWD/GraphPageManager.h \
+    $$PWD/UndoCommand.h \
+    $$PWD/ElementLibraryWidget.h \
+    $$PWD/ObjectsTreeView.h \
+    $$PWD/ElementLibraryListWidget.h \
+    $$PWD/ElementLibraryListWidgetItem.h \
+    $$PWD/ElementSimpleListWidget.h \
+    $$PWD/GraphPageTreeView.h \
+    $$PWD/../Public/PublicDefine.h \
+    $$PWD/../Public/PubTool.h \
+    $$PWD/../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
+    $$PWD/../Public/Element.h \
+    $$PWD/../Public/ElementGroup.h \
+    $$PWD/PluginManager.h
+
 
 FORMS    += MainWindow.ui \
     NewProjectDialog.ui \
@@ -142,14 +175,25 @@ FORMS    += MainWindow.ui \
     InsertTagDialog.ui \
     ScriptRunConditionEditorDlg.ui \
     ChildForm.ui \
-    widget/QIPAddressEdit.ui
+    widget/QIPAddressEdit.ui \
+#    $$PWD/DrawMainWindow.ui \
+    $$PWD/ElementLibraryWidget.ui \
+    $$PWD/GetWidthHeightDialog.ui
 
 RESOURCES += \
     images.qrc \
-    images1.qrc
+    images1.qrc \
+    DrawAppImages.qrc
 
 # windows application icon
 RC_FILE = ProjectManager.rc
 
 #or
 #RC_ICONS = project.ico
+
+
+######################################################
+
+DISTFILES += \
+    $$IDE_BIN_PATH/Config/DrawAppJScriptFun.xml \
+    $$IDE_BIN_PATH/Config/ElementSupportEvents.xml
