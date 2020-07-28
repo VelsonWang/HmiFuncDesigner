@@ -147,7 +147,7 @@ HEADERS  += MainWindow.h \
     PluginManager.h
 
 
-FORMS    += MainWindow.ui \
+FORMS    += \
     NewProjectDialog.ui \
     SystemParametersWin.ui \
     NetSettingDialog.ui \

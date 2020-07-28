@@ -21,9 +21,25 @@
 #include "ChildBase.h"
 #include "ChildForm.h"
 
-namespace Ui {
-class MainWindow;
-}
+#include <QVariant>
+#include <QIcon>
+#include <QAction>
+#include <QApplication>
+#include <QDockWidget>
+#include <QHeaderView>
+#include <QListWidget>
+#include <QMainWindow>
+#include <QMdiArea>
+#include <QMenu>
+#include <QMenuBar>
+#include <QScrollArea>
+#include <QStatusBar>
+#include <QTabWidget>
+#include <QToolBar>
+#include <QTreeView>
+#include <QVBoxLayout>
+#include <QWidget>
+
 
 class MainWindow : public QMainWindow
 {
@@ -119,7 +135,6 @@ protected:
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 private:
-    Ui::MainWindow *ui;
     QString m_strProjectPath;
     QString m_strProjectName;
     QString m_CurItem;
@@ -268,6 +283,84 @@ private:
     QMap<QtProperty *, QString> propertyToId_;
     QMap<QString, QtVariantProperty *> idToProperty_;
     QMap<QString, bool> idToExpanded_;
+
+
+private:
+public:
+    QAction *actionNewPoject;
+    QAction *actionOpenProject;
+    QAction *actionCloseProject;
+    QAction *actionSaveProject;
+    QAction *actionRecentProjectList;
+    QAction *actionExit;
+    QAction *actionToolBar;
+    QAction *actionStatusBar;
+    QAction *actionWorkSpace;
+    QAction *actionDisplayArea_I;
+    QAction *actionBigIcon;
+    QAction *actionSmallIcon;
+    QAction *actionEdit;
+    QAction *actionSimulate;
+    QAction *actionRun;
+    QAction *actionDownload;
+    QAction *actionUpLoad;
+    QAction *actionUDisk;
+    QAction *actionAddTag;
+    QAction *actionAppendTag;
+    QAction *actionRowCopyTag;
+    QAction *actionColumnCopyTag;
+    QAction *actionModifyTag;
+    QAction *actionDeleteTag;
+    QAction *actionExportTag;
+    QAction *actionImportTag;
+    QAction *actionDeviceNew;
+    QAction *actionDeviceModify;
+    QAction *actionDeviceDelete;
+    QAction *actionHelp;
+    QAction *actionAbout;
+    QWidget *centralWidget;
+    QVBoxLayout *verticalLayout_7;
+    QScrollArea *scrollArea;
+    QWidget *scrollAreaWidgetContents;
+    QMdiArea *mdiArea;
+    QMenuBar *menuBar;
+    QMenu *menuProject;
+    QMenu *menuView;
+    QMenu *menu_T;
+    QMenu *menu_D;
+    QMenu *menu;
+    QToolBar *ProjectToolBar;
+    QStatusBar *statusBar;
+    QToolBar *ViewToolBar;
+
+    QWidget *dockWidgetContents;
+    QVBoxLayout *verticalLayout_4;
+    QWidget *tab;
+    QVBoxLayout *verticalLayout_2;
+    QTreeView *treeViewProject;
+    QWidget *tab_2;
+    QVBoxLayout *verticalLayout_3;
+    QListWidget *listWidgetGraphPages;
+    QWidget *dockWidgetContents_8;
+    QVBoxLayout *verticalLayout_5;
+    QVBoxLayout *ElemetsLayout;
+
+    QWidget *dockPropertyLayout;
+    QVBoxLayout *verticalLayout_6;
+    QVBoxLayout *PropertyLayout;
+    QToolBar *RunToolBar;
+    QToolBar *TagOperateToolBar;
+    QToolBar *DeviceOperateToolBar;
+    QToolBar *toolBar;
+
+    void setupUi();
+    void retranslateUi();
+
+private:
+    QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
+    QDockWidget *m_pDockPropertyObj; // 属性停靠控件
+    QDockWidget *m_pDockElemetsObj; // 图形元素停靠控件
+    QTabWidget *m_pTabProjectMgrObj; // 工程管理器TabWidget控件
 };
 
 #endif // MAINWINDOW_H
