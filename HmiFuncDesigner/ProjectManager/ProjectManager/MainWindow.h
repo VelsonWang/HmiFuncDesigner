@@ -9,7 +9,6 @@
 #include <QUndoView>
 #include <QUndoGroup>
 #include <QUndoStack>
-#include "ObjectsTreeView.h"
 #include "GraphPageTreeView.h"
 #include "ElementLibraryWidget.h"
 #include "GraphPage.h"
@@ -147,7 +146,6 @@ private:
     int exitResponse();
     QString getFileName();
     void updateGraphPageViewInfo(const QString &);
-    void updateObjectTree();
     void connectGraphPage(GraphPage *graphPage);
     void disconnectGraphPage(GraphPage *graphPage);
     void removeGraphPage(QGraphicsView *view);
@@ -174,7 +172,6 @@ public slots:
 private slots:
     QGraphicsView *createTabView();
     void slotShowGraphObj(bool);
-    void slotShowTreeObj(bool);
     void slotShowPropEditor(bool);
     void slotEditNew();
     void slotEditOpen();
@@ -226,7 +223,6 @@ private:
     QString graphPageName_;
 
     QAction *actionShowGraphObj_;
-    QAction *actionShowTreeObj_;
     QAction *actionShowPropEditor_;
     QAction *actionNew_;
     QAction *actionOpen_;
@@ -258,7 +254,6 @@ private:
     QGraphicsView *currentView_;
 
     QTabWidget *graphPageTabWidget_;
-    ObjectsTreeView *objTree_;
     ElementLibraryWidget *elementWidget_;
     QUndoGroup *undoGroup_;
 

@@ -76,21 +76,20 @@ SOURCES += main.cpp\
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
-#    $$PWD/DrawMainWindow.cpp \
-    $$PWD/GetWidthHeightDialog.cpp \
-    $$PWD/GraphPage.cpp \
-    $$PWD/GraphPageManager.cpp \
-    $$PWD/UndoCommand.cpp \
-    $$PWD/ElementLibraryWidget.cpp \
-    $$PWD/ObjectsTreeView.cpp \
-    $$PWD/ElementLibraryListWidget.cpp \
-    $$PWD/ElementLibraryListWidgetItem.cpp \
-    $$PWD/ElementSimpleListWidget.cpp \
-    $$PWD/GraphPageTreeView.cpp \
-    $$PWD/../Public/PubTool.cpp \
-    $$PWD/../Public/Element.cpp \
-    $$PWD/../Public/ElementGroup.cpp \
-    $$PWD/PluginManager.cpp
+#    DrawMainWindow.cpp \
+    GetWidthHeightDialog.cpp \
+    GraphPage.cpp \
+    GraphPageManager.cpp \
+    UndoCommand.cpp \
+    ElementLibraryWidget.cpp \
+    ElementLibraryListWidget.cpp \
+    ElementLibraryListWidgetItem.cpp \
+    ElementSimpleListWidget.cpp \
+    GraphPageTreeView.cpp \
+    ../Public/PubTool.cpp \
+    ../Public/Element.cpp \
+    ../Public/ElementGroup.cpp \
+    PluginManager.cpp
 
 HEADERS  += MainWindow.h \
     DevicePluginLoader.h \
@@ -130,23 +129,22 @@ HEADERS  += MainWindow.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
-#    $$PWD/DrawMainWindow.h \
-    $$PWD/GetWidthHeightDialog.h \
-    $$PWD/GraphPage.h \
-    $$PWD/GraphPageManager.h \
-    $$PWD/UndoCommand.h \
-    $$PWD/ElementLibraryWidget.h \
-    $$PWD/ObjectsTreeView.h \
-    $$PWD/ElementLibraryListWidget.h \
-    $$PWD/ElementLibraryListWidgetItem.h \
-    $$PWD/ElementSimpleListWidget.h \
-    $$PWD/GraphPageTreeView.h \
-    $$PWD/../Public/PublicDefine.h \
-    $$PWD/../Public/PubTool.h \
-    $$PWD/../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
-    $$PWD/../Public/Element.h \
-    $$PWD/../Public/ElementGroup.h \
-    $$PWD/PluginManager.h
+#    DrawMainWindow.h \
+    GetWidthHeightDialog.h \
+    GraphPage.h \
+    GraphPageManager.h \
+    UndoCommand.h \
+    ElementLibraryWidget.h \
+    ElementLibraryListWidget.h \
+    ElementLibraryListWidgetItem.h \
+    ElementSimpleListWidget.h \
+    GraphPageTreeView.h \
+    ../Public/PublicDefine.h \
+    ../Public/PubTool.h \
+    ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
+    ../Public/Element.h \
+    ../Public/ElementGroup.h \
+    PluginManager.h
 
 
 FORMS    += MainWindow.ui \
@@ -176,9 +174,9 @@ FORMS    += MainWindow.ui \
     ScriptRunConditionEditorDlg.ui \
     ChildForm.ui \
     widget/QIPAddressEdit.ui \
-#    $$PWD/DrawMainWindow.ui \
-    $$PWD/ElementLibraryWidget.ui \
-    $$PWD/GetWidthHeightDialog.ui
+#    DrawMainWindow.ui \
+    ElementLibraryWidget.ui \
+    GetWidthHeightDialog.ui
 
 RESOURCES += \
     images.qrc \

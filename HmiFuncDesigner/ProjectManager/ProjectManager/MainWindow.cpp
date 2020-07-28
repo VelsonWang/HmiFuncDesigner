@@ -1329,11 +1329,6 @@ void MainWindow::initView()
 
     connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
             this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
-
-
-    objTree_ = new ObjectsTreeView();
-    ui->ObjectTreeLayout->addWidget(objTree_);
-    slotShowTreeObj(false);
 }
 
 void MainWindow::createActions()
@@ -1342,11 +1337,6 @@ void MainWindow::createActions()
     actionShowGraphObj_->setCheckable(true);
     actionShowGraphObj_->setChecked(true);
     connect(actionShowGraphObj_, SIGNAL(triggered(bool)), SLOT(slotShowGraphObj(bool)));
-
-    actionShowTreeObj_ = new QAction(tr("对象树"), this);
-    actionShowTreeObj_->setCheckable(true);
-    actionShowTreeObj_->setChecked(false);
-    connect(actionShowTreeObj_, SIGNAL(triggered(bool)), SLOT(slotShowTreeObj(bool)));
 
     actionShowPropEditor_ = new QAction(tr("属性编辑器"), this);
     actionShowPropEditor_->setCheckable(true);
@@ -1471,7 +1461,6 @@ void MainWindow::createMenus()
 
     QMenu *windowMenu = new QMenu(tr("窗口"), this);
     windowMenu->addAction(actionShowGraphObj_);
-    windowMenu->addAction(actionShowTreeObj_);
     windowMenu->addAction(actionShowPropEditor_);
 
     QMainWindow::menuBar()->addMenu(filemenu);
@@ -1724,7 +1713,6 @@ void MainWindow::slotUpdateActions()
 void MainWindow::slotChangeGraphPage(int GraphPageNum)
 {
     if (GraphPageNum == -1) {
-        objTree_->clearModel();
         return;
     }
 
@@ -1739,8 +1727,6 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
     currentGraphPage_ = dynamic_cast<GraphPage *>(currentView_->scene());
     currentGraphPage_->setActive(true);
     //currentGraphPage_->fillGraphPagePropertyModel();
-    objTree_->setContentList(currentGraphPage_->items());
-    objTree_->updateContent();
     currentGraphPageIndex_ = GraphPageNum;
     slotUpdateActions();
 }
@@ -1751,15 +1737,10 @@ void MainWindow::slotChangeGraphPageName()
     //int index = GraphPageManager::getInstance()->getIndexByGraphPage(currentGraphPage_);
 }
 
-void MainWindow::updateObjectTree()
-{
-    objTree_->setContentList(currentGraphPage_->items());
-    objTree_->updateContent();
-}
 
 void MainWindow::slotElementIdChanged()
 {
-    updateObjectTree();
+
 }
 
 void MainWindow::slotElementPropertyChanged()
@@ -1780,12 +1761,12 @@ void MainWindow::propertyValueChanged(QtProperty *property, const QVariant &valu
 
 void MainWindow::slotNewElementAdded()
 {
-    updateObjectTree();
+
 }
 
 void MainWindow::slotElementsDeleted()
 {
-    updateObjectTree();
+
 }
 
 void MainWindow::slotShowGrid(bool on)
@@ -1802,11 +1783,6 @@ void MainWindow::slotShowGrid(bool on)
 void MainWindow::slotShowGraphObj(bool on)
 {
     on ? ui->dockElemets->show() : ui->dockElemets->hide();
-}
-
-void MainWindow::slotShowTreeObj(bool on)
-{
-    on ? ui->dockObjectTree->show() : ui->dockObjectTree->hide();
 }
 
 void MainWindow::slotShowPropEditor(bool on)

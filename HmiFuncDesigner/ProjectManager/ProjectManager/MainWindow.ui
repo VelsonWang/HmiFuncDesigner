@@ -29,7 +29,7 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>1002</width>
+         <width>1036</width>
          <height>69</height>
         </rect>
        </property>
@@ -257,35 +257,6 @@
          </property>
          <item>
           <layout class="QVBoxLayout" name="ElemetsLayout"/>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </item>
-     <item>
-      <widget class="QDockWidget" name="dockObjectTree">
-       <property name="windowTitle">
-        <string>元素对象</string>
-       </property>
-       <widget class="QWidget" name="dockObjectTreeLayout">
-        <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
-         <property name="spacing">
-          <number>1</number>
-         </property>
-         <property name="leftMargin">
-          <number>1</number>
-         </property>
-         <property name="topMargin">
-          <number>1</number>
-         </property>
-         <property name="rightMargin">
-          <number>1</number>
-         </property>
-         <property name="bottomMargin">
-          <number>1</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" name="ObjectTreeLayout"/>
          </item>
         </layout>
        </widget>
