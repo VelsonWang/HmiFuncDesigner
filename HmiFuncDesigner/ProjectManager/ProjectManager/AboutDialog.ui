@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>343</width>
-    <height>104</height>
+    <width>454</width>
+    <height>213</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -36,7 +36,12 @@
       </font>
      </property>
      <property name="text">
-      <string>工程管理器 V1.0.1</string>
+      <string>工程管理器 V1.0.1
+
+联系方式 Contact
+Email：VelsonWang@qq.com
+QQ:706409617
+QQ交流群:568268522</string>
      </property>
     </widget>
    </item>

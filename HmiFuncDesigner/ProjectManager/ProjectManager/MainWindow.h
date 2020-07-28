@@ -5,13 +5,41 @@
 #include <QMdiSubWindow>
 #include <QStandardItemModel>
 #include <QMap>
+
+#include <QUndoView>
+#include <QUndoGroup>
+#include <QUndoStack>
+#include "GraphPageTreeView.h"
+#include "ElementLibraryWidget.h"
+#include "GraphPage.h"
+#include "GraphPageManager.h"
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
+
 #include "SystemParametersWin.h"
 #include "ChildBase.h"
 #include "ChildForm.h"
 
-namespace Ui {
-class MainWindow;
-}
+#include <QVariant>
+#include <QIcon>
+#include <QAction>
+#include <QApplication>
+#include <QDockWidget>
+#include <QHeaderView>
+#include <QListWidget>
+#include <QMainWindow>
+#include <QMdiArea>
+#include <QMenu>
+#include <QMenuBar>
+#include <QScrollArea>
+#include <QStatusBar>
+#include <QTabWidget>
+#include <QToolBar>
+#include <QTreeView>
+#include <QVBoxLayout>
+#include <QWidget>
+
 
 class MainWindow : public QMainWindow
 {
@@ -107,11 +135,232 @@ protected:
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 private:
-    Ui::MainWindow *ui;
     QString m_strProjectPath;
     QString m_strProjectName;
     QString m_CurItem;
     QString m_CurTreeViewItem;
+
+
+
+
+public:
+    bool isGridVisible() const;
+    // 打开画面
+    void openGraphPage(const QString &szProjPath,
+                       const QString &szProjName,
+                       const QString &szPageName);
+
+private:
+    void initView();
+    void createMenus();
+    void createActions();
+    void createToolbars();
+    void createUndoView();
+    void addNewGraphPage();
+    QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
+    int exitResponse();
+    QString getFileName();
+    void updateGraphPageViewInfo(const QString &);
+    void connectGraphPage(GraphPage *graphPage);
+    void disconnectGraphPage(GraphPage *graphPage);
+    void removeGraphPage(QGraphicsView *view);
+    bool isGraphPageOpen(const QString &filename);
+
+    bool createDocument(GraphPage *graphPage,
+                        QGraphicsView *view,
+                        const QString &filename);
+    // 创建空的画面页
+    void createEmptyGraphpage(const QString &projPath,
+                              const QString &graphPageName,
+                              int width,
+                              int height);
+
+public slots:
+    void slotNewElementAdded();
+    void slotElementsDeleted();
+    void slotElementIdChanged();
+    void slotElementPropertyChanged();
+    void slotGraphPagePropertyChanged();
+
+    void propertyValueChanged(QtProperty *property, const QVariant &value);
+
+private slots:
+    QGraphicsView *createTabView();
+    void slotShowGraphObj(bool);
+    void slotShowPropEditor(bool);
+    void slotEditNew();
+    void slotEditOpen();
+    void slotSaveGraphPage();
+    void slotExit();
+    void slotShowGrid(bool);
+    void slotShowLinear(bool);
+    void slotZoomIn();
+    void slotZoomOut();
+    void slotUpdateActions();
+    void slotChangeGraphPage(int);
+    void slotChangeGraphPageName();
+    void slotCloseGraphPage();
+    void slotCloseAll();
+    // 对齐操作
+    void slotAlignElements();
+    // 水平均匀分布
+    void slotHUniformDistributeElements();
+    // 垂直均匀分布
+    void slotVUniformDistributeElements();
+    // 设置选中控件大小一致
+    void slotSetTheSameSizeElements();
+    // 上移一层
+    void slotUpLayerElements();
+    // 下移一层
+    void slotDownLayerElements();
+    // 删除
+    void slotEditDelete();
+    // 拷贝
+    void slotEditCopy();
+    // 粘贴
+    void slotEditPaste();
+    // 画面名称被单击
+    void on_listWidgetGraphPages_currentTextChanged(const QString &currentText);
+    // 新建画面
+    void onNewGraphPage();
+    // 重命名画面
+    void onRenameGraphPage();
+    // 删除画面
+    void onDeleteGraphPage();
+    // 复制画面
+    void onCopyGraphPage();
+    // 粘贴画面
+    void onPasteGraphPage();
+
+private:
+    QString szProjPath_;
+    QString szProjName_;
+    QString graphPageName_;
+
+    QAction *actionShowGraphObj_;
+    QAction *actionShowPropEditor_;
+    QAction *actionNew_;
+    QAction *actionOpen_;
+    QAction *actionSaveGraphPage_;
+    QAction *actionExit_;
+    QAction *actionShowGrid_;
+    QAction *actionShowLinear_;
+    QAction *actionZoomIn_;
+    QAction *actionZoomOut_;
+    QAction *actionUndo_;
+    QAction *actionRedo_;
+    QAction *actionCloseGraphPage_;
+    QAction *actionCloseAll_;
+
+    QAction *actionCopy_; // 拷贝
+    QAction *actionPaste_; // 粘贴
+    QAction *actionDelete_; // 删除
+    QAction *alignTopAction_; // 顶部对齐
+    QAction *alignDownAction_; // 底部对齐
+    QAction *alignRightAction_; // 右对齐
+    QAction *alignLeftAction_; // 左对齐
+    QAction *hUniformDistributeAction_; // 水平均匀分布
+    QAction *vUniformDistributeAction_; // 垂直均匀分布
+    QAction *setTheSameSizeAction_; // 设置选中控件大小一致
+    QAction *upLayerAction_; // 上移一层
+    QAction *downLayerAction_; // 下移一层
+
+    GraphPage *currentGraphPage_;
+    QGraphicsView *currentView_;
+
+    QTabWidget *graphPageTabWidget_;
+    ElementLibraryWidget *elementWidget_;
+    QUndoGroup *undoGroup_;
+
+    bool gridVisible_;
+    int currentGraphPageIndex_;
+    QString szCopyGraphPageFileName_;
+
+private:
+    QtVariantPropertyManager *variantPropertyManager_;
+    QtTreePropertyBrowser *propertyEditor_;
+    QtVariantEditorFactory *variantEditorFactory_;
+    QMap<QtProperty *, QString> propertyToId_;
+    QMap<QString, QtVariantProperty *> idToProperty_;
+    QMap<QString, bool> idToExpanded_;
+
+
+private:
+public:
+    QAction *actionNewPoject;
+    QAction *actionOpenProject;
+    QAction *actionCloseProject;
+    QAction *actionSaveProject;
+    QAction *actionRecentProjectList;
+    QAction *actionExit;
+    QAction *actionToolBar;
+    QAction *actionStatusBar;
+    QAction *actionWorkSpace;
+    QAction *actionDisplayArea_I;
+    QAction *actionBigIcon;
+    QAction *actionSmallIcon;
+    QAction *actionEdit;
+    QAction *actionSimulate;
+    QAction *actionRun;
+    QAction *actionDownload;
+    QAction *actionUpLoad;
+    QAction *actionUDisk;
+    QAction *actionAddTag;
+    QAction *actionAppendTag;
+    QAction *actionRowCopyTag;
+    QAction *actionColumnCopyTag;
+    QAction *actionModifyTag;
+    QAction *actionDeleteTag;
+    QAction *actionExportTag;
+    QAction *actionImportTag;
+    QAction *actionDeviceNew;
+    QAction *actionDeviceModify;
+    QAction *actionDeviceDelete;
+    QAction *actionHelp;
+    QAction *actionAbout;
+    QWidget *centralWidget;
+    QVBoxLayout *verticalLayout_7;
+    QScrollArea *scrollArea;
+    QWidget *scrollAreaWidgetContents;
+    QMdiArea *mdiArea;
+    QMenuBar *menuBar;
+    QMenu *menuProject;
+    QMenu *menuView;
+    QMenu *menu_T;
+    QMenu *menu_D;
+    QMenu *menu;
+    QToolBar *ProjectToolBar;
+    QStatusBar *statusBar;
+    QToolBar *ViewToolBar;
+
+    QWidget *dockWidgetContents;
+    QVBoxLayout *verticalLayout_4;
+    QWidget *tab;
+    QVBoxLayout *verticalLayout_2;
+    QTreeView *treeViewProject;
+    QWidget *tab_2;
+    QVBoxLayout *verticalLayout_3;
+    QListWidget *listWidgetGraphPages;
+    QWidget *dockWidgetContents_8;
+    QVBoxLayout *verticalLayout_5;
+    QVBoxLayout *ElemetsLayout;
+
+    QWidget *dockPropertyLayout;
+    QVBoxLayout *verticalLayout_6;
+    QVBoxLayout *PropertyLayout;
+    QToolBar *RunToolBar;
+    QToolBar *TagOperateToolBar;
+    QToolBar *DeviceOperateToolBar;
+    QToolBar *toolBar;
+
+    void setupUi();
+    void retranslateUi();
+
+private:
+    QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
+    QDockWidget *m_pDockPropertyObj; // 属性停靠控件
+    QDockWidget *m_pDockElemetsObj; // 图形元素停靠控件
+    QTabWidget *m_pTabProjectMgrObj; // 工程管理器TabWidget控件
 };
 
 #endif // MAINWINDOW_H

@@ -2,7 +2,6 @@
 #define DRAWPAGEWIN_H
 
 #include "ChildBase.h"
-#include "DrawMainWindow.h"
 #include <QStringList>
 #include <QWidget>
 #include <QStandardItemModel>
@@ -64,7 +63,6 @@ private:
     QString szProjName_;
     QString szCopyDrawPageFileName_;
     QFileSystemWatcher fileSystemWatcher_;
-    DrawMainWindow *pDrawMainWindow_;
 };
 
 #endif // DRAWPAGEWIN_H

@@ -2,7 +2,6 @@
 include(../HmiFuncDesigner.pri)
 
 TEMPLATE  = subdirs
-CONFIG += ordered
 
 SUBDIRS   = \
     Utils \
