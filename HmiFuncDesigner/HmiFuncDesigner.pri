@@ -96,10 +96,7 @@ osx {
     IDE_DOC_PATH     = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/doc
     IDE_BIN_PATH     = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
     IDE_TOOL_PATH    = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/tools
-    win32: \
-        IDE_LIBEXEC_PATH = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
-    else: \
-        IDE_LIBEXEC_PATH = $$IDE_OUTPUT_PATH/../QHmiFuncDesignerBin/libexec
+    IDE_LIBEXEC_PATH = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
     !isEqual(IDE_SOURCE_TREE, $$IDE_OUTPUT_PATH):copydata = 1
 
     LINK_LIBRARY_PATH = $$IDE_LIBRARY_PATH

@@ -62,6 +62,15 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setupUi();
 
+    // 创建动作
+    createActions();
+    // 创建菜单
+    createMenus();
+    // 创建工具条
+    createToolbars();
+
+
+
     currentGraphPage_ = Q_NULLPTR;
     currentView_ = Q_NULLPTR;
     gridVisible_ = true;
@@ -607,6 +616,200 @@ MainWindow::~MainWindow()
     delete pTreeViewProjectModel;
     pTreeViewProjectModel = Q_NULLPTR;
 }
+
+
+/**
+ * @brief MainWindow::createActions
+ * @details 创建动作
+ */
+void MainWindow::createActions()
+{
+
+
+
+    //-----------------------------<画面编辑器>----------------------------------
+
+    // 窗口.图形元素
+    m_pActionShowGraphObj = new QAction(tr("图形元素"), this);
+    m_pActionShowGraphObj->setCheckable(true);
+    m_pActionShowGraphObj->setChecked(true);
+    connect(m_pActionShowGraphObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGraphObj(bool)));
+
+    // 窗口.属性编辑器
+    m_pActionShowPropEditorObj = new QAction(tr("属性编辑器"), this);
+    m_pActionShowPropEditorObj->setCheckable(true);
+    m_pActionShowPropEditorObj->setChecked(true);
+    connect(m_pActionShowPropEditorObj, SIGNAL(triggered(bool)), SLOT(onSlotShowPropEditor(bool)));
+
+    // 画面.新建
+    m_pActionNewGraphPageObj = new QAction(QIcon(":/DrawAppImages/filenew.png"), tr("新建"), this);
+    m_pActionNewGraphPageObj->setShortcut(QString("Ctrl+N"));
+    connect(m_pActionNewGraphPageObj, SIGNAL(triggered()), SLOT(onSlotNewGraphPage()));
+
+    // 画面.打开
+    m_pActionOpenObj = new QAction(QIcon(":/DrawAppImages/fileopen.png"), tr("打开"), this);
+    m_pActionOpenObj->setShortcut(QString("Ctrl+O"));
+    connect(m_pActionOpenObj, SIGNAL(triggered()), SLOT(onSlotEditOpen()));
+
+    // 画面.保存
+    m_pActionSaveGraphPageObj = new QAction(QIcon(":/DrawAppImages/saveproject.png"), tr("保存"), this);
+    m_pActionSaveGraphPageObj->setShortcut(QKeySequence::Save);
+    connect(m_pActionSaveGraphPageObj, SIGNAL(triggered()), SLOT(onSlotSaveGraphPage()));
+
+    actionCloseGraphPage_ = new QAction(tr("关闭"), this);
+    connect(actionCloseGraphPage_, SIGNAL(triggered()), SLOT(slotCloseGraphPage()));
+
+    actionCloseAll_ = new QAction(tr("关闭所有"), this);
+    connect(actionCloseAll_, SIGNAL(triggered()), SLOT(slotCloseAll()));
+
+    actionExit_ = new QAction(tr("退出"),this);
+    actionExit_->setShortcut(QKeySequence::Quit);
+    connect(actionExit_,SIGNAL(triggered()),SLOT(slotExit()));
+
+    actionShowGrid_ = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
+    actionShowGrid_->setCheckable(true);
+    actionShowGrid_->setChecked(gridVisible_);
+    connect(actionShowGrid_, SIGNAL(triggered(bool)), SLOT(slotShowGrid(bool)));
+
+    actionShowLinear_ = new QAction(QIcon(":/DrawAppImages/ruler.png"), tr("显示线条"), this);
+    actionShowLinear_->setCheckable(true);
+    actionShowLinear_->setChecked(false);
+    connect(actionShowLinear_, SIGNAL(triggered(bool)), SLOT(slotShowLinear(bool)));
+
+    actionZoomIn_ = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
+    connect(actionZoomIn_, SIGNAL(triggered()), SLOT(slotZoomIn()));
+
+    actionZoomOut_ = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
+    connect(actionZoomOut_, SIGNAL(triggered()), SLOT(slotZoomOut()));
+
+    actionUndo_ = undoGroup_->createUndoAction(this);
+    actionUndo_->setIcon(QIcon(":/DrawAppImages/undo.png"));
+    actionUndo_->setText(tr("撤销"));
+    actionUndo_->setShortcut(QKeySequence::Undo);
+
+    actionRedo_ = undoGroup_->createRedoAction(this);
+    actionRedo_->setText(tr("重做"));
+    actionRedo_->setIcon(QIcon(":/DrawAppImages/redo.png"));
+    actionRedo_->setShortcut(QKeySequence::Redo);
+
+    actionDelete_ = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
+    actionDelete_->setShortcut(QKeySequence::Delete);
+    connect(actionDelete_, SIGNAL(triggered()), SLOT(slotEditDelete()));
+
+    actionCopy_ = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
+    actionCopy_->setShortcut(QKeySequence::Copy);
+    connect(actionCopy_, SIGNAL(triggered()), SLOT(slotEditCopy()));
+
+    actionPaste_ = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
+    actionPaste_->setShortcut(QKeySequence::Paste);
+    connect(actionPaste_, SIGNAL(triggered()), SLOT(slotEditPaste()));
+
+    // 顶部对齐
+    alignTopAction_ = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
+    alignTopAction_->setData(Qt::AlignTop);
+    connect(alignTopAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 底部对齐
+    alignDownAction_ = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
+    alignDownAction_->setData(Qt::AlignBottom);
+    connect(alignDownAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 右对齐
+    alignRightAction_ = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
+    alignRightAction_->setData(Qt::AlignRight);
+    connect(alignRightAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 左对齐
+    alignLeftAction_ = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
+    alignLeftAction_->setData(Qt::AlignLeft);
+    connect(alignLeftAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+
+    // 水平均匀分布
+    hUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
+    connect(hUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotHUniformDistributeElements()));
+
+    // 垂直均匀分布
+    vUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
+    connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
+
+    // 设置选中控件大小一致
+    setTheSameSizeAction_ = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
+    connect(setTheSameSizeAction_, SIGNAL(triggered()), SLOT(slotSetTheSameSizeElements()));
+
+    // 上移一层
+    upLayerAction_ = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
+    connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
+
+    // 下移一层
+    downLayerAction_ = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
+    connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
+
+}
+
+
+/**
+ * @brief MainWindow::createMenus
+ * @details 创建菜单
+ */
+void MainWindow::createMenus()
+{
+
+    //-----------------------------<画面编辑器>----------------------------------
+    QMenu *filemenu = new QMenu(tr("画面"), this);
+#if 0  // for test we need this
+    filemenu->addAction(m_pActionNewGraphPageObj);
+    filemenu->addAction(m_pActionOpenObj);
+#endif
+    filemenu->addAction(m_pActionSaveGraphPageObj);
+    filemenu->addSeparator();
+    filemenu->addAction(actionCloseGraphPage_);
+    filemenu->addAction(actionCloseAll_);
+    filemenu->addSeparator();
+    filemenu->addAction(actionExit_);
+
+    QMenu *windowMenu = new QMenu(tr("窗口"), this);
+    windowMenu->addAction(m_pActionShowGraphObj);
+    windowMenu->addAction(m_pActionShowPropEditorObj);
+
+    QMainWindow::menuBar()->addMenu(filemenu);
+    QMainWindow::menuBar()->addMenu(windowMenu);
+}
+
+
+/**
+ * @brief MainWindow::createToolbars
+ * @details 创建工具条
+ */
+void MainWindow::createToolbars()
+{
+
+    //-----------------------------<画面编辑器>----------------------------------
+    this->toolBar->addAction(m_pActionSaveGraphPageObj);
+    this->toolBar->addSeparator();
+    this->toolBar->addAction(actionShowGrid_);
+    //toolBar->addAction(actionShowLinear);
+    this->toolBar->addAction(actionZoomOut_);
+    this->toolBar->addAction(actionZoomIn_);
+    this->toolBar->addSeparator();
+    this->toolBar->addAction(actionUndo_);
+    this->toolBar->addAction(actionRedo_);
+    this->toolBar->addSeparator();
+    this->toolBar->addAction(actionCopy_); // 拷贝
+    this->toolBar->addAction(actionPaste_); // 粘贴
+    this->toolBar->addAction(actionDelete_); // 删除
+    this->toolBar->addSeparator();
+    this->toolBar->addAction(alignTopAction_); // 顶部对齐
+    this->toolBar->addAction(alignDownAction_); // 底部对齐
+    this->toolBar->addAction(alignLeftAction_); // 左对齐
+    this->toolBar->addAction(alignRightAction_); // 右对齐
+    this->toolBar->addAction(hUniformDistributeAction_); // 水平均匀分布
+    this->toolBar->addAction(vUniformDistributeAction_); // 垂直均匀分布
+    this->toolBar->addAction(setTheSameSizeAction_); // 设置选中控件大小一致
+    this->toolBar->addAction(upLayerAction_); // 上移一层
+    this->toolBar->addAction(downLayerAction_); // 下移一层
+    this->toolBar->addSeparator();
+}
+
 
 // 工程管理器ui初始化
 void MainWindow::setUpProjectTreeView()
@@ -1821,171 +2024,6 @@ void MainWindow::initView()
             this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
 }
 
-void MainWindow::createActions()
-{
-    actionShowGraphObj_ = new QAction(tr("图形元素"), this);
-    actionShowGraphObj_->setCheckable(true);
-    actionShowGraphObj_->setChecked(true);
-    connect(actionShowGraphObj_, SIGNAL(triggered(bool)), SLOT(slotShowGraphObj(bool)));
-
-    actionShowPropEditor_ = new QAction(tr("属性编辑器"), this);
-    actionShowPropEditor_->setCheckable(true);
-    actionShowPropEditor_->setChecked(true);
-    connect(actionShowPropEditor_, SIGNAL(triggered(bool)), SLOT(slotShowPropEditor(bool)));
-
-    actionNew_ = new QAction(QIcon(":/DrawAppImages/filenew.png"), tr("新建"), this);
-    actionNew_->setShortcut(QString("Ctrl+N"));
-    connect(actionNew_, SIGNAL(triggered()), SLOT(slotEditNew()));
-
-    actionOpen_ = new QAction(QIcon(":/DrawAppImages/fileopen.png"), tr("打开"), this);
-    actionOpen_->setShortcut(QString("Ctrl+O"));
-    connect(actionOpen_, SIGNAL(triggered()), SLOT(slotEditOpen()));
-
-    actionSaveGraphPage_ = new QAction(QIcon(":/DrawAppImages/saveproject.png"), tr("保存"), this);
-    actionSaveGraphPage_->setShortcut(QKeySequence::Save);
-    connect(actionSaveGraphPage_, SIGNAL(triggered()), SLOT(slotSaveGraphPage()));
-
-    actionCloseGraphPage_ = new QAction(tr("关闭"), this);
-    connect(actionCloseGraphPage_, SIGNAL(triggered()), SLOT(slotCloseGraphPage()));
-
-    actionCloseAll_ = new QAction(tr("关闭所有"), this);
-    connect(actionCloseAll_, SIGNAL(triggered()), SLOT(slotCloseAll()));
-
-    actionExit_ = new QAction(tr("退出"),this);
-    actionExit_->setShortcut(QKeySequence::Quit);
-    connect(actionExit_,SIGNAL(triggered()),SLOT(slotExit()));
-
-    actionShowGrid_ = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
-    actionShowGrid_->setCheckable(true);
-    actionShowGrid_->setChecked(gridVisible_);
-    connect(actionShowGrid_, SIGNAL(triggered(bool)), SLOT(slotShowGrid(bool)));
-
-    actionShowLinear_ = new QAction(QIcon(":/DrawAppImages/ruler.png"), tr("显示线条"), this);
-    actionShowLinear_->setCheckable(true);
-    actionShowLinear_->setChecked(false);
-    connect(actionShowLinear_, SIGNAL(triggered(bool)), SLOT(slotShowLinear(bool)));
-
-    actionZoomIn_ = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
-    connect(actionZoomIn_, SIGNAL(triggered()), SLOT(slotZoomIn()));
-
-    actionZoomOut_ = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
-    connect(actionZoomOut_, SIGNAL(triggered()), SLOT(slotZoomOut()));
-
-    actionUndo_ = undoGroup_->createUndoAction(this);
-    actionUndo_->setIcon(QIcon(":/DrawAppImages/undo.png"));
-    actionUndo_->setText(tr("撤销"));
-    actionUndo_->setShortcut(QKeySequence::Undo);
-
-    actionRedo_ = undoGroup_->createRedoAction(this);
-    actionRedo_->setText(tr("重做"));
-    actionRedo_->setIcon(QIcon(":/DrawAppImages/redo.png"));
-    actionRedo_->setShortcut(QKeySequence::Redo);
-
-    actionDelete_ = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
-    actionDelete_->setShortcut(QKeySequence::Delete);
-    connect(actionDelete_, SIGNAL(triggered()), SLOT(slotEditDelete()));
-
-    actionCopy_ = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
-    actionCopy_->setShortcut(QKeySequence::Copy);
-    connect(actionCopy_, SIGNAL(triggered()), SLOT(slotEditCopy()));
-
-    actionPaste_ = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
-    actionPaste_->setShortcut(QKeySequence::Paste);
-    connect(actionPaste_, SIGNAL(triggered()), SLOT(slotEditPaste()));
-
-    // 顶部对齐
-    alignTopAction_ = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
-    alignTopAction_->setData(Qt::AlignTop);
-    connect(alignTopAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
-
-    // 底部对齐
-    alignDownAction_ = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
-    alignDownAction_->setData(Qt::AlignBottom);
-    connect(alignDownAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
-
-    // 右对齐
-    alignRightAction_ = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
-    alignRightAction_->setData(Qt::AlignRight);
-    connect(alignRightAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
-
-    // 左对齐
-    alignLeftAction_ = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
-    alignLeftAction_->setData(Qt::AlignLeft);
-    connect(alignLeftAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
-
-    // 水平均匀分布
-    hUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
-    connect(hUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotHUniformDistributeElements()));
-
-    // 垂直均匀分布
-    vUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
-    connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
-
-    // 设置选中控件大小一致
-    setTheSameSizeAction_ = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
-    connect(setTheSameSizeAction_, SIGNAL(triggered()), SLOT(slotSetTheSameSizeElements()));
-
-    // 上移一层
-    upLayerAction_ = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
-    connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
-
-    // 下移一层
-    downLayerAction_ = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
-    connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
-
-}
-
-void MainWindow::createMenus()
-{
-    QMenu *filemenu = new QMenu(tr("文件"), this);
-#if 0  // for test we need this
-    filemenu->addAction(actionNew);
-    filemenu->addAction(actionOpen);
-#endif
-    filemenu->addAction(actionSaveGraphPage_);
-    filemenu->addSeparator();
-    filemenu->addAction(actionCloseGraphPage_);
-    filemenu->addAction(actionCloseAll_);
-    filemenu->addSeparator();
-    filemenu->addAction(actionExit_);
-
-    QMenu *windowMenu = new QMenu(tr("窗口"), this);
-    windowMenu->addAction(actionShowGraphObj_);
-    windowMenu->addAction(actionShowPropEditor_);
-
-    QMainWindow::menuBar()->addMenu(filemenu);
-    QMainWindow::menuBar()->addMenu(windowMenu);
-}
-
-void MainWindow::createToolbars()
-{
-    this->toolBar->addAction(actionSaveGraphPage_);
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(actionShowGrid_);
-    //toolBar->addAction(actionShowLinear);
-    this->toolBar->addAction(actionZoomOut_);
-    this->toolBar->addAction(actionZoomIn_);
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(actionUndo_);
-    this->toolBar->addAction(actionRedo_);
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(actionCopy_); // 拷贝
-    this->toolBar->addAction(actionPaste_); // 粘贴
-    this->toolBar->addAction(actionDelete_); // 删除
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(alignTopAction_); // 顶部对齐
-    this->toolBar->addAction(alignDownAction_); // 底部对齐
-    this->toolBar->addAction(alignLeftAction_); // 左对齐
-    this->toolBar->addAction(alignRightAction_); // 右对齐
-    this->toolBar->addAction(hUniformDistributeAction_); // 水平均匀分布
-    this->toolBar->addAction(vUniformDistributeAction_); // 垂直均匀分布
-    this->toolBar->addAction(setTheSameSizeAction_); // 设置选中控件大小一致
-    this->toolBar->addAction(upLayerAction_); // 上移一层
-    this->toolBar->addAction(downLayerAction_); // 下移一层
-    this->toolBar->addSeparator();
-}
-
-
 
 /**
  * @brief openGraphPage
@@ -2039,7 +2077,11 @@ void MainWindow::openGraphPage(const QString &szProjPath,
 }
 
 
-void MainWindow::slotEditNew()
+/**
+ * @brief MainWindow::onSlotNewGraphPage
+ * @details [画面.新建] 动作响应函数
+ */
+void MainWindow::onSlotNewGraphPage()
 {
     addNewGraphPage();
 }
@@ -2194,9 +2236,9 @@ void MainWindow::slotUpdateActions()
     undoGroup_->setActiveStack(currentGraphPage_->undoStack());
 
     if (!currentGraphPage_->undoStack()->isClean() || currentGraphPage_->getUnsavedFlag()) {
-        actionSaveGraphPage_->setEnabled(true);
+        m_pActionSaveGraphPageObj->setEnabled(true);
     } else {
-        actionSaveGraphPage_->setEnabled(false);
+        m_pActionSaveGraphPageObj->setEnabled(false);
     }
 }
 
@@ -2270,12 +2312,24 @@ void MainWindow::slotShowGrid(bool on)
     gridVisible_ = on;
 }
 
-void MainWindow::slotShowGraphObj(bool on)
+
+/**
+ * @brief MainWindow::onSlotShowGraphObj
+ * @details [窗口.图形元素] 动作响应函数; 图形元素停靠控件的显示或隐藏
+ * @param on true-显示, false-隐藏
+ */
+void MainWindow::onSlotShowGraphObj(bool on)
 {
     this->m_pDockElemetsObj->setVisible(on);
 }
 
-void MainWindow::slotShowPropEditor(bool on)
+
+/**
+ * @brief MainWindow::slotShowPropEditor
+ * @details [窗口.属性编辑器] 动作响应函数; 属性编辑器停靠控件的显示或隐藏
+ * @param on true-显示, false-隐藏
+ */
+void MainWindow::onSlotShowPropEditor(bool on)
 {
     this->m_pDockPropertyObj->setVisible(on);
 }
@@ -2306,7 +2360,7 @@ void MainWindow::removeGraphPage(QGraphicsView *view)
         int ret = exitResponse();
 
         if (ret == QMessageBox::Yes) {
-            slotSaveGraphPage();
+            onSlotSaveGraphPage();
         }
     }
 
@@ -2331,7 +2385,12 @@ void MainWindow::slotCloseGraphPage()
     slotUpdateActions();
 }
 
-void MainWindow::slotEditOpen()
+
+/**
+ * @brief MainWindow::onSlotEditOpen
+ * @details [画面.打开] 动作响应函数
+ */
+void MainWindow::onSlotEditOpen()
 {
     const QString &filename = QFileDialog::getOpenFileName(this,
                                                            tr("Open"),
@@ -2435,7 +2494,11 @@ void MainWindow::updateGraphPageViewInfo(const QString &fileName)
     slotChangeGraphPageName();
 }
 
-void MainWindow::slotSaveGraphPage()
+/**
+ * @brief MainWindow::onSlotEditOpen
+ * @details [画面.保存] 动作响应函数
+ */
+void MainWindow::onSlotSaveGraphPage()
 {
     if (!currentGraphPage_) {
         return;
@@ -2484,7 +2547,7 @@ void MainWindow::slotExit()
     if (unsaved) {
         int ret = exitResponse();
         if (ret == QMessageBox::Yes) {
-            slotSaveGraphPage();
+            onSlotSaveGraphPage();
             QApplication::quit();
         } else if (ret == QMessageBox::No) {
             QApplication::quit();

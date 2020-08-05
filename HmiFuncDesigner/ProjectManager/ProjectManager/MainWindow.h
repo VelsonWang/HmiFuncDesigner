@@ -88,6 +88,11 @@ private slots:
     void on_actionBigIcon_triggered();
     void on_actionSmallIcon_triggered();
 
+
+
+
+
+
 private:
     QStandardItemModel *pTreeViewProjectModel;
 
@@ -152,9 +157,6 @@ public:
 
 private:
     void initView();
-    void createMenus();
-    void createActions();
-    void createToolbars();
     void createUndoView();
     void addNewGraphPage();
     QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
@@ -186,11 +188,9 @@ public slots:
 
 private slots:
     QGraphicsView *createTabView();
-    void slotShowGraphObj(bool);
-    void slotShowPropEditor(bool);
-    void slotEditNew();
-    void slotEditOpen();
-    void slotSaveGraphPage();
+
+
+
     void slotExit();
     void slotShowGrid(bool);
     void slotShowLinear(bool);
@@ -231,17 +231,12 @@ private slots:
     void onCopyGraphPage();
     // 粘贴画面
     void onPasteGraphPage();
-
 private:
-    QString szProjPath_;
-    QString szProjName_;
-    QString graphPageName_;
 
-    QAction *actionShowGraphObj_;
-    QAction *actionShowPropEditor_;
-    QAction *actionNew_;
-    QAction *actionOpen_;
-    QAction *actionSaveGraphPage_;
+
+
+
+
     QAction *actionExit_;
     QAction *actionShowGrid_;
     QAction *actionShowLinear_;
@@ -264,6 +259,12 @@ private:
     QAction *setTheSameSizeAction_; // 设置选中控件大小一致
     QAction *upLayerAction_; // 上移一层
     QAction *downLayerAction_; // 下移一层
+private:
+    QString szProjPath_;
+    QString szProjName_;
+    QString graphPageName_;
+
+
 
     GraphPage *currentGraphPage_;
     QGraphicsView *currentView_;
@@ -356,11 +357,52 @@ public:
     void setupUi();
     void retranslateUi();
 
+
+    //-------------------------------<以下为整理过的代码>------------------------------------------
+
+
+private slots:
+    // 窗口.图形元素 动作响应函数
+    void onSlotShowGraphObj(bool);
+    // 窗口.属性编辑器 动作响应函数
+    void onSlotShowPropEditor(bool);
+    // 画面.新建
+    void onSlotNewGraphPage();
+    // 画面.打开
+    void onSlotEditOpen();
+    // 画面.保存
+    void onSlotSaveGraphPage();
+
+private:
+    // 创建动作
+    void createActions();
+    // 创建菜单
+    void createMenus();
+    // 创建工具条
+    void createToolbars();
+
 private:
     QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
     QDockWidget *m_pDockPropertyObj; // 属性停靠控件
     QDockWidget *m_pDockElemetsObj; // 图形元素停靠控件
     QTabWidget *m_pTabProjectMgrObj; // 工程管理器TabWidget控件
+
+    QAction *m_pActionShowGraphObj; // 窗口.图形元素
+    QAction *m_pActionShowPropEditorObj; // 窗口.属性编辑器
+    QAction *m_pActionNewGraphPageObj; // 画面.新建
+    QAction *m_pActionOpenObj; // 画面.打开
+    QAction *m_pActionSaveGraphPageObj; // 画面.保存
+
+
+
+
+
+
+
+
+
+
+
 };
 
 #endif // MAINWINDOW_H
