@@ -662,14 +662,11 @@ void MainWindow::createActions()
     actionCloseAll_ = new QAction(tr("关闭所有"), this);
     connect(actionCloseAll_, SIGNAL(triggered()), SLOT(slotCloseAll()));
 
-    actionExit_ = new QAction(tr("退出"),this);
-    actionExit_->setShortcut(QKeySequence::Quit);
-    connect(actionExit_,SIGNAL(triggered()),SLOT(slotExit()));
-
-    actionShowGrid_ = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
-    actionShowGrid_->setCheckable(true);
-    actionShowGrid_->setChecked(gridVisible_);
-    connect(actionShowGrid_, SIGNAL(triggered(bool)), SLOT(slotShowGrid(bool)));
+    // 显示栅格
+    m_pActionShowGridObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
+    m_pActionShowGridObj->setCheckable(true);
+    m_pActionShowGridObj->setChecked(gridVisible_);
+    connect(m_pActionShowGridObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGrid(bool)));
 
     actionShowLinear_ = new QAction(QIcon(":/DrawAppImages/ruler.png"), tr("显示线条"), this);
     actionShowLinear_->setCheckable(true);
@@ -765,7 +762,7 @@ void MainWindow::createMenus()
     filemenu->addAction(actionCloseGraphPage_);
     filemenu->addAction(actionCloseAll_);
     filemenu->addSeparator();
-    filemenu->addAction(actionExit_);
+
 
     QMenu *windowMenu = new QMenu(tr("窗口"), this);
     windowMenu->addAction(m_pActionShowGraphObj);
@@ -786,7 +783,7 @@ void MainWindow::createToolbars()
     //-----------------------------<画面编辑器>----------------------------------
     this->toolBar->addAction(m_pActionSaveGraphPageObj);
     this->toolBar->addSeparator();
-    this->toolBar->addAction(actionShowGrid_);
+    this->toolBar->addAction(m_pActionShowGridObj); // 显示栅格
     //toolBar->addAction(actionShowLinear);
     this->toolBar->addAction(actionZoomOut_);
     this->toolBar->addAction(actionZoomIn_);
@@ -2227,7 +2224,7 @@ void MainWindow::slotUpdateActions()
 
     actionZoomIn_->setEnabled(graphPageTabWidget_->count() ? true : false);
     actionZoomOut_->setEnabled(graphPageTabWidget_->count() ? true : false);
-    actionShowGrid_->setEnabled(graphPageTabWidget_->count() ? true : false);
+    m_pActionShowGridObj->setEnabled(graphPageTabWidget_->count() ? true : false);
 
     if (!currentGraphPage_) {
         return;
@@ -2301,7 +2298,13 @@ void MainWindow::slotElementsDeleted()
 
 }
 
-void MainWindow::slotShowGrid(bool on)
+
+/**
+ * @brief MainWindow::onSlotShowGrid
+ * @details 显示栅格
+ * @param on true-显示，false-隐藏
+ */
+void MainWindow::onSlotShowGrid(bool on)
 {
     QListIterator <GraphPage*> iter(GraphPageManager::getInstance()->getGraphPageList());
 
@@ -2527,35 +2530,6 @@ void MainWindow::onSlotSaveGraphPage()
     }
 }
 
-void MainWindow::slotExit()
-{
-    if (graphPageTabWidget_->count() == 0) {
-        QApplication::quit();
-        return;
-    }
-
-    bool unsaved = false;
-
-    QListIterator<GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
-
-    while (it.hasNext()) {
-        if (!it.next()->undoStack()->isClean()) {
-            unsaved = true;
-        }
-    }
-
-    if (unsaved) {
-        int ret = exitResponse();
-        if (ret == QMessageBox::Yes) {
-            onSlotSaveGraphPage();
-            QApplication::quit();
-        } else if (ret == QMessageBox::No) {
-            QApplication::quit();
-        }
-    }
-
-    QApplication::quit();
-}
 
 int MainWindow::exitResponse()
 {

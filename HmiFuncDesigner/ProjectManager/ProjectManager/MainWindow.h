@@ -191,8 +191,8 @@ private slots:
 
 
 
-    void slotExit();
-    void slotShowGrid(bool);
+
+
     void slotShowLinear(bool);
     void slotZoomIn();
     void slotZoomOut();
@@ -237,8 +237,6 @@ private:
 
 
 
-    QAction *actionExit_;
-    QAction *actionShowGrid_;
     QAction *actionShowLinear_;
     QAction *actionZoomIn_;
     QAction *actionZoomOut_;
@@ -372,6 +370,8 @@ private slots:
     void onSlotEditOpen();
     // 画面.保存
     void onSlotSaveGraphPage();
+    // 显示栅格
+    void onSlotShowGrid(bool);
 
 private:
     // 创建动作
@@ -393,7 +393,7 @@ private:
     QAction *m_pActionOpenObj; // 画面.打开
     QAction *m_pActionSaveGraphPageObj; // 画面.保存
 
-
+    QAction *m_pActionShowGridObj; // 显示栅格
 
 
 
