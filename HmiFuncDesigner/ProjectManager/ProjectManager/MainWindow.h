@@ -191,16 +191,10 @@ private slots:
 
 
 
-
-
-    void slotShowLinear(bool);
-    void slotZoomIn();
-    void slotZoomOut();
     void slotUpdateActions();
     void slotChangeGraphPage(int);
     void slotChangeGraphPageName();
-    void slotCloseGraphPage();
-    void slotCloseAll();
+
     // 对齐操作
     void slotAlignElements();
     // 水平均匀分布
@@ -213,12 +207,9 @@ private slots:
     void slotUpLayerElements();
     // 下移一层
     void slotDownLayerElements();
-    // 删除
-    void slotEditDelete();
-    // 拷贝
-    void slotEditCopy();
-    // 粘贴
-    void slotEditPaste();
+
+
+
     // 画面名称被单击
     void on_listWidgetGraphPages_currentTextChanged(const QString &currentText);
     // 新建画面
@@ -237,26 +228,14 @@ private:
 
 
 
-    QAction *actionShowLinear_;
-    QAction *actionZoomIn_;
-    QAction *actionZoomOut_;
-    QAction *actionUndo_;
-    QAction *actionRedo_;
-    QAction *actionCloseGraphPage_;
-    QAction *actionCloseAll_;
 
-    QAction *actionCopy_; // 拷贝
-    QAction *actionPaste_; // 粘贴
-    QAction *actionDelete_; // 删除
-    QAction *alignTopAction_; // 顶部对齐
-    QAction *alignDownAction_; // 底部对齐
-    QAction *alignRightAction_; // 右对齐
-    QAction *alignLeftAction_; // 左对齐
-    QAction *hUniformDistributeAction_; // 水平均匀分布
-    QAction *vUniformDistributeAction_; // 垂直均匀分布
-    QAction *setTheSameSizeAction_; // 设置选中控件大小一致
-    QAction *upLayerAction_; // 上移一层
-    QAction *downLayerAction_; // 下移一层
+
+
+
+
+
+
+
 private:
     QString szProjPath_;
     QString szProjName_;
@@ -269,7 +248,7 @@ private:
 
     QTabWidget *graphPageTabWidget_;
     ElementLibraryWidget *elementWidget_;
-    QUndoGroup *undoGroup_;
+
 
     bool gridVisible_;
     int currentGraphPageIndex_;
@@ -372,6 +351,20 @@ private slots:
     void onSlotSaveGraphPage();
     // 显示栅格
     void onSlotShowGrid(bool);
+    // 画面放大
+    void onSlotZoomIn();
+    // 画面缩小
+    void onSlotZoomOut();
+    // 关闭画面
+    void onSlotCloseGraphPage();
+    // 关闭所有画面
+    void onSlotCloseAll();
+    // 拷贝画面
+    void onSlotEditCopy();
+    // 粘贴画面
+    void onSlotEditPaste();
+    // 删除画面
+    void onSlotEditDelete();
 
 private:
     // 创建动作
@@ -392,8 +385,17 @@ private:
     QAction *m_pActionNewGraphPageObj; // 画面.新建
     QAction *m_pActionOpenObj; // 画面.打开
     QAction *m_pActionSaveGraphPageObj; // 画面.保存
-
     QAction *m_pActionShowGridObj; // 显示栅格
+    QAction *m_pActionZoomInObj; // 画面放大
+    QAction *m_pActionZoomOutObj; // 画面缩小
+    QUndoGroup *m_pUndoGroupObj;
+    QAction *m_pActionUndoObj; // 撤销
+    QAction *m_pActionRedoObj; // 重做
+    QAction *m_pActionCloseGraphPageObj; // 关闭画面
+    QAction *m_pActionCloseAllObj; // 关闭所有画面
+    QAction *m_pActionCopyObj; // 拷贝画面
+    QAction *m_pActionPasteObj; // 粘贴画面
+    QAction *m_pActionDeleteObj; // 删除画面
 
 
 
@@ -402,7 +404,15 @@ private:
 
 
 
-
+    QAction *alignTopAction_; // 顶部对齐
+    QAction *alignDownAction_; // 底部对齐
+    QAction *alignRightAction_; // 右对齐
+    QAction *alignLeftAction_; // 左对齐
+    QAction *hUniformDistributeAction_; // 水平均匀分布
+    QAction *vUniformDistributeAction_; // 垂直均匀分布
+    QAction *setTheSameSizeAction_; // 设置选中控件大小一致
+    QAction *upLayerAction_; // 上移一层
+    QAction *downLayerAction_; // 下移一层
 };
 
 #endif // MAINWINDOW_H

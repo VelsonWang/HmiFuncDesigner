@@ -90,7 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
     szProjName_ = ""; //szProjName;
     graphPageName_ =  ""; //szGraphPageName;
 
-    undoGroup_ = new QUndoGroup(this);
+    m_pUndoGroupObj = new QUndoGroup(this);
     createActions();
 
     createMenus();
@@ -656,11 +656,13 @@ void MainWindow::createActions()
     m_pActionSaveGraphPageObj->setShortcut(QKeySequence::Save);
     connect(m_pActionSaveGraphPageObj, SIGNAL(triggered()), SLOT(onSlotSaveGraphPage()));
 
-    actionCloseGraphPage_ = new QAction(tr("关闭"), this);
-    connect(actionCloseGraphPage_, SIGNAL(triggered()), SLOT(slotCloseGraphPage()));
+    // 关闭画面
+    m_pActionCloseGraphPageObj = new QAction(tr("关闭"), this);
+    connect(m_pActionCloseGraphPageObj, SIGNAL(triggered()), SLOT(onSlotCloseGraphPage()));
 
-    actionCloseAll_ = new QAction(tr("关闭所有"), this);
-    connect(actionCloseAll_, SIGNAL(triggered()), SLOT(slotCloseAll()));
+    // 关闭所有画面
+    m_pActionCloseAllObj = new QAction(tr("关闭所有"), this);
+    connect(m_pActionCloseAllObj, SIGNAL(triggered()), SLOT(slotCloseAll()));
 
     // 显示栅格
     m_pActionShowGridObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
@@ -668,38 +670,40 @@ void MainWindow::createActions()
     m_pActionShowGridObj->setChecked(gridVisible_);
     connect(m_pActionShowGridObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGrid(bool)));
 
-    actionShowLinear_ = new QAction(QIcon(":/DrawAppImages/ruler.png"), tr("显示线条"), this);
-    actionShowLinear_->setCheckable(true);
-    actionShowLinear_->setChecked(false);
-    connect(actionShowLinear_, SIGNAL(triggered(bool)), SLOT(slotShowLinear(bool)));
+    // 画面放大
+    m_pActionZoomInObj = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
+    connect(m_pActionZoomInObj, SIGNAL(triggered()), SLOT(slotZoomIn()));
 
-    actionZoomIn_ = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
-    connect(actionZoomIn_, SIGNAL(triggered()), SLOT(slotZoomIn()));
+    // 画面缩小
+    m_pActionZoomOutObj = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
+    connect(m_pActionZoomOutObj, SIGNAL(triggered()), SLOT(slotZoomOut()));
 
-    actionZoomOut_ = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
-    connect(actionZoomOut_, SIGNAL(triggered()), SLOT(slotZoomOut()));
+    // 撤销
+    m_pActionUndoObj = m_pUndoGroupObj->createUndoAction(this);
+    m_pActionUndoObj->setIcon(QIcon(":/DrawAppImages/undo.png"));
+    m_pActionUndoObj->setText(tr("撤销"));
+    m_pActionUndoObj->setShortcut(QKeySequence::Undo);
 
-    actionUndo_ = undoGroup_->createUndoAction(this);
-    actionUndo_->setIcon(QIcon(":/DrawAppImages/undo.png"));
-    actionUndo_->setText(tr("撤销"));
-    actionUndo_->setShortcut(QKeySequence::Undo);
+    // 重做
+    m_pActionRedoObj = m_pUndoGroupObj->createRedoAction(this);
+    m_pActionRedoObj->setText(tr("重做"));
+    m_pActionRedoObj->setIcon(QIcon(":/DrawAppImages/redo.png"));
+    m_pActionRedoObj->setShortcut(QKeySequence::Redo);
 
-    actionRedo_ = undoGroup_->createRedoAction(this);
-    actionRedo_->setText(tr("重做"));
-    actionRedo_->setIcon(QIcon(":/DrawAppImages/redo.png"));
-    actionRedo_->setShortcut(QKeySequence::Redo);
+    // 删除画面
+    m_pActionDeleteObj = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
+    m_pActionDeleteObj->setShortcut(QKeySequence::Delete);
+    connect(m_pActionDeleteObj, SIGNAL(triggered()), SLOT(slotEditDelete()));
 
-    actionDelete_ = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
-    actionDelete_->setShortcut(QKeySequence::Delete);
-    connect(actionDelete_, SIGNAL(triggered()), SLOT(slotEditDelete()));
+    // 拷贝画面
+    m_pActionCopyObj = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
+    m_pActionCopyObj->setShortcut(QKeySequence::Copy);
+    connect(m_pActionCopyObj, SIGNAL(triggered()), SLOT(onSlotEditCopy()));
 
-    actionCopy_ = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
-    actionCopy_->setShortcut(QKeySequence::Copy);
-    connect(actionCopy_, SIGNAL(triggered()), SLOT(slotEditCopy()));
-
-    actionPaste_ = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
-    actionPaste_->setShortcut(QKeySequence::Paste);
-    connect(actionPaste_, SIGNAL(triggered()), SLOT(slotEditPaste()));
+    // 粘贴画面
+    m_pActionPasteObj = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
+    m_pActionPasteObj->setShortcut(QKeySequence::Paste);
+    connect(m_pActionPasteObj, SIGNAL(triggered()), SLOT(slotEditPaste()));
 
     // 顶部对齐
     alignTopAction_ = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
@@ -759,8 +763,8 @@ void MainWindow::createMenus()
 #endif
     filemenu->addAction(m_pActionSaveGraphPageObj);
     filemenu->addSeparator();
-    filemenu->addAction(actionCloseGraphPage_);
-    filemenu->addAction(actionCloseAll_);
+    filemenu->addAction(m_pActionCloseGraphPageObj); // 画面.关闭
+    filemenu->addAction(m_pActionCloseAllObj); // 画面.关闭所有
     filemenu->addSeparator();
 
 
@@ -784,16 +788,15 @@ void MainWindow::createToolbars()
     this->toolBar->addAction(m_pActionSaveGraphPageObj);
     this->toolBar->addSeparator();
     this->toolBar->addAction(m_pActionShowGridObj); // 显示栅格
-    //toolBar->addAction(actionShowLinear);
-    this->toolBar->addAction(actionZoomOut_);
-    this->toolBar->addAction(actionZoomIn_);
+    this->toolBar->addAction(m_pActionZoomOutObj); //画面缩小
+    this->toolBar->addAction(m_pActionZoomInObj); // 画面放大
     this->toolBar->addSeparator();
-    this->toolBar->addAction(actionUndo_);
-    this->toolBar->addAction(actionRedo_);
+    this->toolBar->addAction(m_pActionUndoObj); // 撤销
+    this->toolBar->addAction(m_pActionRedoObj); // 重做
     this->toolBar->addSeparator();
-    this->toolBar->addAction(actionCopy_); // 拷贝
-    this->toolBar->addAction(actionPaste_); // 粘贴
-    this->toolBar->addAction(actionDelete_); // 删除
+    this->toolBar->addAction(m_pActionCopyObj); // 拷贝画面
+    this->toolBar->addAction(m_pActionPasteObj); // 粘贴画面
+    this->toolBar->addAction(m_pActionDeleteObj); // 删除画面
     this->toolBar->addSeparator();
     this->toolBar->addAction(alignTopAction_); // 顶部对齐
     this->toolBar->addAction(alignDownAction_); // 底部对齐
@@ -2162,8 +2165,8 @@ void MainWindow::addNewGraphPage()
     graphPageTabWidget_->setCurrentWidget(currentView_);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
 
-    undoGroup_->addStack(graphPage->undoStack());
-    undoGroup_->setActiveStack(graphPage->undoStack());
+    m_pUndoGroupObj->addStack(graphPage->undoStack());
+    m_pUndoGroupObj->setActiveStack(graphPage->undoStack());
 
     connectGraphPage(graphPage);
 }
@@ -2222,15 +2225,15 @@ void MainWindow::slotUpdateActions()
         }
     }
 
-    actionZoomIn_->setEnabled(graphPageTabWidget_->count() ? true : false);
-    actionZoomOut_->setEnabled(graphPageTabWidget_->count() ? true : false);
+    m_pActionZoomInObj->setEnabled(graphPageTabWidget_->count() ? true : false);
+    m_pActionZoomOutObj->setEnabled(graphPageTabWidget_->count() ? true : false);
     m_pActionShowGridObj->setEnabled(graphPageTabWidget_->count() ? true : false);
 
     if (!currentGraphPage_) {
         return;
     }
 
-    undoGroup_->setActiveStack(currentGraphPage_->undoStack());
+    m_pUndoGroupObj->setActiveStack(currentGraphPage_->undoStack());
 
     if (!currentGraphPage_->undoStack()->isClean() || currentGraphPage_->getUnsavedFlag()) {
         m_pActionSaveGraphPageObj->setEnabled(true);
@@ -2338,7 +2341,11 @@ void MainWindow::onSlotShowPropEditor(bool on)
 }
 
 
-void MainWindow::slotCloseAll()
+/**
+ * @brief MainWindow::onSlotCloseAll
+ * @details 关闭所有画面
+ */
+void MainWindow::onSlotCloseAll()
 {
     while (graphPageTabWidget_->count()) {
         QGraphicsView *view = static_cast<QGraphicsView*>(graphPageTabWidget_->widget(graphPageTabWidget_->currentIndex()));
@@ -2368,13 +2375,18 @@ void MainWindow::removeGraphPage(QGraphicsView *view)
     }
 
     graphPageTabWidget_->removeTab(index);
-    undoGroup_->removeStack(graphPage->undoStack());
+    m_pUndoGroupObj->removeStack(graphPage->undoStack());
     GraphPageManager::getInstance()->removeGraphPage(graphPage);
     disconnectGraphPage(graphPage);
     delete graphPage;
 }
 
-void MainWindow::slotCloseGraphPage()
+
+/**
+ * @brief MainWindow::onSlotCloseGraphPage
+ * @details 关闭画面
+ */
+void MainWindow::onSlotCloseGraphPage()
 {
     QGraphicsView *view = currentView_;
     removeGraphPage(view);
@@ -2468,8 +2480,8 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     graphPageTabWidget_->setCurrentWidget(view);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
 
-    undoGroup_->addStack(graphPage->undoStack());
-    undoGroup_->setActiveStack(graphPage->undoStack());
+    m_pUndoGroupObj->addStack(graphPage->undoStack());
+    m_pUndoGroupObj->setActiveStack(graphPage->undoStack());
 
     connectGraphPage(graphPage);
 
@@ -2540,11 +2552,11 @@ int MainWindow::exitResponse()
     return ret;
 }
 
-void MainWindow::slotShowLinear(bool on) {
-    Q_UNUSED(on)
-}
-
-void MainWindow::slotZoomIn()
+/**
+ * @brief MainWindow::onSlotZoomIn
+ * @details 画面放大
+ */
+void MainWindow::onSlotZoomIn()
 {
     if(currentGraphPage_ != nullptr) {
         int width = currentGraphPage_->getGraphPageWidth();
@@ -2559,7 +2571,12 @@ void MainWindow::slotZoomIn()
     }
 }
 
-void MainWindow::slotZoomOut()
+
+/**
+ * @brief MainWindow::onSlotZoomOut
+ * @details 画面缩小
+ */
+void MainWindow::onSlotZoomOut()
 {
     if(currentGraphPage_ != nullptr) {
         int width = currentGraphPage_->getGraphPageWidth();
@@ -2660,9 +2677,9 @@ void MainWindow::slotDownLayerElements()
 
 /**
  * @brief MainWindow::slotEditDelete
- * @details 删除
+ * @details 删除画面
  */
-void MainWindow::slotEditDelete()
+void MainWindow::onSlotEditDelete()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -2673,9 +2690,9 @@ void MainWindow::slotEditDelete()
 
 /**
  * @brief MainWindow::slotEditCopy
- * @details 拷贝
+ * @details 拷贝画面
  */
-void MainWindow::slotEditCopy()
+void MainWindow::onSlotEditCopy()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
@@ -2686,9 +2703,9 @@ void MainWindow::slotEditCopy()
 
 /**
  * @brief MainWindow::slotEditPaste
- * @details 粘贴
+ * @details 粘贴画面
  */
-void MainWindow::slotEditPaste()
+void MainWindow::onSlotEditPaste()
 {
     if(currentGraphPage_ != nullptr) {
         QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
