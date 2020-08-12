@@ -8,7 +8,7 @@
 
 
 QMutex gMutex;
-ULog* ULog::log_ = nullptr;
+ULog* ULog::log_ = Q_NULLPTR;
 QMutex ULog::mutex_;
 
 /**

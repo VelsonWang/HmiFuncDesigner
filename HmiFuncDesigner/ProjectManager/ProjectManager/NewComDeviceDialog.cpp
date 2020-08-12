@@ -253,9 +253,9 @@ void NewComDeviceDialog::save(int id)
 {
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
-    if(pObj == nullptr) {
+    if(pObj == Q_NULLPTR) {
         pObj = new DeviceInfoObject();
-        if(pObj == nullptr)
+        if(pObj == Q_NULLPTR)
             return;
         deviceInfo.insert(ProjectData::getInstance()->dbData_, pObj);
         pObj->iID_ = deviceInfo.getLastInsertId(ProjectData::getInstance()->dbData_);

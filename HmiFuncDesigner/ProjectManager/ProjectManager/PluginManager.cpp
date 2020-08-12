@@ -6,7 +6,7 @@
 #include <QDebug>
 
 QMutex PluginManager::mutex_;
-PluginManager *PluginManager::instance_ = nullptr;
+PluginManager *PluginManager::instance_ = Q_NULLPTR;
 
 PluginManager::PluginManager()
 {

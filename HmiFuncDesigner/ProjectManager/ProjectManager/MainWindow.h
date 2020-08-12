@@ -46,7 +46,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
+    explicit MainWindow(QWidget *parent = Q_NULLPTR);
     ~MainWindow();
 
 signals:
@@ -139,14 +139,6 @@ protected:
     void contextMenuEvent(QContextMenuEvent * event);
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
-private:
-    QString m_strProjectPath;
-    QString m_strProjectName;
-    QString m_CurItem;
-    QString m_CurTreeViewItem;
-
-
-
 
 public:
     bool isGridVisible() const;
@@ -195,72 +187,6 @@ private slots:
     void slotChangeGraphPage(int);
     void slotChangeGraphPageName();
 
-    // 对齐操作
-    void slotAlignElements();
-    // 水平均匀分布
-    void slotHUniformDistributeElements();
-    // 垂直均匀分布
-    void slotVUniformDistributeElements();
-    // 设置选中控件大小一致
-    void slotSetTheSameSizeElements();
-    // 上移一层
-    void slotUpLayerElements();
-    // 下移一层
-    void slotDownLayerElements();
-
-
-
-    // 画面名称被单击
-    void on_listWidgetGraphPages_currentTextChanged(const QString &currentText);
-    // 新建画面
-    void onNewGraphPage();
-    // 重命名画面
-    void onRenameGraphPage();
-    // 删除画面
-    void onDeleteGraphPage();
-    // 复制画面
-    void onCopyGraphPage();
-    // 粘贴画面
-    void onPasteGraphPage();
-private:
-
-
-
-
-
-
-
-
-
-
-
-
-
-private:
-    QString szProjPath_;
-    QString szProjName_;
-    QString graphPageName_;
-
-
-
-    GraphPage *currentGraphPage_;
-    QGraphicsView *currentView_;
-
-    QTabWidget *graphPageTabWidget_;
-    ElementLibraryWidget *elementWidget_;
-
-
-    bool gridVisible_;
-    int currentGraphPageIndex_;
-    QString szCopyGraphPageFileName_;
-
-private:
-    QtVariantPropertyManager *variantPropertyManager_;
-    QtTreePropertyBrowser *propertyEditor_;
-    QtVariantEditorFactory *variantEditorFactory_;
-    QMap<QtProperty *, QString> propertyToId_;
-    QMap<QString, QtVariantProperty *> idToProperty_;
-    QMap<QString, bool> idToExpanded_;
 
 
 private:
@@ -365,6 +291,30 @@ private slots:
     void onSlotEditPaste();
     // 删除画面
     void onSlotEditDelete();
+    // 对齐操作
+    void onSlotAlignElements();
+    // 水平均匀分布
+    void onSlotHUniformDistributeElements();
+    // 垂直均匀分布
+    void onSlotVUniformDistributeElements();
+    // 设置选中控件大小一致
+    void onSlotSetTheSameSizeElements();
+    // 上移一层
+    void onSlotUpLayerElements();
+    // 下移一层
+    void onSlotDownLayerElements();
+    // 画面名称被单击
+    void onSlotListWidgetGraphPagesCurrentTextChanged(const QString &szText);
+    // 新建画面
+    void onNewGraphPage();
+    // 重命名画面
+    void onRenameGraphPage();
+    // 删除画面
+    void onDeleteGraphPage();
+    // 复制画面
+    void onCopyGraphPage();
+    // 粘贴画面
+    void onPasteGraphPage();
 
 private:
     // 创建动作
@@ -375,6 +325,35 @@ private:
     void createToolbars();
 
 private:
+    QString m_szProjPath;
+    QString m_szProjName;
+    QString m_szCurItem;
+    QString m_szCurTreeViewItem;
+    GraphPage *m_pCurrentGraphPageObj;
+    QGraphicsView *m_pCurrentViewObj;
+    QTabWidget *m_pGraphPageTabWidgetObj;
+
+
+
+
+
+
+    ElementLibraryWidget *elementWidget_;
+
+
+    bool gridVisible_;
+    int currentGraphPageIndex_;
+    QString szCopyGraphPageFileName_;
+
+private:
+    QtVariantPropertyManager *variantPropertyManager_;
+    QtTreePropertyBrowser *propertyEditor_;
+    QtVariantEditorFactory *variantEditorFactory_;
+    QMap<QtProperty *, QString> propertyToId_;
+    QMap<QString, QtVariantProperty *> idToProperty_;
+    QMap<QString, bool> idToExpanded_;
+
+
     QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
     QDockWidget *m_pDockPropertyObj; // 属性停靠控件
     QDockWidget *m_pDockElemetsObj; // 图形元素停靠控件
@@ -396,6 +375,15 @@ private:
     QAction *m_pActionCopyObj; // 拷贝画面
     QAction *m_pActionPasteObj; // 粘贴画面
     QAction *m_pActionDeleteObj; // 删除画面
+    QAction *m_pActionAlignTopObj; // 顶部对齐
+    QAction *m_pActionAlignDownObj; // 底部对齐
+    QAction *m_pActionAlignRightObj; // 右对齐
+    QAction *m_pActionAalignLeftObj; // 左对齐
+    QAction *m_pActionHUniformDistributeObj; // 水平均匀分布
+    QAction *m_pActionVUniformDistributeObj; // 垂直均匀分布
+    QAction *m_pActionSetTheSameSizeObj; // 设置选中控件大小一致
+    QAction *m_pActionUpLayerObj; // 上移一层
+    QAction *m_pActionDownLayerObj; // 下移一层
 
 
 
@@ -404,15 +392,6 @@ private:
 
 
 
-    QAction *alignTopAction_; // 顶部对齐
-    QAction *alignDownAction_; // 底部对齐
-    QAction *alignRightAction_; // 右对齐
-    QAction *alignLeftAction_; // 左对齐
-    QAction *hUniformDistributeAction_; // 水平均匀分布
-    QAction *vUniformDistributeAction_; // 垂直均匀分布
-    QAction *setTheSameSizeAction_; // 设置选中控件大小一致
-    QAction *upLayerAction_; // 上移一层
-    QAction *downLayerAction_; // 下移一层
 };
 
 #endif // MAINWINDOW_H

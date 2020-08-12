@@ -232,9 +232,9 @@ SysTag::SysTag(QWidget *parent) :
 SysTag::~SysTag()
 {
     delete ui;
-    if(pTableViewVarManagerModel != nullptr) {
+    if(pTableViewVarManagerModel != Q_NULLPTR) {
         delete pTableViewVarManagerModel;
-        pTableViewVarManagerModel = nullptr;
+        pTableViewVarManagerModel = Q_NULLPTR;
     }
 }
 

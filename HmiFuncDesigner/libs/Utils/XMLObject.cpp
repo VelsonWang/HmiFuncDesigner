@@ -4,14 +4,14 @@
 
 XMLObject::XMLObject(XMLObject *parent) :
     m_parent(parent) {
-    if(m_parent != nullptr) {
+    if(m_parent != Q_NULLPTR) {
         m_parent->m_children.append(this);
     }
 }
 
 XMLObject::~XMLObject() {
     clear();
-    if(m_parent != nullptr) {
+    if(m_parent != Q_NULLPTR) {
         m_parent->m_children.removeAll(this);
     }
 }
@@ -91,7 +91,7 @@ void XMLObject::insertChild(int index, XMLObject *child) {
     if(child->m_parent == this)
         return;
 
-    if(child->m_parent != nullptr)
+    if(child->m_parent != Q_NULLPTR)
         child->m_parent->m_children.removeAll(child);
 
     child->m_parent = this;
@@ -197,7 +197,7 @@ XMLObject* XMLObject::getCurrentChild(const QString& name) {
         if(xml->getTagName() == name)
             return xml;
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 

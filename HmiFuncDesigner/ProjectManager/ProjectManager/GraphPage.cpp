@@ -588,7 +588,7 @@ void GraphPage::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mouseMoveEvent(event);
     foreach (QGraphicsItem *item, selectedItems()) {
         Element *ele = dynamic_cast<Element *>(item);
-        if (ele != nullptr) {
+        if (ele != Q_NULLPTR) {
             ele->RestrictedRectangularRegion();
         }
     }
@@ -616,7 +616,7 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
         while(it.hasNext()) {
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
-            if(plugin != nullptr && plugin->getElementName() == typeId) {
+            if(plugin != Q_NULLPTR && plugin->getElementName() == typeId) {
                 Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
@@ -1068,7 +1068,7 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select)
             while(it.hasNext()) {
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
-                if(plugin != nullptr && plugin->getElementID() == objectType) {
+                if(plugin != Q_NULLPTR && plugin->getElementID() == objectType) {
                     Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
@@ -1107,7 +1107,7 @@ void GraphPage::writeItems(QDataStream &out, const QList<QGraphicsItem *> &items
             while(it.hasNext()) {
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
-                if(plugin != nullptr && plugin->getElementID() == type) {
+                if(plugin != Q_NULLPTR && plugin->getElementID() == type) {
                     Element *ele = static_cast<Element *>(items[j]);
                     ele->writeData(out);
                 }
@@ -1127,7 +1127,7 @@ void GraphPage::saveAsBinary(const QString &filename)
     }
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(nullptr,
+        QMessageBox::information(Q_NULLPTR,
                                  tr("错误"),
                                  tr("文件无法保存"),
                                  QMessageBox::Ok);
@@ -1148,7 +1148,7 @@ void GraphPage::loadAsBinary(const QString &filename)
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(nullptr,
+        QMessageBox::information(Q_NULLPTR,
                                  tr("错误"),
                                  tr("文件无法保存"),
                                  QMessageBox::Ok);
@@ -1172,7 +1172,7 @@ void GraphPage::saveAsXML(const QString &filename)
     }
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(nullptr,
+        QMessageBox::information(Q_NULLPTR,
                                  tr("错误"),
                                  tr("文件无法保存"),
                                  QMessageBox::Ok);
@@ -1193,7 +1193,7 @@ void GraphPage::loadAsXML(const QString &filename)
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(nullptr,
+        QMessageBox::information(Q_NULLPTR,
                                  tr("错误"),
                                  tr("无法打开文件"),
                                  QMessageBox::Ok);
@@ -1293,13 +1293,13 @@ Element *GraphPage::createElement(const QString &internalType)
         while(it.hasNext()) {
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
-            if(plugin != nullptr && plugin->getElementIDString() == internalType) {
+            if(plugin != Q_NULLPTR && plugin->getElementIDString() == internalType) {
                 return plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
             }
         }
     }
 
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 
@@ -1312,7 +1312,7 @@ void GraphPage::loadLibrary(QByteArray &data)
     QFile file(filename);
 
     if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(nullptr,
+        QMessageBox::information(Q_NULLPTR,
                                  tr("错误"),
                                  tr("无法打开文件"),
                                  QMessageBox::Ok);
@@ -1371,7 +1371,7 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml)
 
 void GraphPage::slotSaveAsLibrary()
 {
-    QString filename = QFileDialog::getSaveFileName(nullptr,
+    QString filename = QFileDialog::getSaveFileName(Q_NULLPTR,
                                                     tr("Save graph library"),
                                                     QString("."),
                                                     tr("Library (*.drwlib)"));
@@ -1379,7 +1379,7 @@ void GraphPage::slotSaveAsLibrary()
     QFile file(filename);
 
     if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(nullptr,
+        QMessageBox::information(Q_NULLPTR,
                                  tr("错误"),
                                  tr("无法打开文件"),
                                  QMessageBox::Ok);
@@ -1449,7 +1449,7 @@ void GraphPage::getSupportEvents(QStringList &listValue)
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists()) {
-        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
+        QMessageBox::critical(Q_NULLPTR, tr("提示"), tr("事件配置列表文件不存在！"));
         return;
     }
     if(!fileCfg.open(QFile::ReadOnly)) {
@@ -1458,7 +1458,7 @@ void GraphPage::getSupportEvents(QStringList &listValue)
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, nullptr)) {
+    if(!xmlFuncSupportList.load(buffer, Q_NULLPTR)) {
         return;
     }
 
@@ -1538,7 +1538,7 @@ void GraphPage::updateAllElementGraphPageSize(int width, int height)
 {
     foreach (QGraphicsItem *item, items()) {
         Element *pEle = dynamic_cast<Element *>(item);
-        if (pEle != nullptr) {
+        if (pEle != Q_NULLPTR) {
             pEle->setGraphPageSize(width, height);
         }
     }

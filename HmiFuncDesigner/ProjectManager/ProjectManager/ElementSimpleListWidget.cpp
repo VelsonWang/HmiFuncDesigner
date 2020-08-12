@@ -20,7 +20,7 @@ void ElementSimpleListWidget::addElements(QString name) {
     {
         iter.next();
         IDrawApplicationPlugin* plugin = iter.value();
-        if(plugin != nullptr) {
+        if(plugin != Q_NULLPTR) {
             QIcon ico = plugin->getElementIcon();
             QString eleName = plugin->getElementName();
             QListWidgetItem *lineItem = new QListWidgetItem(ico, eleName);

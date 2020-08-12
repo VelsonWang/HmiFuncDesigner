@@ -14,7 +14,7 @@ class MdiChildWindow : public QWidget
 public:
     explicit MdiChildWindow(QList<TagItem *> tagList,
                             QString tittle = QString(),
-                            QWidget *parent = nullptr);
+                            QWidget *parent = Q_NULLPTR);
     ~MdiChildWindow();
     void SetTagLogicValueAndStatus(QString id,
                                    QString logicValue,

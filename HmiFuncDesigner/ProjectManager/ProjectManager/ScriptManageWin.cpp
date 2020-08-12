@@ -149,14 +149,14 @@ ScriptManageWin::ScriptManageWin(QWidget *parent, QString itemName,
 }
 
 ScriptManageWin::~ScriptManageWin() {
-  if (m_pListWidget != nullptr) {
+  if (m_pListWidget != Q_NULLPTR) {
     delete m_pListWidget;
-    m_pListWidget = nullptr;
+    m_pListWidget = Q_NULLPTR;
   }
 
-  if (m_pVLayout != nullptr) {
+  if (m_pVLayout != Q_NULLPTR) {
     delete m_pVLayout;
-    m_pVLayout = nullptr;
+    m_pVLayout = Q_NULLPTR;
   }
 }
 

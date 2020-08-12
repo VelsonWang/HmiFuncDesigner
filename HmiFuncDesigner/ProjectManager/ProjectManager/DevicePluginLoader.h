@@ -19,7 +19,7 @@ public:
     IDevicePlugin *getPluginObject(const QString &szPluginName);
 
 private:
-    DevicePluginLoader(QObject* parent = nullptr);
+    DevicePluginLoader(QObject* parent = Q_NULLPTR);
     ~DevicePluginLoader();
 
 };

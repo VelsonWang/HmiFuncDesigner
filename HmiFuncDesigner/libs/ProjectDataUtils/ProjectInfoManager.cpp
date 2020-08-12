@@ -34,7 +34,7 @@ ProjectInfoManager::ProjectInfoManager()
 }
 
 ProjectInfoManager::~ProjectInfoManager() {
-    if(dPtr_ != nullptr) {
+    if(dPtr_ != Q_NULLPTR) {
         delete dPtr_;
     }
 }

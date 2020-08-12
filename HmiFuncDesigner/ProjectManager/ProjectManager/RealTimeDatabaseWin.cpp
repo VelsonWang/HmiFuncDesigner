@@ -26,9 +26,9 @@ RealTimeDatabaseWin::RealTimeDatabaseWin(QWidget *parent,
 RealTimeDatabaseWin::~RealTimeDatabaseWin()
 {
     delete ui;
-    if (pListViewModel != nullptr) {
+    if (pListViewModel != Q_NULLPTR) {
         delete pListViewModel;
-        pListViewModel = nullptr;
+        pListViewModel = Q_NULLPTR;
     }
 }
 

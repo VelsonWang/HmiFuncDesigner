@@ -10,7 +10,7 @@ class PluginManager
 public:
     static PluginManager *getInstance() {
         QMutexLocker locker(&mutex_);
-        if(instance_ == nullptr) {
+        if(instance_ == Q_NULLPTR) {
             instance_ = new PluginManager();
         }
         return instance_;

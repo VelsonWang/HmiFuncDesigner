@@ -16,7 +16,7 @@ TagIOEditDialog::TagIOEditDialog(QString projName, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TagIOEditDialog),
     m_szProjectName(projName),
-    devPlugin_(nullptr)
+    devPlugin_(Q_NULLPTR)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -78,7 +78,7 @@ void TagIOEditDialog::on_btnOk_clicked()
     quint32 lowerLimit;
     quint32 upperLimit;
     QString area = ui->cboRegisterSection->currentText();
-    if(devPlugin_ != nullptr) {
+    if(devPlugin_ != Q_NULLPTR) {
         DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
         deviceInfo.load(ProjectData::getInstance()->dbData_);
         DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByName(m_szDeviceName);

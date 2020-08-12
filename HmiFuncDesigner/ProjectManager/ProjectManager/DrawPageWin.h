@@ -16,7 +16,7 @@ class DrawPageWin : public ChildBase
     Q_OBJECT
 
 public:
-    explicit DrawPageWin(QWidget *parent = nullptr,
+    explicit DrawPageWin(QWidget *parent = Q_NULLPTR,
                          const QString &itemName = "",
                          const QString &projName = "");
     ~DrawPageWin();

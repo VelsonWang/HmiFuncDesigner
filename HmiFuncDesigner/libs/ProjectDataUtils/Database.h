@@ -16,7 +16,7 @@ public:
                       const QString &pwd = "725431",
                       const QString &hostname = "127.0.0.1",
                       int port = 0,
-                      QObject *parent = nullptr);
+                      QObject *parent = Q_NULLPTR);
     virtual ~Database();
 
     virtual bool openDatabase() = 0;

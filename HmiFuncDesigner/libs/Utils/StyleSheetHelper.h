@@ -12,7 +12,7 @@ public:
     static void setStyle(const QString &style);
 
 private:
-    StyleSheetHelper(QObject *parent=nullptr);
+    StyleSheetHelper(QObject *parent=Q_NULLPTR);
     ~StyleSheetHelper();
     Q_DISABLE_COPY(StyleSheetHelper)
 };

@@ -35,9 +35,9 @@ DrawPageWin::DrawPageWin(QWidget *parent, const QString &itemName,
 DrawPageWin::~DrawPageWin()
 {
     delete ui;
-    if (pListDrawPageModel != nullptr) {
+    if (pListDrawPageModel != Q_NULLPTR) {
         delete pListDrawPageModel;
-        pListDrawPageModel = nullptr;
+        pListDrawPageModel = Q_NULLPTR;
     }
 }
 
@@ -323,7 +323,7 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
     QModelIndex idx = ui->listViewDrawPage->selectionModel()->currentIndex();
     QStandardItem *item = this->pListDrawPageModel->itemFromIndex(idx);
 
-    if (item == nullptr)
+    if (item == Q_NULLPTR)
         return;
 
     if (item->text() == tr("新建画面")) {

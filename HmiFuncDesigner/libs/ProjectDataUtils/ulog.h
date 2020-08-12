@@ -39,9 +39,9 @@ public:
 
     static void deleteInstance()
     {
-        if(log_ != nullptr) {
+        if(log_ != Q_NULLPTR) {
             delete log_;
-            log_ = nullptr;
+            log_ = Q_NULLPTR;
         }
     }
 

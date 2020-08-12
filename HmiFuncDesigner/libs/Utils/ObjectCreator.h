@@ -19,17 +19,17 @@ public:
 
     static void* getobj(const QString& classname)
     {
-        CreateObjFunc creatobjfunc = nullptr;
+        CreateObjFunc creatobjfunc = Q_NULLPTR;
         QMap<QString, CreateObjFunc>::iterator it;
 
         it = getmap().find(classname);
         if(it != getmap().end())
             creatobjfunc = it.value();
 
-        if(creatobjfunc != nullptr)
+        if(creatobjfunc != Q_NULLPTR)
             return (*creatobjfunc)();
 
-        return nullptr;
+        return Q_NULLPTR;
     }
 
 private:

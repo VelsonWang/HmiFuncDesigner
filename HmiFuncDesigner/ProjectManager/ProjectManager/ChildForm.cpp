@@ -46,34 +46,34 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
 
 ChildForm::~ChildForm()
 {
-    if(m_sysParamWinPtr != nullptr) {
+    if(m_sysParamWinPtr != Q_NULLPTR) {
         delete m_sysParamWinPtr;
-        m_sysParamWinPtr = nullptr;
+        m_sysParamWinPtr = Q_NULLPTR;
     }
 
-    if(m_communicationDeviceWinPtr != nullptr) {
+    if(m_communicationDeviceWinPtr != Q_NULLPTR) {
         delete m_communicationDeviceWinPtr;
-        m_communicationDeviceWinPtr = nullptr;
+        m_communicationDeviceWinPtr = Q_NULLPTR;
     }
 
-    if(m_tagManagerWinPtr != nullptr) {
+    if(m_tagManagerWinPtr != Q_NULLPTR) {
         delete m_tagManagerWinPtr;
-        m_tagManagerWinPtr = nullptr;
+        m_tagManagerWinPtr = Q_NULLPTR;
     }
 
-    if(m_drawPageWinPtr != nullptr) {
+    if(m_drawPageWinPtr != Q_NULLPTR) {
         delete m_drawPageWinPtr;
-        m_drawPageWinPtr = nullptr;
+        m_drawPageWinPtr = Q_NULLPTR;
     }
 
-    if(m_rtdbWinPtr != nullptr) {
+    if(m_rtdbWinPtr != Q_NULLPTR) {
         delete m_rtdbWinPtr;
-        m_rtdbWinPtr = nullptr;
+        m_rtdbWinPtr = Q_NULLPTR;
     }
 
-    if(m_scriptManageWinPtr != nullptr) {
+    if(m_scriptManageWinPtr != Q_NULLPTR) {
         delete m_scriptManageWinPtr;
-        m_scriptManageWinPtr = nullptr;
+        m_scriptManageWinPtr = Q_NULLPTR;
     }
 
     delete ui;
@@ -268,7 +268,7 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
     m_currPageFlow = page;
 
     if(m_currPageFlow == PAGE_NONE) {
-        ui->stackedWidget->setCurrentWidget(nullptr);
+        ui->stackedWidget->setCurrentWidget(Q_NULLPTR);
     } else if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
         ui->stackedWidget->setCurrentWidget(m_sysParamWinPtr);
     } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面

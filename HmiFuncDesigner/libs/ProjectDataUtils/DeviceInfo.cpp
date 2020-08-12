@@ -232,7 +232,7 @@ DeviceInfoObject *DeviceInfo::getDeviceInfoObjectByID(int id) {
         if(pObj->iID_ == id)
             return pObj;
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 DeviceInfoObject *DeviceInfo::getDeviceInfoObjectByName(const QString &name) {
@@ -241,7 +241,7 @@ DeviceInfoObject *DeviceInfo::getDeviceInfoObjectByName(const QString &name) {
         if(pObj->szDeviceName_ == name)
             return pObj;
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 

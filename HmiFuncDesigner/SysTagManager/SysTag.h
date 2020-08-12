@@ -61,7 +61,7 @@ public:
     Q_OBJECT
 
 public:
-    explicit TagSystemTableModel(QObject *parent = nullptr)
+    explicit TagSystemTableModel(QObject *parent = Q_NULLPTR)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
@@ -96,7 +96,7 @@ class SysTag : public QWidget
     Q_OBJECT
 
 public:
-    explicit SysTag(QWidget *parent = nullptr);
+    explicit SysTag(QWidget *parent = Q_NULLPTR);
     ~SysTag();
 
 protected:

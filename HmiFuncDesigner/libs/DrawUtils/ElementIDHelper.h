@@ -19,7 +19,7 @@ signals:
 public slots:
 
 private:
-    explicit ElementIDHelper(QObject *parent = nullptr);
+    explicit ElementIDHelper(QObject *parent = Q_NULLPTR);
     ~ElementIDHelper();
 
 private:

@@ -147,7 +147,7 @@ void FunctionEditorDialog::initListWidget()
             strDesc += strFuncDesc;
             strDesc += QString("\n");
             XMLObject* argsXMLObject = func->getCurrentChild("args");
-            if(argsXMLObject != nullptr) {
+            if(argsXMLObject != Q_NULLPTR) {
                 QString strFuncArgs = argsXMLObject->getProperty("name");
                 strDesc += strFuncArgs;
                 strDesc += QString("\n");
@@ -229,7 +229,7 @@ void FunctionEditorDialog::setFunctions(const QStringList &funcs)
             pNewFuncObj->setFuncString(szFuncEvent);
             pNewFuncObj->szEvent_ = mapNameToShowName_[pNewFuncObj->szEvent_];
             TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(pNewFuncObj->szName_);
-            if(pFuncObjectItem == nullptr)
+            if(pFuncObjectItem == Q_NULLPTR)
                 continue;
             int count = pNewFuncObj->argList_.count();
             for(int i=0; i<count; i++) {
@@ -255,7 +255,7 @@ void FunctionEditorDialog::on_btnAdd_clicked()
 {
     foreach (QListWidget *pListWidget, listWidgetList_) {
         QListWidgetItem *pCurItem = pListWidget->currentItem();
-        if(pCurItem != nullptr) {
+        if(pCurItem != Q_NULLPTR) {
             listItemDoubleClicked(pCurItem);
         }
     }
@@ -268,7 +268,7 @@ void FunctionEditorDialog::on_btnAdd_clicked()
 void FunctionEditorDialog::on_btnDel_clicked()
 {
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
-    if(pItem == nullptr)
+    if(pItem == Q_NULLPTR)
         return;
     ui->tableEventFunc->removeRow(pItem->row());
 }
@@ -351,7 +351,7 @@ void FunctionEditorDialog::on_btnCancel_clicked()
 void FunctionEditorDialog::listItemClicked(QListWidgetItem *item)
 {
     TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(item->text());
-    if(pFuncObjectItem != nullptr) {
+    if(pFuncObjectItem != Q_NULLPTR) {
         ui->plainTextFuncDesc->setPlainText(pFuncObjectItem->szDesc_);
         szSelectedFuncName_ = pFuncObjectItem->szName_;
     }
@@ -411,7 +411,7 @@ TFuncObjectItem *FunctionEditorDialog::getFuncObjectItem(const QString &name)
             return pFuncObjItem;
         }
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 /**
@@ -447,7 +447,7 @@ void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
     Q_UNUSED(index)
     iSelectedCurRow_ = ui->tableEventFunc->currentRow();
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
-    if(pItem == nullptr)
+    if(pItem == Q_NULLPTR)
         return;
     QString szFuncNameOrg = ui->tableEventFunc->item(iSelectedCurRow_, 0)->text();
     TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
@@ -466,7 +466,7 @@ void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
 void FunctionEditorDialog::createPropertyList()
 {
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
-    if(pItem == nullptr)
+    if(pItem == Q_NULLPTR)
         return;
     QTableWidgetItem *pItemNeed = ui->tableEventFunc->item(pItem->row(), 0);
     QString szFuncNameOrg = pItemNeed->text();

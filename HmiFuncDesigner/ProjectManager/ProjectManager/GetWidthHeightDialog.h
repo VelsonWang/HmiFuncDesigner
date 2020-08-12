@@ -12,7 +12,7 @@ class GetWidthHeightDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit GetWidthHeightDialog(QWidget *parent = nullptr);
+    explicit GetWidthHeightDialog(QWidget *parent = Q_NULLPTR);
     ~GetWidthHeightDialog();
 
     void setWidth(int iWidth);

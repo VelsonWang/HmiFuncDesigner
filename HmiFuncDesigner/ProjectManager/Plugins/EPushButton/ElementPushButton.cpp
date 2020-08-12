@@ -939,7 +939,7 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists()) {
-        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
+        QMessageBox::critical(Q_NULLPTR, tr("提示"), tr("事件配置列表文件不存在！"));
         return;
     }
     if(!fileCfg.open(QFile::ReadOnly)) {
@@ -948,7 +948,7 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, nullptr)) {
+    if(!xmlFuncSupportList.load(buffer, Q_NULLPTR)) {
         return;
     }
 

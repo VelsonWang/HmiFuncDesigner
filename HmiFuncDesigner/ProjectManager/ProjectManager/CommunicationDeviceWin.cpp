@@ -17,7 +17,7 @@ CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
     ui(new Ui::CommunicationDeviceWin)
 {
     ui->setupUi(this);
-    pCommDevModel_ = nullptr;
+    pCommDevModel_ = Q_NULLPTR;
     this->setWindowTitle(itemName);
     m_strItemName = itemName;
     setContextMenuPolicy(Qt::DefaultContextMenu);
@@ -26,9 +26,9 @@ CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
 CommunicationDeviceWin::~CommunicationDeviceWin()
 {
     delete ui;
-    if(pCommDevModel_ != nullptr) {
+    if(pCommDevModel_ != Q_NULLPTR) {
         delete pCommDevModel_;
-        pCommDevModel_ = nullptr;
+        pCommDevModel_ = Q_NULLPTR;
     }
 }
 

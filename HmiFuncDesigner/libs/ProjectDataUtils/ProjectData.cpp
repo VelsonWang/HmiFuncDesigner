@@ -6,8 +6,8 @@
 
 #include <QDebug>
 
-ProjectData* ProjectData::instance_ = nullptr;
-ProjectDataSQLiteDatabase *ProjectData::dbData_ = nullptr;
+ProjectData* ProjectData::instance_ = Q_NULLPTR;
+ProjectDataSQLiteDatabase *ProjectData::dbData_ = Q_NULLPTR;
 QMutex ProjectData::mutex_;
 QString ProjectData::szProjPath_ = "";
 QString ProjectData::szProjName_ = "";
@@ -21,9 +21,9 @@ ProjectData::ProjectData() :
 
 ProjectData::~ProjectData()
 {
-    if(dbData_ != nullptr) {
+    if(dbData_ != Q_NULLPTR) {
         delete dbData_;
-        dbData_ = nullptr;
+        dbData_ = Q_NULLPTR;
     }
 }
 
@@ -31,7 +31,7 @@ ProjectData::~ProjectData()
 ProjectData* ProjectData::getInstance()
 {
     QMutexLocker locker(&mutex_);
-    if(instance_ == nullptr) {
+    if(instance_ == Q_NULLPTR) {
         instance_ = new ProjectData();
         ::atexit(releaseInstance);
     }
@@ -40,9 +40,9 @@ ProjectData* ProjectData::getInstance()
 
 void ProjectData::releaseInstance()
 {
-    if(instance_ != nullptr) {
+    if(instance_ != Q_NULLPTR) {
         delete instance_;
-        instance_ = nullptr;
+        instance_ = Q_NULLPTR;
     }
 }
 
@@ -75,9 +75,9 @@ bool ProjectData::createOrOpenProjectData(const QString &projPath,
     fileName = szProjPath_ + "/" + szProjName_ + ".pdt";
 
     if(dbPath_ != "") {
-        if(dbData_ != nullptr) {
+        if(dbData_ != Q_NULLPTR) {
             delete dbData_;
-            dbData_ = nullptr;
+            dbData_ = Q_NULLPTR;
         }
     }
 

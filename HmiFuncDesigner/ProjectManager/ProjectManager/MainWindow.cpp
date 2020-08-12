@@ -56,9 +56,9 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      m_strProjectPath(""),
-      m_CurItem(""),
-      m_CurTreeViewItem("")
+      m_szProjPath(""),
+      m_szCurItem(""),
+      m_szCurTreeViewItem("")
 {
     setupUi();
 
@@ -71,8 +71,8 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    currentGraphPage_ = Q_NULLPTR;
-    currentView_ = Q_NULLPTR;
+    m_pCurrentGraphPageObj = Q_NULLPTR;
+    m_pCurrentViewObj = Q_NULLPTR;
     gridVisible_ = true;
     currentGraphPageIndex_ = 0;
 
@@ -86,10 +86,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //--------------------------------------------------------------------------
 
-    szProjPath_ = m_strProjectPath;
-    szProjName_ = ""; //szProjName;
-    graphPageName_ =  ""; //szGraphPageName;
-
     m_pUndoGroupObj = new QUndoGroup(this);
     createActions();
 
@@ -100,7 +96,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     setWindowIcon(QIcon(":/DrawAppImages/application.png"));
 
-    connect(graphPageTabWidget_, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
+    connect(m_pGraphPageTabWidgetObj, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
 
     QDesktopWidget * pDesktopWidget = QApplication::desktop();
     QRect rect = pDesktopWidget->screenGeometry();
@@ -110,7 +106,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     Helper::WidgetMoveCenter(this);
 
-    DrawListUtils::setProjectPath(szProjPath_);
+    DrawListUtils::setProjectPath(m_szProjPath);
 
     listWidgetGraphPages->setContextMenuPolicy(Qt::DefaultContextMenu);
 }
@@ -351,6 +347,9 @@ void MainWindow::setupUi()
     verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
     verticalLayout_3->setContentsMargins(0, 0, 0, 0);
     listWidgetGraphPages = new QListWidget(tab_2);
+    connect(listWidgetGraphPages, SIGNAL(currentTextChanged(const QString &)),
+            this, SLOT(onSlotListWidgetGraphPagesCurrentTextChanged(const QString &)));
+
     listWidgetGraphPages->setObjectName(QString::fromUtf8("listWidgetGraphPages"));
     verticalLayout_3->addWidget(listWidgetGraphPages);
     m_pTabProjectMgrObj->addTab(tab_2, QString(tr("画面")));
@@ -479,135 +478,135 @@ void MainWindow::setupUi()
 
 void MainWindow::retranslateUi()
 {
-    this->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
-    actionNewPoject->setText(QCoreApplication::translate("MainWindow", "\346\226\260\345\273\272(&N)", nullptr));
+    this->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
+    actionNewPoject->setText(QCoreApplication::translate("MainWindow", "\346\226\260\345\273\272(&N)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionNewPoject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+N", nullptr));
+    actionNewPoject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionOpenProject->setText(QCoreApplication::translate("MainWindow", "\346\211\223\345\274\200(&O)", nullptr));
+    actionOpenProject->setText(QCoreApplication::translate("MainWindow", "\346\211\223\345\274\200(&O)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionOpenProject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+O", nullptr));
+    actionOpenProject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionCloseProject->setText(QCoreApplication::translate("MainWindow", "\345\205\263\351\227\255", nullptr));
-    actionSaveProject->setText(QCoreApplication::translate("MainWindow", "\344\277\235\345\255\230(&S)", nullptr));
+    actionCloseProject->setText(QCoreApplication::translate("MainWindow", "\345\205\263\351\227\255", Q_NULLPTR));
+    actionSaveProject->setText(QCoreApplication::translate("MainWindow", "\344\277\235\345\255\230(&S)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionSaveProject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+S", nullptr));
+    actionSaveProject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+S", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionRecentProjectList->setText(QCoreApplication::translate("MainWindow", "\346\234\200\350\277\221\346\226\207\344\273\266\345\210\227\350\241\250", nullptr));
-    actionExit->setText(QCoreApplication::translate("MainWindow", "\351\200\200\345\207\272(&Q)", nullptr));
+    actionRecentProjectList->setText(QCoreApplication::translate("MainWindow", "\346\234\200\350\277\221\346\226\207\344\273\266\345\210\227\350\241\250", Q_NULLPTR));
+    actionExit->setText(QCoreApplication::translate("MainWindow", "\351\200\200\345\207\272(&Q)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionExit->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+Q", nullptr));
+    actionExit->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionToolBar->setText(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\346\240\217(&T)", nullptr));
+    actionToolBar->setText(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\346\240\217(&T)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionToolBar->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+T", nullptr));
+    actionToolBar->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+T", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionStatusBar->setText(QCoreApplication::translate("MainWindow", "\347\212\266\346\200\201\346\240\217(&U)", nullptr));
+    actionStatusBar->setText(QCoreApplication::translate("MainWindow", "\347\212\266\346\200\201\346\240\217(&U)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionStatusBar->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+U", nullptr));
+    actionStatusBar->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+U", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionWorkSpace->setText(QCoreApplication::translate("MainWindow", "\345\267\245\344\275\234\345\214\272(&W)", nullptr));
+    actionWorkSpace->setText(QCoreApplication::translate("MainWindow", "\345\267\245\344\275\234\345\214\272(&W)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionWorkSpace->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+W", nullptr));
+    actionWorkSpace->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionDisplayArea_I->setText(QCoreApplication::translate("MainWindow", "\346\230\276\347\244\272\345\214\272(&I)", nullptr));
+    actionDisplayArea_I->setText(QCoreApplication::translate("MainWindow", "\346\230\276\347\244\272\345\214\272(&I)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionDisplayArea_I->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+I", nullptr));
+    actionDisplayArea_I->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+I", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionBigIcon->setText(QCoreApplication::translate("MainWindow", "\345\244\247\345\233\276\346\240\207(&B)", nullptr));
+    actionBigIcon->setText(QCoreApplication::translate("MainWindow", "\345\244\247\345\233\276\346\240\207(&B)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionBigIcon->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+B", nullptr));
+    actionBigIcon->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+B", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionSmallIcon->setText(QCoreApplication::translate("MainWindow", "\345\260\217\345\233\276\346\240\207(&S)", nullptr));
+    actionSmallIcon->setText(QCoreApplication::translate("MainWindow", "\345\260\217\345\233\276\346\240\207(&S)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionSmallIcon->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+L", nullptr));
+    actionSmallIcon->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+L", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionEdit->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221(&E)", nullptr));
+    actionEdit->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221(&E)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionEdit->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+E", nullptr));
+    actionEdit->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+E", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionSimulate->setText(QCoreApplication::translate("MainWindow", "\346\250\241\346\213\237", nullptr));
+    actionSimulate->setText(QCoreApplication::translate("MainWindow", "\346\250\241\346\213\237", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionSimulate->setShortcut(QCoreApplication::translate("MainWindow", "F5", nullptr));
+    actionSimulate->setShortcut(QCoreApplication::translate("MainWindow", "F5", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionRun->setText(QCoreApplication::translate("MainWindow", "\350\277\220\350\241\214", nullptr));
+    actionRun->setText(QCoreApplication::translate("MainWindow", "\350\277\220\350\241\214", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionRun->setShortcut(QCoreApplication::translate("MainWindow", "F6", nullptr));
+    actionRun->setShortcut(QCoreApplication::translate("MainWindow", "F6", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionDownload->setText(QCoreApplication::translate("MainWindow", "\344\270\213\350\275\275", nullptr));
+    actionDownload->setText(QCoreApplication::translate("MainWindow", "\344\270\213\350\275\275", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionDownload->setShortcut(QCoreApplication::translate("MainWindow", "F9", nullptr));
+    actionDownload->setShortcut(QCoreApplication::translate("MainWindow", "F9", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionUpLoad->setText(QCoreApplication::translate("MainWindow", "\344\270\212\350\275\275", nullptr));
+    actionUpLoad->setText(QCoreApplication::translate("MainWindow", "\344\270\212\350\275\275", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionUpLoad->setShortcut(QCoreApplication::translate("MainWindow", "F10", nullptr));
+    actionUpLoad->setShortcut(QCoreApplication::translate("MainWindow", "F10", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionUDisk->setText(QCoreApplication::translate("MainWindow", "U\347\233\230", nullptr));
+    actionUDisk->setText(QCoreApplication::translate("MainWindow", "U\347\233\230", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionUDisk->setShortcut(QCoreApplication::translate("MainWindow", "F11", nullptr));
+    actionUDisk->setShortcut(QCoreApplication::translate("MainWindow", "F11", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionAddTag->setText(QCoreApplication::translate("MainWindow", "\345\242\236\345\212\240", nullptr));
+    actionAddTag->setText(QCoreApplication::translate("MainWindow", "\345\242\236\345\212\240", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionAddTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+A", nullptr));
+    actionAddTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+A", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionAppendTag->setText(QCoreApplication::translate("MainWindow", "\350\277\275\345\212\240", nullptr));
+    actionAppendTag->setText(QCoreApplication::translate("MainWindow", "\350\277\275\345\212\240", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionAppendTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+S", nullptr));
+    actionAppendTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+S", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionRowCopyTag->setText(QCoreApplication::translate("MainWindow", "\350\241\214\346\213\267", nullptr));
+    actionRowCopyTag->setText(QCoreApplication::translate("MainWindow", "\350\241\214\346\213\267", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionRowCopyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+R", nullptr));
+    actionRowCopyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+R", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionColumnCopyTag->setText(QCoreApplication::translate("MainWindow", "\345\210\227\346\213\267", nullptr));
+    actionColumnCopyTag->setText(QCoreApplication::translate("MainWindow", "\345\210\227\346\213\267", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionColumnCopyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+C", nullptr));
+    actionColumnCopyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+C", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionModifyTag->setText(QCoreApplication::translate("MainWindow", "\344\277\256\346\224\271", nullptr));
+    actionModifyTag->setText(QCoreApplication::translate("MainWindow", "\344\277\256\346\224\271", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionModifyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+M", nullptr));
+    actionModifyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+M", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionDeleteTag->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
+    actionDeleteTag->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionDeleteTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+D", nullptr));
+    actionDeleteTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+D", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionExportTag->setText(QCoreApplication::translate("MainWindow", "\345\257\274\345\207\272", nullptr));
+    actionExportTag->setText(QCoreApplication::translate("MainWindow", "\345\257\274\345\207\272", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionExportTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+B", nullptr));
+    actionExportTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+B", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionImportTag->setText(QCoreApplication::translate("MainWindow", "\345\257\274\345\205\245", nullptr));
+    actionImportTag->setText(QCoreApplication::translate("MainWindow", "\345\257\274\345\205\245", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionImportTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+E", nullptr));
+    actionImportTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+E", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionDeviceNew->setText(QCoreApplication::translate("MainWindow", "\346\226\260\345\273\272", nullptr));
+    actionDeviceNew->setText(QCoreApplication::translate("MainWindow", "\346\226\260\345\273\272", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionDeviceNew->setShortcut(QCoreApplication::translate("MainWindow", "Alt+N", nullptr));
+    actionDeviceNew->setShortcut(QCoreApplication::translate("MainWindow", "Alt+N", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionDeviceModify->setText(QCoreApplication::translate("MainWindow", "\344\277\256\346\224\271", nullptr));
+    actionDeviceModify->setText(QCoreApplication::translate("MainWindow", "\344\277\256\346\224\271", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionDeviceModify->setShortcut(QCoreApplication::translate("MainWindow", "Alt+M", nullptr));
+    actionDeviceModify->setShortcut(QCoreApplication::translate("MainWindow", "Alt+M", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionDeviceDelete->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", nullptr));
+    actionDeviceDelete->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionDeviceDelete->setShortcut(QCoreApplication::translate("MainWindow", "Alt+T", nullptr));
+    actionDeviceDelete->setShortcut(QCoreApplication::translate("MainWindow", "Alt+T", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionHelp->setText(QCoreApplication::translate("MainWindow", "\345\270\256\345\212\251", nullptr));
+    actionHelp->setText(QCoreApplication::translate("MainWindow", "\345\270\256\345\212\251", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionHelp->setShortcut(QCoreApplication::translate("MainWindow", "F1", nullptr));
+    actionHelp->setShortcut(QCoreApplication::translate("MainWindow", "F1", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    actionAbout->setText(QCoreApplication::translate("MainWindow", "\345\205\263\344\272\216", nullptr));
+    actionAbout->setText(QCoreApplication::translate("MainWindow", "\345\205\263\344\272\216", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
-    actionAbout->setShortcut(QCoreApplication::translate("MainWindow", "F2", nullptr));
+    actionAbout->setShortcut(QCoreApplication::translate("MainWindow", "F2", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    menuProject->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\347\250\213(&P)", nullptr));
-    menuView->setTitle(QCoreApplication::translate("MainWindow", "\346\237\245\347\234\213(&V)", nullptr));
-    menu_T->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267(T)", nullptr));
-    menu_D->setTitle(QCoreApplication::translate("MainWindow", "\346\223\215\344\275\234(D)", nullptr));
-    menu->setTitle(QCoreApplication::translate("MainWindow", "\345\270\256\345\212\251(H)", nullptr));
-    ViewToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
-    RunToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
-    TagOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
-    DeviceOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar_2", nullptr));
-    toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", nullptr));
+    menuProject->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\347\250\213(&P)", Q_NULLPTR));
+    menuView->setTitle(QCoreApplication::translate("MainWindow", "\346\237\245\347\234\213(&V)", Q_NULLPTR));
+    menu_T->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267(T)", Q_NULLPTR));
+    menu_D->setTitle(QCoreApplication::translate("MainWindow", "\346\223\215\344\275\234(D)", Q_NULLPTR));
+    menu->setTitle(QCoreApplication::translate("MainWindow", "\345\270\256\345\212\251(H)", Q_NULLPTR));
+    ViewToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
+    RunToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
+    TagOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
+    DeviceOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar_2", Q_NULLPTR));
+    toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
 }
 
 
@@ -706,44 +705,44 @@ void MainWindow::createActions()
     connect(m_pActionPasteObj, SIGNAL(triggered()), SLOT(slotEditPaste()));
 
     // 顶部对齐
-    alignTopAction_ = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
-    alignTopAction_->setData(Qt::AlignTop);
-    connect(alignTopAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+    m_pActionAlignTopObj = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
+    m_pActionAlignTopObj->setData(Qt::AlignTop);
+    connect(m_pActionAlignTopObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 底部对齐
-    alignDownAction_ = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
-    alignDownAction_->setData(Qt::AlignBottom);
-    connect(alignDownAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+    m_pActionAlignDownObj = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
+    m_pActionAlignDownObj->setData(Qt::AlignBottom);
+    connect(m_pActionAlignDownObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 右对齐
-    alignRightAction_ = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
-    alignRightAction_->setData(Qt::AlignRight);
-    connect(alignRightAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+    m_pActionAlignRightObj = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
+    m_pActionAlignRightObj->setData(Qt::AlignRight);
+    connect(m_pActionAlignRightObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 左对齐
-    alignLeftAction_ = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
-    alignLeftAction_->setData(Qt::AlignLeft);
-    connect(alignLeftAction_, SIGNAL(triggered()), SLOT(slotAlignElements()));
+    m_pActionAalignLeftObj = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
+    m_pActionAalignLeftObj->setData(Qt::AlignLeft);
+    connect(m_pActionAalignLeftObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 水平均匀分布
-    hUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
-    connect(hUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotHUniformDistributeElements()));
+    m_pActionHUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
+    connect(m_pActionHUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotHUniformDistributeElements()));
 
     // 垂直均匀分布
-    vUniformDistributeAction_ = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
-    connect(vUniformDistributeAction_, SIGNAL(triggered()), SLOT(slotVUniformDistributeElements()));
+    m_pActionVUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
+    connect(m_pActionVUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotVUniformDistributeElements()));
 
     // 设置选中控件大小一致
-    setTheSameSizeAction_ = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
-    connect(setTheSameSizeAction_, SIGNAL(triggered()), SLOT(slotSetTheSameSizeElements()));
+    m_pActionSetTheSameSizeObj = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
+    connect(m_pActionSetTheSameSizeObj, SIGNAL(triggered()), SLOT(onSlotSetTheSameSizeElements()));
 
     // 上移一层
-    upLayerAction_ = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
-    connect(upLayerAction_, SIGNAL(triggered()), SLOT(slotUpLayerElements()));
+    m_pActionUpLayerObj = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
+    connect(m_pActionUpLayerObj, SIGNAL(triggered()), SLOT(onSlotUpLayerElements()));
 
     // 下移一层
-    downLayerAction_ = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
-    connect(downLayerAction_, SIGNAL(triggered()), SLOT(slotDownLayerElements()));
+    m_pActionDownLayerObj = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
+    connect(m_pActionDownLayerObj, SIGNAL(triggered()), SLOT(onSlotDownLayerElements()));
 
 }
 
@@ -798,15 +797,15 @@ void MainWindow::createToolbars()
     this->toolBar->addAction(m_pActionPasteObj); // 粘贴画面
     this->toolBar->addAction(m_pActionDeleteObj); // 删除画面
     this->toolBar->addSeparator();
-    this->toolBar->addAction(alignTopAction_); // 顶部对齐
-    this->toolBar->addAction(alignDownAction_); // 底部对齐
-    this->toolBar->addAction(alignLeftAction_); // 左对齐
-    this->toolBar->addAction(alignRightAction_); // 右对齐
-    this->toolBar->addAction(hUniformDistributeAction_); // 水平均匀分布
-    this->toolBar->addAction(vUniformDistributeAction_); // 垂直均匀分布
-    this->toolBar->addAction(setTheSameSizeAction_); // 设置选中控件大小一致
-    this->toolBar->addAction(upLayerAction_); // 上移一层
-    this->toolBar->addAction(downLayerAction_); // 下移一层
+    this->toolBar->addAction(m_pActionAlignTopObj); // 顶部对齐
+    this->toolBar->addAction(m_pActionAlignDownObj); // 底部对齐
+    this->toolBar->addAction(m_pActionAalignLeftObj); // 左对齐
+    this->toolBar->addAction(m_pActionAlignRightObj); // 右对齐
+    this->toolBar->addAction(m_pActionHUniformDistributeObj); // 水平均匀分布
+    this->toolBar->addAction(m_pActionVUniformDistributeObj); // 垂直均匀分布
+    this->toolBar->addAction(m_pActionSetTheSameSizeObj); // 设置选中控件大小一致
+    this->toolBar->addAction(m_pActionUpLayerObj); // 上移一层
+    this->toolBar->addAction(m_pActionDownLayerObj); // 下移一层
     this->toolBar->addSeparator();
 }
 
@@ -889,14 +888,14 @@ ChildForm *MainWindow::activeMdiChild()
     if (QMdiSubWindow *activeSubWindow = this->mdiArea->activeSubWindow()) {
         return qobject_cast<ChildForm *>(activeSubWindow->widget());
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 void MainWindow::setActiveSubWindow(ChildForm *window)
 {
     if (!window) return;
     window->showMaximized();
-    m_CurItem = window->windowTitle();
+    m_szCurItem = window->windowTitle();
     this->mdiArea->setActiveSubWindow(Q_NULLPTR);  // Activates the subwindow window. If
     // window is 0, any current active window
     // is deactivated.
@@ -914,7 +913,7 @@ ChildForm *MainWindow::findMdiChild(const QString &windowTitle)
         ChildForm *pChildWin = qobject_cast<ChildForm *>(window->widget());
         if (pChildWin->windowTitle() == windowTitle) return pChildWin;
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 QMdiSubWindow *MainWindow::findMdiSubWindow(const QString &windowTitle)
@@ -923,7 +922,7 @@ QMdiSubWindow *MainWindow::findMdiSubWindow(const QString &windowTitle)
         ChildBase *pChildWin = qobject_cast<ChildBase *>(window->widget());
         if (pChildWin->windowTitle() == windowTitle) return window;
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 /*
@@ -954,7 +953,7 @@ void MainWindow::tagIOGroupAdd()
     NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
     pDlg->SetDialogName("新建数据组");
     pDlg->SetLabelName("数据组名：");
-    ChildForm *window = findMdiChild(this->m_CurItem);
+    ChildForm *window = findMdiChild(this->m_szCurItem);
     if (pDlg->exec() == QDialog::Accepted) {
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
         TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
@@ -963,7 +962,7 @@ void MainWindow::tagIOGroupAdd()
         pObj->m_szShowName = pDlg->GetGroupName();
         tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
         UpdateDeviceVariableTableGroup();
-        if(window != nullptr) {
+        if(window != Q_NULLPTR) {
             QString titleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
             window->SetTitle(titleNew);
         }
@@ -981,7 +980,7 @@ void MainWindow::tagIOGroupRename()
 {
     QModelIndex index = this->treeViewProject->currentIndex();
     QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-    ChildForm *window = findMdiChild(this->m_CurItem);
+    ChildForm *window = findMdiChild(this->m_szCurItem);
 
     NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
     pDlg->SetDialogName("新建数据组");
@@ -1064,16 +1063,16 @@ void MainWindow::contextMenuEvent(QContextMenuEvent * /*event*/)
     bool found = false;
 
     QModelIndex index = this->treeViewProject->currentIndex();
-    m_CurTreeViewItem = this->pTreeViewProjectModel->itemFromIndex(index)->text();
+    m_szCurTreeViewItem = this->pTreeViewProjectModel->itemFromIndex(index)->text();
 
-    if (m_CurTreeViewItem == "设备变量")
+    if (m_szCurTreeViewItem == "设备变量")
         found = true;
 
     TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
     tagIOGroup.load(ProjectData::getInstance()->dbData_);
 
     foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-        if (m_CurTreeViewItem == pObj->m_szShowName)
+        if (m_szCurTreeViewItem == pObj->m_szShowName)
             found = true;
     }
 
@@ -1151,7 +1150,7 @@ void MainWindow::contextMenuEvent(QContextMenuEvent * /*event*/)
 void MainWindow::closeEvent(QCloseEvent *event) {
     QString strFile = Helper::AppDir() + "/lastpath.ini";
     if (pProjectItem->text() != tr("未创建工程"))
-        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
+        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_szProjPath);
     this->mdiArea->closeAllSubWindows();
     writeSettings();
     if (this->mdiArea->currentSubWindow()) {
@@ -1245,8 +1244,8 @@ void MainWindow::on_actionNewPoject_triggered() {
     if (pNewProjectDlg->exec() == QDialog::Accepted) {
         UpdateProjectName(pNewProjectDlg->GetProjectName());
 
-        QString szPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
-        QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
+        QString szPath = ProjectMgrUtils::getProjectPath(m_szProjName);
+        QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjName);
         ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
         pNewProjectDlg->save();
 
@@ -1266,9 +1265,9 @@ void MainWindow::doOpenProject(QString proj)
 
     UpdateProjectName(proj);
     QString strFile = Helper::AppDir() + "/lastpath.ini";
-    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
-    QString szPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
-    QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
+    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_szProjPath);
+    QString szPath = ProjectMgrUtils::getProjectPath(m_szProjName);
+    QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjName);
     ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
 
     // 更新工程名称和工程目录(目录和名称可能人为修改)
@@ -1288,7 +1287,7 @@ void MainWindow::on_actionOpenProject_triggered() {
     QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
     QString fileName = QFileDialog::getOpenFileName(
                 this, tr("选择工程文件"), path, tr("project file (*.pdt)"));
-    if(fileName != nullptr) {
+    if(fileName != Q_NULLPTR) {
         doOpenProject(fileName);
     }
 }
@@ -1314,10 +1313,10 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
 {
     QString winTittle = szItemText;
 
-    ChildForm *findForm = findMdiChild(m_strProjectName);
+    ChildForm *findForm = findMdiChild(m_szProjName);
     if(findForm == Q_NULLPTR) {
-        findForm = new ChildForm(this, m_strProjectName);
-        findForm->setWindowTitle(m_strProjectName);
+        findForm = new ChildForm(this, m_szProjName);
+        findForm->setWindowTitle(m_szProjName);
         this->mdiArea->addSubWindow(findForm);
         connect(this, SIGNAL(treeItemClicked(const QString &)),
                 findForm, SLOT(treeItemClicked(const QString &)), Qt::DirectConnection);
@@ -1402,7 +1401,7 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
 
 void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 {
-    if(m_strProjectName == "")
+    if(m_szProjName == "")
         return;
 
     QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
@@ -1412,19 +1411,19 @@ void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
 void MainWindow::UpdateProjectName(QString name)
 {
     if(!name.isEmpty()) {
-        m_strProjectName = name;
-        m_strProjectPath = ProjectMgrUtils::getProjectPath(name);
+        m_szProjName = name;
+        m_szProjPath = ProjectMgrUtils::getProjectPath(name);
         QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
         pProjectItem->setText(strName);
         this->actionRun->setEnabled(true);
     } else {
-        m_strProjectName = "";
-        m_strProjectPath = "";
+        m_szProjName = "";
+        m_szProjPath = "";
         this->actionRun->setEnabled(false);
         pTreeViewProjectModel->clear();
         this->treeViewProject->reset();
         delete pTreeViewProjectModel;
-        pTreeViewProjectModel = nullptr;
+        pTreeViewProjectModel = Q_NULLPTR;
         setUpProjectTreeView();
     }
 }
@@ -1460,7 +1459,7 @@ void MainWindow::on_actionSaveProject_triggered()
 {
     foreach (QMdiSubWindow* window, this->mdiArea->subWindowList()) {
         ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
-        if(findForm != nullptr)
+        if(findForm != Q_NULLPTR)
             findForm->save();
     }
 }
@@ -1474,7 +1473,7 @@ void MainWindow::on_actionCloseProject_triggered()
         return;
     foreach (QMdiSubWindow* window, this->mdiArea->subWindowList()) {
         ChildForm * findForm = qobject_cast<ChildForm *>(window->widget());
-        if(findForm != nullptr)
+        if(findForm != Q_NULLPTR)
             findForm->save();
         window->close();
     }
@@ -1515,7 +1514,7 @@ void MainWindow::on_actionRun_triggered()
         QProcess *process = new QProcess();
         process->setWorkingDirectory(Helper::AppDir() + "/");
         QStringList argv;
-        argv << m_strProjectPath;
+        argv << m_szProjPath;
         process->startDetached(fileRuntimeApplication, argv);
     }
 }
@@ -1532,7 +1531,7 @@ void MainWindow::on_actionUpLoad_triggered()
         dir.mkpath(tmpDir);
     }
 
-    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, m_strProjectName);
+    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, m_szProjName);
     if (pDlg->exec() == QDialog::Accepted) {
         QString desDir = pDlg->getProjectPath();
         QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
@@ -1584,7 +1583,7 @@ void MainWindow::on_actionUDisk_triggered() {}
  */
 void MainWindow::on_actionDownload_triggered()
 {
-    if(m_strProjectName == nullptr)
+    if(m_szProjName == Q_NULLPTR)
         return;
 
     // 创建tmp目录
@@ -1596,7 +1595,7 @@ void MainWindow::on_actionDownload_triggered()
 
     // 拷贝工程到tmp目录
     QString desDir = QCoreApplication::applicationDirPath() + "/tmp/RunProject";
-    Helper::CopyRecursively(m_strProjectPath, desDir);
+    Helper::CopyRecursively(m_szProjPath, desDir);
 
     // 打包工程到tmp目录
     QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
@@ -1637,8 +1636,7 @@ void MainWindow::on_actionDownload_triggered()
 
     delete tarProc;
 
-    ProjectDownloadDialog *pDlg =
-            new ProjectDownloadDialog(this, m_strProjectName);
+    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, m_szProjName);
     pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
     if (pDlg->exec() == QDialog::Accepted) {
     }
@@ -1648,9 +1646,10 @@ void MainWindow::on_actionDownload_triggered()
 /*
  * 插槽：增加
  */
-void MainWindow::on_actionAddTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+void MainWindow::on_actionAddTag_triggered()
+{
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->addVariableTag();
     }
 }
@@ -1658,9 +1657,10 @@ void MainWindow::on_actionAddTag_triggered() {
 /*
  * 插槽：追加
  */
-void MainWindow::on_actionAppendTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+void MainWindow::on_actionAppendTag_triggered()
+{
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->appendVariableTag();
     }
 }
@@ -1668,9 +1668,10 @@ void MainWindow::on_actionAppendTag_triggered() {
 /*
  * 插槽：行拷贝
  */
-void MainWindow::on_actionRowCopyTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+void MainWindow::on_actionRowCopyTag_triggered()
+{
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->rowCopyVariableTag();
     }
 }
@@ -1678,9 +1679,10 @@ void MainWindow::on_actionRowCopyTag_triggered() {
 /*
  * 插槽：列拷贝
  */
-void MainWindow::on_actionColumnCopyTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+void MainWindow::on_actionColumnCopyTag_triggered()
+{
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->columnCopyVariableTag();
     }
 }
@@ -1688,9 +1690,10 @@ void MainWindow::on_actionColumnCopyTag_triggered() {
 /*
  * 插槽：修改
  */
-void MainWindow::on_actionModifyTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+void MainWindow::on_actionModifyTag_triggered()
+{
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->modifyVariableTag();
     }
 }
@@ -1698,9 +1701,10 @@ void MainWindow::on_actionModifyTag_triggered() {
 /*
  * 插槽：删除
  */
-void MainWindow::on_actionDeleteTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+void MainWindow::on_actionDeleteTag_triggered()
+{
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->deleteVariableTag();
     }
 }
@@ -1708,15 +1712,16 @@ void MainWindow::on_actionDeleteTag_triggered() {
 /*
  * 插槽：导出
  */
-void MainWindow::on_actionExportTag_triggered() {
+void MainWindow::on_actionExportTag_triggered()
+{
     QString dirUploadProjects = QCoreApplication::applicationDirPath();
     QString strSaveCsvPath = QFileDialog::getExistingDirectory(
                 this, tr("选择导出csv路径"), dirUploadProjects,
                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if (strSaveCsvPath == "") return;
 
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->variableTagExportToCsv(strSaveCsvPath);
     }
 }
@@ -1738,8 +1743,8 @@ void MainWindow::on_actionImportTag_triggered()
     QString strGroupName = strCsvName.right(strCsvName.length() - strCsvName.lastIndexOf("-") - 1);
 
     if(strCsvName.startsWith(tr("中间变量"))) {
-        ChildForm* pFindForm = findMdiChild(this->m_CurItem);
-        if(pFindForm != nullptr) {
+        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
+        if(pFindForm != Q_NULLPTR) {
             QString titleNew = tr("中间变量");
             pFindForm->SetTitle(titleNew);
             pFindForm->variableTagImportFromCsv(strSaveCsvFile);
@@ -1779,15 +1784,15 @@ void MainWindow::on_actionImportTag_triggered()
             onTreeViewProjectClicked(strGroupName);
             QApplication::processEvents();
 
-            ChildForm* pFindForm = findMdiChild(this->m_CurItem);
-            if(pFindForm != nullptr) {
+            ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
+            if(pFindForm != Q_NULLPTR) {
                 pFindForm->variableTagImportFromCsv(strSaveCsvFile);
             }
             return;
         }
 
-        ChildForm* pFindForm = findMdiChild(this->m_CurItem);
-        if(pFindForm != nullptr) {
+        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
+        if(pFindForm != Q_NULLPTR) {
             QString szWinTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
             pFindForm->SetTitle(szWinTittle);
             pFindForm->variableTagImportFromCsv(strSaveCsvFile);
@@ -1800,8 +1805,8 @@ void MainWindow::on_actionImportTag_triggered()
  */
 void MainWindow::on_actionDeviceNew_triggered()
 {
-    ChildForm* window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+    ChildForm* window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->newDevice();
     }
 }
@@ -1811,8 +1816,8 @@ void MainWindow::on_actionDeviceNew_triggered()
  */
 void MainWindow::on_actionDeviceModify_triggered()
 {
-    ChildForm* window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+    ChildForm* window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->modifyDevice();
     }
 }
@@ -1822,8 +1827,8 @@ void MainWindow::on_actionDeviceModify_triggered()
  */
 void MainWindow::on_actionDeviceDelete_triggered()
 {
-    ChildForm* window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
+    ChildForm* window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
         window->deleteDevice();
     }
 }
@@ -1972,8 +1977,8 @@ void MainWindow::on_actionBigIcon_triggered()
 {
     this->actionBigIcon->setChecked(true);
     this->actionSmallIcon->setChecked(false);
-    ChildForm *findForm = findMdiChild(this->m_CurItem);
-    if(findForm != nullptr) {
+    ChildForm *findForm = findMdiChild(this->m_szCurItem);
+    if(findForm != Q_NULLPTR) {
         findForm->showLargeIcon();
     }
 }
@@ -1985,8 +1990,8 @@ void MainWindow::on_actionSmallIcon_triggered()
 {
     this->actionBigIcon->setChecked(false);
     this->actionSmallIcon->setChecked(true);
-    ChildForm *findForm = findMdiChild(this->m_CurItem);
-    if(findForm != nullptr) {
+    ChildForm *findForm = findMdiChild(this->m_szCurItem);
+    if(findForm != Q_NULLPTR) {
         findForm->showSmallIcon();
     }
 }
@@ -1996,9 +2001,9 @@ void MainWindow::on_actionSmallIcon_triggered()
 
 void MainWindow::initView()
 {
-    graphPageTabWidget_ = new QTabWidget(this);
-    graphPageTabWidget_->installEventFilter(this);
-    this->scrollArea->setWidget(graphPageTabWidget_);
+    m_pGraphPageTabWidgetObj = new QTabWidget(this);
+    m_pGraphPageTabWidgetObj->installEventFilter(this);
+    this->scrollArea->setWidget(m_pGraphPageTabWidgetObj);
 
     elementWidget_ = new ElementLibraryWidget();
     this->ElemetsLayout->addWidget(elementWidget_);
@@ -2043,7 +2048,7 @@ void MainWindow::openGraphPage(const QString &szProjPath,
         if (fileName.toLower().endsWith(".drw")) {
             QGraphicsView *view = createTabView();
 
-            if (graphPageTabWidget_->indexOf(view) != -1) {
+            if (m_pGraphPageTabWidgetObj->indexOf(view) != -1) {
                 delete view;
                 return;
             }
@@ -2054,8 +2059,8 @@ void MainWindow::openGraphPage(const QString &szProjPath,
             }
 
             if(szPageId == szPageName) {
-                currentGraphPage_ = graphPage;
-                currentView_ = dynamic_cast<QGraphicsView *>(view);
+                m_pCurrentGraphPageObj = graphPage;
+                m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
             }
 
             graphPage->setProjectPath(szProjPath);
@@ -2088,7 +2093,7 @@ void MainWindow::onSlotNewGraphPage()
 
 QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
 {
-    QString title = currentGraphPage_->getGraphPageId();
+    QString title = m_pCurrentGraphPageObj->getGraphPageId();
 
     if (title.isEmpty()) {
         title = "Untitled";
@@ -2107,14 +2112,14 @@ QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
 
         bool unique = true;
 
-        for (int j = 0; j < graphPageTabWidget_->count(); ++j) {
-            const QWidget *widget = graphPageTabWidget_->widget(j);
+        for (int j = 0; j < m_pGraphPageTabWidgetObj->count(); ++j) {
+            const QWidget *widget = m_pGraphPageTabWidgetObj->widget(j);
 
             if (widget == viewGraphPage) {
                 continue;
             }
 
-            if (result == graphPageTabWidget_->tabText(j)) {
+            if (result == m_pGraphPageTabWidgetObj->tabText(j)) {
                 unique = false;
                 break;
             }
@@ -2145,24 +2150,24 @@ void MainWindow::addNewGraphPage()
 {
     QGraphicsView *view = createTabView();
 
-    if (graphPageTabWidget_->indexOf(view) != -1) {
+    if (m_pGraphPageTabWidgetObj->indexOf(view) != -1) {
         delete view;
         return;
     }
 
     GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
-    graphPage->setProjectPath(szProjPath_);
-    graphPage->setProjectName(szProjName_);
+    graphPage->setProjectPath(m_szProjPath);
+    graphPage->setProjectName(m_szProjName);
     graphPage->setGridVisible(gridVisible_);
-    currentGraphPage_ = graphPage;
+    m_pCurrentGraphPageObj = graphPage;
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    currentView_ = dynamic_cast<QGraphicsView *>(view);
+    m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
     QString title = fixedWindowTitle(view);
     graphPage->setFileName(title + ".drw");
     graphPage->setGraphPageId(title);
-    graphPageTabWidget_->addTab(currentView_, title);
-    graphPageTabWidget_->setCurrentWidget(currentView_);
+    m_pGraphPageTabWidgetObj->addTab(m_pCurrentViewObj, title);
+    m_pGraphPageTabWidgetObj->setCurrentWidget(m_pCurrentViewObj);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
 
     m_pUndoGroupObj->addStack(graphPage->undoStack());
@@ -2215,27 +2220,27 @@ void MainWindow::slotUpdateActions()
 {
     static const QIcon unsaved(":/DrawAppImages/filesave.png");
 
-    for (int i = 0; i < graphPageTabWidget_->count(); i++) {
-        QGraphicsView *view = dynamic_cast<QGraphicsView*>(graphPageTabWidget_->widget(i));
+    for (int i = 0; i < m_pGraphPageTabWidgetObj->count(); i++) {
+        QGraphicsView *view = dynamic_cast<QGraphicsView*>(m_pGraphPageTabWidgetObj->widget(i));
         if (!dynamic_cast<GraphPage *>(view->scene())->undoStack()->isClean() ||
             dynamic_cast<GraphPage *>(view->scene())->getUnsavedFlag()) {
-            graphPageTabWidget_->setTabIcon(graphPageTabWidget_->indexOf(view), unsaved);
+            m_pGraphPageTabWidgetObj->setTabIcon(m_pGraphPageTabWidgetObj->indexOf(view), unsaved);
         } else {
-            graphPageTabWidget_->setTabIcon(graphPageTabWidget_->indexOf(view), QIcon());
+            m_pGraphPageTabWidgetObj->setTabIcon(m_pGraphPageTabWidgetObj->indexOf(view), QIcon());
         }
     }
 
-    m_pActionZoomInObj->setEnabled(graphPageTabWidget_->count() ? true : false);
-    m_pActionZoomOutObj->setEnabled(graphPageTabWidget_->count() ? true : false);
-    m_pActionShowGridObj->setEnabled(graphPageTabWidget_->count() ? true : false);
+    m_pActionZoomInObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
+    m_pActionZoomOutObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
+    m_pActionShowGridObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
 
-    if (!currentGraphPage_) {
+    if (!m_pCurrentGraphPageObj) {
         return;
     }
 
-    m_pUndoGroupObj->setActiveStack(currentGraphPage_->undoStack());
+    m_pUndoGroupObj->setActiveStack(m_pCurrentGraphPageObj->undoStack());
 
-    if (!currentGraphPage_->undoStack()->isClean() || currentGraphPage_->getUnsavedFlag()) {
+    if (!m_pCurrentGraphPageObj->undoStack()->isClean() || m_pCurrentGraphPageObj->getUnsavedFlag()) {
         m_pActionSaveGraphPageObj->setEnabled(true);
     } else {
         m_pActionSaveGraphPageObj->setEnabled(false);
@@ -2250,14 +2255,14 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
 
     this->listWidgetGraphPages->setCurrentRow(GraphPageNum);
 
-    for (int i = 0; i < graphPageTabWidget_->count(); i++) {
-        QGraphicsView *view = dynamic_cast<QGraphicsView *>(graphPageTabWidget_->widget(i));
+    for (int i = 0; i < m_pGraphPageTabWidgetObj->count(); i++) {
+        QGraphicsView *view = dynamic_cast<QGraphicsView *>(m_pGraphPageTabWidgetObj->widget(i));
         dynamic_cast<GraphPage *>(view->scene())->setActive(false);
     }
 
-    currentView_ = dynamic_cast<QGraphicsView *>(graphPageTabWidget_->widget(GraphPageNum));
-    currentGraphPage_ = dynamic_cast<GraphPage *>(currentView_->scene());
-    currentGraphPage_->setActive(true);
+    m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(m_pGraphPageTabWidgetObj->widget(GraphPageNum));
+    m_pCurrentGraphPageObj = dynamic_cast<GraphPage *>(m_pCurrentViewObj->scene());
+    m_pCurrentGraphPageObj->setActive(true);
     //currentGraphPage_->fillGraphPagePropertyModel();
     currentGraphPageIndex_ = GraphPageNum;
     slotUpdateActions();
@@ -2265,7 +2270,7 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
 
 void MainWindow::slotChangeGraphPageName()
 {
-    graphPageTabWidget_->setTabText(currentGraphPageIndex_, currentGraphPage_->getGraphPageId());
+    m_pGraphPageTabWidgetObj->setTabText(currentGraphPageIndex_, m_pCurrentGraphPageObj->getGraphPageId());
     //int index = GraphPageManager::getInstance()->getIndexByGraphPage(currentGraphPage_);
 }
 
@@ -2347,20 +2352,20 @@ void MainWindow::onSlotShowPropEditor(bool on)
  */
 void MainWindow::onSlotCloseAll()
 {
-    while (graphPageTabWidget_->count()) {
-        QGraphicsView *view = static_cast<QGraphicsView*>(graphPageTabWidget_->widget(graphPageTabWidget_->currentIndex()));
+    while (m_pGraphPageTabWidgetObj->count()) {
+        QGraphicsView *view = static_cast<QGraphicsView*>(m_pGraphPageTabWidgetObj->widget(m_pGraphPageTabWidgetObj->currentIndex()));
         removeGraphPage(view);
         delete view;
     }
 
-    currentView_ = Q_NULLPTR;
-    currentGraphPage_ = Q_NULLPTR;
+    m_pCurrentViewObj = Q_NULLPTR;
+    m_pCurrentGraphPageObj = Q_NULLPTR;
     slotUpdateActions();
 }
 
 void MainWindow::removeGraphPage(QGraphicsView *view)
 {
-    int index = graphPageTabWidget_->indexOf(view);
+    int index = m_pGraphPageTabWidgetObj->indexOf(view);
     GraphPage *graphPage = static_cast<GraphPage*>(view->scene());
 
     if (index == -1)
@@ -2374,7 +2379,7 @@ void MainWindow::removeGraphPage(QGraphicsView *view)
         }
     }
 
-    graphPageTabWidget_->removeTab(index);
+    m_pGraphPageTabWidgetObj->removeTab(index);
     m_pUndoGroupObj->removeStack(graphPage->undoStack());
     GraphPageManager::getInstance()->removeGraphPage(graphPage);
     disconnectGraphPage(graphPage);
@@ -2388,13 +2393,13 @@ void MainWindow::removeGraphPage(QGraphicsView *view)
  */
 void MainWindow::onSlotCloseGraphPage()
 {
-    QGraphicsView *view = currentView_;
+    QGraphicsView *view = m_pCurrentViewObj;
     removeGraphPage(view);
     delete view;
 
-    if (graphPageTabWidget_->count() == 0) {
-        currentGraphPage_ = Q_NULLPTR;
-        currentView_ = Q_NULLPTR;
+    if (m_pGraphPageTabWidgetObj->count() == 0) {
+        m_pCurrentGraphPageObj = Q_NULLPTR;
+        m_pCurrentViewObj = Q_NULLPTR;
     }
 
     slotUpdateActions();
@@ -2418,7 +2423,7 @@ void MainWindow::onSlotEditOpen()
 
         QGraphicsView *view = createTabView();
 
-        if (graphPageTabWidget_->indexOf(view) != -1) {
+        if (m_pGraphPageTabWidgetObj->indexOf(view) != -1) {
             delete view;
             return;
         }
@@ -2434,7 +2439,7 @@ void MainWindow::onSlotEditOpen()
 
         QGraphicsView *view = createTabView();
 
-        if (graphPageTabWidget_->indexOf(view) != -1) {
+        if (m_pGraphPageTabWidgetObj->indexOf(view) != -1) {
             delete view;
             return;
         }
@@ -2444,10 +2449,10 @@ void MainWindow::onSlotEditOpen()
             return;
         }
 
-        currentGraphPage_ = graphPage;
-        currentView_ = dynamic_cast<QGraphicsView *>(view);
-        graphPage->setProjectPath(szProjPath_);
-        graphPage->setProjectName(szProjName_);
+        m_pCurrentGraphPageObj = graphPage;
+        m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
+        graphPage->setProjectPath(m_szProjPath);
+        graphPage->setProjectName(m_szProjName);
         graphPage->loadAsXML(filename);
         int pos = filename.lastIndexOf("/");
         QString pageFileName = "";
@@ -2476,8 +2481,8 @@ bool MainWindow::createDocument(GraphPage *graphPage,
     graphPage->setGridVisible(gridVisible_);
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-    graphPageTabWidget_->addTab(view, graphPage->getGraphPageId());
-    graphPageTabWidget_->setCurrentWidget(view);
+    m_pGraphPageTabWidgetObj->addTab(view, graphPage->getGraphPageId());
+    m_pGraphPageTabWidgetObj->setCurrentWidget(view);
     GraphPageManager::getInstance()->addGraphPage(graphPage);
 
     m_pUndoGroupObj->addStack(graphPage->undoStack());
@@ -2495,17 +2500,17 @@ QString MainWindow::getFileName()
 {
     QString filename = QFileDialog::getSaveFileName(this,
                                                     tr("Save as"),
-                                                    QString("./%1").arg(currentGraphPage_->getGraphPageId()),
+                                                    QString("./%1").arg(m_pCurrentGraphPageObj->getGraphPageId()),
                                                     tr("GraphPage(*.drw)"));
     return filename;
 }
 
 void MainWindow::updateGraphPageViewInfo(const QString &fileName)
 {
-    int index = graphPageTabWidget_->indexOf(currentView_);
+    int index = m_pGraphPageTabWidgetObj->indexOf(m_pCurrentViewObj);
     QFileInfo file(fileName);
-    currentGraphPage_->setGraphPageId(file.baseName());
-    graphPageTabWidget_->setTabText(index,file.baseName());
+    m_pCurrentGraphPageObj->setGraphPageId(file.baseName());
+    m_pGraphPageTabWidgetObj->setTabText(index,file.baseName());
     slotChangeGraphPageName();
 }
 
@@ -2515,12 +2520,12 @@ void MainWindow::updateGraphPageViewInfo(const QString &fileName)
  */
 void MainWindow::onSlotSaveGraphPage()
 {
-    if (!currentGraphPage_) {
+    if (!m_pCurrentGraphPageObj) {
         return;
     }
 
     for (;;) {
-        QString fileName = currentGraphPage_->getFileName();
+        QString fileName = m_pCurrentGraphPageObj->getFileName();
 
         if (fileName.isEmpty())
             fileName = getFileName();
@@ -2528,9 +2533,9 @@ void MainWindow::onSlotSaveGraphPage()
         if (fileName.isEmpty())
             break;
 
-        currentGraphPage_->setFileName(fileName);
+        m_pCurrentGraphPageObj->setFileName(fileName);
         updateGraphPageViewInfo(fileName);
-        currentGraphPage_->saveAsXML(szProjPath_ + "/" + fileName);
+        m_pCurrentGraphPageObj->saveAsXML(m_szProjPath + "/" + fileName);
 #if 0
         if (fileName.toLower().endsWith(".drw")) {
             QString binaryFileName = fileName.toLower()+ "b"; // ".drw"==>".drwb"
@@ -2558,16 +2563,16 @@ int MainWindow::exitResponse()
  */
 void MainWindow::onSlotZoomIn()
 {
-    if(currentGraphPage_ != nullptr) {
-        int width = currentGraphPage_->getGraphPageWidth();
-        int height = currentGraphPage_->getGraphPageHeight();
-        currentGraphPage_->setGraphPageWidth(static_cast<int>(width * 1.25));
-        currentGraphPage_->setGraphPageHeight(static_cast<int>(height * 1.25));
-        currentGraphPage_->setGridVisible(currentGraphPage_->isGridVisible());
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        int width = m_pCurrentGraphPageObj->getGraphPageWidth();
+        int height = m_pCurrentGraphPageObj->getGraphPageHeight();
+        m_pCurrentGraphPageObj->setGraphPageWidth(static_cast<int>(width * 1.25));
+        m_pCurrentGraphPageObj->setGraphPageHeight(static_cast<int>(height * 1.25));
+        m_pCurrentGraphPageObj->setGridVisible(m_pCurrentGraphPageObj->isGridVisible());
     }
-    if (currentView_ != nullptr) {
-        currentView_->scale(1.25, 1.25);
-        currentView_->setFixedSize(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
+    if (m_pCurrentViewObj != Q_NULLPTR) {
+        m_pCurrentViewObj->scale(1.25, 1.25);
+        m_pCurrentViewObj->setFixedSize(m_pCurrentGraphPageObj->getGraphPageWidth(), m_pCurrentGraphPageObj->getGraphPageHeight());
     }
 }
 
@@ -2578,99 +2583,99 @@ void MainWindow::onSlotZoomIn()
  */
 void MainWindow::onSlotZoomOut()
 {
-    if(currentGraphPage_ != nullptr) {
-        int width = currentGraphPage_->getGraphPageWidth();
-        int height = currentGraphPage_->getGraphPageHeight();
-        currentGraphPage_->setGraphPageWidth(static_cast<int>(width * 1/1.25));
-        currentGraphPage_->setGraphPageHeight(static_cast<int>(height * 1/1.25));
-        currentGraphPage_->setGridVisible(currentGraphPage_->isGridVisible());
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        int width = m_pCurrentGraphPageObj->getGraphPageWidth();
+        int height = m_pCurrentGraphPageObj->getGraphPageHeight();
+        m_pCurrentGraphPageObj->setGraphPageWidth(static_cast<int>(width * 1/1.25));
+        m_pCurrentGraphPageObj->setGraphPageHeight(static_cast<int>(height * 1/1.25));
+        m_pCurrentGraphPageObj->setGridVisible(m_pCurrentGraphPageObj->isGridVisible());
     }
-    if (currentView_ != nullptr) {
-        currentView_->scale(1/1.25, 1/1.25);
-        currentView_->setFixedSize(currentGraphPage_->getGraphPageWidth(), currentGraphPage_->getGraphPageHeight());
+    if (m_pCurrentViewObj != Q_NULLPTR) {
+        m_pCurrentViewObj->scale(1/1.25, 1/1.25);
+        m_pCurrentViewObj->setFixedSize(m_pCurrentGraphPageObj->getGraphPageWidth(), m_pCurrentGraphPageObj->getGraphPageHeight());
     }
 }
 
 
 /**
- * @brief MainWindow::slotAlignElements
+ * @brief MainWindow::onSlotAlignElements
  * @details 顶部对齐, 底部对齐, 右对齐, 左对齐
  */
-void MainWindow::slotAlignElements()
+void MainWindow::onSlotAlignElements()
 {
     QAction *action = qobject_cast<QAction*>(sender());
     if (!action)
         return;
 
     Qt::Alignment alignment = static_cast<Qt::Alignment>(action->data().toInt());
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onAlignElements(alignment, items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onAlignElements(alignment, items);
     }
 }
 
 
 /**
- * @brief MainWindow::slotHUniformDistributeElements
+ * @brief MainWindow::onSlotHUniformDistributeElements
  * @details 水平均匀分布
  */
-void MainWindow::slotHUniformDistributeElements()
+void MainWindow::onSlotHUniformDistributeElements()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onHUniformDistributeElements(items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onHUniformDistributeElements(items);
     }
 }
 
 
 /**
- * @brief MainWindow::slotVUniformDistributeElements
+ * @brief MainWindow::onSlotVUniformDistributeElements
  * @details 垂直均匀分布
  */
-void MainWindow::slotVUniformDistributeElements()
+void MainWindow::onSlotVUniformDistributeElements()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onVUniformDistributeElements(items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onVUniformDistributeElements(items);
     }
 }
 
 
 /**
- * @brief MainWindow::slotSetTheSameSizeElements
+ * @brief MainWindow::onSlotSetTheSameSizeElements
  * @details 设置选中控件大小一致
  */
-void MainWindow::slotSetTheSameSizeElements()
+void MainWindow::onSlotSetTheSameSizeElements()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onSetTheSameSizeElements(items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onSetTheSameSizeElements(items);
     }
 }
 
 
 /**
- * @brief MainWindow::slotUpLayerElements
+ * @brief MainWindow::onSlotUpLayerElements
  * @details 上移一层
  */
-void MainWindow::slotUpLayerElements()
+void MainWindow::onSlotUpLayerElements()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onUpLayerElements(items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onUpLayerElements(items);
     }
 }
 
 
 /**
- * @brief MainWindow::slotDownLayerElements
+ * @brief MainWindow::onSlotDownLayerElements
  * @details 下移一层
  */
-void MainWindow::slotDownLayerElements()
+void MainWindow::onSlotDownLayerElements()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onDownLayerElements(items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onDownLayerElements(items);
     }
 }
 
@@ -2681,9 +2686,9 @@ void MainWindow::slotDownLayerElements()
  */
 void MainWindow::onSlotEditDelete()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onEditDelete(items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onEditDelete(items);
     }
 }
 
@@ -2694,9 +2699,9 @@ void MainWindow::onSlotEditDelete()
  */
 void MainWindow::onSlotEditCopy()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onEditCopy(items);
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onEditCopy(items);
     }
 }
 
@@ -2707,22 +2712,22 @@ void MainWindow::onSlotEditCopy()
  */
 void MainWindow::onSlotEditPaste()
 {
-    if(currentGraphPage_ != nullptr) {
-        QList<QGraphicsItem*> items = currentGraphPage_->selectedItems();
-        currentGraphPage_->onEditPaste();
+    if(m_pCurrentGraphPageObj != Q_NULLPTR) {
+        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+        m_pCurrentGraphPageObj->onEditPaste();
     }
 }
 
 
 /**
- * @brief MainWindow::on_listWidgetGraphPages_itemClicked
+ * @brief MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged
  * @details 画面名称被单击
  * @param item
  */
-void MainWindow::on_listWidgetGraphPages_currentTextChanged(const QString &currentText)
+void MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged(const QString &currentText)
 {
     Q_UNUSED(currentText)
-    graphPageTabWidget_->setCurrentIndex(this->listWidgetGraphPages->currentRow());
+    m_pGraphPageTabWidgetObj->setCurrentIndex(this->listWidgetGraphPages->currentRow());
 }
 
 
@@ -2786,17 +2791,17 @@ reInput:
             height = pGraphPage->getGraphPageHeight();
         }
 
-        createEmptyGraphpage(szProjPath_, szGraphPageName, width, height);
+        createEmptyGraphpage(m_szProjPath, szGraphPageName, width, height);
         DrawListUtils::drawList_.append(szGraphPageName);
-        DrawListUtils::saveDrawList(szProjPath_);
+        DrawListUtils::saveDrawList(m_szProjPath);
 
         this->listWidgetGraphPages->addItem(szGraphPageName);
-        QString fileName = szProjPath_ + "/" + szGraphPageName + ".drw";
+        QString fileName = m_szProjPath + "/" + szGraphPageName + ".drw";
 
         if (fileName.toLower().endsWith(".drw")) {
             QGraphicsView *view = createTabView();
 
-            if (graphPageTabWidget_->indexOf(view) != -1) {
+            if (m_pGraphPageTabWidgetObj->indexOf(view) != -1) {
                 delete view;
                 return;
             }
@@ -2806,10 +2811,10 @@ reInput:
                 return;
             }
 
-            currentGraphPage_ = graphPage;
-            currentView_ = dynamic_cast<QGraphicsView *>(view);
-            graphPage->setProjectPath(szProjPath_);
-            graphPage->setProjectName(szProjName_);
+            m_pCurrentGraphPageObj = graphPage;
+            m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
+            graphPage->setProjectPath(m_szProjPath);
+            graphPage->setProjectName(m_szProjName);
             graphPage->loadAsXML(fileName);
             view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szGraphPageName + ".drw");
@@ -2819,7 +2824,7 @@ reInput:
         QList<QListWidgetItem*> listWidgetItem = this->listWidgetGraphPages->findItems(szGraphPageName, Qt::MatchCaseSensitive);
         if ( listWidgetItem.size() > 0 ) {
             this->listWidgetGraphPages->setCurrentItem(listWidgetItem.at(0));
-            graphPageTabWidget_->setCurrentIndex(this->listWidgetGraphPages->currentRow());
+            m_pGraphPageTabWidgetObj->setCurrentIndex(this->listWidgetGraphPages->currentRow());
         }
     }
 }
@@ -2851,16 +2856,16 @@ reInput:
         for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
             if ( szOldGraphPageName == DrawListUtils::drawList_.at(i) ) {
                 DrawListUtils::drawList_.replace(i, szNewGraphPageName);
-                QString szOldName = szProjPath_ + "/" + szOldGraphPageName + ".drw";
-                QString szNewName = szProjPath_ + "/" + szNewGraphPageName + ".drw";
+                QString szOldName = m_szProjPath + "/" + szOldGraphPageName + ".drw";
+                QString szNewName = m_szProjPath + "/" + szNewGraphPageName + ".drw";
                 QFile::rename(szOldName, szNewName);
-                DrawListUtils::saveDrawList(szProjPath_);
+                DrawListUtils::saveDrawList(m_szProjPath);
                 this->listWidgetGraphPages->currentItem()->setText(szNewGraphPageName);
                 GraphPage *pGraphPage = GraphPageManager::getInstance()->getGraphPageById(szOldGraphPageName);
                 pGraphPage->setFileName(szNewGraphPageName + ".drw");
                 pGraphPage->setGraphPageId(szNewGraphPageName);
-                graphPageTabWidget_->setTabText(graphPageTabWidget_->currentIndex(), szNewGraphPageName);
-                currentGraphPage_->setUnsavedFlag(true);
+                m_pGraphPageTabWidgetObj->setTabText(m_pGraphPageTabWidgetObj->currentIndex(), szNewGraphPageName);
+                m_pCurrentGraphPageObj->setUnsavedFlag(true);
                 slotUpdateActions();
                 break;
             }
@@ -2881,13 +2886,13 @@ void MainWindow::onDeleteGraphPage()
         if ( szGraphPageName == DrawListUtils::drawList_.at(i) ) {
             DrawListUtils::drawList_.removeAt(i);
 
-            QString fileName = szProjPath_ + "/" + szGraphPageName + ".drw";
+            QString fileName = m_szProjPath + "/" + szGraphPageName + ".drw";
             QFile file(fileName);
             if (file.exists()) {
                 file.remove();
             }
 
-            graphPageTabWidget_->removeTab(this->listWidgetGraphPages->currentRow());
+            m_pGraphPageTabWidgetObj->removeTab(this->listWidgetGraphPages->currentRow());
 
             GraphPage *pGraphPageObj = GraphPageManager::getInstance()->getGraphPageById(szGraphPageName);
             if ( pGraphPageObj != Q_NULLPTR ) {
@@ -2896,7 +2901,7 @@ void MainWindow::onDeleteGraphPage()
                 pGraphPageObj = Q_NULLPTR;
             }
 
-            DrawListUtils::saveDrawList(szProjPath_);
+            DrawListUtils::saveDrawList(m_szProjPath);
 
             this->listWidgetGraphPages->clear();
             foreach(QString szPageId, DrawListUtils::drawList_) {
@@ -2905,7 +2910,7 @@ void MainWindow::onDeleteGraphPage()
 
             if (this->listWidgetGraphPages->count() > 0) {
                 this->listWidgetGraphPages->setCurrentRow(0);
-                graphPageTabWidget_->setCurrentIndex(0);
+                m_pGraphPageTabWidgetObj->setCurrentIndex(0);
             }
 
             break;
@@ -2942,16 +2947,16 @@ reGetNum:
 
     this->listWidgetGraphPages->addItem(strDrawPageName);
     DrawListUtils::drawList_.append(strDrawPageName);
-    DrawListUtils::saveDrawList(szProjPath_);
-    QString szFileName = szProjPath_ + "/" + szCopyGraphPageFileName_ + ".drw";
+    DrawListUtils::saveDrawList(m_szProjPath);
+    QString szFileName = m_szProjPath + "/" + szCopyGraphPageFileName_ + ".drw";
     QFile file(szFileName);
-    QString szPasteFileName = szProjPath_ + "/" + strDrawPageName + ".drw";
+    QString szPasteFileName = m_szProjPath + "/" + strDrawPageName + ".drw";
     file.copy(szPasteFileName);
 
     if (szPasteFileName.toLower().endsWith(".drw")) {
         QGraphicsView *view = createTabView();
 
-        if (graphPageTabWidget_->indexOf(view) != -1) {
+        if (m_pGraphPageTabWidgetObj->indexOf(view) != -1) {
             delete view;
             return;
         }
@@ -2961,10 +2966,10 @@ reGetNum:
             return;
         }
 
-        currentGraphPage_ = graphPage;
-        currentView_ = dynamic_cast<QGraphicsView *>(view);
-        graphPage->setProjectPath(szProjPath_);
-        graphPage->setProjectName(szProjName_);
+        m_pCurrentGraphPageObj = graphPage;
+        m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
+        graphPage->setProjectPath(m_szProjPath);
+        graphPage->setProjectName(m_szProjName);
         graphPage->loadAsXML(szPasteFileName);
         view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         graphPage->setFileName(strDrawPageName + ".drw");
@@ -2974,9 +2979,9 @@ reGetNum:
     QList<QListWidgetItem*> listWidgetItem = this->listWidgetGraphPages->findItems(strDrawPageName, Qt::MatchCaseSensitive);
     if ( listWidgetItem.size() > 0 ) {
         this->listWidgetGraphPages->setCurrentItem(listWidgetItem.at(0));
-        graphPageTabWidget_->setCurrentIndex(this->listWidgetGraphPages->currentRow());
+        m_pGraphPageTabWidgetObj->setCurrentIndex(this->listWidgetGraphPages->currentRow());
     }
 
-    currentGraphPage_->setUnsavedFlag(true);
+    m_pCurrentGraphPageObj->setUnsavedFlag(true);
     slotUpdateActions();
 }
