@@ -73,8 +73,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     m_pCurrentGraphPageObj = Q_NULLPTR;
     m_pCurrentViewObj = Q_NULLPTR;
-    gridVisible_ = true;
-    currentGraphPageIndex_ = 0;
+    m_bGraphPageGridVisible = true;
+    m_iCurrentGraphPageIndex = 0;
 
     enableToolBar("");                             // 工具条使能
     setContextMenuPolicy(Qt::DefaultContextMenu);  // 右键菜单生效
@@ -117,34 +117,9 @@ void MainWindow::setupUi()
     QIcon icon;
     icon.addFile(QString::fromUtf8(":/images/appicon.png"), QSize(), QIcon::Normal, QIcon::Off);
     this->setWindowIcon(icon);
-    actionNewPoject = new QAction(this);
-    actionNewPoject->setObjectName(QString::fromUtf8("actionNewPoject"));
-    QIcon icon1;
-    icon1.addFile(QString::fromUtf8(":/images/newproject.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionNewPoject->setIcon(icon1);
-    actionNewPoject->setIconVisibleInMenu(true);
-    actionOpenProject = new QAction(this);
-    actionOpenProject->setObjectName(QString::fromUtf8("actionOpenProject"));
-    QIcon icon2;
-    icon2.addFile(QString::fromUtf8(":/images/openproject.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionOpenProject->setIcon(icon2);
-    actionCloseProject = new QAction(this);
-    actionCloseProject->setObjectName(QString::fromUtf8("actionCloseProject"));
-    QIcon icon3;
-    icon3.addFile(QString::fromUtf8(":/images/projectexit.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionCloseProject->setIcon(icon3);
-    actionSaveProject = new QAction(this);
-    actionSaveProject->setObjectName(QString::fromUtf8("actionSaveProject"));
-    QIcon icon4;
-    icon4.addFile(QString::fromUtf8(":/images/saveproject.PNG"), QSize(), QIcon::Normal, QIcon::Off);
-    actionSaveProject->setIcon(icon4);
-    actionRecentProjectList = new QAction(this);
-    actionRecentProjectList->setObjectName(QString::fromUtf8("actionRecentProjectList"));
-    actionExit = new QAction(this);
-    actionExit->setObjectName(QString::fromUtf8("actionExit"));
-    QIcon icon5;
-    icon5.addFile(QString::fromUtf8(":/images/programexit.PNG"), QSize(), QIcon::Normal, QIcon::Off);
-    actionExit->setIcon(icon5);
+
+
+
     actionToolBar = new QAction(this);
     actionToolBar->setObjectName(QString::fromUtf8("actionToolBar"));
     actionToolBar->setCheckable(true);
@@ -288,8 +263,7 @@ void MainWindow::setupUi()
     menuBar = new QMenuBar(this);
     menuBar->setObjectName(QString::fromUtf8("menuBar"));
     menuBar->setGeometry(QRect(0, 0, 1337, 23));
-    menuProject = new QMenu(menuBar);
-    menuProject->setObjectName(QString::fromUtf8("menuProject"));
+
     menuView = new QMenu(menuBar);
     menuView->setObjectName(QString::fromUtf8("menuView"));
     menu_T = new QMenu(menuBar);
@@ -299,10 +273,7 @@ void MainWindow::setupUi()
     menu = new QMenu(menuBar);
     menu->setObjectName(QString::fromUtf8("menu"));
     this->setMenuBar(menuBar);
-    ProjectToolBar = new QToolBar(this);
-    ProjectToolBar->setObjectName(QString::fromUtf8("ProjectToolBar"));
-    ProjectToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    this->addToolBar(Qt::TopToolBarArea, ProjectToolBar);
+
     statusBar = new QStatusBar(this);
     statusBar->setObjectName(QString::fromUtf8("statusBar"));
     this->setStatusBar(statusBar);
@@ -411,19 +382,12 @@ void MainWindow::setupUi()
     toolBar->setObjectName(QString::fromUtf8("toolBar"));
     this->addToolBar(Qt::TopToolBarArea, toolBar);
 
-    menuBar->addAction(menuProject->menuAction());
+
     menuBar->addAction(menuView->menuAction());
     menuBar->addAction(menu_T->menuAction());
     menuBar->addAction(menu_D->menuAction());
     menuBar->addAction(menu->menuAction());
-    menuProject->addAction(actionNewPoject);
-    menuProject->addAction(actionOpenProject);
-    menuProject->addAction(actionCloseProject);
-    menuProject->addAction(actionSaveProject);
-    menuProject->addSeparator();
-    menuProject->addAction(actionRecentProjectList);
-    menuProject->addSeparator();
-    menuProject->addAction(actionExit);
+
     menuView->addAction(actionToolBar);
     menuView->addAction(actionStatusBar);
     menuView->addAction(actionWorkSpace);
@@ -446,11 +410,7 @@ void MainWindow::setupUi()
     menu_D->addAction(actionImportTag);
     menu->addAction(actionHelp);
     menu->addAction(actionAbout);
-    ProjectToolBar->addAction(actionNewPoject);
-    ProjectToolBar->addAction(actionOpenProject);
-    ProjectToolBar->addAction(actionCloseProject);
-    ProjectToolBar->addAction(actionSaveProject);
-    ProjectToolBar->addAction(actionExit);
+
     ViewToolBar->addAction(actionBigIcon);
     ViewToolBar->addAction(actionSmallIcon);
     ViewToolBar->addAction(actionEdit);
@@ -479,24 +439,10 @@ void MainWindow::setupUi()
 void MainWindow::retranslateUi()
 {
     this->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
-    actionNewPoject->setText(QCoreApplication::translate("MainWindow", "\346\226\260\345\273\272(&N)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionNewPoject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+N", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionOpenProject->setText(QCoreApplication::translate("MainWindow", "\346\211\223\345\274\200(&O)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionOpenProject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+O", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionCloseProject->setText(QCoreApplication::translate("MainWindow", "\345\205\263\351\227\255", Q_NULLPTR));
-    actionSaveProject->setText(QCoreApplication::translate("MainWindow", "\344\277\235\345\255\230(&S)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionSaveProject->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+S", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionRecentProjectList->setText(QCoreApplication::translate("MainWindow", "\346\234\200\350\277\221\346\226\207\344\273\266\345\210\227\350\241\250", Q_NULLPTR));
-    actionExit->setText(QCoreApplication::translate("MainWindow", "\351\200\200\345\207\272(&Q)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionExit->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+Q", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
+
+
+
+
     actionToolBar->setText(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\346\240\217(&T)", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
     actionToolBar->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+T", Q_NULLPTR));
@@ -597,7 +543,6 @@ void MainWindow::retranslateUi()
 #if QT_CONFIG(shortcut)
     actionAbout->setShortcut(QCoreApplication::translate("MainWindow", "F2", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    menuProject->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\347\250\213(&P)", Q_NULLPTR));
     menuView->setTitle(QCoreApplication::translate("MainWindow", "\346\237\245\347\234\213(&V)", Q_NULLPTR));
     menu_T->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267(T)", Q_NULLPTR));
     menu_D->setTitle(QCoreApplication::translate("MainWindow", "\346\223\215\344\275\234(D)", Q_NULLPTR));
@@ -623,7 +568,31 @@ MainWindow::~MainWindow()
  */
 void MainWindow::createActions()
 {
+    // 新建工程
+    m_pActionNewProjObj = new QAction(QIcon(":/images/newproject.png"), tr("新建工程"), this);
+    m_pActionNewProjObj->setShortcut(QString("Ctrl+N"));
+    connect(m_pActionNewProjObj, &QAction::triggered, this, &MainWindow::onNewPoject);
 
+    //  打开工程
+    m_pActionOpenProjObj = new QAction(QIcon(":/images/openproject.png"), tr("打开工程"), this);
+    m_pActionOpenProjObj->setShortcut(QString("Ctrl+O"));
+    connect(m_pActionOpenProjObj, &QAction::triggered, this, &MainWindow::onOpenProject);
+
+    // 关闭工程
+    m_pActionCloseProjObj = new QAction(QIcon(":/images/projectexit.png"), tr("关闭"), this);
+    connect(m_pActionCloseProjObj, &QAction::triggered, this, &MainWindow::onCloseProject);
+
+    // 保存工程
+    m_pActionSaveProjObj = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), this);
+    m_pActionSaveProjObj->setShortcut(QString("Ctrl+S"));
+    connect(m_pActionSaveProjObj, &QAction::triggered, this, &MainWindow::onSaveProject);
+
+    // 最近打开的工程
+    m_pActionRecentProjListObj = new QAction(tr("最近打开的工程"), this);
+
+    m_pActionExitObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), this);
+    m_pActionExitObj->setShortcut(QString("Ctrl+Q"));
+    connect(m_pActionExitObj, &QAction::triggered, this, &MainWindow::onExit);
 
 
     //-----------------------------<画面编辑器>----------------------------------
@@ -666,7 +635,7 @@ void MainWindow::createActions()
     // 显示栅格
     m_pActionShowGridObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
     m_pActionShowGridObj->setCheckable(true);
-    m_pActionShowGridObj->setChecked(gridVisible_);
+    m_pActionShowGridObj->setChecked(m_bGraphPageGridVisible);
     connect(m_pActionShowGridObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGrid(bool)));
 
     // 画面放大
@@ -753,6 +722,16 @@ void MainWindow::createActions()
  */
 void MainWindow::createMenus()
 {
+    // 工程菜单
+    m_pMenuProjectObj = new QMenu(tr("工程"), menuBar);
+    m_pMenuProjectObj->addAction(m_pActionNewProjObj);
+    m_pMenuProjectObj->addAction(m_pActionOpenProjObj);
+    m_pMenuProjectObj->addAction(m_pActionCloseProjObj);
+    m_pMenuProjectObj->addAction(m_pActionSaveProjObj);
+    m_pMenuProjectObj->addSeparator();
+    m_pMenuProjectObj->addAction(m_pActionRecentProjListObj);
+    m_pMenuProjectObj->addSeparator();
+    m_pMenuProjectObj->addAction(m_pActionExitObj);
 
     //-----------------------------<画面编辑器>----------------------------------
     QMenu *filemenu = new QMenu(tr("画面"), this);
@@ -771,6 +750,7 @@ void MainWindow::createMenus()
     windowMenu->addAction(m_pActionShowGraphObj);
     windowMenu->addAction(m_pActionShowPropEditorObj);
 
+    QMainWindow::menuBar()->addMenu(m_pMenuProjectObj);
     QMainWindow::menuBar()->addMenu(filemenu);
     QMainWindow::menuBar()->addMenu(windowMenu);
 }
@@ -782,6 +762,15 @@ void MainWindow::createMenus()
  */
 void MainWindow::createToolbars()
 {
+    // 工程
+    m_pToolBarProjectObj = new QToolBar(this);
+    m_pToolBarProjectObj->setObjectName(QString::fromUtf8("ProjectToolBar"));
+    m_pToolBarProjectObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    m_pToolBarProjectObj->addAction(m_pActionNewProjObj);
+    m_pToolBarProjectObj->addAction(m_pActionOpenProjObj);
+    m_pToolBarProjectObj->addAction(m_pActionCloseProjObj);
+    m_pToolBarProjectObj->addAction(m_pActionSaveProjObj);
+    m_pToolBarProjectObj->addAction(m_pActionExitObj);
 
     //-----------------------------<画面编辑器>----------------------------------
     this->toolBar->addAction(m_pActionSaveGraphPageObj);
@@ -807,6 +796,8 @@ void MainWindow::createToolbars()
     this->toolBar->addAction(m_pActionUpLayerObj); // 上移一层
     this->toolBar->addAction(m_pActionDownLayerObj); // 下移一层
     this->toolBar->addSeparator();
+
+    this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
 }
 
 
@@ -1232,7 +1223,12 @@ void MainWindow::initWindow() {
     this->statusBar->showMessage(tr("欢迎使用HmiFuncDesigner组态系统"));
 }
 
-void MainWindow::on_actionNewPoject_triggered() {
+/**
+ * @brief MainWindow::onNewPoject
+ * @details 新建工程
+ */
+void MainWindow::onNewPoject()
+{
     if (pProjectItem->text() != tr("未创建工程")) {
         QMessageBox::information(
                     this, tr("系统提示"),
@@ -1282,7 +1278,12 @@ void MainWindow::doOpenProject(QString proj)
     updateRecentProjectList(proj);
 }
 
-void MainWindow::on_actionOpenProject_triggered() {
+/**
+ * @brief MainWindow::onOpenProject
+ * @details 打开工程
+ */
+void MainWindow::onOpenProject()
+{
     QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
     QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
     QString fileName = QFileDialog::getOpenFileName(
@@ -1452,10 +1453,12 @@ void MainWindow::UpdateDeviceVariableTableGroup()
     tagIOGroup.listTagIOGroupDBItem_.clear();
 }
 
-/*
- * 所有活动窗口执行保存
+
+/**
+ * @brief MainWindow::onSaveProject
+ * @details 保存工程
  */
-void MainWindow::on_actionSaveProject_triggered()
+void MainWindow::onSaveProject()
 {
     foreach (QMdiSubWindow* window, this->mdiArea->subWindowList()) {
         ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
@@ -1464,10 +1467,12 @@ void MainWindow::on_actionSaveProject_triggered()
     }
 }
 
-/*
-* 插槽：关闭
-*/
-void MainWindow::on_actionCloseProject_triggered()
+
+/**
+ * @brief MainWindow::onCloseProject
+ * @details 关闭工程
+ */
+void MainWindow::onCloseProject()
 {
     if(pProjectItem->text() == "未创建工程")
         return;
@@ -1480,11 +1485,14 @@ void MainWindow::on_actionCloseProject_triggered()
     UpdateProjectName(QString());
 }
 
-/*
-* 插槽：退出
-*/
-void MainWindow::on_actionExit_triggered() {
-    on_actionSaveProject_triggered();
+
+/**
+ * @brief MainWindow::onExit
+ * @details 退出
+ */
+void MainWindow::onExit()
+{
+    onSaveProject();
     qApp->exit();
 }
 
@@ -1867,14 +1875,14 @@ void MainWindow::loadRecentProjectList()
             connect(pAct, &QAction::triggered, this, [=]{
                 this->doOpenProject(pAct->text());
             });
-            this->menuProject->insertAction(this->actionRecentProjectList, pAct);
+            this->m_pMenuProjectObj->insertAction(this->m_pActionRecentProjListObj, pAct);
         }
-        this->menuProject->removeAction(this->actionRecentProjectList);
+        this->m_pMenuProjectObj->removeAction(this->m_pActionRecentProjListObj);
         return;
     }
 
     QList<QAction *> listActRemove;
-    QList<QAction *> listAct = this->menuProject->actions();
+    QList<QAction *> listAct = this->m_pMenuProjectObj->actions();
     for (int i = 0; i<listAct.size(); ++i) {
         QAction *pAct = listAct.at(i);
         if(pAct->isSeparator())
@@ -1883,7 +1891,7 @@ void MainWindow::loadRecentProjectList()
             listActRemove.append(pAct);
     }
     for (int j = 0; j<listActRemove.size(); ++j) {
-        this->menuProject->removeAction(listActRemove.at(j));
+        this->m_pMenuProjectObj->removeAction(listActRemove.at(j));
     }
 }
 
@@ -1913,7 +1921,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
         ConfigUtils::writeCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
         QList<QAction *> listActRemove;
-        QList<QAction *> listAct = this->menuProject->actions();
+        QList<QAction *> listAct = this->m_pMenuProjectObj->actions();
         for (int i = 0; i < listAct.size(); ++i) {
             QAction *pAct = listAct.at(i);
             if(pAct->isSeparator() && bStart == false && bEnd == false) {
@@ -1932,7 +1940,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
                 listActRemove.append(pAct);
         }
         for (int j = 0; j<listActRemove.size(); ++j) {
-            this->menuProject->removeAction(listActRemove.at(j));
+            this->m_pMenuProjectObj->removeAction(listActRemove.at(j));
         }
 
         /////////////////////////////////////////////////////
@@ -1940,7 +1948,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
         bStart = bEnd = false;
         QAction *pActPos = Q_NULLPTR;
         listAct.clear();
-        listAct = this->menuProject->actions();
+        listAct = this->m_pMenuProjectObj->actions();
         for (int i = 0; i < listAct.size(); ++i) {
             QAction *pAct = listAct.at(i);
             if(pAct->isSeparator() && bStart == false && bEnd == false) {
@@ -1961,7 +1969,7 @@ void MainWindow::updateRecentProjectList(QString newProj)
             connect(pAct, &QAction::triggered, this, [=]{
                 this->doOpenProject(pAct->text());
             });
-            this->menuProject->insertAction(pActPos, pAct);
+            this->m_pMenuProjectObj->insertAction(pActPos, pAct);
         }
     } else {
         QStringList slist;
@@ -2005,27 +2013,27 @@ void MainWindow::initView()
     m_pGraphPageTabWidgetObj->installEventFilter(this);
     this->scrollArea->setWidget(m_pGraphPageTabWidgetObj);
 
-    elementWidget_ = new ElementLibraryWidget();
-    this->ElemetsLayout->addWidget(elementWidget_);
+    m_pElementWidgetObj = new ElementLibraryWidget();
+    this->ElemetsLayout->addWidget(m_pElementWidgetObj);
 
-    variantEditorFactory_ = new VariantFactory(this);
+    m_pVariantEditorFactoryObj = new VariantFactory(this);
 
     //propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
-    propertyEditor_ = new QtTreePropertyBrowser(this);
-    propertyEditor_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    propertyEditor_->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
+    m_pPropertyEditorObj = new QtTreePropertyBrowser(this);
+    m_pPropertyEditorObj->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_pPropertyEditorObj->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
     //propertyEditor_->setColumnWidth(0, 60);
     //propertyEditor_->setColumnWidth(1, 200);
 
 
-    this->PropertyLayout->addWidget(propertyEditor_);
+    this->PropertyLayout->addWidget(m_pPropertyEditorObj);
 
     VariantManager *pVariantManager  = new VariantManager(this);
-    variantPropertyManager_ = pVariantManager;
-    pVariantManager->setPropertyEditor(propertyEditor_);
-    propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
+    m_pVariantPropertyMgrObj = pVariantManager;
+    pVariantManager->setPropertyEditor(m_pPropertyEditorObj);
+    m_pPropertyEditorObj->setFactoryForManager(m_pVariantPropertyMgrObj, m_pVariantEditorFactoryObj);
 
-    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+    connect(m_pVariantPropertyMgrObj, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
             this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
 }
 
@@ -2053,7 +2061,7 @@ void MainWindow::openGraphPage(const QString &szProjPath,
                 return;
             }
 
-            GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
+            GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
             if (!createDocument(graphPage, view, fileName)) {
                 return;
             }
@@ -2065,7 +2073,7 @@ void MainWindow::openGraphPage(const QString &szProjPath,
 
             graphPage->setProjectPath(szProjPath);
             graphPage->setProjectName(szProjName);
-            graphPage->setGridVisible(gridVisible_);
+            graphPage->setGridVisible(m_bGraphPageGridVisible);
             graphPage->loadAsXML(fileName);
             view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szPageId + ".drw");
@@ -2155,10 +2163,10 @@ void MainWindow::addNewGraphPage()
         return;
     }
 
-    GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
+    GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
     graphPage->setProjectPath(m_szProjPath);
     graphPage->setProjectName(m_szProjName);
-    graphPage->setGridVisible(gridVisible_);
+    graphPage->setGridVisible(m_bGraphPageGridVisible);
     m_pCurrentGraphPageObj = graphPage;
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
@@ -2264,13 +2272,13 @@ void MainWindow::slotChangeGraphPage(int GraphPageNum)
     m_pCurrentGraphPageObj = dynamic_cast<GraphPage *>(m_pCurrentViewObj->scene());
     m_pCurrentGraphPageObj->setActive(true);
     //currentGraphPage_->fillGraphPagePropertyModel();
-    currentGraphPageIndex_ = GraphPageNum;
+    m_iCurrentGraphPageIndex = GraphPageNum;
     slotUpdateActions();
 }
 
 void MainWindow::slotChangeGraphPageName()
 {
-    m_pGraphPageTabWidgetObj->setTabText(currentGraphPageIndex_, m_pCurrentGraphPageObj->getGraphPageId());
+    m_pGraphPageTabWidgetObj->setTabText(m_iCurrentGraphPageIndex, m_pCurrentGraphPageObj->getGraphPageId());
     //int index = GraphPageManager::getInstance()->getIndexByGraphPage(currentGraphPage_);
 }
 
@@ -2320,7 +2328,7 @@ void MainWindow::onSlotShowGrid(bool on)
         iter.next()->setGridVisible(on);
     }
 
-    gridVisible_ = on;
+    m_bGraphPageGridVisible = on;
 }
 
 
@@ -2444,7 +2452,7 @@ void MainWindow::onSlotEditOpen()
             return;
         }
 
-        GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
+        GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
         if (!createDocument(graphPage, view, filename)) {
             return;
         }
@@ -2478,7 +2486,7 @@ bool MainWindow::createDocument(GraphPage *graphPage,
         return false;
     }
 
-    graphPage->setGridVisible(gridVisible_);
+    graphPage->setGridVisible(m_bGraphPageGridVisible);
     view->setScene(graphPage);
     view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
     m_pGraphPageTabWidgetObj->addTab(view, graphPage->getGraphPageId());
@@ -2806,7 +2814,7 @@ reInput:
                 return;
             }
 
-            GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
+            GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
             if (!createDocument(graphPage, view, fileName)) {
                 return;
             }
@@ -2925,7 +2933,7 @@ void MainWindow::onDeleteGraphPage()
  */
 void MainWindow::onCopyGraphPage()
 {
-    szCopyGraphPageFileName_ = this->listWidgetGraphPages->currentItem()->text();
+    m_szCopyGraphPageFileName = this->listWidgetGraphPages->currentItem()->text();
 }
 
 
@@ -2938,17 +2946,17 @@ void MainWindow::onPasteGraphPage()
     int iLast = 0;
 
 reGetNum:
-    iLast = DrawListUtils::getMaxDrawPageNum(szCopyGraphPageFileName_);
-    QString strDrawPageName = szCopyGraphPageFileName_ + QString("-%1").arg(iLast);
+    iLast = DrawListUtils::getMaxDrawPageNum(m_szCopyGraphPageFileName);
+    QString strDrawPageName = m_szCopyGraphPageFileName + QString("-%1").arg(iLast);
     if ( DrawListUtils::drawList_.contains(strDrawPageName )) {
-        szCopyGraphPageFileName_ = strDrawPageName;
+        m_szCopyGraphPageFileName = strDrawPageName;
         goto reGetNum;
     }
 
     this->listWidgetGraphPages->addItem(strDrawPageName);
     DrawListUtils::drawList_.append(strDrawPageName);
     DrawListUtils::saveDrawList(m_szProjPath);
-    QString szFileName = m_szProjPath + "/" + szCopyGraphPageFileName_ + ".drw";
+    QString szFileName = m_szProjPath + "/" + m_szCopyGraphPageFileName + ".drw";
     QFile file(szFileName);
     QString szPasteFileName = m_szProjPath + "/" + strDrawPageName + ".drw";
     file.copy(szPasteFileName);
@@ -2961,7 +2969,7 @@ reGetNum:
             return;
         }
 
-        GraphPage *graphPage = new GraphPage(QRectF(), variantPropertyManager_, propertyEditor_);
+        GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
         if (!createDocument(graphPage, view, szPasteFileName)) {
             return;
         }

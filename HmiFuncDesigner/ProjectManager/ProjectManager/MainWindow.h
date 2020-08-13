@@ -55,11 +55,9 @@ signals:
 private slots:   
     void setActiveSubWindow(ChildForm *window);
     ChildForm* getActiveSubWindow();
-    void on_actionNewPoject_triggered();
     void on_actionWorkSpace_triggered(bool checked);
     void on_treeViewProject_clicked(const QModelIndex &index);
-    void on_actionOpenProject_triggered();
-    void on_actionSaveProject_triggered();
+
     void on_treeViewProject_activated(const QModelIndex &index);
     void tagIOGroupAdd(); // 增加组
     void tagIOGroupRename(); // 重命名组
@@ -70,8 +68,6 @@ private slots:
     void on_actionUpLoad_triggered();
     void on_actionUDisk_triggered();
     void on_actionDownload_triggered();
-    void on_actionCloseProject_triggered();
-    void on_actionExit_triggered();
     void on_actionAddTag_triggered();
     void on_actionAppendTag_triggered();
     void on_actionRowCopyTag_triggered();
@@ -191,12 +187,7 @@ private slots:
 
 private:
 public:
-    QAction *actionNewPoject;
-    QAction *actionOpenProject;
-    QAction *actionCloseProject;
-    QAction *actionSaveProject;
-    QAction *actionRecentProjectList;
-    QAction *actionExit;
+
     QAction *actionToolBar;
     QAction *actionStatusBar;
     QAction *actionWorkSpace;
@@ -228,12 +219,12 @@ public:
     QWidget *scrollAreaWidgetContents;
     QMdiArea *mdiArea;
     QMenuBar *menuBar;
-    QMenu *menuProject;
+
     QMenu *menuView;
     QMenu *menu_T;
     QMenu *menu_D;
     QMenu *menu;
-    QToolBar *ProjectToolBar;
+
     QStatusBar *statusBar;
     QToolBar *ViewToolBar;
 
@@ -265,6 +256,18 @@ public:
 
 
 private slots:
+    // 新建工程
+    void onNewPoject();
+    // 打开工程
+    void onOpenProject();
+    // 关闭工程
+    void onCloseProject();
+    // 保存工程
+    void onSaveProject();
+    // 退出
+    void onExit();
+
+
     // 窗口.图形元素 动作响应函数
     void onSlotShowGraphObj(bool);
     // 窗口.属性编辑器 动作响应函数
@@ -316,6 +319,7 @@ private slots:
     // 粘贴画面
     void onPasteGraphPage();
 
+
 private:
     // 创建动作
     void createActions();
@@ -332,27 +336,17 @@ private:
     GraphPage *m_pCurrentGraphPageObj;
     QGraphicsView *m_pCurrentViewObj;
     QTabWidget *m_pGraphPageTabWidgetObj;
+    ElementLibraryWidget *m_pElementWidgetObj;
+    bool m_bGraphPageGridVisible;
+    int m_iCurrentGraphPageIndex;
+    QString m_szCopyGraphPageFileName;
 
-
-
-
-
-
-    ElementLibraryWidget *elementWidget_;
-
-
-    bool gridVisible_;
-    int currentGraphPageIndex_;
-    QString szCopyGraphPageFileName_;
-
-private:
-    QtVariantPropertyManager *variantPropertyManager_;
-    QtTreePropertyBrowser *propertyEditor_;
-    QtVariantEditorFactory *variantEditorFactory_;
-    QMap<QtProperty *, QString> propertyToId_;
-    QMap<QString, QtVariantProperty *> idToProperty_;
-    QMap<QString, bool> idToExpanded_;
-
+    QtVariantPropertyManager *m_pVariantPropertyMgrObj;
+    QtTreePropertyBrowser *m_pPropertyEditorObj;
+    QtVariantEditorFactory *m_pVariantEditorFactoryObj;
+    QMap<QtProperty *, QString> m_mapPropertyObjToId;
+    QMap<QString, QtVariantProperty *> m_mapIdToPropertyObj;
+    QMap<QString, bool> m_mapIdToExpanded;
 
     QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
     QDockWidget *m_pDockPropertyObj; // 属性停靠控件
@@ -385,7 +379,14 @@ private:
     QAction *m_pActionUpLayerObj; // 上移一层
     QAction *m_pActionDownLayerObj; // 下移一层
 
-
+    QMenu *m_pMenuProjectObj; // 工程菜单
+    QToolBar *m_pToolBarProjectObj; // 工程工具条
+    QAction *m_pActionNewProjObj; // 新建工程
+    QAction *m_pActionOpenProjObj; // 打开工程
+    QAction *m_pActionCloseProjObj; // 关闭工程
+    QAction *m_pActionSaveProjObj; // 保存工程
+    QAction *m_pActionRecentProjListObj; // 最近打开工程
+    QAction *m_pActionExitObj; // 退出
 
 
 
