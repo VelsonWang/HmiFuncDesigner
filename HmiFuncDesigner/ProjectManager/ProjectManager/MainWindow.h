@@ -81,8 +81,8 @@ private slots:
     void on_actionDeviceDelete_triggered();
     void on_actionHelp_triggered();
     void on_actionAbout_triggered();
-    void on_actionBigIcon_triggered();
-    void on_actionSmallIcon_triggered();
+
+
 
 
 
@@ -139,9 +139,7 @@ protected:
 public:
     bool isGridVisible() const;
     // 打开画面
-    void openGraphPage(const QString &szProjPath,
-                       const QString &szProjName,
-                       const QString &szPageName);
+    void openGraphPage(const QString &szProjPath, const QString &szProjName, const QString &szPageName);
 
 private:
     void initView();
@@ -156,9 +154,7 @@ private:
     void removeGraphPage(QGraphicsView *view);
     bool isGraphPageOpen(const QString &filename);
 
-    bool createDocument(GraphPage *graphPage,
-                        QGraphicsView *view,
-                        const QString &filename);
+    bool createDocument(GraphPage *graphPage, QGraphicsView *view, const QString &filename);
     // 创建空的画面页
     void createEmptyGraphpage(const QString &projPath,
                               const QString &graphPageName,
@@ -176,25 +172,13 @@ public slots:
 
 private slots:
     QGraphicsView *createTabView();
-
-
-
     void slotUpdateActions();
     void slotChangeGraphPage(int);
     void slotChangeGraphPageName();
 
-
-
-private:
 public:
 
-    QAction *actionToolBar;
-    QAction *actionStatusBar;
-    QAction *actionWorkSpace;
-    QAction *actionDisplayArea_I;
-    QAction *actionBigIcon;
-    QAction *actionSmallIcon;
-    QAction *actionEdit;
+
     QAction *actionSimulate;
     QAction *actionRun;
     QAction *actionDownload;
@@ -218,15 +202,11 @@ public:
     QScrollArea *scrollArea;
     QWidget *scrollAreaWidgetContents;
     QMdiArea *mdiArea;
-    QMenuBar *menuBar;
 
-    QMenu *menuView;
-    QMenu *menu_T;
-    QMenu *menu_D;
-    QMenu *menu;
 
-    QStatusBar *statusBar;
-    QToolBar *ViewToolBar;
+
+
+
 
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout_4;
@@ -319,8 +299,14 @@ private slots:
     // 粘贴画面
     void onPasteGraphPage();
 
+    // 显示大图标
+    void onBigIcon();
+    // 显示小图标
+    void onSmallIcon();
 
 private:
+    // 创建状态栏
+    void createStatusBar();
     // 创建动作
     void createActions();
     // 创建菜单
@@ -348,6 +334,7 @@ private:
     QMap<QString, QtVariantProperty *> m_mapIdToPropertyObj;
     QMap<QString, bool> m_mapIdToExpanded;
 
+    QStatusBar *m_pStatusBarObj; // 状态栏
     QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
     QDockWidget *m_pDockPropertyObj; // 属性停靠控件
     QDockWidget *m_pDockElemetsObj; // 图形元素停靠控件
@@ -388,7 +375,21 @@ private:
     QAction *m_pActionRecentProjListObj; // 最近打开工程
     QAction *m_pActionExitObj; // 退出
 
+    QMenu *m_pMenuViewObj; // 视图
+    QToolBar *m_pToolBarView; // 视图工具栏
+    QAction *m_pActionToolBarObj;
+    QAction *m_pActionStatusBarObj;
+    QAction *m_pActionWorkSpaceObj;
+    QAction *m_pActionDisplayAreaObj;
+    QAction *m_pActionBigIconObj; // 显示大图标
+    QAction *m_pActionSmallIconObj; // 显示小图标
+    QAction *m_pActionEditObj; // 编辑
 
+
+
+    QMenu *menu_T;
+    QMenu *menu_D;
+    QMenu *menu;
 
 
 

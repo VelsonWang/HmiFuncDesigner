@@ -62,6 +62,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     setupUi();
 
+    this->setWindowIcon(QIcon(":/images/appicon.png"));
+
+    // 创建状态栏
+    createStatusBar();
     // 创建动作
     createActions();
     // 创建菜单
@@ -76,13 +80,13 @@ MainWindow::MainWindow(QWidget *parent)
     m_bGraphPageGridVisible = true;
     m_iCurrentGraphPageIndex = 0;
 
-    enableToolBar("");                             // 工具条使能
-    setContextMenuPolicy(Qt::DefaultContextMenu);  // 右键菜单生效
+    enableToolBar(""); // 工具条使能
+    setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
     readSettings();  // 初始窗口时读取窗口设置信息
-    initWindow();    // 初始化窗口
+    initWindow(); // 初始化窗口
     setUpProjectTreeView();
     loadRecentProjectList();
-    on_actionBigIcon_triggered();  // 大图标显示
+    onBigIcon();  // 大图标显示
 
     //--------------------------------------------------------------------------
 
@@ -112,45 +116,21 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 
+/**
+ * @brief MainWindow::createStatusBar
+ * @details 创建状态栏
+ */
+void MainWindow::createStatusBar()
+{
+    m_pStatusBarObj = new QStatusBar(this);
+    m_pStatusBarObj->setObjectName(QString::fromUtf8("statusBar"));
+    this->setStatusBar(m_pStatusBarObj);
+}
+
 void MainWindow::setupUi()
 {
-    QIcon icon;
-    icon.addFile(QString::fromUtf8(":/images/appicon.png"), QSize(), QIcon::Normal, QIcon::Off);
-    this->setWindowIcon(icon);
 
 
-
-    actionToolBar = new QAction(this);
-    actionToolBar->setObjectName(QString::fromUtf8("actionToolBar"));
-    actionToolBar->setCheckable(true);
-    actionStatusBar = new QAction(this);
-    actionStatusBar->setObjectName(QString::fromUtf8("actionStatusBar"));
-    actionStatusBar->setCheckable(true);
-    actionWorkSpace = new QAction(this);
-    actionWorkSpace->setObjectName(QString::fromUtf8("actionWorkSpace"));
-    actionWorkSpace->setCheckable(true);
-    actionWorkSpace->setChecked(true);
-    actionDisplayArea_I = new QAction(this);
-    actionDisplayArea_I->setObjectName(QString::fromUtf8("actionDisplayArea_I"));
-    actionDisplayArea_I->setCheckable(true);
-    actionBigIcon = new QAction(this);
-    actionBigIcon->setObjectName(QString::fromUtf8("actionBigIcon"));
-    actionBigIcon->setCheckable(true);
-    QIcon icon6;
-    icon6.addFile(QString::fromUtf8(":/images/viewbig.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionBigIcon->setIcon(icon6);
-    actionSmallIcon = new QAction(this);
-    actionSmallIcon->setObjectName(QString::fromUtf8("actionSmallIcon"));
-    actionSmallIcon->setCheckable(true);
-    QIcon icon7;
-    icon7.addFile(QString::fromUtf8(":/images/viewlittle.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionSmallIcon->setIcon(icon7);
-    actionEdit = new QAction(this);
-    actionEdit->setObjectName(QString::fromUtf8("actionEdit"));
-    actionEdit->setCheckable(true);
-    QIcon icon8;
-    icon8.addFile(QString::fromUtf8(":/images/edit.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionEdit->setIcon(icon8);
     actionSimulate = new QAction(this);
     actionSimulate->setObjectName(QString::fromUtf8("actionSimulate"));
     actionSimulate->setEnabled(false);
@@ -260,27 +240,12 @@ void MainWindow::setupUi()
     verticalLayout_7->addWidget(mdiArea);
 
     this->setCentralWidget(centralWidget);
-    menuBar = new QMenuBar(this);
-    menuBar->setObjectName(QString::fromUtf8("menuBar"));
-    menuBar->setGeometry(QRect(0, 0, 1337, 23));
 
-    menuView = new QMenu(menuBar);
-    menuView->setObjectName(QString::fromUtf8("menuView"));
-    menu_T = new QMenu(menuBar);
-    menu_T->setObjectName(QString::fromUtf8("menu_T"));
-    menu_D = new QMenu(menuBar);
-    menu_D->setObjectName(QString::fromUtf8("menu_D"));
-    menu = new QMenu(menuBar);
-    menu->setObjectName(QString::fromUtf8("menu"));
-    this->setMenuBar(menuBar);
 
-    statusBar = new QStatusBar(this);
-    statusBar->setObjectName(QString::fromUtf8("statusBar"));
-    this->setStatusBar(statusBar);
-    ViewToolBar = new QToolBar(this);
-    ViewToolBar->setObjectName(QString::fromUtf8("ViewToolBar"));
-    ViewToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    this->addToolBar(Qt::TopToolBarArea, ViewToolBar);
+
+
+
+
 
     // 工程管理器停靠控件
     m_pDockProjectMgrObj = new QDockWidget(this);
@@ -383,18 +348,13 @@ void MainWindow::setupUi()
     this->addToolBar(Qt::TopToolBarArea, toolBar);
 
 
-    menuBar->addAction(menuView->menuAction());
-    menuBar->addAction(menu_T->menuAction());
-    menuBar->addAction(menu_D->menuAction());
-    menuBar->addAction(menu->menuAction());
 
-    menuView->addAction(actionToolBar);
-    menuView->addAction(actionStatusBar);
-    menuView->addAction(actionWorkSpace);
-    menuView->addAction(actionDisplayArea_I);
-    menuView->addAction(actionBigIcon);
-    menuView->addAction(actionSmallIcon);
-    menuView->addAction(actionEdit);
+    this->menuBar()->addAction(menu_T->menuAction());
+    this->menuBar()->addAction(menu_D->menuAction());
+    this->menuBar()->addAction(menu->menuAction());
+
+
+
     menu_T->addAction(actionSimulate);
     menu_T->addAction(actionRun);
     menu_T->addAction(actionDownload);
@@ -411,9 +371,7 @@ void MainWindow::setupUi()
     menu->addAction(actionHelp);
     menu->addAction(actionAbout);
 
-    ViewToolBar->addAction(actionBigIcon);
-    ViewToolBar->addAction(actionSmallIcon);
-    ViewToolBar->addAction(actionEdit);
+
     RunToolBar->addAction(actionSimulate);
     RunToolBar->addAction(actionRun);
     RunToolBar->addAction(actionDownload);
@@ -438,39 +396,7 @@ void MainWindow::setupUi()
 
 void MainWindow::retranslateUi()
 {
-    this->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", Q_NULLPTR));
 
-
-
-
-    actionToolBar->setText(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267\346\240\217(&T)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionToolBar->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+T", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionStatusBar->setText(QCoreApplication::translate("MainWindow", "\347\212\266\346\200\201\346\240\217(&U)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionStatusBar->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+U", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionWorkSpace->setText(QCoreApplication::translate("MainWindow", "\345\267\245\344\275\234\345\214\272(&W)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionWorkSpace->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+W", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionDisplayArea_I->setText(QCoreApplication::translate("MainWindow", "\346\230\276\347\244\272\345\214\272(&I)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionDisplayArea_I->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+I", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionBigIcon->setText(QCoreApplication::translate("MainWindow", "\345\244\247\345\233\276\346\240\207(&B)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionBigIcon->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+B", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionSmallIcon->setText(QCoreApplication::translate("MainWindow", "\345\260\217\345\233\276\346\240\207(&S)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionSmallIcon->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+L", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionEdit->setText(QCoreApplication::translate("MainWindow", "\347\274\226\350\276\221(&E)", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionEdit->setShortcut(QCoreApplication::translate("MainWindow", "Ctrl+E", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
     actionSimulate->setText(QCoreApplication::translate("MainWindow", "\346\250\241\346\213\237", Q_NULLPTR));
 #if QT_CONFIG(shortcut)
     actionSimulate->setShortcut(QCoreApplication::translate("MainWindow", "F5", Q_NULLPTR));
@@ -543,11 +469,10 @@ void MainWindow::retranslateUi()
 #if QT_CONFIG(shortcut)
     actionAbout->setShortcut(QCoreApplication::translate("MainWindow", "F2", Q_NULLPTR));
 #endif // QT_CONFIG(shortcut)
-    menuView->setTitle(QCoreApplication::translate("MainWindow", "\346\237\245\347\234\213(&V)", Q_NULLPTR));
+
     menu_T->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267(T)", Q_NULLPTR));
     menu_D->setTitle(QCoreApplication::translate("MainWindow", "\346\223\215\344\275\234(D)", Q_NULLPTR));
     menu->setTitle(QCoreApplication::translate("MainWindow", "\345\270\256\345\212\251(H)", Q_NULLPTR));
-    ViewToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
     RunToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
     TagOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
     DeviceOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar_2", Q_NULLPTR));
@@ -593,6 +518,41 @@ void MainWindow::createActions()
     m_pActionExitObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), this);
     m_pActionExitObj->setShortcut(QString("Ctrl+Q"));
     connect(m_pActionExitObj, &QAction::triggered, this, &MainWindow::onExit);
+
+    //-----------------------------<视图>---------------------------------------
+
+    // 视图工具栏
+    m_pActionToolBarObj = new QAction(tr("视图工具栏"), this);
+    m_pActionToolBarObj->setCheckable(true);
+
+    // 状态栏
+    m_pActionStatusBarObj = new QAction(tr("状态栏"), this);
+    m_pActionStatusBarObj->setCheckable(true);
+
+    // 工作区
+    m_pActionWorkSpaceObj = new QAction(tr("工作区"), this);
+    m_pActionWorkSpaceObj->setCheckable(true);
+
+    // 显示区
+    m_pActionDisplayAreaObj = new QAction(tr("显示区"), this);
+    m_pActionDisplayAreaObj->setCheckable(true);
+
+    // 大图标显示
+    m_pActionBigIconObj = new QAction(QIcon(":/images/viewbig.png"), tr("大图标"), this);
+    m_pActionExitObj->setShortcut(QString("Ctrl+B"));
+    m_pActionBigIconObj->setCheckable(true);
+    connect(m_pActionBigIconObj, &QAction::triggered, this, &MainWindow::onBigIcon);
+
+    // 显示小图标
+    m_pActionSmallIconObj = new QAction(QIcon(":/images/viewlittle.png"), tr("小图标"), this);
+    m_pActionSmallIconObj->setShortcut(QString("Ctrl+L"));
+    m_pActionSmallIconObj->setCheckable(true);
+    connect(m_pActionSmallIconObj, &QAction::triggered, this, &MainWindow::onSmallIcon);
+
+    // 编辑
+    m_pActionEditObj = new QAction(QIcon(":/images/edit.png"), tr("编辑"), this);
+    m_pActionEditObj->setShortcut(QString("Ctrl+E"));
+    m_pActionEditObj->setCheckable(true);
 
 
     //-----------------------------<画面编辑器>----------------------------------
@@ -722,8 +682,17 @@ void MainWindow::createActions()
  */
 void MainWindow::createMenus()
 {
+
+    menu_T = new QMenu(this->menuBar());
+    menu_T->setObjectName(QString::fromUtf8("menu_T"));
+    menu_D = new QMenu(this->menuBar());
+    menu_D->setObjectName(QString::fromUtf8("menu_D"));
+    menu = new QMenu(this->menuBar());
+    menu->setObjectName(QString::fromUtf8("menu"));
+    this->setMenuBar(this->menuBar());
+
     // 工程菜单
-    m_pMenuProjectObj = new QMenu(tr("工程"), menuBar);
+    m_pMenuProjectObj = this->menuBar()->addMenu(tr("工程"));
     m_pMenuProjectObj->addAction(m_pActionNewProjObj);
     m_pMenuProjectObj->addAction(m_pActionOpenProjObj);
     m_pMenuProjectObj->addAction(m_pActionCloseProjObj);
@@ -733,8 +702,20 @@ void MainWindow::createMenus()
     m_pMenuProjectObj->addSeparator();
     m_pMenuProjectObj->addAction(m_pActionExitObj);
 
+    // 视图菜单
+    m_pMenuViewObj = this->menuBar()->addMenu(tr("视图"));
+    m_pMenuViewObj->addAction(m_pActionToolBarObj);
+    m_pMenuViewObj->addAction(m_pActionStatusBarObj);
+    m_pMenuViewObj->addAction(m_pActionWorkSpaceObj);
+    m_pMenuViewObj->addAction(m_pActionDisplayAreaObj);
+    m_pMenuViewObj->addAction(m_pActionBigIconObj);
+    m_pMenuViewObj->addAction(m_pActionSmallIconObj);
+    m_pMenuViewObj->addAction(m_pActionEditObj);
+
+
+
     //-----------------------------<画面编辑器>----------------------------------
-    QMenu *filemenu = new QMenu(tr("画面"), this);
+    QMenu *filemenu = this->menuBar()->addMenu(tr("画面"));
 #if 0  // for test we need this
     filemenu->addAction(m_pActionNewGraphPageObj);
     filemenu->addAction(m_pActionOpenObj);
@@ -746,13 +727,9 @@ void MainWindow::createMenus()
     filemenu->addSeparator();
 
 
-    QMenu *windowMenu = new QMenu(tr("窗口"), this);
+    QMenu *windowMenu = this->menuBar()->addMenu(tr("窗口"));
     windowMenu->addAction(m_pActionShowGraphObj);
     windowMenu->addAction(m_pActionShowPropEditorObj);
-
-    QMainWindow::menuBar()->addMenu(m_pMenuProjectObj);
-    QMainWindow::menuBar()->addMenu(filemenu);
-    QMainWindow::menuBar()->addMenu(windowMenu);
 }
 
 
@@ -762,7 +739,7 @@ void MainWindow::createMenus()
  */
 void MainWindow::createToolbars()
 {
-    // 工程
+    //-----------------------------<工程工具栏>-----------------------------------
     m_pToolBarProjectObj = new QToolBar(this);
     m_pToolBarProjectObj->setObjectName(QString::fromUtf8("ProjectToolBar"));
     m_pToolBarProjectObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -771,6 +748,15 @@ void MainWindow::createToolbars()
     m_pToolBarProjectObj->addAction(m_pActionCloseProjObj);
     m_pToolBarProjectObj->addAction(m_pActionSaveProjObj);
     m_pToolBarProjectObj->addAction(m_pActionExitObj);
+
+    //-----------------------------<视图工具栏>----------------------------------
+
+    m_pToolBarView = new QToolBar(this);
+    m_pToolBarView->setObjectName(QString::fromUtf8("ViewToolBar"));
+    m_pToolBarView->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    m_pToolBarView->addAction(m_pActionBigIconObj);
+    m_pToolBarView->addAction(m_pActionSmallIconObj);
+    m_pToolBarView->addAction(m_pActionEditObj);
 
     //-----------------------------<画面编辑器>----------------------------------
     this->toolBar->addAction(m_pActionSaveGraphPageObj);
@@ -798,6 +784,7 @@ void MainWindow::createToolbars()
     this->toolBar->addSeparator();
 
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
+    this->addToolBar(Qt::TopToolBarArea, m_pToolBarView);
 }
 
 
@@ -1220,7 +1207,7 @@ void MainWindow::initWindow() {
 //    this->mdiArea->setFrameShadow(QFrame::Sunken);
 //    this->mdiArea->setViewMode(QMdiArea::TabbedView);
 
-    this->statusBar->showMessage(tr("欢迎使用HmiFuncDesigner组态系统"));
+    this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态系统"));
 }
 
 /**
@@ -1979,12 +1966,13 @@ void MainWindow::updateRecentProjectList(QString newProj)
 
 
 /**
- * @brief MainWindow::on_actionBigIcon_triggered 显示大图标
+ * @brief MainWindow::onBigIcon
+ * @details 显示大图标
  */
-void MainWindow::on_actionBigIcon_triggered()
+void MainWindow::onBigIcon()
 {
-    this->actionBigIcon->setChecked(true);
-    this->actionSmallIcon->setChecked(false);
+    this->m_pActionBigIconObj->setChecked(true);
+    this->m_pActionSmallIconObj->setChecked(false);
     ChildForm *findForm = findMdiChild(this->m_szCurItem);
     if(findForm != Q_NULLPTR) {
         findForm->showLargeIcon();
@@ -1992,12 +1980,13 @@ void MainWindow::on_actionBigIcon_triggered()
 }
 
 /**
- * @brief MainWindow::on_actionSmallIcon_triggered 显示小图标
+ * @brief MainWindow::onSmallIcon
+ * @details 显示小图标
  */
-void MainWindow::on_actionSmallIcon_triggered()
+void MainWindow::onSmallIcon()
 {
-    this->actionBigIcon->setChecked(false);
-    this->actionSmallIcon->setChecked(true);
+    this->m_pActionBigIconObj->setChecked(false);
+    this->m_pActionSmallIconObj->setChecked(true);
     ChildForm *findForm = findMdiChild(this->m_szCurItem);
     if(findForm != Q_NULLPTR) {
         findForm->showSmallIcon();
