@@ -63,19 +63,18 @@ private slots:
     void tagIOGroupRename(); // 重命名组
     void tagIODeleteGroup(); // 删除组
     void tagIOGroupCopy(); // 复制组
-    void on_actionSimulate_triggered();
-    void on_actionRun_triggered();
-    void on_actionUpLoad_triggered();
-    void on_actionUDisk_triggered();
-    void on_actionDownload_triggered();
-    void on_actionAddTag_triggered();
-    void on_actionAppendTag_triggered();
-    void on_actionRowCopyTag_triggered();
-    void on_actionColumnCopyTag_triggered();
-    void on_actionModifyTag_triggered();
-    void on_actionDeleteTag_triggered();
-    void on_actionExportTag_triggered();
-    void on_actionImportTag_triggered();
+
+
+
+
+
+
+
+
+
+
+
+
     void on_actionDeviceNew_triggered();
     void on_actionDeviceModify_triggered();
     void on_actionDeviceDelete_triggered();
@@ -178,20 +177,6 @@ private slots:
 
 public:
 
-
-    QAction *actionSimulate;
-    QAction *actionRun;
-    QAction *actionDownload;
-    QAction *actionUpLoad;
-    QAction *actionUDisk;
-    QAction *actionAddTag;
-    QAction *actionAppendTag;
-    QAction *actionRowCopyTag;
-    QAction *actionColumnCopyTag;
-    QAction *actionModifyTag;
-    QAction *actionDeleteTag;
-    QAction *actionExportTag;
-    QAction *actionImportTag;
     QAction *actionDeviceNew;
     QAction *actionDeviceModify;
     QAction *actionDeviceDelete;
@@ -223,13 +208,12 @@ public:
     QWidget *dockPropertyLayout;
     QVBoxLayout *verticalLayout_6;
     QVBoxLayout *PropertyLayout;
-    QToolBar *RunToolBar;
-    QToolBar *TagOperateToolBar;
+
+
     QToolBar *DeviceOperateToolBar;
     QToolBar *toolBar;
 
     void setupUi();
-    void retranslateUi();
 
 
     //-------------------------------<以下为整理过的代码>------------------------------------------
@@ -303,6 +287,31 @@ private slots:
     void onBigIcon();
     // 显示小图标
     void onSmallIcon();
+    // 模拟仿真
+    void onSlotSimulate();
+    // 运行工程
+    void onSlotRunProject();
+    // 下载工程
+    void onSlotDownloadProject();
+    // 上载工程
+    void onSlotUpLoadProject();
+    // U盘
+    void onSlotUDisk();
+
+    // 添加变量
+    void onSlotAddTag();
+    // 追加变量
+    void onSlotAppendTag();
+    // 拷贝变量
+    void onSlotRowCopyTag();
+    // 修改变量
+    void onSlotModifyTag();
+    // 删除变量
+    void onSlotDeleteTag();
+    // 导出变量
+    void onSlotExportTag();
+    // 导入变量
+    void onSlotImportTag();
 
 private:
     // 创建状态栏
@@ -385,14 +394,28 @@ private:
     QAction *m_pActionSmallIconObj; // 显示小图标
     QAction *m_pActionEditObj; // 编辑
 
+    QMenu *m_pMenuToolsObj; // 工具菜单
+    QToolBar *m_pToolBarToolsObj;
+    QAction *m_pActionSimulateObj; // 模拟仿真
+    QAction *m_pActionRunObj; // 运行工程
+    QAction *m_pActionDownloadObj; // 下载工程
+    QAction *m_pActionUpLoadObj; // 上传工程
+    QAction *m_pActionUDiskObj; // U盘
+
+    QMenu *m_pMenuTagEditObj; // 变量编辑菜单
+    QToolBar *m_pToolBarTagEditObj;
+    QAction *m_pActionAddTagObj; // 添加变量
+    QAction *m_pActionAppendTagObj; // 追加变量
+    QAction *m_pActionRowCopyTagObj; // 拷贝变量
+    QAction *m_pActionModifyTagObj; // 修改变量
+    QAction *m_pActionDeleteTagObj; // 删除变量
+    QAction *m_pActionExportTagObj; // 导出变量
+    QAction *m_pActionImportTagObj; // 导入变量
 
 
-    QMenu *menu_T;
-    QMenu *menu_D;
+
+
     QMenu *menu;
-
-
-
 
 };
 

@@ -131,73 +131,8 @@ void MainWindow::setupUi()
 {
 
 
-    actionSimulate = new QAction(this);
-    actionSimulate->setObjectName(QString::fromUtf8("actionSimulate"));
-    actionSimulate->setEnabled(false);
-    QIcon icon9;
-    icon9.addFile(QString::fromUtf8(":/images/offline.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionSimulate->setIcon(icon9);
-    actionRun = new QAction(this);
-    actionRun->setObjectName(QString::fromUtf8("actionRun"));
-    actionRun->setEnabled(true);
-    QIcon icon10;
-    icon10.addFile(QString::fromUtf8(":/images/online.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionRun->setIcon(icon10);
-    actionDownload = new QAction(this);
-    actionDownload->setObjectName(QString::fromUtf8("actionDownload"));
-    QIcon icon11;
-    icon11.addFile(QString::fromUtf8(":/images/download.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionDownload->setIcon(icon11);
-    actionUpLoad = new QAction(this);
-    actionUpLoad->setObjectName(QString::fromUtf8("actionUpLoad"));
-    QIcon icon12;
-    icon12.addFile(QString::fromUtf8(":/images/upload.PNG"), QSize(), QIcon::Normal, QIcon::Off);
-    actionUpLoad->setIcon(icon12);
-    actionUDisk = new QAction(this);
-    actionUDisk->setObjectName(QString::fromUtf8("actionUDisk"));
-    QIcon icon13;
-    icon13.addFile(QString::fromUtf8(":/images/downusb.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionUDisk->setIcon(icon13);
-    actionAddTag = new QAction(this);
-    actionAddTag->setObjectName(QString::fromUtf8("actionAddTag"));
-    QIcon icon14;
-    icon14.addFile(QString::fromUtf8(":/images/data_add.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionAddTag->setIcon(icon14);
-    actionAppendTag = new QAction(this);
-    actionAppendTag->setObjectName(QString::fromUtf8("actionAppendTag"));
-    QIcon icon15;
-    icon15.addFile(QString::fromUtf8(":/images/data_supadd.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionAppendTag->setIcon(icon15);
-    actionRowCopyTag = new QAction(this);
-    actionRowCopyTag->setObjectName(QString::fromUtf8("actionRowCopyTag"));
-    QIcon icon16;
-    icon16.addFile(QString::fromUtf8(":/images/data_rowcopy.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionRowCopyTag->setIcon(icon16);
-    actionColumnCopyTag = new QAction(this);
-    actionColumnCopyTag->setObjectName(QString::fromUtf8("actionColumnCopyTag"));
-    QIcon icon17;
-    icon17.addFile(QString::fromUtf8(":/images/data_colcopy.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionColumnCopyTag->setIcon(icon17);
-    actionModifyTag = new QAction(this);
-    actionModifyTag->setObjectName(QString::fromUtf8("actionModifyTag"));
-    QIcon icon18;
-    icon18.addFile(QString::fromUtf8(":/images/icon_modify.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionModifyTag->setIcon(icon18);
-    actionDeleteTag = new QAction(this);
-    actionDeleteTag->setObjectName(QString::fromUtf8("actionDeleteTag"));
-    QIcon icon19;
-    icon19.addFile(QString::fromUtf8(":/images/icon_delete.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionDeleteTag->setIcon(icon19);
-    actionExportTag = new QAction(this);
-    actionExportTag->setObjectName(QString::fromUtf8("actionExportTag"));
-    QIcon icon20;
-    icon20.addFile(QString::fromUtf8(":/images/data_export.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionExportTag->setIcon(icon20);
-    actionImportTag = new QAction(this);
-    actionImportTag->setObjectName(QString::fromUtf8("actionImportTag"));
-    QIcon icon21;
-    icon21.addFile(QString::fromUtf8(":/images/data_inport.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionImportTag->setIcon(icon21);
+
+
     actionDeviceNew = new QAction(this);
     actionDeviceNew->setObjectName(QString::fromUtf8("actionDeviceNew"));
     QIcon icon22;
@@ -205,10 +140,10 @@ void MainWindow::setupUi()
     actionDeviceNew->setIcon(icon22);
     actionDeviceModify = new QAction(this);
     actionDeviceModify->setObjectName(QString::fromUtf8("actionDeviceModify"));
-    actionDeviceModify->setIcon(icon18);
+    //actionDeviceModify->setIcon(icon18);
     actionDeviceDelete = new QAction(this);
     actionDeviceDelete->setObjectName(QString::fromUtf8("actionDeviceDelete"));
-    actionDeviceDelete->setIcon(icon19);
+    //actionDeviceDelete->setIcon(icon19);
     actionHelp = new QAction(this);
     actionHelp->setObjectName(QString::fromUtf8("actionHelp"));
     actionAbout = new QAction(this);
@@ -331,14 +266,8 @@ void MainWindow::setupUi()
     m_pDockProjectMgrObj->setWidget(dockWidgetContents);
 
 
-    RunToolBar = new QToolBar(this);
-    RunToolBar->setObjectName(QString::fromUtf8("RunToolBar"));
-    RunToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    this->addToolBar(Qt::TopToolBarArea, RunToolBar);
-    TagOperateToolBar = new QToolBar(this);
-    TagOperateToolBar->setObjectName(QString::fromUtf8("TagOperateToolBar"));
-    TagOperateToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    this->addToolBar(Qt::TopToolBarArea, TagOperateToolBar);
+
+
     DeviceOperateToolBar = new QToolBar(this);
     DeviceOperateToolBar->setObjectName(QString::fromUtf8("DeviceOperateToolBar"));
     DeviceOperateToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
@@ -349,135 +278,30 @@ void MainWindow::setupUi()
 
 
 
-    this->menuBar()->addAction(menu_T->menuAction());
-    this->menuBar()->addAction(menu_D->menuAction());
+
+
     this->menuBar()->addAction(menu->menuAction());
 
 
 
-    menu_T->addAction(actionSimulate);
-    menu_T->addAction(actionRun);
-    menu_T->addAction(actionDownload);
-    menu_T->addAction(actionUpLoad);
-    menu_T->addAction(actionUDisk);
-    menu_D->addAction(actionAddTag);
-    menu_D->addAction(actionAppendTag);
-    menu_D->addAction(actionRowCopyTag);
-    menu_D->addAction(actionColumnCopyTag);
-    menu_D->addAction(actionModifyTag);
-    menu_D->addAction(actionDeleteTag);
-    menu_D->addAction(actionExportTag);
-    menu_D->addAction(actionImportTag);
+
+
+
+
     menu->addAction(actionHelp);
     menu->addAction(actionAbout);
 
 
-    RunToolBar->addAction(actionSimulate);
-    RunToolBar->addAction(actionRun);
-    RunToolBar->addAction(actionDownload);
-    RunToolBar->addAction(actionUpLoad);
-    RunToolBar->addAction(actionUDisk);
-    TagOperateToolBar->addAction(actionAddTag);
-    TagOperateToolBar->addAction(actionAppendTag);
-    TagOperateToolBar->addAction(actionRowCopyTag);
-    TagOperateToolBar->addAction(actionColumnCopyTag);
-    TagOperateToolBar->addAction(actionModifyTag);
-    TagOperateToolBar->addAction(actionDeleteTag);
-    TagOperateToolBar->addAction(actionExportTag);
-    TagOperateToolBar->addAction(actionImportTag);
+
+
+
+
     DeviceOperateToolBar->addAction(actionDeviceNew);
     DeviceOperateToolBar->addAction(actionDeviceModify);
     DeviceOperateToolBar->addAction(actionDeviceDelete);
 
-    retranslateUi();
-
     QMetaObject::connectSlotsByName(this);
 } // setupUi
-
-void MainWindow::retranslateUi()
-{
-
-    actionSimulate->setText(QCoreApplication::translate("MainWindow", "\346\250\241\346\213\237", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionSimulate->setShortcut(QCoreApplication::translate("MainWindow", "F5", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionRun->setText(QCoreApplication::translate("MainWindow", "\350\277\220\350\241\214", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionRun->setShortcut(QCoreApplication::translate("MainWindow", "F6", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionDownload->setText(QCoreApplication::translate("MainWindow", "\344\270\213\350\275\275", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionDownload->setShortcut(QCoreApplication::translate("MainWindow", "F9", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionUpLoad->setText(QCoreApplication::translate("MainWindow", "\344\270\212\350\275\275", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionUpLoad->setShortcut(QCoreApplication::translate("MainWindow", "F10", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionUDisk->setText(QCoreApplication::translate("MainWindow", "U\347\233\230", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionUDisk->setShortcut(QCoreApplication::translate("MainWindow", "F11", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionAddTag->setText(QCoreApplication::translate("MainWindow", "\345\242\236\345\212\240", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionAddTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+A", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionAppendTag->setText(QCoreApplication::translate("MainWindow", "\350\277\275\345\212\240", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionAppendTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+S", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionRowCopyTag->setText(QCoreApplication::translate("MainWindow", "\350\241\214\346\213\267", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionRowCopyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+R", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionColumnCopyTag->setText(QCoreApplication::translate("MainWindow", "\345\210\227\346\213\267", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionColumnCopyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+C", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionModifyTag->setText(QCoreApplication::translate("MainWindow", "\344\277\256\346\224\271", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionModifyTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+M", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionDeleteTag->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionDeleteTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+D", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionExportTag->setText(QCoreApplication::translate("MainWindow", "\345\257\274\345\207\272", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionExportTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+B", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionImportTag->setText(QCoreApplication::translate("MainWindow", "\345\257\274\345\205\245", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionImportTag->setShortcut(QCoreApplication::translate("MainWindow", "Alt+E", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionDeviceNew->setText(QCoreApplication::translate("MainWindow", "\346\226\260\345\273\272", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionDeviceNew->setShortcut(QCoreApplication::translate("MainWindow", "Alt+N", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionDeviceModify->setText(QCoreApplication::translate("MainWindow", "\344\277\256\346\224\271", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionDeviceModify->setShortcut(QCoreApplication::translate("MainWindow", "Alt+M", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionDeviceDelete->setText(QCoreApplication::translate("MainWindow", "\345\210\240\351\231\244", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionDeviceDelete->setShortcut(QCoreApplication::translate("MainWindow", "Alt+T", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionHelp->setText(QCoreApplication::translate("MainWindow", "\345\270\256\345\212\251", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionHelp->setShortcut(QCoreApplication::translate("MainWindow", "F1", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-    actionAbout->setText(QCoreApplication::translate("MainWindow", "\345\205\263\344\272\216", Q_NULLPTR));
-#if QT_CONFIG(shortcut)
-    actionAbout->setShortcut(QCoreApplication::translate("MainWindow", "F2", Q_NULLPTR));
-#endif // QT_CONFIG(shortcut)
-
-    menu_T->setTitle(QCoreApplication::translate("MainWindow", "\345\267\245\345\205\267(T)", Q_NULLPTR));
-    menu_D->setTitle(QCoreApplication::translate("MainWindow", "\346\223\215\344\275\234(D)", Q_NULLPTR));
-    menu->setTitle(QCoreApplication::translate("MainWindow", "\345\270\256\345\212\251(H)", Q_NULLPTR));
-    RunToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
-    TagOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
-    DeviceOperateToolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar_2", Q_NULLPTR));
-    toolBar->setWindowTitle(QCoreApplication::translate("MainWindow", "toolBar", Q_NULLPTR));
-}
 
 
 MainWindow::~MainWindow()
@@ -673,6 +497,68 @@ void MainWindow::createActions()
     m_pActionDownLayerObj = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
     connect(m_pActionDownLayerObj, SIGNAL(triggered()), SLOT(onSlotDownLayerElements()));
 
+    //-----------------------------<工具菜单>----------------------------------
+    // 模拟仿真
+    m_pActionSimulateObj = new QAction(QIcon(":/images/offline.png"), tr("模拟仿真"));
+    m_pActionSimulateObj->setEnabled(false);
+    connect(m_pActionSimulateObj, SIGNAL(triggered()), SLOT(onSlotSimulate()));
+
+    // 运行工程
+    m_pActionRunObj = new QAction(QIcon(":/images/online.png"), tr("运行"));
+    m_pActionRunObj->setObjectName(QString::fromUtf8("actionRun"));
+    m_pActionRunObj->setEnabled(true);
+    connect(m_pActionSimulateObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
+
+    // 下载工程
+    m_pActionDownloadObj = new QAction(QIcon(":/images/download.png"), tr("下载"));
+    m_pActionDownloadObj->setObjectName(QString::fromUtf8("actionDownload"));
+    connect(m_pActionDownloadObj, SIGNAL(triggered()), SLOT(onSlotDownloadProject()));
+
+    // 上载工程
+    m_pActionUpLoadObj = new QAction(QIcon(":/images/upload.png"), tr("上载"));
+    m_pActionUpLoadObj->setObjectName(QString::fromUtf8("actionUpLoad"));
+    connect(m_pActionUpLoadObj, SIGNAL(triggered()), SLOT(onSlotUpLoadProject()));
+
+    // U盘
+    m_pActionUDiskObj = new QAction(QIcon(":/images/downusb.png"), tr("U盘"));
+    m_pActionUDiskObj->setObjectName(QString::fromUtf8("actionUDisk"));
+    connect(m_pActionUDiskObj, SIGNAL(triggered()), SLOT(onSlotUDisk()));
+
+    //-----------------------------<变量编辑菜单>----------------------------------
+    // 添加变量
+    m_pActionAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
+    m_pActionAddTagObj->setObjectName(QString::fromUtf8("actionAddTag"));
+    connect(m_pActionAddTagObj, SIGNAL(triggered()), SLOT(onSlotAddTag()));
+
+    // 追加变量
+    m_pActionAppendTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("追加变量"));
+    m_pActionAppendTagObj->setObjectName(QString::fromUtf8("actionAppendTag"));
+    connect(m_pActionAppendTagObj, SIGNAL(triggered()), SLOT(onSlotAppendTag()));
+
+    // 拷贝变量
+    m_pActionRowCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
+    m_pActionRowCopyTagObj->setObjectName(QString::fromUtf8("actionRowCopyTag"));
+    connect(m_pActionRowCopyTagObj, SIGNAL(triggered()), SLOT(onSlotRowCopyTag()));
+
+    // 修改变量
+    m_pActionModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
+    m_pActionModifyTagObj->setObjectName(QString::fromUtf8("actionModifyTag"));
+    connect(m_pActionModifyTagObj, SIGNAL(triggered()), SLOT(onSlotModifyTag()));
+
+    // 删除变量
+    m_pActionDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
+    m_pActionDeleteTagObj->setObjectName(QString::fromUtf8("actionDeleteTag"));
+    connect(m_pActionDeleteTagObj, SIGNAL(triggered()), SLOT(onSlotDeleteTag()));
+
+    // 导出变量
+    m_pActionExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
+    m_pActionExportTagObj->setObjectName(QString::fromUtf8("actionExportTag"));
+    connect(m_pActionExportTagObj, SIGNAL(triggered()), SLOT(onSlotExportTag()));
+
+    // 导入变量
+    m_pActionImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
+    m_pActionImportTagObj->setObjectName(QString::fromUtf8("actionImportTag"));
+    connect(m_pActionImportTagObj, SIGNAL(triggered()), SLOT(onSlotImportTag()));
 }
 
 
@@ -683,10 +569,6 @@ void MainWindow::createActions()
 void MainWindow::createMenus()
 {
 
-    menu_T = new QMenu(this->menuBar());
-    menu_T->setObjectName(QString::fromUtf8("menu_T"));
-    menu_D = new QMenu(this->menuBar());
-    menu_D->setObjectName(QString::fromUtf8("menu_D"));
     menu = new QMenu(this->menuBar());
     menu->setObjectName(QString::fromUtf8("menu"));
     this->setMenuBar(this->menuBar());
@@ -730,6 +612,26 @@ void MainWindow::createMenus()
     QMenu *windowMenu = this->menuBar()->addMenu(tr("窗口"));
     windowMenu->addAction(m_pActionShowGraphObj);
     windowMenu->addAction(m_pActionShowPropEditorObj);
+
+    //-----------------------------<工具菜单>----------------------------------
+    m_pMenuToolsObj = this->menuBar()->addMenu(tr("工具"));
+    m_pMenuToolsObj->addAction(m_pActionSimulateObj); // 模拟仿真
+    m_pMenuToolsObj->addAction(m_pActionRunObj); // 运行工程
+    m_pMenuToolsObj->addAction(m_pActionDownloadObj); // 下载工程
+    m_pMenuToolsObj->addAction(m_pActionUpLoadObj); // 上传工程
+    m_pMenuToolsObj->addAction(m_pActionUDiskObj); // U盘
+
+    //-----------------------------<变量编辑菜单>----------------------------------
+    m_pMenuTagEditObj = this->menuBar()->addMenu(tr("变量编辑"));
+    m_pMenuTagEditObj->addAction(m_pActionAddTagObj); // 添加变量
+    m_pMenuTagEditObj->addAction(m_pActionAppendTagObj); // 追加变量
+    m_pMenuTagEditObj->addAction(m_pActionRowCopyTagObj); // 拷贝变量
+    m_pMenuTagEditObj->addAction(m_pActionModifyTagObj); // 修改变量
+    m_pMenuTagEditObj->addAction(m_pActionDeleteTagObj); // 删除变量
+    m_pMenuTagEditObj->addAction(m_pActionExportTagObj); // 导出变量
+    m_pMenuTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
+
+
 }
 
 
@@ -783,8 +685,34 @@ void MainWindow::createToolbars()
     this->toolBar->addAction(m_pActionDownLayerObj); // 下移一层
     this->toolBar->addSeparator();
 
+    //-----------------------------<工具>----------------------------------
+
+    m_pToolBarToolsObj = new QToolBar(this);
+    m_pToolBarToolsObj->setObjectName(QString::fromUtf8("ToolBarTools"));
+    m_pToolBarToolsObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    m_pToolBarToolsObj->addAction(m_pActionSimulateObj); // 模拟仿真
+    m_pToolBarToolsObj->addAction(m_pActionRunObj); // 运行工程
+    m_pToolBarToolsObj->addAction(m_pActionDownloadObj); // 下载工程
+    m_pToolBarToolsObj->addAction(m_pActionUpLoadObj); // 上传工程
+    m_pToolBarToolsObj->addAction(m_pActionUDiskObj); // U盘
+
+    //-----------------------------<变量编辑>----------------------------------
+    m_pToolBarTagEditObj = new QToolBar(this);
+    m_pToolBarTagEditObj->setObjectName(QString::fromUtf8("TagOperateToolBar"));
+    m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    m_pToolBarTagEditObj->addAction(m_pActionAddTagObj);  // 添加变量
+    m_pToolBarTagEditObj->addAction(m_pActionAppendTagObj); // 追加变量
+    m_pToolBarTagEditObj->addAction(m_pActionRowCopyTagObj); // 拷贝变量
+    m_pToolBarTagEditObj->addAction(m_pActionModifyTagObj); // 修改变量
+    m_pToolBarTagEditObj->addAction(m_pActionDeleteTagObj); // 删除变量
+    m_pToolBarTagEditObj->addAction(m_pActionExportTagObj); // 导出变量
+    m_pToolBarTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
+
+
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarView);
+    this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
+    this->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
 }
 
 
@@ -1285,12 +1213,16 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
     this->m_pDockProjectMgrObj->setVisible(checked);
 }
 
-/*
-* 工具条使能
-*/
-void MainWindow::enableToolBar(QString text) {
+
+/**
+ * @brief MainWindow::enableToolBar
+ * @param text
+ * @details 工具条使能
+ */
+void MainWindow::enableToolBar(QString text)
+{
     bool bTagIOOrTmp = (text == tr("中间变量")) | (text.startsWith(tr("设备变量")));
-    this->TagOperateToolBar->setEnabled(bTagIOOrTmp);
+    this->m_pToolBarTagEditObj->setEnabled(bTagIOOrTmp);
 
     bool bdevice = (text == tr("串口设备")) | (text == tr("网络设备")) |
             (text == tr("总线设备")) | (text == tr("OPC设备"));
@@ -1403,11 +1335,11 @@ void MainWindow::UpdateProjectName(QString name)
         m_szProjPath = ProjectMgrUtils::getProjectPath(name);
         QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
         pProjectItem->setText(strName);
-        this->actionRun->setEnabled(true);
+        this->m_pActionRunObj->setEnabled(true);
     } else {
         m_szProjName = "";
         m_szProjPath = "";
-        this->actionRun->setEnabled(false);
+        this->m_pActionRunObj->setEnabled(false);
         pTreeViewProjectModel->clear();
         this->treeViewProject->reset();
         delete pTreeViewProjectModel;
@@ -1485,15 +1417,21 @@ void MainWindow::onExit()
 
 void MainWindow::on_treeViewProject_activated(const QModelIndex & /*index*/) {}
 
-/*
- * 插槽：模拟
- */
-void MainWindow::on_actionSimulate_triggered() {}
 
-/*
- * 插槽：运行
+/**
+ * @brief MainWindow::onSlotSimulate
+ * @details 模拟仿真
  */
-void MainWindow::on_actionRun_triggered()
+void MainWindow::onSlotSimulate()
+{
+
+}
+
+/**
+ * @brief MainWindow::onSlotRunProject
+ * @details 运行工程
+ */
+void MainWindow::onSlotRunProject()
 {
     QString fileRuntimeApplication = "";
 #ifdef Q_OS_WIN
@@ -1514,10 +1452,11 @@ void MainWindow::on_actionRun_triggered()
     }
 }
 
-/*
- * 插槽：上载
+/**
+ * @brief MainWindow::onSlotUpLoadProject
+ * @details 上载工程
  */
-void MainWindow::on_actionUpLoad_triggered()
+void MainWindow::onSlotUpLoadProject()
 {
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/UploadProjects/tmp";
@@ -1568,15 +1507,21 @@ void MainWindow::on_actionUpLoad_triggered()
     delete pDlg;
 }
 
-/*
- * 插槽：U盘
- */
-void MainWindow::on_actionUDisk_triggered() {}
 
-/*
- * 插槽：下载
+/**
+ * @brief MainWindow::onSlotUDisk
+ * @details U盘
  */
-void MainWindow::on_actionDownload_triggered()
+void MainWindow::onSlotUDisk()
+{
+
+}
+
+/**
+ * @brief MainWindow::onSlotDownloadProject
+ * @details 下载工程
+ */
+void MainWindow::onSlotDownloadProject()
 {
     if(m_szProjName == Q_NULLPTR)
         return;
@@ -1638,10 +1583,12 @@ void MainWindow::on_actionDownload_triggered()
     delete pDlg;
 }
 
-/*
- * 插槽：增加
+
+/**
+ * @brief MainWindow::onSlotAddTag
+ * @details 添加变量
  */
-void MainWindow::on_actionAddTag_triggered()
+void MainWindow::onSlotAddTag()
 {
     ChildForm *window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1649,10 +1596,12 @@ void MainWindow::on_actionAddTag_triggered()
     }
 }
 
-/*
- * 插槽：追加
+
+/**
+ * @brief MainWindow::onSlotAppendTag
+ * @details 追加变量
  */
-void MainWindow::on_actionAppendTag_triggered()
+void MainWindow::onSlotAppendTag()
 {
     ChildForm *window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1660,10 +1609,12 @@ void MainWindow::on_actionAppendTag_triggered()
     }
 }
 
-/*
- * 插槽：行拷贝
+
+/**
+ * @brief MainWindow::onSlotRowCopyTag
+ * @details 拷贝变量
  */
-void MainWindow::on_actionRowCopyTag_triggered()
+void MainWindow::onSlotRowCopyTag()
 {
     ChildForm *window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1671,21 +1622,13 @@ void MainWindow::on_actionRowCopyTag_triggered()
     }
 }
 
-/*
- * 插槽：列拷贝
- */
-void MainWindow::on_actionColumnCopyTag_triggered()
-{
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->columnCopyVariableTag();
-    }
-}
 
-/*
- * 插槽：修改
+
+/**
+ * @brief MainWindow::onSlotModifyTag
+ * @details 修改变量
  */
-void MainWindow::on_actionModifyTag_triggered()
+void MainWindow::onSlotModifyTag()
 {
     ChildForm *window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1693,10 +1636,11 @@ void MainWindow::on_actionModifyTag_triggered()
     }
 }
 
-/*
- * 插槽：删除
+/**
+ * @brief MainWindow::onSlotDeleteTag
+ * @details 删除变量
  */
-void MainWindow::on_actionDeleteTag_triggered()
+void MainWindow::onSlotDeleteTag()
 {
     ChildForm *window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1704,10 +1648,12 @@ void MainWindow::on_actionDeleteTag_triggered()
     }
 }
 
-/*
- * 插槽：导出
+
+/**
+ * @brief MainWindow::onSlotExportTag
+ * @details 导出变量
  */
-void MainWindow::on_actionExportTag_triggered()
+void MainWindow::onSlotExportTag()
 {
     QString dirUploadProjects = QCoreApplication::applicationDirPath();
     QString strSaveCsvPath = QFileDialog::getExistingDirectory(
@@ -1721,10 +1667,12 @@ void MainWindow::on_actionExportTag_triggered()
     }
 }
 
-/*
- * 插槽：导入
+
+/**
+ * @brief MainWindow::onSlotImportTag
+ * @details 导入变量
  */
-void MainWindow::on_actionImportTag_triggered()
+void MainWindow::onSlotImportTag()
 {
     QString path = QCoreApplication::applicationDirPath();
     QString strSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),

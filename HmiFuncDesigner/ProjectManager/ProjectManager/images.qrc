@@ -8,7 +8,7 @@
         <file>images/data_delete.png</file>
         <file>images/data_export.png</file>
         <file>images/data_inadd.png</file>
-        <file>images/data_inport.png</file>
+        <file>images/data_import.png</file>
         <file>images/data_rowcopy.png</file>
         <file>images/data_supadd.png</file>
         <file>images/db_dbview.png</file>
@@ -88,7 +88,7 @@
         <file>images/setfunction.png</file>
         <file>images/statef_abnormal.png</file>
         <file>images/statef_normal.png</file>
-        <file>images/upload.PNG</file>
+        <file>images/upload.png</file>
         <file>images/usrcustomwidget.png</file>
         <file>images/viewbig.png</file>
         <file>images/viewenlargeless.png</file>
