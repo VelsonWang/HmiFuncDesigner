@@ -130,7 +130,6 @@ public slots:
     void onTagAdd();
     void onTagAppend();
     void onTagRowCopy();
-    void onTagColCopy();
     void onTagModify();
     void onTagDelete();
 

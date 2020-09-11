@@ -52,8 +52,6 @@ public:
     void appendVariableTag();
     // 行拷贝变量标签
     void rowCopyVariableTag();
-    // 列拷贝变量标签
-    void columnCopyVariableTag();
     // 修改变量标签
     void modifyVariableTag();
     // 删除变量标签

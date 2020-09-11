@@ -243,15 +243,6 @@ void TagManagerWin::onTagRowCopy()
     }
 }
 
-/*
-* 插槽：列拷贝变量
-*/
-void TagManagerWin::onTagColCopy()
-{
-    if(m_strItemName == tr("设备变量")) {
-    } else if(m_strItemName == tr("中间变量")) {
-    }
-}
 
 /*
 * 插槽：修改变量

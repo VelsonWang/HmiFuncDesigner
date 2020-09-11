@@ -174,17 +174,6 @@ void ChildForm::rowCopyVariableTag()
 
 
 /**
- * @brief ChildForm::columnCopyVariableTag 列拷贝变量标签
- */
-void ChildForm::columnCopyVariableTag()
-{
-    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->onTagColCopy();
-    }
-}
-
-
-/**
  * @brief ChildForm::modifyVariableTag 修改变量标签
  */
 void ChildForm::modifyVariableTag()
