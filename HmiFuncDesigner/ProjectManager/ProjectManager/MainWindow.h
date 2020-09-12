@@ -170,12 +170,7 @@ public:
     QVBoxLayout *ElemetsLayout;
 
     QWidget *dockPropertyLayout;
-    QVBoxLayout *verticalLayout_6;
     QVBoxLayout *PropertyLayout;
-
-
-
-
 
     void setupUi();
 

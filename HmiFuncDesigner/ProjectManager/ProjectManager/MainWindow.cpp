@@ -64,6 +64,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     this->setWindowIcon(QIcon(":/images/appicon.png"));
 
+    m_pUndoGroupObj = new QUndoGroup(this);
+
     // 创建状态栏
     createStatusBar();
     // 创建动作
@@ -90,11 +92,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     //--------------------------------------------------------------------------
 
-    m_pUndoGroupObj = new QUndoGroup(this);
-    createActions();
-
-    createMenus();
-    createToolbars();
     initView();
     slotUpdateActions();
 
@@ -129,7 +126,6 @@ void MainWindow::createStatusBar()
 
 void MainWindow::setupUi()
 {
-
     centralWidget = new QWidget(this);
     centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
     verticalLayout_7 = new QVBoxLayout(centralWidget);
@@ -230,20 +226,23 @@ void MainWindow::setupUi()
     this->addDockWidget(Qt::RightDockWidgetArea, m_pDockPropertyObj);
     dockPropertyLayout = new QWidget();
     dockPropertyLayout->setObjectName(QString::fromUtf8("dockPropertyLayout"));
-    verticalLayout_6 = new QVBoxLayout(dockPropertyLayout);
-    verticalLayout_6->setSpacing(1);
-    verticalLayout_6->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_6->setObjectName(QString::fromUtf8("verticalLayout_6"));
-    verticalLayout_6->setContentsMargins(1, 1, 1, 1);
+    QVBoxLayout *propertyWidgetLayout = new QVBoxLayout(dockPropertyLayout);
+    propertyWidgetLayout->setSpacing(1);
+    propertyWidgetLayout->setContentsMargins(11, 11, 11, 11);
+    propertyWidgetLayout->setObjectName(QString::fromUtf8("propertyWidgetLayout"));
+    propertyWidgetLayout->setContentsMargins(1, 1, 1, 1);
     PropertyLayout = new QVBoxLayout();
     PropertyLayout->setSpacing(6);
     PropertyLayout->setObjectName(QString::fromUtf8("PropertyLayout"));
-    verticalLayout_6->addLayout(PropertyLayout);
+    propertyWidgetLayout->addLayout(PropertyLayout);
     m_pDockPropertyObj->setWidget(dockPropertyLayout);
     m_pDockProjectMgrObj->setWidget(dockWidgetContents);
 
-    QMetaObject::connectSlotsByName(this);
-} // setupUi
+    QSizePolicy dockPropertySizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    dockPropertySizePolicy.setHorizontalStretch(0);
+    dockPropertySizePolicy.setVerticalStretch(0);
+    dockWidgetContents->setSizePolicy(dockPropertySizePolicy);
+}
 
 
 MainWindow::~MainWindow()
@@ -356,7 +355,7 @@ void MainWindow::createActions()
 
     // 关闭所有画面
     m_pActionCloseAllObj = new QAction(tr("关闭所有"), this);
-    connect(m_pActionCloseAllObj, SIGNAL(triggered()), SLOT(slotCloseAll()));
+    connect(m_pActionCloseAllObj, SIGNAL(triggered()), SLOT(onSlotCloseAll()));
 
     // 显示栅格
     m_pActionShowGridObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
@@ -366,11 +365,11 @@ void MainWindow::createActions()
 
     // 画面放大
     m_pActionZoomInObj = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
-    connect(m_pActionZoomInObj, SIGNAL(triggered()), SLOT(slotZoomIn()));
+    connect(m_pActionZoomInObj, SIGNAL(triggered()), SLOT(onSlotZoomIn()));
 
     // 画面缩小
     m_pActionZoomOutObj = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
-    connect(m_pActionZoomOutObj, SIGNAL(triggered()), SLOT(slotZoomOut()));
+    connect(m_pActionZoomOutObj, SIGNAL(triggered()), SLOT(onSlotZoomOut()));
 
     // 撤销
     m_pActionUndoObj = m_pUndoGroupObj->createUndoAction(this);
@@ -387,7 +386,7 @@ void MainWindow::createActions()
     // 删除画面
     m_pActionDeleteObj = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
     m_pActionDeleteObj->setShortcut(QKeySequence::Delete);
-    connect(m_pActionDeleteObj, SIGNAL(triggered()), SLOT(slotEditDelete()));
+    connect(m_pActionDeleteObj, SIGNAL(triggered()), SLOT(onSlotEditDelete()));
 
     // 拷贝画面
     m_pActionCopyObj = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
@@ -397,7 +396,7 @@ void MainWindow::createActions()
     // 粘贴画面
     m_pActionPasteObj = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
     m_pActionPasteObj->setShortcut(QKeySequence::Paste);
-    connect(m_pActionPasteObj, SIGNAL(triggered()), SLOT(slotEditPaste()));
+    connect(m_pActionPasteObj, SIGNAL(triggered()), SLOT(onSlotEditPaste()));
 
     // 顶部对齐
     m_pActionAlignTopObj = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
@@ -683,12 +682,12 @@ void MainWindow::createToolbars()
     m_pToolBarDeviceEditObj->addAction(m_pActionModifyDeviceObj); // 修改设备
     m_pToolBarDeviceEditObj->addAction(m_pActionDeleteDeviceObj); // 删除设备
 
-
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarView);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarDeviceEditObj);
+    addToolBarBreak();
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
 }
 
