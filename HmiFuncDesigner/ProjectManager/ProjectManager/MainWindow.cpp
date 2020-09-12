@@ -130,24 +130,6 @@ void MainWindow::createStatusBar()
 void MainWindow::setupUi()
 {
 
-
-
-
-    actionDeviceNew = new QAction(this);
-    actionDeviceNew->setObjectName(QString::fromUtf8("actionDeviceNew"));
-    QIcon icon22;
-    icon22.addFile(QString::fromUtf8(":/images/icon_new.png"), QSize(), QIcon::Normal, QIcon::Off);
-    actionDeviceNew->setIcon(icon22);
-    actionDeviceModify = new QAction(this);
-    actionDeviceModify->setObjectName(QString::fromUtf8("actionDeviceModify"));
-    //actionDeviceModify->setIcon(icon18);
-    actionDeviceDelete = new QAction(this);
-    actionDeviceDelete->setObjectName(QString::fromUtf8("actionDeviceDelete"));
-    //actionDeviceDelete->setIcon(icon19);
-    actionHelp = new QAction(this);
-    actionHelp->setObjectName(QString::fromUtf8("actionHelp"));
-    actionAbout = new QAction(this);
-    actionAbout->setObjectName(QString::fromUtf8("actionAbout"));
     centralWidget = new QWidget(this);
     centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
     verticalLayout_7 = new QVBoxLayout(centralWidget);
@@ -175,11 +157,6 @@ void MainWindow::setupUi()
     verticalLayout_7->addWidget(mdiArea);
 
     this->setCentralWidget(centralWidget);
-
-
-
-
-
 
 
     // 工程管理器停靠控件
@@ -264,41 +241,6 @@ void MainWindow::setupUi()
     verticalLayout_6->addLayout(PropertyLayout);
     m_pDockPropertyObj->setWidget(dockPropertyLayout);
     m_pDockProjectMgrObj->setWidget(dockWidgetContents);
-
-
-
-
-    DeviceOperateToolBar = new QToolBar(this);
-    DeviceOperateToolBar->setObjectName(QString::fromUtf8("DeviceOperateToolBar"));
-    DeviceOperateToolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    this->addToolBar(Qt::TopToolBarArea, DeviceOperateToolBar);
-    toolBar = new QToolBar(this);
-    toolBar->setObjectName(QString::fromUtf8("toolBar"));
-    this->addToolBar(Qt::TopToolBarArea, toolBar);
-
-
-
-
-
-    this->menuBar()->addAction(menu->menuAction());
-
-
-
-
-
-
-
-    menu->addAction(actionHelp);
-    menu->addAction(actionAbout);
-
-
-
-
-
-
-    DeviceOperateToolBar->addAction(actionDeviceNew);
-    DeviceOperateToolBar->addAction(actionDeviceModify);
-    DeviceOperateToolBar->addAction(actionDeviceDelete);
 
     QMetaObject::connectSlotsByName(this);
 } // setupUi
@@ -559,6 +501,33 @@ void MainWindow::createActions()
     m_pActionImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
     m_pActionImportTagObj->setObjectName(QString::fromUtf8("actionImportTag"));
     connect(m_pActionImportTagObj, SIGNAL(triggered()), SLOT(onSlotImportTag()));
+
+    //-----------------------------<帮助菜单>----------------------------------
+    // 帮助
+    m_pActionHelpObj = new QAction(tr("帮助"));
+    m_pActionHelpObj->setObjectName(QString::fromUtf8("actionHelp"));
+    connect(m_pActionHelpObj, SIGNAL(triggered()), SLOT(onSlotHelp()));
+
+    // 关于
+    m_pActionAboutObj = new QAction(tr("关于"));
+    m_pActionAboutObj->setObjectName(QString::fromUtf8("actionAbout"));
+    connect(m_pActionAboutObj, SIGNAL(triggered()), SLOT(onSlotAbout()));
+
+    //-----------------------------<设备编辑菜单>----------------------------------
+    // 新建设备
+    m_pActionNewDeviceObj = new QAction(QIcon(":/images/icon_new.png"), tr("新建设备"));
+    m_pActionNewDeviceObj->setObjectName(QString::fromUtf8("actionDeviceNew"));
+    connect(m_pActionNewDeviceObj, SIGNAL(triggered()), SLOT(onSlotNewDevice()));
+
+    // 修改设备
+    m_pActionModifyDeviceObj = new QAction(tr("修改设备"));
+    m_pActionModifyDeviceObj->setObjectName(QString::fromUtf8("actionDeviceModify"));
+    connect(m_pActionModifyDeviceObj, SIGNAL(triggered()), SLOT(onSlotModifyDevice()));
+
+    // 删除设备
+    m_pActionDeleteDeviceObj = new QAction(tr("删除设备"));
+    m_pActionDeleteDeviceObj->setObjectName(QString::fromUtf8("actionDeviceDelete"));
+    connect(m_pActionDeleteDeviceObj, SIGNAL(triggered()), SLOT(onSlotDeleteDevice()));
 }
 
 
@@ -568,11 +537,6 @@ void MainWindow::createActions()
  */
 void MainWindow::createMenus()
 {
-
-    menu = new QMenu(this->menuBar());
-    menu->setObjectName(QString::fromUtf8("menu"));
-    this->setMenuBar(this->menuBar());
-
     // 工程菜单
     m_pMenuProjectObj = this->menuBar()->addMenu(tr("工程"));
     m_pMenuProjectObj->addAction(m_pActionNewProjObj);
@@ -593,8 +557,6 @@ void MainWindow::createMenus()
     m_pMenuViewObj->addAction(m_pActionBigIconObj);
     m_pMenuViewObj->addAction(m_pActionSmallIconObj);
     m_pMenuViewObj->addAction(m_pActionEditObj);
-
-
 
     //-----------------------------<画面编辑器>----------------------------------
     QMenu *filemenu = this->menuBar()->addMenu(tr("画面"));
@@ -631,7 +593,10 @@ void MainWindow::createMenus()
     m_pMenuTagEditObj->addAction(m_pActionExportTagObj); // 导出变量
     m_pMenuTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
 
-
+    //-----------------------------<帮助菜单>----------------------------------
+    m_pMenuHelpObj = this->menuBar()->addMenu(tr("帮助"));
+    m_pMenuHelpObj->addAction(m_pActionHelpObj); // 帮助
+    m_pMenuHelpObj->addAction(m_pActionAboutObj); // 关于
 }
 
 
@@ -661,29 +626,31 @@ void MainWindow::createToolbars()
     m_pToolBarView->addAction(m_pActionEditObj);
 
     //-----------------------------<画面编辑器>----------------------------------
-    this->toolBar->addAction(m_pActionSaveGraphPageObj);
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(m_pActionShowGridObj); // 显示栅格
-    this->toolBar->addAction(m_pActionZoomOutObj); //画面缩小
-    this->toolBar->addAction(m_pActionZoomInObj); // 画面放大
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(m_pActionUndoObj); // 撤销
-    this->toolBar->addAction(m_pActionRedoObj); // 重做
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(m_pActionCopyObj); // 拷贝画面
-    this->toolBar->addAction(m_pActionPasteObj); // 粘贴画面
-    this->toolBar->addAction(m_pActionDeleteObj); // 删除画面
-    this->toolBar->addSeparator();
-    this->toolBar->addAction(m_pActionAlignTopObj); // 顶部对齐
-    this->toolBar->addAction(m_pActionAlignDownObj); // 底部对齐
-    this->toolBar->addAction(m_pActionAalignLeftObj); // 左对齐
-    this->toolBar->addAction(m_pActionAlignRightObj); // 右对齐
-    this->toolBar->addAction(m_pActionHUniformDistributeObj); // 水平均匀分布
-    this->toolBar->addAction(m_pActionVUniformDistributeObj); // 垂直均匀分布
-    this->toolBar->addAction(m_pActionSetTheSameSizeObj); // 设置选中控件大小一致
-    this->toolBar->addAction(m_pActionUpLayerObj); // 上移一层
-    this->toolBar->addAction(m_pActionDownLayerObj); // 下移一层
-    this->toolBar->addSeparator();
+    m_pToolBarGraphPageEditObj = new QToolBar(this);
+    m_pToolBarGraphPageEditObj->setObjectName(QString::fromUtf8("toolBarGraphPageEdit"));
+    m_pToolBarGraphPageEditObj->addAction(m_pActionSaveGraphPageObj);
+    m_pToolBarGraphPageEditObj->addSeparator();
+    m_pToolBarGraphPageEditObj->addAction(m_pActionShowGridObj); // 显示栅格
+    m_pToolBarGraphPageEditObj->addAction(m_pActionZoomOutObj); //画面缩小
+    m_pToolBarGraphPageEditObj->addAction(m_pActionZoomInObj); // 画面放大
+    m_pToolBarGraphPageEditObj->addSeparator();
+    m_pToolBarGraphPageEditObj->addAction(m_pActionUndoObj); // 撤销
+    m_pToolBarGraphPageEditObj->addAction(m_pActionRedoObj); // 重做
+    m_pToolBarGraphPageEditObj->addSeparator();
+    m_pToolBarGraphPageEditObj->addAction(m_pActionCopyObj); // 拷贝画面
+    m_pToolBarGraphPageEditObj->addAction(m_pActionPasteObj); // 粘贴画面
+    m_pToolBarGraphPageEditObj->addAction(m_pActionDeleteObj); // 删除画面
+    m_pToolBarGraphPageEditObj->addSeparator();
+    m_pToolBarGraphPageEditObj->addAction(m_pActionAlignTopObj); // 顶部对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActionAlignDownObj); // 底部对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActionAalignLeftObj); // 左对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActionAlignRightObj); // 右对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActionHUniformDistributeObj); // 水平均匀分布
+    m_pToolBarGraphPageEditObj->addAction(m_pActionVUniformDistributeObj); // 垂直均匀分布
+    m_pToolBarGraphPageEditObj->addAction(m_pActionSetTheSameSizeObj); // 设置选中控件大小一致
+    m_pToolBarGraphPageEditObj->addAction(m_pActionUpLayerObj); // 上移一层
+    m_pToolBarGraphPageEditObj->addAction(m_pActionDownLayerObj); // 下移一层
+    m_pToolBarGraphPageEditObj->addSeparator();
 
     //-----------------------------<工具>----------------------------------
 
@@ -708,11 +675,21 @@ void MainWindow::createToolbars()
     m_pToolBarTagEditObj->addAction(m_pActionExportTagObj); // 导出变量
     m_pToolBarTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
 
+    //-----------------------------<设备编辑>----------------------------------
+    m_pToolBarDeviceEditObj = new QToolBar(this);
+    m_pToolBarDeviceEditObj->setObjectName(QString::fromUtf8("DeviceOperateToolBar"));
+    m_pToolBarDeviceEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    m_pToolBarDeviceEditObj->addAction(m_pActionNewDeviceObj); // 新建设备
+    m_pToolBarDeviceEditObj->addAction(m_pActionModifyDeviceObj); // 修改设备
+    m_pToolBarDeviceEditObj->addAction(m_pActionDeleteDeviceObj); // 删除设备
+
 
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarView);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
+    this->addToolBar(Qt::TopToolBarArea, m_pToolBarDeviceEditObj);
+    this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
 }
 
 
@@ -1226,7 +1203,7 @@ void MainWindow::enableToolBar(QString text)
 
     bool bdevice = (text == tr("串口设备")) | (text == tr("网络设备")) |
             (text == tr("总线设备")) | (text == tr("OPC设备"));
-    this->DeviceOperateToolBar->setEnabled(bdevice);
+    this->m_pToolBarDeviceEditObj->setEnabled(bdevice);
 }
 
 void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
@@ -1744,9 +1721,10 @@ void MainWindow::onSlotImportTag()
 }
 
 /**
- * @brief MainWindow::on_actionDeviceNew_triggered 新建设备
+ * @brief MainWindow::on_actionDeviceNew_triggered
+ * @details 新建设备
  */
-void MainWindow::on_actionDeviceNew_triggered()
+void MainWindow::onSlotNewDevice()
 {
     ChildForm* window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1754,10 +1732,12 @@ void MainWindow::on_actionDeviceNew_triggered()
     }
 }
 
-/*
- * 插槽：修改设备
+
+/**
+ * @brief MainWindow::onSlotModifyDevice
+ * @details 修改设备
  */
-void MainWindow::on_actionDeviceModify_triggered()
+void MainWindow::onSlotModifyDevice()
 {
     ChildForm* window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1765,10 +1745,12 @@ void MainWindow::on_actionDeviceModify_triggered()
     }
 }
 
-/*
- * 插槽：删除设备
+
+/**
+ * @brief MainWindow::onSlotDeleteDevice
+ * @details 删除设备
  */
-void MainWindow::on_actionDeviceDelete_triggered()
+void MainWindow::onSlotDeleteDevice()
 {
     ChildForm* window = findMdiChild(this->m_szCurItem);
     if(window != Q_NULLPTR) {
@@ -1776,15 +1758,22 @@ void MainWindow::on_actionDeviceDelete_triggered()
     }
 }
 
-/*
- * 插槽：帮助
- */
-void MainWindow::on_actionHelp_triggered() {}
 
-/*
- * 插槽：关于
+/**
+ * @brief MainWindow::onSlotHelp
+ * @details 帮助
  */
-void MainWindow::on_actionAbout_triggered()
+void MainWindow::onSlotHelp()
+{
+
+}
+
+
+/**
+ * @brief MainWindow::onSlotAbout
+ * @details 关于
+ */
+void MainWindow::onSlotAbout()
 {
     AboutDialog *pDlg = new AboutDialog(this);
     if(pDlg->exec() == QDialog::Accepted) {

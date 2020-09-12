@@ -57,36 +57,11 @@ private slots:
     ChildForm* getActiveSubWindow();
     void on_actionWorkSpace_triggered(bool checked);
     void on_treeViewProject_clicked(const QModelIndex &index);
-
     void on_treeViewProject_activated(const QModelIndex &index);
     void tagIOGroupAdd(); // 增加组
     void tagIOGroupRename(); // 重命名组
     void tagIODeleteGroup(); // 删除组
     void tagIOGroupCopy(); // 复制组
-
-
-
-
-
-
-
-
-
-
-
-
-    void on_actionDeviceNew_triggered();
-    void on_actionDeviceModify_triggered();
-    void on_actionDeviceDelete_triggered();
-    void on_actionHelp_triggered();
-    void on_actionAbout_triggered();
-
-
-
-
-
-
-
 
 private:
     QStandardItemModel *pTreeViewProjectModel;
@@ -176,22 +151,11 @@ private slots:
     void slotChangeGraphPageName();
 
 public:
-
-    QAction *actionDeviceNew;
-    QAction *actionDeviceModify;
-    QAction *actionDeviceDelete;
-    QAction *actionHelp;
-    QAction *actionAbout;
     QWidget *centralWidget;
     QVBoxLayout *verticalLayout_7;
     QScrollArea *scrollArea;
     QWidget *scrollAreaWidgetContents;
     QMdiArea *mdiArea;
-
-
-
-
-
 
     QWidget *dockWidgetContents;
     QVBoxLayout *verticalLayout_4;
@@ -210,8 +174,8 @@ public:
     QVBoxLayout *PropertyLayout;
 
 
-    QToolBar *DeviceOperateToolBar;
-    QToolBar *toolBar;
+
+
 
     void setupUi();
 
@@ -313,6 +277,18 @@ private slots:
     // 导入变量
     void onSlotImportTag();
 
+    // 帮助
+    void onSlotHelp();
+    // 关于
+    void onSlotAbout();
+
+    // 新建设备
+    void onSlotNewDevice();
+    // 修改设备
+    void onSlotModifyDevice();
+    // 删除设备
+    void onSlotDeleteDevice();
+
 private:
     // 创建状态栏
     void createStatusBar();
@@ -349,6 +325,7 @@ private:
     QDockWidget *m_pDockElemetsObj; // 图形元素停靠控件
     QTabWidget *m_pTabProjectMgrObj; // 工程管理器TabWidget控件
 
+    QToolBar *m_pToolBarGraphPageEditObj; // 画面编辑工具条
     QAction *m_pActionShowGraphObj; // 窗口.图形元素
     QAction *m_pActionShowPropEditorObj; // 窗口.属性编辑器
     QAction *m_pActionNewGraphPageObj; // 画面.新建
@@ -412,10 +389,15 @@ private:
     QAction *m_pActionExportTagObj; // 导出变量
     QAction *m_pActionImportTagObj; // 导入变量
 
+    QMenu *m_pMenuHelpObj; // 帮助菜单
+    QAction *m_pActionHelpObj; // 帮助
+    QAction *m_pActionAboutObj; // 关于
 
+    QToolBar *m_pToolBarDeviceEditObj; // 设备编辑工具条
+    QAction *m_pActionNewDeviceObj; // 新建设备
+    QAction *m_pActionModifyDeviceObj; // 修改设备
+    QAction *m_pActionDeleteDeviceObj; // 删除设备
 
-
-    QMenu *menu;
 
 };
 
