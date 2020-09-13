@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("ProjectManager");
     app.setApplicationDisplayName("ProjectManager");
     app.setApplicationVersion(QString("V%1").arg(VER_FILE));
+    app.setWindowIcon(QIcon(":/images/appicon.png"));
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
 

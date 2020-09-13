@@ -5,7 +5,6 @@
 #include <QMdiSubWindow>
 #include <QStandardItemModel>
 #include <QMap>
-
 #include <QUndoView>
 #include <QUndoGroup>
 #include <QUndoStack>
@@ -16,11 +15,10 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-
 #include "SystemParametersWin.h"
 #include "ChildBase.h"
 #include "ChildForm.h"
-
+#include "ProjectTreeView.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -36,7 +34,6 @@
 #include <QStatusBar>
 #include <QTabWidget>
 #include <QToolBar>
-#include <QTreeView>
 #include <QVBoxLayout>
 #include <QWidget>
 
@@ -56,35 +53,8 @@ private slots:
     void setActiveSubWindow(ChildForm *window);
     ChildForm* getActiveSubWindow();
     void on_actionWorkSpace_triggered(bool checked);
-    void on_treeViewProject_clicked(const QModelIndex &index);
-    void on_treeViewProject_activated(const QModelIndex &index);
-    void tagIOGroupAdd(); // 增加组
-    void tagIOGroupRename(); // 重命名组
-    void tagIODeleteGroup(); // 删除组
-    void tagIOGroupCopy(); // 复制组
-
-private:
-    QStandardItemModel *pTreeViewProjectModel;
-
-    QStandardItem *pProjectItem;
-    QStandardItem *pSystemParameters;
-    QStandardItem *pCommunicationDevice;
-    QStandardItem *pComDevice;
-    QStandardItem *pNetDevice;
-    QStandardItem *pBusDevice;
-    QStandardItem *pOPCDevice;
-    QStandardItem *pDataBaseConfig;
-    QStandardItem *pDevVariable;
-    QList<QStandardItem *> pDevVariableTabList;
-    QStandardItem *pTmpVariable;
-    QStandardItem *pSysVariable;
-    QStandardItem *pDataBaseManager;
-    QStandardItem *pRealTimeDatabase;
-    QStandardItem *pHistoryDatabase;
-    QStandardItem *pDrawPage;
-    QStandardItem *pLogicProgram;
-    QStandardItem *pScriptEditor;
-    QStandardItem *pSystemTool;
+    // 工程树节点被单击
+    void onSlotProjectTreeViewClicked(const QModelIndex &index);
 
 
 private:
@@ -95,10 +65,9 @@ private:
     void readSettings();  // 读取窗口设置
     void writeSettings(); // 写入窗口设置
     void initWindow(); // 初始化窗口
-    void setUpProjectTreeView();
-    void UpdateProjectName(QString name);
+    void UpdateProjectName(const QString &szName);
     void UpdateDeviceVariableTableGroup();
-    void enableToolBar(QString text);
+    void enableToolBar(const QString &szText);
     void loadRecentProjectList();
     void updateRecentProjectList(QString newProj);
     void doOpenProject(QString proj);
@@ -141,7 +110,6 @@ public slots:
     void slotElementIdChanged();
     void slotElementPropertyChanged();
     void slotGraphPagePropertyChanged();
-
     void propertyValueChanged(QtProperty *property, const QVariant &value);
 
 private slots:
@@ -149,34 +117,6 @@ private slots:
     void slotUpdateActions();
     void slotChangeGraphPage(int);
     void slotChangeGraphPageName();
-
-public:
-    QWidget *centralWidget;
-    QVBoxLayout *verticalLayout_7;
-    QScrollArea *scrollArea;
-    QWidget *scrollAreaWidgetContents;
-    QMdiArea *mdiArea;
-
-    QWidget *dockWidgetContents;
-    QVBoxLayout *verticalLayout_4;
-    QWidget *tab;
-    QVBoxLayout *verticalLayout_2;
-    QTreeView *treeViewProject;
-    QWidget *tab_2;
-    QVBoxLayout *verticalLayout_3;
-    QListWidget *listWidgetGraphPages;
-    QWidget *dockWidgetContents_8;
-    QVBoxLayout *verticalLayout_5;
-    QVBoxLayout *ElemetsLayout;
-
-    QWidget *dockPropertyLayout;
-    QVBoxLayout *PropertyLayout;
-
-    void setupUi();
-
-
-    //-------------------------------<以下为整理过的代码>------------------------------------------
-
 
 private slots:
     // 新建工程
@@ -189,7 +129,6 @@ private slots:
     void onSaveProject();
     // 退出
     void onExit();
-
 
     // 窗口.图形元素 动作响应函数
     void onSlotShowGraphObj(bool);
@@ -277,14 +216,13 @@ private slots:
     // 关于
     void onSlotAbout();
 
-    // 新建设备
-    void onSlotNewDevice();
-    // 修改设备
-    void onSlotModifyDevice();
-    // 删除设备
-    void onSlotDeleteDevice();
+
+    // 设置窗口标题
+    void onSlotSetWindowSetTitle(const QString &szTitle);
 
 private:
+    // 初始化UI
+    void initUI();
     // 创建状态栏
     void createStatusBar();
     // 创建动作
@@ -313,6 +251,14 @@ private:
     QMap<QtProperty *, QString> m_mapPropertyObjToId;
     QMap<QString, QtVariantProperty *> m_mapIdToPropertyObj;
     QMap<QString, bool> m_mapIdToExpanded;
+    QVBoxLayout *m_pElemetsLayoutObj;
+    QVBoxLayout *m_pPropertyLayoutObj;
+    QWidget *m_pCentralWidgetObj;
+    QMdiArea *m_pMdiAreaObj;
+    QScrollArea *m_pScrollAreaObj;
+    ProjectTreeView *m_pProjectTreeViewObj;
+    QListWidget *listWidgetGraphPages;
+
 
     QStatusBar *m_pStatusBarObj; // 状态栏
     QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
@@ -387,12 +333,6 @@ private:
     QMenu *m_pMenuHelpObj; // 帮助菜单
     QAction *m_pActionHelpObj; // 帮助
     QAction *m_pActionAboutObj; // 关于
-
-    QToolBar *m_pToolBarDeviceEditObj; // 设备编辑工具条
-    QAction *m_pActionNewDeviceObj; // 新建设备
-    QAction *m_pActionModifyDeviceObj; // 修改设备
-    QAction *m_pActionDeleteDeviceObj; // 删除设备
-
 
 };
 

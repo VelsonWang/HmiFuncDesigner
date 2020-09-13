@@ -60,9 +60,112 @@ MainWindow::MainWindow(QWidget *parent)
       m_szCurItem(""),
       m_szCurTreeViewItem("")
 {
-    setupUi();
+    initUI();
 
-    this->setWindowIcon(QIcon(":/images/appicon.png"));
+}
+
+
+/**
+ * @brief MainWindow::initUI
+ * @details 初始化UI
+ */
+void MainWindow::initUI()
+{
+    m_pCentralWidgetObj = new QWidget(this);
+    QVBoxLayout *centralWidgetLayout = new QVBoxLayout(m_pCentralWidgetObj);
+    centralWidgetLayout->setSpacing(6);
+    centralWidgetLayout->setContentsMargins(11, 11, 11, 11);
+    m_pScrollAreaObj = new QScrollArea(m_pCentralWidgetObj);
+    m_pScrollAreaObj->setWidgetResizable(true);
+    QWidget *scrollAreaContentWidget = new QWidget();
+    scrollAreaContentWidget->setGeometry(QRect(0, 0, 1036, 69));
+    m_pScrollAreaObj->setWidget(scrollAreaContentWidget);
+    centralWidgetLayout->addWidget(m_pScrollAreaObj);
+
+    m_pMdiAreaObj = new QMdiArea(m_pCentralWidgetObj);
+    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    sizePolicy.setHorizontalStretch(0);
+    sizePolicy.setVerticalStretch(0);
+    sizePolicy.setHeightForWidth(m_pMdiAreaObj->sizePolicy().hasHeightForWidth());
+    m_pMdiAreaObj->setSizePolicy(sizePolicy);
+    centralWidgetLayout->addWidget(m_pMdiAreaObj);
+
+    this->setCentralWidget(m_pCentralWidgetObj);
+
+
+    // 工程管理器停靠控件
+    m_pDockProjectMgrObj = new QDockWidget(this);
+    m_pDockProjectMgrObj->setWindowTitle(tr("工程管理器"));
+    this->addDockWidget(Qt::LeftDockWidgetArea, m_pDockProjectMgrObj);
+    QWidget *dockWidgetContents = new QWidget();
+    QVBoxLayout *dockWidgetContentsLayout = new QVBoxLayout(dockWidgetContents);
+    dockWidgetContentsLayout->setSpacing(6);
+    dockWidgetContentsLayout->setContentsMargins(0, 0, 0, 0);
+    m_pTabProjectMgrObj = new QTabWidget(dockWidgetContents);
+    QWidget *projectTabWidget = new QWidget();
+    QVBoxLayout *projectTabWidgetLayout = new QVBoxLayout(projectTabWidget);
+    projectTabWidgetLayout->setSpacing(0);
+    projectTabWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    projectTabWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    m_pProjectTreeViewObj = new ProjectTreeView(projectTabWidget);
+    m_pProjectTreeViewObj->updateUI();
+    connect(m_pProjectTreeViewObj, &QAbstractItemView::clicked, this, &MainWindow::onSlotProjectTreeViewClicked);
+    connect(m_pProjectTreeViewObj, &ProjectTreeView::sigNotifySetWindowSetTitle, this, &MainWindow::onSlotSetWindowSetTitle);
+
+    QFont font;
+    font.setPointSize(10);
+    m_pProjectTreeViewObj->setFont(font);
+    projectTabWidgetLayout->addWidget(m_pProjectTreeViewObj);
+
+    m_pTabProjectMgrObj->addTab(projectTabWidget, QString(tr("工程")));
+    QWidget *graphPageWidget = new QWidget();
+    QVBoxLayout *graphPageWidgetLayout = new QVBoxLayout(graphPageWidget);
+    graphPageWidgetLayout->setSpacing(0);
+    graphPageWidgetLayout->setContentsMargins(2, 2, 2, 2);
+    graphPageWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    listWidgetGraphPages = new QListWidget(graphPageWidget);
+    connect(listWidgetGraphPages, SIGNAL(currentTextChanged(const QString &)),
+            this, SLOT(onSlotListWidgetGraphPagesCurrentTextChanged(const QString &)));
+
+    graphPageWidgetLayout->addWidget(listWidgetGraphPages);
+    m_pTabProjectMgrObj->addTab(graphPageWidget, QString(tr("画面")));
+    dockWidgetContentsLayout->addWidget(m_pTabProjectMgrObj);
+    m_pTabProjectMgrObj->setCurrentIndex(0);
+
+    // 图形元素停靠控件
+    m_pDockElemetsObj = new QDockWidget(this);
+    m_pDockElemetsObj->setWindowTitle(tr("图形元素"));
+    this->addDockWidget(Qt::RightDockWidgetArea, m_pDockElemetsObj);
+    QWidget *dockElemetsWidget = new QWidget();
+    QVBoxLayout *dockElemetsLayout = new QVBoxLayout(dockElemetsWidget);
+    dockElemetsLayout->setSpacing(6);
+    dockElemetsLayout->setContentsMargins(11, 11, 11, 11);
+    dockElemetsLayout->setContentsMargins(0, 0, 0, 0);
+    m_pElemetsLayoutObj = new QVBoxLayout();
+    m_pElemetsLayoutObj->setSpacing(6);
+    dockElemetsLayout->addLayout(m_pElemetsLayoutObj);
+    m_pDockElemetsObj->setWidget(dockElemetsWidget);
+
+
+    // 属性停靠控件
+    m_pDockPropertyObj = new QDockWidget(this);
+    m_pDockPropertyObj->setWindowTitle(tr("属性编辑"));
+    this->addDockWidget(Qt::RightDockWidgetArea, m_pDockPropertyObj);
+    QWidget *dockPropertyWidget = new QWidget();
+    QVBoxLayout *propertyWidgetLayout = new QVBoxLayout(dockPropertyWidget);
+    propertyWidgetLayout->setSpacing(1);
+    propertyWidgetLayout->setContentsMargins(11, 11, 11, 11);
+    propertyWidgetLayout->setContentsMargins(1, 1, 1, 1);
+    m_pPropertyLayoutObj = new QVBoxLayout();
+    m_pPropertyLayoutObj->setSpacing(6);
+    propertyWidgetLayout->addLayout(m_pPropertyLayoutObj);
+    m_pDockPropertyObj->setWidget(dockPropertyWidget);
+    m_pDockProjectMgrObj->setWidget(dockWidgetContents);
+
+    QSizePolicy dockPropertySizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    dockPropertySizePolicy.setHorizontalStretch(0);
+    dockPropertySizePolicy.setVerticalStretch(0);
+    dockWidgetContents->setSizePolicy(dockPropertySizePolicy);
 
     m_pUndoGroupObj = new QUndoGroup(this);
 
@@ -75,8 +178,6 @@ MainWindow::MainWindow(QWidget *parent)
     // 创建工具条
     createToolbars();
 
-
-
     m_pCurrentGraphPageObj = Q_NULLPTR;
     m_pCurrentViewObj = Q_NULLPTR;
     m_bGraphPageGridVisible = true;
@@ -86,7 +187,6 @@ MainWindow::MainWindow(QWidget *parent)
     setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
     readSettings();  // 初始窗口时读取窗口设置信息
     initWindow(); // 初始化窗口
-    setUpProjectTreeView();
     loadRecentProjectList();
     onBigIcon();  // 大图标显示
 
@@ -94,9 +194,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     initView();
     slotUpdateActions();
-
-    setWindowIcon(QIcon(":/DrawAppImages/application.png"));
-
     connect(m_pGraphPageTabWidgetObj, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
 
     QDesktopWidget * pDesktopWidget = QApplication::desktop();
@@ -113,6 +210,22 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 
+MainWindow::~MainWindow()
+{
+#define DEL_OBJ(obj_ptr) do\
+    if(obj_ptr != Q_NULLPTR) {\
+        delete obj_ptr;\
+        obj_ptr = Q_NULLPTR;\
+    } while(0);
+
+    DEL_OBJ(m_pVariantPropertyMgrObj);
+    DEL_OBJ(m_pPropertyEditorObj);
+    DEL_OBJ(m_pVariantEditorFactoryObj);
+
+#undef DEL_OBJ
+}
+
+
 /**
  * @brief MainWindow::createStatusBar
  * @details 创建状态栏
@@ -120,135 +233,7 @@ MainWindow::MainWindow(QWidget *parent)
 void MainWindow::createStatusBar()
 {
     m_pStatusBarObj = new QStatusBar(this);
-    m_pStatusBarObj->setObjectName(QString::fromUtf8("statusBar"));
     this->setStatusBar(m_pStatusBarObj);
-}
-
-void MainWindow::setupUi()
-{
-    centralWidget = new QWidget(this);
-    centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
-    verticalLayout_7 = new QVBoxLayout(centralWidget);
-    verticalLayout_7->setSpacing(6);
-    verticalLayout_7->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_7->setObjectName(QString::fromUtf8("verticalLayout_7"));
-    scrollArea = new QScrollArea(centralWidget);
-    scrollArea->setObjectName(QString::fromUtf8("scrollArea"));
-    scrollArea->setWidgetResizable(true);
-    scrollAreaWidgetContents = new QWidget();
-    scrollAreaWidgetContents->setObjectName(QString::fromUtf8("scrollAreaWidgetContents"));
-    scrollAreaWidgetContents->setGeometry(QRect(0, 0, 1036, 69));
-    scrollArea->setWidget(scrollAreaWidgetContents);
-
-    verticalLayout_7->addWidget(scrollArea);
-
-    mdiArea = new QMdiArea(centralWidget);
-    mdiArea->setObjectName(QString::fromUtf8("mdiArea"));
-    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(mdiArea->sizePolicy().hasHeightForWidth());
-    mdiArea->setSizePolicy(sizePolicy);
-
-    verticalLayout_7->addWidget(mdiArea);
-
-    this->setCentralWidget(centralWidget);
-
-
-    // 工程管理器停靠控件
-    m_pDockProjectMgrObj = new QDockWidget(this);
-    m_pDockProjectMgrObj->setObjectName(QString::fromUtf8("dockProjectManager"));
-    m_pDockProjectMgrObj->setWindowTitle(tr("工程管理器"));
-    this->addDockWidget(Qt::LeftDockWidgetArea, m_pDockProjectMgrObj);
-    dockWidgetContents = new QWidget();
-    dockWidgetContents->setObjectName(QString::fromUtf8("dockWidgetContents"));
-    verticalLayout_4 = new QVBoxLayout(dockWidgetContents);
-    verticalLayout_4->setSpacing(6);
-    verticalLayout_4->setContentsMargins(0, 0, 0, 0);
-    verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
-    m_pTabProjectMgrObj = new QTabWidget(dockWidgetContents);
-    m_pTabProjectMgrObj->setObjectName(QString::fromUtf8("TabProjectMgr"));
-    tab = new QWidget();
-    tab->setObjectName(QString::fromUtf8("tab"));
-    verticalLayout_2 = new QVBoxLayout(tab);
-    verticalLayout_2->setSpacing(0);
-    verticalLayout_2->setContentsMargins(0, 0, 0, 0);
-    verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-    verticalLayout_2->setContentsMargins(0, 0, 0, 0);
-    treeViewProject = new QTreeView(tab);
-    treeViewProject->setObjectName(QString::fromUtf8("treeViewProject"));
-    QFont font;
-    font.setPointSize(10);
-    treeViewProject->setFont(font);
-    verticalLayout_2->addWidget(treeViewProject);
-
-    m_pTabProjectMgrObj->addTab(tab, QString(tr("工程")));
-    tab_2 = new QWidget();
-    tab_2->setObjectName(QString::fromUtf8("tab_2"));
-    verticalLayout_3 = new QVBoxLayout(tab_2);
-    verticalLayout_3->setSpacing(0);
-    verticalLayout_3->setContentsMargins(2, 2, 2, 2);
-    verticalLayout_3->setObjectName(QString::fromUtf8("verticalLayout_3"));
-    verticalLayout_3->setContentsMargins(0, 0, 0, 0);
-    listWidgetGraphPages = new QListWidget(tab_2);
-    connect(listWidgetGraphPages, SIGNAL(currentTextChanged(const QString &)),
-            this, SLOT(onSlotListWidgetGraphPagesCurrentTextChanged(const QString &)));
-
-    listWidgetGraphPages->setObjectName(QString::fromUtf8("listWidgetGraphPages"));
-    verticalLayout_3->addWidget(listWidgetGraphPages);
-    m_pTabProjectMgrObj->addTab(tab_2, QString(tr("画面")));
-    verticalLayout_4->addWidget(m_pTabProjectMgrObj);
-    m_pTabProjectMgrObj->setCurrentIndex(0);
-
-    // 图形元素停靠控件
-    m_pDockElemetsObj = new QDockWidget(this);
-    m_pDockElemetsObj->setObjectName(QString::fromUtf8("dockElemets"));
-    m_pDockElemetsObj->setWindowTitle(tr("图形元素"));
-    this->addDockWidget(Qt::RightDockWidgetArea, m_pDockElemetsObj);
-    dockWidgetContents_8 = new QWidget();
-    dockWidgetContents_8->setObjectName(QString::fromUtf8("dockWidgetContents_8"));
-    verticalLayout_5 = new QVBoxLayout(dockWidgetContents_8);
-    verticalLayout_5->setSpacing(6);
-    verticalLayout_5->setContentsMargins(11, 11, 11, 11);
-    verticalLayout_5->setObjectName(QString::fromUtf8("verticalLayout_5"));
-    verticalLayout_5->setContentsMargins(0, 0, 0, 0);
-    ElemetsLayout = new QVBoxLayout();
-    ElemetsLayout->setSpacing(6);
-    ElemetsLayout->setObjectName(QString::fromUtf8("ElemetsLayout"));
-    verticalLayout_5->addLayout(ElemetsLayout);
-    m_pDockElemetsObj->setWidget(dockWidgetContents_8);
-
-
-    // 属性停靠控件
-    m_pDockPropertyObj = new QDockWidget(this);
-    m_pDockPropertyObj->setObjectName(QString::fromUtf8("dockProperty"));
-    m_pDockPropertyObj->setWindowTitle(tr("属性编辑"));
-    this->addDockWidget(Qt::RightDockWidgetArea, m_pDockPropertyObj);
-    dockPropertyLayout = new QWidget();
-    dockPropertyLayout->setObjectName(QString::fromUtf8("dockPropertyLayout"));
-    QVBoxLayout *propertyWidgetLayout = new QVBoxLayout(dockPropertyLayout);
-    propertyWidgetLayout->setSpacing(1);
-    propertyWidgetLayout->setContentsMargins(11, 11, 11, 11);
-    propertyWidgetLayout->setObjectName(QString::fromUtf8("propertyWidgetLayout"));
-    propertyWidgetLayout->setContentsMargins(1, 1, 1, 1);
-    PropertyLayout = new QVBoxLayout();
-    PropertyLayout->setSpacing(6);
-    PropertyLayout->setObjectName(QString::fromUtf8("PropertyLayout"));
-    propertyWidgetLayout->addLayout(PropertyLayout);
-    m_pDockPropertyObj->setWidget(dockPropertyLayout);
-    m_pDockProjectMgrObj->setWidget(dockWidgetContents);
-
-    QSizePolicy dockPropertySizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    dockPropertySizePolicy.setHorizontalStretch(0);
-    dockPropertySizePolicy.setVerticalStretch(0);
-    dockWidgetContents->setSizePolicy(dockPropertySizePolicy);
-}
-
-
-MainWindow::~MainWindow()
-{
-    delete pTreeViewProjectModel;
-    pTreeViewProjectModel = Q_NULLPTR;
 }
 
 
@@ -446,87 +431,59 @@ void MainWindow::createActions()
 
     // 运行工程
     m_pActionRunObj = new QAction(QIcon(":/images/online.png"), tr("运行"));
-    m_pActionRunObj->setObjectName(QString::fromUtf8("actionRun"));
     m_pActionRunObj->setEnabled(true);
     connect(m_pActionSimulateObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
 
     // 下载工程
     m_pActionDownloadObj = new QAction(QIcon(":/images/download.png"), tr("下载"));
-    m_pActionDownloadObj->setObjectName(QString::fromUtf8("actionDownload"));
     connect(m_pActionDownloadObj, SIGNAL(triggered()), SLOT(onSlotDownloadProject()));
 
     // 上载工程
     m_pActionUpLoadObj = new QAction(QIcon(":/images/upload.png"), tr("上载"));
-    m_pActionUpLoadObj->setObjectName(QString::fromUtf8("actionUpLoad"));
     connect(m_pActionUpLoadObj, SIGNAL(triggered()), SLOT(onSlotUpLoadProject()));
 
     // U盘
     m_pActionUDiskObj = new QAction(QIcon(":/images/downusb.png"), tr("U盘"));
-    m_pActionUDiskObj->setObjectName(QString::fromUtf8("actionUDisk"));
     connect(m_pActionUDiskObj, SIGNAL(triggered()), SLOT(onSlotUDisk()));
 
     //-----------------------------<变量编辑菜单>----------------------------------
     // 添加变量
     m_pActionAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
-    m_pActionAddTagObj->setObjectName(QString::fromUtf8("actionAddTag"));
     connect(m_pActionAddTagObj, SIGNAL(triggered()), SLOT(onSlotAddTag()));
 
     // 追加变量
     m_pActionAppendTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("追加变量"));
-    m_pActionAppendTagObj->setObjectName(QString::fromUtf8("actionAppendTag"));
     connect(m_pActionAppendTagObj, SIGNAL(triggered()), SLOT(onSlotAppendTag()));
 
     // 拷贝变量
     m_pActionRowCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
-    m_pActionRowCopyTagObj->setObjectName(QString::fromUtf8("actionRowCopyTag"));
     connect(m_pActionRowCopyTagObj, SIGNAL(triggered()), SLOT(onSlotRowCopyTag()));
 
     // 修改变量
     m_pActionModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
-    m_pActionModifyTagObj->setObjectName(QString::fromUtf8("actionModifyTag"));
     connect(m_pActionModifyTagObj, SIGNAL(triggered()), SLOT(onSlotModifyTag()));
 
     // 删除变量
     m_pActionDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
-    m_pActionDeleteTagObj->setObjectName(QString::fromUtf8("actionDeleteTag"));
     connect(m_pActionDeleteTagObj, SIGNAL(triggered()), SLOT(onSlotDeleteTag()));
 
     // 导出变量
     m_pActionExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
-    m_pActionExportTagObj->setObjectName(QString::fromUtf8("actionExportTag"));
     connect(m_pActionExportTagObj, SIGNAL(triggered()), SLOT(onSlotExportTag()));
 
     // 导入变量
     m_pActionImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
-    m_pActionImportTagObj->setObjectName(QString::fromUtf8("actionImportTag"));
     connect(m_pActionImportTagObj, SIGNAL(triggered()), SLOT(onSlotImportTag()));
 
     //-----------------------------<帮助菜单>----------------------------------
     // 帮助
     m_pActionHelpObj = new QAction(tr("帮助"));
-    m_pActionHelpObj->setObjectName(QString::fromUtf8("actionHelp"));
     connect(m_pActionHelpObj, SIGNAL(triggered()), SLOT(onSlotHelp()));
 
     // 关于
     m_pActionAboutObj = new QAction(tr("关于"));
-    m_pActionAboutObj->setObjectName(QString::fromUtf8("actionAbout"));
     connect(m_pActionAboutObj, SIGNAL(triggered()), SLOT(onSlotAbout()));
 
-    //-----------------------------<设备编辑菜单>----------------------------------
-    // 新建设备
-    m_pActionNewDeviceObj = new QAction(QIcon(":/images/icon_new.png"), tr("新建设备"));
-    m_pActionNewDeviceObj->setObjectName(QString::fromUtf8("actionDeviceNew"));
-    connect(m_pActionNewDeviceObj, SIGNAL(triggered()), SLOT(onSlotNewDevice()));
-
-    // 修改设备
-    m_pActionModifyDeviceObj = new QAction(tr("修改设备"));
-    m_pActionModifyDeviceObj->setObjectName(QString::fromUtf8("actionDeviceModify"));
-    connect(m_pActionModifyDeviceObj, SIGNAL(triggered()), SLOT(onSlotModifyDevice()));
-
-    // 删除设备
-    m_pActionDeleteDeviceObj = new QAction(tr("删除设备"));
-    m_pActionDeleteDeviceObj->setObjectName(QString::fromUtf8("actionDeviceDelete"));
-    connect(m_pActionDeleteDeviceObj, SIGNAL(triggered()), SLOT(onSlotDeleteDevice()));
 }
 
 
@@ -607,7 +564,6 @@ void MainWindow::createToolbars()
 {
     //-----------------------------<工程工具栏>-----------------------------------
     m_pToolBarProjectObj = new QToolBar(this);
-    m_pToolBarProjectObj->setObjectName(QString::fromUtf8("ProjectToolBar"));
     m_pToolBarProjectObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     m_pToolBarProjectObj->addAction(m_pActionNewProjObj);
     m_pToolBarProjectObj->addAction(m_pActionOpenProjObj);
@@ -618,7 +574,6 @@ void MainWindow::createToolbars()
     //-----------------------------<视图工具栏>----------------------------------
 
     m_pToolBarView = new QToolBar(this);
-    m_pToolBarView->setObjectName(QString::fromUtf8("ViewToolBar"));
     m_pToolBarView->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     m_pToolBarView->addAction(m_pActionBigIconObj);
     m_pToolBarView->addAction(m_pActionSmallIconObj);
@@ -626,7 +581,6 @@ void MainWindow::createToolbars()
 
     //-----------------------------<画面编辑器>----------------------------------
     m_pToolBarGraphPageEditObj = new QToolBar(this);
-    m_pToolBarGraphPageEditObj->setObjectName(QString::fromUtf8("toolBarGraphPageEdit"));
     m_pToolBarGraphPageEditObj->addAction(m_pActionSaveGraphPageObj);
     m_pToolBarGraphPageEditObj->addSeparator();
     m_pToolBarGraphPageEditObj->addAction(m_pActionShowGridObj); // 显示栅格
@@ -654,7 +608,6 @@ void MainWindow::createToolbars()
     //-----------------------------<工具>----------------------------------
 
     m_pToolBarToolsObj = new QToolBar(this);
-    m_pToolBarToolsObj->setObjectName(QString::fromUtf8("ToolBarTools"));
     m_pToolBarToolsObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     m_pToolBarToolsObj->addAction(m_pActionSimulateObj); // 模拟仿真
     m_pToolBarToolsObj->addAction(m_pActionRunObj); // 运行工程
@@ -664,7 +617,6 @@ void MainWindow::createToolbars()
 
     //-----------------------------<变量编辑>----------------------------------
     m_pToolBarTagEditObj = new QToolBar(this);
-    m_pToolBarTagEditObj->setObjectName(QString::fromUtf8("TagOperateToolBar"));
     m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     m_pToolBarTagEditObj->addAction(m_pActionAddTagObj);  // 添加变量
     m_pToolBarTagEditObj->addAction(m_pActionAppendTagObj); // 追加变量
@@ -674,100 +626,18 @@ void MainWindow::createToolbars()
     m_pToolBarTagEditObj->addAction(m_pActionExportTagObj); // 导出变量
     m_pToolBarTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
 
-    //-----------------------------<设备编辑>----------------------------------
-    m_pToolBarDeviceEditObj = new QToolBar(this);
-    m_pToolBarDeviceEditObj->setObjectName(QString::fromUtf8("DeviceOperateToolBar"));
-    m_pToolBarDeviceEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarDeviceEditObj->addAction(m_pActionNewDeviceObj); // 新建设备
-    m_pToolBarDeviceEditObj->addAction(m_pActionModifyDeviceObj); // 修改设备
-    m_pToolBarDeviceEditObj->addAction(m_pActionDeleteDeviceObj); // 删除设备
-
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarView);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
-    this->addToolBar(Qt::TopToolBarArea, m_pToolBarDeviceEditObj);
     addToolBarBreak();
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
 }
 
 
-// 工程管理器ui初始化
-void MainWindow::setUpProjectTreeView()
-{
-    treeViewProject->setHeaderHidden(true);
-
-    pTreeViewProjectModel = new QStandardItemModel();
-    pProjectItem = new QStandardItem(QIcon(":/images/pj_pro.png"), tr("未创建工程"));
-    pProjectItem->setEditable(false);
-    pSystemParameters = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("系统参数"));
-    pSystemParameters->setEditable(false);
-    pProjectItem->appendRow(pSystemParameters);
-
-    //////////////////////////////////////////////////////
-
-    pCommunicationDevice = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("通讯设备"));
-    pCommunicationDevice->setEditable(false);
-    pComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), tr("串口设备"));
-    pComDevice->setEditable(false);
-    pCommunicationDevice->appendRow(pComDevice);
-    pNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), tr("网络设备"));
-    pNetDevice->setEditable(false);
-    pCommunicationDevice->appendRow(pNetDevice);
-    /*
-  pBusDevice = new QStandardItem(QIcon(":/images/pj_bus.png"), tr("总线设备"));
-  pBusDevice->setEditable(false);
-  pCommunicationDevice->appendRow(pBusDevice);
-  pOPCDevice = new QStandardItem(QIcon(":/images/pj_opc.png"), tr("OPC设备"));
-  pOPCDevice->setEditable(false);
-  pCommunicationDevice->appendRow(pOPCDevice);
-  */
-    pProjectItem->appendRow(pCommunicationDevice);
-
-    pDataBaseConfig = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("变量管理"));
-    pDataBaseConfig->setEditable(false);
-    pDevVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("设备变量"));
-    pDevVariable->setEditable(false);
-
-    pDataBaseConfig->appendRow(pDevVariable);
-    pTmpVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("中间变量"));
-    pTmpVariable->setEditable(false);
-    pDataBaseConfig->appendRow(pTmpVariable);
-    pSysVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("系统变量"));
-    pSysVariable->setEditable(false);
-    pDataBaseConfig->appendRow(pSysVariable);
-    pProjectItem->appendRow(pDataBaseConfig);
-
-    pDataBaseManager = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("数据库管理"));
-    pDataBaseManager->setEditable(false);
-    pRealTimeDatabase = new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
-    pRealTimeDatabase->setEditable(false);
-    pDataBaseManager->appendRow(pRealTimeDatabase);
-    pHistoryDatabase = new QStandardItem(QIcon(":/images/db_hisdbview.png"), tr("历史数据库"));
-    pHistoryDatabase->setEditable(false);
-    pDataBaseManager->appendRow(pHistoryDatabase);
-    pProjectItem->appendRow(pDataBaseManager);
-
-    pDrawPage = new QStandardItem(QIcon(":/images/pm_draw.png"), tr("画面"));
-    pDrawPage->setEditable(false);
-    pProjectItem->appendRow(pDrawPage);
-
-    pLogicProgram = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
-    pLogicProgram->setEditable(false);
-
-    pScriptEditor = new QStandardItem(QIcon(":/images/pj_script.png"), tr("脚本编辑器"));
-    pScriptEditor->setEditable(false);
-    pLogicProgram->appendRow(pScriptEditor);
-    pProjectItem->appendRow(pLogicProgram);
-
-    pTreeViewProjectModel->appendRow(pProjectItem);
-    this->treeViewProject->setModel(pTreeViewProjectModel);
-    this->treeViewProject->expandAll();
-}
-
 ChildForm *MainWindow::activeMdiChild()
 {
-    if (QMdiSubWindow *activeSubWindow = this->mdiArea->activeSubWindow()) {
+    if (QMdiSubWindow *activeSubWindow = this->m_pMdiAreaObj->activeSubWindow()) {
         return qobject_cast<ChildForm *>(activeSubWindow->widget());
     }
     return Q_NULLPTR;
@@ -778,20 +648,20 @@ void MainWindow::setActiveSubWindow(ChildForm *window)
     if (!window) return;
     window->showMaximized();
     m_szCurItem = window->windowTitle();
-    this->mdiArea->setActiveSubWindow(Q_NULLPTR);  // Activates the subwindow window. If
+    this->m_pMdiAreaObj->setActiveSubWindow(Q_NULLPTR);  // Activates the subwindow window. If
     // window is 0, any current active window
     // is deactivated.
-    this->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow *>(window));
+    this->m_pMdiAreaObj->setActiveSubWindow(qobject_cast<QMdiSubWindow *>(window));
 }
 
 ChildForm *MainWindow::getActiveSubWindow()
 {
-    return qobject_cast<ChildForm *>(this->mdiArea->activeSubWindow()->widget());
+    return qobject_cast<ChildForm *>(this->m_pMdiAreaObj->activeSubWindow()->widget());
 }
 
 ChildForm *MainWindow::findMdiChild(const QString &windowTitle)
 {
-    foreach (QMdiSubWindow *window, this->mdiArea->subWindowList()) {
+    foreach (QMdiSubWindow *window, this->m_pMdiAreaObj->subWindowList()) {
         ChildForm *pChildWin = qobject_cast<ChildForm *>(window->widget());
         if (pChildWin->windowTitle() == windowTitle) return pChildWin;
     }
@@ -800,7 +670,7 @@ ChildForm *MainWindow::findMdiChild(const QString &windowTitle)
 
 QMdiSubWindow *MainWindow::findMdiSubWindow(const QString &windowTitle)
 {
-    foreach (QMdiSubWindow *window, this->mdiArea->subWindowList()) {
+    foreach (QMdiSubWindow *window, this->m_pMdiAreaObj->subWindowList()) {
         ChildBase *pChildWin = qobject_cast<ChildBase *>(window->widget());
         if (pChildWin->windowTitle() == windowTitle) return window;
     }
@@ -812,7 +682,7 @@ QMdiSubWindow *MainWindow::findMdiSubWindow(const QString &windowTitle)
 */
 void MainWindow::CreateDefaultIOTagGroup()
 {
-    if (pDevVariable->rowCount() == 0) {
+    if (this->m_pProjectTreeViewObj->getDevTagGroupCount() == 0) {
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
         TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
         pObj->m_id = 1;
@@ -827,169 +697,12 @@ void MainWindow::CreateDefaultIOTagGroup()
     }
 }
 
-/*
-* 增加组
-*/
-void MainWindow::tagIOGroupAdd()
-{
-    NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
-    pDlg->SetDialogName("新建数据组");
-    pDlg->SetLabelName("数据组名：");
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if (pDlg->exec() == QDialog::Accepted) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-        pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
-        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-        pObj->m_szShowName = pDlg->GetGroupName();
-        tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-        UpdateDeviceVariableTableGroup();
-        if(window != Q_NULLPTR) {
-            QString titleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
-            window->SetTitle(titleNew);
-        }
-        if(pObj != Q_NULLPTR) {
-            delete pObj;
-            pObj = Q_NULLPTR;
-        }
-    }
-}
-
-/*
-* 重命名组
-*/
-void MainWindow::tagIOGroupRename()
-{
-    QModelIndex index = this->treeViewProject->currentIndex();
-    QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-
-    NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
-    pDlg->SetDialogName("新建数据组");
-    pDlg->SetLabelName("数据组名：");
-    pDlg->SetGroupName(text);
-    if (pDlg->exec() == QDialog::Accepted) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(ProjectData::getInstance()->dbData_, text);
-
-        if(window != Q_NULLPTR) {
-            QString titleNew = QString("%1%2%3")
-                    .arg("设备变量")
-                    .arg("-")
-                    .arg(pDlg->GetGroupName());
-            window->SetTitle(titleNew);
-        }
-        pObj->m_szShowName = pDlg->GetGroupName();
-        tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-        if(pObj != Q_NULLPTR) {
-            delete pObj;
-            pObj = Q_NULLPTR;
-        }
-        UpdateDeviceVariableTableGroup();
-    }
-}
-
-/*
-* 删除组
-*/
-void MainWindow::tagIODeleteGroup()
-{
-    QModelIndex ModelIndex = this->treeViewProject->selectionModel()->currentIndex();
-    QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(ProjectData::getInstance()->dbData_, qTiem->text());
-    tagIOGroup.del(ProjectData::getInstance()->dbData_, pObj);
-    if(pObj != Q_NULLPTR) {
-        delete pObj;
-        pObj = Q_NULLPTR;
-    }
-    UpdateDeviceVariableTableGroup();
-}
-
-/*
-* 复制组
-*/
-void MainWindow::tagIOGroupCopy()
-{
-    QModelIndex ModelIndex = this->treeViewProject->selectionModel()->currentIndex();
-    QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    // check the same name first
-    QString szName = QString("复制_%1").arg(qTiem->text());
-    int iCnt = tagIOGroup.getGroupCountByShowName(ProjectData::getInstance()->dbData_, szName);
-    if(iCnt > 0) {
-        QMessageBox::information(this, "系统提示", "同名文件存在，请先修改名称！");
-        return;
-    }
-
-    TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-    pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
-    pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-    pObj->m_szShowName = szName;
-    tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-    UpdateDeviceVariableTableGroup();
-    if(pObj != Q_NULLPTR) {
-        delete pObj;
-        pObj = Q_NULLPTR;
-    }
-}
-
 
 /*
 * 右键菜单
 */
 void MainWindow::contextMenuEvent(QContextMenuEvent * /*event*/)
 {
-    bool found = false;
-
-    QModelIndex index = this->treeViewProject->currentIndex();
-    m_szCurTreeViewItem = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-
-    if (m_szCurTreeViewItem == "设备变量")
-        found = true;
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-        if (m_szCurTreeViewItem == pObj->m_szShowName)
-            found = true;
-    }
-
-    qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-    tagIOGroup.listTagIOGroupDBItem_.clear();
-
-    if (!found)
-        return;
-
-    QMenu *pMenu = new QMenu(this);
-
-    QAction *pAddGroupAct = new QAction(tr("增加组"), this);
-    pAddGroupAct->setStatusTip(tr("增加组"));
-    connect(pAddGroupAct, SIGNAL(triggered()), this, SLOT(tagIOGroupAdd()));
-    pMenu->addAction(pAddGroupAct);
-
-    QAction *pRenameGroupAct = new QAction(tr("重命名"), this);
-    pRenameGroupAct->setStatusTip(tr("重命名"));
-    connect(pRenameGroupAct, SIGNAL(triggered()), this, SLOT(tagIOGroupRename()));
-    pMenu->addAction(pRenameGroupAct);
-
-    QAction *pDeleteGroupAct = new QAction(tr("删除组"), this);
-    pDeleteGroupAct->setStatusTip(tr("删除组"));
-    connect(pDeleteGroupAct, SIGNAL(triggered()), this, SLOT(tagIODeleteGroup()));
-    pMenu->addAction(pDeleteGroupAct);
-
-    QAction *pCopyGroupAct = new QAction(tr("复制组"), this);
-    pCopyGroupAct->setStatusTip(tr("复制组"));
-    connect(pCopyGroupAct, SIGNAL(triggered()), this, SLOT(tagIOGroupCopy()));
-    pMenu->addAction(pCopyGroupAct);
-
-    pMenu->move(cursor().pos());
-    pMenu->show();
-
-
 #if 0
 
     QMenu *pMenu = new QMenu(this);
@@ -1029,13 +742,14 @@ void MainWindow::contextMenuEvent(QContextMenuEvent * /*event*/)
  * @brief MainWindow::closeEvent  关闭事件
  * @param event
  */
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::closeEvent(QCloseEvent *event)
+{
     QString strFile = Helper::AppDir() + "/lastpath.ini";
-    if (pProjectItem->text() != tr("未创建工程"))
+    if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程"))
         ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_szProjPath);
-    this->mdiArea->closeAllSubWindows();
+    this->m_pMdiAreaObj->closeAllSubWindows();
     writeSettings();
-    if (this->mdiArea->currentSubWindow()) {
+    if (this->m_pMdiAreaObj->currentSubWindow()) {
         event->ignore();
     } else {
         event->accept();
@@ -1098,20 +812,20 @@ void MainWindow::readSettings()
  * @brief MainWindow::initWindow 初始化窗口
  */
 void MainWindow::initWindow() {
-    setCentralWidget(this->mdiArea);
+    setCentralWidget(this->m_pMdiAreaObj);
     //    setWindowState(Qt::WindowMaximized);
-    setWindowTitle(tr("HmiFuncDesigner跨平台自动化软件"));
+    setWindowTitle(tr("HmiFuncDesigner组态软件"));
 
     // 当多文档区域的内容超出可视区域后，出现滚动条
-    this->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    this->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    this->m_pMdiAreaObj->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    this->m_pMdiAreaObj->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-//    this->mdiArea->setLineWidth(3);
-//    this->mdiArea->setFrameShape(QFrame::Panel);
-//    this->mdiArea->setFrameShadow(QFrame::Sunken);
-//    this->mdiArea->setViewMode(QMdiArea::TabbedView);
+//    this->m_pMdiAreaObj->setLineWidth(3);
+//    this->m_pMdiAreaObj->setFrameShape(QFrame::Panel);
+//    this->m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
+//    this->m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
 
-    this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态系统"));
+    this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态软件"));
 }
 
 /**
@@ -1120,10 +834,10 @@ void MainWindow::initWindow() {
  */
 void MainWindow::onNewPoject()
 {
-    if (pProjectItem->text() != tr("未创建工程")) {
-        QMessageBox::information(
-                    this, tr("系统提示"),
-                    tr("工程文件已建立，请手动关闭当前工程文件后重新建立！"));
+    if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程")) {
+        QMessageBox::information(this,
+                                 tr("系统提示"),
+                                 tr("工程文件已建立，请手动关闭当前工程文件后重新建立！"));
         return;
     }
 
@@ -1192,17 +906,15 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
 
 /**
  * @brief MainWindow::enableToolBar
- * @param text
+ * @param szText
  * @details 工具条使能
  */
-void MainWindow::enableToolBar(QString text)
+void MainWindow::enableToolBar(const QString &szText)
 {
-    bool bTagIOOrTmp = (text == tr("中间变量")) | (text.startsWith(tr("设备变量")));
+    bool bTagIOOrTmp = (szText == tr("中间变量")) | (szText.startsWith(tr("设备变量")));
     this->m_pToolBarTagEditObj->setEnabled(bTagIOOrTmp);
 
-    bool bdevice = (text == tr("串口设备")) | (text == tr("网络设备")) |
-            (text == tr("总线设备")) | (text == tr("OPC设备"));
-    this->m_pToolBarDeviceEditObj->setEnabled(bdevice);
+
 }
 
 void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
@@ -1213,7 +925,7 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
     if(findForm == Q_NULLPTR) {
         findForm = new ChildForm(this, m_szProjName);
         findForm->setWindowTitle(m_szProjName);
-        this->mdiArea->addSubWindow(findForm);
+        this->m_pMdiAreaObj->addSubWindow(findForm);
         connect(this, SIGNAL(treeItemClicked(const QString &)),
                 findForm, SLOT(treeItemClicked(const QString &)), Qt::DirectConnection);
     }
@@ -1294,33 +1006,34 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
 }
 
 
-
-void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
+/**
+ * @brief MainWindow::onSlotProjectTreeViewClicked
+ * @details 工程树节点被单击
+ * @param index
+ */
+void MainWindow::onSlotProjectTreeViewClicked(const QModelIndex &index)
 {
     if(m_szProjName == "")
         return;
 
-    QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
-    onTreeViewProjectClicked(item->text());
+    QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->m_pProjectTreeViewObj->model());
+    QStandardItem *pItemObj = pModelObj->itemFromIndex(index);
+    onTreeViewProjectClicked(pItemObj->text());
 }
 
-void MainWindow::UpdateProjectName(QString name)
+void MainWindow::UpdateProjectName(const QString &szName)
 {
-    if(!name.isEmpty()) {
-        m_szProjName = name;
-        m_szProjPath = ProjectMgrUtils::getProjectPath(name);
-        QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
-        pProjectItem->setText(strName);
+    if(!szName.isEmpty()) {
+        m_szProjName = szName;
+        m_szProjPath = ProjectMgrUtils::getProjectPath(szName);
+        QString szNameTmp = szName.mid(szName.lastIndexOf("/") + 1, szName.indexOf(".") - szName.lastIndexOf("/") - 1);
+        this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
         this->m_pActionRunObj->setEnabled(true);
     } else {
         m_szProjName = "";
         m_szProjPath = "";
         this->m_pActionRunObj->setEnabled(false);
-        pTreeViewProjectModel->clear();
-        this->treeViewProject->reset();
-        delete pTreeViewProjectModel;
-        pTreeViewProjectModel = Q_NULLPTR;
-        setUpProjectTreeView();
+        this->m_pProjectTreeViewObj->updateUI();
     }
 }
 
@@ -1329,23 +1042,7 @@ void MainWindow::UpdateProjectName(QString name)
  */
 void MainWindow::UpdateDeviceVariableTableGroup()
 {
-    while(!pDevVariableTabList.empty())
-        pDevVariableTabList.takeFirst();
-    pDevVariable->removeRows(0, pDevVariable->rowCount());
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-        QStandardItem *pDevVarTab = new QStandardItem(QIcon(":/images/pj_zone.png"), pObj->m_szShowName);
-        pDevVarTab->setEditable(false);
-        pDevVariableTabList.append(pDevVarTab);
-        pDevVariable->appendRow(pDevVarTab);
-    }
-    QApplication::processEvents();
-
-    qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-    tagIOGroup.listTagIOGroupDBItem_.clear();
+    this->m_pProjectTreeViewObj->updateDeviceTagGroup();
 }
 
 
@@ -1355,7 +1052,7 @@ void MainWindow::UpdateDeviceVariableTableGroup()
  */
 void MainWindow::onSaveProject()
 {
-    foreach (QMdiSubWindow* window, this->mdiArea->subWindowList()) {
+    foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
         ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
         if(findForm != Q_NULLPTR)
             findForm->save();
@@ -1369,9 +1066,9 @@ void MainWindow::onSaveProject()
  */
 void MainWindow::onCloseProject()
 {
-    if(pProjectItem->text() == "未创建工程")
+    if(this->m_pProjectTreeViewObj->getProjectName() == tr("未创建工程"))
         return;
-    foreach (QMdiSubWindow* window, this->mdiArea->subWindowList()) {
+    foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
         ChildForm * findForm = qobject_cast<ChildForm *>(window->widget());
         if(findForm != Q_NULLPTR)
             findForm->save();
@@ -1390,8 +1087,6 @@ void MainWindow::onExit()
     onSaveProject();
     qApp->exit();
 }
-
-void MainWindow::on_treeViewProject_activated(const QModelIndex & /*index*/) {}
 
 
 /**
@@ -1719,44 +1414,6 @@ void MainWindow::onSlotImportTag()
     }
 }
 
-/**
- * @brief MainWindow::on_actionDeviceNew_triggered
- * @details 新建设备
- */
-void MainWindow::onSlotNewDevice()
-{
-    ChildForm* window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->newDevice();
-    }
-}
-
-
-/**
- * @brief MainWindow::onSlotModifyDevice
- * @details 修改设备
- */
-void MainWindow::onSlotModifyDevice()
-{
-    ChildForm* window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->modifyDevice();
-    }
-}
-
-
-/**
- * @brief MainWindow::onSlotDeleteDevice
- * @details 删除设备
- */
-void MainWindow::onSlotDeleteDevice()
-{
-    ChildForm* window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->deleteDevice();
-    }
-}
-
 
 /**
  * @brief MainWindow::onSlotHelp
@@ -1936,10 +1593,10 @@ void MainWindow::initView()
 {
     m_pGraphPageTabWidgetObj = new QTabWidget(this);
     m_pGraphPageTabWidgetObj->installEventFilter(this);
-    this->scrollArea->setWidget(m_pGraphPageTabWidgetObj);
+    this->m_pScrollAreaObj->setWidget(m_pGraphPageTabWidgetObj);
 
     m_pElementWidgetObj = new ElementLibraryWidget();
-    this->ElemetsLayout->addWidget(m_pElementWidgetObj);
+    this->m_pElemetsLayoutObj->addWidget(m_pElementWidgetObj);
 
     m_pVariantEditorFactoryObj = new VariantFactory(this);
 
@@ -1951,7 +1608,7 @@ void MainWindow::initView()
     //propertyEditor_->setColumnWidth(1, 200);
 
 
-    this->PropertyLayout->addWidget(m_pPropertyEditorObj);
+    this->m_pPropertyLayoutObj->addWidget(m_pPropertyEditorObj);
 
     VariantManager *pVariantManager  = new VariantManager(this);
     m_pVariantPropertyMgrObj = pVariantManager;
@@ -2917,4 +2574,18 @@ reGetNum:
 
     m_pCurrentGraphPageObj->setUnsavedFlag(true);
     slotUpdateActions();
+}
+
+
+/**
+ * @brief MainWindow::onSlotSetWindowSetTitle
+ * @details 设置窗口标题
+ * @param szTitle 标题
+ */
+void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
+{
+    ChildForm *window = findMdiChild(this->m_szCurItem);
+    if(window != Q_NULLPTR) {
+        window->SetTitle(szTitle);
+    }
 }

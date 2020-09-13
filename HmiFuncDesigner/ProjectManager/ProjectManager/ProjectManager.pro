@@ -43,6 +43,7 @@ SOURCES += main.cpp\
     DevicePluginLoader.cpp \
     MainWindow.cpp \
     NewProjectDialog.cpp \
+    ProjectTreeView.cpp \
     SystemParametersWin.cpp \
     NetSettingDialog.cpp \
     DatabaseSettingDialog.cpp \
@@ -95,6 +96,7 @@ HEADERS  += MainWindow.h \
     DevicePluginLoader.h \
     NewProjectDialog.h \
     ../Public/Public.h \
+    ProjectTreeView.h \
     SystemParametersWin.h \
     NetSettingDialog.h \
     DatabaseSettingDialog.h \
