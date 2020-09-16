@@ -268,10 +268,6 @@ void ProjectTreeView::updateUI()
     m_pDataBaseManagerObj->appendRow(m_pHistoryDatabaseObj);
     m_pProjectItemObj->appendRow(m_pDataBaseManagerObj);
 
-    m_pGraphPageObj = new QStandardItem(QIcon(":/images/pm_draw.png"), tr("画面"));
-    m_pGraphPageObj->setEditable(false);
-    m_pProjectItemObj->appendRow(m_pGraphPageObj);
-
     m_pLogicProgramObj = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
     m_pLogicProgramObj->setEditable(false);
 

@@ -27,11 +27,6 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     m_tagManagerWinPtr->setProjectName(m_strProjectName);
     ui->stackedWidget->addWidget(m_tagManagerWinPtr);
 
-    // 画面管理
-    m_drawPageWinPtr = new DrawPageWin(this);
-    m_drawPageWinPtr->setProjectName(m_strProjectName);
-    ui->stackedWidget->addWidget(m_drawPageWinPtr);
-
     // 实时数据库
     m_rtdbWinPtr = new RealTimeDatabaseWin(this);
     m_rtdbWinPtr->setProjectName(m_strProjectName);
@@ -59,11 +54,6 @@ ChildForm::~ChildForm()
     if(m_tagManagerWinPtr != Q_NULLPTR) {
         delete m_tagManagerWinPtr;
         m_tagManagerWinPtr = Q_NULLPTR;
-    }
-
-    if(m_drawPageWinPtr != Q_NULLPTR) {
-        delete m_drawPageWinPtr;
-        m_drawPageWinPtr = Q_NULLPTR;
     }
 
     if(m_rtdbWinPtr != Q_NULLPTR) {
@@ -131,8 +121,6 @@ QString ChildForm::getItemName() const
         return m_communicationDeviceWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         return m_tagManagerWinPtr->getItemName();
-    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        return m_drawPageWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         return m_rtdbWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
@@ -264,8 +252,6 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
         ui->stackedWidget->setCurrentWidget(m_communicationDeviceWinPtr);
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         ui->stackedWidget->setCurrentWidget(m_tagManagerWinPtr);
-    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        ui->stackedWidget->setCurrentWidget(m_drawPageWinPtr);
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         ui->stackedWidget->setCurrentWidget(m_rtdbWinPtr);
     } else if(m_currPageFlow == PAGE_SCRIPT_MANAGER) { // 脚本编辑器
@@ -285,8 +271,6 @@ void ChildForm::open()
         m_communicationDeviceWinPtr->open();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_tagManagerWinPtr->open();
-    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        m_drawPageWinPtr->open();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->open();
     } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
@@ -302,7 +286,6 @@ void ChildForm::save()
     m_sysParamWinPtr->save();
     m_communicationDeviceWinPtr->save();
     m_tagManagerWinPtr->save();
-    m_drawPageWinPtr->save();
     m_rtdbWinPtr->save();
     m_scriptManageWinPtr->save();
 }
@@ -318,8 +301,6 @@ void ChildForm::showLargeIcon()
         m_communicationDeviceWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_tagManagerWinPtr->showLargeIcon();
-    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        m_drawPageWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->showLargeIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
@@ -338,11 +319,9 @@ void ChildForm::showSmallIcon()
         m_communicationDeviceWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_tagManagerWinPtr->showSmallIcon();
-    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        m_drawPageWinPtr->showSmallIcon();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->showSmallIcon();
-    } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
+    } else if(m_currPageFlow == PAGE_SCRIPT_MANAGER) { // 脚本编辑器
         m_scriptManageWinPtr->showSmallIcon();
     }
 }
@@ -357,9 +336,6 @@ void ChildForm::treeItemClicked(const QString &itemText)
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
         m_tagManagerWinPtr->setItemName(itemText);
         m_tagManagerWinPtr->init(itemText);
-    } else if(m_currPageFlow == PAGE_DRAW_PAGE) { // 画面管理
-        m_drawPageWinPtr->setItemName(itemText);
-        m_drawPageWinPtr->init();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->setItemName(itemText);
         m_rtdbWinPtr->init();

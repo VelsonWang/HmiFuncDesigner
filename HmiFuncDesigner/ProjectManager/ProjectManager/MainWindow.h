@@ -103,6 +103,10 @@ private:
                               const QString &graphPageName,
                               int width,
                               int height);
+    // 初始化画面列表控件
+    void initGraphPageListWidget();
+    // 清空画面列表控件
+    void clearGraphPageListWidget();
 
 public slots:
     void slotNewElementAdded();
@@ -257,7 +261,7 @@ private:
     QMdiArea *m_pMdiAreaObj;
     QScrollArea *m_pScrollAreaObj;
     ProjectTreeView *m_pProjectTreeViewObj;
-    QListWidget *listWidgetGraphPages;
+    QListWidget *m_pListWidgetGraphPagesObj;
 
 
     QStatusBar *m_pStatusBarObj; // 状态栏

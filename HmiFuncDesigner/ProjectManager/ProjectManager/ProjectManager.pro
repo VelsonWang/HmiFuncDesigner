@@ -58,7 +58,6 @@ SOURCES += main.cpp\
     NewVariableGroupDialog.cpp \
     DeviceListDialog.cpp \
     SelectProtocolDialog.cpp \
-    DrawPageWin.cpp \
     ProjectDownloadDialog.cpp \
     ProjectUploadDialog.cpp \
     AboutDialog.cpp \
@@ -111,7 +110,6 @@ HEADERS  += MainWindow.h \
     NewVariableGroupDialog.h \
     DeviceListDialog.h \
     SelectProtocolDialog.h \
-    DrawPageWin.h \
     ProjectDownloadDialog.h \
     ProjectUploadDialog.h \
     AboutDialog.h \
@@ -163,7 +161,6 @@ FORMS    += \
     NewVariableGroupDialog.ui \
     DeviceListDialog.ui \
     SelectProtocolDialog.ui \
-    DrawPageWin.ui \
     ProjectDownloadDialog.ui \
     ProjectUploadDialog.ui \
     AboutDialog.ui \

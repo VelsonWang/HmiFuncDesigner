@@ -66,7 +66,6 @@ private:
     QStandardItem *m_pDataBaseManagerObj = Q_NULLPTR;
     QStandardItem *m_pRealTimeDatabaseObj = Q_NULLPTR;
     QStandardItem *m_pHistoryDatabaseObj = Q_NULLPTR;
-    QStandardItem *m_pGraphPageObj = Q_NULLPTR;
     QStandardItem *m_pLogicProgramObj = Q_NULLPTR;
     QStandardItem *m_pScriptEditorObj = Q_NULLPTR;
     QStandardItem *m_pSystemToolObj = Q_NULLPTR;

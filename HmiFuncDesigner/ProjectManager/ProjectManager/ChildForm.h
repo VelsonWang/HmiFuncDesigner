@@ -6,7 +6,6 @@
 #include "SystemParametersWin.h"
 #include "CommunicationDeviceWin.h"
 #include "TagManagerWin.h"
-#include "DrawPageWin.h"
 #include "RealTimeDatabaseWin.h"
 #include "ScriptManageWin.h"
 
@@ -91,7 +90,6 @@ private:
     SystemParametersWin *m_sysParamWinPtr; // 系统参数设置
     CommunicationDeviceWin *m_communicationDeviceWinPtr; // 通讯设备
     TagManagerWin *m_tagManagerWinPtr; // 变量管理
-    DrawPageWin *m_drawPageWinPtr; // 画面管理
     RealTimeDatabaseWin *m_rtdbWinPtr; // 实时数据库
     ScriptManageWin *m_scriptManageWinPtr; // 脚本编辑器
 
