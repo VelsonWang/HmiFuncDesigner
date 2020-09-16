@@ -41,6 +41,7 @@ LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
 SOURCES += main.cpp\
     DevicePluginLoader.cpp \
+    GraphPageListWidget.cpp \
     MainWindow.cpp \
     NewProjectDialog.cpp \
     ProjectTreeView.cpp \
@@ -93,6 +94,7 @@ SOURCES += main.cpp\
 
 HEADERS  += MainWindow.h \
     DevicePluginLoader.h \
+    GraphPageListWidget.h \
     NewProjectDialog.h \
     ../Public/Public.h \
     ProjectTreeView.h \

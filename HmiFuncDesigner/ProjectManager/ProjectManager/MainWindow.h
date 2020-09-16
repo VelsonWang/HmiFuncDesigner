@@ -19,6 +19,7 @@
 #include "ChildBase.h"
 #include "ChildForm.h"
 #include "ProjectTreeView.h"
+#include "GraphPageListWidget.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -75,7 +76,6 @@ private:
     void onTreeViewProjectClicked(const QString &szItemText);
 
 protected:
-    void contextMenuEvent(QContextMenuEvent * event);
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 
@@ -261,7 +261,7 @@ private:
     QMdiArea *m_pMdiAreaObj;
     QScrollArea *m_pScrollAreaObj;
     ProjectTreeView *m_pProjectTreeViewObj;
-    QListWidget *m_pListWidgetGraphPagesObj;
+    GraphPageListWidget *m_pListWidgetGraphPagesObj; // 画面名称列表
 
 
     QStatusBar *m_pStatusBarObj; // 状态栏
