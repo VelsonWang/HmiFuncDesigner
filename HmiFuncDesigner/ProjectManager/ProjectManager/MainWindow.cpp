@@ -72,25 +72,26 @@ void MainWindow::initUI()
 {
     m_pCentralWidgetObj = new QWidget(this);
     QVBoxLayout *centralWidgetLayout = new QVBoxLayout(m_pCentralWidgetObj);
-    centralWidgetLayout->setSpacing(6);
-    centralWidgetLayout->setContentsMargins(11, 11, 11, 11);
-    m_pScrollAreaObj = new QScrollArea(m_pCentralWidgetObj);
-    m_pScrollAreaObj->setWidgetResizable(true);
-    QWidget *scrollAreaContentWidget = new QWidget();
-    scrollAreaContentWidget->setGeometry(QRect(0, 0, 1036, 69));
-    m_pScrollAreaObj->setWidget(scrollAreaContentWidget);
-    centralWidgetLayout->addWidget(m_pScrollAreaObj);
+    centralWidgetLayout->setSpacing(0);
+    centralWidgetLayout->setContentsMargins(1, 1, 1, 1);
+
+    m_pGraphPageTabWidgetObj = new QTabWidget(m_pCentralWidgetObj);
+    QSizePolicy sizePolicyGraphPageTabWidget(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    sizePolicyGraphPageTabWidget.setHorizontalStretch(0);
+    sizePolicyGraphPageTabWidget.setVerticalStretch(0);
+    m_pGraphPageTabWidgetObj->setSizePolicy(sizePolicyGraphPageTabWidget);
+    m_pGraphPageTabWidgetObj->installEventFilter(this);
+    centralWidgetLayout->addWidget(m_pGraphPageTabWidgetObj);
 
     m_pMdiAreaObj = new QMdiArea(m_pCentralWidgetObj);
-    QSizePolicy sizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    sizePolicy.setHorizontalStretch(0);
-    sizePolicy.setVerticalStretch(0);
-    sizePolicy.setHeightForWidth(m_pMdiAreaObj->sizePolicy().hasHeightForWidth());
-    m_pMdiAreaObj->setSizePolicy(sizePolicy);
+    QSizePolicy sizePolicyMdiArea(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    sizePolicyMdiArea.setHorizontalStretch(0);
+    sizePolicyMdiArea.setVerticalStretch(0);
+    m_pMdiAreaObj->setSizePolicy(sizePolicyMdiArea);
     centralWidgetLayout->addWidget(m_pMdiAreaObj);
 
+    m_pCentralWidgetObj->setLayout(centralWidgetLayout);
     this->setCentralWidget(m_pCentralWidgetObj);
-
 
     // 工程管理器停靠控件
     m_pDockProjectMgrObj = new QDockWidget(this);
@@ -98,29 +99,24 @@ void MainWindow::initUI()
     this->addDockWidget(Qt::LeftDockWidgetArea, m_pDockProjectMgrObj);
     QWidget *dockWidgetContents = new QWidget();
     QVBoxLayout *dockWidgetContentsLayout = new QVBoxLayout(dockWidgetContents);
-    dockWidgetContentsLayout->setSpacing(6);
+    dockWidgetContentsLayout->setSpacing(0);
     dockWidgetContentsLayout->setContentsMargins(0, 0, 0, 0);
     m_pTabProjectMgrObj = new QTabWidget(dockWidgetContents);
+
     QWidget *projectTabWidget = new QWidget();
     QVBoxLayout *projectTabWidgetLayout = new QVBoxLayout(projectTabWidget);
     projectTabWidgetLayout->setSpacing(0);
-    projectTabWidgetLayout->setContentsMargins(0, 0, 0, 0);
     projectTabWidgetLayout->setContentsMargins(0, 0, 0, 0);
     m_pProjectTreeViewObj = new ProjectTreeView(projectTabWidget);
     m_pProjectTreeViewObj->updateUI();
     connect(m_pProjectTreeViewObj, &QAbstractItemView::clicked, this, &MainWindow::onSlotProjectTreeViewClicked);
     connect(m_pProjectTreeViewObj, &ProjectTreeView::sigNotifySetWindowSetTitle, this, &MainWindow::onSlotSetWindowSetTitle);
-
-    QFont font;
-    font.setPointSize(10);
-    m_pProjectTreeViewObj->setFont(font);
     projectTabWidgetLayout->addWidget(m_pProjectTreeViewObj);
 
     m_pTabProjectMgrObj->addTab(projectTabWidget, QString(tr("工程")));
     QWidget *graphPageWidget = new QWidget();
     QVBoxLayout *graphPageWidgetLayout = new QVBoxLayout(graphPageWidget);
     graphPageWidgetLayout->setSpacing(0);
-    graphPageWidgetLayout->setContentsMargins(2, 2, 2, 2);
     graphPageWidgetLayout->setContentsMargins(0, 0, 0, 0);
 
     // 画面名称列表
@@ -139,11 +135,10 @@ void MainWindow::initUI()
     this->addDockWidget(Qt::RightDockWidgetArea, m_pDockElemetsObj);
     QWidget *dockElemetsWidget = new QWidget();
     QVBoxLayout *dockElemetsLayout = new QVBoxLayout(dockElemetsWidget);
-    dockElemetsLayout->setSpacing(6);
-    dockElemetsLayout->setContentsMargins(11, 11, 11, 11);
+    dockElemetsLayout->setSpacing(0);
     dockElemetsLayout->setContentsMargins(0, 0, 0, 0);
     m_pElemetsLayoutObj = new QVBoxLayout();
-    m_pElemetsLayoutObj->setSpacing(6);
+    m_pElemetsLayoutObj->setSpacing(0);
     dockElemetsLayout->addLayout(m_pElemetsLayoutObj);
     m_pDockElemetsObj->setWidget(dockElemetsWidget);
 
@@ -154,16 +149,15 @@ void MainWindow::initUI()
     this->addDockWidget(Qt::RightDockWidgetArea, m_pDockPropertyObj);
     QWidget *dockPropertyWidget = new QWidget();
     QVBoxLayout *propertyWidgetLayout = new QVBoxLayout(dockPropertyWidget);
-    propertyWidgetLayout->setSpacing(1);
-    propertyWidgetLayout->setContentsMargins(11, 11, 11, 11);
-    propertyWidgetLayout->setContentsMargins(1, 1, 1, 1);
+    propertyWidgetLayout->setSpacing(0);
+    propertyWidgetLayout->setContentsMargins(0, 0, 0, 0);
     m_pPropertyLayoutObj = new QVBoxLayout();
-    m_pPropertyLayoutObj->setSpacing(6);
+    m_pPropertyLayoutObj->setSpacing(0);
     propertyWidgetLayout->addLayout(m_pPropertyLayoutObj);
     m_pDockPropertyObj->setWidget(dockPropertyWidget);
     m_pDockProjectMgrObj->setWidget(dockWidgetContents);
 
-    QSizePolicy dockPropertySizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    QSizePolicy dockPropertySizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     dockPropertySizePolicy.setHorizontalStretch(0);
     dockPropertySizePolicy.setVerticalStretch(0);
     dockWidgetContents->setSizePolicy(dockPropertySizePolicy);
@@ -187,13 +181,35 @@ void MainWindow::initUI()
     enableToolBar(""); // 工具条使能
     setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
     readSettings();  // 初始窗口时读取窗口设置信息
-    initWindow(); // 初始化窗口
     loadRecentProjectList();
     onBigIcon();  // 大图标显示
 
     //--------------------------------------------------------------------------
 
-    initView();
+    m_pElementWidgetObj = new ElementLibraryWidget();
+    this->m_pElemetsLayoutObj->addWidget(m_pElementWidgetObj);
+
+    m_pVariantEditorFactoryObj = new VariantFactory(this);
+
+    //propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
+    m_pPropertyEditorObj = new QtTreePropertyBrowser(this);
+    m_pPropertyEditorObj->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    m_pPropertyEditorObj->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
+    //propertyEditor_->setColumnWidth(0, 60);
+    //propertyEditor_->setColumnWidth(1, 200);
+
+
+    this->m_pPropertyLayoutObj->addWidget(m_pPropertyEditorObj);
+
+    VariantManager *pVariantManager  = new VariantManager(this);
+    m_pVariantPropertyMgrObj = pVariantManager;
+    pVariantManager->setPropertyEditor(m_pPropertyEditorObj);
+    m_pPropertyEditorObj->setFactoryForManager(m_pVariantPropertyMgrObj, m_pVariantEditorFactoryObj);
+
+    connect(m_pVariantPropertyMgrObj, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
+            this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
+
+
     slotUpdateActions();
     connect(m_pGraphPageTabWidgetObj, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
 
@@ -208,6 +224,24 @@ void MainWindow::initUI()
     DrawListUtils::setProjectPath(m_szProjPath);
 
     m_pListWidgetGraphPagesObj->setContextMenuPolicy(Qt::DefaultContextMenu);
+
+
+    //    setWindowState(Qt::WindowMaximized);
+    setWindowTitle(tr("HmiFuncDesigner组态软件"));
+
+    // 当多文档区域的内容超出可视区域后，出现滚动条
+    this->m_pMdiAreaObj->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    this->m_pMdiAreaObj->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+
+//    this->m_pMdiAreaObj->setLineWidth(3);
+//    this->m_pMdiAreaObj->setFrameShape(QFrame::Panel);
+//    this->m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
+//    this->m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
+
+    this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态软件"));
+
+    connect(m_pTabProjectMgrObj, SIGNAL(currentChanged(int)), SLOT(onSlotTabProjectMgrCurChanged(int)));
+    onSlotTabProjectMgrCurChanged(0);
 }
 
 
@@ -582,7 +616,7 @@ void MainWindow::createToolbars()
 
     //-----------------------------<画面编辑器>----------------------------------
     m_pToolBarGraphPageEditObj = new QToolBar(this);
-    m_pToolBarGraphPageEditObj->addAction(m_pActionSaveGraphPageObj);
+    //m_pToolBarGraphPageEditObj->addAction(m_pActionSaveGraphPageObj);
     m_pToolBarGraphPageEditObj->addSeparator();
     m_pToolBarGraphPageEditObj->addAction(m_pActionShowGridObj); // 显示栅格
     m_pToolBarGraphPageEditObj->addAction(m_pActionZoomOutObj); //画面缩小
@@ -769,25 +803,6 @@ void MainWindow::readSettings()
     }
 }
 
-/**
- * @brief MainWindow::initWindow 初始化窗口
- */
-void MainWindow::initWindow() {
-    setCentralWidget(this->m_pMdiAreaObj);
-    //    setWindowState(Qt::WindowMaximized);
-    setWindowTitle(tr("HmiFuncDesigner组态软件"));
-
-    // 当多文档区域的内容超出可视区域后，出现滚动条
-    this->m_pMdiAreaObj->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    this->m_pMdiAreaObj->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-//    this->m_pMdiAreaObj->setLineWidth(3);
-//    this->m_pMdiAreaObj->setFrameShape(QFrame::Panel);
-//    this->m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
-//    this->m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
-
-    this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态软件"));
-}
 
 /**
  * @brief MainWindow::onNewPoject
@@ -842,6 +857,9 @@ void MainWindow::doOpenProject(QString proj)
     // 加载设备变量组信息
     UpdateDeviceVariableTableGroup();
     updateRecentProjectList(proj);
+
+    // 初始化画面名称列表控件
+    initGraphPageListWidget();
 }
 
 /**
@@ -852,8 +870,10 @@ void MainWindow::onOpenProject()
 {
     QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
     QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
-    QString fileName = QFileDialog::getOpenFileName(
-                this, tr("选择工程文件"), path, tr("project file (*.pdt)"));
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("选择工程文件"),
+                                                    path,
+                                                    tr("project file (*.pdt)"));
     if(fileName != Q_NULLPTR) {
         doOpenProject(fileName);
     }
@@ -974,9 +994,7 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
  */
 void MainWindow::onSlotProjectTreeViewClicked(const QModelIndex &index)
 {
-    if(m_szProjName == "")
-        return;
-
+    if(m_szProjName == "") return;
     QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->m_pProjectTreeViewObj->model());
     QStandardItem *pItemObj = pModelObj->itemFromIndex(index);
     onTreeViewProjectClicked(pItemObj->text());
@@ -1018,6 +1036,9 @@ void MainWindow::onSaveProject()
         if(findForm != Q_NULLPTR)
             findForm->save();
     }
+
+    // 保存画面
+    onSlotSaveGraphPage();
 }
 
 
@@ -1039,6 +1060,11 @@ void MainWindow::onCloseProject()
 
     // 清空画面列表控件
     clearGraphPageListWidget();
+
+    // 关闭所有画面
+    onSlotCloseAll();
+    onSlotTabProjectMgrCurChanged(0);
+    m_pTabProjectMgrObj->setCurrentIndex(0);
 }
 
 
@@ -1553,36 +1579,6 @@ void MainWindow::onSmallIcon()
 
 //------------------------------------------------------------------------------
 
-void MainWindow::initView()
-{
-    m_pGraphPageTabWidgetObj = new QTabWidget(this);
-    m_pGraphPageTabWidgetObj->installEventFilter(this);
-    this->m_pScrollAreaObj->setWidget(m_pGraphPageTabWidgetObj);
-
-    m_pElementWidgetObj = new ElementLibraryWidget();
-    this->m_pElemetsLayoutObj->addWidget(m_pElementWidgetObj);
-
-    m_pVariantEditorFactoryObj = new VariantFactory(this);
-
-    //propertyEditor_ = new QtTreePropertyBrowser(dockProperty);
-    m_pPropertyEditorObj = new QtTreePropertyBrowser(this);
-    m_pPropertyEditorObj->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_pPropertyEditorObj->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
-    //propertyEditor_->setColumnWidth(0, 60);
-    //propertyEditor_->setColumnWidth(1, 200);
-
-
-    this->m_pPropertyLayoutObj->addWidget(m_pPropertyEditorObj);
-
-    VariantManager *pVariantManager  = new VariantManager(this);
-    m_pVariantPropertyMgrObj = pVariantManager;
-    pVariantManager->setPropertyEditor(m_pPropertyEditorObj);
-    m_pPropertyEditorObj->setFactoryForManager(m_pVariantPropertyMgrObj, m_pVariantEditorFactoryObj);
-
-    connect(m_pVariantPropertyMgrObj, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-            this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
-}
-
 
 /**
  * @brief openGraphPage
@@ -1598,25 +1594,18 @@ void MainWindow::openGraphPage(const QString &szProjPath,
     foreach(QString szPageId, DrawListUtils::drawList_) {
         this->m_pListWidgetGraphPagesObj->addItem(szPageId);
         QString fileName = szProjPath + "/" + szPageId + ".drw";
-
         if (fileName.toLower().endsWith(".drw")) {
             QGraphicsView *view = createTabView();
-
             if (m_pGraphPageTabWidgetObj->indexOf(view) != -1) {
                 delete view;
                 return;
             }
-
             GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
-            if (!createDocument(graphPage, view, fileName)) {
-                return;
-            }
-
-            if(szPageId == szPageName) {
+            if (!createDocument(graphPage, view, fileName)) return;
+            if((szPageId == szPageName) || (szPageName == tr("") && this->m_pListWidgetGraphPagesObj->count() == 1)) {
                 m_pCurrentGraphPageObj = graphPage;
                 m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
             }
-
             graphPage->setProjectPath(szProjPath);
             graphPage->setProjectName(szProjName);
             graphPage->setGridVisible(m_bGraphPageGridVisible);
@@ -1631,8 +1620,9 @@ void MainWindow::openGraphPage(const QString &szProjPath,
     QList<QListWidgetItem*> listWidgetItem = this->m_pListWidgetGraphPagesObj->findItems(szPageName, Qt::MatchCaseSensitive);
     if ( listWidgetItem.size() > 0 ) {
         this->m_pListWidgetGraphPagesObj->setCurrentItem(listWidgetItem.at(0));
+    } else {
+        this->m_pListWidgetGraphPagesObj->setCurrentRow(0);
     }
-
 }
 
 
@@ -1801,24 +1791,23 @@ void MainWindow::slotUpdateActions()
     }
 }
 
-void MainWindow::slotChangeGraphPage(int GraphPageNum)
+void MainWindow::slotChangeGraphPage(int iGraphPageNum)
 {
-    if (GraphPageNum == -1) {
-        return;
-    }
+    if (iGraphPageNum == -1) return;
 
-    this->m_pListWidgetGraphPagesObj->setCurrentRow(GraphPageNum);
+    if(iGraphPageNum != this->m_pListWidgetGraphPagesObj->currentRow())
+        this->m_pListWidgetGraphPagesObj->setCurrentRow(iGraphPageNum);
 
     for (int i = 0; i < m_pGraphPageTabWidgetObj->count(); i++) {
         QGraphicsView *view = dynamic_cast<QGraphicsView *>(m_pGraphPageTabWidgetObj->widget(i));
         dynamic_cast<GraphPage *>(view->scene())->setActive(false);
     }
 
-    m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(m_pGraphPageTabWidgetObj->widget(GraphPageNum));
+    m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(m_pGraphPageTabWidgetObj->widget(iGraphPageNum));
     m_pCurrentGraphPageObj = dynamic_cast<GraphPage *>(m_pCurrentViewObj->scene());
     m_pCurrentGraphPageObj->setActive(true);
     //currentGraphPage_->fillGraphPagePropertyModel();
-    m_iCurrentGraphPageIndex = GraphPageNum;
+    m_iCurrentGraphPageIndex = iGraphPageNum;
     slotUpdateActions();
 }
 
@@ -2074,19 +2063,12 @@ void MainWindow::updateGraphPageViewInfo(const QString &fileName)
  */
 void MainWindow::onSlotSaveGraphPage()
 {
-    if (!m_pCurrentGraphPageObj) {
-        return;
-    }
+    if (!m_pCurrentGraphPageObj) return;
 
     for (;;) {
         QString fileName = m_pCurrentGraphPageObj->getFileName();
-
-        if (fileName.isEmpty())
-            fileName = getFileName();
-
-        if (fileName.isEmpty())
-            break;
-
+        if (fileName.isEmpty()) fileName = getFileName();
+        if (fileName.isEmpty()) break;
         m_pCurrentGraphPageObj->setFileName(fileName);
         updateGraphPageViewInfo(fileName);
         m_pCurrentGraphPageObj->saveAsXML(m_szProjPath + "/" + fileName);
@@ -2097,7 +2079,6 @@ void MainWindow::onSlotSaveGraphPage()
         }
 #endif
         break;
-
     }
 }
 
@@ -2278,10 +2259,11 @@ void MainWindow::onSlotEditPaste()
  * @details 画面名称被单击
  * @param item
  */
-void MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged(const QString &currentText)
+void MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged(const QString &szText)
 {
-    Q_UNUSED(currentText)
-    m_pGraphPageTabWidgetObj->setCurrentIndex(this->m_pListWidgetGraphPagesObj->currentRow());
+    if(szText == tr("")) return;
+    if(this->m_pListWidgetGraphPagesObj->currentRow() != this->m_pGraphPageTabWidgetObj->currentIndex());
+        m_pGraphPageTabWidgetObj->setCurrentIndex(this->m_pListWidgetGraphPagesObj->currentRow());
 }
 
 
@@ -2547,11 +2529,9 @@ reGetNum:
  */
 void MainWindow::initGraphPageListWidget()
 {
-    m_pListWidgetGraphPagesObj->setProjectPath(this->m_szProjPath);
-    DrawListUtils::loadDrawList(this->m_szProjPath);
-    for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
-        m_pListWidgetGraphPagesObj->addItem(DrawListUtils::drawList_.at(i));
-    }
+    this->m_pListWidgetGraphPagesObj->clear();
+    this->m_pListWidgetGraphPagesObj->setProjectPath(this->m_szProjPath);
+    this->openGraphPage(m_szProjPath, m_szProjName, tr(""));
 }
 
 
@@ -2578,4 +2558,28 @@ void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
         window->SetTitle(szTitle);
     }
 }
+
+
+/**
+ * @brief MainWindow::onSlotTabProjectMgrCurChanged
+ * @details 工程管理器标签改变
+ * @param index 0：工程标签页, 1：画面标签页
+ */
+void MainWindow::onSlotTabProjectMgrCurChanged(int index)
+{
+    if(this->m_szProjName == "") {
+        m_pMdiAreaObj->setVisible(true);
+        m_pGraphPageTabWidgetObj->setVisible(false);
+        m_pDockPropertyObj->setVisible(false); // 属性停靠控件
+        m_pDockElemetsObj->setVisible(false); // 图形元素停靠控件
+        m_pToolBarGraphPageEditObj->setVisible(false); // 画面编辑工具条
+    } else {
+        m_pMdiAreaObj->setVisible(index == 0);
+        m_pGraphPageTabWidgetObj->setVisible(index == 1);
+        m_pDockPropertyObj->setVisible(index == 1); // 属性停靠控件
+        m_pDockElemetsObj->setVisible(index == 1); // 图形元素停靠控件
+        m_pToolBarGraphPageEditObj->setVisible(index == 1);
+    }
+}
+
 
