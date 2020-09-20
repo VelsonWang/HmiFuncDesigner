@@ -29,10 +29,7 @@ public:
     void open();
     // 保存文件
     void save();
-    // 显示大图标
-    void showLargeIcon();
-    // 显示小图标
-    void showSmallIcon();
+
 
 private:
     void ListViewInitUi();

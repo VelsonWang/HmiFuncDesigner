@@ -19,7 +19,7 @@ CommunicationDeviceWin::CommunicationDeviceWin(QWidget *parent,
     ui->setupUi(this);
     pCommDevModel_ = Q_NULLPTR;
     this->setWindowTitle(itemName);
-    m_strItemName = itemName;
+    m_szItemName = itemName;
     setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
@@ -182,9 +182,9 @@ void CommunicationDeviceWin::ListViewOpcDeviceUpdate()
 void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const QModelIndex &index)
 {
     QStandardItem *item = pCommDevModel_->itemFromIndex(index);
-    if(m_strProjectName == "")
+    if(m_szProjectName == "")
         return;
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
     if(item->text() == tr("新建串口设备")) {
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
         QStringList list;
@@ -256,7 +256,7 @@ void CommunicationDeviceWin::on_listViewCommunicationDevice_doubleClicked(const 
             }
         }
     }
-    ListViewUpdate(m_strItemName);
+    ListViewUpdate(m_szItemName);
 }
 
 /*
@@ -289,16 +289,14 @@ void CommunicationDeviceWin::contextMenuEvent(QContextMenuEvent * event)
 */
 void CommunicationDeviceWin::NewDevice()
 {
-    if(m_strProjectName == "")
-        return;
+    if(m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
     QList<QStandardItem *> itemList;
 
-    if(m_strItemName == tr("串口设备")) {
+    if(m_szItemName == tr("串口设备")) {
         itemList = pCommDevModel_->findItems(tr("新建串口设备"));
-        if(itemList.size() == 0)
-            return;
+        if(itemList.size() == 0) return;
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
         QStringList list;
         DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
@@ -312,10 +310,9 @@ void CommunicationDeviceWin::NewDevice()
             deviceInfo.listDeviceInfoObject_.append((DeviceInfoObject *)pNewComDeviceDlg->GetComDevice());
             pNewComDeviceDlg->save(-1);
         }
-    } else if(m_strItemName == tr("网络设备")) {
+    } else if(m_szItemName == tr("网络设备")) {
         itemList = pCommDevModel_->findItems(tr("新建网络设备"));
-        if(itemList.size() == 0)
-            return;
+        if(itemList.size() == 0) return;
         NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this);
         QStringList list;
         DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
@@ -329,13 +326,13 @@ void CommunicationDeviceWin::NewDevice()
             deviceInfo.listDeviceInfoObject_.append((DeviceInfoObject *)pNewNetDeviceDlg->GetNetDevice());
             pNewNetDeviceDlg->save(-1);
         }
-    } else if(m_strItemName == tr("总线设备")) {
+    } else if(m_szItemName == tr("总线设备")) {
         itemList = pCommDevModel_->findItems(tr("新建总线设备"));
-    } else if(m_strItemName == tr("OPC设备")) {
+    } else if(m_szItemName == tr("OPC设备")) {
         itemList = pCommDevModel_->findItems(tr("新建OPC设备"));
     }
 
-    ListViewUpdate(m_strItemName);
+    ListViewUpdate(m_szItemName);
 }
 
 
@@ -346,9 +343,8 @@ void CommunicationDeviceWin::ModifyDevice()
 {
     QModelIndex idx = ui->listViewCommunicationDevice->selectionModel()->currentIndex();
     QStandardItem *item = pCommDevModel_->itemFromIndex(idx);
-    if(m_strProjectName == "")
-        return;
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+    if(m_szProjectName == "") return;
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
 
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
@@ -374,7 +370,7 @@ void CommunicationDeviceWin::ModifyDevice()
         }
     }
 
-    ListViewUpdate(m_strItemName);
+    ListViewUpdate(m_szItemName);
 }
 
 /*
@@ -394,7 +390,7 @@ void CommunicationDeviceWin::DeleteDevice()
         }
     }
 
-    ListViewUpdate(m_strItemName);
+    ListViewUpdate(m_szItemName);
 }
 
 /*
@@ -413,18 +409,3 @@ void CommunicationDeviceWin::save()
 
 }
 
-/*
-* 显示大图标
-*/
-void CommunicationDeviceWin::showLargeIcon()
-{
-    ui->listViewCommunicationDevice->setIconSize(QSize(32, 32));
-}
-
-/*
-* 显示小图标
-*/
-void CommunicationDeviceWin::showSmallIcon()
-{
-    ui->listViewCommunicationDevice->setIconSize(QSize(24, 24));
-}

@@ -18,7 +18,7 @@ RealTimeDatabaseWin::RealTimeDatabaseWin(QWidget *parent,
 {
     ui->setupUi(this);
     this->setWindowTitle(itemName);
-    m_strItemName = itemName;
+    m_szItemName = itemName;
     m_ProjPath = ProjectMgrUtils::getProjectPath(projName);
     ListViewInitUi();
 }
@@ -34,7 +34,7 @@ RealTimeDatabaseWin::~RealTimeDatabaseWin()
 
 void RealTimeDatabaseWin::init()
 {
-    m_ProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+    m_ProjPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
 }
 
 void RealTimeDatabaseWin::ListViewInitUi()
@@ -70,21 +70,6 @@ void RealTimeDatabaseWin::open() {}
  */
 void RealTimeDatabaseWin::save() {}
 
-/*
-* 显示大图标
-*/
-void RealTimeDatabaseWin::showLargeIcon()
-{
-    ui->listView->setIconSize(QSize(32, 32));
-}
-
-/*
-* 显示小图标
-*/
-void RealTimeDatabaseWin::showSmallIcon()
-{
-    ui->listView->setIconSize(QSize(24, 24));
-}
 
 void RealTimeDatabaseWin::on_listView_clicked(const QModelIndex &index)
 {

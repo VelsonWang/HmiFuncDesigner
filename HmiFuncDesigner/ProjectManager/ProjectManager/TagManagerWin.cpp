@@ -68,13 +68,13 @@ TagManagerWin::~TagManagerWin()
 void TagManagerWin::init(const QString &itemName)
 {   
     SetTitle(itemName);
-    load(m_strItemName);
+    load(m_szItemName);
 
-    if(m_strItemName == tr("设备变量")) {
+    if(m_szItemName == tr("设备变量")) {
         ui->stackedWidget->setCurrentWidget(ui->pageTagIO);
-    } else if(m_strItemName == tr("中间变量")) {
+    } else if(m_szItemName == tr("中间变量")) {
         ui->stackedWidget->setCurrentWidget(ui->pageTagTmp);
-    } else if(m_strItemName == tr("系统变量")) {
+    } else if(m_szItemName == tr("系统变量")) {
         ui->stackedWidget->setCurrentWidget(ui->pageTagSys);
     }
 }
@@ -82,9 +82,9 @@ void TagManagerWin::init(const QString &itemName)
 void TagManagerWin::SetTitle(const QString &t)
 {
     if(t == tr("中间变量") || t == tr("系统变量")) {
-        m_strItemName = t;
+        m_szItemName = t;
     } else {
-        m_strItemName = tr("设备变量");
+        m_szItemName = tr("设备变量");
         QString str = t;
         m_IOTagListWhat = str.replace(QString(tr("设备变量-")), "");
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
@@ -131,12 +131,12 @@ void TagManagerWin::save(const QString &it)
 */
 void TagManagerWin::exportToCsv(const QString &path)
 {
-    if(m_strItemName == tr("设备变量")) {
+    if(m_szItemName == tr("设备变量")) {
         // 设备变量表变量导出至CSV文件
-        this->tagIOExportToCsv(path, QString("%1-%2").arg(m_strItemName).arg(m_IOTagListWhat));
-    } else if(m_strItemName == tr("中间变量")) {
+        this->tagIOExportToCsv(path, QString("%1-%2").arg(m_szItemName).arg(m_IOTagListWhat));
+    } else if(m_szItemName == tr("中间变量")) {
         // 中间变量表变量导出至CSV文件
-        tagTmpExportToCsv(path, m_strItemName);
+        tagTmpExportToCsv(path, m_szItemName);
     }
 }
 
@@ -161,7 +161,7 @@ void TagManagerWin::importFromCsv(const QString &path)
 */
 void TagManagerWin::contextMenuEvent(QContextMenuEvent * /*event*/)
 {
-    if(m_strItemName == tr("变量管理") || m_strItemName == tr("系统变量"))
+    if(m_szItemName == tr("变量管理") || m_szItemName == tr("系统变量"))
         return;
 
     QMenu *pMenu = new QMenu(this);
@@ -205,10 +205,10 @@ void TagManagerWin::contextMenuEvent(QContextMenuEvent * /*event*/)
 */
 void TagManagerWin::onTagAdd()
 {
-    if(m_strItemName == tr("设备变量")) {
+    if(m_szItemName == tr("设备变量")) {
         // 创建设备变量
         createTagIO();
-    } else if(m_strItemName == tr("中间变量")) {
+    } else if(m_szItemName == tr("中间变量")) {
         // 创建中间变量
         createTagTmp();
     }
@@ -219,10 +219,10 @@ void TagManagerWin::onTagAdd()
 */
 void TagManagerWin::onTagAppend()
 {
-    if(m_strItemName == tr("设备变量")) {
+    if(m_szItemName == tr("设备变量")) {
         // 追加设备变量
         appendTagIO();
-    } else if(m_strItemName == "中间变量") {
+    } else if(m_szItemName == "中间变量") {
         // 追加中间变量
         appendTagTmp();
     }
@@ -234,10 +234,10 @@ void TagManagerWin::onTagAppend()
 */
 void TagManagerWin::onTagRowCopy()
 {
-    if(m_strItemName == tr("设备变量")) {
+    if(m_szItemName == tr("设备变量")) {
         // 拷贝选中设备变量
         copyCurTagIO();
-    } else if(m_strItemName == tr("中间变量")) {
+    } else if(m_szItemName == tr("中间变量")) {
         // 拷贝选中中间变量
         copyCurTagTmp();
     }
@@ -249,10 +249,10 @@ void TagManagerWin::onTagRowCopy()
 */
 void TagManagerWin::onTagModify()
 {
-    if(m_strItemName == tr("设备变量")) {
+    if(m_szItemName == tr("设备变量")) {
         // 修改选中设备变量
         modifyCurTagIO();
-    } else if(m_strItemName == tr("中间变量")) {
+    } else if(m_szItemName == tr("中间变量")) {
         // 修改选中中间变量
         modifyCurTagTmp();
     }
@@ -263,10 +263,10 @@ void TagManagerWin::onTagModify()
 */
 void TagManagerWin::onTagDelete()
 {
-    if(m_strItemName == tr("设备变量")) {
+    if(m_szItemName == tr("设备变量")) {
         // 删除选中设备变量
         deleteCurTagIO();
-    } else if(m_strItemName == tr("中间变量")) {
+    } else if(m_szItemName == tr("中间变量")) {
         // 删除选中中间变量
         deleteCurTagTmp();
     }
@@ -295,27 +295,10 @@ void TagManagerWin::open()
  */
 void TagManagerWin::save()
 {
-    if(!m_strItemName.isEmpty()) {
-        save(m_strItemName);
+    if(!m_szItemName.isEmpty()) {
+        save(m_szItemName);
     }
 }
-
-/*
-* 显示大图标
-*/
-void TagManagerWin::showLargeIcon()
-{
-
-}
-
-/*
-* 显示小图标
-*/
-void TagManagerWin::showSmallIcon()
-{
-
-}
-
 
 
 /**
@@ -1441,7 +1424,7 @@ void TagManagerWin::createTagIO()
         return;
     }
 
-    TagIOEditDialog *pDlg = new TagIOEditDialog(m_strProjectName, this);
+    TagIOEditDialog *pDlg = new TagIOEditDialog(m_szProjectName, this);
     if(pDlg->exec() == QDialog::Accepted) {
         int num = pDlg->createTagNum();
         int iOffset = pDlg->addrOffset();
@@ -1573,7 +1556,7 @@ void TagManagerWin::modifyCurTagIO()
     if(iSelectedRow >= 0) {
         TagIODBItem *pTagIO = getTagIOObjByRow(iSelectedRow);
 
-        TagIOEditDialog *pDlg = new TagIOEditDialog(m_strProjectName, this);
+        TagIOEditDialog *pDlg = new TagIOEditDialog(m_szProjectName, this);
         pDlg->setWindowTitle(tr("编辑设备变量"));
         pDlg->hideCreateNumUI();
         pDlg->setTagName(pTagIO->m_szName);
@@ -1713,7 +1696,7 @@ void TagManagerWin::on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item)
         modifyCurTagTmp();
     } else if(iColumn == 7) {
         TagTmpDBItem *pTagTmp = getTagTmpObjByRow(iRow);
-        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_strProjectName), this);
+        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_szProjectName), this);
         pDlg->SetData(pTagTmp->m_szProjectConverter);
         if(pDlg->exec() == QDialog::Accepted) {
             pTagTmp->m_szProjectConverter = pDlg->GetData();
@@ -1737,7 +1720,7 @@ void TagManagerWin::on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item)
         modifyCurTagIO();
     } else if(iColumn == 14) {
         TagIODBItem *pTagIO = getTagIOObjByRow(iRow);
-        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_strProjectName), this);
+        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_szProjectName), this);
         pDlg->SetData(pTagIO->m_szProjectConverter);
         if(pDlg->exec() == QDialog::Accepted) {
             pTagIO->m_szProjectConverter = pDlg->GetData();

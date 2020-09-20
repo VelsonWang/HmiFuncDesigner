@@ -290,41 +290,6 @@ void ChildForm::save()
     m_scriptManageWinPtr->save();
 }
 
-/*
-* 显示大图标
-*/
-void ChildForm::showLargeIcon()
-{
-    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
-        m_sysParamWinPtr->showLargeIcon();
-    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
-        m_communicationDeviceWinPtr->showLargeIcon();
-    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_tagManagerWinPtr->showLargeIcon();
-    } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
-        m_rtdbWinPtr->showLargeIcon();
-    } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
-        m_scriptManageWinPtr->showLargeIcon();
-    }
-}
-
-/*
-* 显示小图标
-*/
-void ChildForm::showSmallIcon()
-{
-    if (m_currPageFlow == PAGE_SYSTEM_PARAMETER) { // 系统参数设置页面
-        m_sysParamWinPtr->showSmallIcon();
-    } else if(m_currPageFlow == PAGE_COMMUNICATE_DEVICE) { // 通讯设备页面
-        m_communicationDeviceWinPtr->showSmallIcon();
-    } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_tagManagerWinPtr->showSmallIcon();
-    } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
-        m_rtdbWinPtr->showSmallIcon();
-    } else if(m_currPageFlow == PAGE_SCRIPT_MANAGER) { // 脚本编辑器
-        m_scriptManageWinPtr->showSmallIcon();
-    }
-}
 
 void ChildForm::treeItemClicked(const QString &itemText)
 {

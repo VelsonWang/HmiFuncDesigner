@@ -58,10 +58,9 @@ void SystemParametersWin::on_listViewProject_doubleClicked(const QModelIndex &in
 {
     QStandardItem *item = pListViewProjectModel->itemFromIndex(index);
 
-    if(m_strProjectName == "")
-        return;
+    if(m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
     if(item->text() == tr("运行系统")) {
         NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this, strProjectPath);
         pNewProjectDlg->load();
@@ -105,21 +104,4 @@ void SystemParametersWin::save()
 {
 
 }
-
-/*
-* 显示大图标
-*/
-void SystemParametersWin::showLargeIcon()
-{
-    ui->listViewProject->setIconSize(QSize(32, 32));
-}
-
-/*
-* 显示小图标
-*/
-void SystemParametersWin::showSmallIcon()
-{
-    ui->listViewProject->setIconSize(QSize(24, 24));
-}
-
 

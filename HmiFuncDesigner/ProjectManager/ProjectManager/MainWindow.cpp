@@ -182,7 +182,6 @@ void MainWindow::initUI()
     setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
     readSettings();  // 初始窗口时读取窗口设置信息
     loadRecentProjectList();
-    onBigIcon();  // 大图标显示
 
     //--------------------------------------------------------------------------
 
@@ -321,24 +320,6 @@ void MainWindow::createActions()
     // 显示区
     m_pActionDisplayAreaObj = new QAction(tr("显示区"), this);
     m_pActionDisplayAreaObj->setCheckable(true);
-
-    // 大图标显示
-    m_pActionBigIconObj = new QAction(QIcon(":/images/viewbig.png"), tr("大图标"), this);
-    m_pActionExitObj->setShortcut(QString("Ctrl+B"));
-    m_pActionBigIconObj->setCheckable(true);
-    connect(m_pActionBigIconObj, &QAction::triggered, this, &MainWindow::onBigIcon);
-
-    // 显示小图标
-    m_pActionSmallIconObj = new QAction(QIcon(":/images/viewlittle.png"), tr("小图标"), this);
-    m_pActionSmallIconObj->setShortcut(QString("Ctrl+L"));
-    m_pActionSmallIconObj->setCheckable(true);
-    connect(m_pActionSmallIconObj, &QAction::triggered, this, &MainWindow::onSmallIcon);
-
-    // 编辑
-    m_pActionEditObj = new QAction(QIcon(":/images/edit.png"), tr("编辑"), this);
-    m_pActionEditObj->setShortcut(QString("Ctrl+E"));
-    m_pActionEditObj->setCheckable(true);
-
 
     //-----------------------------<画面编辑器>----------------------------------
 
@@ -545,9 +526,6 @@ void MainWindow::createMenus()
     m_pMenuViewObj->addAction(m_pActionStatusBarObj);
     m_pMenuViewObj->addAction(m_pActionWorkSpaceObj);
     m_pMenuViewObj->addAction(m_pActionDisplayAreaObj);
-    m_pMenuViewObj->addAction(m_pActionBigIconObj);
-    m_pMenuViewObj->addAction(m_pActionSmallIconObj);
-    m_pMenuViewObj->addAction(m_pActionEditObj);
 
     //-----------------------------<画面编辑器>----------------------------------
     QMenu *filemenu = this->menuBar()->addMenu(tr("画面"));
@@ -606,14 +584,6 @@ void MainWindow::createToolbars()
     m_pToolBarProjectObj->addAction(m_pActionSaveProjObj);
     m_pToolBarProjectObj->addAction(m_pActionExitObj);
 
-    //-----------------------------<视图工具栏>----------------------------------
-
-    m_pToolBarView = new QToolBar(this);
-    m_pToolBarView->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarView->addAction(m_pActionBigIconObj);
-    m_pToolBarView->addAction(m_pActionSmallIconObj);
-    m_pToolBarView->addAction(m_pActionEditObj);
-
     //-----------------------------<画面编辑器>----------------------------------
     m_pToolBarGraphPageEditObj = new QToolBar(this);
     //m_pToolBarGraphPageEditObj->addAction(m_pActionSaveGraphPageObj);
@@ -662,7 +632,6 @@ void MainWindow::createToolbars()
     m_pToolBarTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
 
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
-    this->addToolBar(Qt::TopToolBarArea, m_pToolBarView);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
     addToolBarBreak();
@@ -1544,35 +1513,6 @@ void MainWindow::updateRecentProjectList(QString newProj)
     } else {
         QStringList slist;
         ConfigUtils::writeCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
-    }
-}
-
-
-/**
- * @brief MainWindow::onBigIcon
- * @details 显示大图标
- */
-void MainWindow::onBigIcon()
-{
-    this->m_pActionBigIconObj->setChecked(true);
-    this->m_pActionSmallIconObj->setChecked(false);
-    ChildForm *findForm = findMdiChild(this->m_szCurItem);
-    if(findForm != Q_NULLPTR) {
-        findForm->showLargeIcon();
-    }
-}
-
-/**
- * @brief MainWindow::onSmallIcon
- * @details 显示小图标
- */
-void MainWindow::onSmallIcon()
-{
-    this->m_pActionBigIconObj->setChecked(false);
-    this->m_pActionSmallIconObj->setChecked(true);
-    ChildForm *findForm = findMdiChild(this->m_szCurItem);
-    if(findForm != Q_NULLPTR) {
-        findForm->showSmallIcon();
     }
 }
 

@@ -24,14 +24,11 @@ public:
     virtual void open() = 0;
     // 保存文件
     virtual void save() = 0;
-    // 显示大图标
-    virtual void showLargeIcon() = 0;
-    // 显示小图标
-    virtual void showSmallIcon() = 0;
+
 
 public:
-    QString m_strProjectName;
-    QString m_strItemName;
+    QString m_szProjectName;
+    QString m_szItemName;
 
 private:
     bool m_bModifiedFlag;

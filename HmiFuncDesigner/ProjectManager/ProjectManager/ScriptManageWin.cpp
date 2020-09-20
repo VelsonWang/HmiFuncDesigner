@@ -124,7 +124,7 @@ ScriptManageWin::ScriptManageWin(QWidget *parent, QString itemName,
                                  QString projName)
     : ChildBase(parent, itemName, projName) {
   this->setWindowTitle(itemName);
-  m_strItemName = itemName;
+  m_szItemName = itemName;
 
   ///////////////////////////////////////////////////////////
 
@@ -164,7 +164,7 @@ ScriptManageWin::~ScriptManageWin() {
 * 打开文件
 */
 void ScriptManageWin::open() {
-  QString fileDes = ProjectMgrUtils::getProjectPath(m_strProjectName) +
+  QString fileDes = ProjectMgrUtils::getProjectPath(m_szProjectName) +
                     "/Scripts/Script.info";
   ScriptFileManage::load(fileDes, DATA_SAVE_FORMAT);
 
@@ -186,31 +186,19 @@ void ScriptManageWin::open() {
 /*
 * 保存文件
 */
-void ScriptManageWin::save() {
-  QString fileDes = ProjectMgrUtils::getProjectPath(m_strProjectName) +
-                    "/Scripts/Script.info";
+void ScriptManageWin::save()
+{
+  QString fileDes = ProjectMgrUtils::getProjectPath(m_szProjectName) + "/Scripts/Script.info";
   ScriptFileManage::save(fileDes, DATA_SAVE_FORMAT);
 }
 
-/*
-* 显示大图标
-*/
-void ScriptManageWin::showLargeIcon() {
-  m_pListWidget->setIconSize(QSize(32, 32));
-}
-
-/*
-* 显示小图标
-*/
-void ScriptManageWin::showSmallIcon() {
-  m_pListWidget->setIconSize(QSize(24, 24));
-}
 
 /*
 * 插槽：列表视图控件单击
 */
-void ScriptManageWin::ListWidgetClicked(QListWidgetItem *item) {
-  if (m_strProjectName == "") return;
+void ScriptManageWin::ListWidgetClicked(QListWidgetItem *item)
+{
+  if (m_szProjectName == "") return;
 
   if (item->text() == "新建脚本") {
     NewScript();
@@ -222,7 +210,8 @@ void ScriptManageWin::ListWidgetClicked(QListWidgetItem *item) {
 /*
 * 右键菜单生成
 */
-void ScriptManageWin::contextMenuEvent(QContextMenuEvent *event) {
+void ScriptManageWin::contextMenuEvent(QContextMenuEvent *event)
+{
   Q_UNUSED(event);
 
   QMenu *pMenu = new QMenu(this);
@@ -253,9 +242,9 @@ void ScriptManageWin::contextMenuEvent(QContextMenuEvent *event) {
 * 插槽：新建
 */
 void ScriptManageWin::NewScript() {
-  if (m_strProjectName == "") return;
+  if (m_szProjectName == "") return;
 
-  QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+  QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
   QListWidgetItem *pCurItem = m_pListWidget->currentItem();
 
   /////////////////////////////////////////////////////////////////////////////
@@ -283,10 +272,11 @@ void ScriptManageWin::NewScript() {
 /*
 * 插槽：修改
 */
-void ScriptManageWin::ModifyScript() {
-  if (m_strProjectName == "") return;
+void ScriptManageWin::ModifyScript()
+{
+  if (m_szProjectName == "") return;
 
-  QString strProjectPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
+  QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
   QListWidgetItem *pCurItem = m_pListWidget->currentItem();
   QString scriptFileName =
       strProjectPath + "/Scripts/" + pCurItem->text() + ".js";
@@ -338,12 +328,13 @@ void ScriptManageWin::ModifyScript() {
 /*
 * 插槽：删除
 */
-void ScriptManageWin::DeleteScript() {
+void ScriptManageWin::DeleteScript()
+{
   QListWidgetItem *pCurItem = m_pListWidget->currentItem();
   ScriptObject *pObj = ScriptFileManage::GetScriptObject(pCurItem->text());
   ScriptFileManage::DeleteScriptInfo(pObj);
 
-  QString scriptFileName = ProjectMgrUtils::getProjectPath(m_strProjectName) +
+  QString scriptFileName = ProjectMgrUtils::getProjectPath(m_szProjectName) +
                            "/Scripts/" + pCurItem->text() + ".js";
   QFile scriptFile(scriptFileName);
   if (scriptFile.exists()) scriptFile.remove();

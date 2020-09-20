@@ -183,10 +183,6 @@ private slots:
     // 粘贴画面
     void onPasteGraphPage();
 
-    // 显示大图标
-    void onBigIcon();
-    // 显示小图标
-    void onSmallIcon();
     // 模拟仿真
     void onSlotSimulate();
     // 运行工程
@@ -307,14 +303,10 @@ private:
     QAction *m_pActionExitObj = Q_NULLPTR; // 退出
 
     QMenu *m_pMenuViewObj = Q_NULLPTR; // 视图
-    QToolBar *m_pToolBarView = Q_NULLPTR; // 视图工具栏
     QAction *m_pActionToolBarObj = Q_NULLPTR;
     QAction *m_pActionStatusBarObj = Q_NULLPTR;
     QAction *m_pActionWorkSpaceObj = Q_NULLPTR;
     QAction *m_pActionDisplayAreaObj = Q_NULLPTR;
-    QAction *m_pActionBigIconObj = Q_NULLPTR; // 显示大图标
-    QAction *m_pActionSmallIconObj = Q_NULLPTR; // 显示小图标
-    QAction *m_pActionEditObj = Q_NULLPTR; // 编辑
 
     QMenu *m_pMenuToolsObj = Q_NULLPTR; // 工具菜单
     QToolBar *m_pToolBarToolsObj = Q_NULLPTR;

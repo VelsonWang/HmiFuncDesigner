@@ -23,11 +23,6 @@ public:
     void open();
     // 保存文件
     void save();
-    // 显示大图标
-    void showLargeIcon();
-    // 显示小图标
-    void showSmallIcon();
-
 
 private slots:
     void on_listViewProject_doubleClicked(const QModelIndex &index);

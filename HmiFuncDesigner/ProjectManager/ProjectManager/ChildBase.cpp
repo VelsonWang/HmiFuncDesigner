@@ -5,8 +5,8 @@ ChildBase::ChildBase(QWidget *parent,
                      const QString &itemName,
                      const QString &projName) :
     QWidget(parent),
-    m_strItemName(itemName),
-    m_strProjectName(projName)
+    m_szItemName(itemName),
+    m_szProjectName(projName)
 {
     setMinimumSize(600, 400);
     this->m_bModifiedFlag = false;
@@ -19,22 +19,22 @@ ChildBase::~ChildBase()
 
 QString ChildBase::getProjectName() const
 {
-    return m_strProjectName;
+    return m_szProjectName;
 }
 
 void ChildBase::setProjectName(const QString &s)
 {
-    m_strProjectName = s;
+    m_szProjectName = s;
 }
 
 QString ChildBase::getItemName() const
 {
-    return m_strItemName;
+    return m_szItemName;
 }
 
 void ChildBase::setItemName(const QString &s)
 {
-    m_strItemName = s;
+    m_szItemName = s;
 }
 
 void ChildBase::setModifiedFlag(bool b)
