@@ -28,7 +28,7 @@
 #include <QHeaderView>
 #include <QListWidget>
 #include <QMainWindow>
-#include <QMdiArea>
+#include "MdiArea.h"
 #include <QMenu>
 #include <QMenuBar>
 #include <QScrollArea>
@@ -37,6 +37,7 @@
 #include <QToolBar>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QSignalMapper>
 
 
 class MainWindow : public QMainWindow
@@ -75,6 +76,7 @@ private:
     void onTreeViewProjectClicked(const QString &szItemText);
 
 protected:
+    virtual bool eventFilter(QObject*, QEvent* e);
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 
@@ -220,6 +222,14 @@ private slots:
 
     // 工程管理器标签改变
     void onSlotTabProjectMgrCurChanged(int index);
+    // 子窗口关闭请求
+    void onSlotTabCloseRequested(int);
+    // 更新菜单
+    void onSlotUpdateMenus();
+    //
+    void onSlotSetActiveSubWindow(QWidget* window);
+    //
+    void onSlotFocusChanged(QWidget*, QWidget*);
 
 private:
     // 初始化UI
@@ -245,6 +255,9 @@ private:
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;
     QString m_szCopyGraphPageFileName;
+    int m_typeDocCurrent;
+    QWidget* m_childCurrent;
+    QSignalMapper* m_windowMapper;
 
     QtVariantPropertyManager *m_pVariantPropertyMgrObj = Q_NULLPTR;
     QtTreePropertyBrowser *m_pPropertyEditorObj = Q_NULLPTR;
@@ -255,7 +268,7 @@ private:
     QVBoxLayout *m_pElemetsLayoutObj = Q_NULLPTR;
     QVBoxLayout *m_pPropertyLayoutObj = Q_NULLPTR;
     QWidget *m_pCentralWidgetObj = Q_NULLPTR;
-    QMdiArea *m_pMdiAreaObj = Q_NULLPTR;
+    MdiArea *m_pMdiAreaObj = Q_NULLPTR;
     ProjectTreeView *m_pProjectTreeViewObj = Q_NULLPTR;
     GraphPageListWidget *m_pListWidgetGraphPagesObj = Q_NULLPTR; // 画面名称列表
 

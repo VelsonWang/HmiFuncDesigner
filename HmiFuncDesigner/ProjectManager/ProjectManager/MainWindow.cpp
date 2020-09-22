@@ -42,6 +42,7 @@
 #include "variantmanager.h"
 #include "variantfactory.h"
 #include "GraphPage.h"
+#include "ChildInterface.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -83,11 +84,24 @@ void MainWindow::initUI()
     m_pGraphPageTabWidgetObj->installEventFilter(this);
     centralWidgetLayout->addWidget(m_pGraphPageTabWidgetObj);
 
-    m_pMdiAreaObj = new QMdiArea(m_pCentralWidgetObj);
+    m_pMdiAreaObj = new MdiArea(m_pCentralWidgetObj);
     QSizePolicy sizePolicyMdiArea(QSizePolicy::Preferred, QSizePolicy::Preferred);
     sizePolicyMdiArea.setHorizontalStretch(0);
     sizePolicyMdiArea.setVerticalStretch(0);
     m_pMdiAreaObj->setSizePolicy(sizePolicyMdiArea);
+    m_pMdiAreaObj->setLineWidth(3);
+    m_pMdiAreaObj->setFrameShape(QFrame::Panel);
+    m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
+    m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
+    ((MdiArea*)m_pMdiAreaObj)->setupMdiArea();
+    QObject::connect(m_pMdiAreaObj, SIGNAL(tabCloseRequested(int)), this, SLOT(onSlotTabCloseRequested(int)));
+    qApp->installEventFilter(this);
+    m_pMdiAreaObj->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    m_pMdiAreaObj->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    connect(m_pMdiAreaObj, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(onSlotUpdateMenus()));
+    m_windowMapper = new QSignalMapper(this);
+    connect(m_windowMapper, SIGNAL(mapped(QWidget*)), this, SLOT(onSlotSetActiveSubWindow(QWidget*)));
+    QObject::connect(qApp, SIGNAL(focusChanged(QWidget*,QWidget*)), this, SLOT(onSlotFocusChanged(QWidget*, QWidget*)));
     centralWidgetLayout->addWidget(m_pMdiAreaObj);
 
     m_pCentralWidgetObj->setLayout(centralWidgetLayout);
@@ -232,10 +246,10 @@ void MainWindow::initUI()
     this->m_pMdiAreaObj->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     this->m_pMdiAreaObj->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
 
-//    this->m_pMdiAreaObj->setLineWidth(3);
-//    this->m_pMdiAreaObj->setFrameShape(QFrame::Panel);
-//    this->m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
-//    this->m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
+    //    this->m_pMdiAreaObj->setLineWidth(3);
+    //    this->m_pMdiAreaObj->setFrameShape(QFrame::Panel);
+    //    this->m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
+    //    this->m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
 
     this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态软件"));
 
@@ -248,9 +262,9 @@ MainWindow::~MainWindow()
 {
 #define DEL_OBJ(obj_ptr) do\
     if(obj_ptr != Q_NULLPTR) {\
-        delete obj_ptr;\
-        obj_ptr = Q_NULLPTR;\
-    } while(0);
+    delete obj_ptr;\
+    obj_ptr = Q_NULLPTR;\
+} while(0);
 
     DEL_OBJ(m_pVariantPropertyMgrObj);
     DEL_OBJ(m_pPropertyEditorObj);
@@ -638,7 +652,14 @@ void MainWindow::createToolbars()
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
 }
 
-
+#if 0
+QWidget* MainWindow::activeMdiChild()
+{
+    if (QMdiSubWindow* activeSubWindow = m_mdiArea->activeSubWindow())
+        return activeSubWindow->widget();
+    return Q_NULL;
+}
+#endif
 ChildForm *MainWindow::activeMdiChild()
 {
     if (QMdiSubWindow *activeSubWindow = this->m_pMdiAreaObj->activeSubWindow()) {
@@ -663,6 +684,19 @@ ChildForm *MainWindow::getActiveSubWindow()
     return qobject_cast<ChildForm *>(this->m_pMdiAreaObj->activeSubWindow()->widget());
 }
 
+#if 0
+QMdiSubWindow* MainWindow::findMdiChild(const QString& fileName)
+{
+    QString canonicalFilePath = QFileInfo(fileName).canonicalFilePath();
+    foreach (QMdiSubWindow* window, m_mdiArea->subWindowList())
+    {
+        ChildInterface* ifChild = qobject_cast<ChildInterface*>(window->widget());
+        if (ifChild && ifChild->currentFile() == canonicalFilePath)
+            return window;
+    }
+    return 0;
+}
+#endif
 ChildForm *MainWindow::findMdiChild(const QString &windowTitle)
 {
     foreach (QMdiSubWindow *window, this->m_pMdiAreaObj->subWindowList()) {
@@ -702,6 +736,28 @@ void MainWindow::CreateDefaultIOTagGroup()
 }
 
 
+bool MainWindow::eventFilter(QObject* obj, QEvent* event)
+{
+    switch(event->type()) {
+    case QEvent::ChildRemoved :
+        if (QChildEvent* pEvent= static_cast<QChildEvent*>(event)) {
+            if (qobject_cast<QMdiSubWindow*>(pEvent->child()) && m_childCurrent &&
+                    m_pMdiAreaObj->subWindowList().size() == 1) {
+                if (ChildInterface* ifOldChild = qobject_cast<ChildInterface*>(m_childCurrent))
+                    ifOldChild->removeUserInterface(this);
+
+                m_childCurrent = Q_NULLPTR;
+                m_typeDocCurrent = ChildInterface::td_None;
+            }
+        }
+        break;
+    default:
+        break;
+    }
+    return QMainWindow::eventFilter(obj, event);
+}
+
+
 /**
  * @brief MainWindow::closeEvent  关闭事件
  * @param event
@@ -713,7 +769,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
         ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_szProjPath);
     this->m_pMdiAreaObj->closeAllSubWindows();
     writeSettings();
-    if (this->m_pMdiAreaObj->currentSubWindow()) {
+    m_pMdiAreaObj->closeAllSubWindows();
+    if (m_pMdiAreaObj->currentSubWindow()) {
         event->ignore();
     } else {
         event->accept();
@@ -1707,7 +1764,7 @@ void MainWindow::slotUpdateActions()
     for (int i = 0; i < m_pGraphPageTabWidgetObj->count(); i++) {
         QGraphicsView *view = dynamic_cast<QGraphicsView*>(m_pGraphPageTabWidgetObj->widget(i));
         if (!dynamic_cast<GraphPage *>(view->scene())->undoStack()->isClean() ||
-            dynamic_cast<GraphPage *>(view->scene())->getUnsavedFlag()) {
+                dynamic_cast<GraphPage *>(view->scene())->getUnsavedFlag()) {
             m_pGraphPageTabWidgetObj->setTabIcon(m_pGraphPageTabWidgetObj->indexOf(view), unsaved);
         } else {
             m_pGraphPageTabWidgetObj->setTabIcon(m_pGraphPageTabWidgetObj->indexOf(view), QIcon());
@@ -2203,7 +2260,7 @@ void MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged(const QString &szT
 {
     if(szText == tr("")) return;
     if(this->m_pListWidgetGraphPagesObj->currentRow() != this->m_pGraphPageTabWidgetObj->currentIndex());
-        m_pGraphPageTabWidgetObj->setCurrentIndex(this->m_pListWidgetGraphPagesObj->currentRow());
+    m_pGraphPageTabWidgetObj->setCurrentIndex(this->m_pListWidgetGraphPagesObj->currentRow());
 }
 
 
@@ -2519,6 +2576,60 @@ void MainWindow::onSlotTabProjectMgrCurChanged(int index)
         m_pDockPropertyObj->setVisible(index == 1); // 属性停靠控件
         m_pDockElemetsObj->setVisible(index == 1); // 图形元素停靠控件
         m_pToolBarGraphPageEditObj->setVisible(index == 1);
+    }
+}
+
+/**
+ * @brief MainWindow::onSlotTabCloseRequested
+ * @details 子窗口关闭请求
+ */
+void MainWindow::onSlotTabCloseRequested(int index)
+{
+    QList<QMdiSubWindow*> list = m_pMdiAreaObj->subWindowList();
+    if (index < 0 || index >= list.count()) return;
+    QMdiSubWindow* mdiSubWindow = list[index];
+    mdiSubWindow->close();
+}
+
+
+/**
+ * @brief MainWindow::onSlotUpdateMenus
+ * @details 更新菜单
+ */
+void MainWindow::onSlotUpdateMenus()
+{
+    bool hasMdiChild = (activeMdiChild() != 0);
+    //m_xxAct->setEnabled(hasMdiChild);
+    //m_xxxAct->setEnabled(hasMdiChild);
+
+}
+
+
+void MainWindow::onSlotSetActiveSubWindow(QWidget* window)
+{
+    if (!window) return;
+    m_pMdiAreaObj->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
+}
+
+
+void MainWindow::onSlotFocusChanged(QWidget* old, QWidget* now)
+{
+    Q_UNUSED(old);
+    QWidget* pChild = activeMdiChild();
+    if (qobject_cast<QAbstractScrollArea*>(now) && pChild != now) {
+        if (ChildInterface* ifChild = qobject_cast<ChildInterface*>(now)) {
+            if (m_typeDocCurrent != ifChild->typeDocument()) {
+                setUpdatesEnabled(false);
+                if (ChildInterface* ifOldChild = qobject_cast<ChildInterface*>(m_childCurrent))
+                    ifOldChild->removeUserInterface(this);
+
+                m_childCurrent = now;
+                m_typeDocCurrent = ifChild->typeDocument();
+
+                ifChild->buildUserInterface(this);
+                setUpdatesEnabled(true);
+            }
+        }
     }
 }
 

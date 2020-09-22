@@ -43,6 +43,7 @@ SOURCES += main.cpp\
     DevicePluginLoader.cpp \
     GraphPageListWidget.cpp \
     MainWindow.cpp \
+    MdiArea.cpp \
     NewProjectDialog.cpp \
     ProjectTreeView.cpp \
     SystemParametersWin.cpp \
@@ -93,8 +94,10 @@ SOURCES += main.cpp\
     PluginManager.cpp
 
 HEADERS  += MainWindow.h \
+    ChildInterface.h \
     DevicePluginLoader.h \
     GraphPageListWidget.h \
+    MdiArea.h \
     NewProjectDialog.h \
     ../Public/Public.h \
     ProjectTreeView.h \
