@@ -3,7 +3,7 @@
 
 #include <QWidget>
 
-#include "SystemParametersWin.h"
+#include "SystemParametersChild.h"
 #include "CommunicationDeviceWin.h"
 #include "TagManagerWin.h"
 #include "RealTimeDatabaseWin.h"
@@ -83,7 +83,7 @@ private:
     PAGE_FLOWTYPE m_currPageFlow; // 当前页面
     bool m_bModifiedFlag;
     QString m_strProjectName;
-    SystemParametersWin *m_sysParamWinPtr; // 系统参数设置
+    //SystemParametersWin *m_sysParamWinPtr; // 系统参数设置
     CommunicationDeviceWin *m_communicationDeviceWinPtr; // 通讯设备
     TagManagerWin *m_tagManagerWinPtr; // 变量管理
     RealTimeDatabaseWin *m_rtdbWinPtr; // 实时数据库

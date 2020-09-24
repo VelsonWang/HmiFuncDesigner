@@ -42,13 +42,14 @@ LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 SOURCES += main.cpp\
     DevicePluginLoader.cpp \
     GraphPageListWidget.cpp \
+    ListViewEx.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
     NewProjectDialog.cpp \
     ProjectTreeView.cpp \
-    SystemParametersWin.cpp \
     NetSettingDialog.cpp \
     DatabaseSettingDialog.cpp \
+    SystemParametersChild.cpp \
     TableviewDelegate.cpp \
     TagIOEditDialog.cpp \
     TagManagerWin.cpp \
@@ -97,13 +98,14 @@ HEADERS  += MainWindow.h \
     ChildInterface.h \
     DevicePluginLoader.h \
     GraphPageListWidget.h \
+    ListViewEx.h \
     MdiArea.h \
     NewProjectDialog.h \
     ../Public/Public.h \
     ProjectTreeView.h \
-    SystemParametersWin.h \
     NetSettingDialog.h \
     DatabaseSettingDialog.h \
+    SystemParametersChild.h \
     TableviewDelegate.h \
     TagIOEditDialog.h \
     TagManagerWin.h \
@@ -154,7 +156,6 @@ HEADERS  += MainWindow.h \
 
 FORMS    += \
     NewProjectDialog.ui \
-    SystemParametersWin.ui \
     NetSettingDialog.ui \
     DatabaseSettingDialog.ui \
     TagIOEditDialog.ui \

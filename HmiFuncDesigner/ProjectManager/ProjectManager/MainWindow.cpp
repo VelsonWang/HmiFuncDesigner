@@ -43,6 +43,7 @@
 #include "variantfactory.h"
 #include "GraphPage.h"
 #include "ChildInterface.h"
+#include "SystemParametersChild.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -89,10 +90,10 @@ void MainWindow::initUI()
     sizePolicyMdiArea.setHorizontalStretch(0);
     sizePolicyMdiArea.setVerticalStretch(0);
     m_pMdiAreaObj->setSizePolicy(sizePolicyMdiArea);
-    m_pMdiAreaObj->setLineWidth(3);
-    m_pMdiAreaObj->setFrameShape(QFrame::Panel);
-    m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
-    m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
+    //m_pMdiAreaObj->setLineWidth(3);
+    //m_pMdiAreaObj->setFrameShape(QFrame::Panel);
+    //m_pMdiAreaObj->setFrameShadow(QFrame::Sunken);
+    //m_pMdiAreaObj->setViewMode(QMdiArea::TabbedView);
     ((MdiArea*)m_pMdiAreaObj)->setupMdiArea();
     QObject::connect(m_pMdiAreaObj, SIGNAL(tabCloseRequested(int)), this, SLOT(onSlotTabCloseRequested(int)));
     qApp->installEventFilter(this);
@@ -260,17 +261,9 @@ void MainWindow::initUI()
 
 MainWindow::~MainWindow()
 {
-#define DEL_OBJ(obj_ptr) do\
-    if(obj_ptr != Q_NULLPTR) {\
-    delete obj_ptr;\
-    obj_ptr = Q_NULLPTR;\
-} while(0);
-
     DEL_OBJ(m_pVariantPropertyMgrObj);
     DEL_OBJ(m_pPropertyEditorObj);
     DEL_OBJ(m_pVariantEditorFactoryObj);
-
-#undef DEL_OBJ
 }
 
 
@@ -652,31 +645,26 @@ void MainWindow::createToolbars()
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
 }
 
-#if 0
-QWidget* MainWindow::activeMdiChild()
-{
-    if (QMdiSubWindow* activeSubWindow = m_mdiArea->activeSubWindow())
-        return activeSubWindow->widget();
-    return Q_NULL;
-}
-#endif
-ChildForm *MainWindow::activeMdiChild()
+
+QWidget *MainWindow::activeMdiChild()
 {
     if (QMdiSubWindow *activeSubWindow = this->m_pMdiAreaObj->activeSubWindow()) {
-        return qobject_cast<ChildForm *>(activeSubWindow->widget());
+        return qobject_cast<QWidget *>(activeSubWindow->widget());
     }
     return Q_NULLPTR;
 }
 
-void MainWindow::setActiveSubWindow(ChildForm *window)
+void MainWindow::onSlotSetActiveSubWindow(QWidget *window)
 {
     if (!window) return;
-    window->showMaximized();
-    m_szCurItem = window->windowTitle();
-    this->m_pMdiAreaObj->setActiveSubWindow(Q_NULLPTR);  // Activates the subwindow window. If
-    // window is 0, any current active window
-    // is deactivated.
-    this->m_pMdiAreaObj->setActiveSubWindow(qobject_cast<QMdiSubWindow *>(window));
+    QMdiSubWindow *pWndObj = qobject_cast<QMdiSubWindow *>(window);
+    if(pWndObj) {
+        QWidget *pWidgetObj = qobject_cast<QWidget *>(pWndObj->widget());
+        if(pWidgetObj) {
+            m_szCurItem = window->windowTitle();
+        }
+    }
+    this->m_pMdiAreaObj->setActiveSubWindow(pWndObj);
 }
 
 ChildForm *MainWindow::getActiveSubWindow()
@@ -684,36 +672,16 @@ ChildForm *MainWindow::getActiveSubWindow()
     return qobject_cast<ChildForm *>(this->m_pMdiAreaObj->activeSubWindow()->widget());
 }
 
-#if 0
-QMdiSubWindow* MainWindow::findMdiChild(const QString& fileName)
+
+QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
 {
-    QString canonicalFilePath = QFileInfo(fileName).canonicalFilePath();
-    foreach (QMdiSubWindow* window, m_mdiArea->subWindowList())
-    {
-        ChildInterface* ifChild = qobject_cast<ChildInterface*>(window->widget());
-        if (ifChild && ifChild->currentFile() == canonicalFilePath)
-            return window;
-    }
-    return 0;
-}
-#endif
-ChildForm *MainWindow::findMdiChild(const QString &windowTitle)
-{
-    foreach (QMdiSubWindow *window, this->m_pMdiAreaObj->subWindowList()) {
-        ChildForm *pChildWin = qobject_cast<ChildForm *>(window->widget());
-        if (pChildWin->windowTitle() == windowTitle) return pChildWin;
+    foreach (QMdiSubWindow *wnd, this->m_pMdiAreaObj->subWindowList()) {
+        ChildInterface *ifChild = qobject_cast<ChildInterface *>(wnd->widget());
+        if (ifChild && ifChild->wndTitle() == szWndTitle) return wnd;
     }
     return Q_NULLPTR;
 }
 
-QMdiSubWindow *MainWindow::findMdiSubWindow(const QString &windowTitle)
-{
-    foreach (QMdiSubWindow *window, this->m_pMdiAreaObj->subWindowList()) {
-        ChildBase *pChildWin = qobject_cast<ChildBase *>(window->widget());
-        if (pChildWin->windowTitle() == windowTitle) return window;
-    }
-    return Q_NULLPTR;
-}
 
 /*
 * 新建工程时，创建缺省IO变量组
@@ -745,7 +713,6 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
                     m_pMdiAreaObj->subWindowList().size() == 1) {
                 if (ChildInterface* ifOldChild = qobject_cast<ChildInterface*>(m_childCurrent))
                     ifOldChild->removeUserInterface(this);
-
                 m_childCurrent = Q_NULLPTR;
                 m_typeDocCurrent = ChildInterface::td_None;
             }
@@ -926,16 +893,37 @@ void MainWindow::enableToolBar(const QString &szText)
 
 void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
 {
-    QString winTittle = szItemText;
+    QString szWndTittle = szItemText;
 
-    ChildForm *findForm = findMdiChild(m_szProjName);
-    if(findForm == Q_NULLPTR) {
-        findForm = new ChildForm(this, m_szProjName);
-        findForm->setWindowTitle(m_szProjName);
-        this->m_pMdiAreaObj->addSubWindow(findForm);
-        connect(this, SIGNAL(treeItemClicked(const QString &)),
-                findForm, SLOT(treeItemClicked(const QString &)), Qt::DirectConnection);
+    QMdiSubWindow *pWndObj = findMdiChild(szWndTittle);
+    if(pWndObj == Q_NULLPTR) {
+        QWidget *pWidgetObj = Q_NULLPTR;
+        if(szItemText == tr("系统参数")) {
+            SystemParametersChild *pChildObj = new SystemParametersChild(this);
+            pChildObj->m_szProjectName = m_szProjName;
+            pWidgetObj = pChildObj;
+            pWidgetObj->setWindowTitle(tr("系统参数"));
+        }
+
+        if(pWidgetObj) {
+            pWndObj = this->m_pMdiAreaObj->addSubWindow(pWidgetObj);
+            pWidgetObj->show();
+        }
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
 
     ////////////////////////////////////////////////////////////////////////
 
@@ -1007,9 +995,11 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
     } else if(szItemText == tr("脚本编辑器")) {
         findForm->switchPage(PAGE_SCRIPT_MANAGER);
     }
+#endif
 
-    setActiveSubWindow(findForm);
-    emit treeItemClicked(winTittle);
+
+    onSlotSetActiveSubWindow(pWndObj);
+    emit treeItemClicked(szWndTittle);
 }
 
 
@@ -1277,10 +1267,10 @@ void MainWindow::onSlotDownloadProject()
  */
 void MainWindow::onSlotAddTag()
 {
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->addVariableTag();
-    }
+//    ChildForm *window = findMdiChild(this->m_szCurItem);
+//    if(window != Q_NULLPTR) {
+//        window->addVariableTag();
+//    }
 }
 
 
@@ -1290,10 +1280,10 @@ void MainWindow::onSlotAddTag()
  */
 void MainWindow::onSlotAppendTag()
 {
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->appendVariableTag();
-    }
+//    ChildForm *window = findMdiChild(this->m_szCurItem);
+//    if(window != Q_NULLPTR) {
+//        window->appendVariableTag();
+//    }
 }
 
 
@@ -1303,10 +1293,10 @@ void MainWindow::onSlotAppendTag()
  */
 void MainWindow::onSlotRowCopyTag()
 {
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->rowCopyVariableTag();
-    }
+//    ChildForm *window = findMdiChild(this->m_szCurItem);
+//    if(window != Q_NULLPTR) {
+//        window->rowCopyVariableTag();
+//    }
 }
 
 
@@ -1317,10 +1307,10 @@ void MainWindow::onSlotRowCopyTag()
  */
 void MainWindow::onSlotModifyTag()
 {
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->modifyVariableTag();
-    }
+//    ChildForm *window = findMdiChild(this->m_szCurItem);
+//    if(window != Q_NULLPTR) {
+//        window->modifyVariableTag();
+//    }
 }
 
 /**
@@ -1329,10 +1319,10 @@ void MainWindow::onSlotModifyTag()
  */
 void MainWindow::onSlotDeleteTag()
 {
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->deleteVariableTag();
-    }
+//    ChildForm *window = findMdiChild(this->m_szCurItem);
+//    if(window != Q_NULLPTR) {
+//        window->deleteVariableTag();
+//    }
 }
 
 
@@ -1348,10 +1338,10 @@ void MainWindow::onSlotExportTag()
                 QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     if (strSaveCsvPath == "") return;
 
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->variableTagExportToCsv(strSaveCsvPath);
-    }
+//    ChildForm *window = findMdiChild(this->m_szCurItem);
+//    if(window != Q_NULLPTR) {
+//        window->variableTagExportToCsv(strSaveCsvPath);
+//    }
 }
 
 
@@ -1373,12 +1363,12 @@ void MainWindow::onSlotImportTag()
     QString strGroupName = strCsvName.right(strCsvName.length() - strCsvName.lastIndexOf("-") - 1);
 
     if(strCsvName.startsWith(tr("中间变量"))) {
-        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
-        if(pFindForm != Q_NULLPTR) {
-            QString titleNew = tr("中间变量");
-            pFindForm->SetTitle(titleNew);
-            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-        }
+//        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
+//        if(pFindForm != Q_NULLPTR) {
+//            QString titleNew = tr("中间变量");
+//            pFindForm->SetTitle(titleNew);
+//            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
+//        }
     } else if(strCsvName.startsWith(tr("设备变量"))) {
         bool found = false;
 
@@ -1414,19 +1404,19 @@ void MainWindow::onSlotImportTag()
             onTreeViewProjectClicked(strGroupName);
             QApplication::processEvents();
 
-            ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
-            if(pFindForm != Q_NULLPTR) {
-                pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-            }
+//            ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
+//            if(pFindForm != Q_NULLPTR) {
+//                pFindForm->variableTagImportFromCsv(strSaveCsvFile);
+//            }
             return;
         }
 
-        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
-        if(pFindForm != Q_NULLPTR) {
-            QString szWinTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
-            pFindForm->SetTitle(szWinTittle);
-            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-        }
+//        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
+//        if(pFindForm != Q_NULLPTR) {
+//            QString szWinTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
+//            pFindForm->SetTitle(szWinTittle);
+//            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
+//        }
     }
 }
 
@@ -2550,10 +2540,10 @@ void MainWindow::clearGraphPageListWidget()
  */
 void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
 {
-    ChildForm *window = findMdiChild(this->m_szCurItem);
-    if(window != Q_NULLPTR) {
-        window->SetTitle(szTitle);
-    }
+//    ChildForm *window = findMdiChild(this->m_szCurItem);
+//    if(window != Q_NULLPTR) {
+//        window->SetTitle(szTitle);
+//    }
 }
 
 
@@ -2603,14 +2593,6 @@ void MainWindow::onSlotUpdateMenus()
     //m_xxxAct->setEnabled(hasMdiChild);
 
 }
-
-
-void MainWindow::onSlotSetActiveSubWindow(QWidget* window)
-{
-    if (!window) return;
-    m_pMdiAreaObj->setActiveSubWindow(qobject_cast<QMdiSubWindow*>(window));
-}
-
 
 void MainWindow::onSlotFocusChanged(QWidget* old, QWidget* now)
 {

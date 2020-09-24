@@ -15,11 +15,12 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "SystemParametersWin.h"
+#include "SystemParametersChild.h"
 #include "ChildBase.h"
 #include "ChildForm.h"
 #include "ProjectTreeView.h"
 #include "GraphPageListWidget.h"
+#include "ChildInterface.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -51,8 +52,7 @@ public:
 signals:
     void treeItemClicked(const QString &itemText);
 
-private slots:   
-    void setActiveSubWindow(ChildForm *window);
+private slots:
     ChildForm* getActiveSubWindow();
     void on_actionWorkSpace_triggered(bool checked);
     // 工程树节点被单击
@@ -60,10 +60,9 @@ private slots:
 
 
 private:
-    ChildForm* activeMdiChild();
+    QWidget* activeMdiChild();
     void CreateItemWindows();
-    ChildForm* findMdiChild(const QString &windowTitle);
-    QMdiSubWindow* findMdiSubWindow(const QString &windowTitle);
+    QMdiSubWindow* findMdiChild(const QString &szWndTitle);
     void readSettings();  // 读取窗口设置
     void writeSettings(); // 写入窗口设置
     void UpdateProjectName(const QString &szName);
@@ -256,8 +255,8 @@ private:
     int m_iCurrentGraphPageIndex;
     QString m_szCopyGraphPageFileName;
     int m_typeDocCurrent;
-    QWidget* m_childCurrent;
-    QSignalMapper* m_windowMapper;
+    QWidget* m_childCurrent = Q_NULLPTR;
+    QSignalMapper* m_windowMapper = Q_NULLPTR;
 
     QtVariantPropertyManager *m_pVariantPropertyMgrObj = Q_NULLPTR;
     QtTreePropertyBrowser *m_pPropertyEditorObj = Q_NULLPTR;
