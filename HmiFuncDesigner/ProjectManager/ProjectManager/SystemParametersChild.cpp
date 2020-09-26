@@ -23,7 +23,8 @@ SystemParametersChild::SystemParametersChild(QWidget *parent) : QWidget(parent)
     m_pListViewProjectObj->setSpacing(20);
     m_pListViewProjectObj->setResizeMode(QListView::Adjust);
     m_pListViewProjectObj->setMovement(QListView::Static);
-    connect(m_pListViewProjectObj, &QAbstractItemView::doubleClicked, this, &SystemParametersChild::onSlotListViewProjectDoubleClicked);
+    connect(m_pListViewProjectObj, &QAbstractItemView::doubleClicked,
+            this, &SystemParametersChild::onSlotListViewProjectDoubleClicked);
 
     QVBoxLayout *pVLayoutObj = new QVBoxLayout(this);
     pVLayoutObj->setSpacing(0);
@@ -130,6 +131,7 @@ QString SystemParametersChild::currentFile() const
 
 QString SystemParametersChild::wndTitle() const
 {
+    qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << this->windowTitle();
     return this->windowTitle();
 }
 

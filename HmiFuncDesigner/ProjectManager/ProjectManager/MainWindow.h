@@ -56,7 +56,7 @@ private slots:
     ChildForm* getActiveSubWindow();
     void on_actionWorkSpace_triggered(bool checked);
     // 工程树节点被单击
-    void onSlotProjectTreeViewClicked(const QModelIndex &index);
+    void onSlotTreeProjectViewClicked(const QString &szItemText);
 
 
 private:
@@ -72,7 +72,7 @@ private:
     void updateRecentProjectList(QString newProj);
     void doOpenProject(QString proj);
     void CreateDefaultIOTagGroup();
-    void onTreeViewProjectClicked(const QString &szItemText);
+
 
 protected:
     virtual bool eventFilter(QObject*, QEvent* e);

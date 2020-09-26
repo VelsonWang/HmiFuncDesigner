@@ -2,6 +2,7 @@
 #define CHILDINTERFACE_H
 
 #include <QtPlugin>
+#include <QDebug>
 
 class QMainWindow;
 class QString;
@@ -15,7 +16,7 @@ public:
     {
         td_None,
         td_SystemParameters,
-
+        td_CommunicationDevice,
     };
 
 

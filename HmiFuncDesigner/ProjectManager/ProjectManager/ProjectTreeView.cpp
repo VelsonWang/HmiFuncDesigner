@@ -96,61 +96,13 @@ void ProjectTreeView::contextMenuEvent(QContextMenuEvent * event)
 ///
 void ProjectTreeView::onSlotClicked(const QModelIndex &index)
 {
-#if 0
-    QString szBox = "";
-    QString szPort = "";
-    QString szDevice = "";
-    QString szGroup = "";
-    QStandardItemModel *pModel = dynamic_cast<QStandardItemModel *>(this->model());
-    if(pModel != Q_NULLPTR) {
-        QStandardItem *pItem = pModel->itemFromIndex(index);
-        if(pItem != Q_NULLPTR) {
-            QString szTreeItemType = pItem->data(Qt::UserRole + 1).toString();
-            QStringList listVal = pItem->data(Qt::UserRole + 2).toStringList();
-            if(listVal.count() > 3) {
-                m_szCurBoxName = listVal.at(0);
-                m_szCurPortName = listVal.at(1);
-                m_szCurDeviceName = listVal.at(2);
-                m_szCurTagGroupName = listVal.at(3);
-            }
-            else {
-                m_szCurBoxName = "";
-                m_szCurPortName = "";
-                m_szCurDeviceName = "";
-                m_szCurTagGroupName = "";
-            }
-            if(szTreeItemType == QString("DEVICE") || szTreeItemType == QString("GROUP")) {
-                if(listVal.count() == 4) {
-                    szBox = listVal.at(0);
-                    szPort = listVal.at(1);
-                    szDevice = listVal.at(2);
-                    szGroup = listVal.at(3);
-                }
-            }
+    QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
+    if(pModelObj != Q_NULLPTR) {
+        QStandardItem *pItemObj = pModelObj->itemFromIndex(index);
+        if(pItemObj != Q_NULLPTR) {
+            emit sigNotifyClicked(pItemObj->text());
         }
     }
-
-    if(m_bDoingMonitor) {
-        Device *pDeviceObj = ConfigData::getInstance()->getCommDeviceObj(currentBoxName(), currentDeviceName());
-        bool bMasterDevice = true;
-        if(pDeviceObj != Q_NULLPTR) {
-            CollectorBox *pBoxObj = ConfigData::getInstance()->getBoxObj(currentBoxName());
-            QString szCfgFileName = QString("%1.xml").arg(pBoxObj->m_szDevModelType);
-            bMasterDevice = DeviceConfigReader::instance()->isMasterProtocol(szCfgFileName, pDeviceObj->m_szDeviceModel);
-        }
-        if(!bMasterDevice) {
-            QMessageBox msgBox;
-            msgBox.setIcon(QMessageBox::Information);
-            msgBox.setWindowTitle(tr("提示"));
-            msgBox.setStandardButtons(QMessageBox::Ok);
-            msgBox.setButtonText (QMessageBox::Ok, QString("确定"));
-            msgBox.setText("从站设备不支持监视功能!");
-            msgBox.exec();
-            return;
-        }
-    }
-    emit sigUpdateTagTable(szBox, szPort, szDevice, szGroup);
-#endif
 }
 
 ///
@@ -160,47 +112,8 @@ void ProjectTreeView::onSlotClicked(const QModelIndex &index)
 ///
 void ProjectTreeView::onSlotDoubleClicked(const QModelIndex &index)
 {
-#if 0
-    QStandardItemModel *pModel = dynamic_cast<QStandardItemModel *>(this->model());
-    if(pModel != Q_NULLPTR) {
-        QStandardItem *pItem = pModel->itemFromIndex(index);
-        if(pItem != Q_NULLPTR) {
-            QString szTreeItemType = pItem->data(Qt::UserRole + 1).toString();
-            QStringList listVal = pItem->data(Qt::UserRole + 2).toStringList();
-            if(listVal.count() > 3) {
-                m_szCurBoxName = listVal.at(0);
-                m_szCurPortName = listVal.at(1);
-                m_szCurDeviceName = listVal.at(2);
-                m_szCurTagGroupName = listVal.at(3);
-            }
-            else {
-                m_szCurBoxName = "";
-                m_szCurPortName = "";
-                m_szCurDeviceName = "";
-                m_szCurTagGroupName = "";
-            }
-            if(szTreeItemType == QString("PROJECT")) { // 鼠标双击 "工程名称"
-                onSetProjectName();
-            }
-            else if(szTreeItemType == QString("BOX")) { // 鼠标双击 "BOX名称"
-                onEditDeviceProperty();
-            }
-            else if(szTreeItemType == QString("RS232") || szTreeItemType == QString("RS485")) { // 鼠标双击 "端口RS232名称", 鼠标右键单击 "端口RS485名称"
-                onSetSerialPortParameter();
-            }
-            else if(szTreeItemType == QString("WAN") || szTreeItemType == QString("LAN")) { // 鼠标双击 "端口WAN名称", 鼠标右键单击 "端口LAN名称"
-                onSetNetWorkParameter();
-            }
-            else if(szTreeItemType == QString("DEVICE")) { // 鼠标双击 "通讯设备名称"
-                onEditCommDeviceProperty();
-            }
-            else if(szTreeItemType == QString("GROUP")) { // 鼠标双击 "变量组名称"
-                onEditTagGroupProperty();
-            }
-            updateUI();
-        }
-    }
-#endif
+
+
 }
 
 
@@ -233,14 +146,6 @@ void ProjectTreeView::updateUI()
     m_pNetDeviceObj->setEditable(false);
     m_pCommunicationDeviceObj->appendRow(m_pNetDeviceObj);
 
-#if 0
-    m_pBusDeviceObj = new QStandardItem(QIcon(":/images/pj_bus.png"), tr("总线设备"));
-    m_pBusDeviceObj->setEditable(false);
-    m_pCommunicationDeviceObj->appendRow(m_pBusDeviceObj);
-    m_pOPCDeviceObj = new QStandardItem(QIcon(":/images/pj_opc.png"), tr("OPC设备"));
-    m_pOPCDeviceObj->setEditable(false);
-    m_pCommunicationDeviceObj->appendRow(m_pOPCDeviceObj);
-#endif
 
     m_pProjectItemObj->appendRow(m_pCommunicationDeviceObj);
 

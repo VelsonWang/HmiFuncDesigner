@@ -1,5 +1,5 @@
-﻿#ifndef SYSTEMPARAMETERSWIN_H
-#define SYSTEMPARAMETERSWIN_H
+﻿#ifndef SYSTEMPARAMETERSCHILD_H
+#define SYSTEMPARAMETERSCHILD_H
 
 #include "ChildInterface.h"
 #include "ListViewEx.h"
@@ -39,4 +39,4 @@ private:
     ListViewEx *m_pListViewProjectObj = Q_NULLPTR;
 };
 
-#endif // SYSTEMPARAMETERSWIN_H
+#endif

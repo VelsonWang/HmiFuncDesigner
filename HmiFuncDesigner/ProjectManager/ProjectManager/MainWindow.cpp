@@ -18,7 +18,7 @@
 #include <QTime>
 #include <QDir>
 #include "AboutDialog.h"
-#include "CommunicationDeviceWin.h"
+#include "CommunicationDeviceChild.h"
 #include "ConfigUtils.h"
 #include "Helper.h"
 #include "NewProjectDialog.h"
@@ -44,6 +44,7 @@
 #include "GraphPage.h"
 #include "ChildInterface.h"
 #include "SystemParametersChild.h"
+#include "CommunicationDeviceChild.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -124,7 +125,7 @@ void MainWindow::initUI()
     projectTabWidgetLayout->setContentsMargins(0, 0, 0, 0);
     m_pProjectTreeViewObj = new ProjectTreeView(projectTabWidget);
     m_pProjectTreeViewObj->updateUI();
-    connect(m_pProjectTreeViewObj, &QAbstractItemView::clicked, this, &MainWindow::onSlotProjectTreeViewClicked);
+    connect(m_pProjectTreeViewObj, &ProjectTreeView::sigNotifyClicked, this, &MainWindow::onSlotTreeProjectViewClicked);
     connect(m_pProjectTreeViewObj, &ProjectTreeView::sigNotifySetWindowSetTitle, this, &MainWindow::onSlotSetWindowSetTitle);
     projectTabWidgetLayout->addWidget(m_pProjectTreeViewObj);
 
@@ -675,8 +676,10 @@ ChildForm *MainWindow::getActiveSubWindow()
 
 QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
 {
+    qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << szWndTitle;
     foreach (QMdiSubWindow *wnd, this->m_pMdiAreaObj->subWindowList()) {
         ChildInterface *ifChild = qobject_cast<ChildInterface *>(wnd->widget());
+        if (ifChild) qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << "ifChild->wndTitle: " << ifChild->wndTitle();
         if (ifChild && ifChild->wndTitle() == szWndTitle) return wnd;
     }
     return Q_NULLPTR;
@@ -891,23 +894,48 @@ void MainWindow::enableToolBar(const QString &szText)
 
 }
 
-void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
+
+/**
+ * @brief MainWindow::onSlotProjectTreeViewClicked
+ * @details 工程树节点被单击
+ * @param index
+ */
+void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
+    if(m_szProjName == "") return;
+
+    qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << szItemText;
+
     QString szWndTittle = szItemText;
 
     QMdiSubWindow *pWndObj = findMdiChild(szWndTittle);
     if(pWndObj == Q_NULLPTR) {
+        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
         QWidget *pWidgetObj = Q_NULLPTR;
+        ChildInterface *pChildObj = Q_NULLPTR;
         if(szItemText == tr("系统参数")) {
-            SystemParametersChild *pChildObj = new SystemParametersChild(this);
+            SystemParametersChild *pObj = new SystemParametersChild(this);
+            pWidgetObj = pObj;
+            pChildObj = pObj;
             pChildObj->m_szProjectName = m_szProjName;
-            pWidgetObj = pChildObj;
-            pWidgetObj->setWindowTitle(tr("系统参数"));
+            pChildObj->m_szItemName = szItemText;
+        } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") ||
+                  szItemText == tr("网络设备")) {
+            CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);
+            pWidgetObj = pObj;
+            pChildObj = pObj;
+            pChildObj->m_szProjectName = m_szProjName;
+            pChildObj->m_szItemName = szItemText;
+        }
+
+        if(pChildObj) {
+            pChildObj->buildUserInterface(this);
         }
 
         if(pWidgetObj) {
+            pWidgetObj->setWindowTitle(szItemText);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pWidgetObj);
-            pWidgetObj->show();
+            pWidgetObj->showMaximized();
         }
     }
 
@@ -1003,18 +1031,6 @@ void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
 }
 
 
-/**
- * @brief MainWindow::onSlotProjectTreeViewClicked
- * @details 工程树节点被单击
- * @param index
- */
-void MainWindow::onSlotProjectTreeViewClicked(const QModelIndex &index)
-{
-    if(m_szProjName == "") return;
-    QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->m_pProjectTreeViewObj->model());
-    QStandardItem *pItemObj = pModelObj->itemFromIndex(index);
-    onTreeViewProjectClicked(pItemObj->text());
-}
 
 void MainWindow::UpdateProjectName(const QString &szName)
 {
@@ -1399,9 +1415,9 @@ void MainWindow::onSlotImportTag()
             UpdateDeviceVariableTableGroup();
             enableToolBar(strCsvName);
 
-            onTreeViewProjectClicked(tr("设备变量"));
+            onSlotTreeProjectViewClicked(tr("设备变量"));
             QApplication::processEvents();
-            onTreeViewProjectClicked(strGroupName);
+            onSlotTreeProjectViewClicked(strGroupName);
             QApplication::processEvents();
 
 //            ChildForm* pFindForm = findMdiChild(this->m_szCurItem);

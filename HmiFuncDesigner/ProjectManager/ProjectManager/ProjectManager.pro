@@ -40,6 +40,7 @@ LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
 SOURCES += main.cpp\
+    CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
     GraphPageListWidget.cpp \
     ListViewEx.cpp \
@@ -55,7 +56,6 @@ SOURCES += main.cpp\
     TagManagerWin.cpp \
     TagTmpEditDialog.cpp \
     UserAuthorityDialog.cpp \
-    CommunicationDeviceWin.cpp \
     NewComDeviceDialog.cpp \
     ChildBase.cpp \
     NewVariableGroupDialog.cpp \
@@ -96,6 +96,7 @@ SOURCES += main.cpp\
 
 HEADERS  += MainWindow.h \
     ChildInterface.h \
+    CommunicationDeviceChild.h \
     DevicePluginLoader.h \
     GraphPageListWidget.h \
     ListViewEx.h \
@@ -111,7 +112,6 @@ HEADERS  += MainWindow.h \
     TagManagerWin.h \
     TagTmpEditDialog.h \
     UserAuthorityDialog.h \
-    CommunicationDeviceWin.h \
     NewComDeviceDialog.h \
     ChildBase.h \
     NewVariableGroupDialog.h \
@@ -162,7 +162,6 @@ FORMS    += \
     TagManagerWin.ui \
     TagTmpEditDialog.ui \
     UserAuthorityDialog.ui \
-    CommunicationDeviceWin.ui \
     NewComDeviceDialog.ui \
     NewVariableGroupDialog.ui \
     DeviceListDialog.ui \

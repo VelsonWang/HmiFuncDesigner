@@ -1,6 +1,6 @@
 ﻿#include "TagManagerWin.h"
 #include "ui_TagManagerWin.h"
-#include "CommunicationDeviceWin.h"
+#include "CommunicationDeviceChild.h"
 #include "ui_CommunicationDeviceWin.h"
 #include "NewComDeviceDialog.h"
 #include "TagIOEditDialog.h"

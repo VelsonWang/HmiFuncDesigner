@@ -1,0 +1,57 @@
+﻿#ifndef COMMUNICATIONDEVICECHILD_H
+#define COMMUNICATIONDEVICECHILD_H
+
+#include "ChildInterface.h"
+#include "ListViewEx.h"
+#include <QWidget>
+#include <QStandardItemModel>
+#include <QVBoxLayout>
+#include <QListView>
+
+class CommunicationDeviceChild : public QWidget, public ChildInterface
+{
+    Q_OBJECT
+
+public:
+    explicit CommunicationDeviceChild(QWidget *parent = Q_NULLPTR);
+    ~CommunicationDeviceChild();
+
+public:
+    TypeDocument typeDocument() const {return td_CommunicationDevice;}
+
+    void buildUserInterface(QMainWindow* pMainWin);
+    void removeUserInterface(QMainWindow* pMainWin);
+
+    bool open();
+    bool save();
+    bool saveAs();
+
+    QString userFriendlyCurrentFile();
+    QString currentFile() const;
+    QString wndTitle() const;
+
+    bool hasSelection() const;
+
+private:
+    void listViewUISetting();
+    void listViewUpdate();
+    void listViewCommunicationDeviceUpdate();
+    void listViewCOMDeviceUpdate();
+    void listViewNetDeviceUpdate();
+
+protected:
+    void contextMenuEvent(QContextMenuEvent * event);
+
+public slots:
+    void onSlotListViewProjectDoubleClicked(const QModelIndex &index);
+    void onSlotNewDevice();
+    void onSlotModifyDevice();
+    void onSlotDeleteDevice();
+
+private:
+    QStandardItemModel *m_pCommDevModelObj = Q_NULLPTR;
+    ListViewEx *m_pListViewCommDevObj = Q_NULLPTR;
+
+};
+
+#endif

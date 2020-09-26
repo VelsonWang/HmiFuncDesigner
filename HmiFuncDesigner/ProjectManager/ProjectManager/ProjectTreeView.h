@@ -48,6 +48,8 @@ private slots:
 signals:
     // 设置窗口标题
     void sigNotifySetWindowSetTitle(const QString &szTitle);
+    // 叶节点被单击
+    void sigNotifyClicked(const QString &szItemText);
 
 private:
     QStandardItemModel *m_pItemModelObj = Q_NULLPTR;
@@ -56,8 +58,6 @@ private:
     QStandardItem *m_pCommunicationDeviceObj = Q_NULLPTR;
     QStandardItem *m_pComDeviceObj = Q_NULLPTR;
     QStandardItem *m_pNetDeviceObj = Q_NULLPTR;
-    QStandardItem *m_pBusDeviceObj = Q_NULLPTR;
-    QStandardItem *m_pOPCDeviceObj = Q_NULLPTR;
     QStandardItem *m_pDataBaseConfigObj = Q_NULLPTR;
     QStandardItem *m_pDevTagObj = Q_NULLPTR;
     QList<QStandardItem *> m_pDevVariableTabListObj;
