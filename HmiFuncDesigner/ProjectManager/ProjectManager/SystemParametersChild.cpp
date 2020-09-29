@@ -131,7 +131,6 @@ QString SystemParametersChild::currentFile() const
 
 QString SystemParametersChild::wndTitle() const
 {
-    qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << this->windowTitle();
     return this->windowTitle();
 }
 

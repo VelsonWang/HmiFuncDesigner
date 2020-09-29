@@ -11,7 +11,7 @@
 class CommunicationDeviceChild : public QWidget, public ChildInterface
 {
     Q_OBJECT
-
+    Q_INTERFACES(ChildInterface)
 public:
     explicit CommunicationDeviceChild(QWidget *parent = Q_NULLPTR);
     ~CommunicationDeviceChild();

@@ -410,7 +410,6 @@ QString CommunicationDeviceChild::currentFile() const
 
 QString CommunicationDeviceChild::wndTitle() const
 {
-    qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << this->windowTitle();
     return this->windowTitle();
 }
 

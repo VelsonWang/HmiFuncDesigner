@@ -11,6 +11,7 @@
 class SystemParametersChild : public QWidget, public ChildInterface
 {
     Q_OBJECT
+    Q_INTERFACES(ChildInterface)
 public:
     explicit SystemParametersChild(QWidget *parent = Q_NULLPTR);
     ~SystemParametersChild();

@@ -676,10 +676,8 @@ ChildForm *MainWindow::getActiveSubWindow()
 
 QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
 {
-    qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << szWndTitle;
     foreach (QMdiSubWindow *wnd, this->m_pMdiAreaObj->subWindowList()) {
         ChildInterface *ifChild = qobject_cast<ChildInterface *>(wnd->widget());
-        if (ifChild) qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << "ifChild->wndTitle: " << ifChild->wndTitle();
         if (ifChild && ifChild->wndTitle() == szWndTitle) return wnd;
     }
     return Q_NULLPTR;
@@ -904,25 +902,25 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
     if(m_szProjName == "") return;
 
-    qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << szItemText;
-
     QString szWndTittle = szItemText;
 
     QMdiSubWindow *pWndObj = findMdiChild(szWndTittle);
     if(pWndObj == Q_NULLPTR) {
-        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-        QWidget *pWidgetObj = Q_NULLPTR;
         ChildInterface *pChildObj = Q_NULLPTR;
         if(szItemText == tr("系统参数")) {
             SystemParametersChild *pObj = new SystemParametersChild(this);
-            pWidgetObj = pObj;
+            pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
+            pObj->setWindowTitle(szItemText);
+            pObj->showMaximized();
             pChildObj = pObj;
             pChildObj->m_szProjectName = m_szProjName;
             pChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") ||
                   szItemText == tr("网络设备")) {
             CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);
-            pWidgetObj = pObj;
+            pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
+            pObj->setWindowTitle(szItemText);
+            pObj->showMaximized();
             pChildObj = pObj;
             pChildObj->m_szProjectName = m_szProjName;
             pChildObj->m_szItemName = szItemText;
@@ -930,12 +928,6 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 
         if(pChildObj) {
             pChildObj->buildUserInterface(this);
-        }
-
-        if(pWidgetObj) {
-            pWidgetObj->setWindowTitle(szItemText);
-            pWndObj = this->m_pMdiAreaObj->addSubWindow(pWidgetObj);
-            pWidgetObj->showMaximized();
         }
     }
 
