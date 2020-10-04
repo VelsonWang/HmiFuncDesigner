@@ -53,7 +53,7 @@ SOURCES += main.cpp\
     SystemParametersChild.cpp \
     TableviewDelegate.cpp \
     TagIOEditDialog.cpp \
-    TagManagerWin.cpp \
+    TagManagerChild.cpp \
     TagTmpEditDialog.cpp \
     UserAuthorityDialog.cpp \
     NewComDeviceDialog.cpp \
@@ -109,7 +109,7 @@ HEADERS  += MainWindow.h \
     SystemParametersChild.h \
     TableviewDelegate.h \
     TagIOEditDialog.h \
-    TagManagerWin.h \
+    TagManagerChild.h \
     TagTmpEditDialog.h \
     UserAuthorityDialog.h \
     NewComDeviceDialog.h \
@@ -159,7 +159,6 @@ FORMS    += \
     NetSettingDialog.ui \
     DatabaseSettingDialog.ui \
     TagIOEditDialog.ui \
-    TagManagerWin.ui \
     TagTmpEditDialog.ui \
     UserAuthorityDialog.ui \
     NewComDeviceDialog.ui \

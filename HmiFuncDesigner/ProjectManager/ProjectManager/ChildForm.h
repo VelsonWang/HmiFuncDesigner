@@ -4,8 +4,7 @@
 #include <QWidget>
 
 #include "SystemParametersChild.h"
-#include "CommunicationDeviceChild.h"
-#include "TagManagerWin.h"
+#include "TagManagerChild.h"
 #include "RealTimeDatabaseWin.h"
 #include "ScriptManageWin.h"
 
@@ -83,7 +82,6 @@ private:
     PAGE_FLOWTYPE m_currPageFlow; // 当前页面
     bool m_bModifiedFlag;
     QString m_strProjectName;
-    TagManagerWin *m_tagManagerWinPtr; // 变量管理
     RealTimeDatabaseWin *m_rtdbWinPtr; // 实时数据库
     ScriptManageWin *m_scriptManageWinPtr; // 脚本编辑器
 

@@ -18,7 +18,6 @@
 #include <QTime>
 #include <QDir>
 #include "AboutDialog.h"
-#include "CommunicationDeviceChild.h"
 #include "ConfigUtils.h"
 #include "Helper.h"
 #include "NewProjectDialog.h"
@@ -30,7 +29,7 @@
 #include "RealTimeDatabaseWin.h"
 #include "ScriptManageWin.h"
 #include "ProjectData.h"
-#include "TagManagerWin.h"
+#include "TagManagerChild.h"
 #include "MainWindow.h"
 #include "Helper.h"
 #include "ProjectData.h"
@@ -45,6 +44,7 @@
 #include "ChildInterface.h"
 #include "SystemParametersChild.h"
 #include "CommunicationDeviceChild.h"
+#include "TagManagerChild.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -904,13 +904,37 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 
     QString szWndTittle = szItemText;
 
+    if(szItemText == tr("变量管理") || szItemText == tr("设备变量")) return;
+
+    bool isTagWndFound = false;
+    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
+        szWndTittle = szItemText;
+        isTagWndFound = true;
+    } else {
+        // 设备变量
+        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+        tagIOGroup.load(ProjectData::getInstance()->dbData_);
+
+        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
+            if (szItemText == pObj->m_szShowName) {
+                szWndTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
+                isTagWndFound = true;
+            }
+        }
+
+        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
+        tagIOGroup.listTagIOGroupDBItem_.clear();
+    }
+
+    /////////////////////////////////////////////////////////////////////////
+
     QMdiSubWindow *pWndObj = findMdiChild(szWndTittle);
     if(pWndObj == Q_NULLPTR) {
         ChildInterface *pChildObj = Q_NULLPTR;
         if(szItemText == tr("系统参数")) {
             SystemParametersChild *pObj = new SystemParametersChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szItemText);
+            pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pChildObj = pObj;
             pChildObj->m_szProjectName = m_szProjName;
@@ -919,18 +943,29 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
                   szItemText == tr("网络设备")) {
             CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szItemText);
+            pObj->setWindowTitle(szWndTittle);
+            pObj->showMaximized();
+            pChildObj = pObj;
+            pChildObj->m_szProjectName = m_szProjName;
+            pChildObj->m_szItemName = szItemText;
+        } else if(isTagWndFound) { // 标签变量
+            TagManagerChild *pObj = new TagManagerChild(this);
+            pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
+            pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pChildObj = pObj;
             pChildObj->m_szProjectName = m_szProjName;
             pChildObj->m_szItemName = szItemText;
         }
 
+
         if(pChildObj) {
             pChildObj->buildUserInterface(this);
         }
     }
 
+
+    ////////////////////////////////////////////////////////////////////////
 
 
 
@@ -944,68 +979,12 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 
 
 #if 0
-
-    ////////////////////////////////////////////////////////////////////////
-
-    if(szItemText == tr("变量管理") || szItemText == tr("设备变量")) {
-        if (findForm) findForm->hide();
-        return;
-    }
-
-    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
-        winTittle = szItemText;
-    } else {
-        // 设备变量
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if (szItemText == pObj->m_szShowName)
-                winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
-        }
-
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
-    }
-
     // 工具条使能
     enableToolBar(winTittle);
 
     ////////////////////////////////////////////////////////////////////////
 
-    bool VarFound = false;
-    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
-        VarFound = true;
-    } else {
-        // 设备变量
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if (szItemText == pObj->m_szShowName)
-                VarFound = true;
-        }
-
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
-    }
-
-    ////////////////////////////////////////////////////////////////////////
-
-    if(szItemText == tr("系统参数")) {
-        findForm->switchPage(PAGE_SYSTEM_PARAMETER);
-    } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") || szItemText == tr("网络设备")) {
-        findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
-    } else if(VarFound) { // 变量
-        if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
-            winTittle = szItemText;
-        } else {
-            winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
-        }
-        findForm->switchPage(PAGE_VARIABLE_MANAGER);
-        if(szItemText == tr("设备变量"))
-            findForm->switchPage(PAGE_NONE);
-    } else if(szItemText == tr("画面")) {
+    if(szItemText == tr("画面")) {
         findForm->switchPage(PAGE_DRAW_PAGE);
     } else if(szItemText == tr("实时数据库")) {
         findForm->switchPage(PAGE_RTDB);

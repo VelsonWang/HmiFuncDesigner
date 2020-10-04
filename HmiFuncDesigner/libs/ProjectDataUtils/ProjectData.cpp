@@ -54,8 +54,7 @@ void ProjectData::releaseInstance()
  * @param projFile 工程名称
  * @return true-成功, false-失败
  */
-bool ProjectData::createOrOpenProjectData(const QString &projPath,
-                                          const QString &projName)
+bool ProjectData::createOrOpenProjectData(const QString &projPath, const QString &projName)
 {
     QString fileName = projPath;
 

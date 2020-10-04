@@ -15,7 +15,6 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "SystemParametersChild.h"
 #include "ChildBase.h"
 #include "ChildForm.h"
 #include "ProjectTreeView.h"

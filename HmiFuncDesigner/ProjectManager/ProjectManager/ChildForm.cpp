@@ -12,12 +12,6 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
     setMinimumSize(600, 400);
     qRegisterMetaType<PAGE_FLOWTYPE>("PAGE_FLOWTYPE");
 
-
-    // 变量管理
-    m_tagManagerWinPtr = new TagManagerWin(this);
-    m_tagManagerWinPtr->setProjectName(m_strProjectName);
-    ui->stackedWidget->addWidget(m_tagManagerWinPtr);
-
     // 实时数据库
     m_rtdbWinPtr = new RealTimeDatabaseWin(this);
     m_rtdbWinPtr->setProjectName(m_strProjectName);
@@ -32,11 +26,6 @@ ChildForm::ChildForm(QWidget *parent, const QString & projName) :
 
 ChildForm::~ChildForm()
 {
-    if(m_tagManagerWinPtr != Q_NULLPTR) {
-        delete m_tagManagerWinPtr;
-        m_tagManagerWinPtr = Q_NULLPTR;
-    }
-
     if(m_rtdbWinPtr != Q_NULLPTR) {
         delete m_rtdbWinPtr;
         m_rtdbWinPtr = Q_NULLPTR;
@@ -88,16 +77,13 @@ bool ChildForm::getModifiedFlag()
 
 void ChildForm::SetTitle(const QString &title)
 {
-    if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_tagManagerWinPtr->SetTitle(title);
-    }
     this->setWindowTitle(title);
 }
 
 QString ChildForm::getItemName() const
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        return m_tagManagerWinPtr->getItemName();
+        //return m_tagManagerWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         return m_rtdbWinPtr->getItemName();
     } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
@@ -112,7 +98,7 @@ QString ChildForm::getItemName() const
 void ChildForm::addVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->onTagAdd();
+        //m_tagManagerWinPtr->onTagAdd();
     }
 }
 
@@ -122,7 +108,7 @@ void ChildForm::addVariableTag()
 void ChildForm::appendVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->onTagAppend();
+        //m_tagManagerWinPtr->onTagAppend();
     }
 }
 
@@ -133,7 +119,7 @@ void ChildForm::appendVariableTag()
 void ChildForm::rowCopyVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->onTagRowCopy();
+        //m_tagManagerWinPtr->onTagRowCopy();
     }
 }
 
@@ -144,7 +130,7 @@ void ChildForm::rowCopyVariableTag()
 void ChildForm::modifyVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->onTagModify();
+        //m_tagManagerWinPtr->onTagModify();
     }
 }
 
@@ -154,7 +140,7 @@ void ChildForm::modifyVariableTag()
 void ChildForm::deleteVariableTag()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->onTagDelete();
+        //m_tagManagerWinPtr->onTagDelete();
     }
 }
 
@@ -165,7 +151,7 @@ void ChildForm::deleteVariableTag()
 void ChildForm::variableTagExportToCsv(const QString &path)
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->exportToCsv(path);
+        //m_tagManagerWinPtr->exportToCsv(path);
     }
 }
 
@@ -177,7 +163,7 @@ void ChildForm::variableTagExportToCsv(const QString &path)
 void ChildForm::variableTagImportFromCsv(const QString &file)
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) {
-        m_tagManagerWinPtr->importFromCsv(file);
+        //m_tagManagerWinPtr->importFromCsv(file);
     }
 }
 
@@ -194,7 +180,7 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
     if(m_currPageFlow == PAGE_NONE) {
         ui->stackedWidget->setCurrentWidget(Q_NULLPTR);
     } else if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        ui->stackedWidget->setCurrentWidget(m_tagManagerWinPtr);
+        //ui->stackedWidget->setCurrentWidget(m_tagManagerWinPtr);
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         ui->stackedWidget->setCurrentWidget(m_rtdbWinPtr);
     } else if(m_currPageFlow == PAGE_SCRIPT_MANAGER) { // 脚本编辑器
@@ -209,7 +195,7 @@ void ChildForm::switchPage(PAGE_FLOWTYPE page)
 void ChildForm::open()
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_tagManagerWinPtr->open();
+        //m_tagManagerWinPtr->open();
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->open();
     } else if(m_currPageFlow == PAGE_RTDB) { // 脚本编辑器
@@ -222,7 +208,7 @@ void ChildForm::open()
  */
 void ChildForm::save()
 {
-    m_tagManagerWinPtr->save();
+    //m_tagManagerWinPtr->save();
     m_rtdbWinPtr->save();
     m_scriptManageWinPtr->save();
 }
@@ -231,8 +217,8 @@ void ChildForm::save()
 void ChildForm::treeItemClicked(const QString &itemText)
 {
     if(m_currPageFlow == PAGE_VARIABLE_MANAGER) { // 变量管理
-        m_tagManagerWinPtr->setItemName(itemText);
-        m_tagManagerWinPtr->init(itemText);
+        //m_tagManagerWinPtr->setItemName(itemText);
+        //m_tagManagerWinPtr->init(itemText);
     } else if(m_currPageFlow == PAGE_RTDB) { // 实时数据库
         m_rtdbWinPtr->setItemName(itemText);
         m_rtdbWinPtr->init();

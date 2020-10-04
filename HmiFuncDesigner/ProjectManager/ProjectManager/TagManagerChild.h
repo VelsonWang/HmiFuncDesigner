@@ -1,7 +1,8 @@
 ﻿#ifndef TAGMANAGERWIN_H
 #define TAGMANAGERWIN_H
 
-#include "ChildBase.h"
+#include "ChildInterface.h"
+#include "ListViewEx.h"
 #include "TagFuncEditDialog.h"
 #include "../../Public/Public.h"
 #include "ProjectData.h"
@@ -14,45 +15,49 @@
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QMap>
+#include <QStackedWidget>
+#include <QTableWidget>
+#include <QDir>
+#include <QFile>
+#include <QPluginLoader>
+#include <QMessageBox>
 
 //////////////////////////////////////////////////////////
-
-
-namespace Ui {
-class TagManagerWin;
-}
 
 
 struct TagTmpDBItem;
 struct TagIODBItem;
 
-class TagManagerWin : public ChildBase
+class TagManagerChild : public QWidget, public ChildInterface
 {
     Q_OBJECT
+    Q_INTERFACES(ChildInterface)
+public:
+    explicit TagManagerChild(QWidget *parent = Q_NULLPTR);
+    ~TagManagerChild();
 
 public:
-    explicit TagManagerWin(QWidget *parent = Q_NULLPTR,
-                           const QString &itemName = "",
-                           const QString &projName = "");
-    ~TagManagerWin();
+    TypeDocument typeDocument() const {return td_TagManager;}
 
-    void init(const QString &itemName = "");
+    void buildUserInterface(QMainWindow* pMainWin);
+    void removeUserInterface(QMainWindow* pMainWin);
 
-public:
-    // 打开文件
-    void open();
-    // 保存文件
-    void save();
+    bool open();
+    bool save();
+    bool saveAs();
+
+    QString userFriendlyCurrentFile();
+    QString currentFile() const;
+    QString wndTitle() const;
+
+    bool hasSelection() const;
 
 public:
     void exportToCsv(const QString &path);
     void importFromCsv(const QString &path);
-    void SetTitle(const QString &t);
 
 private:
-    void load(const QString &it);
-    void save(const QString &it);
-
+    void initUi();
     // 初始化系统变量表
     void initialTableTagSys();
     // 刷新系统变量表
@@ -130,7 +135,6 @@ public slots:
     void onTagDelete();
 
 public:
-    QString m_IOTagListWhat;
     QString m_szCurIOGroupName;
 
 private slots:
@@ -144,12 +148,17 @@ private slots:
     void on_tableTagTmp_cellDoubleClicked(int row, int column);
 
 private:
-    Ui::TagManagerWin *ui; 
-    QString m_strCurTagType;
     int m_iTableTagTmpSelectedRow = -1;
     int m_iTableTagIOSelectedRow = -1;
     QStringList m_listTagTmpDeleteRows;
     QStringList m_listTagIODeleteRows;
+
+public:
+    QVBoxLayout *m_pTopVLayoutObj;
+    QStackedWidget *m_pStackedWidgetObj;
+    QTableWidget *m_pTableTagIOObj;
+    QTableWidget *m_pTableTagTmpObj;
+    QTableWidget *m_pTableTagSysObj;
 };
 
 #endif // TAGMANAGERWIN_H

@@ -17,6 +17,7 @@ public:
         td_None,
         td_SystemParameters,
         td_CommunicationDevice,
+        td_TagManager,
     };
 
 
