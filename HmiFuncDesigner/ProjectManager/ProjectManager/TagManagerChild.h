@@ -21,6 +21,7 @@
 #include <QFile>
 #include <QPluginLoader>
 #include <QMessageBox>
+#include <QToolBar>
 
 //////////////////////////////////////////////////////////
 
@@ -128,11 +129,20 @@ protected:
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 public slots:
-    void onTagAdd();
-    void onTagAppend();
-    void onTagRowCopy();
-    void onTagModify();
-    void onTagDelete();
+    // 添加变量
+    void onSlotAddTag();
+    // 追加变量
+    void onSlotAppendTag();
+    // 拷贝变量
+    void onSlotRowCopyTag();
+    // 修改变量
+    void onSlotModifyTag();
+    // 删除变量
+    void onSlotDeleteTag();
+    // 导出变量
+    void onSlotExportTag();
+    // 导入变量
+    void onSlotImportTag();
 
 public:
     QString m_szCurIOGroupName;
@@ -152,6 +162,17 @@ private:
     int m_iTableTagIOSelectedRow = -1;
     QStringList m_listTagTmpDeleteRows;
     QStringList m_listTagIODeleteRows;
+    QMainWindow* m_pMainWinObj = Q_NULLPTR;
+
+    QMenu *m_pMenuTagEditObj = Q_NULLPTR; // 变量编辑菜单
+    QToolBar *m_pToolBarTagEditObj = Q_NULLPTR; // 变量编辑工具条
+    QAction *m_pActAddTagObj = Q_NULLPTR; // 添加变量
+    QAction *m_pActAppendTagObj = Q_NULLPTR; // 追加变量
+    QAction *m_pActRowCopyTagObj = Q_NULLPTR; // 拷贝变量
+    QAction *m_pActModifyTagObj = Q_NULLPTR; // 修改变量
+    QAction *m_pActDeleteTagObj = Q_NULLPTR; // 删除变量
+    QAction *m_pActExportTagObj = Q_NULLPTR; // 导出变量
+    QAction *m_pActImportTagObj = Q_NULLPTR; // 导入变量
 
 public:
     QVBoxLayout *m_pTopVLayoutObj;

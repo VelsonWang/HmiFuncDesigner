@@ -29,6 +29,7 @@
 #include "TagSys.h"
 #include "IDevicePlugin.h"
 #include "TableviewDelegate.h"
+#include "MainWindow.h"
 #include <QVariant>
 #include <QApplication>
 #include <QHeaderView>
@@ -37,6 +38,7 @@
 #include <QDir>
 #include <QFile>
 #include <QPluginLoader>
+#include <QFileDialog>
 #include <QDebug>
 
 TagManagerChild::TagManagerChild(QWidget *parent) : QWidget(parent)
@@ -123,32 +125,27 @@ void TagManagerChild::contextMenuEvent(QContextMenuEvent * /*event*/)
 
     QAction *pAddAct = new QAction(QIcon(":/images/data_add.png"), tr("增加"), this);
     pAddAct->setStatusTip(tr("新增变量"));
-    connect(pAddAct, SIGNAL(triggered()), this, SLOT(onTagAdd()));
+    connect(pAddAct, SIGNAL(triggered()), this, SLOT(onSlotAddTag()));
     pMenu->addAction(pAddAct);
 
     QAction *pAppendAct = new QAction(QIcon(":/images/data_supadd.png"), tr("追加"), this);
     pAppendAct->setStatusTip(tr("追加"));
-    connect(pAppendAct, SIGNAL(triggered()), this, SLOT(onTagAppend()));
+    connect(pAppendAct, SIGNAL(triggered()), this, SLOT(onSlotAppendTag()));
     pMenu->addAction(pAppendAct);
 
     QAction *pRowCopyAct = new QAction(QIcon(":/images/data_rowcopy.png"), tr("行拷"), this);
     pRowCopyAct->setStatusTip(tr("行拷"));
-    connect(pRowCopyAct, SIGNAL(triggered()), this, SLOT(onTagRowCopy()));
+    connect(pRowCopyAct, SIGNAL(triggered()), this, SLOT(onSlotRowCopyTag()));
     pMenu->addAction(pRowCopyAct);
-
-    QAction *pColCopyAct = new QAction(QIcon(":/images/data_colcopy.png"), tr("列拷"), this);
-    pColCopyAct->setStatusTip(tr("列拷"));
-    connect(pColCopyAct, SIGNAL(triggered()), this, SLOT(onTagColCopy()));
-    pMenu->addAction(pColCopyAct);
 
     QAction *pModifyAct = new QAction(QIcon(":/images/icon_modify.png"), tr("修改"), this);
     pModifyAct->setStatusTip(tr("修改"));
-    connect(pModifyAct, SIGNAL(triggered()), this, SLOT(onTagModify()));
+    connect(pModifyAct, SIGNAL(triggered()), this, SLOT(onSlotModifyTag()));
     pMenu->addAction(pModifyAct);
 
     QAction *pDeleteAct = new QAction(QIcon(":/images/data_delete.png"), tr("删除"), this);
     pDeleteAct->setStatusTip(tr("删除"));
-    connect(pDeleteAct, SIGNAL(triggered()), this, SLOT(onTagDelete()));
+    connect(pDeleteAct, SIGNAL(triggered()), this, SLOT(onSlotDeleteTag()));
     pMenu->addAction(pDeleteAct);
 
     if(!pMenu->isEmpty()) {
@@ -159,10 +156,11 @@ void TagManagerChild::contextMenuEvent(QContextMenuEvent * /*event*/)
     delete pMenu;
 }
 
-/*
-* 插槽：增加变量
-*/
-void TagManagerChild::onTagAdd()
+/**
+ * @brief TagManagerChild::onSlotAddTag
+ * @details 增加变量
+ */
+void TagManagerChild::onSlotAddTag()
 {
     if(wndTitle().startsWith(tr("设备变量"))) {
         // 创建设备变量
@@ -173,10 +171,11 @@ void TagManagerChild::onTagAdd()
     }
 }
 
-/*
-* 插槽：追加变量
-*/
-void TagManagerChild::onTagAppend()
+/**
+ * @brief TagManagerChild::onSlotAppendTag
+ * @details 追加变量
+ */
+void TagManagerChild::onSlotAppendTag()
 {
     if(wndTitle().startsWith(tr("设备变量"))) {
         // 追加设备变量
@@ -188,10 +187,11 @@ void TagManagerChild::onTagAppend()
 }
 
 
-/*
-* 插槽：行拷贝变量
-*/
-void TagManagerChild::onTagRowCopy()
+/**
+ * @brief TagManagerChild::onSlotRowCopyTag
+ * @details 行拷贝变量
+ */
+void TagManagerChild::onSlotRowCopyTag()
 {
     if(wndTitle().startsWith(tr("设备变量"))) {
         // 拷贝选中设备变量
@@ -203,10 +203,11 @@ void TagManagerChild::onTagRowCopy()
 }
 
 
-/*
-* 插槽：修改变量
-*/
-void TagManagerChild::onTagModify()
+/**
+ * @brief TagManagerChild::onSlotModifyTag
+ * @details 修改变量
+ */
+void TagManagerChild::onSlotModifyTag()
 {
     if(wndTitle().startsWith(tr("设备变量"))) {
         // 修改选中设备变量
@@ -217,10 +218,11 @@ void TagManagerChild::onTagModify()
     }
 }
 
-/*
-* 插槽：删除变量
-*/
-void TagManagerChild::onTagDelete()
+/**
+ * @brief TagManagerChild::onSlotDeleteTag
+ * @details 删除变量
+ */
+void TagManagerChild::onSlotDeleteTag()
 {
     if(wndTitle().startsWith(tr("设备变量"))) {
         // 删除选中设备变量
@@ -1695,11 +1697,145 @@ void TagManagerChild::on_tableTagTmp_cellDoubleClicked(int row, int column)
     m_iTableTagTmpSelectedRow = row;
 }
 
+/**
+    * @brief TagManagerChild::onSlotExportTag
+    * @details 导出变量
+    */
+void TagManagerChild::onSlotExportTag()
+{
+    QString szDirPath = QCoreApplication::applicationDirPath();
+    QString szSaveCsvPath = QFileDialog::getExistingDirectory(
+                this, tr("选择导出csv路径"), szDirPath,
+                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    if (szSaveCsvPath == "") return;
+    this->exportToCsv(szSaveCsvPath);
+}
+
+
+/**
+    * @brief TagManagerChild::onSlotImportTag
+    * @details 导入变量
+    */
+void TagManagerChild::onSlotImportTag()
+{
+    QString szDirPath = QCoreApplication::applicationDirPath();
+    QString szSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),
+                                                          szDirPath,
+                                                          tr("csv file (*.csv)"));
+    if(szSaveCsvFile == "") return;
+
+    this->importFromCsv(szSaveCsvFile);
+
+    QString szCsvName= szSaveCsvFile.mid(szSaveCsvFile.lastIndexOf("/") + 1, szSaveCsvFile.indexOf(".") - szSaveCsvFile.lastIndexOf("/") - 1);
+    QString szGroupName = szCsvName.right(szCsvName.length() - szCsvName.lastIndexOf("-") - 1);
+
+    if(szCsvName.startsWith(tr("中间变量"))) {
+
+    } else if(szCsvName.startsWith(tr("设备变量"))) {
+        bool bFound = false;
+
+        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+        tagIOGroup.load(ProjectData::getInstance()->dbData_);
+
+        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
+            if(szGroupName == pObj->m_szShowName) {
+                bFound = true;
+                break;
+            }
+        }
+
+        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
+        tagIOGroup.listTagIOGroupDBItem_.clear();
+
+        if(!bFound) {
+            TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+            TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
+            pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
+            pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
+            pObj->m_szShowName = szGroupName;
+            tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
+            if(pObj != Q_NULLPTR) {
+                delete pObj;
+                pObj = Q_NULLPTR;
+            }
+            if(m_pMainWinObj) {
+                MainWindow *pWndObj = dynamic_cast<MainWindow *>(m_pMainWinObj);
+                if(pWndObj) {
+                    pWndObj->UpdateDeviceVariableTableGroup();
+                    pWndObj->onSlotTreeProjectViewClicked(tr("设备变量"));
+                    QApplication::processEvents();
+                    pWndObj->onSlotTreeProjectViewClicked(szGroupName);
+                    QApplication::processEvents();
+                }
+            }
+        }
+    }
+}
+
 
 
 void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
 {
-    Q_UNUSED(pMainWin)
+    if(pMainWin == Q_NULLPTR) return;
+
+    if(m_pMainWinObj == Q_NULLPTR) {
+
+        //-----------------------------<变量编辑菜单>----------------------------------
+        // 添加变量
+        m_pActAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
+        connect(m_pActAddTagObj, SIGNAL(triggered()), SLOT(onSlotAddTag()));
+
+        // 追加变量
+        m_pActAppendTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("追加变量"));
+        connect(m_pActAppendTagObj, SIGNAL(triggered()), SLOT(onSlotAppendTag()));
+
+        // 拷贝变量
+        m_pActRowCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
+        connect(m_pActRowCopyTagObj, SIGNAL(triggered()), SLOT(onSlotRowCopyTag()));
+
+        // 修改变量
+        m_pActModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
+        connect(m_pActModifyTagObj, SIGNAL(triggered()), SLOT(onSlotModifyTag()));
+
+        // 删除变量
+        m_pActDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
+        connect(m_pActDeleteTagObj, SIGNAL(triggered()), SLOT(onSlotDeleteTag()));
+
+        // 导出变量
+        m_pActExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
+        connect(m_pActExportTagObj, SIGNAL(triggered()), SLOT(onSlotExportTag()));
+
+        // 导入变量
+        m_pActImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
+        connect(m_pActImportTagObj, SIGNAL(triggered()), SLOT(onSlotImportTag()));
+
+
+        //-----------------------------<变量编辑菜单>----------------------------------
+        m_pMenuTagEditObj = pMainWin->menuBar()->addMenu(tr("变量编辑"));
+        m_pMenuTagEditObj->addAction(m_pActAddTagObj); // 添加变量
+        m_pMenuTagEditObj->addAction(m_pActAppendTagObj); // 追加变量
+        m_pMenuTagEditObj->addAction(m_pActRowCopyTagObj); // 拷贝变量
+        m_pMenuTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
+        m_pMenuTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
+        m_pMenuTagEditObj->addAction(m_pActExportTagObj); // 导出变量
+        m_pMenuTagEditObj->addAction(m_pActImportTagObj); // 导入变量
+
+        //-----------------------------<变量编辑>----------------------------------
+        m_pToolBarTagEditObj = new QToolBar(pMainWin);
+        m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+        m_pToolBarTagEditObj->addAction(m_pActAddTagObj);  // 添加变量
+        m_pToolBarTagEditObj->addAction(m_pActAppendTagObj); // 追加变量
+        m_pToolBarTagEditObj->addAction(m_pActRowCopyTagObj); // 拷贝变量
+        m_pToolBarTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
+        m_pToolBarTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
+        m_pToolBarTagEditObj->addAction(m_pActExportTagObj); // 导出变量
+        m_pToolBarTagEditObj->addAction(m_pActImportTagObj); // 导入变量
+
+        pMainWin->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
+    }
+    m_pMainWinObj = pMainWin;
+
+    //////////////////////////////////////////////////////////////////////////
 
     if(wndTitle().startsWith(tr("设备变量"))) {
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
@@ -1720,14 +1856,15 @@ void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
         this->updateTableTagSys();
         m_pStackedWidgetObj->setCurrentWidget(m_pTableTagSysObj);
     }
-
-    // FIXME 增加工具条
-
 }
 
 void TagManagerChild::removeUserInterface(QMainWindow* pMainWin)
 {
-    Q_UNUSED(pMainWin)
+    if(pMainWin == Q_NULLPTR) return;
+
+    m_pMenuTagEditObj->clear();
+    //DEL_OBJ(m_pMenuTagEditObj);
+    pMainWin->removeToolBar(m_pToolBarTagEditObj);
 }
 
 bool TagManagerChild::open()

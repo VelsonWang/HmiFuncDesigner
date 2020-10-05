@@ -286,227 +286,226 @@ void MainWindow::createStatusBar()
 void MainWindow::createActions()
 {
     // 新建工程
-    m_pActionNewProjObj = new QAction(QIcon(":/images/newproject.png"), tr("新建工程"), this);
-    m_pActionNewProjObj->setShortcut(QString("Ctrl+N"));
-    connect(m_pActionNewProjObj, &QAction::triggered, this, &MainWindow::onNewPoject);
+    m_pActNewProjObj = new QAction(QIcon(":/images/newproject.png"), tr("新建工程"), this);
+    m_pActNewProjObj->setShortcut(QString("Ctrl+N"));
+    connect(m_pActNewProjObj, &QAction::triggered, this, &MainWindow::onNewPoject);
 
     //  打开工程
-    m_pActionOpenProjObj = new QAction(QIcon(":/images/openproject.png"), tr("打开工程"), this);
-    m_pActionOpenProjObj->setShortcut(QString("Ctrl+O"));
-    connect(m_pActionOpenProjObj, &QAction::triggered, this, &MainWindow::onOpenProject);
+    m_pActOpenProjObj = new QAction(QIcon(":/images/openproject.png"), tr("打开工程"), this);
+    m_pActOpenProjObj->setShortcut(QString("Ctrl+O"));
+    connect(m_pActOpenProjObj, &QAction::triggered, this, &MainWindow::onOpenProject);
 
     // 关闭工程
-    m_pActionCloseProjObj = new QAction(QIcon(":/images/projectexit.png"), tr("关闭"), this);
-    connect(m_pActionCloseProjObj, &QAction::triggered, this, &MainWindow::onCloseProject);
+    m_pActCloseProjObj = new QAction(QIcon(":/images/projectexit.png"), tr("关闭"), this);
+    connect(m_pActCloseProjObj, &QAction::triggered, this, &MainWindow::onCloseProject);
 
     // 保存工程
-    m_pActionSaveProjObj = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), this);
-    m_pActionSaveProjObj->setShortcut(QString("Ctrl+S"));
-    connect(m_pActionSaveProjObj, &QAction::triggered, this, &MainWindow::onSaveProject);
+    m_pActSaveProjObj = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), this);
+    m_pActSaveProjObj->setShortcut(QString("Ctrl+S"));
+    connect(m_pActSaveProjObj, &QAction::triggered, this, &MainWindow::onSaveProject);
 
     // 最近打开的工程
-    m_pActionRecentProjListObj = new QAction(tr("最近打开的工程"), this);
+    m_pActRecentProjListObj = new QAction(tr("最近打开的工程"), this);
 
-    m_pActionExitObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), this);
-    m_pActionExitObj->setShortcut(QString("Ctrl+Q"));
-    connect(m_pActionExitObj, &QAction::triggered, this, &MainWindow::onExit);
+    m_pActExitObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), this);
+    m_pActExitObj->setShortcut(QString("Ctrl+Q"));
+    connect(m_pActExitObj, &QAction::triggered, this, &MainWindow::onExit);
 
     //-----------------------------<视图>---------------------------------------
 
     // 视图工具栏
-    m_pActionToolBarObj = new QAction(tr("视图工具栏"), this);
-    m_pActionToolBarObj->setCheckable(true);
+    m_pActToolBarObj = new QAction(tr("视图工具栏"), this);
+    m_pActToolBarObj->setCheckable(true);
 
     // 状态栏
-    m_pActionStatusBarObj = new QAction(tr("状态栏"), this);
-    m_pActionStatusBarObj->setCheckable(true);
+    m_pActStatusBarObj = new QAction(tr("状态栏"), this);
+    m_pActStatusBarObj->setCheckable(true);
 
     // 工作区
-    m_pActionWorkSpaceObj = new QAction(tr("工作区"), this);
-    m_pActionWorkSpaceObj->setCheckable(true);
+    m_pActWorkSpaceObj = new QAction(tr("工作区"), this);
+    m_pActWorkSpaceObj->setCheckable(true);
 
     // 显示区
-    m_pActionDisplayAreaObj = new QAction(tr("显示区"), this);
-    m_pActionDisplayAreaObj->setCheckable(true);
+    m_pActDisplayAreaObj = new QAction(tr("显示区"), this);
+    m_pActDisplayAreaObj->setCheckable(true);
 
     //-----------------------------<画面编辑器>----------------------------------
 
     // 窗口.图形元素
-    m_pActionShowGraphObj = new QAction(tr("图形元素"), this);
-    m_pActionShowGraphObj->setCheckable(true);
-    m_pActionShowGraphObj->setChecked(true);
-    connect(m_pActionShowGraphObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGraphObj(bool)));
+    m_pActShowGraphObj = new QAction(tr("图形元素"), this);
+    m_pActShowGraphObj->setCheckable(true);
+    m_pActShowGraphObj->setChecked(true);
+    connect(m_pActShowGraphObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGraphObj(bool)));
 
     // 窗口.属性编辑器
-    m_pActionShowPropEditorObj = new QAction(tr("属性编辑器"), this);
-    m_pActionShowPropEditorObj->setCheckable(true);
-    m_pActionShowPropEditorObj->setChecked(true);
-    connect(m_pActionShowPropEditorObj, SIGNAL(triggered(bool)), SLOT(onSlotShowPropEditor(bool)));
+    m_pActShowPropEditorObj = new QAction(tr("属性编辑器"), this);
+    m_pActShowPropEditorObj->setCheckable(true);
+    m_pActShowPropEditorObj->setChecked(true);
+    connect(m_pActShowPropEditorObj, SIGNAL(triggered(bool)), SLOT(onSlotShowPropEditor(bool)));
 
     // 画面.新建
-    m_pActionNewGraphPageObj = new QAction(QIcon(":/DrawAppImages/filenew.png"), tr("新建"), this);
-    m_pActionNewGraphPageObj->setShortcut(QString("Ctrl+N"));
-    connect(m_pActionNewGraphPageObj, SIGNAL(triggered()), SLOT(onSlotNewGraphPage()));
+    m_pActNewGraphPageObj = new QAction(QIcon(":/DrawAppImages/filenew.png"), tr("新建"), this);
+    m_pActNewGraphPageObj->setShortcut(QString("Ctrl+N"));
+    connect(m_pActNewGraphPageObj, SIGNAL(triggered()), SLOT(onSlotNewGraphPage()));
 
     // 画面.打开
-    m_pActionOpenObj = new QAction(QIcon(":/DrawAppImages/fileopen.png"), tr("打开"), this);
-    m_pActionOpenObj->setShortcut(QString("Ctrl+O"));
-    connect(m_pActionOpenObj, SIGNAL(triggered()), SLOT(onSlotEditOpen()));
+    m_pActOpenObj = new QAction(QIcon(":/DrawAppImages/fileopen.png"), tr("打开"), this);
+    m_pActOpenObj->setShortcut(QString("Ctrl+O"));
+    connect(m_pActOpenObj, SIGNAL(triggered()), SLOT(onSlotEditOpen()));
 
     // 画面.保存
-    m_pActionSaveGraphPageObj = new QAction(QIcon(":/DrawAppImages/saveproject.png"), tr("保存"), this);
-    m_pActionSaveGraphPageObj->setShortcut(QKeySequence::Save);
-    connect(m_pActionSaveGraphPageObj, SIGNAL(triggered()), SLOT(onSlotSaveGraphPage()));
+    m_pActSaveGraphPageObj = new QAction(QIcon(":/DrawAppImages/saveproject.png"), tr("保存"), this);
+    m_pActSaveGraphPageObj->setShortcut(QKeySequence::Save);
+    connect(m_pActSaveGraphPageObj, SIGNAL(triggered()), SLOT(onSlotSaveGraphPage()));
 
     // 关闭画面
-    m_pActionCloseGraphPageObj = new QAction(tr("关闭"), this);
-    connect(m_pActionCloseGraphPageObj, SIGNAL(triggered()), SLOT(onSlotCloseGraphPage()));
+    m_pActCloseGraphPageObj = new QAction(tr("关闭"), this);
+    connect(m_pActCloseGraphPageObj, SIGNAL(triggered()), SLOT(onSlotCloseGraphPage()));
 
     // 关闭所有画面
-    m_pActionCloseAllObj = new QAction(tr("关闭所有"), this);
-    connect(m_pActionCloseAllObj, SIGNAL(triggered()), SLOT(onSlotCloseAll()));
+    m_pActCloseAllObj = new QAction(tr("关闭所有"), this);
+    connect(m_pActCloseAllObj, SIGNAL(triggered()), SLOT(onSlotCloseAll()));
 
     // 显示栅格
-    m_pActionShowGridObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
-    m_pActionShowGridObj->setCheckable(true);
-    m_pActionShowGridObj->setChecked(m_bGraphPageGridVisible);
-    connect(m_pActionShowGridObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGrid(bool)));
+    m_pActShowGridObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
+    m_pActShowGridObj->setCheckable(true);
+    m_pActShowGridObj->setChecked(m_bGraphPageGridVisible);
+    connect(m_pActShowGridObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGrid(bool)));
 
     // 画面放大
-    m_pActionZoomInObj = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
-    connect(m_pActionZoomInObj, SIGNAL(triggered()), SLOT(onSlotZoomIn()));
+    m_pActZoomInObj = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
+    connect(m_pActZoomInObj, SIGNAL(triggered()), SLOT(onSlotZoomIn()));
 
     // 画面缩小
-    m_pActionZoomOutObj = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
-    connect(m_pActionZoomOutObj, SIGNAL(triggered()), SLOT(onSlotZoomOut()));
+    m_pActZoomOutObj = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
+    connect(m_pActZoomOutObj, SIGNAL(triggered()), SLOT(onSlotZoomOut()));
 
     // 撤销
-    m_pActionUndoObj = m_pUndoGroupObj->createUndoAction(this);
-    m_pActionUndoObj->setIcon(QIcon(":/DrawAppImages/undo.png"));
-    m_pActionUndoObj->setText(tr("撤销"));
-    m_pActionUndoObj->setShortcut(QKeySequence::Undo);
+    m_pActUndoObj = m_pUndoGroupObj->createUndoAction(this);
+    m_pActUndoObj->setIcon(QIcon(":/DrawAppImages/undo.png"));
+    m_pActUndoObj->setText(tr("撤销"));
+    m_pActUndoObj->setShortcut(QKeySequence::Undo);
 
     // 重做
-    m_pActionRedoObj = m_pUndoGroupObj->createRedoAction(this);
-    m_pActionRedoObj->setText(tr("重做"));
-    m_pActionRedoObj->setIcon(QIcon(":/DrawAppImages/redo.png"));
-    m_pActionRedoObj->setShortcut(QKeySequence::Redo);
+    m_pActRedoObj = m_pUndoGroupObj->createRedoAction(this);
+    m_pActRedoObj->setText(tr("重做"));
+    m_pActRedoObj->setIcon(QIcon(":/DrawAppImages/redo.png"));
+    m_pActRedoObj->setShortcut(QKeySequence::Redo);
 
     // 删除画面
-    m_pActionDeleteObj = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
-    m_pActionDeleteObj->setShortcut(QKeySequence::Delete);
-    connect(m_pActionDeleteObj, SIGNAL(triggered()), SLOT(onSlotEditDelete()));
+    m_pActDeleteObj = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
+    m_pActDeleteObj->setShortcut(QKeySequence::Delete);
+    connect(m_pActDeleteObj, SIGNAL(triggered()), SLOT(onSlotEditDelete()));
 
     // 拷贝画面
-    m_pActionCopyObj = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
-    m_pActionCopyObj->setShortcut(QKeySequence::Copy);
-    connect(m_pActionCopyObj, SIGNAL(triggered()), SLOT(onSlotEditCopy()));
+    m_pActCopyObj = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
+    m_pActCopyObj->setShortcut(QKeySequence::Copy);
+    connect(m_pActCopyObj, SIGNAL(triggered()), SLOT(onSlotEditCopy()));
 
     // 粘贴画面
-    m_pActionPasteObj = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
-    m_pActionPasteObj->setShortcut(QKeySequence::Paste);
-    connect(m_pActionPasteObj, SIGNAL(triggered()), SLOT(onSlotEditPaste()));
+    m_pActPasteObj = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
+    m_pActPasteObj->setShortcut(QKeySequence::Paste);
+    connect(m_pActPasteObj, SIGNAL(triggered()), SLOT(onSlotEditPaste()));
 
     // 顶部对齐
-    m_pActionAlignTopObj = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
-    m_pActionAlignTopObj->setData(Qt::AlignTop);
-    connect(m_pActionAlignTopObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    m_pActAlignTopObj = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
+    m_pActAlignTopObj->setData(Qt::AlignTop);
+    connect(m_pActAlignTopObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 底部对齐
-    m_pActionAlignDownObj = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
-    m_pActionAlignDownObj->setData(Qt::AlignBottom);
-    connect(m_pActionAlignDownObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    m_pActAlignDownObj = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
+    m_pActAlignDownObj->setData(Qt::AlignBottom);
+    connect(m_pActAlignDownObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 右对齐
-    m_pActionAlignRightObj = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
-    m_pActionAlignRightObj->setData(Qt::AlignRight);
-    connect(m_pActionAlignRightObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    m_pActAlignRightObj = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
+    m_pActAlignRightObj->setData(Qt::AlignRight);
+    connect(m_pActAlignRightObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 左对齐
-    m_pActionAalignLeftObj = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
-    m_pActionAalignLeftObj->setData(Qt::AlignLeft);
-    connect(m_pActionAalignLeftObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    m_pActAalignLeftObj = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
+    m_pActAalignLeftObj->setData(Qt::AlignLeft);
+    connect(m_pActAalignLeftObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
 
     // 水平均匀分布
-    m_pActionHUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
-    connect(m_pActionHUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotHUniformDistributeElements()));
+    m_pActHUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
+    connect(m_pActHUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotHUniformDistributeElements()));
 
     // 垂直均匀分布
-    m_pActionVUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
-    connect(m_pActionVUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotVUniformDistributeElements()));
+    m_pActVUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
+    connect(m_pActVUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotVUniformDistributeElements()));
 
     // 设置选中控件大小一致
-    m_pActionSetTheSameSizeObj = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
-    connect(m_pActionSetTheSameSizeObj, SIGNAL(triggered()), SLOT(onSlotSetTheSameSizeElements()));
+    m_pActSetTheSameSizeObj = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
+    connect(m_pActSetTheSameSizeObj, SIGNAL(triggered()), SLOT(onSlotSetTheSameSizeElements()));
 
     // 上移一层
-    m_pActionUpLayerObj = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
-    connect(m_pActionUpLayerObj, SIGNAL(triggered()), SLOT(onSlotUpLayerElements()));
+    m_pActUpLayerObj = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
+    connect(m_pActUpLayerObj, SIGNAL(triggered()), SLOT(onSlotUpLayerElements()));
 
     // 下移一层
-    m_pActionDownLayerObj = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
-    connect(m_pActionDownLayerObj, SIGNAL(triggered()), SLOT(onSlotDownLayerElements()));
+    m_pActDownLayerObj = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
+    connect(m_pActDownLayerObj, SIGNAL(triggered()), SLOT(onSlotDownLayerElements()));
 
     //-----------------------------<工具菜单>----------------------------------
     // 模拟仿真
-    m_pActionSimulateObj = new QAction(QIcon(":/images/offline.png"), tr("模拟仿真"));
-    m_pActionSimulateObj->setEnabled(false);
-    connect(m_pActionSimulateObj, SIGNAL(triggered()), SLOT(onSlotSimulate()));
+    m_pActSimulateObj = new QAction(QIcon(":/images/offline.png"), tr("模拟仿真"));
+    m_pActSimulateObj->setEnabled(false);
+    connect(m_pActSimulateObj, SIGNAL(triggered()), SLOT(onSlotSimulate()));
 
     // 运行工程
-    m_pActionRunObj = new QAction(QIcon(":/images/online.png"), tr("运行"));
-    m_pActionRunObj->setEnabled(true);
-    connect(m_pActionSimulateObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
+    m_pActRunObj = new QAction(QIcon(":/images/online.png"), tr("运行"));
+    m_pActRunObj->setEnabled(true);
+    connect(m_pActSimulateObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
 
     // 下载工程
-    m_pActionDownloadObj = new QAction(QIcon(":/images/download.png"), tr("下载"));
-    connect(m_pActionDownloadObj, SIGNAL(triggered()), SLOT(onSlotDownloadProject()));
+    m_pActDownloadObj = new QAction(QIcon(":/images/download.png"), tr("下载"));
+    connect(m_pActDownloadObj, SIGNAL(triggered()), SLOT(onSlotDownloadProject()));
 
     // 上载工程
-    m_pActionUpLoadObj = new QAction(QIcon(":/images/upload.png"), tr("上载"));
-    connect(m_pActionUpLoadObj, SIGNAL(triggered()), SLOT(onSlotUpLoadProject()));
+    m_pActUpLoadObj = new QAction(QIcon(":/images/upload.png"), tr("上载"));
+    connect(m_pActUpLoadObj, SIGNAL(triggered()), SLOT(onSlotUpLoadProject()));
 
-    // U盘
-    m_pActionUDiskObj = new QAction(QIcon(":/images/downusb.png"), tr("U盘"));
-    connect(m_pActionUDiskObj, SIGNAL(triggered()), SLOT(onSlotUDisk()));
 
-    //-----------------------------<变量编辑菜单>----------------------------------
-    // 添加变量
-    m_pActionAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
-    connect(m_pActionAddTagObj, SIGNAL(triggered()), SLOT(onSlotAddTag()));
+    //-----------------------------<窗口菜单>----------------------------------
 
-    // 追加变量
-    m_pActionAppendTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("追加变量"));
-    connect(m_pActionAppendTagObj, SIGNAL(triggered()), SLOT(onSlotAppendTag()));
+    m_pActCloseWndObj = new QAction(tr("关闭"));
+    m_pActCloseWndObj->setStatusTip(tr("关闭活动窗口"));
+    connect(m_pActCloseWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::closeActiveSubWindow);
 
-    // 拷贝变量
-    m_pActionRowCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
-    connect(m_pActionRowCopyTagObj, SIGNAL(triggered()), SLOT(onSlotRowCopyTag()));
+    m_pActCloseAllWndObj = new QAction(tr("关闭所有"));
+    m_pActCloseAllWndObj->setStatusTip(tr("关闭所有窗口"));
+    connect(m_pActCloseAllWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::closeAllSubWindows);
 
-    // 修改变量
-    m_pActionModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
-    connect(m_pActionModifyTagObj, SIGNAL(triggered()), SLOT(onSlotModifyTag()));
+    m_pActTileWndObj = new QAction(tr("平铺窗口"));
+    m_pActTileWndObj->setStatusTip(tr("平铺所有窗口"));
+    connect(m_pActTileWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::tileSubWindows);
 
-    // 删除变量
-    m_pActionDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
-    connect(m_pActionDeleteTagObj, SIGNAL(triggered()), SLOT(onSlotDeleteTag()));
+    m_pActCascadeWndObj = new QAction(tr("层叠窗口"), this);
+    m_pActCascadeWndObj->setStatusTip(tr("层叠所有窗口"));
+    connect(m_pActCascadeWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::cascadeSubWindows);
 
-    // 导出变量
-    m_pActionExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
-    connect(m_pActionExportTagObj, SIGNAL(triggered()), SLOT(onSlotExportTag()));
+    m_pActNextWndObj = new QAction(tr("下一窗口"), this);
+    m_pActNextWndObj->setShortcuts(QKeySequence::NextChild);
+    m_pActNextWndObj->setStatusTip(tr("移动焦点至下一下窗口"));
+    connect(m_pActNextWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::activateNextSubWindow);
 
-    // 导入变量
-    m_pActionImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
-    connect(m_pActionImportTagObj, SIGNAL(triggered()), SLOT(onSlotImportTag()));
+    m_pActPreviousWndObj = new QAction(tr("前一窗口"), this);
+    m_pActPreviousWndObj->setShortcuts(QKeySequence::PreviousChild);
+    m_pActPreviousWndObj->setStatusTip(tr("移动焦点至前一下窗口"));
+    connect(m_pActPreviousWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::activatePreviousSubWindow);
+
+    m_pActWindowMenuSeparatorObj = new QAction(this);
+    m_pActWindowMenuSeparatorObj->setSeparator(true);
 
     //-----------------------------<帮助菜单>----------------------------------
     // 帮助
-    m_pActionHelpObj = new QAction(tr("帮助"));
-    connect(m_pActionHelpObj, SIGNAL(triggered()), SLOT(onSlotHelp()));
+    m_pActHelpObj = new QAction(tr("帮助"));
+    connect(m_pActHelpObj, SIGNAL(triggered()), SLOT(onSlotHelp()));
 
     // 关于
-    m_pActionAboutObj = new QAction(tr("关于"));
-    connect(m_pActionAboutObj, SIGNAL(triggered()), SLOT(onSlotAbout()));
+    m_pActAboutObj = new QAction(tr("关于"));
+    connect(m_pActAboutObj, SIGNAL(triggered()), SLOT(onSlotAbout()));
 
 }
 
@@ -519,131 +518,160 @@ void MainWindow::createMenus()
 {
     // 工程菜单
     m_pMenuProjectObj = this->menuBar()->addMenu(tr("工程"));
-    m_pMenuProjectObj->addAction(m_pActionNewProjObj);
-    m_pMenuProjectObj->addAction(m_pActionOpenProjObj);
-    m_pMenuProjectObj->addAction(m_pActionCloseProjObj);
-    m_pMenuProjectObj->addAction(m_pActionSaveProjObj);
+    m_pMenuProjectObj->addAction(m_pActNewProjObj);
+    m_pMenuProjectObj->addAction(m_pActOpenProjObj);
+    m_pMenuProjectObj->addAction(m_pActCloseProjObj);
+    m_pMenuProjectObj->addAction(m_pActSaveProjObj);
     m_pMenuProjectObj->addSeparator();
-    m_pMenuProjectObj->addAction(m_pActionRecentProjListObj);
+    m_pMenuProjectObj->addAction(m_pActRecentProjListObj);
     m_pMenuProjectObj->addSeparator();
-    m_pMenuProjectObj->addAction(m_pActionExitObj);
+    m_pMenuProjectObj->addAction(m_pActExitObj);
 
     // 视图菜单
     m_pMenuViewObj = this->menuBar()->addMenu(tr("视图"));
-    m_pMenuViewObj->addAction(m_pActionToolBarObj);
-    m_pMenuViewObj->addAction(m_pActionStatusBarObj);
-    m_pMenuViewObj->addAction(m_pActionWorkSpaceObj);
-    m_pMenuViewObj->addAction(m_pActionDisplayAreaObj);
+    m_pMenuViewObj->addAction(m_pActToolBarObj);
+    m_pMenuViewObj->addAction(m_pActStatusBarObj);
+    m_pMenuViewObj->addAction(m_pActWorkSpaceObj);
+    m_pMenuViewObj->addAction(m_pActDisplayAreaObj);
 
     //-----------------------------<画面编辑器>----------------------------------
     QMenu *filemenu = this->menuBar()->addMenu(tr("画面"));
 #if 0  // for test we need this
-    filemenu->addAction(m_pActionNewGraphPageObj);
-    filemenu->addAction(m_pActionOpenObj);
+    filemenu->addAction(m_pActNewGraphPageObj);
+    filemenu->addAction(m_pActOpenObj);
 #endif
-    filemenu->addAction(m_pActionSaveGraphPageObj);
+    filemenu->addAction(m_pActSaveGraphPageObj);
     filemenu->addSeparator();
-    filemenu->addAction(m_pActionCloseGraphPageObj); // 画面.关闭
-    filemenu->addAction(m_pActionCloseAllObj); // 画面.关闭所有
+    filemenu->addAction(m_pActCloseGraphPageObj); // 画面.关闭
+    filemenu->addAction(m_pActCloseAllObj); // 画面.关闭所有
     filemenu->addSeparator();
 
 
     QMenu *windowMenu = this->menuBar()->addMenu(tr("窗口"));
-    windowMenu->addAction(m_pActionShowGraphObj);
-    windowMenu->addAction(m_pActionShowPropEditorObj);
+    windowMenu->addAction(m_pActShowGraphObj);
+    windowMenu->addAction(m_pActShowPropEditorObj);
 
     //-----------------------------<工具菜单>----------------------------------
     m_pMenuToolsObj = this->menuBar()->addMenu(tr("工具"));
-    m_pMenuToolsObj->addAction(m_pActionSimulateObj); // 模拟仿真
-    m_pMenuToolsObj->addAction(m_pActionRunObj); // 运行工程
-    m_pMenuToolsObj->addAction(m_pActionDownloadObj); // 下载工程
-    m_pMenuToolsObj->addAction(m_pActionUpLoadObj); // 上传工程
-    m_pMenuToolsObj->addAction(m_pActionUDiskObj); // U盘
+    m_pMenuToolsObj->addAction(m_pActSimulateObj); // 模拟仿真
+    m_pMenuToolsObj->addAction(m_pActRunObj); // 运行工程
+    m_pMenuToolsObj->addAction(m_pActDownloadObj); // 下载工程
+    m_pMenuToolsObj->addAction(m_pActUpLoadObj); // 上传工程
 
-    //-----------------------------<变量编辑菜单>----------------------------------
-    m_pMenuTagEditObj = this->menuBar()->addMenu(tr("变量编辑"));
-    m_pMenuTagEditObj->addAction(m_pActionAddTagObj); // 添加变量
-    m_pMenuTagEditObj->addAction(m_pActionAppendTagObj); // 追加变量
-    m_pMenuTagEditObj->addAction(m_pActionRowCopyTagObj); // 拷贝变量
-    m_pMenuTagEditObj->addAction(m_pActionModifyTagObj); // 修改变量
-    m_pMenuTagEditObj->addAction(m_pActionDeleteTagObj); // 删除变量
-    m_pMenuTagEditObj->addAction(m_pActionExportTagObj); // 导出变量
-    m_pMenuTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
+    //-----------------------------<窗口菜单>----------------------------------
+    m_pActWindowMenuObj = this->menuBar()->addMenu(tr("窗口"));
+    connect(m_pActWindowMenuObj, &QMenu::aboutToShow, this, &MainWindow::onSlotUpdateWindowMenu);
+    m_pActWindowMenuSeparatorObj = new QAction(this);
+    m_pActWindowMenuSeparatorObj->setSeparator(true);
+    onSlotUpdateWindowMenu();
+
+    menuBar()->addSeparator();
 
     //-----------------------------<帮助菜单>----------------------------------
     m_pMenuHelpObj = this->menuBar()->addMenu(tr("帮助"));
-    m_pMenuHelpObj->addAction(m_pActionHelpObj); // 帮助
-    m_pMenuHelpObj->addAction(m_pActionAboutObj); // 关于
+    m_pMenuHelpObj->addAction(m_pActHelpObj); // 帮助
+    m_pMenuHelpObj->addAction(m_pActAboutObj); // 关于
 }
 
 
 /**
- * @brief MainWindow::createToolbars
- * @details 创建工具条
- */
+    * @brief MainWindow::createToolbars
+    * @details 创建工具条
+    */
 void MainWindow::createToolbars()
 {
     //-----------------------------<工程工具栏>-----------------------------------
     m_pToolBarProjectObj = new QToolBar(this);
     m_pToolBarProjectObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarProjectObj->addAction(m_pActionNewProjObj);
-    m_pToolBarProjectObj->addAction(m_pActionOpenProjObj);
-    m_pToolBarProjectObj->addAction(m_pActionCloseProjObj);
-    m_pToolBarProjectObj->addAction(m_pActionSaveProjObj);
-    m_pToolBarProjectObj->addAction(m_pActionExitObj);
+    m_pToolBarProjectObj->addAction(m_pActNewProjObj);
+    m_pToolBarProjectObj->addAction(m_pActOpenProjObj);
+    m_pToolBarProjectObj->addAction(m_pActCloseProjObj);
+    m_pToolBarProjectObj->addAction(m_pActSaveProjObj);
+    m_pToolBarProjectObj->addAction(m_pActExitObj);
 
     //-----------------------------<画面编辑器>----------------------------------
     m_pToolBarGraphPageEditObj = new QToolBar(this);
-    //m_pToolBarGraphPageEditObj->addAction(m_pActionSaveGraphPageObj);
+    //m_pToolBarGraphPageEditObj->addAction(m_pActSaveGraphPageObj);
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActionShowGridObj); // 显示栅格
-    m_pToolBarGraphPageEditObj->addAction(m_pActionZoomOutObj); //画面缩小
-    m_pToolBarGraphPageEditObj->addAction(m_pActionZoomInObj); // 画面放大
+    m_pToolBarGraphPageEditObj->addAction(m_pActShowGridObj); // 显示栅格
+    m_pToolBarGraphPageEditObj->addAction(m_pActZoomOutObj); //画面缩小
+    m_pToolBarGraphPageEditObj->addAction(m_pActZoomInObj); // 画面放大
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActionUndoObj); // 撤销
-    m_pToolBarGraphPageEditObj->addAction(m_pActionRedoObj); // 重做
+    m_pToolBarGraphPageEditObj->addAction(m_pActUndoObj); // 撤销
+    m_pToolBarGraphPageEditObj->addAction(m_pActRedoObj); // 重做
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActionCopyObj); // 拷贝画面
-    m_pToolBarGraphPageEditObj->addAction(m_pActionPasteObj); // 粘贴画面
-    m_pToolBarGraphPageEditObj->addAction(m_pActionDeleteObj); // 删除画面
+    m_pToolBarGraphPageEditObj->addAction(m_pActCopyObj); // 拷贝画面
+    m_pToolBarGraphPageEditObj->addAction(m_pActPasteObj); // 粘贴画面
+    m_pToolBarGraphPageEditObj->addAction(m_pActDeleteObj); // 删除画面
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActionAlignTopObj); // 顶部对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActionAlignDownObj); // 底部对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActionAalignLeftObj); // 左对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActionAlignRightObj); // 右对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActionHUniformDistributeObj); // 水平均匀分布
-    m_pToolBarGraphPageEditObj->addAction(m_pActionVUniformDistributeObj); // 垂直均匀分布
-    m_pToolBarGraphPageEditObj->addAction(m_pActionSetTheSameSizeObj); // 设置选中控件大小一致
-    m_pToolBarGraphPageEditObj->addAction(m_pActionUpLayerObj); // 上移一层
-    m_pToolBarGraphPageEditObj->addAction(m_pActionDownLayerObj); // 下移一层
+    m_pToolBarGraphPageEditObj->addAction(m_pActAlignTopObj); // 顶部对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActAlignDownObj); // 底部对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActAalignLeftObj); // 左对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActAlignRightObj); // 右对齐
+    m_pToolBarGraphPageEditObj->addAction(m_pActHUniformDistributeObj); // 水平均匀分布
+    m_pToolBarGraphPageEditObj->addAction(m_pActVUniformDistributeObj); // 垂直均匀分布
+    m_pToolBarGraphPageEditObj->addAction(m_pActSetTheSameSizeObj); // 设置选中控件大小一致
+    m_pToolBarGraphPageEditObj->addAction(m_pActUpLayerObj); // 上移一层
+    m_pToolBarGraphPageEditObj->addAction(m_pActDownLayerObj); // 下移一层
     m_pToolBarGraphPageEditObj->addSeparator();
 
     //-----------------------------<工具>----------------------------------
 
     m_pToolBarToolsObj = new QToolBar(this);
     m_pToolBarToolsObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarToolsObj->addAction(m_pActionSimulateObj); // 模拟仿真
-    m_pToolBarToolsObj->addAction(m_pActionRunObj); // 运行工程
-    m_pToolBarToolsObj->addAction(m_pActionDownloadObj); // 下载工程
-    m_pToolBarToolsObj->addAction(m_pActionUpLoadObj); // 上传工程
-    m_pToolBarToolsObj->addAction(m_pActionUDiskObj); // U盘
+    m_pToolBarToolsObj->addAction(m_pActSimulateObj); // 模拟仿真
+    m_pToolBarToolsObj->addAction(m_pActRunObj); // 运行工程
+    m_pToolBarToolsObj->addAction(m_pActDownloadObj); // 下载工程
+    m_pToolBarToolsObj->addAction(m_pActUpLoadObj); // 上传工程
 
-    //-----------------------------<变量编辑>----------------------------------
-    m_pToolBarTagEditObj = new QToolBar(this);
-    m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarTagEditObj->addAction(m_pActionAddTagObj);  // 添加变量
-    m_pToolBarTagEditObj->addAction(m_pActionAppendTagObj); // 追加变量
-    m_pToolBarTagEditObj->addAction(m_pActionRowCopyTagObj); // 拷贝变量
-    m_pToolBarTagEditObj->addAction(m_pActionModifyTagObj); // 修改变量
-    m_pToolBarTagEditObj->addAction(m_pActionDeleteTagObj); // 删除变量
-    m_pToolBarTagEditObj->addAction(m_pActionExportTagObj); // 导出变量
-    m_pToolBarTagEditObj->addAction(m_pActionImportTagObj); // 导入变量
+
 
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
-    this->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
     addToolBarBreak();
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
+}
+
+/**
+ * @brief MainWindow::onSlotUpdateWindowMenu
+ * @details 更新窗口菜单
+ */
+void MainWindow::onSlotUpdateWindowMenu()
+{
+    m_pActWindowMenuObj->clear();
+    m_pActWindowMenuObj->addAction(m_pActCloseWndObj);
+    m_pActWindowMenuObj->addAction(m_pActCloseAllWndObj);
+    m_pActWindowMenuObj->addSeparator();
+    m_pActWindowMenuObj->addAction(m_pActTileWndObj);
+    m_pActWindowMenuObj->addAction(m_pActCascadeWndObj);
+    m_pActWindowMenuObj->addSeparator();
+    m_pActWindowMenuObj->addAction(m_pActNextWndObj);
+    m_pActWindowMenuObj->addAction(m_pActPreviousWndObj);
+    m_pActWindowMenuObj->addAction(m_pActWindowMenuSeparatorObj);
+
+    QList<QMdiSubWindow*> windows = m_pMdiAreaObj->subWindowList();
+    m_pActWindowMenuSeparatorObj->setVisible(!windows.isEmpty());
+
+    for (int i = 0; i < windows.size(); ++i) {
+        QWidget* pWidgwtObj = windows.at(i)->widget();
+        if(!pWidgwtObj) continue;
+
+        ChildInterface* pIFaceChildObj = qobject_cast<ChildInterface*>(pWidgwtObj);
+        if(!pIFaceChildObj) continue;
+
+        QString szText = "";
+        if (i < 9) {
+            szText = tr("&%1 %2").arg(i + 1).arg(pIFaceChildObj->wndTitle());
+        } else {
+            szText = tr("%1 %2").arg(i + 1).arg(pIFaceChildObj->wndTitle());
+        }
+
+        QAction* pActObj  = m_pActWindowMenuObj->addAction(szText);
+        pActObj->setCheckable(true);
+        pActObj->setChecked(pWidgwtObj == activeMdiChild());
+        connect(pActObj, SIGNAL(triggered()), m_windowMapper, SLOT(map()));
+        m_windowMapper->setMapping(pActObj, windows.at(i));
+    }
 }
 
 
@@ -655,9 +683,17 @@ QWidget *MainWindow::activeMdiChild()
     return Q_NULLPTR;
 }
 
+QWidget* MainWindow::lastActiveMdiChild()
+{
+    return m_pLastActiveMdiChildObj;
+}
+
 void MainWindow::onSlotSetActiveSubWindow(QWidget *window)
 {
     if (!window) return;
+
+    m_pLastActiveMdiChildObj = activeMdiChild();
+
     QMdiSubWindow *pWndObj = qobject_cast<QMdiSubWindow *>(window);
     if(pWndObj) {
         QWidget *pWidgetObj = qobject_cast<QWidget *>(pWndObj->widget());
@@ -685,8 +721,8 @@ QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
 
 
 /*
-* 新建工程时，创建缺省IO变量组
-*/
+   * 新建工程时，创建缺省IO变量组
+   */
 void MainWindow::CreateDefaultIOTagGroup()
 {
     if (this->m_pProjectTreeViewObj->getDevTagGroupCount() == 0) {
@@ -712,8 +748,8 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
         if (QChildEvent* pEvent= static_cast<QChildEvent*>(event)) {
             if (qobject_cast<QMdiSubWindow*>(pEvent->child()) && m_childCurrent &&
                     m_pMdiAreaObj->subWindowList().size() == 1) {
-                if (ChildInterface* ifOldChild = qobject_cast<ChildInterface*>(m_childCurrent))
-                    ifOldChild->removeUserInterface(this);
+                if (ChildInterface* pIFaceChildObj = qobject_cast<ChildInterface*>(m_childCurrent))
+                    pIFaceChildObj->removeUserInterface(this);
                 m_childCurrent = Q_NULLPTR;
                 m_typeDocCurrent = ChildInterface::td_None;
             }
@@ -727,9 +763,9 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
 
 
 /**
- * @brief MainWindow::closeEvent  关闭事件
- * @param event
- */
+    * @brief MainWindow::closeEvent  关闭事件
+    * @param event
+    */
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     QString strFile = Helper::AppDir() + "/lastpath.ini";
@@ -773,8 +809,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 }
 
 /**
- * @brief MainWindow::writeSettings 写入窗口设置
- */
+    * @brief MainWindow::writeSettings 写入窗口设置
+    */
 void MainWindow::writeSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -782,8 +818,8 @@ void MainWindow::writeSettings()
 }
 
 /**
- * @brief MainWindow::readSettings 读取窗口设置
- */
+    * @brief MainWindow::readSettings 读取窗口设置
+    */
 void MainWindow::readSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -799,9 +835,9 @@ void MainWindow::readSettings()
 
 
 /**
- * @brief MainWindow::onNewPoject
- * @details 新建工程
- */
+    * @brief MainWindow::onNewPoject
+    * @details 新建工程
+    */
 void MainWindow::onNewPoject()
 {
     if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程")) {
@@ -857,9 +893,9 @@ void MainWindow::doOpenProject(QString proj)
 }
 
 /**
- * @brief MainWindow::onOpenProject
- * @details 打开工程
- */
+    * @brief MainWindow::onOpenProject
+    * @details 打开工程
+    */
 void MainWindow::onOpenProject()
 {
     QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
@@ -880,24 +916,21 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
 
 
 /**
- * @brief MainWindow::enableToolBar
- * @param szText
- * @details 工具条使能
- */
+    * @brief MainWindow::enableToolBar
+    * @param szText
+    * @details 工具条使能
+    */
 void MainWindow::enableToolBar(const QString &szText)
 {
-    bool bTagIOOrTmp = (szText == tr("中间变量")) | (szText.startsWith(tr("设备变量")));
-    this->m_pToolBarTagEditObj->setEnabled(bTagIOOrTmp);
-
 
 }
 
 
 /**
- * @brief MainWindow::onSlotProjectTreeViewClicked
- * @details 工程树节点被单击
- * @param index
- */
+    * @brief MainWindow::onSlotProjectTreeViewClicked
+    * @details 工程树节点被单击
+    * @param index
+    */
 void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
     if(m_szProjName == "") return;
@@ -930,37 +963,37 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 
     QMdiSubWindow *pWndObj = findMdiChild(szWndTittle);
     if(pWndObj == Q_NULLPTR) {
-        ChildInterface *pChildObj = Q_NULLPTR;
+        ChildInterface *pIFaceChildObj = Q_NULLPTR;
         if(szItemText == tr("系统参数")) {
             SystemParametersChild *pObj = new SystemParametersChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
-            pChildObj = pObj;
-            pChildObj->m_szProjectName = m_szProjName;
-            pChildObj->m_szItemName = szItemText;
+            pIFaceChildObj = pObj;
+            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") ||
                   szItemText == tr("网络设备")) {
             CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
-            pChildObj = pObj;
-            pChildObj->m_szProjectName = m_szProjName;
-            pChildObj->m_szItemName = szItemText;
+            pIFaceChildObj = pObj;
+            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szItemName = szItemText;
         } else if(isTagWndFound) { // 标签变量
             TagManagerChild *pObj = new TagManagerChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
-            pChildObj = pObj;
-            pChildObj->m_szProjectName = m_szProjName;
-            pChildObj->m_szItemName = szItemText;
+            pIFaceChildObj = pObj;
+            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szItemName = szItemText;
         }
 
 
-        if(pChildObj) {
-            pChildObj->buildUserInterface(this);
+        if(pIFaceChildObj) {
+            pIFaceChildObj->buildUserInterface(this);
         }
     }
 
@@ -1002,7 +1035,11 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 }
 
 
-
+/**
+ * @brief MainWindow::UpdateProjectName
+ * @details 更新工程名称
+ * @param szName 工程名称
+ */
 void MainWindow::UpdateProjectName(const QString &szName)
 {
     if(!szName.isEmpty()) {
@@ -1010,18 +1047,18 @@ void MainWindow::UpdateProjectName(const QString &szName)
         m_szProjPath = ProjectMgrUtils::getProjectPath(szName);
         QString szNameTmp = szName.mid(szName.lastIndexOf("/") + 1, szName.indexOf(".") - szName.lastIndexOf("/") - 1);
         this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
-        this->m_pActionRunObj->setEnabled(true);
+        this->m_pActRunObj->setEnabled(true);
     } else {
         m_szProjName = "";
         m_szProjPath = "";
-        this->m_pActionRunObj->setEnabled(false);
+        this->m_pActRunObj->setEnabled(false);
         this->m_pProjectTreeViewObj->updateUI();
     }
 }
 
 /*
- * 更新设备变量组
- */
+    * 更新设备变量组
+    */
 void MainWindow::UpdateDeviceVariableTableGroup()
 {
     this->m_pProjectTreeViewObj->updateDeviceTagGroup();
@@ -1029,15 +1066,14 @@ void MainWindow::UpdateDeviceVariableTableGroup()
 
 
 /**
- * @brief MainWindow::onSaveProject
- * @details 保存工程
- */
+    * @brief MainWindow::onSaveProject
+    * @details 保存工程
+    */
 void MainWindow::onSaveProject()
 {
     foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
-        ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
-        if(findForm != Q_NULLPTR)
-            findForm->save();
+        ChildInterface *pIFaceChildObj = qobject_cast<ChildInterface *>(window->widget());
+        if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
     }
 
     // 保存画面
@@ -1046,17 +1082,16 @@ void MainWindow::onSaveProject()
 
 
 /**
- * @brief MainWindow::onCloseProject
- * @details 关闭工程
- */
+    * @brief MainWindow::onCloseProject
+    * @details 关闭工程
+    */
 void MainWindow::onCloseProject()
 {
     if(this->m_pProjectTreeViewObj->getProjectName() == tr("未创建工程"))
         return;
     foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
-        ChildForm * findForm = qobject_cast<ChildForm *>(window->widget());
-        if(findForm != Q_NULLPTR)
-            findForm->save();
+        ChildForm * pIFaceChildObj = qobject_cast<ChildForm *>(window->widget());
+        if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
         window->close();
     }
     UpdateProjectName(QString());
@@ -1072,9 +1107,9 @@ void MainWindow::onCloseProject()
 
 
 /**
- * @brief MainWindow::onExit
- * @details 退出
- */
+    * @brief MainWindow::onExit
+    * @details 退出
+    */
 void MainWindow::onExit()
 {
     onSaveProject();
@@ -1083,18 +1118,18 @@ void MainWindow::onExit()
 
 
 /**
- * @brief MainWindow::onSlotSimulate
- * @details 模拟仿真
- */
+    * @brief MainWindow::onSlotSimulate
+    * @details 模拟仿真
+    */
 void MainWindow::onSlotSimulate()
 {
 
 }
 
 /**
- * @brief MainWindow::onSlotRunProject
- * @details 运行工程
- */
+    * @brief MainWindow::onSlotRunProject
+    * @details 运行工程
+    */
 void MainWindow::onSlotRunProject()
 {
     QString fileRuntimeApplication = "";
@@ -1117,9 +1152,9 @@ void MainWindow::onSlotRunProject()
 }
 
 /**
- * @brief MainWindow::onSlotUpLoadProject
- * @details 上载工程
- */
+    * @brief MainWindow::onSlotUpLoadProject
+    * @details 上载工程
+    */
 void MainWindow::onSlotUpLoadProject()
 {
     // 创建tmp目录
@@ -1173,18 +1208,9 @@ void MainWindow::onSlotUpLoadProject()
 
 
 /**
- * @brief MainWindow::onSlotUDisk
- * @details U盘
- */
-void MainWindow::onSlotUDisk()
-{
-
-}
-
-/**
- * @brief MainWindow::onSlotDownloadProject
- * @details 下载工程
- */
+    * @brief MainWindow::onSlotDownloadProject
+    * @details 下载工程
+    */
 void MainWindow::onSlotDownloadProject()
 {
     if(m_szProjName == Q_NULLPTR)
@@ -1249,169 +1275,9 @@ void MainWindow::onSlotDownloadProject()
 
 
 /**
- * @brief MainWindow::onSlotAddTag
- * @details 添加变量
- */
-void MainWindow::onSlotAddTag()
-{
-//    ChildForm *window = findMdiChild(this->m_szCurItem);
-//    if(window != Q_NULLPTR) {
-//        window->addVariableTag();
-//    }
-}
-
-
-/**
- * @brief MainWindow::onSlotAppendTag
- * @details 追加变量
- */
-void MainWindow::onSlotAppendTag()
-{
-//    ChildForm *window = findMdiChild(this->m_szCurItem);
-//    if(window != Q_NULLPTR) {
-//        window->appendVariableTag();
-//    }
-}
-
-
-/**
- * @brief MainWindow::onSlotRowCopyTag
- * @details 拷贝变量
- */
-void MainWindow::onSlotRowCopyTag()
-{
-//    ChildForm *window = findMdiChild(this->m_szCurItem);
-//    if(window != Q_NULLPTR) {
-//        window->rowCopyVariableTag();
-//    }
-}
-
-
-
-/**
- * @brief MainWindow::onSlotModifyTag
- * @details 修改变量
- */
-void MainWindow::onSlotModifyTag()
-{
-//    ChildForm *window = findMdiChild(this->m_szCurItem);
-//    if(window != Q_NULLPTR) {
-//        window->modifyVariableTag();
-//    }
-}
-
-/**
- * @brief MainWindow::onSlotDeleteTag
- * @details 删除变量
- */
-void MainWindow::onSlotDeleteTag()
-{
-//    ChildForm *window = findMdiChild(this->m_szCurItem);
-//    if(window != Q_NULLPTR) {
-//        window->deleteVariableTag();
-//    }
-}
-
-
-/**
- * @brief MainWindow::onSlotExportTag
- * @details 导出变量
- */
-void MainWindow::onSlotExportTag()
-{
-    QString dirUploadProjects = QCoreApplication::applicationDirPath();
-    QString strSaveCsvPath = QFileDialog::getExistingDirectory(
-                this, tr("选择导出csv路径"), dirUploadProjects,
-                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if (strSaveCsvPath == "") return;
-
-//    ChildForm *window = findMdiChild(this->m_szCurItem);
-//    if(window != Q_NULLPTR) {
-//        window->variableTagExportToCsv(strSaveCsvPath);
-//    }
-}
-
-
-/**
- * @brief MainWindow::onSlotImportTag
- * @details 导入变量
- */
-void MainWindow::onSlotImportTag()
-{
-    QString path = QCoreApplication::applicationDirPath();
-    QString strSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),
-                                                          path,
-                                                          tr("csv file (*.csv)"));
-
-    if(strSaveCsvFile == "")
-        return;
-
-    QString strCsvName= strSaveCsvFile.mid(strSaveCsvFile.lastIndexOf("/") + 1, strSaveCsvFile.indexOf(".") - strSaveCsvFile.lastIndexOf("/") - 1);
-    QString strGroupName = strCsvName.right(strCsvName.length() - strCsvName.lastIndexOf("-") - 1);
-
-    if(strCsvName.startsWith(tr("中间变量"))) {
-//        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
-//        if(pFindForm != Q_NULLPTR) {
-//            QString titleNew = tr("中间变量");
-//            pFindForm->SetTitle(titleNew);
-//            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-//        }
-    } else if(strCsvName.startsWith(tr("设备变量"))) {
-        bool found = false;
-
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if(strGroupName == pObj->m_szShowName) {
-                found = true;
-                break;
-            }
-        }
-
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
-
-        if(!found) {
-            TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-            TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-            pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
-            pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-            pObj->m_szShowName = strGroupName;
-            tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-            if(pObj != Q_NULLPTR) {
-                delete pObj;
-                pObj = Q_NULLPTR;
-            }
-            UpdateDeviceVariableTableGroup();
-            enableToolBar(strCsvName);
-
-            onSlotTreeProjectViewClicked(tr("设备变量"));
-            QApplication::processEvents();
-            onSlotTreeProjectViewClicked(strGroupName);
-            QApplication::processEvents();
-
-//            ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
-//            if(pFindForm != Q_NULLPTR) {
-//                pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-//            }
-            return;
-        }
-
-//        ChildForm* pFindForm = findMdiChild(this->m_szCurItem);
-//        if(pFindForm != Q_NULLPTR) {
-//            QString szWinTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
-//            pFindForm->SetTitle(szWinTittle);
-//            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-//        }
-    }
-}
-
-
-/**
- * @brief MainWindow::onSlotHelp
- * @details 帮助
- */
+    * @brief MainWindow::onSlotHelp
+    * @details 帮助
+    */
 void MainWindow::onSlotHelp()
 {
 
@@ -1419,9 +1285,9 @@ void MainWindow::onSlotHelp()
 
 
 /**
- * @brief MainWindow::onSlotAbout
- * @details 关于
- */
+    * @brief MainWindow::onSlotAbout
+    * @details 关于
+    */
 void MainWindow::onSlotAbout()
 {
     AboutDialog *pDlg = new AboutDialog(this);
@@ -1432,8 +1298,8 @@ void MainWindow::onSlotAbout()
 }
 
 /*
- * 加载最近打开的工程列表
- */
+    * 加载最近打开的工程列表
+    */
 void MainWindow::loadRecentProjectList()
 {
     QString iniRecentProjectFileName = Helper::AppDir() + "/RecentProjectList.ini";
@@ -1448,9 +1314,9 @@ void MainWindow::loadRecentProjectList()
             connect(pAct, &QAction::triggered, this, [=]{
                 this->doOpenProject(pAct->text());
             });
-            this->m_pMenuProjectObj->insertAction(this->m_pActionRecentProjListObj, pAct);
+            this->m_pMenuProjectObj->insertAction(this->m_pActRecentProjListObj, pAct);
         }
-        this->m_pMenuProjectObj->removeAction(this->m_pActionRecentProjListObj);
+        this->m_pMenuProjectObj->removeAction(this->m_pActRecentProjListObj);
         return;
     }
 
@@ -1469,8 +1335,8 @@ void MainWindow::loadRecentProjectList()
 }
 
 /*
- * 更新最近打开的工程列表
- */
+    * 更新最近打开的工程列表
+    */
 void MainWindow::updateRecentProjectList(QString newProj)
 {
     bool bStart = false;
@@ -1555,11 +1421,11 @@ void MainWindow::updateRecentProjectList(QString newProj)
 
 
 /**
- * @brief openGraphPage
- * @details 打开画面
- * @param pagePath 画面路径
- * @param pagePath 画面名称
- */
+    * @brief openGraphPage
+    * @details 打开画面
+    * @param pagePath 画面路径
+    * @param pagePath 画面名称
+    */
 void MainWindow::openGraphPage(const QString &szProjPath,
                                const QString &szProjName,
                                const QString &szPageName)
@@ -1601,9 +1467,9 @@ void MainWindow::openGraphPage(const QString &szProjPath,
 
 
 /**
- * @brief MainWindow::onSlotNewGraphPage
- * @details [画面.新建] 动作响应函数
- */
+    * @brief MainWindow::onSlotNewGraphPage
+    * @details [画面.新建] 动作响应函数
+    */
 void MainWindow::onSlotNewGraphPage()
 {
     addNewGraphPage();
@@ -1748,9 +1614,9 @@ void MainWindow::slotUpdateActions()
         }
     }
 
-    m_pActionZoomInObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
-    m_pActionZoomOutObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
-    m_pActionShowGridObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
+    m_pActZoomInObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
+    m_pActZoomOutObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
+    m_pActShowGridObj->setEnabled(m_pGraphPageTabWidgetObj->count() ? true : false);
 
     if (!m_pCurrentGraphPageObj) {
         return;
@@ -1759,9 +1625,9 @@ void MainWindow::slotUpdateActions()
     m_pUndoGroupObj->setActiveStack(m_pCurrentGraphPageObj->undoStack());
 
     if (!m_pCurrentGraphPageObj->undoStack()->isClean() || m_pCurrentGraphPageObj->getUnsavedFlag()) {
-        m_pActionSaveGraphPageObj->setEnabled(true);
+        m_pActSaveGraphPageObj->setEnabled(true);
     } else {
-        m_pActionSaveGraphPageObj->setEnabled(false);
+        m_pActSaveGraphPageObj->setEnabled(false);
     }
 }
 
@@ -1825,10 +1691,10 @@ void MainWindow::slotElementsDeleted()
 
 
 /**
- * @brief MainWindow::onSlotShowGrid
- * @details 显示栅格
- * @param on true-显示，false-隐藏
- */
+    * @brief MainWindow::onSlotShowGrid
+    * @details 显示栅格
+    * @param on true-显示，false-隐藏
+    */
 void MainWindow::onSlotShowGrid(bool on)
 {
     QListIterator <GraphPage*> iter(GraphPageManager::getInstance()->getGraphPageList());
@@ -1842,10 +1708,10 @@ void MainWindow::onSlotShowGrid(bool on)
 
 
 /**
- * @brief MainWindow::onSlotShowGraphObj
- * @details [窗口.图形元素] 动作响应函数; 图形元素停靠控件的显示或隐藏
- * @param on true-显示, false-隐藏
- */
+    * @brief MainWindow::onSlotShowGraphObj
+    * @details [窗口.图形元素] 动作响应函数; 图形元素停靠控件的显示或隐藏
+    * @param on true-显示, false-隐藏
+    */
 void MainWindow::onSlotShowGraphObj(bool on)
 {
     this->m_pDockElemetsObj->setVisible(on);
@@ -1853,10 +1719,10 @@ void MainWindow::onSlotShowGraphObj(bool on)
 
 
 /**
- * @brief MainWindow::slotShowPropEditor
- * @details [窗口.属性编辑器] 动作响应函数; 属性编辑器停靠控件的显示或隐藏
- * @param on true-显示, false-隐藏
- */
+    * @brief MainWindow::slotShowPropEditor
+    * @details [窗口.属性编辑器] 动作响应函数; 属性编辑器停靠控件的显示或隐藏
+    * @param on true-显示, false-隐藏
+    */
 void MainWindow::onSlotShowPropEditor(bool on)
 {
     this->m_pDockPropertyObj->setVisible(on);
@@ -1864,9 +1730,9 @@ void MainWindow::onSlotShowPropEditor(bool on)
 
 
 /**
- * @brief MainWindow::onSlotCloseAll
- * @details 关闭所有画面
- */
+    * @brief MainWindow::onSlotCloseAll
+    * @details 关闭所有画面
+    */
 void MainWindow::onSlotCloseAll()
 {
     while (m_pGraphPageTabWidgetObj->count()) {
@@ -1905,9 +1771,9 @@ void MainWindow::removeGraphPage(QGraphicsView *view)
 
 
 /**
- * @brief MainWindow::onSlotCloseGraphPage
- * @details 关闭画面
- */
+    * @brief MainWindow::onSlotCloseGraphPage
+    * @details 关闭画面
+    */
 void MainWindow::onSlotCloseGraphPage()
 {
     QGraphicsView *view = m_pCurrentViewObj;
@@ -1924,9 +1790,9 @@ void MainWindow::onSlotCloseGraphPage()
 
 
 /**
- * @brief MainWindow::onSlotEditOpen
- * @details [画面.打开] 动作响应函数
- */
+    * @brief MainWindow::onSlotEditOpen
+    * @details [画面.打开] 动作响应函数
+    */
 void MainWindow::onSlotEditOpen()
 {
     const QString &filename = QFileDialog::getOpenFileName(this,
@@ -2032,9 +1898,9 @@ void MainWindow::updateGraphPageViewInfo(const QString &fileName)
 }
 
 /**
- * @brief MainWindow::onSlotEditOpen
- * @details [画面.保存] 动作响应函数
- */
+    * @brief MainWindow::onSlotEditOpen
+    * @details [画面.保存] 动作响应函数
+    */
 void MainWindow::onSlotSaveGraphPage()
 {
     if (!m_pCurrentGraphPageObj) return;
@@ -2067,9 +1933,9 @@ int MainWindow::exitResponse()
 }
 
 /**
- * @brief MainWindow::onSlotZoomIn
- * @details 画面放大
- */
+    * @brief MainWindow::onSlotZoomIn
+    * @details 画面放大
+    */
 void MainWindow::onSlotZoomIn()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2087,9 +1953,9 @@ void MainWindow::onSlotZoomIn()
 
 
 /**
- * @brief MainWindow::onSlotZoomOut
- * @details 画面缩小
- */
+    * @brief MainWindow::onSlotZoomOut
+    * @details 画面缩小
+    */
 void MainWindow::onSlotZoomOut()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2107,9 +1973,9 @@ void MainWindow::onSlotZoomOut()
 
 
 /**
- * @brief MainWindow::onSlotAlignElements
- * @details 顶部对齐, 底部对齐, 右对齐, 左对齐
- */
+    * @brief MainWindow::onSlotAlignElements
+    * @details 顶部对齐, 底部对齐, 右对齐, 左对齐
+    */
 void MainWindow::onSlotAlignElements()
 {
     QAction *action = qobject_cast<QAction*>(sender());
@@ -2125,9 +1991,9 @@ void MainWindow::onSlotAlignElements()
 
 
 /**
- * @brief MainWindow::onSlotHUniformDistributeElements
- * @details 水平均匀分布
- */
+    * @brief MainWindow::onSlotHUniformDistributeElements
+    * @details 水平均匀分布
+    */
 void MainWindow::onSlotHUniformDistributeElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2138,9 +2004,9 @@ void MainWindow::onSlotHUniformDistributeElements()
 
 
 /**
- * @brief MainWindow::onSlotVUniformDistributeElements
- * @details 垂直均匀分布
- */
+    * @brief MainWindow::onSlotVUniformDistributeElements
+    * @details 垂直均匀分布
+    */
 void MainWindow::onSlotVUniformDistributeElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2151,9 +2017,9 @@ void MainWindow::onSlotVUniformDistributeElements()
 
 
 /**
- * @brief MainWindow::onSlotSetTheSameSizeElements
- * @details 设置选中控件大小一致
- */
+    * @brief MainWindow::onSlotSetTheSameSizeElements
+    * @details 设置选中控件大小一致
+    */
 void MainWindow::onSlotSetTheSameSizeElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2164,9 +2030,9 @@ void MainWindow::onSlotSetTheSameSizeElements()
 
 
 /**
- * @brief MainWindow::onSlotUpLayerElements
- * @details 上移一层
- */
+    * @brief MainWindow::onSlotUpLayerElements
+    * @details 上移一层
+    */
 void MainWindow::onSlotUpLayerElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2177,9 +2043,9 @@ void MainWindow::onSlotUpLayerElements()
 
 
 /**
- * @brief MainWindow::onSlotDownLayerElements
- * @details 下移一层
- */
+    * @brief MainWindow::onSlotDownLayerElements
+    * @details 下移一层
+    */
 void MainWindow::onSlotDownLayerElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2190,9 +2056,9 @@ void MainWindow::onSlotDownLayerElements()
 
 
 /**
- * @brief MainWindow::slotEditDelete
- * @details 删除画面
- */
+    * @brief MainWindow::slotEditDelete
+    * @details 删除画面
+    */
 void MainWindow::onSlotEditDelete()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2203,9 +2069,9 @@ void MainWindow::onSlotEditDelete()
 
 
 /**
- * @brief MainWindow::slotEditCopy
- * @details 拷贝画面
- */
+    * @brief MainWindow::slotEditCopy
+    * @details 拷贝画面
+    */
 void MainWindow::onSlotEditCopy()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2216,9 +2082,9 @@ void MainWindow::onSlotEditCopy()
 
 
 /**
- * @brief MainWindow::slotEditPaste
- * @details 粘贴画面
- */
+    * @brief MainWindow::slotEditPaste
+    * @details 粘贴画面
+    */
 void MainWindow::onSlotEditPaste()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
@@ -2229,10 +2095,10 @@ void MainWindow::onSlotEditPaste()
 
 
 /**
- * @brief MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged
- * @details 画面名称被单击
- * @param item
- */
+    * @brief MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged
+    * @details 画面名称被单击
+    * @param item
+    */
 void MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged(const QString &szText)
 {
     if(szText == tr("")) return;
@@ -2242,13 +2108,13 @@ void MainWindow::onSlotListWidgetGraphPagesCurrentTextChanged(const QString &szT
 
 
 /**
- * @brief MainWindow::createEmptyGraphpage
- * @details 创建空的画面页
- * @param projPath 工程路径
- * @param graphPageName 画面名称
- * @param width 画面宽度
- * @param height 画面高度
- */
+    * @brief MainWindow::createEmptyGraphpage
+    * @details 创建空的画面页
+    * @param projPath 工程路径
+    * @param graphPageName 画面名称
+    * @param width 画面宽度
+    * @param height 画面高度
+    */
 void MainWindow::createEmptyGraphpage(const QString &projPath,
                                       const QString &graphPageName,
                                       int width,
@@ -2269,9 +2135,9 @@ void MainWindow::createEmptyGraphpage(const QString &projPath,
 
 
 /**
- * @brief MainWindow::onNewGraphPage
- * @details 新建画面
- */
+    * @brief MainWindow::onNewGraphPage
+    * @details 新建画面
+    */
 void MainWindow::onNewGraphPage()
 {
     int last = DrawListUtils::getMaxDrawPageNum("draw");
@@ -2341,9 +2207,9 @@ reInput:
 
 
 /**
- * @brief MainWindow::onRenameGraphPage
- * @details 修改画面名称
- */
+    * @brief MainWindow::onRenameGraphPage
+    * @details 修改画面名称
+    */
 void MainWindow::onRenameGraphPage()
 {
     QString szOldGraphPageName = this->m_pListWidgetGraphPagesObj->currentItem()->text();
@@ -2385,9 +2251,9 @@ reInput:
 
 
 /**
- * @brief MainWindow::onDeleteGraphPage
- * @details 删除画面
- */
+    * @brief MainWindow::onDeleteGraphPage
+    * @details 删除画面
+    */
 void MainWindow::onDeleteGraphPage()
 {
     QString szGraphPageName = this->m_pListWidgetGraphPagesObj->currentItem()->text();
@@ -2430,9 +2296,9 @@ void MainWindow::onDeleteGraphPage()
 
 
 /**
- * @brief MainWindow::onCopyGraphPage
- * @details 复制画面
- */
+    * @brief MainWindow::onCopyGraphPage
+    * @details 复制画面
+    */
 void MainWindow::onCopyGraphPage()
 {
     m_szCopyGraphPageFileName = this->m_pListWidgetGraphPagesObj->currentItem()->text();
@@ -2440,9 +2306,9 @@ void MainWindow::onCopyGraphPage()
 
 
 /**
- * @brief MainWindow::onPasteGraphPage
- * @details 粘贴画面
- */
+    * @brief MainWindow::onPasteGraphPage
+    * @details 粘贴画面
+    */
 void MainWindow::onPasteGraphPage()
 {
     int iLast = 0;
@@ -2498,9 +2364,9 @@ reGetNum:
 
 
 /**
- * @brief MainWindow::initGraphPageListWidget
- * @details 初始化画面名称列表控件
- */
+    * @brief MainWindow::initGraphPageListWidget
+    * @details 初始化画面名称列表控件
+    */
 void MainWindow::initGraphPageListWidget()
 {
     this->m_pListWidgetGraphPagesObj->clear();
@@ -2510,9 +2376,9 @@ void MainWindow::initGraphPageListWidget()
 
 
 /**
- * @brief MainWindow::clearGraphPageListWidget
- * @details 清空画面列表控件
- */
+    * @brief MainWindow::clearGraphPageListWidget
+    * @details 清空画面列表控件
+    */
 void MainWindow::clearGraphPageListWidget()
 {
     this->m_pListWidgetGraphPagesObj->clear();
@@ -2521,24 +2387,24 @@ void MainWindow::clearGraphPageListWidget()
 
 
 /**
- * @brief MainWindow::onSlotSetWindowSetTitle
- * @details 设置窗口标题
- * @param szTitle 标题
- */
+    * @brief MainWindow::onSlotSetWindowSetTitle
+    * @details 设置窗口标题
+    * @param szTitle 标题
+    */
 void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
 {
-//    ChildForm *window = findMdiChild(this->m_szCurItem);
-//    if(window != Q_NULLPTR) {
-//        window->SetTitle(szTitle);
-//    }
+    //    ChildForm *window = findMdiChild(this->m_szCurItem);
+    //    if(window != Q_NULLPTR) {
+    //        window->SetTitle(szTitle);
+    //    }
 }
 
 
 /**
- * @brief MainWindow::onSlotTabProjectMgrCurChanged
- * @details 工程管理器标签改变
- * @param index 0：工程标签页, 1：画面标签页
- */
+    * @brief MainWindow::onSlotTabProjectMgrCurChanged
+    * @details 工程管理器标签改变
+    * @param index 0：工程标签页, 1：画面标签页
+    */
 void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 {
     if(this->m_szProjName == "") {
@@ -2557,9 +2423,9 @@ void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 }
 
 /**
- * @brief MainWindow::onSlotTabCloseRequested
- * @details 子窗口关闭请求
- */
+    * @brief MainWindow::onSlotTabCloseRequested
+    * @details 子窗口关闭请求
+    */
 void MainWindow::onSlotTabCloseRequested(int index)
 {
     QList<QMdiSubWindow*> list = m_pMdiAreaObj->subWindowList();
@@ -2570,36 +2436,58 @@ void MainWindow::onSlotTabCloseRequested(int index)
 
 
 /**
- * @brief MainWindow::onSlotUpdateMenus
- * @details 更新菜单
- */
+    * @brief MainWindow::onSlotUpdateMenus
+    * @details 更新菜单
+    */
 void MainWindow::onSlotUpdateMenus()
 {
     bool hasMdiChild = (activeMdiChild() != 0);
-    //m_xxAct->setEnabled(hasMdiChild);
-    //m_xxxAct->setEnabled(hasMdiChild);
+    m_pActSaveProjObj->setEnabled(hasMdiChild);
+    m_pActCloseProjObj->setEnabled(hasMdiChild);
 
+    m_pActCloseWndObj->setEnabled(hasMdiChild);
+    m_pActCloseAllWndObj->setEnabled(hasMdiChild);
+    m_pActTileWndObj->setEnabled(hasMdiChild);
+    m_pActCascadeWndObj->setEnabled(hasMdiChild);
+    m_pActNextWndObj->setEnabled(hasMdiChild);
+    m_pActPreviousWndObj->setEnabled(hasMdiChild);
+    m_pActWindowMenuSeparatorObj->setVisible(hasMdiChild);
 }
 
 void MainWindow::onSlotFocusChanged(QWidget* old, QWidget* now)
 {
+    Q_UNUSED(now);
     Q_UNUSED(old);
     QWidget* pChild = activeMdiChild();
-    if (qobject_cast<QAbstractScrollArea*>(now) && pChild != now) {
-        if (ChildInterface* ifChild = qobject_cast<ChildInterface*>(now)) {
-            if (m_typeDocCurrent != ifChild->typeDocument()) {
-                setUpdatesEnabled(false);
-                if (ChildInterface* ifOldChild = qobject_cast<ChildInterface*>(m_childCurrent))
-                    ifOldChild->removeUserInterface(this);
+    QWidget* pLastChild = lastActiveMdiChild();
 
-                m_childCurrent = now;
-                m_typeDocCurrent = ifChild->typeDocument();
+    if(pChild == pLastChild) return;
 
-                ifChild->buildUserInterface(this);
-                setUpdatesEnabled(true);
-            }
-        }
+    if (ChildInterface* pIFaceChildOldObj = qobject_cast<ChildInterface*>(pLastChild)) {
+        qDebug() << "m_typeDocCurrent" << m_typeDocCurrent;
+        qDebug() << "pIFaceChildNowObj->typeDocument()" << pIFaceChildOldObj->typeDocument();
+        qDebug() << "pChild->pIFaceChildOldObj->wndTitle()" << pIFaceChildOldObj->wndTitle();
+        
+        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
+        setUpdatesEnabled(false);
+        pIFaceChildOldObj->removeUserInterface(this);
+        setUpdatesEnabled(true);
+        
     }
+    
+    if (ChildInterface* pIFaceChildNowObj = qobject_cast<ChildInterface*>(pChild)) {
+        qDebug() << "m_typeDocCurrent" << m_typeDocCurrent;
+        qDebug() << "pIFaceChildNowObj->typeDocument()" << pIFaceChildNowObj->typeDocument();
+        qDebug() << "pIFaceChildNowObj->wndTitle()" << pIFaceChildNowObj->wndTitle();
+
+        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
+        setUpdatesEnabled(false);
+        m_childCurrent = pChild;
+        m_typeDocCurrent = pIFaceChildNowObj->typeDocument();
+        pIFaceChildNowObj->buildUserInterface(this);
+        setUpdatesEnabled(true);
+    }
+
 }
 
 

@@ -44,22 +44,6 @@ public:
     // 获取文件修改标志
     bool getModifiedFlag();
 
-    // 增加变量标签
-    void addVariableTag();
-    // 追加变量标签
-    void appendVariableTag();
-    // 行拷贝变量标签
-    void rowCopyVariableTag();
-    // 修改变量标签
-    void modifyVariableTag();
-    // 删除变量标签
-    void deleteVariableTag();
-    // 变量标签导出csv
-    void variableTagExportToCsv(const QString &path);
-    // 从csv导入变量标签
-    void variableTagImportFromCsv(const QString &file);
-
-
     // 新建设备
     void newDevice();
     // 修改设备
