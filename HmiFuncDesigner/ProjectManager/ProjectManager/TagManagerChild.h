@@ -51,8 +51,6 @@ public:
     QString currentFile() const;
     QString wndTitle() const;
 
-    bool hasSelection() const;
-
 public:
     void exportToCsv(const QString &path);
     void importFromCsv(const QString &path);

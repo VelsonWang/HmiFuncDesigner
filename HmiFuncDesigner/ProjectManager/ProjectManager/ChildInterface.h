@@ -34,8 +34,6 @@ public:
     virtual QString currentFile() const = 0;
     virtual QString wndTitle() const = 0;
 
-    virtual bool hasSelection() const = 0;
-
 public:
     QString m_szProjectName;
     QString m_szItemName;

@@ -30,8 +30,6 @@ public:
     QString currentFile() const;
     QString wndTitle() const;
 
-    bool hasSelection() const;
-
 private:
     void listViewUISetting();
     void listViewUpdate();

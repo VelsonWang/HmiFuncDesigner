@@ -135,10 +135,5 @@ QString SystemParametersChild::wndTitle() const
 }
 
 
-bool SystemParametersChild::hasSelection() const
-{
-    return false;
-}
-
 
 

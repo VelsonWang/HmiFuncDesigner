@@ -103,7 +103,6 @@ void MainWindow::initUI()
     connect(m_pMdiAreaObj, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(onSlotUpdateMenus()));
     m_windowMapper = new QSignalMapper(this);
     connect(m_windowMapper, SIGNAL(mapped(QWidget*)), this, SLOT(onSlotSetActiveSubWindow(QWidget*)));
-    QObject::connect(qApp, SIGNAL(focusChanged(QWidget*,QWidget*)), this, SLOT(onSlotFocusChanged(QWidget*, QWidget*)));
     centralWidgetLayout->addWidget(m_pMdiAreaObj);
 
     m_pCentralWidgetObj->setLayout(centralWidgetLayout);
@@ -683,30 +682,47 @@ QWidget *MainWindow::activeMdiChild()
     return Q_NULLPTR;
 }
 
-QWidget* MainWindow::lastActiveMdiChild()
-{
-    return m_pLastActiveMdiChildObj;
-}
 
 void MainWindow::onSlotSetActiveSubWindow(QWidget *window)
 {
     if (!window) return;
 
-    m_pLastActiveMdiChildObj = activeMdiChild();
-
+    QWidget * pLastActiveMdiChildObj = activeMdiChild();
     QMdiSubWindow *pWndObj = qobject_cast<QMdiSubWindow *>(window);
+    QWidget* pChild = Q_NULLPTR;
     if(pWndObj) {
         QWidget *pWidgetObj = qobject_cast<QWidget *>(pWndObj->widget());
         if(pWidgetObj) {
+            pChild = pWidgetObj;
             m_szCurItem = window->windowTitle();
         }
     }
     this->m_pMdiAreaObj->setActiveSubWindow(pWndObj);
+
+    if(pChild == pLastActiveMdiChildObj) return;
+
+    if (ChildInterface* pIFaceChildOldObj = qobject_cast<ChildInterface*>(pLastActiveMdiChildObj)) {
+        qDebug() << "pIFaceChildOldObj->wndTitle()" << pIFaceChildOldObj->wndTitle();
+        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
+        setUpdatesEnabled(false);
+        pIFaceChildOldObj->removeUserInterface(this);
+        setUpdatesEnabled(true);
+    }
+    if (ChildInterface* pIFaceChildNowObj = qobject_cast<ChildInterface*>(pChild)) {
+        ??
+        qDebug() << "pIFaceChildNowObj->wndTitle()" << pIFaceChildNowObj->wndTitle();
+        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
+        m_childCurrent = pChild;
+        m_typeDocCurrent = pIFaceChildNowObj->typeDocument();
+        setUpdatesEnabled(false);
+        pIFaceChildNowObj->buildUserInterface(this);
+        setUpdatesEnabled(true);
+    }
 }
 
-ChildForm *MainWindow::getActiveSubWindow()
+QWidget *MainWindow::getActiveSubWindow()
 {
-    return qobject_cast<ChildForm *>(this->m_pMdiAreaObj->activeSubWindow()->widget());
+    return this->m_pMdiAreaObj->activeSubWindow()->widget();
 }
 
 
@@ -990,11 +1006,6 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pIFaceChildObj->m_szProjectName = m_szProjName;
             pIFaceChildObj->m_szItemName = szItemText;
         }
-
-
-        if(pIFaceChildObj) {
-            pIFaceChildObj->buildUserInterface(this);
-        }
     }
 
 
@@ -1031,7 +1042,6 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 
 
     onSlotSetActiveSubWindow(pWndObj);
-    emit treeItemClicked(szWndTittle);
 }
 
 
@@ -2454,40 +2464,5 @@ void MainWindow::onSlotUpdateMenus()
     m_pActWindowMenuSeparatorObj->setVisible(hasMdiChild);
 }
 
-void MainWindow::onSlotFocusChanged(QWidget* old, QWidget* now)
-{
-    Q_UNUSED(now);
-    Q_UNUSED(old);
-    QWidget* pChild = activeMdiChild();
-    QWidget* pLastChild = lastActiveMdiChild();
-
-    if(pChild == pLastChild) return;
-
-    if (ChildInterface* pIFaceChildOldObj = qobject_cast<ChildInterface*>(pLastChild)) {
-        qDebug() << "m_typeDocCurrent" << m_typeDocCurrent;
-        qDebug() << "pIFaceChildNowObj->typeDocument()" << pIFaceChildOldObj->typeDocument();
-        qDebug() << "pChild->pIFaceChildOldObj->wndTitle()" << pIFaceChildOldObj->wndTitle();
-        
-        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-        setUpdatesEnabled(false);
-        pIFaceChildOldObj->removeUserInterface(this);
-        setUpdatesEnabled(true);
-        
-    }
-    
-    if (ChildInterface* pIFaceChildNowObj = qobject_cast<ChildInterface*>(pChild)) {
-        qDebug() << "m_typeDocCurrent" << m_typeDocCurrent;
-        qDebug() << "pIFaceChildNowObj->typeDocument()" << pIFaceChildNowObj->typeDocument();
-        qDebug() << "pIFaceChildNowObj->wndTitle()" << pIFaceChildNowObj->wndTitle();
-
-        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-        setUpdatesEnabled(false);
-        m_childCurrent = pChild;
-        m_typeDocCurrent = pIFaceChildNowObj->typeDocument();
-        pIFaceChildNowObj->buildUserInterface(this);
-        setUpdatesEnabled(true);
-    }
-
-}
 
 

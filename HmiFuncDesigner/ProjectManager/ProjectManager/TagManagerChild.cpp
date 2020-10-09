@@ -1832,8 +1832,10 @@ void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
         m_pToolBarTagEditObj->addAction(m_pActImportTagObj); // 导入变量
 
         pMainWin->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
+
+        m_pMainWinObj = pMainWin;
     }
-    m_pMainWinObj = pMainWin;
+
 
     //////////////////////////////////////////////////////////////////////////
 
@@ -1862,9 +1864,25 @@ void TagManagerChild::removeUserInterface(QMainWindow* pMainWin)
 {
     if(pMainWin == Q_NULLPTR) return;
 
-    m_pMenuTagEditObj->clear();
-    //DEL_OBJ(m_pMenuTagEditObj);
-    pMainWin->removeToolBar(m_pToolBarTagEditObj);
+    if(m_pMainWinObj) {
+        m_pMenuTagEditObj->clear();
+        DEL_OBJ(m_pActAddTagObj);
+        DEL_OBJ(m_pActAppendTagObj);
+        DEL_OBJ(m_pActRowCopyTagObj);
+        DEL_OBJ(m_pActModifyTagObj);
+        DEL_OBJ(m_pActDeleteTagObj);
+        DEL_OBJ(m_pActExportTagObj);
+        DEL_OBJ(m_pActImportTagObj);
+
+        pMainWin->menuBar()->removeAction(m_pMenuTagEditObj->menuAction());
+        DEL_OBJ(m_pMenuTagEditObj);
+
+        pMainWin->removeToolBar(m_pToolBarTagEditObj);
+
+        m_pMainWinObj = Q_NULLPTR;
+    }
+
+
 }
 
 bool TagManagerChild::open()
@@ -1908,13 +1926,6 @@ QString TagManagerChild::wndTitle() const
 {
     return this->windowTitle();
 }
-
-
-bool TagManagerChild::hasSelection() const
-{
-    return false;
-}
-
 
 
 

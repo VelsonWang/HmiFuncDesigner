@@ -414,10 +414,5 @@ QString CommunicationDeviceChild::wndTitle() const
 }
 
 
-bool CommunicationDeviceChild::hasSelection() const
-{
-    return false;
-}
-
 
 

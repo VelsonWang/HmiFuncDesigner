@@ -49,11 +49,8 @@ public:
     ~MainWindow();
     void UpdateDeviceVariableTableGroup();
 
-signals:
-    void treeItemClicked(const QString &itemText);
-
 public slots:
-    ChildForm* getActiveSubWindow();
+    QWidget* getActiveSubWindow();
     void on_actionWorkSpace_triggered(bool checked);
     // 工程树节点被单击
     void onSlotTreeProjectViewClicked(const QString &szItemText);
@@ -61,7 +58,6 @@ public slots:
 
 private:
     QWidget* activeMdiChild();
-    QWidget* lastActiveMdiChild();
     void CreateItemWindows();
     QMdiSubWindow* findMdiChild(const QString &szWndTitle);
     void readSettings();  // 读取窗口设置
@@ -214,8 +210,6 @@ private slots:
     void onSlotUpdateMenus();
     //
     void onSlotSetActiveSubWindow(QWidget* window);
-    //
-    void onSlotFocusChanged(QWidget*, QWidget*);
 
 private:
     // 初始化UI
@@ -244,7 +238,6 @@ private:
     int m_typeDocCurrent;
     QWidget* m_childCurrent = Q_NULLPTR;
     QSignalMapper* m_windowMapper = Q_NULLPTR;
-    QWidget *m_pLastActiveMdiChildObj = Q_NULLPTR;
 
     QtVariantPropertyManager *m_pVariantPropertyMgrObj = Q_NULLPTR;
     QtTreePropertyBrowser *m_pPropertyEditorObj = Q_NULLPTR;
