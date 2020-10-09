@@ -687,32 +687,31 @@ void MainWindow::onSlotSetActiveSubWindow(QWidget *window)
 {
     if (!window) return;
 
-    QWidget * pLastActiveMdiChildObj = activeMdiChild();
-    QMdiSubWindow *pWndObj = qobject_cast<QMdiSubWindow *>(window);
-    QWidget* pChild = Q_NULLPTR;
-    if(pWndObj) {
-        QWidget *pWidgetObj = qobject_cast<QWidget *>(pWndObj->widget());
+    QMdiSubWindow *pMdiSubWndObj = qobject_cast<QMdiSubWindow *>(window);
+    if(pMdiSubWndObj) {
+        QWidget *pWidgetObj = qobject_cast<QWidget *>(pMdiSubWndObj->widget());
         if(pWidgetObj) {
-            pChild = pWidgetObj;
             m_szCurItem = window->windowTitle();
         }
     }
-    this->m_pMdiAreaObj->setActiveSubWindow(pWndObj);
+    this->m_pMdiAreaObj->setActiveSubWindow(pMdiSubWndObj);
 
-    if(pChild == pLastActiveMdiChildObj) return;
-
-    if (ChildInterface* pIFaceChildOldObj = qobject_cast<ChildInterface*>(pLastActiveMdiChildObj)) {
-        qDebug() << "pIFaceChildOldObj->wndTitle()" << pIFaceChildOldObj->wndTitle();
-        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-        setUpdatesEnabled(false);
-        pIFaceChildOldObj->removeUserInterface(this);
-        setUpdatesEnabled(true);
+    QList<QMdiSubWindow *> subWindowList = this->m_pMdiAreaObj->subWindowList(QMdiArea::ActivationHistoryOrder);
+    int iSubWndSize = subWindowList.size();
+    QWidget *pLastActiveMdiChildObj = Q_NULLPTR;
+    if(iSubWndSize > 1) {
+        pLastActiveMdiChildObj = subWindowList.at(iSubWndSize-2)->widget();
+        if (ChildInterface* pIFaceChildOldObj = qobject_cast<ChildInterface*>(pLastActiveMdiChildObj)) {
+            setUpdatesEnabled(false);
+            pIFaceChildOldObj->removeUserInterface(this);
+            setUpdatesEnabled(true);
+        }
     }
-    if (ChildInterface* pIFaceChildNowObj = qobject_cast<ChildInterface*>(pChild)) {
-        ??
-        qDebug() << "pIFaceChildNowObj->wndTitle()" << pIFaceChildNowObj->wndTitle();
-        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-        m_childCurrent = pChild;
+
+    QWidget* pChildWndObj = Q_NULLPTR;
+    pChildWndObj = subWindowList.at(iSubWndSize-1)->widget();;
+    if (ChildInterface* pIFaceChildNowObj = qobject_cast<ChildInterface*>(pChildWndObj)) {
+        m_childCurrent = pChildWndObj;
         m_typeDocCurrent = pIFaceChildNowObj->typeDocument();
         setUpdatesEnabled(false);
         pIFaceChildNowObj->buildUserInterface(this);

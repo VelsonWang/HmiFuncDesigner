@@ -1778,64 +1778,67 @@ void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
 {
     if(pMainWin == Q_NULLPTR) return;
 
-    if(m_pMainWinObj == Q_NULLPTR) {
+    if(wndTitle().startsWith(tr("设备变量"))|| wndTitle().startsWith(tr("中间变量"))) {
+        if(m_pMainWinObj == Q_NULLPTR) {
 
-        //-----------------------------<变量编辑菜单>----------------------------------
-        // 添加变量
-        m_pActAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
-        connect(m_pActAddTagObj, SIGNAL(triggered()), SLOT(onSlotAddTag()));
+            //-----------------------------<变量编辑菜单>----------------------------------
+            // 添加变量
+            m_pActAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
+            connect(m_pActAddTagObj, SIGNAL(triggered()), SLOT(onSlotAddTag()));
 
-        // 追加变量
-        m_pActAppendTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("追加变量"));
-        connect(m_pActAppendTagObj, SIGNAL(triggered()), SLOT(onSlotAppendTag()));
+            // 追加变量
+            m_pActAppendTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("追加变量"));
+            connect(m_pActAppendTagObj, SIGNAL(triggered()), SLOT(onSlotAppendTag()));
 
-        // 拷贝变量
-        m_pActRowCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
-        connect(m_pActRowCopyTagObj, SIGNAL(triggered()), SLOT(onSlotRowCopyTag()));
+            // 拷贝变量
+            m_pActRowCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
+            connect(m_pActRowCopyTagObj, SIGNAL(triggered()), SLOT(onSlotRowCopyTag()));
 
-        // 修改变量
-        m_pActModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
-        connect(m_pActModifyTagObj, SIGNAL(triggered()), SLOT(onSlotModifyTag()));
+            // 修改变量
+            m_pActModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
+            connect(m_pActModifyTagObj, SIGNAL(triggered()), SLOT(onSlotModifyTag()));
 
-        // 删除变量
-        m_pActDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
-        connect(m_pActDeleteTagObj, SIGNAL(triggered()), SLOT(onSlotDeleteTag()));
+            // 删除变量
+            m_pActDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
+            connect(m_pActDeleteTagObj, SIGNAL(triggered()), SLOT(onSlotDeleteTag()));
 
-        // 导出变量
-        m_pActExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
-        connect(m_pActExportTagObj, SIGNAL(triggered()), SLOT(onSlotExportTag()));
+            // 导出变量
+            m_pActExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
+            connect(m_pActExportTagObj, SIGNAL(triggered()), SLOT(onSlotExportTag()));
 
-        // 导入变量
-        m_pActImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
-        connect(m_pActImportTagObj, SIGNAL(triggered()), SLOT(onSlotImportTag()));
+            // 导入变量
+            m_pActImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
+            connect(m_pActImportTagObj, SIGNAL(triggered()), SLOT(onSlotImportTag()));
 
 
-        //-----------------------------<变量编辑菜单>----------------------------------
-        m_pMenuTagEditObj = pMainWin->menuBar()->addMenu(tr("变量编辑"));
-        m_pMenuTagEditObj->addAction(m_pActAddTagObj); // 添加变量
-        m_pMenuTagEditObj->addAction(m_pActAppendTagObj); // 追加变量
-        m_pMenuTagEditObj->addAction(m_pActRowCopyTagObj); // 拷贝变量
-        m_pMenuTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
-        m_pMenuTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
-        m_pMenuTagEditObj->addAction(m_pActExportTagObj); // 导出变量
-        m_pMenuTagEditObj->addAction(m_pActImportTagObj); // 导入变量
+            //-----------------------------<变量编辑菜单>----------------------------------
+            m_pMenuTagEditObj = pMainWin->menuBar()->addMenu(tr("变量编辑"));
+            m_pMenuTagEditObj->addAction(m_pActAddTagObj); // 添加变量
+            m_pMenuTagEditObj->addAction(m_pActAppendTagObj); // 追加变量
+            m_pMenuTagEditObj->addAction(m_pActRowCopyTagObj); // 拷贝变量
+            m_pMenuTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
+            m_pMenuTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
+            m_pMenuTagEditObj->addAction(m_pActExportTagObj); // 导出变量
+            m_pMenuTagEditObj->addAction(m_pActImportTagObj); // 导入变量
 
-        //-----------------------------<变量编辑>----------------------------------
-        m_pToolBarTagEditObj = new QToolBar(pMainWin);
-        m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-        m_pToolBarTagEditObj->addAction(m_pActAddTagObj);  // 添加变量
-        m_pToolBarTagEditObj->addAction(m_pActAppendTagObj); // 追加变量
-        m_pToolBarTagEditObj->addAction(m_pActRowCopyTagObj); // 拷贝变量
-        m_pToolBarTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
-        m_pToolBarTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
-        m_pToolBarTagEditObj->addAction(m_pActExportTagObj); // 导出变量
-        m_pToolBarTagEditObj->addAction(m_pActImportTagObj); // 导入变量
+            //-----------------------------<变量编辑>----------------------------------
+            m_pToolBarTagEditObj = new QToolBar(pMainWin);
+            m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+            m_pToolBarTagEditObj->addAction(m_pActAddTagObj);  // 添加变量
+            m_pToolBarTagEditObj->addAction(m_pActAppendTagObj); // 追加变量
+            m_pToolBarTagEditObj->addAction(m_pActRowCopyTagObj); // 拷贝变量
+            m_pToolBarTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
+            m_pToolBarTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
+            m_pToolBarTagEditObj->addAction(m_pActExportTagObj); // 导出变量
+            m_pToolBarTagEditObj->addAction(m_pActImportTagObj); // 导入变量
 
-        pMainWin->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
+            pMainWin->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
 
-        m_pMainWinObj = pMainWin;
+            m_pMainWinObj = pMainWin;
+        }
+    } else {
+        m_pMainWinObj = Q_NULLPTR;
     }
-
 
     //////////////////////////////////////////////////////////////////////////
 
