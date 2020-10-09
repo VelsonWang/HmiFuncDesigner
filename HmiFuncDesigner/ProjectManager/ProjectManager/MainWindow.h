@@ -15,8 +15,6 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "ChildBase.h"
-#include "ChildForm.h"
 #include "ProjectTreeView.h"
 #include "GraphPageListWidget.h"
 #include "ChildInterface.h"
@@ -63,8 +61,6 @@ private:
     void readSettings();  // 读取窗口设置
     void writeSettings(); // 写入窗口设置
     void UpdateProjectName(const QString &szName);
-
-    void enableToolBar(const QString &szText);
     void loadRecentProjectList();
     void updateRecentProjectList(QString newProj);
     void doOpenProject(QString proj);

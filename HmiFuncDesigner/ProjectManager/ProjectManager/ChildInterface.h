@@ -18,6 +18,8 @@ public:
         td_SystemParameters,
         td_CommunicationDevice,
         td_TagManager,
+        td_RealTimeDatabase,
+        td_ScriptManager,
     };
 
 

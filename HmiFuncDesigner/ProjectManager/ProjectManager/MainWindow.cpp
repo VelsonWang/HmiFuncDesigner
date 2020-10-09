@@ -26,8 +26,8 @@
 #include "ProjectDownloadDialog.h"
 #include "ProjectMgrUtils.h"
 #include "ProjectUploadDialog.h"
-#include "RealTimeDatabaseWin.h"
-#include "ScriptManageWin.h"
+#include "RealTimeDatabaseChild.h"
+#include "ScriptManageChild.h"
 #include "ProjectData.h"
 #include "TagManagerChild.h"
 #include "MainWindow.h"
@@ -193,7 +193,6 @@ void MainWindow::initUI()
     m_bGraphPageGridVisible = true;
     m_iCurrentGraphPageIndex = 0;
 
-    enableToolBar(""); // 工具条使能
     setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
     readSettings();  // 初始窗口时读取窗口设置信息
     loadRecentProjectList();
@@ -931,17 +930,6 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
 
 
 /**
-    * @brief MainWindow::enableToolBar
-    * @param szText
-    * @details 工具条使能
-    */
-void MainWindow::enableToolBar(const QString &szText)
-{
-
-}
-
-
-/**
     * @brief MainWindow::onSlotProjectTreeViewClicked
     * @details 工程树节点被单击
     * @param index
@@ -1004,41 +992,24 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = m_szProjName;
             pIFaceChildObj->m_szItemName = szItemText;
+        } else if(szItemText == tr("实时数据库")) {
+            RealTimeDatabaseChild *pObj = new RealTimeDatabaseChild(this);
+            pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
+            pObj->setWindowTitle(szWndTittle);
+            pObj->showMaximized();
+            pIFaceChildObj = pObj;
+            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szItemName = szItemText;
+        } else if(szItemText == tr("脚本编辑器")) {
+            ScriptManageChild *pObj = new ScriptManageChild(this);
+            pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
+            pObj->setWindowTitle(szWndTittle);
+            pObj->showMaximized();
+            pIFaceChildObj = pObj;
+            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szItemName = szItemText;
         }
     }
-
-
-    ////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-    // 工具条使能
-    enableToolBar(winTittle);
-
-    ////////////////////////////////////////////////////////////////////////
-
-    if(szItemText == tr("画面")) {
-        findForm->switchPage(PAGE_DRAW_PAGE);
-    } else if(szItemText == tr("实时数据库")) {
-        findForm->switchPage(PAGE_RTDB);
-    } else if(szItemText == tr("历史数据库")) {
-        findForm->switchPage(PAGE_NONE);
-        findForm->hide();
-    } else if(szItemText == tr("脚本编辑器")) {
-        findForm->switchPage(PAGE_SCRIPT_MANAGER);
-    }
-#endif
-
 
     onSlotSetActiveSubWindow(pWndObj);
 }
@@ -1099,7 +1070,7 @@ void MainWindow::onCloseProject()
     if(this->m_pProjectTreeViewObj->getProjectName() == tr("未创建工程"))
         return;
     foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
-        ChildForm * pIFaceChildObj = qobject_cast<ChildForm *>(window->widget());
+        ChildInterface *pIFaceChildObj = qobject_cast<ChildInterface *>(window->widget());
         if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
         window->close();
     }

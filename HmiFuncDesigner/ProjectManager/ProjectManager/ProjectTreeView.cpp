@@ -112,7 +112,7 @@ void ProjectTreeView::onSlotClicked(const QModelIndex &index)
 ///
 void ProjectTreeView::onSlotDoubleClicked(const QModelIndex &index)
 {
-
+    Q_UNUSED(index)
 
 }
 
@@ -168,9 +168,9 @@ void ProjectTreeView::updateUI()
     m_pRealTimeDatabaseObj = new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
     m_pRealTimeDatabaseObj->setEditable(false);
     m_pDataBaseManagerObj->appendRow(m_pRealTimeDatabaseObj);
-    m_pHistoryDatabaseObj = new QStandardItem(QIcon(":/images/db_hisdbview.png"), tr("历史数据库"));
-    m_pHistoryDatabaseObj->setEditable(false);
-    m_pDataBaseManagerObj->appendRow(m_pHistoryDatabaseObj);
+    //m_pHistoryDatabaseObj = new QStandardItem(QIcon(":/images/db_hisdbview.png"), tr("历史数据库"));
+    //m_pHistoryDatabaseObj->setEditable(false);
+    //m_pDataBaseManagerObj->appendRow(m_pHistoryDatabaseObj);
     m_pProjectItemObj->appendRow(m_pDataBaseManagerObj);
 
     m_pLogicProgramObj = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));

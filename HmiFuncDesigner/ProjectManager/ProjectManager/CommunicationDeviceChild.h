@@ -6,7 +6,6 @@
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
-#include <QListView>
 
 class CommunicationDeviceChild : public QWidget, public ChildInterface
 {

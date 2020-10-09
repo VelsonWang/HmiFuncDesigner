@@ -50,6 +50,8 @@ SOURCES += main.cpp\
     ProjectTreeView.cpp \
     NetSettingDialog.cpp \
     DatabaseSettingDialog.cpp \
+    RealTimeDatabaseChild.cpp \
+    ScriptManageChild.cpp \
     SystemParametersChild.cpp \
     TableviewDelegate.cpp \
     TagIOEditDialog.cpp \
@@ -57,16 +59,13 @@ SOURCES += main.cpp\
     TagTmpEditDialog.cpp \
     UserAuthorityDialog.cpp \
     NewComDeviceDialog.cpp \
-    ChildBase.cpp \
     NewVariableGroupDialog.cpp \
     DeviceListDialog.cpp \
     SelectProtocolDialog.cpp \
     ProjectDownloadDialog.cpp \
     ProjectUploadDialog.cpp \
     AboutDialog.cpp \
-    RealTimeDatabaseWin.cpp \
     NewNetDeviceDialog.cpp \
-    ScriptManageWin.cpp \
     ScriptConditionConfigForm.cpp \
     ScriptEditorDlg.cpp \
     TagFuncEditDialog.cpp \
@@ -74,7 +73,6 @@ SOURCES += main.cpp\
     InsertFunctionDialog.cpp \
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
-    ChildForm.cpp \
     ProjectMgrUtils.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
@@ -106,6 +104,8 @@ HEADERS  += MainWindow.h \
     ProjectTreeView.h \
     NetSettingDialog.h \
     DatabaseSettingDialog.h \
+    RealTimeDatabaseChild.h \
+    ScriptManageChild.h \
     SystemParametersChild.h \
     TableviewDelegate.h \
     TagIOEditDialog.h \
@@ -113,16 +113,13 @@ HEADERS  += MainWindow.h \
     TagTmpEditDialog.h \
     UserAuthorityDialog.h \
     NewComDeviceDialog.h \
-    ChildBase.h \
     NewVariableGroupDialog.h \
     DeviceListDialog.h \
     SelectProtocolDialog.h \
     ProjectDownloadDialog.h \
     ProjectUploadDialog.h \
     AboutDialog.h \
-    RealTimeDatabaseWin.h \
     NewNetDeviceDialog.h \
-    ScriptManageWin.h \
     ScriptConditionConfigForm.h \
     ScriptEditorDlg.h \
     TagFuncEditDialog.h \
@@ -131,7 +128,6 @@ HEADERS  += MainWindow.h \
     InsertTagDialog.h \
     ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
-    ChildForm.h \
     ProjectMgrUtils.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
@@ -168,7 +164,6 @@ FORMS    += \
     ProjectDownloadDialog.ui \
     ProjectUploadDialog.ui \
     AboutDialog.ui \
-    RealTimeDatabaseWin.ui \
     NewNetDeviceDialog.ui \
     ScriptConditionConfigForm.ui \
     ScriptEditorDlg.ui \
