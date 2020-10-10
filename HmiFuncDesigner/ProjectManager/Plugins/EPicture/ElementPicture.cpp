@@ -49,8 +49,6 @@ void ElementPicture::release()
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
         picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
     }
-
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementPicture::boundingRect() const

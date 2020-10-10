@@ -27,15 +27,41 @@ public:
 
 
 NetSetting::NetSetting()
-    : dPtr_(new NetSettingPrivate()) {
+    : dPtr_(new NetSettingPrivate())
+{
 
 }
 
-NetSetting::~NetSetting() {
+NetSetting::~NetSetting()
+{
     if(dPtr_ != Q_NULLPTR) {
         delete dPtr_;
     }
 }
+
+
+bool NetSetting::openFromXml(XMLObject *pXmlObj)
+{
+
+    return true;
+}
+
+
+bool NetSetting::saveToXml(XMLObject *pXmlObj)
+{
+    XMLObject *pNetSettingObj = new XMLObject(pXmlObj);
+    pNetSettingObj->setTagName("net_setting");
+    pNetSettingObj->setProperty("hot", dPtr_->bHotStandbyMode_ ? "1" : "0");
+    pNetSettingObj->setProperty("clientMode", dPtr_->bClientMode_ ? "1" : "0");
+    pNetSettingObj->setProperty("sStation", dPtr_->bServerStation_ ? "1" : "0");
+    pNetSettingObj->setProperty("cStation", dPtr_->bClientStation_ ? "1" : "0");
+    pNetSettingObj->setProperty("cAddress", dPtr_->szClientAddress_);
+    pNetSettingObj->setProperty("sAddress", dPtr_->szServerAddress_);
+    pNetSettingObj->setProperty("heartbeat", QString::number(dPtr_->iHeartbeatTime_));
+    pNetSettingObj->setProperty("dbSync", QString::number(dPtr_->iDatabaseSyncTime_));
+    return true;
+}
+
 
 /**
  * @brief NetSetting::load

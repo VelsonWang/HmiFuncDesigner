@@ -50,7 +50,6 @@ void ElementJarShape::regenerateElementId()
  */
 void ElementJarShape::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

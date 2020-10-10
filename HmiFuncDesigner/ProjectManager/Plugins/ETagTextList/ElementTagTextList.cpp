@@ -51,7 +51,6 @@ void ElementTagTextList::regenerateElementId()
  */
 void ElementTagTextList::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

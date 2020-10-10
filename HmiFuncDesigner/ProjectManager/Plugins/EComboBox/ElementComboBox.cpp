@@ -51,7 +51,6 @@ void ElementComboBox::regenerateElementId()
  */
 void ElementComboBox::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

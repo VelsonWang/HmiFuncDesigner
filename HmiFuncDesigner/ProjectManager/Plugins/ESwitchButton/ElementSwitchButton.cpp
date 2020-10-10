@@ -76,8 +76,6 @@ void ElementSwitchButton::release()
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
         picResMgr_.del(ProjectData::getInstance()->dbData_, setPictureFile_);
     }
-
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementSwitchButton::boundingRect() const

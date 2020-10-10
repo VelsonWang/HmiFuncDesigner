@@ -46,7 +46,6 @@ void ElementInputEdit::regenerateElementId()
  */
 void ElementInputEdit::release()
 {
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementInputEdit::boundingRect() const

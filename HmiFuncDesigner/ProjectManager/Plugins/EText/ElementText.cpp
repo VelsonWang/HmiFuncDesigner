@@ -42,7 +42,6 @@ void ElementText::regenerateElementId()
  */
 void ElementText::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

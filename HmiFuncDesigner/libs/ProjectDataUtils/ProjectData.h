@@ -1,7 +1,6 @@
 #ifndef _PROJECTDATA_H_
 #define _PROJECTDATA_H_
 
-#include <QMutex>
 #include <QObject>
 #include <QString>
 #include "ProjectInfoManager.h"
@@ -14,6 +13,7 @@
 #include "TagTmp.h"
 #include "TagIO.h"
 
+
 class ProjectDataSQLiteDatabase;
 
 class ProjectData
@@ -22,8 +22,11 @@ public:
     explicit ProjectData();
     ~ProjectData();
 
+    bool openFromXml(const QString &szProjFile);
+    bool saveToXml(const QString &szProjFile);
+
     static ProjectData* getInstance();
-    static void releaseInstance();
+
     // 创建或打开工程数据
     bool createOrOpenProjectData(const QString &projPath, const QString &projName);
     // 获取工程数据文件路径
@@ -36,6 +39,7 @@ public:
     static ProjectDataSQLiteDatabase *dbData_;
     static QString szProjPath_;
     static QString szProjName_;
+    QString szProjVersion_; // 工程管理器版本
     ProjectInfoManager projInfoMgr_; // 工程信息管理
     NetSetting netSetting_; // 网络配置
     DatabaseSetting dbSetting_; // 数据库配置
@@ -48,9 +52,9 @@ public:
     TagIOGroup tagIOGroup_; // 设备标签变量组
 
 private:  
-    static ProjectData *instance_;
-    static QMutex mutex_;
     QString dbPath_;
+
+    Q_DISABLE_COPY(ProjectData)
 };
 
 

@@ -865,8 +865,8 @@ void MainWindow::onNewPoject()
     if (pNewProjectDlg->exec() == QDialog::Accepted) {
         UpdateProjectName(pNewProjectDlg->GetProjectName());
 
-        QString szPath = ProjectMgrUtils::getProjectPath(m_szProjName);
-        QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjName);
+        QString szPath = ProjectMgrUtils::getProjectPath(m_szProjFile);
+        QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjFile);
         ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
         pNewProjectDlg->save();
 
@@ -887,8 +887,8 @@ void MainWindow::doOpenProject(QString proj)
     UpdateProjectName(proj);
     QString strFile = Helper::AppDir() + "/lastpath.ini";
     ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_szProjPath);
-    QString szPath = ProjectMgrUtils::getProjectPath(m_szProjName);
-    QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjName);
+    QString szPath = ProjectMgrUtils::getProjectPath(m_szProjFile);
+    QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjFile);
     ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
 
     // 更新工程名称和工程目录(目录和名称可能人为修改)
@@ -936,7 +936,7 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
     */
 void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
-    if(m_szProjName == "") return;
+    if(m_szProjFile == "") return;
 
     QString szWndTittle = szItemText;
 
@@ -973,7 +973,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szProjectName = m_szProjFile;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") ||
                   szItemText == tr("网络设备")) {
@@ -982,7 +982,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szProjectName = m_szProjFile;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(isTagWndFound) { // 标签变量
             TagManagerChild *pObj = new TagManagerChild(this);
@@ -990,7 +990,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szProjectName = m_szProjFile;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("实时数据库")) {
             RealTimeDatabaseChild *pObj = new RealTimeDatabaseChild(this);
@@ -998,7 +998,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szProjectName = m_szProjFile;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("脚本编辑器")) {
             ScriptManageChild *pObj = new ScriptManageChild(this);
@@ -1006,7 +1006,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjName;
+            pIFaceChildObj->m_szProjectName = m_szProjFile;
             pIFaceChildObj->m_szItemName = szItemText;
         }
     }
@@ -1023,13 +1023,13 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 void MainWindow::UpdateProjectName(const QString &szName)
 {
     if(!szName.isEmpty()) {
-        m_szProjName = szName;
+        m_szProjFile = szName;
         m_szProjPath = ProjectMgrUtils::getProjectPath(szName);
         QString szNameTmp = szName.mid(szName.lastIndexOf("/") + 1, szName.indexOf(".") - szName.lastIndexOf("/") - 1);
         this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
         this->m_pActRunObj->setEnabled(true);
     } else {
-        m_szProjName = "";
+        m_szProjFile = "";
         m_szProjPath = "";
         this->m_pActRunObj->setEnabled(false);
         this->m_pProjectTreeViewObj->updateUI();
@@ -1051,6 +1051,8 @@ void MainWindow::UpdateDeviceVariableTableGroup()
     */
 void MainWindow::onSaveProject()
 {
+    //m_szProjFile
+    ProjectData::getInstance()->saveToXml(m_szProjPath + "/test.xml");
     foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
         ChildInterface *pIFaceChildObj = qobject_cast<ChildInterface *>(window->widget());
         if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
@@ -1144,7 +1146,7 @@ void MainWindow::onSlotUpLoadProject()
         dir.mkpath(tmpDir);
     }
 
-    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, m_szProjName);
+    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, m_szProjFile);
     if (pDlg->exec() == QDialog::Accepted) {
         QString desDir = pDlg->getProjectPath();
         QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
@@ -1193,7 +1195,7 @@ void MainWindow::onSlotUpLoadProject()
     */
 void MainWindow::onSlotDownloadProject()
 {
-    if(m_szProjName == Q_NULLPTR)
+    if(m_szProjFile == Q_NULLPTR)
         return;
 
     // 创建tmp目录
@@ -1246,7 +1248,7 @@ void MainWindow::onSlotDownloadProject()
 
     delete tarProc;
 
-    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, m_szProjName);
+    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, m_szProjFile);
     pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
     if (pDlg->exec() == QDialog::Accepted) {
     }
@@ -1521,7 +1523,7 @@ void MainWindow::addNewGraphPage()
 
     GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
     graphPage->setProjectPath(m_szProjPath);
-    graphPage->setProjectName(m_szProjName);
+    graphPage->setProjectName(m_szProjFile);
     graphPage->setGridVisible(m_bGraphPageGridVisible);
     m_pCurrentGraphPageObj = graphPage;
     view->setScene(graphPage);
@@ -1815,7 +1817,7 @@ void MainWindow::onSlotEditOpen()
         m_pCurrentGraphPageObj = graphPage;
         m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
         graphPage->setProjectPath(m_szProjPath);
-        graphPage->setProjectName(m_szProjName);
+        graphPage->setProjectName(m_szProjFile);
         graphPage->loadAsXML(filename);
         int pos = filename.lastIndexOf("/");
         QString pageFileName = "";
@@ -2170,7 +2172,7 @@ reInput:
             m_pCurrentGraphPageObj = graphPage;
             m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
             graphPage->setProjectPath(m_szProjPath);
-            graphPage->setProjectName(m_szProjName);
+            graphPage->setProjectName(m_szProjFile);
             graphPage->loadAsXML(fileName);
             view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szGraphPageName + ".drw");
@@ -2325,7 +2327,7 @@ reGetNum:
         m_pCurrentGraphPageObj = graphPage;
         m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
         graphPage->setProjectPath(m_szProjPath);
-        graphPage->setProjectName(m_szProjName);
+        graphPage->setProjectName(m_szProjFile);
         graphPage->loadAsXML(szPasteFileName);
         view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         graphPage->setFileName(strDrawPageName + ".drw");
@@ -2351,7 +2353,7 @@ void MainWindow::initGraphPageListWidget()
 {
     this->m_pListWidgetGraphPagesObj->clear();
     this->m_pListWidgetGraphPagesObj->setProjectPath(this->m_szProjPath);
-    this->openGraphPage(m_szProjPath, m_szProjName, tr(""));
+    this->openGraphPage(m_szProjPath, m_szProjFile, tr(""));
 }
 
 
@@ -2387,7 +2389,7 @@ void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
     */
 void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 {
-    if(this->m_szProjName == "") {
+    if(this->m_szProjFile == "") {
         m_pMdiAreaObj->setVisible(true);
         m_pGraphPageTabWidgetObj->setVisible(false);
         m_pDockPropertyObj->setVisible(false); // 属性停靠控件

@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QObject>
+#include "XMLObject.h"
 
 class NetSettingPrivate;
 class ProjectDataSQLiteDatabase;
@@ -12,6 +13,9 @@ class NetSetting
 public:
     NetSetting();
     ~NetSetting();
+
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
 
     bool load(ProjectDataSQLiteDatabase *pDB);
     bool save(ProjectDataSQLiteDatabase *pDB);

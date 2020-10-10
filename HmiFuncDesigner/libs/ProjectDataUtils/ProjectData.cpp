@@ -1,20 +1,17 @@
 #include "ProjectData.h"
 #include "ProjectDataSQLiteDatabase.h"
-#include <QMutexLocker>
-#include <QMutex>
-#include <cstdlib>
-
+#include "XMLObject.h"
+#include "Helper.h"
 #include <QDebug>
 
-ProjectData* ProjectData::instance_ = Q_NULLPTR;
 ProjectDataSQLiteDatabase *ProjectData::dbData_ = Q_NULLPTR;
-QMutex ProjectData::mutex_;
 QString ProjectData::szProjPath_ = "";
 QString ProjectData::szProjName_ = "";
 
 
-ProjectData::ProjectData() :
-    dbPath_("")
+ProjectData::ProjectData()
+    : dbPath_(""),
+      szProjVersion_("V1.0.0")
 {
 
 }
@@ -30,20 +27,98 @@ ProjectData::~ProjectData()
 
 ProjectData* ProjectData::getInstance()
 {
-    QMutexLocker locker(&mutex_);
-    if(instance_ == Q_NULLPTR) {
-        instance_ = new ProjectData();
-        ::atexit(releaseInstance);
-    }
-    return instance_;
+    static ProjectData instance_;
+    return &instance_;
 }
 
-void ProjectData::releaseInstance()
+
+bool ProjectData::openFromXml(const QString &szProjFile)
 {
-    if(instance_ != Q_NULLPTR) {
-        delete instance_;
-        instance_ = Q_NULLPTR;
+    QString buffer = Helper::readString(szProjFile);
+    XMLObject xml;
+    if(!xml.load(buffer, 0))
+        return false;
+/*
+    QList<XMLObject*> children = xml.getChildren();
+    foreach(XMLObject* obj, children)
+        obj->showXMLObject();
+
+    qDebug() << "\n\n\n=========get child name is person=========\n";
+    children.clear();
+    children = xml.getCurrentChildren("person");
+    foreach(XMLObject* obj, children)
+        obj->showXMLObject();
+
+    qDebug() << "\n\n\n=========getChildrenByParentTagName=========\n";
+    QStringList parents;
+    parents<< "persons";
+    parents<< "person";
+    parents<< "baby";
+    children.clear();
+    xml.getChildrenByParentTagName(parents, children);
+    foreach(XMLObject* obj, children){
+        obj->showXMLObject();
+        obj->setProperty("cb", "123");
     }
+    FileHelper::writeString(project_path + "/pages.xml", xml.write());
+*/
+    return true;
+}
+
+
+bool ProjectData::saveToXml(const QString &szProjFile)
+{
+    XMLObject projObjs;
+    projObjs.setTagName("projects");
+
+    XMLObject *pProjObj = new XMLObject(&projObjs);
+    pProjObj->setTagName("project");
+    pProjObj->setProperty("version", szProjVersion_);
+
+    // 工程信息管理
+    projInfoMgr_.saveToXml(pProjObj);
+    // 网络配置
+    netSetting_.saveToXml(pProjObj);
+
+
+    Helper::writeString(szProjFile, projObjs.write());
+/*
+    XMLObject persons;
+    persons.setTagName("persons");
+
+    XMLObject *person;
+    person = new XMLObject(&persons);
+    person->setTagName("person");
+    person->setText("hi, my name is jason.");
+    person->setProperty("name", "jason");
+    person->setProperty("age", "29");
+    person->setProperty("sex", "male");
+
+    person = new XMLObject(&persons);
+    person->setTagName("person");
+    person->setText("hi, my name is velson.");
+    person->setProperty("name", "velson");
+    person->setProperty("age", "28");
+    person->setProperty("sex", "male");
+
+    person = new XMLObject(&persons);
+    person->setTagName("person");
+    person->setText("hi, my name is lucy.");
+    person->setProperty("name", "lucy");
+    person->setProperty("age", "25");
+    person->setProperty("sex", "female");
+
+    XMLObject *baby = new XMLObject(person);
+    baby->setTagName("baby");
+    baby->setText("lucy==baby");
+    baby->setProperty("name", "baby");
+    baby->setProperty("age", "1");
+    baby->setProperty("sex", "female");
+
+
+
+ */
+    return true;
 }
 
 

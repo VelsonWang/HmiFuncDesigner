@@ -2,6 +2,7 @@
 #define PROJECTINFOMANAGER_H
 
 #include <QString>
+#include "XMLObject.h"
 
 class ProjectInfoPrivate;
 class ProjectDataSQLiteDatabase;
@@ -11,6 +12,9 @@ class ProjectInfoManager
 public:
     ProjectInfoManager();
     ~ProjectInfoManager();
+
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
 
     bool load(ProjectDataSQLiteDatabase *pDB);
     bool save(ProjectDataSQLiteDatabase *pDB);

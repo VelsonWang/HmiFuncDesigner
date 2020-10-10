@@ -29,14 +29,40 @@ public:
 
 
 ProjectInfoManager::ProjectInfoManager()
-    : dPtr_(new ProjectInfoPrivate()) {
+    : dPtr_(new ProjectInfoPrivate())
+{
 
 }
 
-ProjectInfoManager::~ProjectInfoManager() {
+ProjectInfoManager::~ProjectInfoManager()
+{
     if(dPtr_ != Q_NULLPTR) {
         delete dPtr_;
     }
+}
+
+bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj)
+{
+
+    return true;
+}
+
+
+bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj)
+{
+    XMLObject *projInfoObj = new XMLObject(pXmlObj);
+    projInfoObj->setTagName("project_info");
+    projInfoObj->setProperty("encrypt", dPtr_->projectEncrypt_ ? "1" : "0");
+    projInfoObj->setProperty("data_scan", QString::number(dPtr_->dataScanPeriod_));
+    projInfoObj->setProperty("device", dPtr_->deviceType_);
+    projInfoObj->setProperty("page_scan", QString::number(dPtr_->pageScanPeriod_));
+    projInfoObj->setProperty("desc", dPtr_->projectDescription_);
+    projInfoObj->setProperty("name", dPtr_->projectName_);
+    projInfoObj->setProperty("path", dPtr_->projectPath_);
+    projInfoObj->setProperty("start", dPtr_->startPage_);
+    projInfoObj->setProperty("address", dPtr_->stationAddress_);
+    projInfoObj->setProperty("number", QString::number(dPtr_->stationNumber_));
+    return true;
 }
 
 /**

@@ -221,7 +221,7 @@ private:
 
 private:
     QString m_szProjPath;
-    QString m_szProjName;
+    QString m_szProjFile;
     QString m_szCurItem;
     QString m_szCurTreeViewItem;
     GraphPage *m_pCurrentGraphPageObj = Q_NULLPTR;

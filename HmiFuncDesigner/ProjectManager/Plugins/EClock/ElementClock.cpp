@@ -56,7 +56,6 @@ void ElementClock::regenerateElementId()
  */
 void ElementClock::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

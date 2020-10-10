@@ -25,13 +25,15 @@ SOURCES += \
     $$PWD/UserAuthority.cpp \
     $$PWD/DeviceInfo.cpp \
     $$PWD/PictureResourceManager.cpp \
-    orm/core/databaseconfiguration.cpp \
-    orm/core/existingobjectsavestate.cpp \
-    orm/core/introspection.cpp \
-    orm/core/newobjectsavestate.cpp \
-    orm/core/qpersistantobject.cpp \
-    orm/core/qtpersistence.cpp \
-    orm/utils/inflection.cpp
+    $$PWD/orm/core/databaseconfiguration.cpp \
+    $$PWD/orm/core/existingobjectsavestate.cpp \
+    $$PWD/orm/core/introspection.cpp \
+    $$PWD/orm/core/newobjectsavestate.cpp \
+    $$PWD/orm/core/qpersistantobject.cpp \
+    $$PWD/orm/core/qtpersistence.cpp \
+    $$PWD/orm/utils/inflection.cpp \
+    $$PWD/../Utils/XMLObject.cpp \
+    $$PWD/../Utils/Helper.cpp
 
 
 HEADERS += \
@@ -50,17 +52,19 @@ HEADERS += \
     $$PWD/UserAuthority.h \
     $$PWD/DeviceInfo.h \
     $$PWD/PictureResourceManager.h \
-    orm/core/databaseconfiguration_p.h \
-    orm/core/existingobjectsavestate.h \
-    orm/core/introspection.h \
-    orm/core/newobjectsavestate.h \
-    orm/core/objectloader.h \
-    orm/core/objectsavestate.h \
-    orm/core/qpersistantobject.h \
-    orm/core/qpersistantobject_p.h \
-    orm/core/qtpersistence.h \
-    orm/utils/inflection.h \
-    orm/utils/inflection_p.h
+    $$PWD/orm/core/databaseconfiguration_p.h \
+    $$PWD/orm/core/existingobjectsavestate.h \
+    $$PWD/orm/core/introspection.h \
+    $$PWD/orm/core/newobjectsavestate.h \
+    $$PWD/orm/core/objectloader.h \
+    $$PWD/orm/core/objectsavestate.h \
+    $$PWD/orm/core/qpersistantobject.h \
+    $$PWD/orm/core/qpersistantobject_p.h \
+    $$PWD/orm/core/qtpersistence.h \
+    $$PWD/orm/utils/inflection.h \
+    $$PWD/orm/utils/inflection_p.h \
+    $$PWD/../Utils/XMLObject.h \
+    $$PWD/../Utils/Helper.h
 
 
 
