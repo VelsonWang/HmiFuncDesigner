@@ -52,20 +52,15 @@ public:
 
 
 public:
-    TypeDocument typeDocument() const {return td_ScriptManager;}
-
     void buildUserInterface(QMainWindow* pMainWin);
     void removeUserInterface(QMainWindow* pMainWin);
-
-    bool open();
-    bool save();
-    bool saveAs();
-
     QString userFriendlyCurrentFile();
     QString currentFile() const;
     QString wndTitle() const;
 
-signals:
+private:
+    bool open();
+    bool save();
 
 public slots:
     void ListWidgetClicked(QListWidgetItem *item);

@@ -100,7 +100,6 @@ bool DatabaseSettingDialog::check_data()
 void DatabaseSettingDialog::load()
 {
     DatabaseSetting &dbSetting = ProjectData::getInstance()->dbSetting_;
-    dbSetting.load(ProjectData::getInstance()->dbData_);
     ui->editAlarmSize->setText(QString::number(dbSetting.getAlarmSize()));
     ui->checkSpecialDB->setChecked(dbSetting.isSpecialDB());
     ui->checkAutoDelete->setChecked(dbSetting.isAutoDelete());
@@ -134,7 +133,6 @@ void DatabaseSettingDialog::save()
     dbSetting.setDBName(ui->editDBName->text());
     dbSetting.setStartTime(ui->editStartTime->text().toInt());
     dbSetting.setPort(ui->editPort->text().toInt());
-    dbSetting.save(ProjectData::getInstance()->dbData_);
 }
 
 

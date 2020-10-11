@@ -73,7 +73,6 @@ SOURCES += main.cpp\
     InsertFunctionDialog.cpp \
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
-    ProjectMgrUtils.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
@@ -128,7 +127,6 @@ HEADERS  += MainWindow.h \
     InsertTagDialog.h \
     ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
-    ProjectMgrUtils.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \

@@ -5,7 +5,6 @@
 #include "XMLObject.h"
 
 class ProjectInfoPrivate;
-class ProjectDataSQLiteDatabase;
 
 class ProjectInfoManager
 {
@@ -15,9 +14,6 @@ public:
 
     bool openFromXml(XMLObject *pXmlObj);
     bool saveToXml(XMLObject *pXmlObj);
-
-    bool load(ProjectDataSQLiteDatabase *pDB);
-    bool save(ProjectDataSQLiteDatabase *pDB);
 
 public:
     QString getProjectName() const;

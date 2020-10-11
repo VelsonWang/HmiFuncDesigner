@@ -68,7 +68,6 @@ void NetSettingDialog::on_btnExit_clicked()
 void NetSettingDialog::load()
 {
     NetSetting &netSetting = ProjectData::getInstance()->netSetting_;
-    netSetting.load(ProjectData::getInstance()->dbData_);
     ui->checkHotStandbyMode->setChecked(netSetting.isHotStandbyMode());
     ui->checkClientMode->setChecked(netSetting.isClientMode());
     ui->rtbnServerStation->setChecked(netSetting.isServerStation());
@@ -90,7 +89,6 @@ void NetSettingDialog::save()
     netSetting.setServerAddress(ui->editServerAddress->getIPString());
     netSetting.setHeartbeatTime(ui->editHeartbeatTime->text().toInt());
     netSetting.setDatabaseSyncTime(ui->editDatabaseSyncTime->text().toInt());
-    netSetting.save(ProjectData::getInstance()->dbData_);
 }
 
 

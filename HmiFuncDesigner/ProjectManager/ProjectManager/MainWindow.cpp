@@ -24,7 +24,6 @@
 #include "NewVariableGroupDialog.h"
 #include "ProjectData.h"
 #include "ProjectDownloadDialog.h"
-#include "ProjectMgrUtils.h"
 #include "ProjectUploadDialog.h"
 #include "RealTimeDatabaseChild.h"
 #include "ScriptManageChild.h"
@@ -58,7 +57,6 @@
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      m_szProjPath(""),
       m_szCurItem(""),
       m_szCurTreeViewItem("")
 {
@@ -234,7 +232,7 @@ void MainWindow::initUI()
 
     Helper::WidgetMoveCenter(this);
 
-    DrawListUtils::setProjectPath(m_szProjPath);
+    DrawListUtils::setProjectPath(ProjectData::getInstance()->szProjPath_);
 
     m_pListWidgetGraphPagesObj->setContextMenuPolicy(Qt::DefaultContextMenu);
 
@@ -711,7 +709,6 @@ void MainWindow::onSlotSetActiveSubWindow(QWidget *window)
     pChildWndObj = subWindowList.at(iSubWndSize-1)->widget();;
     if (ChildInterface* pIFaceChildNowObj = qobject_cast<ChildInterface*>(pChildWndObj)) {
         m_childCurrent = pChildWndObj;
-        m_typeDocCurrent = pIFaceChildNowObj->typeDocument();
         setUpdatesEnabled(false);
         pIFaceChildNowObj->buildUserInterface(this);
         setUpdatesEnabled(true);
@@ -739,6 +736,7 @@ QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
    */
 void MainWindow::CreateDefaultIOTagGroup()
 {
+    return;
     if (this->m_pProjectTreeViewObj->getDevTagGroupCount() == 0) {
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
         TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
@@ -765,7 +763,6 @@ bool MainWindow::eventFilter(QObject* obj, QEvent* event)
                 if (ChildInterface* pIFaceChildObj = qobject_cast<ChildInterface*>(m_childCurrent))
                     pIFaceChildObj->removeUserInterface(this);
                 m_childCurrent = Q_NULLPTR;
-                m_typeDocCurrent = ChildInterface::td_None;
             }
         }
         break;
@@ -784,7 +781,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     QString strFile = Helper::AppDir() + "/lastpath.ini";
     if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程"))
-        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_szProjPath);
+        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", ProjectData::getInstance()->szProjPath_);
     this->m_pMdiAreaObj->closeAllSubWindows();
     writeSettings();
     m_pMdiAreaObj->closeAllSubWindows();
@@ -863,14 +860,9 @@ void MainWindow::onNewPoject()
 
     NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
     if (pNewProjectDlg->exec() == QDialog::Accepted) {
-        UpdateProjectName(pNewProjectDlg->GetProjectName());
-
-        QString szPath = ProjectMgrUtils::getProjectPath(m_szProjFile);
-        QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjFile);
-        ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
+        UpdateProjectName(ProjectData::getInstance()->szProjFile_);
         pNewProjectDlg->save();
-
-        updateRecentProjectList(pNewProjectDlg->GetProjectName());
+        updateRecentProjectList(ProjectData::getInstance()->szProjFile_);
         CreateDefaultIOTagGroup();
         UpdateDeviceVariableTableGroup();
     }
@@ -884,19 +876,14 @@ void MainWindow::doOpenProject(QString proj)
         return;
     }
 
+    ProjectData::getInstance()->szProjFile_ = proj;
     UpdateProjectName(proj);
     QString strFile = Helper::AppDir() + "/lastpath.ini";
-    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_szProjPath);
-    QString szPath = ProjectMgrUtils::getProjectPath(m_szProjFile);
-    QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_szProjFile);
-    ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
+    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", ProjectData::getInstance()->szProjPath_);
 
-    // 更新工程名称和工程目录(目录和名称可能人为修改)
-    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    projInfoMgr.load(ProjectData::getInstance()->dbData_);
-    projInfoMgr.setProjectPath(szPath);
-    projInfoMgr.setProjectName(szName);
-    projInfoMgr.save(ProjectData::getInstance()->dbData_);
+    ProjectData::getInstance()->szProjPath_ = ProjectData::getInstance()->getProjectPath(ProjectData::getInstance()->szProjFile_);
+    ProjectData::getInstance()->szProjName_ = ProjectData::getInstance()->getProjectNameWithOutSuffix(ProjectData::getInstance()->szProjFile_);
+    ProjectData::getInstance()->openFromXml(ProjectData::getInstance()->szProjFile_);
 
     // 加载设备变量组信息
     UpdateDeviceVariableTableGroup();
@@ -936,7 +923,7 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
     */
 void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
-    if(m_szProjFile == "") return;
+    if(ProjectData::getInstance()->szProjFile_ == "") return;
 
     QString szWndTittle = szItemText;
 
@@ -973,7 +960,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjFile;
+            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") ||
                   szItemText == tr("网络设备")) {
@@ -982,7 +969,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjFile;
+            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(isTagWndFound) { // 标签变量
             TagManagerChild *pObj = new TagManagerChild(this);
@@ -990,7 +977,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjFile;
+            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("实时数据库")) {
             RealTimeDatabaseChild *pObj = new RealTimeDatabaseChild(this);
@@ -998,7 +985,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjFile;
+            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
         } else if(szItemText == tr("脚本编辑器")) {
             ScriptManageChild *pObj = new ScriptManageChild(this);
@@ -1006,7 +993,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szWndTittle);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = m_szProjFile;
+            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
         }
     }
@@ -1023,14 +1010,12 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 void MainWindow::UpdateProjectName(const QString &szName)
 {
     if(!szName.isEmpty()) {
-        m_szProjFile = szName;
-        m_szProjPath = ProjectMgrUtils::getProjectPath(szName);
         QString szNameTmp = szName.mid(szName.lastIndexOf("/") + 1, szName.indexOf(".") - szName.lastIndexOf("/") - 1);
         this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
         this->m_pActRunObj->setEnabled(true);
     } else {
-        m_szProjFile = "";
-        m_szProjPath = "";
+        ProjectData::getInstance()->szProjFile_ = "";
+        ProjectData::getInstance()->szProjPath_ = "";
         this->m_pActRunObj->setEnabled(false);
         this->m_pProjectTreeViewObj->updateUI();
     }
@@ -1052,10 +1037,10 @@ void MainWindow::UpdateDeviceVariableTableGroup()
 void MainWindow::onSaveProject()
 {
     //m_szProjFile
-    ProjectData::getInstance()->saveToXml(m_szProjPath + "/test.xml");
+    ProjectData::getInstance()->saveToXml(ProjectData::getInstance()->szProjFile_);
     foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
         ChildInterface *pIFaceChildObj = qobject_cast<ChildInterface *>(window->widget());
-        if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
+        //if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
     }
 
     // 保存画面
@@ -1073,7 +1058,7 @@ void MainWindow::onCloseProject()
         return;
     foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
         ChildInterface *pIFaceChildObj = qobject_cast<ChildInterface *>(window->widget());
-        if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
+        //if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
         window->close();
     }
     UpdateProjectName(QString());
@@ -1128,7 +1113,7 @@ void MainWindow::onSlotRunProject()
         QProcess *process = new QProcess();
         process->setWorkingDirectory(Helper::AppDir() + "/");
         QStringList argv;
-        argv << m_szProjPath;
+        argv << ProjectData::getInstance()->szProjPath_;
         process->startDetached(fileRuntimeApplication, argv);
     }
 }
@@ -1146,7 +1131,7 @@ void MainWindow::onSlotUpLoadProject()
         dir.mkpath(tmpDir);
     }
 
-    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, m_szProjFile);
+    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, ProjectData::getInstance()->szProjFile_);
     if (pDlg->exec() == QDialog::Accepted) {
         QString desDir = pDlg->getProjectPath();
         QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
@@ -1195,8 +1180,7 @@ void MainWindow::onSlotUpLoadProject()
     */
 void MainWindow::onSlotDownloadProject()
 {
-    if(m_szProjFile == Q_NULLPTR)
-        return;
+    if(ProjectData::getInstance()->szProjFile_ == Q_NULLPTR) return;
 
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/tmp";
@@ -1207,7 +1191,7 @@ void MainWindow::onSlotDownloadProject()
 
     // 拷贝工程到tmp目录
     QString desDir = QCoreApplication::applicationDirPath() + "/tmp/RunProject";
-    Helper::CopyRecursively(m_szProjPath, desDir);
+    Helper::CopyRecursively(ProjectData::getInstance()->szProjPath_, desDir);
 
     // 打包工程到tmp目录
     QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
@@ -1248,7 +1232,7 @@ void MainWindow::onSlotDownloadProject()
 
     delete tarProc;
 
-    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, m_szProjFile);
+    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, ProjectData::getInstance()->szProjFile_);
     pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
     if (pDlg->exec() == QDialog::Accepted) {
     }
@@ -1522,8 +1506,8 @@ void MainWindow::addNewGraphPage()
     }
 
     GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
-    graphPage->setProjectPath(m_szProjPath);
-    graphPage->setProjectName(m_szProjFile);
+    graphPage->setProjectPath(ProjectData::getInstance()->szProjPath_);
+    graphPage->setProjectName(ProjectData::getInstance()->szProjFile_);
     graphPage->setGridVisible(m_bGraphPageGridVisible);
     m_pCurrentGraphPageObj = graphPage;
     view->setScene(graphPage);
@@ -1816,8 +1800,8 @@ void MainWindow::onSlotEditOpen()
 
         m_pCurrentGraphPageObj = graphPage;
         m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
-        graphPage->setProjectPath(m_szProjPath);
-        graphPage->setProjectName(m_szProjFile);
+        graphPage->setProjectPath(ProjectData::getInstance()->szProjPath_);
+        graphPage->setProjectName(ProjectData::getInstance()->szProjFile_);
         graphPage->loadAsXML(filename);
         int pos = filename.lastIndexOf("/");
         QString pageFileName = "";
@@ -1893,7 +1877,7 @@ void MainWindow::onSlotSaveGraphPage()
         if (fileName.isEmpty()) break;
         m_pCurrentGraphPageObj->setFileName(fileName);
         updateGraphPageViewInfo(fileName);
-        m_pCurrentGraphPageObj->saveAsXML(m_szProjPath + "/" + fileName);
+        m_pCurrentGraphPageObj->saveAsXML(ProjectData::getInstance()->szProjPath_ + "/" + fileName);
 #if 0
         if (fileName.toLower().endsWith(".drw")) {
             QString binaryFileName = fileName.toLower()+ "b"; // ".drw"==>".drwb"
@@ -2149,12 +2133,12 @@ reInput:
             height = pGraphPage->getGraphPageHeight();
         }
 
-        createEmptyGraphpage(m_szProjPath, szGraphPageName, width, height);
+        createEmptyGraphpage(ProjectData::getInstance()->szProjPath_, szGraphPageName, width, height);
         DrawListUtils::drawList_.append(szGraphPageName);
-        DrawListUtils::saveDrawList(m_szProjPath);
+        DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
 
         this->m_pListWidgetGraphPagesObj->addItem(szGraphPageName);
-        QString fileName = m_szProjPath + "/" + szGraphPageName + ".drw";
+        QString fileName = ProjectData::getInstance()->szProjPath_ + "/" + szGraphPageName + ".drw";
 
         if (fileName.toLower().endsWith(".drw")) {
             QGraphicsView *view = createTabView();
@@ -2171,8 +2155,8 @@ reInput:
 
             m_pCurrentGraphPageObj = graphPage;
             m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
-            graphPage->setProjectPath(m_szProjPath);
-            graphPage->setProjectName(m_szProjFile);
+            graphPage->setProjectPath(ProjectData::getInstance()->szProjPath_);
+            graphPage->setProjectName(ProjectData::getInstance()->szProjFile_);
             graphPage->loadAsXML(fileName);
             view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
             graphPage->setFileName(szGraphPageName + ".drw");
@@ -2214,10 +2198,10 @@ reInput:
         for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
             if ( szOldGraphPageName == DrawListUtils::drawList_.at(i) ) {
                 DrawListUtils::drawList_.replace(i, szNewGraphPageName);
-                QString szOldName = m_szProjPath + "/" + szOldGraphPageName + ".drw";
-                QString szNewName = m_szProjPath + "/" + szNewGraphPageName + ".drw";
+                QString szOldName = ProjectData::getInstance()->szProjPath_ + "/" + szOldGraphPageName + ".drw";
+                QString szNewName = ProjectData::getInstance()->szProjPath_ + "/" + szNewGraphPageName + ".drw";
                 QFile::rename(szOldName, szNewName);
-                DrawListUtils::saveDrawList(m_szProjPath);
+                DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
                 this->m_pListWidgetGraphPagesObj->currentItem()->setText(szNewGraphPageName);
                 GraphPage *pGraphPage = GraphPageManager::getInstance()->getGraphPageById(szOldGraphPageName);
                 pGraphPage->setFileName(szNewGraphPageName + ".drw");
@@ -2244,7 +2228,7 @@ void MainWindow::onDeleteGraphPage()
         if ( szGraphPageName == DrawListUtils::drawList_.at(i) ) {
             DrawListUtils::drawList_.removeAt(i);
 
-            QString fileName = m_szProjPath + "/" + szGraphPageName + ".drw";
+            QString fileName = ProjectData::getInstance()->szProjPath_ + "/" + szGraphPageName + ".drw";
             QFile file(fileName);
             if (file.exists()) {
                 file.remove();
@@ -2259,7 +2243,7 @@ void MainWindow::onDeleteGraphPage()
                 pGraphPageObj = Q_NULLPTR;
             }
 
-            DrawListUtils::saveDrawList(m_szProjPath);
+            DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
 
             this->m_pListWidgetGraphPagesObj->clear();
             foreach(QString szPageId, DrawListUtils::drawList_) {
@@ -2305,10 +2289,10 @@ reGetNum:
 
     this->m_pListWidgetGraphPagesObj->addItem(strDrawPageName);
     DrawListUtils::drawList_.append(strDrawPageName);
-    DrawListUtils::saveDrawList(m_szProjPath);
-    QString szFileName = m_szProjPath + "/" + m_szCopyGraphPageFileName + ".drw";
+    DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
+    QString szFileName = ProjectData::getInstance()->szProjPath_ + "/" + m_szCopyGraphPageFileName + ".drw";
     QFile file(szFileName);
-    QString szPasteFileName = m_szProjPath + "/" + strDrawPageName + ".drw";
+    QString szPasteFileName = ProjectData::getInstance()->szProjPath_ + "/" + strDrawPageName + ".drw";
     file.copy(szPasteFileName);
 
     if (szPasteFileName.toLower().endsWith(".drw")) {
@@ -2326,8 +2310,8 @@ reGetNum:
 
         m_pCurrentGraphPageObj = graphPage;
         m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
-        graphPage->setProjectPath(m_szProjPath);
-        graphPage->setProjectName(m_szProjFile);
+        graphPage->setProjectPath(ProjectData::getInstance()->szProjPath_);
+        graphPage->setProjectName(ProjectData::getInstance()->szProjFile_);
         graphPage->loadAsXML(szPasteFileName);
         view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
         graphPage->setFileName(strDrawPageName + ".drw");
@@ -2352,8 +2336,8 @@ reGetNum:
 void MainWindow::initGraphPageListWidget()
 {
     this->m_pListWidgetGraphPagesObj->clear();
-    this->m_pListWidgetGraphPagesObj->setProjectPath(this->m_szProjPath);
-    this->openGraphPage(m_szProjPath, m_szProjFile, tr(""));
+    this->m_pListWidgetGraphPagesObj->setProjectPath(ProjectData::getInstance()->szProjPath_);
+    this->openGraphPage(ProjectData::getInstance()->szProjPath_, ProjectData::getInstance()->szProjFile_, tr(""));
 }
 
 
@@ -2389,7 +2373,7 @@ void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
     */
 void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 {
-    if(this->m_szProjFile == "") {
+    if(ProjectData::getInstance()->szProjFile_ == "") {
         m_pMdiAreaObj->setVisible(true);
         m_pGraphPageTabWidgetObj->setVisible(false);
         m_pDockPropertyObj->setVisible(false); // 属性停靠控件

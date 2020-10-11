@@ -3,9 +3,9 @@
 
 #include <QString>
 #include <QObject>
+#include "XMLObject.h"
 
 class DatabaseSettingPrivate;
-class ProjectDataSQLiteDatabase;
 
 class DatabaseSetting
 {
@@ -13,8 +13,8 @@ public:
     DatabaseSetting();
     ~DatabaseSetting();
 
-    bool load(ProjectDataSQLiteDatabase *pDB);
-    bool save(ProjectDataSQLiteDatabase *pDB);
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
 
 public:
     int getAlarmSize();

@@ -24,7 +24,7 @@ TagTmp::~TagTmp()
  */
 bool TagTmp::load(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     QSqlRecord rec;
 
     bool ret = query.exec("select * from t_tag_tmp");
@@ -65,7 +65,7 @@ bool TagTmp::load(ProjectDataSQLiteDatabase *pDB)
  */
 bool TagTmp::save(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     pDB->beginTransaction();
@@ -149,7 +149,7 @@ bool TagTmp::delAll(ProjectDataSQLiteDatabase *pDB)
 
 bool TagTmp::update(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     query.prepare("update t_tag_tmp set name = :name, data_type = :type, "
@@ -178,7 +178,7 @@ bool TagTmp::update(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj)
 
 TagTmpDBItem *TagTmp::getTagTmpDBItemByID(ProjectDataSQLiteDatabase *pDB, const QString &id)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     QSqlRecord rec;
     QString szSql = QString("select * from t_tag_tmp where tagid='%1'").arg(id);
     bool ret = query.exec(szSql);

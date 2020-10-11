@@ -35,10 +35,18 @@ public:
     //获取工程所有变量的名称
     void getAllTagName(QStringList &varList, const QString &type = "ALL");
 
+    // 获取工程路径
+    QString getProjectPath(const QString &projectName);
+    // 获取包含后缀工程名称
+    QString getProjectNameWithSuffix(const QString &projectName);
+    // 获取不包含后缀工程名称
+    QString getProjectNameWithOutSuffix(const QString &projectName);
+
 public:
     static ProjectDataSQLiteDatabase *dbData_;
-    static QString szProjPath_;
-    static QString szProjName_;
+    QString szProjFile_; // 工程文件名
+    QString szProjPath_; // 工程文件所在的路径
+    QString szProjName_; // 工程文件名称
     QString szProjVersion_; // 工程管理器版本
     ProjectInfoManager projInfoMgr_; // 工程信息管理
     NetSetting netSetting_; // 网络配置

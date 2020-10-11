@@ -38,22 +38,16 @@ public:
     ~TagManagerChild();
 
 public:
-    TypeDocument typeDocument() const {return td_TagManager;}
-
     void buildUserInterface(QMainWindow* pMainWin);
     void removeUserInterface(QMainWindow* pMainWin);
-
-    bool open();
-    bool save();
-    bool saveAs();
-
-    QString userFriendlyCurrentFile();
-    QString currentFile() const;
     QString wndTitle() const;
 
 public:
     void exportToCsv(const QString &path);
     void importFromCsv(const QString &path);
+
+private:
+    bool save();
 
 private:
     void initUi();

@@ -3,7 +3,7 @@
 #include "NetSettingDialog.h"
 #include "DatabaseSettingDialog.h"
 #include "UserAuthorityDialog.h"
-#include "ProjectMgrUtils.h"
+#include "ProjectData.h"
 #include <QFileInfo>
 #include <QApplication>
 #include <QFileInfo>
@@ -64,9 +64,9 @@ void SystemParametersChild::onSlotListViewProjectDoubleClicked(const QModelIndex
 
     if(m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
+    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
     if(pItemObj->text() == tr("运行系统")) {
-        NewProjectDialog *pNewProjectDlgObj = new NewProjectDialog(this, strProjectPath);
+        NewProjectDialog *pNewProjectDlgObj = new NewProjectDialog(this);
         pNewProjectDlgObj->load();
         if(pNewProjectDlgObj->exec() == QDialog::Accepted) {
             pNewProjectDlgObj->save();
@@ -102,32 +102,6 @@ void SystemParametersChild::removeUserInterface(QMainWindow* pMainWin)
 {
     Q_UNUSED(pMainWin)
 }
-
-bool SystemParametersChild::open()
-{
-    return true;
-}
-
-bool SystemParametersChild::save()
-{
-    return true;
-}
-
-bool SystemParametersChild::saveAs()
-{
-    return true;
-}
-
-QString SystemParametersChild::userFriendlyCurrentFile()
-{
-    return QString();
-}
-
-QString SystemParametersChild::currentFile() const
-{
-    return QString();
-}
-
 
 QString SystemParametersChild::wndTitle() const
 {

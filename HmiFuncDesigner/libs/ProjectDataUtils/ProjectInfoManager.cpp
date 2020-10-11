@@ -1,11 +1,4 @@
 #include "ProjectInfoManager.h"
-#include "ProjectDataSQLiteDatabase.h"
-#include "ulog.h"
-#include <QFile>
-#include <QDir>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
 
 class ProjectInfoManager;
 
@@ -28,28 +21,44 @@ public:
 
 
 
-ProjectInfoManager::ProjectInfoManager()
-    : dPtr_(new ProjectInfoPrivate())
-{
+ProjectInfoManager::ProjectInfoManager() : dPtr_(new ProjectInfoPrivate()) {
 
 }
 
-ProjectInfoManager::~ProjectInfoManager()
-{
+ProjectInfoManager::~ProjectInfoManager() {
     if(dPtr_ != Q_NULLPTR) {
         delete dPtr_;
     }
 }
 
-bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj)
-{
-
+/**
+ * @brief ProjectInfoManager::openFromXml
+ * @details 读取工程信息
+ * @param pXmlObj
+ * @return true-成功, false-失败
+ */
+bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj) {
+    XMLObject *projInfoObj = pXmlObj->getCurrentChild("project_info");
+    dPtr_->projectEncrypt_ = projInfoObj->getProperty("encrypt") == "1";
+    dPtr_->dataScanPeriod_= projInfoObj->getProperty("data_scan").toUInt();
+    dPtr_->deviceType_ = projInfoObj->getProperty("device");
+    dPtr_->pageScanPeriod_= projInfoObj->getProperty("page_scan").toUInt();
+    dPtr_->projectDescription_= projInfoObj->getProperty("desc");
+    dPtr_->projectName_= projInfoObj->getProperty("name");
+    dPtr_->projectPath_= projInfoObj->getProperty("path");
+    dPtr_->startPage_ = projInfoObj->getProperty("start");
+    dPtr_->stationAddress_ = projInfoObj->getProperty("address");
+    dPtr_->stationNumber_ = projInfoObj->getProperty("number").toInt();
     return true;
 }
 
-
-bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj)
-{
+/**
+ * @brief ProjectInfoManager::saveToXml
+ * @details 保存工程信息
+ * @param pXmlObj
+ * @return true-成功, false-失败
+ */
+bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj) {
     XMLObject *projInfoObj = new XMLObject(pXmlObj);
     projInfoObj->setTagName("project_info");
     projInfoObj->setProperty("encrypt", dPtr_->projectEncrypt_ ? "1" : "0");
@@ -63,78 +72,6 @@ bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj)
     projInfoObj->setProperty("address", dPtr_->stationAddress_);
     projInfoObj->setProperty("number", QString::number(dPtr_->stationNumber_));
     return true;
-}
-
-/**
- * @brief ProjectInfoManager::load
- * @details 读取工程信息
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool ProjectInfoManager::load(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
-    QSqlRecord rec;
-
-    bool ret = query.exec("select * from t_system_parameters");
-    if(!ret) {
-        LogError(QString("get record: %1 failed! %2 ,error: %3!")
-                 .arg("t_system_parameters")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-        return false;
-    }
-
-    while (query.next()) {
-        rec = query.record();
-        dPtr_->projectName_ = rec.value("project_name").toString();
-        dPtr_->projectDescription_ = rec.value("project_description").toString();
-        dPtr_->projectPath_ = rec.value("project_path").toString();
-        dPtr_->deviceType_ = rec.value("device_type").toString();
-        dPtr_->stationNumber_ = rec.value("station_number").toInt();
-        dPtr_->startPage_ = rec.value("start_page").toString();
-        dPtr_->stationAddress_ = rec.value("station_address").toString();
-        dPtr_->projectEncrypt_ = rec.value("project_encrypt").toInt() > 0 ? true : false;
-        dPtr_->pageScanPeriod_ = rec.value("page_scan_period").toInt();
-        dPtr_->dataScanPeriod_ = rec.value("data_scan_period").toInt();
-    }
-
-    return ret;
-}
-
-/**
- * @brief ProjectInfoManager::save
- * @details 保存工程信息
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool ProjectInfoManager::save(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
-    query.prepare("update t_system_parameters set project_encrypt = :encrypt, "
-                  "data_scan_period = :data_scan, device_type = :device, "
-                  "page_scan_period = :page_scan, project_description = :desc, "
-                  "project_name = :name, project_path = :path, start_page = :start, "
-                  "station_address = :address, station_number = :number where id = 1");
-
-    query.bindValue(":encrypt", dPtr_->projectEncrypt_ ? 1 : 0);
-    query.bindValue(":data_scan", dPtr_->dataScanPeriod_);
-    query.bindValue(":device", dPtr_->deviceType_);
-    query.bindValue(":page_scan", dPtr_->pageScanPeriod_);
-    query.bindValue(":desc", dPtr_->projectDescription_);
-    query.bindValue(":name", dPtr_->projectName_);
-    query.bindValue(":path", dPtr_->projectPath_);
-    query.bindValue(":start", dPtr_->startPage_);
-    query.bindValue(":address", dPtr_->stationAddress_);
-    query.bindValue(":number", dPtr_->stationNumber_);
-
-    bool ret = query.exec();
-    if(!ret) {
-        LogError(QString("update record: %1 failed! %2 ,error: %3!")
-                 .arg("t_system_parameters")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-    }
-
-    return ret;
 }
 
 QString ProjectInfoManager::getProjectName() const {

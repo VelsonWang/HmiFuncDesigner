@@ -220,8 +220,6 @@ private:
     void createToolbars();
 
 private:
-    QString m_szProjPath;
-    QString m_szProjFile;
     QString m_szCurItem;
     QString m_szCurTreeViewItem;
     GraphPage *m_pCurrentGraphPageObj = Q_NULLPTR;
@@ -231,7 +229,6 @@ private:
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;
     QString m_szCopyGraphPageFileName;
-    int m_typeDocCurrent;
     QWidget* m_childCurrent = Q_NULLPTR;
     QSignalMapper* m_windowMapper = Q_NULLPTR;
 

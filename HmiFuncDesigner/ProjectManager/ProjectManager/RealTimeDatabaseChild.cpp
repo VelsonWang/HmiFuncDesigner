@@ -8,7 +8,7 @@
 #include <QModelIndex>
 #include "ConfigUtils.h"
 #include "Helper.h"
-#include "ProjectMgrUtils.h"
+#include "ProjectData.h"
 
 RealTimeDatabaseChild::RealTimeDatabaseChild(QWidget *parent) : QWidget(parent)
 {
@@ -89,7 +89,7 @@ void RealTimeDatabaseChild::buildUserInterface(QMainWindow* pMainWin)
     if(pMainWin == Q_NULLPTR) return;
 
     if(m_pMainWinObj == Q_NULLPTR) {
-        m_szProjPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
+        m_szProjPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
         ListViewInitUi();
     }
 }
@@ -102,32 +102,6 @@ void RealTimeDatabaseChild::removeUserInterface(QMainWindow* pMainWin)
 
     }
 }
-
-bool RealTimeDatabaseChild::open()
-{
-    return true;
-}
-
-bool RealTimeDatabaseChild::save()
-{
-    return true;
-}
-
-bool RealTimeDatabaseChild::saveAs()
-{
-    return true;
-}
-
-QString RealTimeDatabaseChild::userFriendlyCurrentFile()
-{
-    return QString();
-}
-
-QString RealTimeDatabaseChild::currentFile() const
-{
-    return QString();
-}
-
 
 QString RealTimeDatabaseChild::wndTitle() const
 {

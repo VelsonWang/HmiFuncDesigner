@@ -3,8 +3,7 @@
 
 #include <QString>
 #include <QObject>
-
-class ProjectDataSQLiteDatabase;
+#include "XMLObject.h"
 
 class UserAuthorityPrivate
 {
@@ -68,16 +67,9 @@ public:
     explicit UserAuthority();
     ~UserAuthority();
 
-    bool load(ProjectDataSQLiteDatabase *pDB);
-    bool save(ProjectDataSQLiteDatabase *pDB);
-
-    bool insert(ProjectDataSQLiteDatabase *pDB, UserAuthorityPrivate *pObj);
-    bool del(ProjectDataSQLiteDatabase *pDB, UserAuthorityPrivate *pObj);
-    bool delAll(ProjectDataSQLiteDatabase *pDB);
-    bool update(ProjectDataSQLiteDatabase *pDB, UserAuthorityPrivate *pObj);
-
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
     int getUserAuthorityID(int index);
-
     int getCount();
 
 public:
@@ -114,7 +106,7 @@ public:
     bool isLogout(int index);
     void setLogout(int index, bool logout);
 
-private:
+public:
     QList<UserAuthorityPrivate *> listUserAuthority_;
 
     Q_DISABLE_COPY(UserAuthority)

@@ -1,7 +1,6 @@
 ﻿#include "CommunicationDeviceChild.h"
 #include "NewComDeviceDialog.h"
 #include "NewNetDeviceDialog.h"
-#include "ProjectMgrUtils.h"
 #include "ProjectData.h"
 #include <QMenu>
 #include <QAction>
@@ -202,7 +201,7 @@ void CommunicationDeviceChild::onSlotNewDevice()
 {
     if(m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
+    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
     QList<QStandardItem *> itemList;
 
     if(m_szItemName == tr("串口设备")) {
@@ -251,7 +250,7 @@ void CommunicationDeviceChild::onSlotModifyDevice()
     QModelIndex idx = m_pListViewCommDevObj->selectionModel()->currentIndex();
     QStandardItem *item = m_pCommDevModelObj->itemFromIndex(idx);
     if(m_szProjectName == "") return;
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
+    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
 
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
@@ -301,7 +300,7 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
 {
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(index);
     if(m_szProjectName == "") return;
-    QString szProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
+    QString szProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
 
     if(pItemObj->text() == tr("新建串口设备")) {
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
@@ -381,32 +380,6 @@ void CommunicationDeviceChild::removeUserInterface(QMainWindow* pMainWin)
     Q_UNUSED(pMainWin)
     // FIXME 工具条、菜单
 }
-
-bool CommunicationDeviceChild::open()
-{
-    return true;
-}
-
-bool CommunicationDeviceChild::save()
-{
-    return true;
-}
-
-bool CommunicationDeviceChild::saveAs()
-{
-    return true;
-}
-
-QString CommunicationDeviceChild::userFriendlyCurrentFile()
-{
-    return QString();
-}
-
-QString CommunicationDeviceChild::currentFile() const
-{
-    return QString();
-}
-
 
 QString CommunicationDeviceChild::wndTitle() const
 {

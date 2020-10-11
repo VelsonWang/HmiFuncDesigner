@@ -240,8 +240,6 @@ bool UserAuthorityDialog::check_data()
 void UserAuthorityDialog::load()
 {
     UserAuthority &userAuthority = ProjectData::getInstance()->userAuthority_;
-    userAuthority.load(ProjectData::getInstance()->dbData_);
-
     pUserModel_->m_tagUserItems.clear();
     for (int i = 0; i < userAuthority.getCount(); ++i) {
         TagUserItem item;
@@ -268,7 +266,7 @@ void UserAuthorityDialog::load()
 void UserAuthorityDialog::save()
 {
     UserAuthority &userAuthority = ProjectData::getInstance()->userAuthority_;
-    userAuthority.delAll(ProjectData::getInstance()->dbData_);
+    userAuthority.listUserAuthority_.clear();
     TagUserItem item;
 
     for(int i = 0; i < pUserModel_->m_tagUserItems.size(); i++)
@@ -286,7 +284,7 @@ void UserAuthorityDialog::save()
         pObj->szName5_ = item.m_sName5;
         pObj->bLogin_ = ui->checkLogIn->isChecked();
         pObj->bLogout_ = ui->checkLogOut->isChecked();
-        userAuthority.insert(ProjectData::getInstance()->dbData_, pObj);
+        userAuthority.listUserAuthority_.append(pObj);
     }
 }
 

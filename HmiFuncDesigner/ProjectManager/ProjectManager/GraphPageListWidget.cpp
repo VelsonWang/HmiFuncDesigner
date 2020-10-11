@@ -108,7 +108,6 @@ void GraphPageListWidget::onSlotNewDrawPage()
     QString szGraphPageName = QString("draw%1").arg(last);
 
     ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    projInfoMgr.load(ProjectData::getInstance()->dbData_);
     int iWidth = projInfoMgr.getGraphPageWidth();
     int iHeight = projInfoMgr.getGraphPageHeight();
 

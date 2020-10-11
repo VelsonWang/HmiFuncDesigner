@@ -24,7 +24,7 @@ DeviceInfo::~DeviceInfo()
  */
 bool DeviceInfo::load(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     QSqlRecord rec;
 
     bool ret = query.exec("select * from t_device_info");
@@ -68,10 +68,10 @@ bool DeviceInfo::load(ProjectDataSQLiteDatabase *pDB)
  * @return true-成功, false-失败
  */
 bool DeviceInfo::save(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
-    pDB->db_.transaction();
+    pDB->database().transaction();
     for(int i=0; i<listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
         query.prepare("update t_device_info set type = :type, "
@@ -99,10 +99,10 @@ bool DeviceInfo::save(ProjectDataSQLiteDatabase *pDB) {
                      .arg("t_device_info")
                      .arg(query.lastQuery())
                      .arg(query.lastError().text()));
-            pDB->db_.rollback();
+            pDB->database().rollback();
         }
     }
-    pDB->db_.commit();
+    pDB->database().commit();
 
     return ret;
 }
@@ -110,7 +110,7 @@ bool DeviceInfo::save(ProjectDataSQLiteDatabase *pDB) {
 
 bool DeviceInfo::insert(ProjectDataSQLiteDatabase *pDB,
                         DeviceInfoObject *pObj) {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     query.prepare("insert into t_device_info (type, "
@@ -151,7 +151,7 @@ bool DeviceInfo::insert(ProjectDataSQLiteDatabase *pDB,
 
 bool DeviceInfo::del(ProjectDataSQLiteDatabase *pDB,
                      DeviceInfoObject *pObj) {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     query.prepare("delete from t_device_info where id = :id");
@@ -171,7 +171,7 @@ bool DeviceInfo::del(ProjectDataSQLiteDatabase *pDB,
 }
 
 bool DeviceInfo::delAll(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     query.prepare("delete from t_device_info");
@@ -191,7 +191,7 @@ bool DeviceInfo::delAll(ProjectDataSQLiteDatabase *pDB) {
 
 bool DeviceInfo::update(ProjectDataSQLiteDatabase *pDB,
                         DeviceInfoObject *pObj) {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     query.prepare("update t_device_info set type = :type, "

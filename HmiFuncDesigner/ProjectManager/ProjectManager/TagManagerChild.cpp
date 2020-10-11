@@ -7,7 +7,6 @@
 #include "reader.h"
 #include "variantdata.h"
 #include "Helper.h"
-#include "ProjectMgrUtils.h"
 #include "ProjectData.h"
 #include <QMenu>
 #include <QAction>
@@ -1635,7 +1634,7 @@ void TagManagerChild::on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item)
         modifyCurTagTmp();
     } else if(iColumn == 7) {
         TagTmpDBItem *pTagTmp = getTagTmpObjByRow(iRow);
-        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_szProjectName), this);
+        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectData::getInstance()->getProjectPath(m_szProjectName), this);
         pDlg->SetData(pTagTmp->m_szProjectConverter);
         if(pDlg->exec() == QDialog::Accepted) {
             pTagTmp->m_szProjectConverter = pDlg->GetData();
@@ -1659,7 +1658,7 @@ void TagManagerChild::on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item)
         modifyCurTagIO();
     } else if(iColumn == 14) {
         TagIODBItem *pTagIO = getTagIOObjByRow(iRow);
-        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectMgrUtils::getProjectPath(m_szProjectName), this);
+        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectData::getInstance()->getProjectPath(m_szProjectName), this);
         pDlg->SetData(pTagIO->m_szProjectConverter);
         if(pDlg->exec() == QDialog::Accepted) {
             pTagIO->m_szProjectConverter = pDlg->GetData();
@@ -1772,6 +1771,21 @@ void TagManagerChild::onSlotImportTag()
     }
 }
 
+bool TagManagerChild::save()
+{
+    if(!m_szItemName.isEmpty()) {
+        if(wndTitle().startsWith(tr("设备变量"))) {
+            // 保存设备变量表
+            this->saveTableTagIO();
+        } else if(wndTitle().startsWith(tr("中间变量"))) {
+            // 保存中间变量表
+            this->saveTableTagTmp();
+        } else if(wndTitle().startsWith(tr("系统变量"))) {
+            // do nothing here!
+        }
+    }
+    return true;
+}
 
 
 void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
@@ -1887,43 +1901,6 @@ void TagManagerChild::removeUserInterface(QMainWindow* pMainWin)
 
 
 }
-
-bool TagManagerChild::open()
-{
-    return true;
-}
-
-bool TagManagerChild::save()
-{
-    if(!m_szItemName.isEmpty()) {
-        if(wndTitle().startsWith(tr("设备变量"))) {
-            // 保存设备变量表
-            this->saveTableTagIO();
-        } else if(wndTitle().startsWith(tr("中间变量"))) {
-            // 保存中间变量表
-            this->saveTableTagTmp();
-        } else if(wndTitle().startsWith(tr("系统变量"))) {
-            // do nothing here!
-        }
-    }
-    return true;
-}
-
-bool TagManagerChild::saveAs()
-{
-    return true;
-}
-
-QString TagManagerChild::userFriendlyCurrentFile()
-{
-    return QString();
-}
-
-QString TagManagerChild::currentFile() const
-{
-    return QString();
-}
-
 
 QString TagManagerChild::wndTitle() const
 {

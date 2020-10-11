@@ -3,7 +3,46 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlDriver>
+#include <QThread>
+#include <QCoreApplication>
 #include "ulog.h"
+
+static const char *g_pszConnectionPrefix = "_database_";
+static DatabaseWrapper *g_pGlobalDatabaseObj = Q_NULLPTR;
+
+
+DatabaseWrapper::DatabaseWrapper(QObject *parent)
+    : QObject(parent),
+      m_llConnectionId(0)
+{
+}
+
+void DatabaseWrapper::onThreadFinished()
+{
+    QThread *pThreadObj = qobject_cast<QThread*>(sender());
+    if (!pThreadObj)
+        return;
+
+    // 清理线程数据库连接
+    QMutexLocker locker(&m_mutex);
+    disconnect(pThreadObj, SIGNAL(finished()), this, SLOT(onThreadFinished()));
+    const QString szConnectionName = m_mapCopies.value(pThreadObj).connectionName();
+    m_mapCopies.remove(pThreadObj);
+    if (szConnectionName.startsWith(QLatin1String(g_pszConnectionPrefix)))
+        QSqlDatabase::removeDatabase(szConnectionName);
+}
+
+static void releaseDatabase()
+{
+    if(g_pGlobalDatabaseObj)
+    {
+        delete g_pGlobalDatabaseObj;
+        g_pGlobalDatabaseObj = Q_NULLPTR;
+    }
+}
+
+
+//------------------------------------------------------------------------------
 
 Database::Database(const QString &dbname,
                    const QString &user,
@@ -550,3 +589,90 @@ bool Database::isExistTable(const QString &szTableName)
     static QStringList szListTable = db_.tables();
     return (szListTable.indexOf(szTableName) >= 0);
 }
+
+
+/**
+ * @brief Database::database
+ * @details 获取线程的数据库对象
+ * @return 线程数据库对象
+ */
+QSqlDatabase Database::database()
+{
+    if (!g_pGlobalDatabaseObj)
+        return QSqlDatabase();
+
+    // 如果在主线程运行，直接返回数据库连接
+    QThread *pThreadObj = QThread::currentThread();
+    if (pThreadObj == g_pGlobalDatabaseObj->thread()) {
+        //LogInfo(QString("[main thread id: %3] get database object").arg(QString::number((ulong)pThreadObj->currentThreadId())));
+        return g_pGlobalDatabaseObj->m_reference;
+    }
+
+    // 如果运行线程已有数据库连接，直接返回数据库连接
+    QMutexLocker locker(&g_pGlobalDatabaseObj->m_mutex);
+    if (g_pGlobalDatabaseObj->m_mapCopies.contains(pThreadObj)) {
+        //LogInfo(QString("[copy thread id: %3] get database object").arg(QString::number((ulong)pThreadObj->currentThreadId())));
+        return g_pGlobalDatabaseObj->m_mapCopies[pThreadObj];
+    }
+
+    // 为线程创建新的数据库连接
+    QObject::connect(pThreadObj, SIGNAL(finished()), g_pGlobalDatabaseObj, SLOT(onThreadFinished()));
+    QSqlDatabase db = QSqlDatabase::cloneDatabase(g_pGlobalDatabaseObj->m_reference,
+                                                  QLatin1String(g_pszConnectionPrefix) + QString::number(g_pGlobalDatabaseObj->m_llConnectionId++));
+
+    const QString driverName = db.driverName();
+    if (driverName == QLatin1String("QMYSQL") ||  driverName == QLatin1String("QMYSQL3"))
+    {
+        db.setHostName(g_pGlobalDatabaseObj->m_szHostName);
+        db.setPort(g_pGlobalDatabaseObj->m_iPort);
+        if(!db.open(g_pGlobalDatabaseObj->m_szUser, g_pGlobalDatabaseObj->m_szPwd))
+        {
+            LogError(QString("Open Database Failed!"));
+            return QSqlDatabase();
+        }
+        QSqlQuery query(db);
+        query.exec(QString("use %1").arg(g_pGlobalDatabaseObj->m_szName));
+        db.exec("set names 'utf-8'");
+    }
+    else
+    {
+        db.open();
+    }
+
+    g_pGlobalDatabaseObj->m_mapCopies.insert(pThreadObj, db);
+    LogInfo(QString("[new thread ID: %3] get database object").arg(QString::number((ulong)pThreadObj->currentThreadId())));
+
+    return db;
+}
+
+
+/**
+ * @brief Database::setDatabase
+ * @details 设置数据库对象
+ * @param database 数据库对象
+ * @param szDBName 数据库名称
+ * @param szUser 数据库用户名
+ * @param szPwd 数据库密码
+ * @param szHostName 数据库IP地址
+ * @param iPort 数据库端口
+ */
+void Database::setDatabase(QSqlDatabase database,
+                           const QString &szDBName,
+                           const QString &szUser,
+                           const QString &szPwd,
+                           const QString &szHostName,
+                           int iPort)
+{
+    if (!g_pGlobalDatabaseObj) {
+        g_pGlobalDatabaseObj = new DatabaseWrapper();
+        qAddPostRoutine(releaseDatabase);
+    }
+    g_pGlobalDatabaseObj->m_reference = database;
+    g_pGlobalDatabaseObj->m_szName = szDBName;
+    g_pGlobalDatabaseObj->m_szUser = szUser;
+    g_pGlobalDatabaseObj->m_szPwd = szPwd;
+    g_pGlobalDatabaseObj->m_szHostName = szHostName;
+    g_pGlobalDatabaseObj->m_iPort = iPort;
+    LogInfo(QString("set database object thread id: %3").arg(QString::number((ulong)g_pGlobalDatabaseObj->thread()->currentThreadId())));
+}
+

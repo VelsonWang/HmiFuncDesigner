@@ -13,8 +13,8 @@
 #include <QListWidgetItem>
 #include <QMenu>
 #include <QProcess>
+#include "ProjectData.h"
 #include "ConfigUtils.h"
-#include "ProjectMgrUtils.h"
 #include "ScriptConditionConfigForm.h"
 #include "ScriptEditorDlg.h"
 
@@ -100,7 +100,7 @@ void ScriptFileManage::load(const QString &filename, SaveFormat saveFormat)
 
 void ScriptFileManage::save(const QString &filename, SaveFormat saveFormat)
 {
-    QString strPath = ProjectMgrUtils::getProjectPath(filename);
+    QString strPath = ProjectData::getInstance()->getProjectPath(filename);
     QDir dir(strPath);
     if (!dir.exists()) {
         dir.mkpath(strPath);
@@ -207,7 +207,7 @@ void ScriptManageChild::NewScript()
 {
     if (m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
+    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
 
     /////////////////////////////////////////////////////////////////////////////
@@ -238,7 +238,7 @@ void ScriptManageChild::ModifyScript()
 {
     if (m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectMgrUtils::getProjectPath(m_szProjectName);
+    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
     QString scriptFileName = strProjectPath + "/Scripts/" + pCurItem->text() + ".js";
 
@@ -291,7 +291,7 @@ void ScriptManageChild::DeleteScript()
     ScriptObject *pObj = ScriptFileManage::GetScriptObject(pCurItem->text());
     ScriptFileManage::DeleteScriptInfo(pObj);
 
-    QString scriptFileName = ProjectMgrUtils::getProjectPath(m_szProjectName) + "/Scripts/" + pCurItem->text() + ".js";
+    QString scriptFileName = ProjectData::getInstance()->getProjectPath(m_szProjectName) + "/Scripts/" + pCurItem->text() + ".js";
     QFile scriptFile(scriptFileName);
     if (scriptFile.exists()) scriptFile.remove();
 
@@ -302,21 +302,9 @@ void ScriptManageChild::DeleteScript()
 }
 
 
-
-void ScriptManageChild::buildUserInterface(QMainWindow* pMainWin)
-{
-    Q_UNUSED(pMainWin)
-    open();
-}
-
-void ScriptManageChild::removeUserInterface(QMainWindow* pMainWin)
-{
-    Q_UNUSED(pMainWin)
-}
-
 bool ScriptManageChild::open()
 {
-    QString fileDes = ProjectMgrUtils::getProjectPath(m_szProjectName) + "/Scripts/Script.info";
+    QString fileDes = ProjectData::getInstance()->getProjectPath(m_szProjectName) + "/Scripts/Script.info";
     ScriptFileManage::load(fileDes, DATA_SAVE_FORMAT);
     m_pListWidgetObj->clear();
     QListWidgetItem *pNewItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), tr("新建脚本"));
@@ -332,26 +320,21 @@ bool ScriptManageChild::open()
 
 bool ScriptManageChild::save()
 {
-    QString fileDes = ProjectMgrUtils::getProjectPath(m_szProjectName) + "/Scripts/Script.info";
+    QString fileDes = ProjectData::getInstance()->getProjectPath(m_szProjectName) + "/Scripts/Script.info";
     ScriptFileManage::save(fileDes, DATA_SAVE_FORMAT);
     return true;
 }
 
-bool ScriptManageChild::saveAs()
+void ScriptManageChild::buildUserInterface(QMainWindow* pMainWin)
 {
-    return true;
+    Q_UNUSED(pMainWin)
+    open();
 }
 
-QString ScriptManageChild::userFriendlyCurrentFile()
+void ScriptManageChild::removeUserInterface(QMainWindow* pMainWin)
 {
-    return QString();
+    Q_UNUSED(pMainWin)
 }
-
-QString ScriptManageChild::currentFile() const
-{
-    return QString();
-}
-
 
 QString ScriptManageChild::wndTitle() const
 {

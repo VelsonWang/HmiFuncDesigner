@@ -17,9 +17,6 @@ public:
     bool openFromXml(XMLObject *pXmlObj);
     bool saveToXml(XMLObject *pXmlObj);
 
-    bool load(ProjectDataSQLiteDatabase *pDB);
-    bool save(ProjectDataSQLiteDatabase *pDB);
-
 public:
     bool isHotStandbyMode();
     void setHotStandbyMode(bool mode);

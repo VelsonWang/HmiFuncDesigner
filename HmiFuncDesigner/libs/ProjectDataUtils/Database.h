@@ -5,13 +5,40 @@
 #include <QStringList>
 #include <QVariant>
 #include <QObject>
+#include <QMutex>
+
+
+class DatabaseWrapper : public QObject
+{
+    Q_OBJECT
+public:
+    DatabaseWrapper(QObject *parent = 0);
+
+    QSqlDatabase m_reference;
+    QMutex m_mutex;
+    QMap<QThread*, QSqlDatabase> m_mapCopies;
+    qint64 m_llConnectionId;
+
+public:
+    QString m_szName;
+    QString m_szUser;
+    QString m_szPwd;
+    QString m_szHostName;
+    int m_iPort;
+
+private slots:
+    void onThreadFinished();
+};
+
+
+//------------------------------------------------------------------------------
 
 
 class Database : public QObject
 {
     Q_OBJECT
 public:
-    explicit Database(const QString &dbname = "xpen",
+    explicit Database(const QString &dbname = "hmi",
                       const QString &user = "root",
                       const QString &pwd = "725431",
                       const QString &hostname = "127.0.0.1",
@@ -109,12 +136,21 @@ public:
     // 是否存在表
     bool isExistTable(const QString &szTableName);
 
+    static QSqlDatabase database();
+    static void setDatabase(QSqlDatabase database,
+                            const QString &dbname,
+                            const QString &user,
+                            const QString &pwd,
+                            const QString &hostname,
+                            int port);
 public:
     QString name_;
     QString user_;
     QString pwd_;
     QString hostName_;
     int port_;
+
+protected:
     QSqlDatabase db_;
 };
 

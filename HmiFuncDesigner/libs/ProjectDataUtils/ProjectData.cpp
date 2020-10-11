@@ -2,18 +2,19 @@
 #include "ProjectDataSQLiteDatabase.h"
 #include "XMLObject.h"
 #include "Helper.h"
+#include <QFileInfo>
 #include <QDebug>
 
 ProjectDataSQLiteDatabase *ProjectData::dbData_ = Q_NULLPTR;
-QString ProjectData::szProjPath_ = "";
-QString ProjectData::szProjName_ = "";
+
 
 
 ProjectData::ProjectData()
     : dbPath_(""),
       szProjVersion_("V1.0.0")
 {
-
+    szProjPath_ = "";
+    szProjName_ = "";
 }
 
 ProjectData::~ProjectData()
@@ -36,32 +37,20 @@ bool ProjectData::openFromXml(const QString &szProjFile)
 {
     QString buffer = Helper::readString(szProjFile);
     XMLObject xml;
-    if(!xml.load(buffer, 0))
-        return false;
-/*
-    QList<XMLObject*> children = xml.getChildren();
-    foreach(XMLObject* obj, children)
-        obj->showXMLObject();
+    if(!xml.load(buffer, 0)) return false;
 
-    qDebug() << "\n\n\n=========get child name is person=========\n";
-    children.clear();
-    children = xml.getCurrentChildren("person");
-    foreach(XMLObject* obj, children)
-        obj->showXMLObject();
-
-    qDebug() << "\n\n\n=========getChildrenByParentTagName=========\n";
-    QStringList parents;
-    parents<< "persons";
-    parents<< "person";
-    parents<< "baby";
-    children.clear();
-    xml.getChildrenByParentTagName(parents, children);
-    foreach(XMLObject* obj, children){
-        obj->showXMLObject();
-        obj->setProperty("cb", "123");
+    QList<XMLObject*> projObjs = xml.getChildren();
+    foreach(XMLObject* pProjObj, projObjs) {
+        // 工程信息管理
+        projInfoMgr_.openFromXml(pProjObj);
+        // 网络配置
+        netSetting_.openFromXml(pProjObj);
+        // 数据库配置
+        dbSetting_.openFromXml(pProjObj);
+        // 用户权限
+        userAuthority_.openFromXml(pProjObj);
     }
-    FileHelper::writeString(project_path + "/pages.xml", xml.write());
-*/
+
     return true;
 }
 
@@ -73,51 +62,20 @@ bool ProjectData::saveToXml(const QString &szProjFile)
 
     XMLObject *pProjObj = new XMLObject(&projObjs);
     pProjObj->setTagName("project");
-    pProjObj->setProperty("version", szProjVersion_);
+    pProjObj->setProperty("application_version", szProjVersion_);
 
     // 工程信息管理
     projInfoMgr_.saveToXml(pProjObj);
     // 网络配置
     netSetting_.saveToXml(pProjObj);
+    // 数据库配置
+    dbSetting_.saveToXml(pProjObj);
+    // 用户权限
+    userAuthority_.saveToXml(pProjObj);
 
 
     Helper::writeString(szProjFile, projObjs.write());
-/*
-    XMLObject persons;
-    persons.setTagName("persons");
 
-    XMLObject *person;
-    person = new XMLObject(&persons);
-    person->setTagName("person");
-    person->setText("hi, my name is jason.");
-    person->setProperty("name", "jason");
-    person->setProperty("age", "29");
-    person->setProperty("sex", "male");
-
-    person = new XMLObject(&persons);
-    person->setTagName("person");
-    person->setText("hi, my name is velson.");
-    person->setProperty("name", "velson");
-    person->setProperty("age", "28");
-    person->setProperty("sex", "male");
-
-    person = new XMLObject(&persons);
-    person->setTagName("person");
-    person->setText("hi, my name is lucy.");
-    person->setProperty("name", "lucy");
-    person->setProperty("age", "25");
-    person->setProperty("sex", "female");
-
-    XMLObject *baby = new XMLObject(person);
-    baby->setTagName("baby");
-    baby->setText("lucy==baby");
-    baby->setProperty("name", "baby");
-    baby->setProperty("age", "1");
-    baby->setProperty("sex", "female");
-
-
-
- */
     return true;
 }
 
@@ -223,4 +181,41 @@ void ProjectData::getAllTagName(QStringList &varList, const QString &type)
         qDeleteAll(tagSys_.listTagSysDBItem_);
         tagSys_.listTagSysDBItem_.clear();
     }
+}
+
+/**
+ * @brief ProjectData::getProjectPath
+ * @details 获取工程路径
+ * @param projectName 工程名称全路径
+ * @return 工程路径
+ */
+QString ProjectData::getProjectPath(const QString &projectName) {
+    QString path = QString();
+    int pos = projectName.lastIndexOf("/");
+    if (pos != -1) {
+        path = projectName.left(pos);
+    }
+    return path;
+}
+
+/**
+ * @brief ProjectData::getProjectNameWithSuffix
+ * @details 获取包含后缀工程名称
+ * @param projectName 工程名称全路径
+ * @return 工程名称包含后缀
+ */
+QString ProjectData::getProjectNameWithSuffix(const QString &projectName) {
+    QFileInfo projFileInfo(projectName);
+    return projFileInfo.fileName();
+}
+
+/**
+ * @brief ProjectData::getProjectNameWithOutSuffix
+ * @details 获取不包含后缀工程名称
+ * @param projectName 工程名称全路径
+ * @return 工程名称不包含后缀
+ */
+QString ProjectData::getProjectNameWithOutSuffix(const QString &projectName) {
+    QFileInfo projFileInfo(projectName);
+    return projFileInfo.baseName();
 }

@@ -3,7 +3,6 @@
 #include "ConfigUtils.h"
 #include "Helper.h"
 #include "IDevicePlugin.h"
-#include "ProjectMgrUtils.h"
 #include "ProjectData.h"
 #include <QStringList>
 #include <QMessageBox>

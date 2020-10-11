@@ -34,6 +34,7 @@ bool SQLiteDatabase::openDatabase()
             LogError(QString("Open Database Failed!"));
             return false;
         }
+        Database::setDatabase(db_, name_, user_, pwd_, hostName_, port_);
     } catch(...) {
         LogError(QString("Open Database Failed Exception!"));
         return false;

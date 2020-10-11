@@ -14,10 +14,9 @@ class NewProjectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewProjectDialog(QWidget *parent = 0, QString projPath = "");
+    explicit NewProjectDialog(QWidget *parent = 0);
     ~NewProjectDialog();
 
-    QString GetProjectName();
     bool load();
     bool save();
 
@@ -34,8 +33,6 @@ private slots:
 private:
     Ui::NewProjectDialog *ui;
     QMap<QString, int> deviceMap_;
-    QString projectName_;
-    QString projectPath_;
 };
 
 #endif // NEWPROJECTDIALOG_H

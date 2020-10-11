@@ -1,11 +1,4 @@
 #include "DatabaseSetting.h"
-#include "ProjectDataSQLiteDatabase.h"
-#include "ulog.h"
-#include <QFile>
-#include <QDir>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
 
 class DatabaseSetting;
 
@@ -32,8 +25,7 @@ public:
 
 
 
-DatabaseSetting::DatabaseSetting()
-    : dPtr_(new DatabaseSettingPrivate()) {
+DatabaseSetting::DatabaseSetting() : dPtr_(new DatabaseSettingPrivate()) {
 
 }
 
@@ -43,86 +35,45 @@ DatabaseSetting::~DatabaseSetting() {
     }
 }
 
-/**
- * @brief DatabaseSetting::load
- * @details 读取网络配置信息
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool DatabaseSetting::load(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
-    QSqlRecord rec;
-
-    bool ret = query.exec("select * from t_database_setting");
-    if(!ret) {
-        LogError(QString("get record: %1 failed! %2 ,error: %3!")
-                 .arg("t_database_setting")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-        return false;
-    }
-
-    while (query.next()) {
-        rec = query.record();
-        dPtr_->iAlarmSize_ = rec.value("alarm_size").toInt();
-        dPtr_->bSpecialDB_ = rec.value("special_db").toInt() > 0 ? true : false;
-        dPtr_->bAutoDelete_ = rec.value("auto_delete").toInt() > 0 ? true : false;
-        dPtr_->szDBType_ = rec.value("db_type").toString();
-        dPtr_->iDataKeepDays_ = rec.value("data_keep_days").toInt();
-        dPtr_->szIPAddress_ = rec.value("ip_address").toString();
-        dPtr_->bUseSD_ = rec.value("use_sd").toInt() > 0 ? true : false;
-        dPtr_->szUser_ = rec.value("user").toString();
-        dPtr_->iSavePeriod_ = rec.value("save_period").toInt();
-        dPtr_->szPassword_ = rec.value("password").toString();
-        dPtr_->iSendPeriod_ = rec.value("send_period").toInt();
-        dPtr_->szDBName_ = rec.value("db_name").toString();
-        dPtr_->iStartTime_ = rec.value("start_time").toInt();
-        dPtr_->iPort_ = rec.value("port").toInt();
-    }
-
-    return ret;
+bool DatabaseSetting::openFromXml(XMLObject *pXmlObj) {
+    XMLObject *pDBSettingObj = pXmlObj->getCurrentChild("database_setting");
+    dPtr_->iAlarmSize_ = pDBSettingObj->getProperty("alarm").toInt();
+    dPtr_->bSpecialDB_ = pDBSettingObj->getProperty("special") == "1";
+    dPtr_->bAutoDelete_ = pDBSettingObj->getProperty("aut") == "1";
+    dPtr_->szDBType_ = pDBSettingObj->getProperty("dbt");
+    dPtr_->iDataKeepDays_ = pDBSettingObj->getProperty("days").toInt();
+    dPtr_->szIPAddress_ = pDBSettingObj->getProperty("ip");
+    dPtr_->bUseSD_ = pDBSettingObj->getProperty("sd") == "1";
+    dPtr_->szUser_ = pDBSettingObj->getProperty("user");
+    dPtr_->iSavePeriod_ = pDBSettingObj->getProperty("save").toInt();
+    dPtr_->szPassword_ = pDBSettingObj->getProperty("pass");
+    dPtr_->iSendPeriod_ = pDBSettingObj->getProperty("send").toInt();
+    dPtr_->szDBName_ = pDBSettingObj->getProperty("db");
+    dPtr_->iStartTime_ = pDBSettingObj->getProperty("start").toInt();
+    dPtr_->iPort_ = pDBSettingObj->getProperty("port").toInt();
+    return true;
 }
 
-/**
- * @brief DatabaseSetting::save
- * @details 保存网络配置信息
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool DatabaseSetting::save(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
-    query.prepare("update t_database_setting set "
-                  "alarm_size = :alarm, special_db = :special, auto_delete = :aut, db_type = :dbt, "
-                  "data_keep_days = :days, ip_address = :ip, use_sd = :sd, user = :user, "
-                  "save_period = :save, password = :pass, send_period = :send, db_name = :db, "
-                  "start_time = :start, port = :port where id = 1");
 
-    query.bindValue(":alarm", dPtr_->iAlarmSize_);
-    query.bindValue(":special", dPtr_->bSpecialDB_ ? 1 : 0);
-    query.bindValue(":aut", dPtr_->bAutoDelete_ ? 1 : 0);
-    query.bindValue(":dbt", dPtr_->szDBType_);
-    query.bindValue(":days", dPtr_->iDataKeepDays_);
-    query.bindValue(":ip", dPtr_->szIPAddress_);
-    query.bindValue(":sd", dPtr_->bUseSD_ ? 1 : 0);
-    query.bindValue(":user", dPtr_->szUser_);
-    query.bindValue(":save", dPtr_->iSavePeriod_);
-    query.bindValue(":pass", dPtr_->szPassword_);
-    query.bindValue(":send", dPtr_->iSendPeriod_);
-    query.bindValue(":db", dPtr_->szDBName_);
-    query.bindValue(":start", dPtr_->iStartTime_);
-    query.bindValue(":port", dPtr_->iPort_);
-
-    bool ret = query.exec();
-    if(!ret) {
-        LogError(QString("update record: %1 failed! %2 ,error: %3!")
-                 .arg("t_database_setting")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-    }
-
-    return ret;
+bool DatabaseSetting::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pDBSettingObj = new XMLObject(pXmlObj);
+    pDBSettingObj->setTagName("database_setting");
+    pDBSettingObj->setProperty("alarm", QString::number(dPtr_->iAlarmSize_));
+    pDBSettingObj->setProperty("special", dPtr_->bSpecialDB_ ? "1" : "0");
+    pDBSettingObj->setProperty("aut", dPtr_->bAutoDelete_ ? "1" : "0");
+    pDBSettingObj->setProperty("dbt", dPtr_->szDBType_);
+    pDBSettingObj->setProperty("days", QString::number(dPtr_->iDataKeepDays_));
+    pDBSettingObj->setProperty("ip", dPtr_->szIPAddress_);
+    pDBSettingObj->setProperty("sd", dPtr_->bUseSD_ ? "1" : "0");
+    pDBSettingObj->setProperty("user", dPtr_->szUser_);
+    pDBSettingObj->setProperty("save", QString::number(dPtr_->iSavePeriod_));
+    pDBSettingObj->setProperty("pass", dPtr_->szPassword_);
+    pDBSettingObj->setProperty("send", QString::number(dPtr_->iSendPeriod_));
+    pDBSettingObj->setProperty("db", dPtr_->szDBName_);
+    pDBSettingObj->setProperty("start", QString::number(dPtr_->iStartTime_));
+    pDBSettingObj->setProperty("port", QString::number(dPtr_->iPort_));
+    return true;
 }
-
 
 int DatabaseSetting::getAlarmSize() {
     return dPtr_->iAlarmSize_;
