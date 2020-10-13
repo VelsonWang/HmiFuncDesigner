@@ -13,7 +13,8 @@ TEMPLATE = app
 DESTDIR = $$IDE_BIN_PATH
 
 INCLUDEPATH += .
-INCLUDEPATH += ./widget
+INCLUDEPATH += $$PWD/widget
+INCLUDEPATH += $$PWD/ProjData
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
 INCLUDEPATH += $$PWD/../../libs/qscintilla
@@ -22,6 +23,8 @@ INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
 include($$PWD/../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
+include($$PWD/ProjData/ProjData.pri)
+
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -37,7 +40,6 @@ LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
 SOURCES += main.cpp\
     CommunicationDeviceChild.cpp \
@@ -168,7 +170,6 @@ FORMS    += \
     InsertFunctionDialog.ui \
     InsertTagDialog.ui \
     ScriptRunConditionEditorDlg.ui \
-    ChildForm.ui \
     widget/QIPAddressEdit.ui \
 #    DrawMainWindow.ui \
     ElementLibraryWidget.ui \

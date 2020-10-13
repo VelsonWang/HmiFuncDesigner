@@ -25,7 +25,6 @@ public:
     void save(int id);
 
 public:
-    ComDevice* GetComDevice();
     QString GetDeviceName() const;
     // 设置已经建立的设备名称列表
     void SetListDeviceName(QStringList l);
@@ -61,7 +60,6 @@ public:
 
 private:
     Ui::NewComDeviceDialog *ui;
-    ComDevice m_dev;
     QStringList m_ListDeviceName;
     QtVariantPropertyManager *m_pVariantPropertyManager;
     QtTreePropertyBrowser *m_pPropertyEditor;

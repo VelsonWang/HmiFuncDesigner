@@ -624,7 +624,7 @@ void MainWindow::createToolbars()
 
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
-    addToolBarBreak();
+    //addToolBarBreak();
     this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
 }
 

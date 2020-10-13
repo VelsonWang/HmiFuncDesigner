@@ -39,6 +39,7 @@ ProjectInfoManager::~ProjectInfoManager() {
  */
 bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj) {
     XMLObject *projInfoObj = pXmlObj->getCurrentChild("project_info");
+    if(projInfoObj == Q_NULLPTR) return false;
     dPtr_->projectEncrypt_ = projInfoObj->getProperty("encrypt") == "1";
     dPtr_->dataScanPeriod_= projInfoObj->getProperty("data_scan").toUInt();
     dPtr_->deviceType_ = projInfoObj->getProperty("device");

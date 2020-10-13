@@ -49,6 +49,8 @@ bool ProjectData::openFromXml(const QString &szProjFile)
         dbSetting_.openFromXml(pProjObj);
         // 用户权限
         userAuthority_.openFromXml(pProjObj);
+        // 设备配置信息
+        deviceInfo_.openFromXml(pProjObj);
     }
 
     return true;
@@ -72,7 +74,8 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     dbSetting_.saveToXml(pProjObj);
     // 用户权限
     userAuthority_.saveToXml(pProjObj);
-
+    // 设备配置信息
+    deviceInfo_.saveToXml(pProjObj);
 
     Helper::writeString(szProjFile, projObjs.write());
 

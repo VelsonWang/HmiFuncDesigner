@@ -35,6 +35,7 @@ NetSetting::~NetSetting()
 
 bool NetSetting::openFromXml(XMLObject *pXmlObj) {
     XMLObject *pNetSettingObj = pXmlObj->getCurrentChild("net_setting");
+    if(pNetSettingObj == Q_NULLPTR) return false;
     dPtr_->bHotStandbyMode_ = pNetSettingObj->getProperty("hot") == "1";
     dPtr_->bClientMode_= pNetSettingObj->getProperty("clientMode") == "1";
     dPtr_->bServerStation_ = pNetSettingObj->getProperty("sStation") == "1";

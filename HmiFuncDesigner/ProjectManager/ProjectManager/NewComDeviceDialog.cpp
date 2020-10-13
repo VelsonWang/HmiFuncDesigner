@@ -62,8 +62,6 @@ NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
 
     ui->editTimeout->setText("50");
 
-    m_dev.szDeviceType_ = "COM";
-
     VariantManager *pVariantManager  = new VariantManager(this);
     m_pVariantPropertyManager = pVariantManager;
 
@@ -96,7 +94,7 @@ void NewComDeviceDialog::on_btnHelp_clicked()
 */
 void NewComDeviceDialog::on_btnDeviceSelect_clicked()
 {
-    DeviceListDialog *pDlg = new DeviceListDialog(m_dev.szDeviceType_, this);
+    DeviceListDialog *pDlg = new DeviceListDialog("COM", this);
     if(pDlg->exec() == QDialog::Accepted) {
         QString devName = pDlg->GetDeviceName();
 
@@ -183,11 +181,6 @@ bool NewComDeviceDialog::check_data()
     return ret;
 }
 
-ComDevice* NewComDeviceDialog::GetComDevice()
-{
-    return &m_dev;
-}
-
 QString NewComDeviceDialog::GetDeviceName() const
 {
     return ui->editDeviceName->text();
@@ -196,44 +189,27 @@ QString NewComDeviceDialog::GetDeviceName() const
 void NewComDeviceDialog::load(int id)
 {
     if(id < 0) return;
-
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    deviceInfo.load(ProjectData::getInstance()->dbData_);
     DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
-
+    if(pObj == Q_NULLPTR) return;
     ui->editDeviceName->setText(pObj->szDeviceName_);
-    m_dev.szDeviceName_ = pObj->szDeviceName_;
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
-    m_dev.iFrameLen_ = pObj->iFrameLen_;
     ui->editProtocol->setText(pObj->szProtocol_);
-    m_dev.szProtocol_ = pObj->szProtocol_;
     ui->cboLink->setCurrentText(pObj->szLink_);
-    m_dev.szLink_ = pObj->szLink_;
     ui->editStateVar->setText(QString::number(pObj->iStateVar_));
-    m_dev.iStateVar_ = pObj->iStateVar_;
     ui->editFrameTimePeriod->setText(QString::number(pObj->iFrameTimePeriod_));
-    m_dev.iFrameTimePeriod_ = pObj->iFrameTimePeriod_;
     ui->editCtrlVar->setText(QString::number(pObj->iCtrlVar_));
-    m_dev.iCtrlVar_ = pObj->iCtrlVar_;
     ui->checkDynamicOptimization->setChecked(pObj->bDynamicOptimization_);
-    m_dev.bDynamicOptimization_ = pObj->bDynamicOptimization_;
     ui->editRemotePort->setText(QString::number(pObj->iRemotePort_));
-    m_dev.iRemotePort_ = pObj->iRemotePort_;
 
     ComDevice comDev;
     comDev.fromString(pObj->szPortParameters_);
     ui->cboPortNumber->setCurrentText(comDev.szPortNumber_);
-    m_dev.szPortNumber_ = comDev.szPortNumber_;
     ui->cboBaudrate->setCurrentText(QString::number(comDev.iBaudrate_));
-    m_dev.iBaudrate_ = comDev.iBaudrate_;
     ui->cboDatabit->setCurrentText(QString::number(comDev.iDatabit_));
-    m_dev.iDatabit_ = comDev.iDatabit_;
     ui->cboStopbit->setCurrentText(QString::number(comDev.fStopbit_));
-    m_dev.fStopbit_ = comDev.fStopbit_;
     ui->cboVerifybit->setCurrentText(comDev.szVerifybit_);
-    m_dev.szVerifybit_ = comDev.szVerifybit_;
     ui->editTimeout->setText(QString::number(comDev.iTimeout_));
-    m_dev.iTimeout_ = comDev.iTimeout_;
 
     QString pluginName = pObj->szDeviceName_;
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
@@ -255,44 +231,28 @@ void NewComDeviceDialog::save(int id)
     DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
     if(pObj == Q_NULLPTR) {
         pObj = new DeviceInfoObject();
-        if(pObj == Q_NULLPTR)
-            return;
-        deviceInfo.insert(ProjectData::getInstance()->dbData_, pObj);
-        pObj->iID_ = deviceInfo.getLastInsertId(ProjectData::getInstance()->dbData_);
+        if(pObj == Q_NULLPTR) return;
+        deviceInfo.listDeviceInfoObject_.append(pObj);
+        pObj->iID_ = deviceInfo.allocNewDeviceID();
     }
-    pObj->szDeviceType_ = m_dev.szDeviceType_;
+    pObj->szDeviceType_ = "COM";
     pObj->szDeviceName_ = ui->editDeviceName->text();
-    m_dev.szDeviceName_ = ui->editDeviceName->text();
     pObj->iFrameLen_ = ui->editFrameLen->text().toInt();
-    m_dev.iFrameLen_ = ui->editFrameLen->text().toInt();
     pObj->szProtocol_ = ui->editProtocol->text();
-    m_dev.szProtocol_ = ui->editProtocol->text();
     pObj->szLink_ = ui->cboLink->currentText();
-    m_dev.szLink_ = ui->cboLink->currentText();
-    pObj->iStateVar_ = ui->editStateVar->text().toInt();
     pObj->iStateVar_ = ui->editStateVar->text().toInt();
     pObj->iFrameTimePeriod_ = ui->editFrameTimePeriod->text().toInt();
-    m_dev.iFrameTimePeriod_ = ui->editFrameTimePeriod->text().toInt();
     pObj->iCtrlVar_ = ui->editCtrlVar->text().toInt();
-    m_dev.iCtrlVar_ = ui->editCtrlVar->text().toInt();
     pObj->bDynamicOptimization_ = ui->checkDynamicOptimization->isChecked();
-    m_dev.bDynamicOptimization_ = ui->checkDynamicOptimization->isChecked();
     pObj->iRemotePort_ = ui->editRemotePort->text().toInt();
-    m_dev.iRemotePort_ = ui->editRemotePort->text().toInt();
 
     ComDevice comDev;
     comDev.szPortNumber_ = ui->cboPortNumber->currentText();
-    m_dev.szPortNumber_ = ui->cboPortNumber->currentText();
     comDev.iBaudrate_ = ui->cboBaudrate->currentText().toInt();
-    m_dev.iBaudrate_ = ui->cboBaudrate->currentText().toInt();
     comDev.iDatabit_ = ui->cboDatabit->currentText().toInt();
-    m_dev.iDatabit_ = ui->cboDatabit->currentText().toInt();
     comDev.fStopbit_ = ui->cboStopbit->currentText().toFloat();
-    m_dev.fStopbit_ = ui->cboStopbit->currentText().toFloat();
     comDev.szVerifybit_ = ui->cboVerifybit->currentText();
-    m_dev.szVerifybit_ = ui->cboVerifybit->currentText();
     comDev.iTimeout_ = ui->editTimeout->text().toInt();
-    m_dev.iTimeout_ = ui->editTimeout->text().toInt();
 
     pObj->szPortParameters_ = comDev.toString();
 
@@ -301,8 +261,6 @@ void NewComDeviceDialog::save(int id)
     if (pDevPluginObj) {
         pObj->szProperties_ = pDevPluginObj->devicePropertiesToString(m_properties);
     }
-
-    deviceInfo.update(ProjectData::getInstance()->dbData_, pObj);
 }
 
 

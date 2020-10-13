@@ -4,8 +4,8 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
+#include "XMLObject.h"
 
-class ProjectDataSQLiteDatabase;
 
 class DeviceInfoObject
 {
@@ -195,7 +195,7 @@ public:
     int iPort1_;
 };
 
-
+class ProjectDataSQLiteDatabase;
 
 class DeviceInfo
 {
@@ -203,20 +203,20 @@ public:
     explicit DeviceInfo();
     ~DeviceInfo();
 
-    bool load(ProjectDataSQLiteDatabase *pDB);
-    bool save(ProjectDataSQLiteDatabase *pDB);
-
-    bool insert(ProjectDataSQLiteDatabase *pDB, DeviceInfoObject *pObj);
-    bool del(ProjectDataSQLiteDatabase *pDB, DeviceInfoObject *pObj);
-    bool delAll(ProjectDataSQLiteDatabase *pDB);
-    bool update(ProjectDataSQLiteDatabase *pDB, DeviceInfoObject *pObj);
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
 
     DeviceInfoObject *getDeviceInfoObjectByID(int id);
     DeviceInfoObject *getDeviceInfoObjectByName(const QString &name);
-    int getLastInsertId(ProjectDataSQLiteDatabase *pDB);
+
+    // 分配一个设备ID
+    static int allocNewDeviceID();
 
 public:
     QList<DeviceInfoObject *> listDeviceInfoObject_;
+
+private:
+    static int iStartNewDeviceID_;
 };
 
 #endif // DEVICEINFO_H

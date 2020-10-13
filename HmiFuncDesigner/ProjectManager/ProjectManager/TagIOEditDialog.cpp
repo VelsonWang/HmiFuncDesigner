@@ -23,7 +23,6 @@ TagIOEditDialog::TagIOEditDialog(QString projName, QWidget *parent) :
 
     // 已经建立设备列表
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    deviceInfo.load(ProjectData::getInstance()->dbData_);
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         ui->cboDeviceName->addItem(pObj->szDeviceName_);
@@ -79,9 +78,7 @@ void TagIOEditDialog::on_btnOk_clicked()
     QString area = ui->cboRegisterSection->currentText();
     if(devPlugin_ != Q_NULLPTR) {
         DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-        deviceInfo.load(ProjectData::getInstance()->dbData_);
         DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByName(m_szDeviceName);
-
         QVector<QPair<QString, QString>> m_properties;
         if(pObj != Q_NULLPTR) {
             if(pObj->szProperties_ == "") {

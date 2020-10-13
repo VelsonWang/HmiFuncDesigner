@@ -26,7 +26,6 @@ public:
     void save(int id);
 
 public:
-    NetDevice* GetNetDevice();
     QString GetDeviceName() const;
     // 设置已经建立的设备名称列表
     void SetListDeviceName(QStringList l);
@@ -62,7 +61,6 @@ public:
 
 private:
     Ui::NewNetDeviceDialog *ui;
-    NetDevice m_dev;
     QStringList m_ListDeviceName;
     QtVariantPropertyManager *m_pVariantPropertyManager;
     QtTreePropertyBrowser *m_pPropertyEditor;

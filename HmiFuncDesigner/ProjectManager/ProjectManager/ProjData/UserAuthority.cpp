@@ -14,8 +14,8 @@ bool UserAuthority::openFromXml(XMLObject *pXmlObj)
 {
     qDeleteAll(listUserAuthority_);
     listUserAuthority_.clear();
-
     XMLObject *pUsersObj = pXmlObj->getCurrentChild("users");
+    if(pUsersObj == Q_NULLPTR) return false;
     QList<XMLObject* > listUsersObj = pUsersObj->getCurrentChildren("user");
     foreach(XMLObject* pUserObj, listUsersObj) {
         UserAuthorityPrivate *pObj = new UserAuthorityPrivate();

@@ -59,9 +59,6 @@ void CommunicationDeviceChild::listViewUISetting()
 
 void CommunicationDeviceChild::listViewUpdate()
 {
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    deviceInfo.load(ProjectData::getInstance()->dbData_);
-
     if(m_szItemName == tr("通讯设备")) {
         listViewCommunicationDeviceUpdate();
     } else if(m_szItemName == tr("串口设备")) {
@@ -217,7 +214,6 @@ void CommunicationDeviceChild::onSlotNewDevice()
         pNewComDeviceDlg->SetListDeviceName(list);
         pNewComDeviceDlg->load(-1);
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
-            deviceInfo.listDeviceInfoObject_.append((DeviceInfoObject *)pNewComDeviceDlg->GetComDevice());
             pNewComDeviceDlg->save(-1);
         }
     } else if(m_szItemName == tr("网络设备")) {
@@ -233,7 +229,6 @@ void CommunicationDeviceChild::onSlotNewDevice()
         pNewNetDeviceDlg->SetListDeviceName(list);
         pNewNetDeviceDlg->load(-1);
         if(pNewNetDeviceDlg->exec() == QDialog::Accepted) {
-            deviceInfo.listDeviceInfoObject_.append((DeviceInfoObject *)pNewNetDeviceDlg->GetNetDevice());
             pNewNetDeviceDlg->save(-1);
         }
     }
@@ -287,7 +282,7 @@ void CommunicationDeviceChild::onSlotDeleteDevice()
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         if(pItemObj->text() == pObj->szDeviceName_) {
-            deviceInfo.del(ProjectData::getInstance()->dbData_, pObj);
+            deviceInfo.listDeviceInfoObject_.removeOne(pObj);
             break;
         }
     }
@@ -313,7 +308,6 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
         pNewComDeviceDlg->SetListDeviceName(list);
         pNewComDeviceDlg->load(-1);
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
-            deviceInfo.listDeviceInfoObject_.append((DeviceInfoObject *)pNewComDeviceDlg->GetComDevice());
             pNewComDeviceDlg->save(-1);
         }
     } else if(pItemObj->text() == tr("新建网络设备")) {
@@ -327,7 +321,6 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
         pNewNetDeviceDlg->SetListDeviceName(list);
         pNewNetDeviceDlg->load(-1);
         if(pNewNetDeviceDlg->exec() == QDialog::Accepted) {
-            deviceInfo.listDeviceInfoObject_.append((DeviceInfoObject *)pNewNetDeviceDlg->GetNetDevice());
             pNewNetDeviceDlg->save(-1);
         }
     } else {

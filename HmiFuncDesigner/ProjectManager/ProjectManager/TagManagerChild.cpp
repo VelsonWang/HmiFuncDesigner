@@ -1356,7 +1356,6 @@ void TagManagerChild::createTagIO()
 
     // 判断是否已经建立通讯设备
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    deviceInfo.load(ProjectData::getInstance()->dbData_);
     if(deviceInfo.listDeviceInfoObject_.count() < 1) {
         QMessageBox::warning(this,
                              tr("提示"),
@@ -1575,7 +1574,6 @@ void TagManagerChild::on_tableTagIO_itemPressed(QTableWidgetItem *item)
             if(pComboBoxDelegateObj != Q_NULLPTR) {
                 QStringList szListDevNames;
                 DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-                deviceInfo.load(ProjectData::getInstance()->dbData_);
                 for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
                     DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
                     szListDevNames.append(pObj->szDeviceName_);

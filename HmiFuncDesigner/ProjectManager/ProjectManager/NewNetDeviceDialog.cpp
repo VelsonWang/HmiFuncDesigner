@@ -36,8 +36,6 @@ NewNetDeviceDialog::NewNetDeviceDialog(QWidget *parent) :
     ui->editIpAddress1->setText(QString("0"));
     ui->editPort1->setText(QString("0"));
 
-    m_dev.szDeviceType_ = "NET";
-
     VariantManager *pVariantManager  = new VariantManager(this);
     m_pVariantPropertyManager = pVariantManager;
 
@@ -69,7 +67,7 @@ void NewNetDeviceDialog::on_btnHelp_clicked()
 */
 void NewNetDeviceDialog::on_btnDeviceSelect_clicked()
 {
-    DeviceListDialog *pDlg = new DeviceListDialog(m_dev.szDeviceType_, this);
+    DeviceListDialog *pDlg = new DeviceListDialog("NET", this);
     if(pDlg->exec() == QDialog::Accepted)
     {
         QString devName = pDlg->GetDeviceName();
@@ -157,10 +155,6 @@ bool NewNetDeviceDialog::check_data()
 }
 
 
-NetDevice* NewNetDeviceDialog::GetNetDevice() {
-    return &m_dev;
-}
-
 QString NewNetDeviceDialog::GetDeviceName() const {
     return ui->editDeviceName->text();
 }
@@ -168,42 +162,26 @@ QString NewNetDeviceDialog::GetDeviceName() const {
 
 void NewNetDeviceDialog::load(int id)
 {
-    if(id < 0)
-        return;
-
+    if(id < 0) return;
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    deviceInfo.load(ProjectData::getInstance()->dbData_);
     DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
-
+    if(pObj == Q_NULLPTR) return;
     ui->editDeviceName->setText(pObj->szDeviceName_);
-    m_dev.szDeviceName_ = pObj->szDeviceName_;
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
-    m_dev.iFrameLen_ = pObj->iFrameLen_;
     ui->editProtocol->setText(pObj->szProtocol_);
-    m_dev.szProtocol_ = pObj->szProtocol_;
     ui->cboLink->setCurrentText(pObj->szLink_);
-    m_dev.szLink_ = pObj->szLink_;
     ui->editStateVar->setText(QString::number(pObj->iStateVar_));
-    m_dev.iStateVar_ = pObj->iStateVar_;
     ui->editFrameTimePeriod->setText(QString::number(pObj->iFrameTimePeriod_));
-    m_dev.iFrameTimePeriod_ = pObj->iFrameTimePeriod_;
     ui->editCtrlVar->setText(QString::number(pObj->iCtrlVar_));
-    m_dev.iCtrlVar_ = pObj->iCtrlVar_;
     ui->checkDynamicOptimization->setChecked(pObj->bDynamicOptimization_);
-    m_dev.bDynamicOptimization_ = pObj->bDynamicOptimization_;
     ui->editRemotePort->setText(QString::number(pObj->iRemotePort_));
-    m_dev.iRemotePort_ = pObj->iRemotePort_;
 
     NetDevice netDev;
     netDev.fromString(pObj->szPortParameters_);
     ui->editIpAddress->setText(netDev.szIpAddress_);
-    m_dev.szIpAddress_ = netDev.szIpAddress_;
     ui->editPort->setText(QString::number(netDev.iPort_));
-    m_dev.iPort_ = netDev.iPort_;
     ui->editIpAddress1->setText(netDev.szIpAddress1_);
-    m_dev.szIpAddress1_ = netDev.szIpAddress1_;
     ui->editPort1->setText(QString::number(netDev.iPort1_));
-    m_dev.iPort1_ = netDev.iPort1_;
 
     QString pluginName = pObj->szDeviceName_;
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
@@ -225,41 +203,27 @@ void NewNetDeviceDialog::save(int id)
 
     if(pObj == Q_NULLPTR) {
         pObj = new DeviceInfoObject();
-        if(pObj == Q_NULLPTR)
-            return;
-        deviceInfo.insert(ProjectData::getInstance()->dbData_, pObj);
-        pObj->iID_ = deviceInfo.getLastInsertId(ProjectData::getInstance()->dbData_);
+        if(pObj == Q_NULLPTR) return;
+        deviceInfo.listDeviceInfoObject_.append(pObj);
+        pObj->iID_ = deviceInfo.allocNewDeviceID();
     }
 
-    pObj->szDeviceType_ = m_dev.szDeviceType_;
+    pObj->szDeviceType_ = "NET";
     pObj->szDeviceName_ = ui->editDeviceName->text();
-    m_dev.szDeviceName_ = ui->editDeviceName->text();
     pObj->iFrameLen_ = ui->editFrameLen->text().toInt();
-    m_dev.iFrameLen_ = ui->editFrameLen->text().toInt();
     pObj->szProtocol_ = ui->editProtocol->text();
-    m_dev.szProtocol_ = ui->editProtocol->text();
     pObj->szLink_ = ui->cboLink->currentText();
-    m_dev.szLink_ = ui->cboLink->currentText();
     pObj->iStateVar_ = ui->editStateVar->text().toInt();
-    m_dev.iStateVar_ = ui->editStateVar->text().toInt();
     pObj->iFrameTimePeriod_ = ui->editFrameTimePeriod->text().toInt();
-    m_dev.iFrameTimePeriod_ = ui->editFrameTimePeriod->text().toInt();
     pObj->iCtrlVar_ = ui->editCtrlVar->text().toInt();
-    m_dev.iCtrlVar_ = ui->editCtrlVar->text().toInt();
     pObj->bDynamicOptimization_ = ui->checkDynamicOptimization->isChecked();
-    m_dev.bDynamicOptimization_ = ui->checkDynamicOptimization->isChecked();
     pObj->iRemotePort_ = ui->editRemotePort->text().toInt();
-    m_dev.iRemotePort_ = ui->editRemotePort->text().toInt();
 
     NetDevice netDev;
     netDev.szIpAddress_ = ui->editIpAddress->text();
-    m_dev.szIpAddress_ = ui->editIpAddress->text();
     netDev.iPort_ = ui->editPort->text().toInt();
-    m_dev.iPort_ = ui->editPort->text().toInt();
     netDev.szIpAddress1_ = ui->editIpAddress1->text();
-    m_dev.szIpAddress1_ = ui->editIpAddress1->text();
     netDev.iPort1_ = ui->editPort1->text().toInt();
-    m_dev.iPort1_ = ui->editPort1->text().toInt();
 
     pObj->szPortParameters_ = netDev.toString();
 
@@ -268,16 +232,12 @@ void NewNetDeviceDialog::save(int id)
     if (pDevPluginObj) {
         pObj->szProperties_ = pDevPluginObj->devicePropertiesToString(m_properties);
     }
-
-    deviceInfo.update(ProjectData::getInstance()->dbData_, pObj);
 }
 
 
 void NewNetDeviceDialog::addProperty(QtVariantProperty *property, const QString &id, bool bAddToList)
 {
-    if(bAddToList) {
-        m_listProp.append(property);
-    }
+    if(bAddToList) m_listProp.append(property);
     m_propertyToId[property] = id;
     m_idToProperty[id] = property;
 }

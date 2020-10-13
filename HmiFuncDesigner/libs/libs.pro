@@ -9,10 +9,10 @@ SUBDIRS   = \
     Csv \
     DrawUtils \
     qtpropertybrowser \
-    qscintilla \
+    qscintilla #\
 #    Lua \
 #    Ftp \
-    ProjectDataUtils
+
 
 
 

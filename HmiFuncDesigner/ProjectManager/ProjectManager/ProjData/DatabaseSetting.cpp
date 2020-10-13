@@ -37,6 +37,7 @@ DatabaseSetting::~DatabaseSetting() {
 
 bool DatabaseSetting::openFromXml(XMLObject *pXmlObj) {
     XMLObject *pDBSettingObj = pXmlObj->getCurrentChild("database_setting");
+    if(pDBSettingObj == Q_NULLPTR) return false;
     dPtr_->iAlarmSize_ = pDBSettingObj->getProperty("alarm").toInt();
     dPtr_->bSpecialDB_ = pDBSettingObj->getProperty("special") == "1";
     dPtr_->bAutoDelete_ = pDBSettingObj->getProperty("aut") == "1";
