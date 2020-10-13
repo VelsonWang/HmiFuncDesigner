@@ -55,7 +55,6 @@ void ElementValueStick::regenerateElementId()
  */
 void ElementValueStick::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

@@ -39,7 +39,7 @@ void ElementRect::regenerateElementId()
  */
 void ElementRect::release()
 {
-    ProjectData::releaseInstance();
+
 }
 
 QRectF ElementRect::boundingRect() const

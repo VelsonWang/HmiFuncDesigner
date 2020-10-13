@@ -1,5 +1,5 @@
-﻿#ifndef PROJECTTREEVIEW_H
-#define PROJECTTREEVIEW_H
+﻿#ifndef GRAPHPAGETREEVIEW_H
+#define GRAPHPAGETREEVIEW_H
 
 #include <QListWidget>
 
@@ -18,4 +18,4 @@ private:
     QIcon itemIcon;
 };
 
-#endif // PROJECTTREEVIEW_H
+#endif // GRAPHPAGETREEVIEW_H

@@ -40,30 +40,32 @@ LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
 SOURCES += main.cpp\
+    CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
+    GraphPageListWidget.cpp \
+    ListViewEx.cpp \
     MainWindow.cpp \
+    MdiArea.cpp \
     NewProjectDialog.cpp \
-    SystemParametersWin.cpp \
+    ProjectTreeView.cpp \
     NetSettingDialog.cpp \
     DatabaseSettingDialog.cpp \
+    RealTimeDatabaseChild.cpp \
+    ScriptManageChild.cpp \
+    SystemParametersChild.cpp \
     TableviewDelegate.cpp \
     TagIOEditDialog.cpp \
-    TagManagerWin.cpp \
+    TagManagerChild.cpp \
     TagTmpEditDialog.cpp \
     UserAuthorityDialog.cpp \
-    CommunicationDeviceWin.cpp \
     NewComDeviceDialog.cpp \
-    ChildBase.cpp \
     NewVariableGroupDialog.cpp \
     DeviceListDialog.cpp \
     SelectProtocolDialog.cpp \
-    DrawPageWin.cpp \
     ProjectDownloadDialog.cpp \
     ProjectUploadDialog.cpp \
     AboutDialog.cpp \
-    RealTimeDatabaseWin.cpp \
     NewNetDeviceDialog.cpp \
-    ScriptManageWin.cpp \
     ScriptConditionConfigForm.cpp \
     ScriptEditorDlg.cpp \
     TagFuncEditDialog.cpp \
@@ -71,8 +73,6 @@ SOURCES += main.cpp\
     InsertFunctionDialog.cpp \
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
-    ChildForm.cpp \
-    ProjectMgrUtils.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
@@ -92,30 +92,33 @@ SOURCES += main.cpp\
     PluginManager.cpp
 
 HEADERS  += MainWindow.h \
+    ChildInterface.h \
+    CommunicationDeviceChild.h \
     DevicePluginLoader.h \
+    GraphPageListWidget.h \
+    ListViewEx.h \
+    MdiArea.h \
     NewProjectDialog.h \
     ../Public/Public.h \
-    SystemParametersWin.h \
+    ProjectTreeView.h \
     NetSettingDialog.h \
     DatabaseSettingDialog.h \
+    RealTimeDatabaseChild.h \
+    ScriptManageChild.h \
+    SystemParametersChild.h \
     TableviewDelegate.h \
     TagIOEditDialog.h \
-    TagManagerWin.h \
+    TagManagerChild.h \
     TagTmpEditDialog.h \
     UserAuthorityDialog.h \
-    CommunicationDeviceWin.h \
     NewComDeviceDialog.h \
-    ChildBase.h \
     NewVariableGroupDialog.h \
     DeviceListDialog.h \
     SelectProtocolDialog.h \
-    DrawPageWin.h \
     ProjectDownloadDialog.h \
     ProjectUploadDialog.h \
     AboutDialog.h \
-    RealTimeDatabaseWin.h \
     NewNetDeviceDialog.h \
-    ScriptManageWin.h \
     ScriptConditionConfigForm.h \
     ScriptEditorDlg.h \
     TagFuncEditDialog.h \
@@ -124,8 +127,6 @@ HEADERS  += MainWindow.h \
     InsertTagDialog.h \
     ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
-    ChildForm.h \
-    ProjectMgrUtils.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
@@ -149,23 +150,18 @@ HEADERS  += MainWindow.h \
 
 FORMS    += \
     NewProjectDialog.ui \
-    SystemParametersWin.ui \
     NetSettingDialog.ui \
     DatabaseSettingDialog.ui \
     TagIOEditDialog.ui \
-    TagManagerWin.ui \
     TagTmpEditDialog.ui \
     UserAuthorityDialog.ui \
-    CommunicationDeviceWin.ui \
     NewComDeviceDialog.ui \
     NewVariableGroupDialog.ui \
     DeviceListDialog.ui \
     SelectProtocolDialog.ui \
-    DrawPageWin.ui \
     ProjectDownloadDialog.ui \
     ProjectUploadDialog.ui \
     AboutDialog.ui \
-    RealTimeDatabaseWin.ui \
     NewNetDeviceDialog.ui \
     ScriptConditionConfigForm.ui \
     ScriptEditorDlg.ui \

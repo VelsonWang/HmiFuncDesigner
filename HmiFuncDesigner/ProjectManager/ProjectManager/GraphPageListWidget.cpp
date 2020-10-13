@@ -1,45 +1,127 @@
-﻿#include "DrawPageWin.h"
-#include <QAction>
-#include <QDebug>
-#include <QFile>
-#include <QInputDialog>
-#include <QMenu>
-#include <QMessageBox>
-#include <QModelIndex>
-#include <QProcess>
-#include "../Public/Public.h"
-#include "ConfigUtils.h"
-#include "DrawListUtils.h"
+#include "GraphPageListWidget.h"
 #include "Helper.h"
+#include "DrawListUtils.h"
 #include "ProjectData.h"
-#include "ProjectInfoManager.h"
-#include "ProjectMgrUtils.h"
-#include "Singleton.h"
-#include "ui_DrawPageWin.h"
+#include <QMenu>
+#include <QAction>
 
-DrawPageWin::DrawPageWin(QWidget *parent, const QString &itemName,
-                         const QString &projName)
-    : ChildBase(parent, itemName, projName),
-      ui(new Ui::DrawPageWin)
+GraphPageListWidget::GraphPageListWidget(QWidget *parent) : QListWidget(parent)
 {
-    ui->setupUi(this);
-    this->setWindowTitle(itemName);
-    m_strItemName = itemName;
-    szProjPath_ = ProjectMgrUtils::getProjectPath(projName);
-    szProjName_ = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
     setContextMenuPolicy(Qt::DefaultContextMenu);
-    pListDrawPageModel = new QStandardItemModel();
-    ui->listViewDrawPage->setModel(pListDrawPageModel);
+
 }
 
-DrawPageWin::~DrawPageWin()
+
+/**
+ * @brief GraphPageListWidget::contextMenuEvent
+ * @details 右键菜单
+ */
+void GraphPageListWidget::contextMenuEvent(QContextMenuEvent * event)
 {
-    delete ui;
-    if (pListDrawPageModel != Q_NULLPTR) {
-        delete pListDrawPageModel;
-        pListDrawPageModel = Q_NULLPTR;
+    QMenu *pMenu = new QMenu(this);
+
+    QAction *pNewAct = new QAction(tr("新建"), this);
+    pNewAct->setStatusTip(tr("新建画面"));
+    connect(pNewAct, SIGNAL(triggered()), this, SLOT(onSlotNewDrawPage()));
+
+    QAction *pRenameAct = new QAction(tr("重命名"), this);
+    pRenameAct->setStatusTip(tr("重命名画面"));
+    //connect(pRenameAct, SIGNAL(triggered()), this, SLOT(onRenameGraphPage()));
+
+    QAction *pDeleteAct = new QAction(tr("删除"), this);
+    pDeleteAct->setStatusTip(tr("删除画面"));
+    //connect(pDeleteAct, SIGNAL(triggered()), this, SLOT(onDeleteGraphPage()));
+
+    QAction *pCopyAct = new QAction(tr("复制"), this);
+    pCopyAct->setStatusTip(tr("复制画面"));
+    //connect(pCopyAct, SIGNAL(triggered()), this, SLOT(onCopyGraphPage()));
+
+    QAction *pPasteAct = new QAction(tr("粘贴"), this);
+    pPasteAct->setStatusTip(tr("粘贴画面"));
+    pPasteAct->setEnabled(false);
+    //connect(pPasteAct, SIGNAL(triggered()), this, SLOT(onPasteGraphPage()));
+
+    QModelIndex index = indexAt(event->pos());
+    if(!index.isValid()) { // 单击空白部分
+        pMenu->addAction(pNewAct); // 新建
+        pMenu->addAction(pPasteAct); // 粘贴
+    } else {
+        pMenu->addAction(pNewAct); // 新建
+        pMenu->addAction(pRenameAct); // 重命名
+        pMenu->addAction(pDeleteAct); // 删除
+        pMenu->addAction(pCopyAct); // 复制
+        pMenu->addAction(pPasteAct); // 粘贴
     }
+
+    pMenu->move(cursor().pos());
+    pMenu->show();
+
+    if(!pMenu->isEmpty()) {
+        pMenu->move(cursor().pos());
+        pMenu->exec();
+        pMenu->clear();
+    }
+    delete pMenu;
 }
+
+/**
+ * @brief GraphPageListWidget::setProjectPath
+ * @details 设置工程目录
+ * @param szPath 工程目录
+ */
+void GraphPageListWidget::setProjectPath(const QString &szPath)
+{
+    m_szProjectPath = szPath;
+}
+
+
+/**
+ * @brief GraphPageListWidget::createEmptyGraphpage
+ * @details 创建空的画面页
+ * @param graphPageName 画面名称
+ * @param width 画面宽度
+ * @param height 画面高度
+ */
+void GraphPageListWidget::createEmptyGraphpage(const QString &szGraphPageName, int iWidth, int Hheight)
+{
+    QString fileName = m_szProjectPath + "/" + szGraphPageName + ".drw";
+    QString szContent = QString(
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                "<graphPage fileName=\"%1.drw\" graphPageId=\"%1\" "
+                "width=\"%2\" height=\"%3\" background=\"#ffffff\">\n"
+                "</graphPage>")
+            .arg(szGraphPageName)
+            .arg(QString::number(iWidth))
+            .arg(QString::number(Hheight));
+
+    Helper::writeString(fileName, szContent);
+}
+
+
+/**
+ * @brief GraphPageListWidget::onSlotNewDrawPage
+ * @details 新建画面
+ */
+void GraphPageListWidget::onSlotNewDrawPage()
+{
+    int last = DrawListUtils::getMaxDrawPageNum("draw");
+    QString szGraphPageName = QString("draw%1").arg(last);
+
+    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    int iWidth = projInfoMgr.getGraphPageWidth();
+    int iHeight = projInfoMgr.getGraphPageHeight();
+
+    createEmptyGraphpage(szGraphPageName, iWidth, iHeight);
+    DrawListUtils::drawList_.append(szGraphPageName);
+    this->addItem(szGraphPageName);
+    DrawListUtils::saveDrawList(m_szProjectPath);
+}
+
+
+
+
+#if 0
+
 
 void DrawPageWin::init()
 {
@@ -51,87 +133,6 @@ void DrawPageWin::init()
         connect(&fileSystemWatcher_, SIGNAL(fileChanged(QString)), this, SLOT(onFileChanged(QString)));
         fileSystemWatcher_.addPath(szProjPath_ + "/DrawList.xml");
     }
-}
-
-/*
-*  打开文件
-*/
-void DrawPageWin::open()
-{
-    DrawListUtils::loadDrawList(szProjPath_);
-}
-
-/*
-* 保存文件
-*/
-void DrawPageWin::save()
-{
-    if (getModifiedFlag()) {
-        setModifiedFlag(false);
-        DrawListUtils::saveDrawList(szProjPath_);
-    }
-}
-
-/*
-* 显示大图标
-*/
-void DrawPageWin::showLargeIcon()
-{
-    ui->listViewDrawPage->setIconSize(QSize(32, 32));
-}
-
-/*
-* 显示小图标
-*/
-void DrawPageWin::showSmallIcon()
-{
-    ui->listViewDrawPage->setIconSize(QSize(24, 24));
-}
-
-/**
- * @brief DrawPageWin::createEmptyGraphpage
- * @details 创建空的画面页
- * @param projPath 工程路径
- * @param graphPageName 画面名称
- * @param width 画面宽度
- * @param height 画面高度
- */
-void DrawPageWin::createEmptyGraphpage(const QString &projPath,
-                                       const QString &graphPageName,
-                                       int width,
-                                       int height)
-{
-    QString fileName = projPath + "/" + graphPageName + ".drw";
-    QString szContent = QString(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                "<graphPage fileName=\"%1.drw\" graphPageId=\"%1\" "
-                "width=\"%2\" height=\"%3\" background=\"#ffffff\">\n"
-                "</graphPage>")
-            .arg(graphPageName)
-            .arg(QString::number(width))
-            .arg(QString::number(height));
-
-    Helper::writeString(fileName, szContent);
-}
-
-/*
-* 新建画面
-*/
-void DrawPageWin::NewDrawPage()
-{
-    int last = DrawListUtils::getMaxDrawPageNum("draw");
-    QString szGraphPageName = QString("draw%1").arg(last);
-
-    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    projInfoMgr.load(ProjectData::getInstance()->dbData_);
-    int width = projInfoMgr.getGraphPageWidth();
-    int height = projInfoMgr.getGraphPageHeight();
-
-    createEmptyGraphpage(szProjPath_, szGraphPageName, width, height);
-    DrawListUtils::drawList_.append(szGraphPageName);
-    setModifiedFlag(true);
-    save();
-    ListViewUpdate();
 }
 
 /*
@@ -280,43 +281,6 @@ void DrawPageWin::contextMenuEvent(QContextMenuEvent *event)
     pMenu->show();
 }
 
-void DrawPageWin::closeEvent(QCloseEvent *event)
-{
-    Q_UNUSED(event)
-    QString strProjPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
-    DrawListUtils::saveDrawList(strProjPath);
-}
-
-void DrawPageWin::ListViewUISetting()
-{
-    ui->listViewDrawPage->setViewMode(QListView::IconMode);
-    ui->listViewDrawPage->setIconSize(QSize(32, 32));
-    ui->listViewDrawPage->setGridSize(QSize(60, 60));
-    ui->listViewDrawPage->setWordWrap(true);
-    ui->listViewDrawPage->setSpacing(10);
-    // 设置QListView大小改变时，图标的调整模式，默认是固定的，但可以改成自动调整：
-    ui->listViewDrawPage->setResizeMode(QListView::Adjust);
-    //设置图标可不可以移动，默认是可移动的，但可以改成静态的：
-    ui->listViewDrawPage->setMovement(QListView::Static);
-}
-
-void DrawPageWin::ListViewUpdate()
-{
-    DrawListUtils::loadDrawList(szProjPath_);
-    pListDrawPageModel->clear();
-    ListViewUISetting();
-
-    QStandardItem *pNewWin = new QStandardItem(QIcon(":/images/drawexec.png"), tr("新建画面"));
-    pNewWin->setEditable(false);
-    pListDrawPageModel->appendRow(pNewWin);
-
-    for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
-        QStandardItem *pDrawPage = new QStandardItem(QIcon(":/images/drawexec.png"), DrawListUtils::drawList_.at(i));
-        pDrawPage->setEditable(false);
-        pListDrawPageModel->appendRow(pDrawPage);
-    }
-}
-
 void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
 {
     Q_UNUSED(index)
@@ -347,12 +311,4 @@ void DrawPageWin::on_listViewDrawPage_doubleClicked(const QModelIndex &index)
 }
 
 
-void DrawPageWin::onFileChanged(const QString &path)
-{
-    Q_UNUSED(path)
-    ListViewUpdate();
-}
-
-
-
-
+#endif

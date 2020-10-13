@@ -24,7 +24,7 @@ TagSys::~TagSys()
  */
 bool TagSys::load(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     QSqlRecord rec;
 
     bool ret = query.exec("select * from t_tag_sys");

@@ -51,7 +51,6 @@ void ElementAnalogClock::regenerateElementId()
  */
 void ElementAnalogClock::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

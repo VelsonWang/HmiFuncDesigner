@@ -24,7 +24,7 @@ TagIO::~TagIO()
  */
 bool TagIO::load(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     QSqlRecord rec;
 
     bool ret = query.exec("select * from t_tag_io");
@@ -73,7 +73,7 @@ bool TagIO::load(ProjectDataSQLiteDatabase *pDB)
  */
 bool TagIO::save(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     pDB->beginTransaction();
@@ -173,7 +173,7 @@ bool TagIO::delAll(ProjectDataSQLiteDatabase *pDB)
 
 bool TagIO::update(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     query.prepare("update t_tag_io set group_name = :group, tag_name = :name, "
@@ -274,7 +274,7 @@ TagIOGroup::~TagIOGroup()
  */
 bool TagIOGroup::load(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     QSqlRecord rec;
 
     bool ret = query.exec("select * from t_io_group_info");
@@ -310,7 +310,7 @@ bool TagIOGroup::load(ProjectDataSQLiteDatabase *pDB)
  */
 bool TagIOGroup::save(ProjectDataSQLiteDatabase *pDB)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     pDB->beginTransaction();
@@ -356,7 +356,7 @@ bool TagIOGroup::del(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
 
 bool TagIOGroup::update(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
 {
-    QSqlQuery query(pDB->db_);
+    QSqlQuery query(pDB->database());
     bool ret = false;
 
     query.prepare("update t_io_group_info set group_name = :group, show_name = :name "

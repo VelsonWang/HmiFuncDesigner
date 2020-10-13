@@ -1,11 +1,4 @@
 #include "NetSetting.h"
-#include "ProjectDataSQLiteDatabase.h"
-#include "ulog.h"
-#include <QFile>
-#include <QDir>
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
 
 class NetSetting;
 
@@ -27,82 +20,45 @@ public:
 
 
 NetSetting::NetSetting()
-    : dPtr_(new NetSettingPrivate()) {
+    : dPtr_(new NetSettingPrivate())
+{
 
 }
 
-NetSetting::~NetSetting() {
+NetSetting::~NetSetting()
+{
     if(dPtr_ != Q_NULLPTR) {
         delete dPtr_;
     }
 }
 
-/**
- * @brief NetSetting::load
- * @details 读取网络配置信息
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool NetSetting::load(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
-    QSqlRecord rec;
 
-    bool ret = query.exec("select * from t_net_setting");
-    if(!ret) {
-        LogError(QString("get record: %1 failed! %2 ,error: %3!")
-                 .arg("t_net_setting")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-        return false;
-    }
-
-    while (query.next()) {
-        rec = query.record();
-        dPtr_->bHotStandbyMode_ = rec.value("hot_standby_mode").toInt() > 0 ? true : false;
-        dPtr_->bClientMode_ = rec.value("client_mode").toInt() > 0 ? true : false;
-        dPtr_->bServerStation_ = rec.value("server_station").toInt() > 0 ? true : false;
-        dPtr_->bClientStation_ = rec.value("client_station").toInt() > 0 ? true : false;
-        dPtr_->szClientAddress_ = rec.value("client_address").toString();
-        dPtr_->szServerAddress_ = rec.value("server_address").toString();
-        dPtr_->iHeartbeatTime_ = rec.value("heartbeat_time").toInt();
-        dPtr_->iDatabaseSyncTime_ = rec.value("database_sync_time").toInt();
-    }
-
-    return ret;
+bool NetSetting::openFromXml(XMLObject *pXmlObj) {
+    XMLObject *pNetSettingObj = pXmlObj->getCurrentChild("net_setting");
+    dPtr_->bHotStandbyMode_ = pNetSettingObj->getProperty("hot") == "1";
+    dPtr_->bClientMode_= pNetSettingObj->getProperty("clientMode") == "1";
+    dPtr_->bServerStation_ = pNetSettingObj->getProperty("sStation") == "1";
+    dPtr_->bClientStation_ = pNetSettingObj->getProperty("cStation") == "1";
+    dPtr_->szClientAddress_ = pNetSettingObj->getProperty("cAddress");
+    dPtr_->szServerAddress_ = pNetSettingObj->getProperty("sAddress");
+    dPtr_->iHeartbeatTime_ = pNetSettingObj->getProperty("heartbeat").toInt();
+    dPtr_->iDatabaseSyncTime_ = pNetSettingObj->getProperty("dbSync").toInt();
+    return true;
 }
 
-/**
- * @brief NetSetting::save
- * @details 保存网络配置信息
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool NetSetting::save(ProjectDataSQLiteDatabase *pDB) {
-    QSqlQuery query(pDB->db_);
-    query.prepare("update t_net_setting set hot_standby_mode = :hot, "
-                  "client_mode = :clientMode, server_station = :sStation, "
-                  "client_station = :cStation, client_address = :cAddress, "
-                  "server_address = :sAddress, heartbeat_time = :heartbeat, "
-                  "database_sync_time = :dbSync where id = 1");
 
-    query.bindValue(":hot", dPtr_->bHotStandbyMode_ ? 1 : 0);
-    query.bindValue(":clientMode", dPtr_->bClientMode_ ? 1 : 0);
-    query.bindValue(":sStation", dPtr_->bServerStation_ ? 1 : 0);
-    query.bindValue(":cStation", dPtr_->bClientStation_ ? 1 : 0);
-    query.bindValue(":cAddress", dPtr_->szClientAddress_);
-    query.bindValue(":sAddress", dPtr_->szServerAddress_);
-    query.bindValue(":heartbeat", dPtr_->iHeartbeatTime_);
-    query.bindValue(":dbSync", dPtr_->iDatabaseSyncTime_);
-
-    bool ret = query.exec();
-    if(!ret) {
-        LogError(QString("update record: %1 failed! %2 ,error: %3!")
-                 .arg("t_net_setting")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-    }
-
-    return ret;
+bool NetSetting::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pNetSettingObj = new XMLObject(pXmlObj);
+    pNetSettingObj->setTagName("net_setting");
+    pNetSettingObj->setProperty("hot", dPtr_->bHotStandbyMode_ ? "1" : "0");
+    pNetSettingObj->setProperty("clientMode", dPtr_->bClientMode_ ? "1" : "0");
+    pNetSettingObj->setProperty("sStation", dPtr_->bServerStation_ ? "1" : "0");
+    pNetSettingObj->setProperty("cStation", dPtr_->bClientStation_ ? "1" : "0");
+    pNetSettingObj->setProperty("cAddress", dPtr_->szClientAddress_);
+    pNetSettingObj->setProperty("sAddress", dPtr_->szServerAddress_);
+    pNetSettingObj->setProperty("heartbeat", QString::number(dPtr_->iHeartbeatTime_));
+    pNetSettingObj->setProperty("dbSync", QString::number(dPtr_->iDatabaseSyncTime_));
+    return true;
 }
 
 bool NetSetting::isHotStandbyMode() {

@@ -54,7 +54,6 @@ void ElementMovingText::regenerateElementId()
  */
 void ElementMovingText::release()
 {
-    ProjectData::releaseInstance();
 }
 
 

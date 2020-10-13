@@ -1,7 +1,8 @@
 ﻿#ifndef TAGMANAGERWIN_H
 #define TAGMANAGERWIN_H
 
-#include "ChildBase.h"
+#include "ChildInterface.h"
+#include "ListViewEx.h"
 #include "TagFuncEditDialog.h"
 #include "../../Public/Public.h"
 #include "ProjectData.h"
@@ -14,49 +15,42 @@
 #include <QVBoxLayout>
 #include <QComboBox>
 #include <QMap>
+#include <QStackedWidget>
+#include <QTableWidget>
+#include <QDir>
+#include <QFile>
+#include <QPluginLoader>
+#include <QMessageBox>
+#include <QToolBar>
 
 //////////////////////////////////////////////////////////
-
-
-namespace Ui {
-class TagManagerWin;
-}
 
 
 struct TagTmpDBItem;
 struct TagIODBItem;
 
-class TagManagerWin : public ChildBase
+class TagManagerChild : public QWidget, public ChildInterface
 {
     Q_OBJECT
+    Q_INTERFACES(ChildInterface)
+public:
+    explicit TagManagerChild(QWidget *parent = Q_NULLPTR);
+    ~TagManagerChild();
 
 public:
-    explicit TagManagerWin(QWidget *parent = Q_NULLPTR,
-                           const QString &itemName = "",
-                           const QString &projName = "");
-    ~TagManagerWin();
-
-    void init(const QString &itemName = "");
-
-public:
-    // 打开文件
-    void open();
-    // 保存文件
-    void save();
-    // 显示大图标
-    void showLargeIcon();
-    // 显示小图标
-    void showSmallIcon();
+    void buildUserInterface(QMainWindow* pMainWin);
+    void removeUserInterface(QMainWindow* pMainWin);
+    QString wndTitle() const;
 
 public:
     void exportToCsv(const QString &path);
     void importFromCsv(const QString &path);
-    void SetTitle(const QString &t);
 
 private:
-    void load(const QString &it);
-    void save(const QString &it);
+    bool save();
 
+private:
+    void initUi();
     // 初始化系统变量表
     void initialTableTagSys();
     // 刷新系统变量表
@@ -127,14 +121,22 @@ protected:
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 public slots:
-    void onTagAdd();
-    void onTagAppend();
-    void onTagRowCopy();
-    void onTagModify();
-    void onTagDelete();
+    // 添加变量
+    void onSlotAddTag();
+    // 追加变量
+    void onSlotAppendTag();
+    // 拷贝变量
+    void onSlotRowCopyTag();
+    // 修改变量
+    void onSlotModifyTag();
+    // 删除变量
+    void onSlotDeleteTag();
+    // 导出变量
+    void onSlotExportTag();
+    // 导入变量
+    void onSlotImportTag();
 
 public:
-    QString m_IOTagListWhat;
     QString m_szCurIOGroupName;
 
 private slots:
@@ -148,12 +150,28 @@ private slots:
     void on_tableTagTmp_cellDoubleClicked(int row, int column);
 
 private:
-    Ui::TagManagerWin *ui; 
-    QString m_strCurTagType;
     int m_iTableTagTmpSelectedRow = -1;
     int m_iTableTagIOSelectedRow = -1;
     QStringList m_listTagTmpDeleteRows;
     QStringList m_listTagIODeleteRows;
+    QMainWindow* m_pMainWinObj = Q_NULLPTR;
+
+    QMenu *m_pMenuTagEditObj = Q_NULLPTR; // 变量编辑菜单
+    QToolBar *m_pToolBarTagEditObj = Q_NULLPTR; // 变量编辑工具条
+    QAction *m_pActAddTagObj = Q_NULLPTR; // 添加变量
+    QAction *m_pActAppendTagObj = Q_NULLPTR; // 追加变量
+    QAction *m_pActRowCopyTagObj = Q_NULLPTR; // 拷贝变量
+    QAction *m_pActModifyTagObj = Q_NULLPTR; // 修改变量
+    QAction *m_pActDeleteTagObj = Q_NULLPTR; // 删除变量
+    QAction *m_pActExportTagObj = Q_NULLPTR; // 导出变量
+    QAction *m_pActImportTagObj = Q_NULLPTR; // 导入变量
+
+public:
+    QVBoxLayout *m_pTopVLayoutObj;
+    QStackedWidget *m_pStackedWidgetObj;
+    QTableWidget *m_pTableTagIOObj;
+    QTableWidget *m_pTableTagTmpObj;
+    QTableWidget *m_pTableTagSysObj;
 };
 
 #endif // TAGMANAGERWIN_H

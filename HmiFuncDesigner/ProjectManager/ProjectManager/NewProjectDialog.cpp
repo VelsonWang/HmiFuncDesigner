@@ -15,10 +15,9 @@
 #include "Singleton.h"
 #include "ui_NewProjectDialog.h"
 
-NewProjectDialog::NewProjectDialog(QWidget *parent, QString projPath)
+NewProjectDialog::NewProjectDialog(QWidget *parent)
     : QDialog(parent),
-      ui(new Ui::NewProjectDialog),
-      projectPath_(projPath)
+      ui(new Ui::NewProjectDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -28,7 +27,7 @@ NewProjectDialog::NewProjectDialog(QWidget *parent, QString projPath)
     ui->editStationAddress->setText("192.168.1.10");
 
     ui->cboStartPage->clear();
-    DrawListUtils::loadDrawList(projPath);
+    DrawListUtils::loadDrawList(ProjectData::getInstance()->szProjPath_);
     for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
         QString strPageName = DrawListUtils::drawList_.at(i) + ".drw";
         ui->cboStartPage->addItem(strPageName);
@@ -119,10 +118,12 @@ void NewProjectDialog::on_btnCheck_clicked() {
 
 void NewProjectDialog::on_btnOk_clicked() {
     if (check_data()) {
-        QString strProjPath = ui->editProjectPath->text();
-        QString strProjName = ui->editProjectName->text();
-        QString file = strProjPath + "/" + strProjName + ".pdt";
-        projectName_ = file;
+        QString szProjPath = ui->editProjectPath->text();
+        ProjectData::getInstance()->szProjPath_ = szProjPath;
+        QString szProjName = ui->editProjectName->text();
+        ProjectData::getInstance()->szProjName_ = szProjName;
+        QString szFile = szProjPath + "/" + szProjName + ".pdt";
+        ProjectData::getInstance()->szProjFile_ = szFile;
         QDialog::accept();
     }
 }
@@ -131,13 +132,10 @@ void NewProjectDialog::on_btnExit_clicked() {
     QDialog::reject();
 }
 
-QString NewProjectDialog::GetProjectName() {
-    return projectName_;
-}
 
 bool NewProjectDialog::load() {
     ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    projInfoMgr.load(ProjectData::getInstance()->dbData_);
+    projInfoMgr.setProjectName(ProjectData::getInstance()->szProjName_);
     ui->editProjectName->setText(projInfoMgr.getProjectName());
     ui->editProjectDescription->setPlainText(projInfoMgr.getProjectDescription());
     ui->cboDevType->setCurrentText(projInfoMgr.getDeviceType());
@@ -147,7 +145,8 @@ bool NewProjectDialog::load() {
     ui->chkProjectEncrypt->setChecked(projInfoMgr.getProjectEncrypt());
     ui->editPageScanPeriod->setText(QString::number(projInfoMgr.getPageScanPeriod()));
     ui->editDataScanPeriod->setText(QString::number(projInfoMgr.getDataScanPeriod()));
-    ui->editProjectPath->setText(projectPath_);
+    projInfoMgr.setProjectPath(ProjectData::getInstance()->szProjPath_);
+    ui->editProjectPath->setText(projInfoMgr.getProjectPath());
     return true;
 }
 
@@ -163,6 +162,5 @@ bool NewProjectDialog::save() {
     projInfoMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
     projInfoMgr.setPageScanPeriod(ui->editPageScanPeriod->text().toInt());
     projInfoMgr.setDataScanPeriod(ui->editDataScanPeriod->text().toInt());
-    projInfoMgr.save(ProjectData::getInstance()->dbData_);
     return true;
 }

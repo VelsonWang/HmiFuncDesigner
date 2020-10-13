@@ -5,7 +5,6 @@
 #include <QMdiSubWindow>
 #include <QStandardItemModel>
 #include <QMap>
-
 #include <QUndoView>
 #include <QUndoGroup>
 #include <QUndoStack>
@@ -16,11 +15,9 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-
-#include "SystemParametersWin.h"
-#include "ChildBase.h"
-#include "ChildForm.h"
-
+#include "ProjectTreeView.h"
+#include "GraphPageListWidget.h"
+#include "ChildInterface.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -29,16 +26,16 @@
 #include <QHeaderView>
 #include <QListWidget>
 #include <QMainWindow>
-#include <QMdiArea>
+#include "MdiArea.h"
 #include <QMenu>
 #include <QMenuBar>
 #include <QScrollArea>
 #include <QStatusBar>
 #include <QTabWidget>
 #include <QToolBar>
-#include <QTreeView>
 #include <QVBoxLayout>
 #include <QWidget>
+#include <QSignalMapper>
 
 
 class MainWindow : public QMainWindow
@@ -48,65 +45,30 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = Q_NULLPTR);
     ~MainWindow();
+    void UpdateDeviceVariableTableGroup();
 
-signals:
-    void treeItemClicked(const QString &itemText);
-
-private slots:   
-    void setActiveSubWindow(ChildForm *window);
-    ChildForm* getActiveSubWindow();
+public slots:
+    QWidget* getActiveSubWindow();
     void on_actionWorkSpace_triggered(bool checked);
-    void on_treeViewProject_clicked(const QModelIndex &index);
-    void on_treeViewProject_activated(const QModelIndex &index);
-    void tagIOGroupAdd(); // 增加组
-    void tagIOGroupRename(); // 重命名组
-    void tagIODeleteGroup(); // 删除组
-    void tagIOGroupCopy(); // 复制组
-
-private:
-    QStandardItemModel *pTreeViewProjectModel;
-
-    QStandardItem *pProjectItem;
-    QStandardItem *pSystemParameters;
-    QStandardItem *pCommunicationDevice;
-    QStandardItem *pComDevice;
-    QStandardItem *pNetDevice;
-    QStandardItem *pBusDevice;
-    QStandardItem *pOPCDevice;
-    QStandardItem *pDataBaseConfig;
-    QStandardItem *pDevVariable;
-    QList<QStandardItem *> pDevVariableTabList;
-    QStandardItem *pTmpVariable;
-    QStandardItem *pSysVariable;
-    QStandardItem *pDataBaseManager;
-    QStandardItem *pRealTimeDatabase;
-    QStandardItem *pHistoryDatabase;
-    QStandardItem *pDrawPage;
-    QStandardItem *pLogicProgram;
-    QStandardItem *pScriptEditor;
-    QStandardItem *pSystemTool;
+    // 工程树节点被单击
+    void onSlotTreeProjectViewClicked(const QString &szItemText);
 
 
 private:
-    ChildForm* activeMdiChild();
+    QWidget* activeMdiChild();
     void CreateItemWindows();
-    ChildForm* findMdiChild(const QString &windowTitle);
-    QMdiSubWindow* findMdiSubWindow(const QString &windowTitle);
+    QMdiSubWindow* findMdiChild(const QString &szWndTitle);
     void readSettings();  // 读取窗口设置
     void writeSettings(); // 写入窗口设置
-    void initWindow(); // 初始化窗口
-    void setUpProjectTreeView();
-    void UpdateProjectName(QString name);
-    void UpdateDeviceVariableTableGroup();
-    void enableToolBar(QString text);
+    void UpdateProjectName(const QString &szName);
     void loadRecentProjectList();
     void updateRecentProjectList(QString newProj);
     void doOpenProject(QString proj);
     void CreateDefaultIOTagGroup();
-    void onTreeViewProjectClicked(const QString &szItemText);
+
 
 protected:
-    void contextMenuEvent(QContextMenuEvent * event);
+    virtual bool eventFilter(QObject*, QEvent* e);
     void closeEvent(QCloseEvent *event);  // 关闭事件
 
 
@@ -116,7 +78,6 @@ public:
     void openGraphPage(const QString &szProjPath, const QString &szProjName, const QString &szPageName);
 
 private:
-    void initView();
     void createUndoView();
     void addNewGraphPage();
     QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
@@ -134,6 +95,10 @@ private:
                               const QString &graphPageName,
                               int width,
                               int height);
+    // 初始化画面列表控件
+    void initGraphPageListWidget();
+    // 清空画面列表控件
+    void clearGraphPageListWidget();
 
 public slots:
     void slotNewElementAdded();
@@ -141,7 +106,6 @@ public slots:
     void slotElementIdChanged();
     void slotElementPropertyChanged();
     void slotGraphPagePropertyChanged();
-
     void propertyValueChanged(QtProperty *property, const QVariant &value);
 
 private slots:
@@ -149,39 +113,6 @@ private slots:
     void slotUpdateActions();
     void slotChangeGraphPage(int);
     void slotChangeGraphPageName();
-
-public:
-    QWidget *centralWidget;
-    QVBoxLayout *verticalLayout_7;
-    QScrollArea *scrollArea;
-    QWidget *scrollAreaWidgetContents;
-    QMdiArea *mdiArea;
-
-    QWidget *dockWidgetContents;
-    QVBoxLayout *verticalLayout_4;
-    QWidget *tab;
-    QVBoxLayout *verticalLayout_2;
-    QTreeView *treeViewProject;
-    QWidget *tab_2;
-    QVBoxLayout *verticalLayout_3;
-    QListWidget *listWidgetGraphPages;
-    QWidget *dockWidgetContents_8;
-    QVBoxLayout *verticalLayout_5;
-    QVBoxLayout *ElemetsLayout;
-
-    QWidget *dockPropertyLayout;
-    QVBoxLayout *verticalLayout_6;
-    QVBoxLayout *PropertyLayout;
-
-
-
-
-
-    void setupUi();
-
-
-    //-------------------------------<以下为整理过的代码>------------------------------------------
-
 
 private slots:
     // 新建工程
@@ -194,7 +125,6 @@ private slots:
     void onSaveProject();
     // 退出
     void onExit();
-
 
     // 窗口.图形元素 动作响应函数
     void onSlotShowGraphObj(bool);
@@ -247,10 +177,6 @@ private slots:
     // 粘贴画面
     void onPasteGraphPage();
 
-    // 显示大图标
-    void onBigIcon();
-    // 显示小图标
-    void onSmallIcon();
     // 模拟仿真
     void onSlotSimulate();
     // 运行工程
@@ -259,37 +185,31 @@ private slots:
     void onSlotDownloadProject();
     // 上载工程
     void onSlotUpLoadProject();
-    // U盘
-    void onSlotUDisk();
 
-    // 添加变量
-    void onSlotAddTag();
-    // 追加变量
-    void onSlotAppendTag();
-    // 拷贝变量
-    void onSlotRowCopyTag();
-    // 修改变量
-    void onSlotModifyTag();
-    // 删除变量
-    void onSlotDeleteTag();
-    // 导出变量
-    void onSlotExportTag();
-    // 导入变量
-    void onSlotImportTag();
+    // 更新窗口菜单
+    void onSlotUpdateWindowMenu();
 
     // 帮助
     void onSlotHelp();
     // 关于
     void onSlotAbout();
 
-    // 新建设备
-    void onSlotNewDevice();
-    // 修改设备
-    void onSlotModifyDevice();
-    // 删除设备
-    void onSlotDeleteDevice();
+
+    // 设置窗口标题
+    void onSlotSetWindowSetTitle(const QString &szTitle);
+
+    // 工程管理器标签改变
+    void onSlotTabProjectMgrCurChanged(int index);
+    // 子窗口关闭请求
+    void onSlotTabCloseRequested(int);
+    // 更新菜单
+    void onSlotUpdateMenus();
+    //
+    void onSlotSetActiveSubWindow(QWidget* window);
 
 private:
+    // 初始化UI
+    void initUI();
     // 创建状态栏
     void createStatusBar();
     // 创建动作
@@ -300,104 +220,99 @@ private:
     void createToolbars();
 
 private:
-    QString m_szProjPath;
-    QString m_szProjName;
     QString m_szCurItem;
     QString m_szCurTreeViewItem;
-    GraphPage *m_pCurrentGraphPageObj;
-    QGraphicsView *m_pCurrentViewObj;
-    QTabWidget *m_pGraphPageTabWidgetObj;
-    ElementLibraryWidget *m_pElementWidgetObj;
+    GraphPage *m_pCurrentGraphPageObj = Q_NULLPTR;
+    QGraphicsView *m_pCurrentViewObj = Q_NULLPTR;
+    QTabWidget *m_pGraphPageTabWidgetObj = Q_NULLPTR;
+    ElementLibraryWidget *m_pElementWidgetObj = Q_NULLPTR;
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;
     QString m_szCopyGraphPageFileName;
+    QWidget* m_childCurrent = Q_NULLPTR;
+    QSignalMapper* m_windowMapper = Q_NULLPTR;
 
-    QtVariantPropertyManager *m_pVariantPropertyMgrObj;
-    QtTreePropertyBrowser *m_pPropertyEditorObj;
-    QtVariantEditorFactory *m_pVariantEditorFactoryObj;
+    QtVariantPropertyManager *m_pVariantPropertyMgrObj = Q_NULLPTR;
+    QtTreePropertyBrowser *m_pPropertyEditorObj = Q_NULLPTR;
+    QtVariantEditorFactory *m_pVariantEditorFactoryObj = Q_NULLPTR;
     QMap<QtProperty *, QString> m_mapPropertyObjToId;
     QMap<QString, QtVariantProperty *> m_mapIdToPropertyObj;
     QMap<QString, bool> m_mapIdToExpanded;
+    QVBoxLayout *m_pElemetsLayoutObj = Q_NULLPTR;
+    QVBoxLayout *m_pPropertyLayoutObj = Q_NULLPTR;
+    QWidget *m_pCentralWidgetObj = Q_NULLPTR;
+    MdiArea *m_pMdiAreaObj = Q_NULLPTR;
+    ProjectTreeView *m_pProjectTreeViewObj = Q_NULLPTR;
+    GraphPageListWidget *m_pListWidgetGraphPagesObj = Q_NULLPTR; // 画面名称列表
 
-    QStatusBar *m_pStatusBarObj; // 状态栏
-    QDockWidget *m_pDockProjectMgrObj; // 工程管理器停靠控件
-    QDockWidget *m_pDockPropertyObj; // 属性停靠控件
-    QDockWidget *m_pDockElemetsObj; // 图形元素停靠控件
-    QTabWidget *m_pTabProjectMgrObj; // 工程管理器TabWidget控件
 
-    QToolBar *m_pToolBarGraphPageEditObj; // 画面编辑工具条
-    QAction *m_pActionShowGraphObj; // 窗口.图形元素
-    QAction *m_pActionShowPropEditorObj; // 窗口.属性编辑器
-    QAction *m_pActionNewGraphPageObj; // 画面.新建
-    QAction *m_pActionOpenObj; // 画面.打开
-    QAction *m_pActionSaveGraphPageObj; // 画面.保存
-    QAction *m_pActionShowGridObj; // 显示栅格
-    QAction *m_pActionZoomInObj; // 画面放大
-    QAction *m_pActionZoomOutObj; // 画面缩小
-    QUndoGroup *m_pUndoGroupObj;
-    QAction *m_pActionUndoObj; // 撤销
-    QAction *m_pActionRedoObj; // 重做
-    QAction *m_pActionCloseGraphPageObj; // 关闭画面
-    QAction *m_pActionCloseAllObj; // 关闭所有画面
-    QAction *m_pActionCopyObj; // 拷贝画面
-    QAction *m_pActionPasteObj; // 粘贴画面
-    QAction *m_pActionDeleteObj; // 删除画面
-    QAction *m_pActionAlignTopObj; // 顶部对齐
-    QAction *m_pActionAlignDownObj; // 底部对齐
-    QAction *m_pActionAlignRightObj; // 右对齐
-    QAction *m_pActionAalignLeftObj; // 左对齐
-    QAction *m_pActionHUniformDistributeObj; // 水平均匀分布
-    QAction *m_pActionVUniformDistributeObj; // 垂直均匀分布
-    QAction *m_pActionSetTheSameSizeObj; // 设置选中控件大小一致
-    QAction *m_pActionUpLayerObj; // 上移一层
-    QAction *m_pActionDownLayerObj; // 下移一层
+    QStatusBar *m_pStatusBarObj = Q_NULLPTR; // 状态栏
+    QDockWidget *m_pDockProjectMgrObj = Q_NULLPTR; // 工程管理器停靠控件
+    QDockWidget *m_pDockPropertyObj = Q_NULLPTR; // 属性停靠控件
+    QDockWidget *m_pDockElemetsObj = Q_NULLPTR; // 图形元素停靠控件
+    QTabWidget *m_pTabProjectMgrObj = Q_NULLPTR; // 工程管理器TabWidget控件
 
-    QMenu *m_pMenuProjectObj; // 工程菜单
-    QToolBar *m_pToolBarProjectObj; // 工程工具条
-    QAction *m_pActionNewProjObj; // 新建工程
-    QAction *m_pActionOpenProjObj; // 打开工程
-    QAction *m_pActionCloseProjObj; // 关闭工程
-    QAction *m_pActionSaveProjObj; // 保存工程
-    QAction *m_pActionRecentProjListObj; // 最近打开工程
-    QAction *m_pActionExitObj; // 退出
+    QToolBar *m_pToolBarGraphPageEditObj = Q_NULLPTR; // 画面编辑工具条
+    QAction *m_pActShowGraphObj = Q_NULLPTR; // 窗口.图形元素
+    QAction *m_pActShowPropEditorObj = Q_NULLPTR; // 窗口.属性编辑器
+    QAction *m_pActNewGraphPageObj = Q_NULLPTR; // 画面.新建
+    QAction *m_pActOpenObj = Q_NULLPTR; // 画面.打开
+    QAction *m_pActSaveGraphPageObj = Q_NULLPTR; // 画面.保存
+    QAction *m_pActShowGridObj = Q_NULLPTR; // 显示栅格
+    QAction *m_pActZoomInObj = Q_NULLPTR; // 画面放大
+    QAction *m_pActZoomOutObj = Q_NULLPTR; // 画面缩小
+    QUndoGroup *m_pUndoGroupObj = Q_NULLPTR;
+    QAction *m_pActUndoObj = Q_NULLPTR; // 撤销
+    QAction *m_pActRedoObj = Q_NULLPTR; // 重做
+    QAction *m_pActCloseGraphPageObj = Q_NULLPTR; // 关闭画面
+    QAction *m_pActCloseAllObj = Q_NULLPTR; // 关闭所有画面
+    QAction *m_pActCopyObj = Q_NULLPTR; // 拷贝画面
+    QAction *m_pActPasteObj = Q_NULLPTR; // 粘贴画面
+    QAction *m_pActDeleteObj = Q_NULLPTR; // 删除画面
+    QAction *m_pActAlignTopObj = Q_NULLPTR; // 顶部对齐
+    QAction *m_pActAlignDownObj = Q_NULLPTR; // 底部对齐
+    QAction *m_pActAlignRightObj = Q_NULLPTR; // 右对齐
+    QAction *m_pActAalignLeftObj = Q_NULLPTR; // 左对齐
+    QAction *m_pActHUniformDistributeObj = Q_NULLPTR; // 水平均匀分布
+    QAction *m_pActVUniformDistributeObj = Q_NULLPTR; // 垂直均匀分布
+    QAction *m_pActSetTheSameSizeObj = Q_NULLPTR; // 设置选中控件大小一致
+    QAction *m_pActUpLayerObj = Q_NULLPTR; // 上移一层
+    QAction *m_pActDownLayerObj = Q_NULLPTR; // 下移一层
 
-    QMenu *m_pMenuViewObj; // 视图
-    QToolBar *m_pToolBarView; // 视图工具栏
-    QAction *m_pActionToolBarObj;
-    QAction *m_pActionStatusBarObj;
-    QAction *m_pActionWorkSpaceObj;
-    QAction *m_pActionDisplayAreaObj;
-    QAction *m_pActionBigIconObj; // 显示大图标
-    QAction *m_pActionSmallIconObj; // 显示小图标
-    QAction *m_pActionEditObj; // 编辑
+    QMenu *m_pMenuProjectObj = Q_NULLPTR; // 工程菜单
+    QToolBar *m_pToolBarProjectObj = Q_NULLPTR; // 工程工具条
+    QAction *m_pActNewProjObj = Q_NULLPTR; // 新建工程
+    QAction *m_pActOpenProjObj = Q_NULLPTR; // 打开工程
+    QAction *m_pActCloseProjObj = Q_NULLPTR; // 关闭工程
+    QAction *m_pActSaveProjObj = Q_NULLPTR; // 保存工程
+    QAction *m_pActRecentProjListObj = Q_NULLPTR; // 最近打开工程
+    QAction *m_pActExitObj = Q_NULLPTR; // 退出
 
-    QMenu *m_pMenuToolsObj; // 工具菜单
-    QToolBar *m_pToolBarToolsObj;
-    QAction *m_pActionSimulateObj; // 模拟仿真
-    QAction *m_pActionRunObj; // 运行工程
-    QAction *m_pActionDownloadObj; // 下载工程
-    QAction *m_pActionUpLoadObj; // 上传工程
-    QAction *m_pActionUDiskObj; // U盘
+    QMenu *m_pMenuViewObj = Q_NULLPTR; // 视图
+    QAction *m_pActToolBarObj = Q_NULLPTR;
+    QAction *m_pActStatusBarObj = Q_NULLPTR;
+    QAction *m_pActWorkSpaceObj = Q_NULLPTR;
+    QAction *m_pActDisplayAreaObj = Q_NULLPTR;
 
-    QMenu *m_pMenuTagEditObj; // 变量编辑菜单
-    QToolBar *m_pToolBarTagEditObj;
-    QAction *m_pActionAddTagObj; // 添加变量
-    QAction *m_pActionAppendTagObj; // 追加变量
-    QAction *m_pActionRowCopyTagObj; // 拷贝变量
-    QAction *m_pActionModifyTagObj; // 修改变量
-    QAction *m_pActionDeleteTagObj; // 删除变量
-    QAction *m_pActionExportTagObj; // 导出变量
-    QAction *m_pActionImportTagObj; // 导入变量
+    QMenu *m_pMenuToolsObj = Q_NULLPTR; // 工具菜单
+    QToolBar *m_pToolBarToolsObj = Q_NULLPTR;
+    QAction *m_pActSimulateObj = Q_NULLPTR; // 模拟仿真
+    QAction *m_pActRunObj = Q_NULLPTR; // 运行工程
+    QAction *m_pActDownloadObj = Q_NULLPTR; // 下载工程
+    QAction *m_pActUpLoadObj = Q_NULLPTR; // 上传工程
 
-    QMenu *m_pMenuHelpObj; // 帮助菜单
-    QAction *m_pActionHelpObj; // 帮助
-    QAction *m_pActionAboutObj; // 关于
+    QMenu *m_pActWindowMenuObj = Q_NULLPTR; // 窗口菜单
+    QAction *m_pActCloseWndObj = Q_NULLPTR;
+    QAction *m_pActCloseAllWndObj = Q_NULLPTR;
+    QAction *m_pActTileWndObj = Q_NULLPTR; // 平铺
+    QAction *m_pActCascadeWndObj = Q_NULLPTR; // 层叠
+    QAction *m_pActNextWndObj = Q_NULLPTR;
+    QAction *m_pActPreviousWndObj = Q_NULLPTR;
+    QAction *m_pActWindowMenuSeparatorObj = Q_NULLPTR;
 
-    QToolBar *m_pToolBarDeviceEditObj; // 设备编辑工具条
-    QAction *m_pActionNewDeviceObj; // 新建设备
-    QAction *m_pActionModifyDeviceObj; // 修改设备
-    QAction *m_pActionDeleteDeviceObj; // 删除设备
-
+    QMenu *m_pMenuHelpObj = Q_NULLPTR; // 帮助菜单
+    QAction *m_pActHelpObj = Q_NULLPTR; // 帮助
+    QAction *m_pActAboutObj = Q_NULLPTR; // 关于
 
 };
 

@@ -1,7 +1,7 @@
-﻿#ifndef SCRIPTMANAGEWIN_H
-#define SCRIPTMANAGEWIN_H
+﻿#ifndef ScriptManageChild_H
+#define ScriptManageChild_H
 
-#include "ChildBase.h"
+#include "ChildInterface.h"
 #include "../../Public/Public.h"
 #include <QWidget>
 #include <QListWidget>
@@ -41,25 +41,26 @@ public:
     static QList<ScriptObject *> m_listScriptInfo;
 };
 
-class ScriptManageWin : public ChildBase
+class ScriptManageChild : public QWidget, public ChildInterface
 {
     Q_OBJECT
+    Q_INTERFACES(ChildInterface)
 public:
-    explicit ScriptManageWin(QWidget *parent = 0, QString itemName = "", QString projName = "");
-    ~ScriptManageWin();
+    explicit ScriptManageChild(QWidget *parent = Q_NULLPTR);
+    ~ScriptManageChild();
     void init();
 
-public:
-    // 打开文件
-    void open();
-    // 保存文件
-    void save();
-    // 显示大图标
-    void showLargeIcon();
-    // 显示小图标
-    void showSmallIcon();
 
-signals:
+public:
+    void buildUserInterface(QMainWindow* pMainWin);
+    void removeUserInterface(QMainWindow* pMainWin);
+    QString userFriendlyCurrentFile();
+    QString currentFile() const;
+    QString wndTitle() const;
+
+private:
+    bool open();
+    bool save();
 
 public slots:
     void ListWidgetClicked(QListWidgetItem *item);
@@ -71,9 +72,9 @@ protected:
     void contextMenuEvent(QContextMenuEvent * event);
 
 private:
-    QListWidget *m_pListWidget;
-    QVBoxLayout *m_pVLayout;
+    QListWidget *m_pListWidgetObj;
+    QVBoxLayout *m_pVLayoutObj;
 };
 
 
-#endif // SCRIPTMANAGEWIN_H
+#endif // ScriptManageChild_H

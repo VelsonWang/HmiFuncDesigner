@@ -1,22 +1,20 @@
 #include "ProjectData.h"
 #include "ProjectDataSQLiteDatabase.h"
-#include <QMutexLocker>
-#include <QMutex>
-#include <cstdlib>
-
+#include "XMLObject.h"
+#include "Helper.h"
+#include <QFileInfo>
 #include <QDebug>
 
-ProjectData* ProjectData::instance_ = Q_NULLPTR;
 ProjectDataSQLiteDatabase *ProjectData::dbData_ = Q_NULLPTR;
-QMutex ProjectData::mutex_;
-QString ProjectData::szProjPath_ = "";
-QString ProjectData::szProjName_ = "";
 
 
-ProjectData::ProjectData() :
-    dbPath_("")
+
+ProjectData::ProjectData()
+    : dbPath_(""),
+      szProjVersion_("V1.0.0")
 {
-
+    szProjPath_ = "";
+    szProjName_ = "";
 }
 
 ProjectData::~ProjectData()
@@ -30,20 +28,55 @@ ProjectData::~ProjectData()
 
 ProjectData* ProjectData::getInstance()
 {
-    QMutexLocker locker(&mutex_);
-    if(instance_ == Q_NULLPTR) {
-        instance_ = new ProjectData();
-        ::atexit(releaseInstance);
-    }
-    return instance_;
+    static ProjectData instance_;
+    return &instance_;
 }
 
-void ProjectData::releaseInstance()
+
+bool ProjectData::openFromXml(const QString &szProjFile)
 {
-    if(instance_ != Q_NULLPTR) {
-        delete instance_;
-        instance_ = Q_NULLPTR;
+    QString buffer = Helper::readString(szProjFile);
+    XMLObject xml;
+    if(!xml.load(buffer, 0)) return false;
+
+    QList<XMLObject*> projObjs = xml.getChildren();
+    foreach(XMLObject* pProjObj, projObjs) {
+        // 工程信息管理
+        projInfoMgr_.openFromXml(pProjObj);
+        // 网络配置
+        netSetting_.openFromXml(pProjObj);
+        // 数据库配置
+        dbSetting_.openFromXml(pProjObj);
+        // 用户权限
+        userAuthority_.openFromXml(pProjObj);
     }
+
+    return true;
+}
+
+
+bool ProjectData::saveToXml(const QString &szProjFile)
+{
+    XMLObject projObjs;
+    projObjs.setTagName("projects");
+
+    XMLObject *pProjObj = new XMLObject(&projObjs);
+    pProjObj->setTagName("project");
+    pProjObj->setProperty("application_version", szProjVersion_);
+
+    // 工程信息管理
+    projInfoMgr_.saveToXml(pProjObj);
+    // 网络配置
+    netSetting_.saveToXml(pProjObj);
+    // 数据库配置
+    dbSetting_.saveToXml(pProjObj);
+    // 用户权限
+    userAuthority_.saveToXml(pProjObj);
+
+
+    Helper::writeString(szProjFile, projObjs.write());
+
+    return true;
 }
 
 
@@ -54,8 +87,7 @@ void ProjectData::releaseInstance()
  * @param projFile 工程名称
  * @return true-成功, false-失败
  */
-bool ProjectData::createOrOpenProjectData(const QString &projPath,
-                                          const QString &projName)
+bool ProjectData::createOrOpenProjectData(const QString &projPath, const QString &projName)
 {
     QString fileName = projPath;
 
@@ -149,4 +181,41 @@ void ProjectData::getAllTagName(QStringList &varList, const QString &type)
         qDeleteAll(tagSys_.listTagSysDBItem_);
         tagSys_.listTagSysDBItem_.clear();
     }
+}
+
+/**
+ * @brief ProjectData::getProjectPath
+ * @details 获取工程路径
+ * @param projectName 工程名称全路径
+ * @return 工程路径
+ */
+QString ProjectData::getProjectPath(const QString &projectName) {
+    QString path = QString();
+    int pos = projectName.lastIndexOf("/");
+    if (pos != -1) {
+        path = projectName.left(pos);
+    }
+    return path;
+}
+
+/**
+ * @brief ProjectData::getProjectNameWithSuffix
+ * @details 获取包含后缀工程名称
+ * @param projectName 工程名称全路径
+ * @return 工程名称包含后缀
+ */
+QString ProjectData::getProjectNameWithSuffix(const QString &projectName) {
+    QFileInfo projFileInfo(projectName);
+    return projFileInfo.fileName();
+}
+
+/**
+ * @brief ProjectData::getProjectNameWithOutSuffix
+ * @details 获取不包含后缀工程名称
+ * @param projectName 工程名称全路径
+ * @return 工程名称不包含后缀
+ */
+QString ProjectData::getProjectNameWithOutSuffix(const QString &projectName) {
+    QFileInfo projFileInfo(projectName);
+    return projFileInfo.baseName();
 }

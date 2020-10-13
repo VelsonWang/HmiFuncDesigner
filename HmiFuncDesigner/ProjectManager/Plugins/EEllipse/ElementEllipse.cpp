@@ -37,7 +37,6 @@ void ElementEllipse::regenerateElementId()
  */
 void ElementEllipse::release()
 {
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementEllipse::boundingRect() const

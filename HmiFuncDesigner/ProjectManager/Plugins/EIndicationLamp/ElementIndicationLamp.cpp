@@ -54,7 +54,6 @@ void ElementIndicationLamp::release()
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
         picResMgr_.del(ProjectData::getInstance()->dbData_, setFileIndicationLamp_);
     }
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementIndicationLamp::boundingRect() const
