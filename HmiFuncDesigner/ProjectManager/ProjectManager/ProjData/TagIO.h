@@ -5,6 +5,7 @@
 #include <QStringList>
 #include <QList>
 #include "DBTag.h"
+#include "XMLObject.h"
 
 class ProjectDataSQLiteDatabase;
 
@@ -42,26 +43,17 @@ public:
     explicit TagIOGroup();
     ~TagIOGroup();
 
-    bool load(ProjectDataSQLiteDatabase *pDB);
-    bool save(ProjectDataSQLiteDatabase *pDB);
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
 
-    bool insert(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj);
-    bool del(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj);
-    bool update(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj);
+    QString getGroupNameByShowName(const QString &szShowName);
+    TagIOGroupDBItem *getGroupObjByShowName(const QString &szShowName);
 
-    int getLastInsertId(ProjectDataSQLiteDatabase *pDB);
-
-    bool saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj);
-
-    QString getGroupNameByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name);
-    TagIOGroupDBItem *getGroupObjByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name);
-
-    int getGroupCount(ProjectDataSQLiteDatabase *pDB);
-    int getGroupCountByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name);
+    int getGroupCount();
+    int getGroupCountByShowName(const QString &szShowName);
 
 public:
     QList<TagIOGroupDBItem *> listTagIOGroupDBItem_;
-
 };
 
 #endif // TAGIO_H

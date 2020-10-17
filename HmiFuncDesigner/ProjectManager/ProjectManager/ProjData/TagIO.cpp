@@ -266,169 +266,66 @@ TagIOGroup::~TagIOGroup()
     listTagIOGroupDBItem_.clear();
 }
 
-/**
- * @brief TagIOGroup::load
- * @details 读取设备标签变量
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool TagIOGroup::load(ProjectDataSQLiteDatabase *pDB)
+
+bool TagIOGroup::openFromXml(XMLObject *pXmlObj)
 {
-    QSqlQuery query(pDB->database());
-    QSqlRecord rec;
-
-    bool ret = query.exec("select * from t_io_group_info");
-    if(!ret) {
-        LogError(QString("get record: %1 failed! %2 ,error: %3!")
-                 .arg("t_io_group_info")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-        return false;
-    }
-
     qDeleteAll(listTagIOGroupDBItem_);
     listTagIOGroupDBItem_.clear();
-
-    while (query.next()) {
-        rec = query.record();
+    XMLObject *pTagIOGroupsObj = pXmlObj->getCurrentChild("tag_io_groups");
+    if(pTagIOGroupsObj == Q_NULLPTR) return false;
+    QList<XMLObject* > listTagIOGroupsObj = pTagIOGroupsObj->getCurrentChildren("tag_io_group");
+    foreach(XMLObject* pTagIOGroupObj, listTagIOGroupsObj) {
         TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-        pObj->m_id = rec.value("id").toInt();
-        pObj->m_szGroupName = rec.value("group_name").toString();
-        pObj->m_szShowName = rec.value("show_name").toString();
+        pObj->m_id = pTagIOGroupObj->getProperty("id").toInt();
+        pObj->m_szGroupName = pTagIOGroupObj->getProperty("group");
+        pObj->m_szShowName = pTagIOGroupObj->getProperty("name");
         listTagIOGroupDBItem_.append(pObj);
     }
-
-    return ret;
+    return true;
 }
 
 
-/**
- * @brief TagIOGroup::save
- * @details 保存设备标签变量
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool TagIOGroup::save(ProjectDataSQLiteDatabase *pDB)
-{
-    QSqlQuery query(pDB->database());
-    bool ret = false;
-
-    pDB->beginTransaction();
+bool TagIOGroup::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pTagIOGroupsObj = new XMLObject(pXmlObj);
+    pTagIOGroupsObj->setTagName("tag_io_groups");
     for(int i=0; i<listTagIOGroupDBItem_.count(); i++) {
         TagIOGroupDBItem *pObj = listTagIOGroupDBItem_.at(i);
-        query.prepare("update t_io_group_info set group_name = :group, show_name = :name "
-                      "where id = :id");
-
-        query.bindValue(":id", pObj->m_id);
-        query.bindValue(":group", pObj->m_szGroupName);
-        query.bindValue(":name", pObj->m_szShowName);
-        ret = query.exec();
-        if(!ret) {
-            LogError(QString("update record: %1 failed! %2 ,error: %3!")
-                     .arg("t_io_group_info")
-                     .arg(query.lastQuery())
-                     .arg(query.lastError().text()));
-            pDB->rollbackTransaction();
-        }
+        XMLObject *pTagIOGroupObj = new XMLObject(pTagIOGroupsObj);
+        pTagIOGroupObj->setTagName("tag_io_group");
+        pTagIOGroupObj->setProperty("id", QString::number(pObj->m_id));
+        pTagIOGroupObj->setProperty("group", pObj->m_szGroupName);
+        pTagIOGroupObj->setProperty("name", pObj->m_szShowName);
     }
-    pDB->commitTransaction();
-
-    return ret;
+    return true;
 }
 
-
-bool TagIOGroup::insert(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
-{
-    QStringList keyList, valueList;
-
-    keyList << "group_name" <<"show_name";
-    valueList << pObj->m_szGroupName << pObj->m_szShowName;
-
-    return pDB->insertRecord("t_io_group_info", keyList, valueList);
-}
-
-
-bool TagIOGroup::del(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
-{
-    return pDB->deleteRecord("t_io_group_info", QString("id=%1").arg(pObj->m_id));
-}
-
-
-bool TagIOGroup::update(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
-{
-    QSqlQuery query(pDB->database());
-    bool ret = false;
-
-    query.prepare("update t_io_group_info set group_name = :group, show_name = :name "
-                  "where id = :id");
-
-    query.bindValue(":id", pObj->m_id);
-    query.bindValue(":group", pObj->m_szGroupName);
-    query.bindValue(":name", pObj->m_szShowName);
-    ret = query.exec();
-    if(!ret) {
-        LogError(QString("update record: %1 failed! %2 ,error: %3!")
-                 .arg("t_io_group_info")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
+QString TagIOGroup::getGroupNameByShowName(const QString &szShowName) {
+    for(int i=0; i<listTagIOGroupDBItem_.count(); i++) {
+        TagIOGroupDBItem *pObj = listTagIOGroupDBItem_.at(i);
+        if(pObj->m_szShowName == szShowName) return pObj->m_szGroupName;
     }
-
-    return ret;
-}
-
-
-int TagIOGroup::getLastInsertId(ProjectDataSQLiteDatabase *pDB)
-{
-    return pDB->getLastInsertId("t_io_group_info");
-}
-
-
-bool TagIOGroup::saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagIOGroupDBItem *pObj)
-{
-    bool ret = false;
-    if(pDB->getRowCount("t_io_group_info", QString("id=%1").arg(pObj->m_id))) {
-        ret = update(pDB, pObj);
-    } else {
-        ret = insert(pDB, pObj);
-    }
-
-    return ret;
-}
-
-
-QString TagIOGroup::getGroupNameByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name)
-{
-    bool ret = false;
-    QString rzRetValue = "";
-    ret = pDB->getRecord("t_io_group_info", "group_name", rzRetValue, QString("show_name='%1'").arg(name));
-    if(ret) return rzRetValue;
-
     return QString();
 }
 
-TagIOGroupDBItem *TagIOGroup::getGroupObjByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name)
-{
-    bool ret = false;
-    QStringList keyList, valueList;
-    keyList << "id" << "group_name";
-    ret = pDB->getRecord("t_io_group_info", keyList, valueList, QString("show_name='%1'").arg(name));
-    if(ret) {
-        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-        pObj->m_id = valueList.at(0).toInt();
-        pObj->m_szGroupName = valueList.at(1);
-        pObj->m_szShowName = name;
-        return pObj;
+TagIOGroupDBItem *TagIOGroup::getGroupObjByShowName(const QString &szShowName) {
+    for(int i=0; i<listTagIOGroupDBItem_.count(); i++) {
+        TagIOGroupDBItem *pObj = listTagIOGroupDBItem_.at(i);
+        if(pObj->m_szShowName == szShowName) return pObj;
     }
-
     return Q_NULLPTR;
 }
 
-int TagIOGroup::getGroupCount(ProjectDataSQLiteDatabase *pDB)
+int TagIOGroup::getGroupCount()
 {
-    return pDB->getRowCount("t_io_group_info");
+    return this->listTagIOGroupDBItem_.count();
 }
 
-int TagIOGroup::getGroupCountByShowName(ProjectDataSQLiteDatabase *pDB, const QString &name)
+int TagIOGroup::getGroupCountByShowName(const QString &szShowName)
 {
-    return pDB->getRowCount("t_io_group_info", QString("show_name='%1'").arg(name));
+    int iCnt = 0;
+    for(int i=0; i<listTagIOGroupDBItem_.count(); i++) {
+        TagIOGroupDBItem *pObj = listTagIOGroupDBItem_.at(i);
+        if(pObj->m_szShowName == szShowName) return ++iCnt;
+    }
+    return iCnt;
 }

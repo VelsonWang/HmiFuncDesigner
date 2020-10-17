@@ -736,18 +736,13 @@ QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
    */
 void MainWindow::CreateDefaultIOTagGroup()
 {
-    return;
     if (this->m_pProjectTreeViewObj->getDevTagGroupCount() == 0) {
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
         TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
         pObj->m_id = 1;
         pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
         pObj->m_szShowName = QString(tr("IO设备"));
-        tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-        if(pObj != Q_NULLPTR) {
-            delete pObj;
-            pObj = Q_NULLPTR;
-        }
+        tagIOGroup.listTagIOGroupDBItem_.append(pObj);
         UpdateDeviceVariableTableGroup();
     }
 }
@@ -936,17 +931,12 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
     } else {
         // 设备变量
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
         foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
             if (szItemText == pObj->m_szShowName) {
                 szWndTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
                 isTagWndFound = true;
             }
         }
-
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
     }
 
     /////////////////////////////////////////////////////////////////////////

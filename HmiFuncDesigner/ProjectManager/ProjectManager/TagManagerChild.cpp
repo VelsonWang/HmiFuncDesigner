@@ -1315,6 +1315,7 @@ void TagManagerChild::tagIOImportFromCsv(const QString &path)
         TagIODBItem * pTagIO = new TagIODBItem();
         int iRowCnt = m_pTableTagIOObj->rowCount();
         int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+        (void)id;
         //pTagIO->m_szTagID = QString("tmp.%1").arg(QString::number(id));
 
         // TODO
@@ -1732,8 +1733,6 @@ void TagManagerChild::onSlotImportTag()
         bool bFound = false;
 
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
         foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
             if(szGroupName == pObj->m_szShowName) {
                 bFound = true;
@@ -1741,20 +1740,13 @@ void TagManagerChild::onSlotImportTag()
             }
         }
 
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
-
         if(!bFound) {
             TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
             TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-            pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
+            pObj->m_id = tagIOGroup.getGroupCount() + 1;
             pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
             pObj->m_szShowName = szGroupName;
-            tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-            if(pObj != Q_NULLPTR) {
-                delete pObj;
-                pObj = Q_NULLPTR;
-            }
+            tagIOGroup.listTagIOGroupDBItem_.append(pObj);
             if(m_pMainWinObj) {
                 MainWindow *pWndObj = dynamic_cast<MainWindow *>(m_pMainWinObj);
                 if(pWndObj) {
@@ -1856,7 +1848,7 @@ void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
 
     if(wndTitle().startsWith(tr("设备变量"))) {
         TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        QString szGroup = tagIOGroup.getGroupNameByShowName(ProjectData::getInstance()->dbData_, m_szItemName);
+        QString szGroup = tagIOGroup.getGroupNameByShowName(m_szItemName);
         m_szCurIOGroupName = QString();
         if(szGroup != QString()) {
             m_szCurIOGroupName = szGroup;

@@ -51,6 +51,8 @@ bool ProjectData::openFromXml(const QString &szProjFile)
         userAuthority_.openFromXml(pProjObj);
         // 设备配置信息
         deviceInfo_.openFromXml(pProjObj);
+        // 设备标签变量组
+        tagIOGroup_.openFromXml(pProjObj);
     }
 
     return true;
@@ -76,6 +78,9 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     userAuthority_.saveToXml(pProjObj);
     // 设备配置信息
     deviceInfo_.saveToXml(pProjObj);
+    // 设备标签变量组
+    tagIOGroup_.saveToXml(pProjObj);
+
 
     Helper::writeString(szProjFile, projObjs.write());
 
