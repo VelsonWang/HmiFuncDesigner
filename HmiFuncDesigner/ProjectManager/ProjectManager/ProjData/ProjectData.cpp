@@ -53,6 +53,8 @@ bool ProjectData::openFromXml(const QString &szProjFile)
         deviceInfo_.openFromXml(pProjObj);
         // 设备标签变量组
         tagIOGroup_.openFromXml(pProjObj);
+        // 设备标签变量
+        tagIO_.openFromXml(pProjObj);
     }
 
     return true;
@@ -80,7 +82,8 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     deviceInfo_.saveToXml(pProjObj);
     // 设备标签变量组
     tagIOGroup_.saveToXml(pProjObj);
-
+    // 设备标签变量
+    tagIO_.saveToXml(pProjObj);
 
     Helper::writeString(szProjFile, projObjs.write());
 
@@ -159,35 +162,26 @@ void ProjectData::getAllTagName(QStringList &varList, const QString &type)
 
     //-------------设备变量------------------//
     if(szType == "ALL" || szType == "IO") {
-        tagIO_.load(dbData_);
         for(int i=0; i<tagIO_.listTagIODBItem_.count(); i++) {
             TagIODBItem *pObj = tagIO_.listTagIODBItem_.at(i);
             varList << (QObject::tr("设备变量.") + pObj->m_szName + "[" + pObj->m_szTagID + "]");
         }
-        qDeleteAll(tagIO_.listTagIODBItem_);
-        tagIO_.listTagIODBItem_.clear();
     }
 
     //-------------中间变量------------------//
     if(szType == "ALL" || szType == "TMP") {
-        tagTmp_.load(dbData_);
         for(int i=0; i<tagTmp_.listTagTmpDBItem_.count(); i++) {
             TagTmpDBItem *pObj = tagTmp_.listTagTmpDBItem_.at(i);
             varList << (QObject::tr("中间变量.") + pObj->m_szName + "[" + pObj->m_szTagID + "]");
         }
-        qDeleteAll(tagTmp_.listTagTmpDBItem_);
-        tagTmp_.listTagTmpDBItem_.clear();
     }
 
     //-------------系统变量------------------//
     if(szType == "ALL" || szType == "SYS") {
-        tagSys_.load(dbData_);
         for(int i=0; i<tagSys_.listTagSysDBItem_.count(); i++) {
             TagSysDBItem *pObj = tagSys_.listTagSysDBItem_.at(i);
             varList << (QObject::tr("系统变量.") + pObj->m_szName + "[" + pObj->m_szTagID + "]");
         }
-        qDeleteAll(tagSys_.listTagSysDBItem_);
-        tagSys_.listTagSysDBItem_.clear();
     }
 }
 

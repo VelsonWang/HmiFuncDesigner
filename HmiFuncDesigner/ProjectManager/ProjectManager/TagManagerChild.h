@@ -65,8 +65,6 @@ private:
     int getTagTmpIdNumValue(int iRow);
     // 刷新中间变量表
     void updateTableTagTmp();
-    // 保存中间变量表
-    void saveTableTagTmp();
     // 中间变量表变量导出至CSV文件
     void tagTmpExportToCsv(const QString &path, const QString & /*group*/);
     // 从CSV文件导入中间变量至中间变量表
@@ -95,8 +93,6 @@ private:
     int getTagIOIdNumValue(int iRow);
     // 刷新设备变量表
     void updateTableTagIO();
-    // 保存设备变量表
-    void saveTableTagIO();
     // 设备变量表变量导出至CSV文件
     void tagIOExportToCsv(const QString &path, const QString & /*group*/);
     // 从CSV文件导入设备变量至设备变量表

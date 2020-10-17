@@ -16,204 +16,67 @@ TagIO::~TagIO()
     listTagIODBItem_.clear();
 }
 
-/**
- * @brief TagIO::load
- * @details 读取设备标签变量
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool TagIO::load(ProjectDataSQLiteDatabase *pDB)
+
+bool TagIO::openFromXml(XMLObject *pXmlObj)
 {
-    QSqlQuery query(pDB->database());
-    QSqlRecord rec;
-
-    bool ret = query.exec("select * from t_tag_io");
-    if(!ret) {
-        LogError(QString("get record: %1 failed! %2 ,error: %3!")
-                 .arg("t_tag_io")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-        return false;
-    }
-
     qDeleteAll(listTagIODBItem_);
     listTagIODBItem_.clear();
-
-    while (query.next()) {
-        rec = query.record();
+    XMLObject *pTagIOsObj = pXmlObj->getCurrentChild("tag_ios");
+    if(pTagIOsObj == Q_NULLPTR) return false;
+    QList<XMLObject* > listTagIOGroupsObj = pTagIOsObj->getCurrentChildren("tag_io");
+    foreach(XMLObject* pTagIOGroupObj, listTagIOGroupsObj) {
         TagIODBItem *pObj = new TagIODBItem();
-        pObj->m_szTagID = rec.value("tagid").toString();
-        pObj->m_szGroupName = rec.value("group_name").toString();
-        pObj->m_szName = rec.value("tag_name").toString();
-        pObj->m_szDescription = rec.value("description").toString();
-        pObj->m_szDeviceName = rec.value("dev_name").toString();
-        pObj->m_szDeviceAddr = rec.value("dev_addr").toString();
-        pObj->m_szRegisterArea = rec.value("reg_area").toString();
-        pObj->m_szRegisterAddr = rec.value("reg_addr").toString();
-        pObj->m_szAddrOffset = rec.value("addr_offset").toString();
-        pObj->m_szReadWriteType = rec.value("rw_type").toString();
-        pObj->m_szDataType = rec.value("data_type").toString();
-        pObj->m_szInitVal = rec.value("init_val").toString();
-        pObj->m_szMinVal = rec.value("min_val").toString();
-        pObj->m_szMaxVal = rec.value("max_val").toString();
-        pObj->m_szScale = rec.value("scale").toString();
-        pObj->m_szProjectConverter = rec.value("converter").toString();
+        pObj->m_szTagID = pTagIOGroupObj->getProperty("id");
+        pObj->m_szGroupName = pTagIOGroupObj->getProperty("group");
+        pObj->m_szName = pTagIOGroupObj->getProperty("name");
+        pObj->m_szDescription = pTagIOGroupObj->getProperty("desc");
+        pObj->m_szDeviceName = pTagIOGroupObj->getProperty("dev_name");
+        pObj->m_szDeviceAddr = pTagIOGroupObj->getProperty("dev_addr");
+        pObj->m_szRegisterArea = pTagIOGroupObj->getProperty("reg_area");
+        pObj->m_szRegisterAddr = pTagIOGroupObj->getProperty("reg_addr");
+        pObj->m_szAddrOffset = pTagIOGroupObj->getProperty("offset");
+        pObj->m_szReadWriteType = pTagIOGroupObj->getProperty("rw");
+        pObj->m_szDataType = pTagIOGroupObj->getProperty("data_type");
+        pObj->m_szInitVal = pTagIOGroupObj->getProperty("init");
+        pObj->m_szMinVal = pTagIOGroupObj->getProperty("min");
+        pObj->m_szMaxVal = pTagIOGroupObj->getProperty("max");
+        pObj->m_szScale = pTagIOGroupObj->getProperty("scale");
+        pObj->m_szProjectConverter = pTagIOGroupObj->getProperty("conv");
         listTagIODBItem_.append(pObj);
     }
-
-    return ret;
+    return true;
 }
 
 
-/**
- * @brief TagIO::save
- * @details 保存设备标签变量
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool TagIO::save(ProjectDataSQLiteDatabase *pDB)
-{
-    QSqlQuery query(pDB->database());
-    bool ret = false;
-
-    pDB->beginTransaction();
+bool TagIO::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pTagIOsObj = new XMLObject(pXmlObj);
+    pTagIOsObj->setTagName("tag_ios");
     for(int i=0; i<listTagIODBItem_.count(); i++) {
         TagIODBItem *pObj = listTagIODBItem_.at(i);
-        query.prepare("update t_tag_io set group_name = :group, tag_name = :name, "
-                      "description = :desc, dev_name = :devName, dev_addr = :devAddr, "
-                      "reg_area = :regArea, reg_addr = :regAddr, addr_offset = :offset, "
-                      "rw_type = :rw, data_type = :dtype, init_val = :init, "
-                      "min_val = :min, max_val = :max , scale = :sca , converter = :conv "
-                      "where tagid = :id");
-
-        query.bindValue(":id", pObj->m_szTagID);
-        query.bindValue(":group", pObj->m_szGroupName);
-        query.bindValue(":name", pObj->m_szName);
-        query.bindValue(":desc", pObj->m_szDescription);
-        query.bindValue(":devName", pObj->m_szDeviceName);
-        query.bindValue(":devAddr", pObj->m_szDeviceAddr);
-        query.bindValue(":regArea", pObj->m_szRegisterArea);
-        query.bindValue(":regAddr", pObj->m_szRegisterAddr);
-        query.bindValue(":offset", pObj->m_szAddrOffset);
-        query.bindValue(":rw", pObj->m_szReadWriteType);
-        query.bindValue(":dtype", pObj->m_szDataType);
-        query.bindValue(":init", pObj->m_szInitVal);
-        query.bindValue(":min", pObj->m_szMinVal);
-        query.bindValue(":max", pObj->m_szMaxVal);
-        query.bindValue(":sca", pObj->m_szScale);
-        query.bindValue(":conv", pObj->m_szProjectConverter);
-
-        ret = query.exec();
-        if(!ret) {
-            LogError(QString("update record: %1 failed! %2 ,error: %3!")
-                     .arg("t_tag_io")
-                     .arg(query.lastQuery())
-                     .arg(query.lastError().text()));
-            pDB->rollbackTransaction();
-        }
+        XMLObject *pTagIOObj = new XMLObject(pTagIOsObj);
+        pTagIOObj->setTagName("tag_io");
+        pTagIOObj->setProperty("id", pObj->m_szTagID);
+        pTagIOObj->setProperty("group", pObj->m_szGroupName);
+        pTagIOObj->setProperty("name", pObj->m_szName);
+        pTagIOObj->setProperty("desc", pObj->m_szDescription);
+        pTagIOObj->setProperty("dev_name", pObj->m_szDeviceName);
+        pTagIOObj->setProperty("dev_addr", pObj->m_szDeviceAddr);
+        pTagIOObj->setProperty("reg_area", pObj->m_szRegisterArea);
+        pTagIOObj->setProperty("reg_addr", pObj->m_szRegisterAddr);
+        pTagIOObj->setProperty("offset", pObj->m_szAddrOffset);
+        pTagIOObj->setProperty("rw", pObj->m_szReadWriteType);
+        pTagIOObj->setProperty("data_type", pObj->m_szDataType);
+        pTagIOObj->setProperty("init", pObj->m_szInitVal);
+        pTagIOObj->setProperty("min", pObj->m_szMinVal);
+        pTagIOObj->setProperty("max", pObj->m_szMaxVal);
+        pTagIOObj->setProperty("scale", pObj->m_szScale);
+        pTagIOObj->setProperty("conv", pObj->m_szProjectConverter);
     }
-    pDB->commitTransaction();
-
-    return ret;
+    return true;
 }
 
 
-bool TagIO::insert(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
-{
-    QStringList keyList, valueList;
-
-    keyList << "tagid" <<"group_name" <<  "tag_name" << "description" << "dev_name"
-            << "dev_addr" << "reg_area" << "reg_addr" << "addr_offset"
-            << "rw_type" << "data_type" << "init_val" << "min_val"
-            << "max_val" << "scale"<< "converter";
-
-    valueList << pObj->m_szTagID << pObj->m_szGroupName << pObj->m_szName << pObj->m_szDescription << pObj->m_szDeviceName
-              << pObj->m_szDeviceAddr << pObj->m_szRegisterArea << pObj->m_szRegisterAddr << pObj->m_szAddrOffset
-              << pObj->m_szReadWriteType << pObj->m_szDataType << pObj->m_szInitVal << pObj->m_szMinVal
-              << pObj->m_szMaxVal << pObj->m_szScale << pObj->m_szProjectConverter;
-
-    return pDB->insertRecord("t_tag_io", keyList, valueList);
-}
-
-
-bool TagIO::insert(ProjectDataSQLiteDatabase *pDB, QList<TagIODBItem *> &pObjs)
-{
-    bool ret = false;
-
-    pDB->beginTransaction();
-    for(int i=0; i<pObjs.count(); i++) {
-        TagIODBItem *pObj = pObjs.at(i);
-        ret = insert(pDB, pObj);
-        if(!ret) {
-            pDB->rollbackTransaction();
-        }
-    }
-    pDB->commitTransaction();
-
-    return ret;
-}
-
-
-bool TagIO::del(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
-{
-    return pDB->deleteRecord("t_tag_io", QString("tagid='%1'").arg(pObj->m_szTagID));
-}
-
-bool TagIO::del(ProjectDataSQLiteDatabase *pDB, const QString &id)
-{
-    return pDB->deleteRecord("t_tag_io", QString("tagid='%1'").arg(id));
-}
-
-
-bool TagIO::delAll(ProjectDataSQLiteDatabase *pDB)
-{
-    return pDB->deleteRecord("t_tag_io");
-}
-
-
-bool TagIO::update(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
-{
-    QSqlQuery query(pDB->database());
-    bool ret = false;
-
-    query.prepare("update t_tag_io set group_name = :group, tag_name = :name, "
-                  "description = :desc, dev_name = :devName, dev_addr = :devAddr, "
-                  "reg_area = :regArea, reg_addr = :regAddr, addr_offset = :offset, "
-                  "rw_type = :rw, data_type = :dtype, init_val = :init, "
-                  "min_val = :min, max_val = :max , scale = :sca , converter = :conv "
-                  "where tagid = :id");
-
-    query.bindValue(":id", pObj->m_szTagID);
-    query.bindValue(":group", pObj->m_szGroupName);
-    query.bindValue(":name", pObj->m_szName);
-    query.bindValue(":desc", pObj->m_szDescription);
-    query.bindValue(":devName", pObj->m_szDeviceName);
-    query.bindValue(":devAddr", pObj->m_szDeviceAddr);
-    query.bindValue(":regArea", pObj->m_szRegisterArea);
-    query.bindValue(":regAddr", pObj->m_szRegisterAddr);
-    query.bindValue(":offset", pObj->m_szAddrOffset);
-    query.bindValue(":rw", pObj->m_szReadWriteType);
-    query.bindValue(":dtype", pObj->m_szDataType);
-    query.bindValue(":init", pObj->m_szInitVal);
-    query.bindValue(":min", pObj->m_szMinVal);
-    query.bindValue(":max", pObj->m_szMaxVal);
-    query.bindValue(":sca", pObj->m_szScale);
-    query.bindValue(":conv", pObj->m_szProjectConverter);
-
-    ret = query.exec();
-    if(!ret) {
-        LogError(QString("update record: %1 failed! %2 ,error: %3!")
-                 .arg("t_tag_io")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-
-    }
-
-    return ret;
-}
-
-TagIODBItem *TagIO::getTagIODBItemByID(const QString &id)
-{
+TagIODBItem *TagIO::getTagIODBItemByID(const QString &id) {
     for(int i=0; i<listTagIODBItem_.count(); i++) {
         TagIODBItem *pObj = listTagIODBItem_.at(i);
         if(pObj->m_szTagID == id)
@@ -222,33 +85,13 @@ TagIODBItem *TagIO::getTagIODBItemByID(const QString &id)
     return Q_NULLPTR;
 }
 
-TagIODBItem *TagIO::getTagIODBItemByName(const QString &name)
-{
+TagIODBItem *TagIO::getTagIODBItemByName(const QString &name) {
     for(int i=0; i<listTagIODBItem_.count(); i++) {
         TagIODBItem *pObj = listTagIODBItem_.at(i);
         if(pObj->m_szName == name)
             return pObj;
     }
     return Q_NULLPTR;
-}
-
-
-int TagIO::getLastInsertId(ProjectDataSQLiteDatabase *pDB)
-{
-    return pDB->getLastInsertId("t_tag_io");
-}
-
-
-bool TagIO::saveTagIODBItem(ProjectDataSQLiteDatabase *pDB, TagIODBItem *pObj)
-{
-    bool ret = false;
-    if(pDB->getRowCount("t_tag_io", QString("tagid='%1'").arg(pObj->m_szTagID))) {
-        ret = update(pDB, pObj);
-    } else {
-        ret = insert(pDB, pObj);
-    }
-
-    return ret;
 }
 
 

@@ -335,6 +335,8 @@ void ProjectTreeView::onSlotTagIOGroupCopy()
     pObj->m_szShowName = szName;
     tagIOGroup.listTagIOGroupDBItem_.append(pObj);
     updateDeviceTagGroup();
+
+    // FIXME 拷贝组内变量
 }
 
 

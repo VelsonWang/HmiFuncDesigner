@@ -238,7 +238,6 @@ void TagManagerChild::onSlotDeleteTag()
  */
 void TagManagerChild::closeEvent(QCloseEvent *event)
 {
-    save();
     event->accept();
 }
 
@@ -294,7 +293,6 @@ void TagManagerChild::initialTableTagSys()
 void TagManagerChild::updateTableTagSys()
 {
     TagSys &tagSys = ProjectData::getInstance()->tagSys_;
-    tagSys.load(ProjectData::getInstance()->dbData_);
 
     m_pTableTagSysObj->clearContents();
     m_pTableTagSysObj->setRowCount(0);
@@ -316,9 +314,6 @@ void TagManagerChild::updateTableTagSys()
         QTableWidgetItem *pItemComments = new QTableWidgetItem(itemTagSys->m_szComments);
         m_pTableTagSysObj->setItem(iRowCount, 5, pItemComments);
     }
-
-    qDeleteAll(tagSys.listTagSysDBItem_);
-    tagSys.listTagSysDBItem_.clear();
 }
 
 
@@ -469,42 +464,14 @@ int TagManagerChild::getTagTmpIdNumValue(int iRow)
 void TagManagerChild::updateTableTagTmp()
 {
     TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-    tagTmp.load(ProjectData::getInstance()->dbData_);
-
     m_pTableTagTmpObj->clearContents();
     m_pTableTagTmpObj->setRowCount(0);
-
     foreach (TagTmpDBItem * itemTagTmp, tagTmp.listTagTmpDBItem_) {
         int iRow = tableTagTmpAddRow();
         setTagTmpObjByRow(iRow, itemTagTmp);
     }
-
-    qDeleteAll(tagTmp.listTagTmpDBItem_);
-    tagTmp.listTagTmpDBItem_.clear();
 }
 
-/**
- * @brief TagManagerChild::saveTableTagTmp
- * @details 保存中间变量表
- */
-void TagManagerChild::saveTableTagTmp()
-{
-    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-    int iRowCount = m_pTableTagTmpObj->rowCount();
-    for(int i=0; i<iRowCount; i++) {
-        TagTmpDBItem * pTagTmp = getTagTmpObjByRow(i);
-        tagTmp.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pTagTmp);
-        if(pTagTmp != Q_NULLPTR) {
-            delete pTagTmp;
-            pTagTmp = Q_NULLPTR;
-        }
-    }
-
-    foreach(QString szTagId, m_listTagTmpDeleteRows) {
-        tagTmp.del(ProjectData::getInstance()->dbData_, szTagId);
-    }
-    m_listTagTmpDeleteRows.clear();
-}
 
 /**
  * @brief TagManagerChild::tagTmpExportToCsv
@@ -552,11 +519,10 @@ void TagManagerChild::tagTmpImportFromCsv(const QString &path)
                                                         QString(","),
                                                         QString("\""),
                                                         QTextCodec::codecForName("GB18030"));
-    for(int i=0; i<data.size(); i++)
-    {
+    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+    for(int i=0; i<data.size(); i++) {
         QStringList row = data.at(i);
-        if(row.at(0) == "ID")
-            continue;
+        if(row.at(0) == "ID") continue;
 
         TagTmpDBItem * pTagTmp = new TagTmpDBItem();
         int iRowCnt = m_pTableTagTmpObj->rowCount();
@@ -574,10 +540,7 @@ void TagManagerChild::tagTmpImportFromCsv(const QString &path)
         int iRow = tableTagTmpAddRow();
         setTagTmpObjByRow(iRow, pTagTmp);
 
-        if(pTagTmp != Q_NULLPTR) {
-            delete pTagTmp;
-            pTagTmp = Q_NULLPTR;
-        }
+        tagTmp.listTagTmpDBItem_.append(pTagTmp);
     }
 }
 
@@ -592,6 +555,7 @@ void TagManagerChild::createTagTmp()
         int num = pDlg->createTagNum();
         int iRowCnt = m_pTableTagTmpObj->rowCount();
         int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
+        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
         for(int i=0; i<num; i++) {
             TagTmpDBItem * pTagTmp = new TagTmpDBItem();
             pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
@@ -606,10 +570,7 @@ void TagManagerChild::createTagTmp()
             int iRow = tableTagTmpAddRow();
             setTagTmpObjByRow(iRow, pTagTmp);
 
-            if(pTagTmp != Q_NULLPTR) {
-                delete pTagTmp;
-                pTagTmp = Q_NULLPTR;
-            }
+            tagTmp.listTagTmpDBItem_.append(pTagTmp);
             id++;
         }
     }
@@ -624,8 +585,7 @@ void TagManagerChild::createTagTmp()
 void TagManagerChild::appendTagTmp()
 {
     int iRowCnt = m_pTableTagTmpObj->rowCount();
-    if(iRowCnt < 1)
-        return;
+    if(iRowCnt < 1) return;
 
     int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
     TagTmpDBItem * pNewTagTmp = new TagTmpDBItem();
@@ -643,11 +603,8 @@ void TagManagerChild::appendTagTmp()
     pNewTagTmp->m_szProjectConverter = "";
     int iRow = tableTagTmpAddRow();
     setTagTmpObjByRow(iRow, pNewTagTmp);
-
-    if(pNewTagTmp != Q_NULLPTR) {
-        delete pNewTagTmp;
-        pNewTagTmp = Q_NULLPTR;
-    }
+    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+    tagTmp.listTagTmpDBItem_.append(pNewTagTmp);
 }
 
 
@@ -660,14 +617,17 @@ void TagManagerChild::appendTagTmp()
 TagTmpDBItem *TagManagerChild::getTagTmpObjByRow(int iRow)
 {
     int iRowCnt = m_pTableTagTmpObj->rowCount();
-    if(iRow < 0 || iRow >= iRowCnt)
-        return Q_NULLPTR;
+    if(iRow < 0 || iRow >= iRowCnt) return Q_NULLPTR;
 
-    TagTmpDBItem * pNewTagTmp = new TagTmpDBItem();
+    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+    TagTmpDBItem * pNewTagTmp = Q_NULLPTR;
     QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(iRow, 0);
     if(pItemID != Q_NULLPTR) {
+        pNewTagTmp = tagTmp.getTagTmpDBItemByID(ProjectData::getInstance()->dbData_, pItemID->text());
+        if(pNewTagTmp == Q_NULLPTR) return Q_NULLPTR;
         pNewTagTmp->m_szTagID = pItemID->text();
     }
+
     QTableWidgetItem *pItemName = m_pTableTagTmpObj->item(iRow, 1);
     if(pItemName != Q_NULLPTR) {
         pNewTagTmp->m_szName = pItemName->text();
@@ -710,8 +670,7 @@ TagTmpDBItem *TagManagerChild::getTagTmpObjByRow(int iRow)
 void TagManagerChild::setTagTmpObjByRow(int iRow, TagTmpDBItem *pObj)
 {
     int iRowCnt = m_pTableTagTmpObj->rowCount();
-    if(pObj == Q_NULLPTR || iRow < 0 || iRow >= iRowCnt)
-        return;
+    if(pObj == Q_NULLPTR || iRow < 0 || iRow >= iRowCnt) return;
 
     QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(iRow, 0);
     if(pItemID != Q_NULLPTR) {
@@ -761,11 +720,8 @@ void TagManagerChild::copyCurTagTmp()
         pNewTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
         int iRow = tableTagTmpAddRow();
         setTagTmpObjByRow(iRow, pNewTagTmp);
-
-        if(pNewTagTmp != Q_NULLPTR) {
-            delete pNewTagTmp;
-            pNewTagTmp = Q_NULLPTR;
-        }
+        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+        tagTmp.listTagTmpDBItem_.append(pNewTagTmp);
     }
 }
 
@@ -800,11 +756,6 @@ void TagManagerChild::modifyCurTagTmp()
             setTagTmpObjByRow(iSelectedRow, pTagTmp);
         }
         delete pDlg;
-
-        if(pTagTmp != Q_NULLPTR) {
-            delete pTagTmp;
-            pTagTmp = Q_NULLPTR;
-        }
     }
 }
 
@@ -824,12 +775,15 @@ void TagManagerChild::deleteCurTagTmp()
     int rowToDel;
     QMapIterator<int, int> rowMapIterator(rowMap);
     rowMapIterator.toBack();
+    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
     while (rowMapIterator.hasPrevious()) {
         rowMapIterator.previous();
         rowToDel = rowMapIterator.key();
         QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(rowToDel, 0);
         if(pItemID != Q_NULLPTR) {
             m_listTagTmpDeleteRows << pItemID->text();
+            TagTmpDBItem *pTagTmpObj = tagTmp.getTagTmpDBItemByID(ProjectData::getInstance()->dbData_, pItemID->text());
+            tagTmp.listTagTmpDBItem_.removeOne(pTagTmpObj);
         }
         m_pTableTagTmpObj->removeRow(rowToDel);
     }
@@ -1059,23 +1013,14 @@ int TagManagerChild::getTagIOIdNumValue(int iRow)
 void TagManagerChild::updateTableTagIO()
 {
     TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-
     if(m_szCurIOGroupName == QString()) return;
-
-    tagIO.load(ProjectData::getInstance()->dbData_);
-
     m_pTableTagIOObj->clearContents();
     m_pTableTagIOObj->setRowCount(0);
-
     foreach (TagIODBItem * itemTagIO, tagIO.listTagIODBItem_) {
-        if(m_szCurIOGroupName != itemTagIO->m_szGroupName)
-            continue;
+        if(m_szCurIOGroupName != itemTagIO->m_szGroupName) continue;
         int iRow = tableTagIOAddRow();
         setTagIOObjByRow(iRow, itemTagIO);
     }
-
-    qDeleteAll(tagIO.listTagIODBItem_);
-    tagIO.listTagIODBItem_.clear();
 }
 
 /**
@@ -1087,14 +1032,16 @@ void TagManagerChild::updateTableTagIO()
 TagIODBItem *TagManagerChild::getTagIOObjByRow(int iRow)
 {
     int iRowCnt = m_pTableTagIOObj->rowCount();
-    if(iRow < 0 || iRow >= iRowCnt)
-        return Q_NULLPTR;
+    if(iRow < 0 || iRow >= iRowCnt) return Q_NULLPTR;
 
-    TagIODBItem *pObj = new TagIODBItem();
+    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+    TagIODBItem *pObj = Q_NULLPTR;
 
     QTableWidgetItem *pItemID = m_pTableTagIOObj->item(iRow, 0);
     if(pItemID != Q_NULLPTR) {
         pObj->m_szTagID = pItemID->text();
+        pObj = tagIO.getTagIODBItemByID(pItemID->text());
+        if(pObj == Q_NULLPTR) return Q_NULLPTR;
     }
     QTableWidgetItem *pItemName = m_pTableTagIOObj->item(iRow, 1);
     if(pItemName != Q_NULLPTR) {
@@ -1167,8 +1114,7 @@ TagIODBItem *TagManagerChild::getTagIOObjByRow(int iRow)
 void TagManagerChild::setTagIOObjByRow(int iRow, TagIODBItem *pObj)
 {
     int iRowCnt = m_pTableTagIOObj->rowCount();
-    if(iRow < 0 || iRow >= iRowCnt)
-        return;
+    if(iRow < 0 || iRow >= iRowCnt) return;
 
     QTableWidgetItem *pItemID = m_pTableTagIOObj->item(iRow, 0);
     if(pItemID != Q_NULLPTR) {
@@ -1234,29 +1180,6 @@ void TagManagerChild::setTagIOObjByRow(int iRow, TagIODBItem *pObj)
 
 
 /**
- * @brief TagManagerChild::saveTableTagIO
- * @details 保存设备变量表
- */
-void TagManagerChild::saveTableTagIO()
-{
-    int iRowCount = m_pTableTagIOObj->rowCount();
-    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    for(int i=0; i<iRowCount; i++) {
-        TagIODBItem * pTagIO = getTagIOObjByRow(i);
-        tagIO.saveTagIODBItem(ProjectData::getInstance()->dbData_, pTagIO);
-        if(pTagIO != Q_NULLPTR) {
-            delete pTagIO;
-            pTagIO = Q_NULLPTR;
-        }
-    }
-    foreach(QString szTagId, m_listTagIODeleteRows) {
-        tagIO.del(ProjectData::getInstance()->dbData_, szTagId);
-    }
-    m_listTagIODeleteRows.clear();
-}
-
-
-/**
  * @brief TagManagerChild::tagIOExportToCsv
  * @details 设备变量表变量导出至CSV文件
  * @param path
@@ -1275,11 +1198,6 @@ void TagManagerChild::tagIOExportToCsv(const QString &path, const QString &group
                << pTagIO->m_szMinVal << pTagIO->m_szMaxVal << pTagIO->m_szScale << pTagIO->m_szProjectConverter;
 
         varData.addRow(varRow);
-
-        if(pTagIO != Q_NULLPTR) {
-            delete pTagIO;
-            pTagIO = Q_NULLPTR;
-        }
     }
 
     QString filepath = path + "/" + group + ".csv";
@@ -1306,11 +1224,10 @@ void TagManagerChild::tagIOImportFromCsv(const QString &path)
                                                         QString(","),
                                                         QString("\""),
                                                         QTextCodec::codecForName("GB18030"));
-    for(int i=0; i<data.size(); i++)
-    {
+    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+    for(int i=0; i<data.size(); i++) {
         QStringList row = data.at(i);
-        if(row.at(0) == "ID")
-            continue;
+        if(row.at(0) == "ID") continue;
 
         TagIODBItem * pTagIO = new TagIODBItem();
         int iRowCnt = m_pTableTagIOObj->rowCount();
@@ -1339,11 +1256,7 @@ void TagManagerChild::tagIOImportFromCsv(const QString &path)
 
         int iRow = tableTagIOAddRow();
         setTagIOObjByRow(iRow, pTagIO);
-
-        if(pTagIO != Q_NULLPTR) {
-            delete pTagIO;
-            pTagIO = Q_NULLPTR;
-        }
+        tagIO.listTagIODBItem_.append(pTagIO);
     }
 }
 
@@ -1370,6 +1283,7 @@ void TagManagerChild::createTagIO()
         int iOffset = pDlg->addrOffset();
         int iRowCnt = m_pTableTagIOObj->rowCount();
         int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+        TagIO &tagIO = ProjectData::getInstance()->tagIO_;
         for(int i=0; i<num; i++) {
             TagIODBItem * pTagIO = new TagIODBItem();
             pTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
@@ -1392,11 +1306,7 @@ void TagManagerChild::createTagIO()
             int iRow = tableTagIOAddRow();
             setTagIOObjByRow(iRow, pTagIO);
 
-            if(pTagIO != Q_NULLPTR) {
-                delete pTagIO;
-                pTagIO = Q_NULLPTR;
-            }
-
+            tagIO.listTagIODBItem_.append(pTagIO);
             id++;
         }
     }
@@ -1453,10 +1363,8 @@ void TagManagerChild::appendTagIO()
     int iRow = tableTagIOAddRow();
     setTagIOObjByRow(iRow, pNewTagIO);
 
-    if(pNewTagIO != Q_NULLPTR) {
-        delete pNewTagIO;
-        pNewTagIO = Q_NULLPTR;
-    }
+    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+    tagIO.listTagIODBItem_.append(pNewTagIO);
 }
 
 
@@ -1476,10 +1384,8 @@ void TagManagerChild::copyCurTagIO()
         pNewTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
         int iRow = tableTagIOAddRow();
         setTagIOObjByRow(iRow, pNewTagIO);
-        if(pNewTagIO != Q_NULLPTR) {
-            delete pNewTagIO;
-            pNewTagIO = Q_NULLPTR;
-        }
+        TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+        tagIO.listTagIODBItem_.append(pNewTagIO);
     }
 }
 
@@ -1527,11 +1433,6 @@ void TagManagerChild::modifyCurTagIO()
             setTagIOObjByRow(iSelectedRow, pTagIO);
         }
         delete pDlg;
-
-        if(pTagIO != Q_NULLPTR) {
-            delete pTagIO;
-            pTagIO = Q_NULLPTR;
-        }
     }
 }
 
@@ -1551,12 +1452,15 @@ void TagManagerChild::deleteCurTagIO()
     int rowToDel;
     QMapIterator<int, int> rowMapIterator(rowMap);
     rowMapIterator.toBack();
+    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
     while (rowMapIterator.hasPrevious()) {
         rowMapIterator.previous();
         rowToDel = rowMapIterator.key();
         QTableWidgetItem *pItemID = m_pTableTagIOObj->item(rowToDel, 0);
         if(pItemID != Q_NULLPTR) {
             m_listTagIODeleteRows << pItemID->text();
+            TagIODBItem *pTagIOObj = tagIO.getTagIODBItemByID(pItemID->text());
+            tagIO.listTagIODBItem_.removeOne(pTagIOObj);
         }
         m_pTableTagIOObj->removeRow(rowToDel);
     }
@@ -1640,10 +1544,6 @@ void TagManagerChild::on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item)
             setTagTmpObjByRow(iRow, pTagTmp);
         }
         delete pDlg;
-        if(pTagTmp != Q_NULLPTR) {
-            delete pTagTmp;
-            pTagTmp = Q_NULLPTR;
-        }
     }
 }
 
@@ -1664,10 +1564,6 @@ void TagManagerChild::on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item)
             setTagIOObjByRow(iRow, pTagIO);
         }
         delete pDlg;
-        if(pTagIO != Q_NULLPTR) {
-            delete pTagIO;
-            pTagIO = Q_NULLPTR;
-        }
     }
 }
 
@@ -1759,22 +1655,6 @@ void TagManagerChild::onSlotImportTag()
             }
         }
     }
-}
-
-bool TagManagerChild::save()
-{
-    if(!m_szItemName.isEmpty()) {
-        if(wndTitle().startsWith(tr("设备变量"))) {
-            // 保存设备变量表
-            this->saveTableTagIO();
-        } else if(wndTitle().startsWith(tr("中间变量"))) {
-            // 保存中间变量表
-            this->saveTableTagTmp();
-        } else if(wndTitle().startsWith(tr("系统变量"))) {
-            // do nothing here!
-        }
-    }
-    return true;
 }
 
 
