@@ -7,8 +7,6 @@
 #include "DBTag.h"
 #include "XMLObject.h"
 
-class ProjectDataSQLiteDatabase;
-
 class TagIO
 {
 public:

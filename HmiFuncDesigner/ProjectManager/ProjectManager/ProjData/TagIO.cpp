@@ -1,9 +1,4 @@
 #include "TagIO.h"
-#include "ProjectDataSQLiteDatabase.h"
-#include "ulog.h"
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
 
 TagIO::TagIO()
 {
@@ -23,25 +18,25 @@ bool TagIO::openFromXml(XMLObject *pXmlObj)
     listTagIODBItem_.clear();
     XMLObject *pTagIOsObj = pXmlObj->getCurrentChild("tag_ios");
     if(pTagIOsObj == Q_NULLPTR) return false;
-    QList<XMLObject* > listTagIOGroupsObj = pTagIOsObj->getCurrentChildren("tag_io");
-    foreach(XMLObject* pTagIOGroupObj, listTagIOGroupsObj) {
+    QList<XMLObject* > listTagIOsObj = pTagIOsObj->getCurrentChildren("tag_io");
+    foreach(XMLObject* pTagIOObj, listTagIOsObj) {
         TagIODBItem *pObj = new TagIODBItem();
-        pObj->m_szTagID = pTagIOGroupObj->getProperty("id");
-        pObj->m_szGroupName = pTagIOGroupObj->getProperty("group");
-        pObj->m_szName = pTagIOGroupObj->getProperty("name");
-        pObj->m_szDescription = pTagIOGroupObj->getProperty("desc");
-        pObj->m_szDeviceName = pTagIOGroupObj->getProperty("dev_name");
-        pObj->m_szDeviceAddr = pTagIOGroupObj->getProperty("dev_addr");
-        pObj->m_szRegisterArea = pTagIOGroupObj->getProperty("reg_area");
-        pObj->m_szRegisterAddr = pTagIOGroupObj->getProperty("reg_addr");
-        pObj->m_szAddrOffset = pTagIOGroupObj->getProperty("offset");
-        pObj->m_szReadWriteType = pTagIOGroupObj->getProperty("rw");
-        pObj->m_szDataType = pTagIOGroupObj->getProperty("data_type");
-        pObj->m_szInitVal = pTagIOGroupObj->getProperty("init");
-        pObj->m_szMinVal = pTagIOGroupObj->getProperty("min");
-        pObj->m_szMaxVal = pTagIOGroupObj->getProperty("max");
-        pObj->m_szScale = pTagIOGroupObj->getProperty("scale");
-        pObj->m_szProjectConverter = pTagIOGroupObj->getProperty("conv");
+        pObj->m_szTagID = pTagIOObj->getProperty("id");
+        pObj->m_szGroupName = pTagIOObj->getProperty("group");
+        pObj->m_szName = pTagIOObj->getProperty("name");
+        pObj->m_szDescription = pTagIOObj->getProperty("desc");
+        pObj->m_szDeviceName = pTagIOObj->getProperty("dev_name");
+        pObj->m_szDeviceAddr = pTagIOObj->getProperty("dev_addr");
+        pObj->m_szRegisterArea = pTagIOObj->getProperty("reg_area");
+        pObj->m_szRegisterAddr = pTagIOObj->getProperty("reg_addr");
+        pObj->m_szAddrOffset = pTagIOObj->getProperty("offset");
+        pObj->m_szReadWriteType = pTagIOObj->getProperty("rw");
+        pObj->m_szDataType = pTagIOObj->getProperty("data_type");
+        pObj->m_szInitVal = pTagIOObj->getProperty("init");
+        pObj->m_szMinVal = pTagIOObj->getProperty("min");
+        pObj->m_szMaxVal = pTagIOObj->getProperty("max");
+        pObj->m_szScale = pTagIOObj->getProperty("scale");
+        pObj->m_szProjectConverter = pTagIOObj->getProperty("conv");
         listTagIODBItem_.append(pObj);
     }
     return true;

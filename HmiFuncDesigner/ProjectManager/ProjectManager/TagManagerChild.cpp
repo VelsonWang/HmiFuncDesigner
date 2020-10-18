@@ -623,7 +623,7 @@ TagTmpDBItem *TagManagerChild::getTagTmpObjByRow(int iRow)
     TagTmpDBItem * pNewTagTmp = Q_NULLPTR;
     QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(iRow, 0);
     if(pItemID != Q_NULLPTR) {
-        pNewTagTmp = tagTmp.getTagTmpDBItemByID(ProjectData::getInstance()->dbData_, pItemID->text());
+        pNewTagTmp = tagTmp.getTagTmpDBItemByID(pItemID->text());
         if(pNewTagTmp == Q_NULLPTR) return Q_NULLPTR;
         pNewTagTmp->m_szTagID = pItemID->text();
     }
@@ -782,7 +782,7 @@ void TagManagerChild::deleteCurTagTmp()
         QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(rowToDel, 0);
         if(pItemID != Q_NULLPTR) {
             m_listTagTmpDeleteRows << pItemID->text();
-            TagTmpDBItem *pTagTmpObj = tagTmp.getTagTmpDBItemByID(ProjectData::getInstance()->dbData_, pItemID->text());
+            TagTmpDBItem *pTagTmpObj = tagTmp.getTagTmpDBItemByID(pItemID->text());
             tagTmp.listTagTmpDBItem_.removeOne(pTagTmpObj);
         }
         m_pTableTagTmpObj->removeRow(rowToDel);

@@ -51,10 +51,21 @@ bool ProjectData::openFromXml(const QString &szProjFile)
         userAuthority_.openFromXml(pProjObj);
         // 设备配置信息
         deviceInfo_.openFromXml(pProjObj);
-        // 设备标签变量组
-        tagIOGroup_.openFromXml(pProjObj);
-        // 设备标签变量
-        tagIO_.openFromXml(pProjObj);
+
+        XMLObject *pTagsObj = pProjObj->getCurrentChild("tags");
+        if(pTagsObj != Q_NULLPTR) {
+            // 设备标签变量组
+            tagIOGroup_.openFromXml(pTagsObj);
+            // 设备标签变量
+            tagIO_.openFromXml(pTagsObj);
+            // 中间标签变量
+            tagTmp_.openFromXml(pTagsObj);
+            // 系统标签变量
+            tagSys_.openFromXml(pTagsObj);
+        }
+
+
+
     }
 
     return true;
@@ -80,10 +91,18 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     userAuthority_.saveToXml(pProjObj);
     // 设备配置信息
     deviceInfo_.saveToXml(pProjObj);
+
+    XMLObject *pTagsObj = new XMLObject(pProjObj);
+    pTagsObj->setTagName("tags");
     // 设备标签变量组
-    tagIOGroup_.saveToXml(pProjObj);
+    tagIOGroup_.saveToXml(pTagsObj);
     // 设备标签变量
-    tagIO_.saveToXml(pProjObj);
+    tagIO_.saveToXml(pTagsObj);
+    // 中间标签变量
+    tagTmp_.saveToXml(pTagsObj);
+    // 系统标签变量
+    tagSys_.saveToXml(pTagsObj);
+
 
     Helper::writeString(szProjFile, projObjs.write());
 

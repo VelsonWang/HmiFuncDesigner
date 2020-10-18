@@ -5,8 +5,7 @@
 #include <QStringList>
 #include <QList>
 #include "DBTag.h"
-
-class ProjectDataSQLiteDatabase;
+#include "XMLObject.h"
 
 class TagTmp
 {
@@ -14,22 +13,10 @@ public:
     explicit TagTmp();
     ~TagTmp();
 
-    bool load(ProjectDataSQLiteDatabase *pDB);
-    bool save(ProjectDataSQLiteDatabase *pDB);
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
 
-    bool insert(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
-    bool insert(ProjectDataSQLiteDatabase *pDB, QList<TagTmpDBItem *> &pObjs);
-    bool del(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
-    bool del(ProjectDataSQLiteDatabase *pDB, const QString &id);
-    bool delAll(ProjectDataSQLiteDatabase *pDB);
-    bool update(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
-
-    int rowCount(ProjectDataSQLiteDatabase *pDB);
-
-    TagTmpDBItem *getTagTmpDBItemByID(ProjectDataSQLiteDatabase *pDB, const QString &id);
-    int getLastInsertId(ProjectDataSQLiteDatabase *pDB);
-
-    bool saveTagTmpDBItem(ProjectDataSQLiteDatabase *pDB, TagTmpDBItem *pObj);
+    TagTmpDBItem *getTagTmpDBItemByID(const QString &id);
 
 public:
     QList<TagTmpDBItem *> listTagTmpDBItem_;

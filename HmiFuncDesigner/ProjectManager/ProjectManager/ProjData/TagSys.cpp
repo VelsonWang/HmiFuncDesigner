@@ -1,9 +1,9 @@
 #include "TagSys.h"
-#include "ProjectDataSQLiteDatabase.h"
-#include "ulog.h"
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
+#include <QCoreApplication>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
 
 TagSys::TagSys()
 {
@@ -16,109 +16,65 @@ TagSys::~TagSys()
     listTagSysDBItem_.clear();
 }
 
-/**
- * @brief TagSys::load
- * @details 读取系统标签变量
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool TagSys::load(ProjectDataSQLiteDatabase *pDB)
-{
-    QSqlQuery query(pDB->database());
-    QSqlRecord rec;
 
-    bool ret = query.exec("select * from t_tag_sys");
-    if(!ret) {
-        LogError(QString("get record: %1 failed! %2 ,error: %3!")
-                 .arg("t_tag_sys")
-                 .arg(query.lastQuery())
-                 .arg(query.lastError().text()));
-        return false;
-    }
-
+bool TagSys::openFromXml(XMLObject *pXmlObj) {
     qDeleteAll(listTagSysDBItem_);
     listTagSysDBItem_.clear();
+    XMLObject *pTagSyssObj = pXmlObj->getCurrentChild("tag_syss");
+    if(pTagSyssObj == Q_NULLPTR) {
+        QString szTagSysConfig = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
+        QFile jasonFile(szTagSysConfig);
+        if (!jasonFile.open(QIODevice::ReadOnly)) return false;
+        QByteArray saveData = jasonFile.readAll();
+        jasonFile.close();
+        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+        const QJsonObject json = loadDoc.object();
+        QJsonArray tagSysArray = json["SysVarArray"].toArray();
+        for (int i = 0; i < tagSysArray.size(); ++i) {
+            QJsonObject jsonObj = tagSysArray[i].toObject();
+            TagSysDBItem *pObj = new TagSysDBItem();
+            pObj->m_szTagID = jsonObj["sID"].toString();
+            pObj->m_szName = jsonObj["sName"].toString();
+            pObj->m_szDescription = jsonObj["sDescription"].toString();
+            pObj->m_szUnit = jsonObj["sUnit"].toString();
+            pObj->m_szProjectConverter = jsonObj["sProjectConverter"].toString();
+            pObj->m_szComments = jsonObj["sComments"].toString();
+            listTagSysDBItem_.append(pObj);
+        }
+        return true;
+    }
 
-    while (query.next()) {
-        rec = query.record();
+    QList<XMLObject* > listTagSyssObj = pTagSyssObj->getCurrentChildren("tag_sys");
+    foreach(XMLObject* pTagSysObj, listTagSyssObj) {
         TagSysDBItem *pObj = new TagSysDBItem();
-        pObj->m_szTagID = rec.value("tagid").toString();
-        pObj->m_szName = rec.value("name").toString();
-        pObj->m_szDescription = rec.value("description").toString();
-        pObj->m_szUnit = rec.value("unit").toString();
-        pObj->m_szProjectConverter = rec.value("converter").toString();
-        pObj->m_szComments = rec.value("comments").toString();
+        pObj->m_szTagID = pTagSysObj->getProperty("id");
+        pObj->m_szName = pTagSysObj->getProperty("name");
+        pObj->m_szDescription = pTagSysObj->getProperty("desc");
+        pObj->m_szUnit = pTagSysObj->getProperty("unit");
+        pObj->m_szProjectConverter = pTagSysObj->getProperty("conv");
+        pObj->m_szComments = pTagSysObj->getProperty("comments");
         listTagSysDBItem_.append(pObj);
     }
-
-    return ret;
+    return true;
 }
 
 
-/**
- * @brief TagSys::save
- * @details 保存系统标签变量
- * @param pDB 数据库对象
- * @return true-成功, false-失败
- */
-bool TagSys::save(ProjectDataSQLiteDatabase *pDB)
-{
-    Q_UNUSED(pDB)
-    return false;
-}
-
-
-bool TagSys::insert(ProjectDataSQLiteDatabase *pDB, TagSysDBItem *pObj)
-{
-    Q_UNUSED(pDB)
-    Q_UNUSED(pObj)
-    return false;
-}
-
-bool TagSys::del(ProjectDataSQLiteDatabase *pDB, TagSysDBItem *pObj)
-{
-    Q_UNUSED(pDB)
-    Q_UNUSED(pObj)
-    return false;
-}
-
-bool TagSys::delAll(ProjectDataSQLiteDatabase *pDB)
-{
-    Q_UNUSED(pDB)
-    return false;
-}
-
-
-bool TagSys::update(ProjectDataSQLiteDatabase *pDB, TagSysDBItem *pObj)
-{
-    Q_UNUSED(pDB)
-    Q_UNUSED(pObj)
-    return false;
-}
-
-TagSysDBItem *TagSys::getTagSysDBItemByID(const QString &id)
-{
+bool TagSys::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pTagSyssObj = new XMLObject(pXmlObj);
+    pTagSyssObj->setTagName("tag_syss");
     for(int i=0; i<listTagSysDBItem_.count(); i++) {
         TagSysDBItem *pObj = listTagSysDBItem_.at(i);
-        if(pObj->m_szTagID == id)
-            return pObj;
+        XMLObject *pTagSysObj = new XMLObject(pTagSyssObj);
+        pTagSysObj->setTagName("tag_sys");
+        pTagSysObj->setProperty("id", pObj->m_szTagID);
+        pTagSysObj->setProperty("name", pObj->m_szName);
+        pTagSysObj->setProperty("desc", pObj->m_szDescription);
+        pTagSysObj->setProperty("unit", pObj->m_szUnit);
+        pTagSysObj->setProperty("conv", pObj->m_szProjectConverter);
+        pTagSysObj->setProperty("comments", pObj->m_szComments);
     }
-    return Q_NULLPTR;
-}
-
-TagSysDBItem *TagSys::getTagSysDBItemByName(const QString &name)
-{
-    for(int i=0; i<listTagSysDBItem_.count(); i++) {
-        TagSysDBItem *pObj = listTagSysDBItem_.at(i);
-        if(pObj->m_szName == name)
-            return pObj;
-    }
-    return Q_NULLPTR;
+    return true;
 }
 
 
-int TagSys::getLastInsertId(ProjectDataSQLiteDatabase *pDB)
-{
-    return pDB->getLastInsertId("t_tag_sys");
-}
 
