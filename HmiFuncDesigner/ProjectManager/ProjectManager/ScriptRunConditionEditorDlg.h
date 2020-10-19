@@ -12,7 +12,7 @@ class ScriptRunConditionEditorDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScriptRunConditionEditorDlg(QString projectPath, QWidget *parent = 0);
+    explicit ScriptRunConditionEditorDlg(QWidget *parent = 0);
     ~ScriptRunConditionEditorDlg();
     QString getConditionString() const;
     void setConditionString(QString condition);
@@ -28,8 +28,7 @@ private slots:
 
 private:
     Ui::ScriptRunConditionEditorDlg *ui;
-    QString m_strProjectPath;
-    QString m_strCondition;
+    QString m_szCondition;
 };
 
 #endif // SCRIPTRUNCONDITIONEDITORDLG_H

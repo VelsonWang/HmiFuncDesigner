@@ -2,31 +2,30 @@
 #include "ui_InsertTagDialog.h"
 #include "ProjectData.h"
 
-InsertTagDialog::InsertTagDialog(QString projectPath, QWidget *parent) :
-    QDialog(parent),
-    m_strProjectPath(projectPath),
-    ui(new Ui::InsertTagDialog)
+InsertTagDialog::InsertTagDialog(QWidget *parent)
+    : QDialog(parent),
+      ui(new Ui::InsertTagDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
-    m_varsList.clear();
-    ProjectData::getInstance()->getAllTagName(m_varsList, "IO");
-    for(QString varName : m_varsList) {
+    m_listTags.clear();
+    ProjectData::getInstance()->getAllTagName(m_listTags, "IO");
+    for(QString varName : m_listTags) {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pj_var.png"), varName);
         ui->listWidgetTagIO->addItem(pItem);
     }
 
-    m_varsList.clear();
-    ProjectData::getInstance()->getAllTagName(m_varsList, "TMP");
-    for(QString varName : m_varsList) {
+    m_listTags.clear();
+    ProjectData::getInstance()->getAllTagName(m_listTags, "TMP");
+    for(QString varName : m_listTags) {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pj_var.png"), varName);
         ui->listWidgetTagTmp->addItem(pItem);
     }
 
-    m_varsList.clear();
-    ProjectData::getInstance()->getAllTagName(m_varsList, "SYS");
-    for(QString varName : m_varsList) {
-        QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pj_var.png"), varName);
+    m_listTags.clear();
+    ProjectData::getInstance()->getAllTagName(m_listTags, "SYS");
+    for(QString szName : m_listTags) {
+        QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/pj_var.png"), szName);
         ui->listWidgetTagSys->addItem(pItem);
     }
 
@@ -53,7 +52,7 @@ void InsertTagDialog::on_btnOk_clicked()
  */
 void InsertTagDialog::on_btnCancel_clicked()
 {
-    m_strSelectedTagName = "";
+    m_szSelectedTagName = "";
     QDialog::reject();
 }
 
@@ -65,7 +64,7 @@ void InsertTagDialog::on_listWidgetTagIO_itemClicked(QListWidgetItem *item)
 {
     ui->listWidgetTagSys->clearSelection();
     ui->listWidgetTagTmp->clearSelection();
-    m_strSelectedTagName = ui->listWidgetTagIO->currentItem()->text();
+    m_szSelectedTagName = ui->listWidgetTagIO->currentItem()->text();
 }
 
 /**
@@ -76,7 +75,7 @@ void InsertTagDialog::on_listWidgetTagTmp_itemClicked(QListWidgetItem *item)
 {
     ui->listWidgetTagSys->clearSelection();
     ui->listWidgetTagIO->clearSelection();
-    m_strSelectedTagName = ui->listWidgetTagTmp->currentItem()->text();
+    m_szSelectedTagName = ui->listWidgetTagTmp->currentItem()->text();
 }
 
 /**
@@ -87,10 +86,10 @@ void InsertTagDialog::on_listWidgetTagSys_itemClicked(QListWidgetItem *item)
 {
     ui->listWidgetTagIO->clearSelection();
     ui->listWidgetTagTmp->clearSelection();
-    m_strSelectedTagName = ui->listWidgetTagSys->currentItem()->text();
+    m_szSelectedTagName = ui->listWidgetTagSys->currentItem()->text();
 }
 
 QString InsertTagDialog::getSelectedTagName(void) const
 {
-    return m_strSelectedTagName;
+    return m_szSelectedTagName;
 }

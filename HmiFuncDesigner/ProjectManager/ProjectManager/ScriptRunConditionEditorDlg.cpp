@@ -3,11 +3,10 @@
 #include "InsertTagDialog.h"
 #include <QDebug>
 
-ScriptRunConditionEditorDlg::ScriptRunConditionEditorDlg(QString projectPath, QWidget *parent) :
-    QDialog(parent),
-    m_strProjectPath(projectPath),
-    m_strCondition(""),
-    ui(new Ui::ScriptRunConditionEditorDlg)
+ScriptRunConditionEditorDlg::ScriptRunConditionEditorDlg(QWidget *parent)
+    : QDialog(parent),
+      m_szCondition(""),
+      ui(new Ui::ScriptRunConditionEditorDlg)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -20,7 +19,7 @@ ScriptRunConditionEditorDlg::~ScriptRunConditionEditorDlg()
 
 void ScriptRunConditionEditorDlg::on_btnVarConst_clicked()
 {
-    InsertTagDialog *pDlg = new InsertTagDialog(m_strProjectPath, this);
+    InsertTagDialog *pDlg = new InsertTagDialog(this);
     if(pDlg->exec() == QDialog::Accepted)
     {
         ui->editVarConst->setText(pDlg->getSelectedTagName());
@@ -30,7 +29,7 @@ void ScriptRunConditionEditorDlg::on_btnVarConst_clicked()
 
 void ScriptRunConditionEditorDlg::on_btnVarLeft_clicked()
 {
-    InsertTagDialog *pDlg = new InsertTagDialog(m_strProjectPath, this);
+    InsertTagDialog *pDlg = new InsertTagDialog(this);
     if(pDlg->exec() == QDialog::Accepted)
     {
         ui->editVarVarLeft->setText(pDlg->getSelectedTagName());
@@ -40,7 +39,7 @@ void ScriptRunConditionEditorDlg::on_btnVarLeft_clicked()
 
 void ScriptRunConditionEditorDlg::on_btnVarRight_clicked()
 {
-    InsertTagDialog *pDlg = new InsertTagDialog(m_strProjectPath, this);
+    InsertTagDialog *pDlg = new InsertTagDialog(this);
     if(pDlg->exec() == QDialog::Accepted)
     {
         ui->editVarVarRight->setText(pDlg->getSelectedTagName());
@@ -51,9 +50,9 @@ void ScriptRunConditionEditorDlg::on_btnVarRight_clicked()
 void ScriptRunConditionEditorDlg::on_btnOk_clicked()
 {
     if(ui->radioBtnVarConst->isChecked())
-        m_strCondition = ui->editVarConst->text() + ui->cboVarConst->currentText() + ui->editValConst->text();
+        m_szCondition = ui->editVarConst->text() + ui->cboVarConst->currentText() + ui->editValConst->text();
     else
-        m_strCondition = ui->editVarVarLeft->text() + ui->cboVarVar->currentText() + ui->editVarVarRight->text();
+        m_szCondition = ui->editVarVarLeft->text() + ui->cboVarVar->currentText() + ui->editVarVarRight->text();
 
     this->accept();
 }
@@ -66,7 +65,7 @@ void ScriptRunConditionEditorDlg::on_btnCancel_clicked()
 
 QString ScriptRunConditionEditorDlg::getConditionString() const
 {
-    return this->m_strCondition;
+    return this->m_szCondition;
 }
 
 void ScriptRunConditionEditorDlg::setConditionString(QString condition)

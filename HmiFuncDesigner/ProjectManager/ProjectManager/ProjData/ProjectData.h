@@ -12,7 +12,7 @@
 #include "TagSys.h"
 #include "TagTmp.h"
 #include "TagIO.h"
-
+#include "Script.h"
 
 class ProjectDataSQLiteDatabase;
 
@@ -58,6 +58,7 @@ public:
     TagTmp tagTmp_; // 中间标签变量
     TagIO tagIO_; // 设备标签变量
     TagIOGroup tagIOGroup_; // 设备标签变量组
+    Script script_; // 脚本
 
 private:  
     QString dbPath_;

@@ -13,7 +13,8 @@ SOURCES += \
     $$PWD/DatabaseSetting.cpp \
     $$PWD/UserAuthority.cpp \
     $$PWD/DeviceInfo.cpp \
-    $$PWD/PictureResourceManager.cpp
+    $$PWD/PictureResourceManager.cpp \
+    $$PWD/Script.cpp
 
 
 HEADERS += \
@@ -31,7 +32,8 @@ HEADERS += \
     $$PWD/DatabaseSetting.h \
     $$PWD/UserAuthority.h \
     $$PWD/DeviceInfo.h \
-    $$PWD/PictureResourceManager.h
+    $$PWD/PictureResourceManager.h \
+    $$PWD/Script.h
 
 
 

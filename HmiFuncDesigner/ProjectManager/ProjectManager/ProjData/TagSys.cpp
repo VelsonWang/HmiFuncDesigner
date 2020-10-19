@@ -62,6 +62,29 @@ bool TagSys::openFromXml(XMLObject *pXmlObj) {
 bool TagSys::saveToXml(XMLObject *pXmlObj) {
     XMLObject *pTagSyssObj = new XMLObject(pXmlObj);
     pTagSyssObj->setTagName("tag_syss");
+
+    if(listTagSysDBItem_.count() < 1) {
+        QString szTagSysConfig = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
+        QFile jasonFile(szTagSysConfig);
+        if (!jasonFile.open(QIODevice::ReadOnly)) return false;
+        QByteArray saveData = jasonFile.readAll();
+        jasonFile.close();
+        QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+        const QJsonObject json = loadDoc.object();
+        QJsonArray tagSysArray = json["SysVarArray"].toArray();
+        for (int i = 0; i < tagSysArray.size(); ++i) {
+            QJsonObject jsonObj = tagSysArray[i].toObject();
+            TagSysDBItem *pObj = new TagSysDBItem();
+            pObj->m_szTagID = jsonObj["sID"].toString();
+            pObj->m_szName = jsonObj["sName"].toString();
+            pObj->m_szDescription = jsonObj["sDescription"].toString();
+            pObj->m_szUnit = jsonObj["sUnit"].toString();
+            pObj->m_szProjectConverter = jsonObj["sProjectConverter"].toString();
+            pObj->m_szComments = jsonObj["sComments"].toString();
+            listTagSysDBItem_.append(pObj);
+        }
+    }
+
     for(int i=0; i<listTagSysDBItem_.count(); i++) {
         TagSysDBItem *pObj = listTagSysDBItem_.at(i);
         XMLObject *pTagSysObj = new XMLObject(pTagSyssObj);

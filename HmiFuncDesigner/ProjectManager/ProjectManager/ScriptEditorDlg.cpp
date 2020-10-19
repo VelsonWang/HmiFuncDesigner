@@ -21,9 +21,8 @@
 
 #include <QDebug>
 
-ScriptEditorDlg::ScriptEditorDlg(QString projectPath, QWidget *parent)
+ScriptEditorDlg::ScriptEditorDlg(QWidget *parent)
     : QDialog(parent),
-      m_strProjectPath(projectPath),
       ui(new Ui::ScriptEditorDlg) {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -506,7 +505,7 @@ void ScriptEditorDlg::on_btnToolFunc_clicked() {
 *插槽：插入RTDB变量
 */
 void ScriptEditorDlg::on_btnToolRtdb_clicked() {
-    InsertTagDialog *pDlg = new InsertTagDialog(m_strProjectPath, this);
+    InsertTagDialog *pDlg = new InsertTagDialog(this);
     if (pDlg->exec() == QDialog::Accepted) {
         QString scriptText = scriptEdit->text();
         scriptText += QString("%1").arg(pDlg->getSelectedTagName());
@@ -515,10 +514,11 @@ void ScriptEditorDlg::on_btnToolRtdb_clicked() {
     delete pDlg;
 }
 
-void ScriptEditorDlg::load(const QString scriptName) {
-    scriptEdit->setText(Helper::readString(scriptName));
+void ScriptEditorDlg::setScriptText(const QString &szScriptText) {
+    scriptEdit->setText(szScriptText);
 }
 
-void ScriptEditorDlg::save(const QString scriptName) {
-    Helper::writeString(scriptName, scriptEdit->text());
+
+QString ScriptEditorDlg::getScriptText() {
+    return scriptEdit->text();
 }

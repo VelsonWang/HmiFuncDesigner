@@ -4,10 +4,9 @@
 #include <QMessageBox>
 
 
-ScriptConditionConfigForm::ScriptConditionConfigForm(QString projectPath, QWidget *parent) :
-    QDialog(parent),
-    m_strProjectPath(projectPath),
-    ui(new Ui::ScriptConditionConfigForm)
+ScriptConditionConfigForm::ScriptConditionConfigForm(QWidget *parent)
+    : QDialog(parent),
+      ui(new Ui::ScriptConditionConfigForm)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -127,7 +126,7 @@ void ScriptConditionConfigForm::on_btnCancel_clicked()
 
 void ScriptConditionConfigForm::on_btnEdit_clicked()
 {
-    ScriptRunConditionEditorDlg  *pDlg = new ScriptRunConditionEditorDlg(m_strProjectPath, this);
+    ScriptRunConditionEditorDlg  *pDlg = new ScriptRunConditionEditorDlg(this);
     pDlg->setWindowTitle(tr("条件运行属性编辑"));
     pDlg->setConditionString(ui->textEditCondition->toPlainText());
     if(pDlg->exec() == QDialog::Accepted)

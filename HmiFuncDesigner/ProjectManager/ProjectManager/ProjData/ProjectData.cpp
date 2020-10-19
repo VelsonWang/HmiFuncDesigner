@@ -64,6 +64,9 @@ bool ProjectData::openFromXml(const QString &szProjFile)
             tagSys_.openFromXml(pTagsObj);
         }
 
+        // 脚本
+        script_.openFromXml(pProjObj);
+
 
 
     }
@@ -102,6 +105,11 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     tagTmp_.saveToXml(pTagsObj);
     // 系统标签变量
     tagSys_.saveToXml(pTagsObj);
+
+    // 脚本
+    script_.saveToXml(pProjObj);
+
+
 
 
     Helper::writeString(szProjFile, projObjs.write());
@@ -173,9 +181,6 @@ QString ProjectData::getDBPath() const
  */
 void ProjectData::getAllTagName(QStringList &varList, const QString &type)
 {
-    if(dbData_ == Q_NULLPTR)
-        return;
-
     varList.clear();
     QString szType = type.toUpper();
 

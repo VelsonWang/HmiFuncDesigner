@@ -12,7 +12,7 @@ class ScriptConditionConfigForm : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScriptConditionConfigForm(QString projectPath, QWidget *parent = 0);
+    explicit ScriptConditionConfigForm(QWidget *parent = 0);
     ~ScriptConditionConfigForm();
 
     QString GetName();
@@ -37,7 +37,7 @@ private slots:
 
 private:
     Ui::ScriptConditionConfigForm *ui;
-    QString m_strProjectPath;
+    QString m_szProjectPath;
 };
 
 #endif // SCRIPTCONDITIONCONFIGFORM_H

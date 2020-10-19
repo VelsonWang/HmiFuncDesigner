@@ -17,7 +17,7 @@ class InsertTagDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit InsertTagDialog(QString projectPath, QWidget *parent = 0);
+    explicit InsertTagDialog(QWidget *parent = 0);
     ~InsertTagDialog();
     QString getSelectedTagName(void) const;
 
@@ -30,9 +30,8 @@ private slots:
 
 private:
     Ui::InsertTagDialog *ui;
-    QStringList m_varsList;
-    QString m_strProjectPath;
-    QString m_strSelectedTagName;
+    QStringList m_listTags;
+    QString m_szSelectedTagName;
 };
 
 #endif // INSERTTAGDIALOG_H

@@ -17,10 +17,10 @@ class ScriptEditorDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScriptEditorDlg(QString projectPath, QWidget *parent = 0);
+    explicit ScriptEditorDlg(QWidget *parent = 0);
     ~ScriptEditorDlg();
-    void load(const QString scriptName);
-    void save(const QString scriptName);
+    void setScriptText(const QString &szScriptText);
+    QString getScriptText();
 
 protected:
     //void resizeEvent(QResizeEvent *event);
@@ -68,7 +68,6 @@ private slots:
 private:
     Ui::ScriptEditorDlg *ui;
     QsciScintilla *scriptEdit;
-    QString m_strProjectPath;
 };
 
 #endif // SCRIPTEDITORDLG_H
