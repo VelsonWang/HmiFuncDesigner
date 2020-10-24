@@ -19,6 +19,7 @@ SOURCES += \
 
 HEADERS += \
     $$PWD/DBTag.h \
+    $$PWD/IGraphPageSaveLoad.h \
     $$PWD/TagSys.h \
     $$PWD/TagTmp.h \
     $$PWD/TagIO.h \

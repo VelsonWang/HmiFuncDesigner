@@ -15,6 +15,7 @@ DESTDIR = $$IDE_BIN_PATH
 INCLUDEPATH += .
 INCLUDEPATH += $$PWD/widget
 INCLUDEPATH += $$PWD/ProjData
+INCLUDEPATH += $$PWD/GraphPage
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
 INCLUDEPATH += $$PWD/../../libs/qscintilla
@@ -44,7 +45,8 @@ LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 SOURCES += main.cpp\
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
-    GraphPageListWidget.cpp \
+    GraphPage/GraphPageEditor.cpp \
+    GraphPage/GraphPageListWidget.cpp \
     ListViewEx.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
@@ -80,14 +82,14 @@ SOURCES += main.cpp\
     widget/QQuickInputLineEdit.cpp \
 #    DrawMainWindow.cpp \
     GetWidthHeightDialog.cpp \
-    GraphPage.cpp \
-    GraphPageManager.cpp \
+    GraphPage/GraphPage.cpp \
+    GraphPage/GraphPageManager.cpp \
     UndoCommand.cpp \
     ElementLibraryWidget.cpp \
     ElementLibraryListWidget.cpp \
     ElementLibraryListWidgetItem.cpp \
     ElementSimpleListWidget.cpp \
-    GraphPageTreeView.cpp \
+    GraphPage/GraphPageTreeView.cpp \
     ../Public/PubTool.cpp \
     ../Public/Element.cpp \
     ../Public/ElementGroup.cpp \
@@ -97,7 +99,8 @@ HEADERS  += MainWindow.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
     DevicePluginLoader.h \
-    GraphPageListWidget.h \
+    GraphPage/GraphPageEditor.h \
+    GraphPage/GraphPageListWidget.h \
     ListViewEx.h \
     MdiArea.h \
     NewProjectDialog.h \
@@ -134,14 +137,14 @@ HEADERS  += MainWindow.h \
     widget/QQuickInputLineEdit.h \
 #    DrawMainWindow.h \
     GetWidthHeightDialog.h \
-    GraphPage.h \
-    GraphPageManager.h \
+    GraphPage/GraphPage.h \
+    GraphPage/GraphPageManager.h \
     UndoCommand.h \
     ElementLibraryWidget.h \
     ElementLibraryListWidget.h \
     ElementLibraryListWidgetItem.h \
     ElementSimpleListWidget.h \
-    GraphPageTreeView.h \
+    GraphPage/GraphPageTreeView.h \
     ../Public/PublicDefine.h \
     ../Public/PubTool.h \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \

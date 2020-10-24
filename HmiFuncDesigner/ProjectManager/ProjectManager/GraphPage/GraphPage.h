@@ -17,6 +17,7 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
+#include "XMLObject.h"
 
 class GraphPage : public QGraphicsScene
 {
@@ -51,21 +52,10 @@ public:
     void setActive(bool);
     bool active();
 
-    QString getFileName() const;
-    void setFileName(const QString &);
-
-    QString getProjectPath() const;
-    void setProjectPath(const QString &);
-
-    QString getProjectName() const;
-    void setProjectName(const QString &);
-
     void fillGraphPagePropertyModel();
 
-    void saveAsXML(const QString &filename);
-    void saveAsBinary(const QString &filename);
-    void loadAsXML(const QString &filename);
-    void loadAsBinary(const QString &filename);
+    bool openFromXml(XMLObject *pXmlObj);
+    bool saveToXml(XMLObject *pXmlObj);
 
     void writeItems(QDataStream &out,const QList<QGraphicsItem*> &items);
     void readItems(QDataStream &in,int offset,bool select);
@@ -76,9 +66,6 @@ public:
     void connectItem(Element *item);
     bool getUnsavedFlag();
     void setUnsavedFlag(bool bFlag = true);
-
-    friend QDataStream &operator<<(QDataStream &out, GraphPage &page);
-    friend QDataStream &operator>>(QDataStream &in, GraphPage &page);
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);

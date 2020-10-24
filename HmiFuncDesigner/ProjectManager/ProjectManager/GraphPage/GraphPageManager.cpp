@@ -1,17 +1,20 @@
 ﻿#include "GraphPageManager.h"
 
-GraphPageManager *GraphPageManager::instance_ = Q_NULLPTR;
 
 GraphPageManager::GraphPageManager()
 {
 }
 
+void GraphPageManager::releaseAllGraphPage()
+{
+    qDeleteAll(graphPageList_);
+    graphPageList_.clear();
+}
+
 GraphPageManager *GraphPageManager::getInstance()
 {
-    if (!instance_) {
-        instance_ = new GraphPageManager();
-    }
-    return instance_;
+    static GraphPageManager instance;
+    return &instance;
 }
 
 void GraphPageManager::addGraphPage(GraphPage *graphPage)
@@ -44,7 +47,8 @@ int GraphPageManager::getIndexByGraphPage(GraphPage *graphPage)
     return graphPageList_.indexOf(graphPage);
 }
 
-QList<GraphPage*> GraphPageManager::getGraphPageList() const
+QList<GraphPage*> *GraphPageManager::getGraphPageList()
 {
-    return graphPageList_;
+    return &graphPageList_;
 }
+

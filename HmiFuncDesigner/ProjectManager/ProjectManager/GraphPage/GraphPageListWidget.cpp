@@ -64,16 +64,6 @@ void GraphPageListWidget::contextMenuEvent(QContextMenuEvent * event)
     delete pMenu;
 }
 
-/**
- * @brief GraphPageListWidget::setProjectPath
- * @details 设置工程目录
- * @param szPath 工程目录
- */
-void GraphPageListWidget::setProjectPath(const QString &szPath)
-{
-    m_szProjectPath = szPath;
-}
-
 
 /**
  * @brief GraphPageListWidget::createEmptyGraphpage
@@ -82,20 +72,20 @@ void GraphPageListWidget::setProjectPath(const QString &szPath)
  * @param width 画面宽度
  * @param height 画面高度
  */
-void GraphPageListWidget::createEmptyGraphpage(const QString &szGraphPageName, int iWidth, int Hheight)
-{
-    QString fileName = m_szProjectPath + "/" + szGraphPageName + ".drw";
-    QString szContent = QString(
-                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-                "<graphPage fileName=\"%1.drw\" graphPageId=\"%1\" "
-                "width=\"%2\" height=\"%3\" background=\"#ffffff\">\n"
-                "</graphPage>")
-            .arg(szGraphPageName)
-            .arg(QString::number(iWidth))
-            .arg(QString::number(Hheight));
+//void GraphPageListWidget::createEmptyGraphpage(const QString &szGraphPageName, int iWidth, int Hheight)
+//{
+//    QString fileName = m_szProjectPath + "/" + szGraphPageName + ".drw";
+//    QString szContent = QString(
+//                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+//                "<graphPage fileName=\"%1.drw\" graphPageId=\"%1\" "
+//                "width=\"%2\" height=\"%3\" background=\"#ffffff\">\n"
+//                "</graphPage>")
+//            .arg(szGraphPageName)
+//            .arg(QString::number(iWidth))
+//            .arg(QString::number(Hheight));
 
-    Helper::writeString(fileName, szContent);
-}
+//    Helper::writeString(fileName, szContent);
+//}
 
 
 /**
@@ -111,10 +101,10 @@ void GraphPageListWidget::onSlotNewDrawPage()
     int iWidth = projInfoMgr.getGraphPageWidth();
     int iHeight = projInfoMgr.getGraphPageHeight();
 
-    createEmptyGraphpage(szGraphPageName, iWidth, iHeight);
+    //createEmptyGraphpage(szGraphPageName, iWidth, iHeight);
     DrawListUtils::drawList_.append(szGraphPageName);
     this->addItem(szGraphPageName);
-    DrawListUtils::saveDrawList(m_szProjectPath);
+    //DrawListUtils::saveDrawList(m_szProjectPath);
 }
 
 

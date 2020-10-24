@@ -467,16 +467,6 @@ QUndoStack *GraphPage::undoStack() const
     return m_undoStack;
 }
 
-void GraphPage::setFileName(const QString &file)
-{
-    filename = file;
-}
-
-QString GraphPage::getFileName() const
-{
-    return filename;
-}
-
 void GraphPage::setGraphPageId(const QString &id)
 {
     graphPageId = id;
@@ -1116,173 +1106,57 @@ void GraphPage::writeItems(QDataStream &out, const QList<QGraphicsItem *> &items
     }
 }
 
-void GraphPage::saveAsBinary(const QString &filename)
-{
-    QFile file(filename);
-    QFileInfo fi(filename);
-
-    if (graphPageId != fi.baseName()) {
-        QString newName = fi.absolutePath() + "/" + graphPageId + ".drwb";
-        file.rename(newName);
-    }
-
-    if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(Q_NULLPTR,
-                                 tr("错误"),
-                                 tr("文件无法保存"),
-                                 QMessageBox::Ok);
-        return;
-    }
-
-    QDataStream out(&file);
-    out << *this;
-    writeItems(out,items());
-    m_undoStack->setClean();
-    unsavedFlag_ = false;
-    file.close();
-    emit GraphPageSaved();
-}
-
-void GraphPage::loadAsBinary(const QString &filename)
-{
-    QFile file(filename);
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(Q_NULLPTR,
-                                 tr("错误"),
-                                 tr("文件无法保存"),
-                                 QMessageBox::Ok);
-        return;
-    }
-
-    QDataStream in(&file);
-    in >> *this;
-    readItems(in, 0, false);
-    file.close();
-}
-
-void GraphPage::saveAsXML(const QString &filename)
-{
-    QFile file(filename);
-    QFileInfo fi(filename);
-
-    if (graphPageId != fi.baseName()) {
-        QString newName = fi.absolutePath() + "/" + graphPageId + ".drw";
-        file.rename(newName);
-    }
-
-    if (!file.open(QIODevice::WriteOnly)) {
-        QMessageBox::information(Q_NULLPTR,
-                                 tr("错误"),
-                                 tr("文件无法保存"),
-                                 QMessageBox::Ok);
-        return;
-    }
-
-    writeGraphPage(file, this);
-
-    unsavedFlag_ = false;
-    m_undoStack->setClean();
-    file.close();
-    emit GraphPageSaved();
-}
-
-
-void GraphPage::loadAsXML(const QString &filename)
-{
-    QFile file(filename);
-
-    if (!file.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(Q_NULLPTR,
-                                 tr("错误"),
-                                 tr("无法打开文件"),
-                                 QMessageBox::Ok);
-        return;
-    }
-
-    readGraphPageConfig(file);
-    addElementEvent();
-
-    file.close();
-}
-
-void GraphPage::readGraphPageConfig(QFile &file)
-{
-    QXmlStreamReader reader;
-    reader.setDevice(&file);
-
-    while (!reader.atEnd() && !reader.hasError()) {
-        QXmlStreamReader::TokenType token = reader.readNext();
-
-        if (token == QXmlStreamReader::StartDocument) {
-            continue;
-        }
-
-        if (token == QXmlStreamReader::StartElement) {
-
-            if (reader.name() == "graphPage") {
-                readGraphPageTag(reader);
-            }
-        }
-    }
-}
-
-void GraphPage::readGraphPageTag(QXmlStreamReader &xml)
-{
-    setGraphPageAttributes(xml);
-    copyList.clear();
-    xml.readNext();
-
-    while (!(xml.tokenType() == QXmlStreamReader::EndElement && xml.name() == "graphPage")) {
-        if (xml.tokenType() == QXmlStreamReader::StartElement) {
-            if (xml.name() == "element") {
-                if (xml.attributes().hasAttribute("internalType")) {
-                    Element *ele = createElement(xml.attributes().value("internalType").toString());
-                    if (ele) {
-                        ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
-                        ele->setProjectName(szProjName_);
-                        ele->readFromXml(xml.attributes());
-                        ele->setSelected(false);
-                        connectItem(ele);
-                        addItem(ele);
-                    }
-                }
-            }
-        }
-
-        xml.readNext();
-    }
-}
-
-void GraphPage::setGraphPageAttributes(QXmlStreamReader &xml)
-{
-    if (xml.attributes().hasAttribute("fileName")) {
-        setFileName(xml.attributes().value("fileName").toString());
-    }
-
-    if (xml.attributes().hasAttribute("graphPageId")) {
-        setGraphPageId(xml.attributes().value("graphPageId").toString());
-    }
-
-    if (xml.attributes().hasAttribute("width")) {
-        setGraphPageWidth(xml.attributes().value("width").toString().toInt());
-    }
-
-    if (xml.attributes().hasAttribute("height")) {
-        setGraphPageHeight(xml.attributes().value("height").toString().toInt());
-    }
-
-    if (xml.attributes().hasAttribute("background")) {
-        setGraphPageBackground(QColor(xml.attributes().value("background").toString()));
-    }
-
-    if (xml.attributes().hasAttribute("functions")) {
-        QString listString = xml.attributes().value("functions").toString();
-        setSelectedFunctions(listString.split('|'));
-    }
+bool GraphPage::openFromXml(XMLObject *pXmlObj) {
+    this->setGraphPageId(pXmlObj->getProperty("id"));
+    this->setGraphPageWidth(pXmlObj->getProperty("width").toInt());
+    this->setGraphPageHeight(pXmlObj->getProperty("height").toInt());
+    this->setGraphPageBackground(pXmlObj->getProperty("background"));
+    QString listString = pXmlObj->getProperty("functions");
+    this->setSelectedFunctions(listString.split('|'));
 
     fillGridPixmap();
+
+    copyList.clear();
+
+    QList<XMLObject* > listElementsObj = pXmlObj->getCurrentChildren("element");
+    foreach(XMLObject* pElementObj, listElementsObj) {
+        QString szInternalType = pElementObj->getProperty("internalType");
+        if (!szInternalType.isEmpty()) {
+            Element *ele = createElement(szInternalType);
+            if (ele) {
+                ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
+                ele->setProjectName(szProjName_);
+                ele->openFromXml(pElementObj);
+                ele->setSelected(false);
+                connectItem(ele);
+                addItem(ele);
+            }
+        }
+    }
+
+    addElementEvent();
+
+    return true;
 }
+
+bool GraphPage::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pPageObj = new XMLObject(pXmlObj);
+    pPageObj->setTagName("page");
+    pPageObj->setProperty("id", this->getGraphPageId());
+    pPageObj->setProperty("width", QString::number(this->getGraphPageWidth()));
+    pPageObj->setProperty("height", QString::number(this->getGraphPageHeight()));
+    pPageObj->setProperty("background", this->getGraphPageBackground().name());
+    pPageObj->setProperty("functions", this->getSelectedFunctions().join("|"));
+
+    QListIterator <QGraphicsItem*> it(this->items());
+    while (it.hasNext()) {
+        Element *ele = static_cast<Element *>(it.next());
+        ele->saveToXml(pXmlObj);
+    }
+
+    return true;
+}
+
 
 Element *GraphPage::createElement(const QString &internalType)
 {
@@ -1357,7 +1231,7 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml)
                     if (ele) {
                         ele->setProjectName(szProjName_);
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
-                        ele->readFromXml(xml.attributes());
+                        //ele->readFromXml(xml.attributes());
                         connectItem(ele);
                         addItem(ele);
                     }
@@ -1389,38 +1263,6 @@ void GraphPage::slotSaveAsLibrary()
     writeLibrary(file,this);
 
     file.close();
-}
-
-/**
- * @brief GraphPage::getProjectPath
- * @details 获取工程路径
- * @return 工程路径
- */
-QString GraphPage::getProjectPath() const
-{
-    return szProjPath_;
-}
-
-
-/**
- * @brief GraphPage::setProjectPath
- * @details 设置工程路径
- * @param path 工程路径
- */
-void GraphPage::setProjectPath(const QString &path)
-{
-    szProjPath_ = path;
-}
-
-
-QString GraphPage::getProjectName() const
-{
-    return szProjName_;
-}
-
-void GraphPage::setProjectName(const QString &name)
-{
-    szProjName_ = name;
 }
 
 /**
@@ -1487,25 +1329,7 @@ void GraphPage::getSupportEvents(QStringList &listValue)
 
 void GraphPage::writeGraphPage(QFile &file, GraphPage *graphPage)
 {
-    QXmlStreamWriter writer(&file);
-    writer.setAutoFormatting(true);
-    writer.writeStartDocument();
-    writer.writeStartElement("graphPage");
-    writer.writeAttribute("fileName", graphPage->getFileName());
-    writer.writeAttribute("graphPageId", graphPage->getGraphPageId());
-    writer.writeAttribute("width", QString::number(graphPage->getGraphPageWidth()));
-    writer.writeAttribute("height", QString::number(graphPage->getGraphPageHeight()));
-    writer.writeAttribute("background", graphPage->getGraphPageBackground().name());
-    writer.writeAttribute("functions", graphPage->getSelectedFunctions().join("|"));
-    QListIterator <QGraphicsItem*> it(graphPage->items());
 
-    while (it.hasNext()) {
-        Element *ele = static_cast<Element *>(it.next());
-        ele->writeAsXml(writer);
-    }
-
-    writer.writeEndElement();
-    writer.writeEndDocument();
 }
 
 void GraphPage::writeLibrary(QFile &file, GraphPage *graphPage)
@@ -1519,7 +1343,7 @@ void GraphPage::writeLibrary(QFile &file, GraphPage *graphPage)
 
     while (it.hasNext()) {
         Element *ele = static_cast<Element *>(it.next());
-        ele->writeAsXml(writer);
+        //ele->writeAsXml(writer);
     }
 
     writer.writeEndElement();
@@ -1543,44 +1367,3 @@ void GraphPage::updateAllElementGraphPageSize(int width, int height)
         }
     }
 }
-
-QDataStream &operator<<(QDataStream &out, GraphPage &page)
-{
-    out << page.getFileName()
-        << page.getGraphPageId()
-        << page.getGraphPageBackground()
-        << page.getGraphPageHeight()
-        << page.getGraphPageWidth()
-        << page.getSelectedFunctions();
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, GraphPage &page)
-{
-    QString filename;
-    QString id;
-
-    QColor backColor;
-    int height;
-    int width;
-    QStringList funcs;
-
-    in >> filename
-       >> id
-       >> backColor
-       >> height
-       >> width
-       >> funcs;
-
-    page.setFileName(filename);
-    page.setGraphPageId(id);
-    page.setGraphPageWidth(width);
-    page.setGraphPageHeight(height);
-    page.setGraphPageBackground(backColor);
-    page.setSelectedFunctions(funcs);
-    page.fillGridPixmap();
-
-    return in;
-}
-

@@ -18,6 +18,8 @@
 #include "ProjectTreeView.h"
 #include "GraphPageListWidget.h"
 #include "ChildInterface.h"
+#include "GraphPageEditor.h"
+#include "IGraphPageSaveLoad.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -38,7 +40,8 @@
 #include <QSignalMapper>
 
 
-class MainWindow : public QMainWindow
+
+class MainWindow : public QMainWindow, public IGraphPageSaveLoad
 {
     Q_OBJECT
 
@@ -46,6 +49,12 @@ public:
     explicit MainWindow(QWidget *parent = Q_NULLPTR);
     ~MainWindow();
     void UpdateDeviceVariableTableGroup();
+
+public:
+    // 加载画面
+    bool openFromXml(XMLObject *pXmlObj);
+    // 保存画面
+    bool saveToXml(XMLObject *pXmlObj);
 
 public slots:
     QWidget* getActiveSubWindow();
@@ -74,29 +83,22 @@ protected:
 
 public:
     bool isGridVisible() const;
-    // 打开画面
-    void openGraphPage(const QString &szProjPath, const QString &szProjName, const QString &szPageName);
 
 private:
     void createUndoView();
     void addNewGraphPage();
     QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
     int exitResponse();
-    QString getFileName();
     void updateGraphPageViewInfo(const QString &);
     void connectGraphPage(GraphPage *graphPage);
     void disconnectGraphPage(GraphPage *graphPage);
     void removeGraphPage(QGraphicsView *view);
-    bool isGraphPageOpen(const QString &filename);
-
-    bool createDocument(GraphPage *graphPage, QGraphicsView *view, const QString &filename);
+    bool createDocument(GraphPage *graphPage, QGraphicsView *view);
     // 创建空的画面页
     void createEmptyGraphpage(const QString &projPath,
                               const QString &graphPageName,
                               int width,
                               int height);
-    // 初始化画面列表控件
-    void initGraphPageListWidget();
     // 清空画面列表控件
     void clearGraphPageListWidget();
 
@@ -132,10 +134,6 @@ private slots:
     void onSlotShowPropEditor(bool);
     // 画面.新建
     void onSlotNewGraphPage();
-    // 画面.打开
-    void onSlotEditOpen();
-    // 画面.保存
-    void onSlotSaveGraphPage();
     // 显示栅格
     void onSlotShowGrid(bool);
     // 画面放大
@@ -224,7 +222,7 @@ private:
     QString m_szCurTreeViewItem;
     GraphPage *m_pCurrentGraphPageObj = Q_NULLPTR;
     QGraphicsView *m_pCurrentViewObj = Q_NULLPTR;
-    QTabWidget *m_pGraphPageTabWidgetObj = Q_NULLPTR;
+    GraphPageEditor *m_pGraphPageEditorObj = Q_NULLPTR;
     ElementLibraryWidget *m_pElementWidgetObj = Q_NULLPTR;
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;
@@ -256,8 +254,6 @@ private:
     QAction *m_pActShowGraphObj = Q_NULLPTR; // 窗口.图形元素
     QAction *m_pActShowPropEditorObj = Q_NULLPTR; // 窗口.属性编辑器
     QAction *m_pActNewGraphPageObj = Q_NULLPTR; // 画面.新建
-    QAction *m_pActOpenObj = Q_NULLPTR; // 画面.打开
-    QAction *m_pActSaveGraphPageObj = Q_NULLPTR; // 画面.保存
     QAction *m_pActShowGridObj = Q_NULLPTR; // 显示栅格
     QAction *m_pActZoomInObj = Q_NULLPTR; // 画面放大
     QAction *m_pActZoomOutObj = Q_NULLPTR; // 画面缩小

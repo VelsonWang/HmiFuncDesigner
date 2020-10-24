@@ -10,15 +10,15 @@ class GraphPageManager : public QObject
     Q_OBJECT
 public:
     static GraphPageManager *getInstance();
+    void releaseAllGraphPage();
     void addGraphPage(GraphPage*);
     GraphPage *getGraphPageById(const QString &) const;
     int getIndexByGraphPage(GraphPage *);
-    QList<GraphPage*> getGraphPageList() const;
+    QList<GraphPage*>* getGraphPageList();
     void removeGraphPage(GraphPage *graphPage);
 
 private:
     GraphPageManager();
-    static GraphPageManager *instance_;
     QList<GraphPage *> graphPageList_;
 };
 

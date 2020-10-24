@@ -10,13 +10,13 @@ class GraphPageListWidget : public QListWidget
 public:
     explicit GraphPageListWidget(QWidget *parent = nullptr);
     // 设置工程目录
-    void setProjectPath(const QString &szPath);
+    //void setProjectPath(const QString &szPath);
 
 signals:
 
 private:
     // 创建空的画面页
-    void createEmptyGraphpage(const QString &szGraphPageName, int iWidth, int Hheight);
+    //void createEmptyGraphpage(const QString &szGraphPageName, int iWidth, int Hheight);
 
 
 protected:
@@ -27,7 +27,7 @@ private slots:
     void onSlotNewDrawPage();
 
 private:
-    QString m_szProjectPath; // 工程目录
+    //QString m_szProjectPath; // 工程目录
 
 };
 

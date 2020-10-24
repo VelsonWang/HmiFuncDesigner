@@ -13,6 +13,7 @@
 #include "TagTmp.h"
 #include "TagIO.h"
 #include "Script.h"
+#include "IGraphPageSaveLoad.h"
 
 class ProjectDataSQLiteDatabase;
 
@@ -59,6 +60,7 @@ public:
     TagIO tagIO_; // 设备标签变量
     TagIOGroup tagIOGroup_; // 设备标签变量组
     Script script_; // 脚本
+    IGraphPageSaveLoad *pImplGraphPageSaveLoadObj_; // 画面
 
 private:  
     QString dbPath_;

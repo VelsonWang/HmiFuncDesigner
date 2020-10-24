@@ -11,6 +11,7 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
+#include "XMLObject.h"
 
 class Element : public QGraphicsObject
 {
@@ -32,8 +33,8 @@ public:
     QList<QtProperty*> getPropertyList() const;
     virtual void updatePropertyModel() = 0;
     virtual void createPropertyList() = 0;
-    virtual void writeAsXml(QXmlStreamWriter &) = 0;
-    virtual void readFromXml(const QXmlStreamAttributes &) = 0;
+    virtual bool openFromXml(XMLObject *pXmlObj) = 0;
+    virtual bool saveToXml(XMLObject *pXmlObj) = 0;
     virtual void setBlocked(bool);
     virtual void writeData(QDataStream &out) = 0;
     virtual void readData(QDataStream &in) = 0;

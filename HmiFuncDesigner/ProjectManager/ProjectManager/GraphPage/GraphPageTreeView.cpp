@@ -23,12 +23,10 @@ void GraphPageTreeView::graphPageChangeName(int index, const QString &name) {
 }
 
 void GraphPageTreeView::updateView() {
-
     clear();
-
-    QListIterator <GraphPage*> it(GraphPageManager::getInstance()->getGraphPageList());
-
-    while (it.hasNext()) {
-        addNewElement(it.next()->getGraphPageId());
+    QList<GraphPage*>* pGraphPageListObj = GraphPageManager::getInstance()->getGraphPageList();
+    for(int i=0; i<pGraphPageListObj->count(); i++) {
+        GraphPage* pObj = pGraphPageListObj->at(i);
+        addNewElement(pObj->getGraphPageId());
     }
 }

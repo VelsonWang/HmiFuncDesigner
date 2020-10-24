@@ -13,6 +13,7 @@ ProjectData::ProjectData()
     : dbPath_(""),
       szProjVersion_("V1.0.0")
 {
+    this->pImplGraphPageSaveLoadObj_ = Q_NULLPTR;
     szProjPath_ = "";
     szProjName_ = "";
 }
@@ -64,10 +65,16 @@ bool ProjectData::openFromXml(const QString &szProjFile)
             tagSys_.openFromXml(pTagsObj);
         }
 
+        // 加载画面
+        XMLObject *pPagesObj = pProjObj->getCurrentChild("pages");
+        if(pPagesObj != Q_NULLPTR) {
+            if(pImplGraphPageSaveLoadObj_) {
+                pImplGraphPageSaveLoadObj_->openFromXml(pPagesObj);
+            }
+        }
+
         // 脚本
         script_.openFromXml(pProjObj);
-
-
 
     }
 
@@ -106,10 +113,15 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     // 系统标签变量
     tagSys_.saveToXml(pTagsObj);
 
+    // 保存画面
+    XMLObject *pPagesObj = new XMLObject(pProjObj);
+    pPagesObj->setTagName("pages");
+    if(pImplGraphPageSaveLoadObj_) {
+        pImplGraphPageSaveLoadObj_->saveToXml(pPagesObj);
+    }
+
     // 脚本
     script_.saveToXml(pProjObj);
-
-
 
 
     Helper::writeString(szProjFile, projObjs.write());
