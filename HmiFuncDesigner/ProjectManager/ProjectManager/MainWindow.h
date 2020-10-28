@@ -86,7 +86,7 @@ public:
 
 private:
     void createUndoView();
-    void addNewGraphPage();
+    void addNewGraphPage(const QString &szName);
     QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
     int exitResponse();
     void updateGraphPageViewInfo(const QString &);
@@ -94,11 +94,6 @@ private:
     void disconnectGraphPage(GraphPage *graphPage);
     void removeGraphPage(QGraphicsView *view);
     bool createDocument(GraphPage *graphPage, QGraphicsView *view);
-    // 创建空的画面页
-    void createEmptyGraphpage(const QString &projPath,
-                              const QString &graphPageName,
-                              int width,
-                              int height);
     // 清空画面列表控件
     void clearGraphPageListWidget();
 
@@ -163,9 +158,9 @@ private slots:
     // 下移一层
     void onSlotDownLayerElements();
     // 画面名称被单击
-    void onSlotListWidgetGraphPagesCurrentTextChanged(const QString &szText);
-    // 新建画面
-    void onNewGraphPage();
+    void onSlotGraphPageNameClicked(QListWidgetItem *pItemObj);
+    // 创建指定名称的画面
+    void onSlotCreateGraphPageUseName(const QString &szName);
     // 重命名画面
     void onRenameGraphPage();
     // 删除画面

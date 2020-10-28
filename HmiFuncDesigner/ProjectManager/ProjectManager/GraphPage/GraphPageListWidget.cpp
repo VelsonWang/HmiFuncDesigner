@@ -4,6 +4,7 @@
 #include "ProjectData.h"
 #include <QMenu>
 #include <QAction>
+#include <QInputDialog>
 
 GraphPageListWidget::GraphPageListWidget(QWidget *parent) : QListWidget(parent)
 {
@@ -94,19 +95,26 @@ void GraphPageListWidget::contextMenuEvent(QContextMenuEvent * event)
  */
 void GraphPageListWidget::onSlotNewDrawPage()
 {
-    int last = DrawListUtils::getMaxDrawPageNum("draw");
-    QString szGraphPageName = QString("draw%1").arg(last);
+    QString szName = QString("draw_new");
+    QInputDialog dlg(this);
+    dlg.setWindowTitle(tr("画面名称"));
+    dlg.setLabelText(tr("请输入画面名称"));
+    dlg.setOkButtonText(tr("确定"));
+    dlg.setCancelButtonText(tr("取消"));
+    dlg.setTextValue(szName);
 
-    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    int iWidth = projInfoMgr.getGraphPageWidth();
-    int iHeight = projInfoMgr.getGraphPageHeight();
-
-    //createEmptyGraphpage(szGraphPageName, iWidth, iHeight);
-    DrawListUtils::drawList_.append(szGraphPageName);
-    this->addItem(szGraphPageName);
-    //DrawListUtils::saveDrawList(m_szProjectPath);
+reInput:
+    dlg.setLabelText(tr("画面名称为空或画面名称重复"));
+    if ( dlg.exec() == QDialog::Accepted ) {
+        szName = dlg.textValue();
+        QList<QListWidgetItem*> listWidgetItem = this->findItems(szName, Qt::MatchCaseSensitive);
+        if (listWidgetItem.size() > 0 || szName == "") {
+            goto reInput;
+        }
+        this->addItem(szName);
+        emit notifyCreateGraphPageUseName(szName);
+    }
 }
-
 
 
 

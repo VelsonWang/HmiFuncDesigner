@@ -13,11 +13,8 @@ public:
     //void setProjectPath(const QString &szPath);
 
 signals:
-
-private:
-    // 创建空的画面页
-    //void createEmptyGraphpage(const QString &szGraphPageName, int iWidth, int Hheight);
-
+    // 创建指定名称的画面
+    void notifyCreateGraphPageUseName(const QString &szName);
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
