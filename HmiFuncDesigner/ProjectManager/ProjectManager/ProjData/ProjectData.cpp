@@ -1,17 +1,11 @@
 #include "ProjectData.h"
-#include "ProjectDataSQLiteDatabase.h"
 #include "XMLObject.h"
 #include "Helper.h"
 #include <QFileInfo>
 #include <QDebug>
 
-ProjectDataSQLiteDatabase *ProjectData::dbData_ = Q_NULLPTR;
 
-
-
-ProjectData::ProjectData()
-    : dbPath_(""),
-      szProjVersion_("V1.0.0")
+ProjectData::ProjectData() : szProjVersion_("V1.0.0")
 {
     this->pImplGraphPageSaveLoadObj_ = Q_NULLPTR;
     szProjPath_ = "";
@@ -20,10 +14,7 @@ ProjectData::ProjectData()
 
 ProjectData::~ProjectData()
 {
-    if(dbData_ != Q_NULLPTR) {
-        delete dbData_;
-        dbData_ = Q_NULLPTR;
-    }
+
 }
 
 
@@ -75,6 +66,8 @@ bool ProjectData::openFromXml(const QString &szProjFile)
 
         // 脚本
         script_.openFromXml(pProjObj);
+        // 图片资源管理
+        pictureResourceMgr_.openFromXml(pProjObj);
 
     }
 
@@ -122,66 +115,12 @@ bool ProjectData::saveToXml(const QString &szProjFile)
 
     // 脚本
     script_.saveToXml(pProjObj);
-
+    // 图片资源管理
+    pictureResourceMgr_.saveToXml(pProjObj);
 
     Helper::writeString(szProjFile, projObjs.write());
 
     return true;
-}
-
-
-/**
- * @brief ProjectData::createOrOpenProjectData
- * @details 创建或打开工程数据
- * @param projFile 工程路径
- * @param projFile 工程名称
- * @return true-成功, false-失败
- */
-bool ProjectData::createOrOpenProjectData(const QString &projPath, const QString &projName)
-{
-    QString fileName = projPath;
-
-    if(fileName.endsWith('/'))
-        fileName.chop(1);
-
-    szProjPath_ = fileName;
-    szProjName_ = projName;
-
-    if(szProjPath_.isEmpty() || szProjName_.isEmpty()) {
-        qWarning() << __FILE__ << __LINE__ <<__FUNCTION__
-                   << "szProjPath_: " << szProjPath_ << " "
-                   << "szProjName_: " << szProjName_;
-        return false;
-    }
-
-    fileName = szProjPath_ + "/" + szProjName_ + ".pdt";
-
-    if(dbPath_ != "") {
-        if(dbData_ != Q_NULLPTR) {
-            delete dbData_;
-            dbData_ = Q_NULLPTR;
-        }
-    }
-
-    dbPath_ = fileName;
-    dbData_ = new ProjectDataSQLiteDatabase(fileName);
-    if(dbData_->openDatabase()) {
-        dbData_->createTables();
-        return true;
-    }
-
-    return false;
-}
-
-
-/**
- * @brief ProjectData::getDBPath
- * @details 获取工程数据文件路径
- * @return 工程数据文件路径
- */
-QString ProjectData::getDBPath() const
-{
-    return dbPath_;
 }
 
 

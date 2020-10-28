@@ -1140,9 +1140,6 @@ bool GraphPage::openFromXml(XMLObject *pXmlObj) {
 }
 
 bool GraphPage::saveToXml(XMLObject *pXmlObj) {
-
-    qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-
     XMLObject *pPageObj = new XMLObject(pXmlObj);
     pPageObj->setTagName("page");
     pPageObj->setProperty("id", this->getGraphPageId());

@@ -1369,34 +1369,15 @@ void MainWindow::updateRecentProjectList(QString newProj)
  * @return true-成功，false-失败
  */
 bool MainWindow::openFromXml(XMLObject *pXmlObj) {
-    qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-
     GraphPageManager::getInstance()->releaseAllGraphPage();
     this->m_pListWidgetGraphPagesObj->clear();
 
     QList<XMLObject* > listPagesObj = pXmlObj->getCurrentChildren("page");
     foreach(XMLObject* pPageObj, listPagesObj) {
-        QString szPageId = pPageObj->getProperty("graphPageId");
+        QString szPageId = pPageObj->getProperty("id");
         this->m_pListWidgetGraphPagesObj->addItem(szPageId);
-
-        QGraphicsView *view = createTabView();
-        if (m_pGraphPageEditorObj->indexOf(view) != -1) {
-            delete view;
-            return false;
-        }
-        GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
-        if (!createDocument(graphPage, view)) return false;
-        m_pCurrentGraphPageObj = Q_NULLPTR;
-        m_pCurrentViewObj = Q_NULLPTR;
-        graphPage->setGridVisible(m_bGraphPageGridVisible);
-        graphPage->openFromXml(pPageObj);
-        view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-        graphPage->setGraphPageId(szPageId);
-        graphPage->fillGraphPagePropertyModel();
+        addNewGraphPage(szPageId);
     }
-
-    if(this->m_pListWidgetGraphPagesObj->count() > 0)
-        this->m_pListWidgetGraphPagesObj->setCurrentRow(0);
 
     return true;
 }
@@ -1409,22 +1390,19 @@ bool MainWindow::openFromXml(XMLObject *pXmlObj) {
  * @return true-成功，false-失败
  */
 bool MainWindow::saveToXml(XMLObject *pXmlObj) {
-    qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-
     QList<GraphPage*>* pGraphPageListObj = GraphPageManager::getInstance()->getGraphPageList();
     for(int i=0; i<pGraphPageListObj->count(); i++) {
         GraphPage *pObj = pGraphPageListObj->at(i);
-        XMLObject *pPageObj = new XMLObject(pXmlObj);
-        pObj->saveToXml(pPageObj);
+        pObj->saveToXml(pXmlObj);
     }
     return true;
 }
 
 
 /**
-    * @brief MainWindow::onSlotNewGraphPage
-    * @details [画面.新建] 动作响应函数
-    */
+ * @brief MainWindow::onSlotNewGraphPage
+ * @details [画面.新建] 动作响应函数
+ */
 void MainWindow::onSlotNewGraphPage()
 {
     QString szName = QString("draw_new");

@@ -15,8 +15,6 @@
 #include "Script.h"
 #include "IGraphPageSaveLoad.h"
 
-class ProjectDataSQLiteDatabase;
-
 class ProjectData
 {
 public:
@@ -27,11 +25,6 @@ public:
     bool saveToXml(const QString &szProjFile);
 
     static ProjectData* getInstance();
-
-    // 创建或打开工程数据
-    bool createOrOpenProjectData(const QString &projPath, const QString &projName);
-    // 获取工程数据文件路径
-    QString getDBPath() const;
 
     //获取工程所有变量的名称
     void getAllTagName(QStringList &varList, const QString &type = "ALL");
@@ -44,7 +37,6 @@ public:
     QString getProjectNameWithOutSuffix(const QString &projectName);
 
 public:
-    static ProjectDataSQLiteDatabase *dbData_;
     QString szProjFile_; // 工程文件名
     QString szProjPath_; // 工程文件所在的路径
     QString szProjName_; // 工程文件名称
@@ -63,7 +55,6 @@ public:
     IGraphPageSaveLoad *pImplGraphPageSaveLoadObj_; // 画面
 
 private:  
-    QString dbPath_;
 
     Q_DISABLE_COPY(ProjectData)
 };
