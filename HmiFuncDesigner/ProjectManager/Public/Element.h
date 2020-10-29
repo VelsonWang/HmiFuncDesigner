@@ -17,9 +17,7 @@ class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    Element(const QString &szProjPath,
-            const QString &szProjName,
-            QtVariantPropertyManager *propertyMgr);
+    Element(QtVariantPropertyManager *propertyMgr);
     virtual ~Element();
 
     void init();
@@ -64,16 +62,6 @@ public:
     QString getInternalElementType() const;
 
     void moveTo(int x,int y);
-
-    // 设置工程路径
-    void setProjectPath(const QString &path);
-    // 获取工程路径
-    QString getProjectPath() const;
-
-    // 设置工程名称
-    void setProjectName(const QString &name);
-    // 获取工程名称
-    QString getProjectName() const;
 
     // 获取分配的索引值
     int getIndexFromIDString(const QString &szID);
@@ -140,8 +128,6 @@ protected:
 
     quint32 rd;
 
-    QString szProjectPath_; // 工程路径
-    QString szProjectName_; // 工程名称
     int iGraphPageWidth_; // 画面宽度
     int iGraphPageHeight_; // 画面高度
 

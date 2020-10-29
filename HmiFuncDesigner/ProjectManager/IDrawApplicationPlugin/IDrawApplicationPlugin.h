@@ -1,5 +1,4 @@
-﻿
-#ifndef IDRAWAPPLICATIONPLUGIN_H
+﻿#ifndef IDRAWAPPLICATIONPLUGIN_H
 #define IDRAWAPPLICATIONPLUGIN_H
 
 
@@ -32,9 +31,7 @@ public:
     // 获取元素ID String
     virtual QString getElementIDString() = 0;
     // 创建元素
-    virtual Element* createElement(const QString &szProjPath,
-                                   const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr) = 0;
+    virtual Element* createElement(QtVariantPropertyManager *propertyMgr) = 0;
 };
 
 

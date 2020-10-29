@@ -49,8 +49,6 @@ GraphPage::GraphPage(const QRectF &rect,
     QGraphicsScene(parent),
     filename(QString()),
     unsavedFlag_(false),
-    szProjPath_(""),
-    szProjName_(""),
     variantPropertyManager_(propertyMgr),
     propertyEditor_(propertyEditor)
 {
@@ -607,7 +605,7 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != Q_NULLPTR && plugin->getElementName() == typeId) {
-                Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
+                Element *ele = plugin->createElement(variantPropertyManager_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
                     ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
@@ -1059,7 +1057,7 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select)
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != Q_NULLPTR && plugin->getElementID() == objectType) {
-                    Element *ele = plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
+                    Element *ele = plugin->createElement(variantPropertyManager_);
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
@@ -1125,7 +1123,6 @@ bool GraphPage::openFromXml(XMLObject *pXmlObj) {
             Element *ele = createElement(szInternalType);
             if (ele) {
                 ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
-                ele->setProjectName(szProjName_);
                 ele->openFromXml(pElementObj);
                 ele->setSelected(false);
                 connectItem(ele);
@@ -1168,7 +1165,7 @@ Element *GraphPage::createElement(const QString &internalType)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != Q_NULLPTR && plugin->getElementIDString() == internalType) {
-                return plugin->createElement(szProjPath_, szProjName_, variantPropertyManager_);
+                return plugin->createElement(variantPropertyManager_);
             }
         }
     }
@@ -1229,7 +1226,6 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml)
                 if (xml.attributes().hasAttribute("internalType")) {
                     Element *ele = createElement(xml.attributes().value("internalType").toString());
                     if (ele) {
-                        ele->setProjectName(szProjName_);
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         //ele->readFromXml(xml.attributes());
                         connectItem(ele);

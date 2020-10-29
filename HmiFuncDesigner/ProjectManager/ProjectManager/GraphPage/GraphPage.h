@@ -154,8 +154,6 @@ signals:
     void GraphPageSaved();
 
 private:
-    QString szProjPath_;
-    QString szProjName_;
     bool gridVisible;
     Element *currentItem;
     static const int gridSize = 20;

@@ -2,13 +2,12 @@
 #include "ProjectData.h"
 #include "variantmanager.h"
 #include "editbasicpropertydialog.h"
+#include <QString>
 
 int ElementText::iLastIndex_ = 1;
 
-ElementText::ElementText(const QString &szProjPath,
-                         const QString &szProjName,
-                         QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementText::ElementText(QtVariantPropertyManager *propertyMgr)
+    : Element(propertyMgr)
 {
     elementId = QString(tr("Text_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -23,8 +22,6 @@ ElementText::ElementText(const QString &szProjPath,
     hideOnClick_ = false;
     showOnInitial_ = true;
     init();
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     createPropertyList();
     updatePropertyModel();
 }
@@ -423,138 +420,98 @@ void ElementText::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-void ElementText::writeAsXml(QXmlStreamWriter &writer)
+bool ElementText::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-	writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeAttribute("elementtext", elementText);
-    writer.writeAttribute("halign", getHAlignString(szHAlign_));
-    writer.writeAttribute("valign", getVAlignString(szVAlign_));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("hideOnClick", hideOnClick_?"true":"false");
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeEndElement();
-}
+    XMLObject *pObj = pXmlObj->getCurrentChild("element");
+    if(pObj == Q_NULLPTR) return false;
 
-void ElementText::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
+
+    szTagSelected_ = pObj->getProperty("tag");
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
+    elementText = pObj->getProperty("elementtext");
+
+    QString align = pObj->getProperty("halign");
+    this->setHAlignString(align, szHAlign_);
+
+    align = pObj->getProperty("valign");
+    this->setVAlignString(align, szVAlign_);
+
+    backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
+    QString value = pObj->getProperty("transparentBackground");
+    transparentBackground_ = false;
+    if(value == "true") {
+        transparentBackground_ = true;
     }
 
-	if (attributes.hasAttribute("tag")) {
-		szTagSelected_ = attributes.value("tag").toString();
-	}
+    textColor = QColor(pObj->getProperty("textcolor"));
 
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
+    QString szFont = pObj->getProperty("font");
+    font_.fromString(szFont);
+
+
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+
+    value = pObj->getProperty("hideOnClick");
+    hideOnClick_ = false;
+    if(value == "true") {
+        hideOnClick_ = true;
     }
 
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
+    value = pObj->getProperty("showOnInitial");
+    showOnInitial_ = false;
+    if(value == "true") {
+        showOnInitial_ = true;
     }
 
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("elementtext")) {
-        elementText = attributes.value("elementtext").toString();
-    }
-
-    if (attributes.hasAttribute("halign")) {
-        QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
-    }
-
-    if (attributes.hasAttribute("valign")) {
-        QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
-    }
-
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
-    }
-
-    if (attributes.hasAttribute("transparentBackground")) {
-        QString value = attributes.value("transparentBackground").toString();
-        transparentBackground_ = false;
-        if(value == "true") {
-            transparentBackground_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("textcolor")) {
-        textColor = QColor(attributes.value("textcolor").toString());
-    }
-
-    if (attributes.hasAttribute("font")) {
-        QString szFont = attributes.value("font").toString();
-        font_.fromString(szFont);
-    }
-
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
-
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
-
-    if (attributes.hasAttribute("hideOnClick")) {
-        QString value = attributes.value("hideOnClick").toString();
-        hideOnClick_ = false;
-        if(value == "true") {
-            hideOnClick_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("elemAngle")) {
-        setAngle(attributes.value("elemAngle").toString().toInt());
-    }
+    setAngle(pObj->getProperty("elemAngle").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+bool ElementText::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("tag", szTagSelected_);
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    pObj->setProperty("elementtext", elementText);
+    pObj->setProperty("halign", getHAlignString(szHAlign_));
+    pObj->setProperty("valign", getVAlignString(szVAlign_));
+    pObj->setProperty("backgroundColor", backgroundColor_.name());
+    pObj->setProperty("transparentBackground", transparentBackground_?"true":"false");
+    pObj->setProperty("textcolor", textColor.name());
+    pObj->setProperty("font", font_.toString());
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("hideOnClick", hideOnClick_?"true":"false");
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("elemAngle", QString::number(elemAngle));
+    return true;
+}
+
 
 void ElementText::writeData(QDataStream &out)
 {
     out << this->elementId
-		<< this->szTagSelected_
+        << this->szTagSelected_
         << this->x()
         << this->y()
         << this->zValue()
@@ -577,7 +534,7 @@ void ElementText::writeData(QDataStream &out)
 void ElementText::readData(QDataStream &in)
 {
     QString id;
-	QString szTagSelected;
+    QString szTagSelected;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
@@ -597,31 +554,31 @@ void ElementText::readData(QDataStream &in)
     qreal angle;
 
     in >> id
-	   >> szTagSelected
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> text
-       >> hAlign
-       >> vAlign
-       >> backgroundColor
-       >> transparentBackground
-       >> textColor
-       >> font
-       >> borderWidth
-       >> borderColor
-       >> hideOnClick
-       >> showOnInitial
-       >> angle;
+            >> szTagSelected
+            >> xpos
+            >> ypos
+            >> zvalue
+            >> width
+            >> height
+            >> text
+            >> hAlign
+            >> vAlign
+            >> backgroundColor
+            >> transparentBackground
+            >> textColor
+            >> font
+            >> borderWidth
+            >> borderColor
+            >> hideOnClick
+            >> showOnInitial
+            >> angle;
 
     this->setElementId(id);
     int index = getIndexFromIDString(id);
     if(iLastIndex_ < index) {
         iLastIndex_ = index;
     }
-	this->szTagSelected_ = szTagSelected;
+    this->szTagSelected_ = szTagSelected;
     this->setElementXPos(static_cast<int>(xpos));
     this->setElementYPos(static_cast<int>(ypos));
     this->setElementZValue(static_cast<int>(zvalue));
@@ -646,7 +603,7 @@ void ElementText::readData(QDataStream &in)
 QDataStream &operator<<(QDataStream &out,const ElementText &text)
 {
     out << text.elementId
-		<< text.szTagSelected_
+        << text.szTagSelected_
         << text.x()
         << text.y()
         << text.zValue()
@@ -670,7 +627,7 @@ QDataStream &operator<<(QDataStream &out,const ElementText &text)
 QDataStream &operator>>(QDataStream &in, ElementText &text)
 {
     QString id;
-	QString szTagSelected;
+    QString szTagSelected;
     qreal xpos;
     qreal ypos;
     qreal zvalue;
@@ -690,31 +647,31 @@ QDataStream &operator>>(QDataStream &in, ElementText &text)
     qreal angle;
 
     in >> id
-	   >> szTagSelected
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> txt
-       >> hAlign
-       >> vAlign
-       >> backgroundColor
-       >> transparentBackground
-       >> textColor
-       >> font
-       >> borderWidth
-       >> borderColor
-       >> hideOnClick
-       >> showOnInitial
-       >> angle;
+            >> szTagSelected
+            >> xpos
+            >> ypos
+            >> zvalue
+            >> width
+            >> height
+            >> txt
+            >> hAlign
+            >> vAlign
+            >> backgroundColor
+            >> transparentBackground
+            >> textColor
+            >> font
+            >> borderWidth
+            >> borderColor
+            >> hideOnClick
+            >> showOnInitial
+            >> angle;
 
     text.setElementId(id);
     int index = text.getIndexFromIDString(id);
     if(text.iLastIndex_ < index) {
         text.iLastIndex_ = index;
     }
-	text.szTagSelected_ = szTagSelected;
+    text.szTagSelected_ = szTagSelected;
     text.setElementXPos(static_cast<int>(xpos));
     text.setElementYPos(static_cast<int>(ypos));
     text.setElementZValue(static_cast<int>(zvalue));

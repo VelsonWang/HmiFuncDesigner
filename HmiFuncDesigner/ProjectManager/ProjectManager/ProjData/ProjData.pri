@@ -1,3 +1,4 @@
+INCLUDEPATH += $$PWD
 
 SOURCES += \
     $$PWD/TagSys.cpp \

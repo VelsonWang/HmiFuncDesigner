@@ -2,12 +2,8 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QPainter>
 
-Element::Element(const QString &szProjPath,
-                 const QString &szProjName,
-                 QtVariantPropertyManager *propertyMgr)
+Element::Element(QtVariantPropertyManager *propertyMgr)
     : elementId(""),
-      szProjectPath_(szProjPath),
-      szProjectName_(szProjName),
       variantPropertyManager_(propertyMgr)
 {
 }
@@ -153,53 +149,6 @@ void Element::setBlocked(bool blocked)
     setFlag(QGraphicsItem::ItemIsMovable, !blocked);
 }
 
-
-/**
- * @brief Element::setProjectPath
- * @details 设置工程路径
- * @param path 工程路径
- */
-void Element::setProjectPath(const QString &path)
-{
-    if(szProjectPath_ != path) {
-        szProjectPath_ = path;
-    }
-}
-
-
-/**
- * @brief Element::getProjectPath
- * @details 获取工程路径
- * @return 工程路径
- */
-QString Element::getProjectPath() const
-{
-    return szProjectPath_;
-}
-
-
-/**
- * @brief Element::setProjectName
- * @details 设置工程名称
- * @param name 工程名称
- */
-void Element::setProjectName(const QString &name)
-{
-    if(szProjectName_ != name) {
-        szProjectName_ = name;
-    }
-}
-
-
-/**
- * @brief Element::getProjectName
- * @details 获取工程名称
- * @return 工程名称(不包含后缀)
- */
-QString Element::getProjectName() const
-{
-    return szProjectName_;
-}
 
 
 /**
