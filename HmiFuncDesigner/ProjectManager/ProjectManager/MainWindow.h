@@ -86,7 +86,7 @@ public:
 
 private:
     void createUndoView();
-    void addNewGraphPage(const QString &szName);
+    GraphPage *addNewGraphPage(const QString &szName);
     QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
     int exitResponse();
     void updateGraphPageViewInfo(const QString &);

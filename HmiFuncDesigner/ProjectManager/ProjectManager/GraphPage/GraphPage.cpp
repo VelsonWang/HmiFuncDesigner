@@ -389,22 +389,12 @@ void GraphPage::updateActions()
 
 void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant &value)
 {
-    if (selectedItems().isEmpty()) {
-        return;
-    }
-
-    if (!currentItem) {
-        return;
-    }
+    if (selectedItems().isEmpty() || !currentItem) return;
 
     currentItem->updateElementProperty(property, value);
-
     unsavedFlag_ = true;
     emit elementPropertyChanged();
-
-    if (property->propertyName() == tr("ID")) {
-        emit elementIdChanged();
-    }
+    if (property->propertyName() == tr("ID")) emit elementIdChanged();
 }
 
 void GraphPage::slotSelectionChanged()
@@ -1113,7 +1103,6 @@ bool GraphPage::openFromXml(XMLObject *pXmlObj) {
     this->setSelectedFunctions(listString.split('|'));
 
     fillGridPixmap();
-
     copyList.clear();
 
     QList<XMLObject* > listElementsObj = pXmlObj->getCurrentChildren("element");
@@ -1147,8 +1136,8 @@ bool GraphPage::saveToXml(XMLObject *pXmlObj) {
 
     QListIterator <QGraphicsItem*> it(this->items());
     while (it.hasNext()) {
-        Element *ele = static_cast<Element *>(it.next());
-        ele->saveToXml(pXmlObj);
+        Element *pEleObj = static_cast<Element *>(it.next());
+        pEleObj->saveToXml(pPageObj);
     }
 
     return true;

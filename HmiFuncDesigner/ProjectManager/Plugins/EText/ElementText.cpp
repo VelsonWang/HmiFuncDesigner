@@ -422,8 +422,7 @@ void ElementText::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 
 bool ElementText::openFromXml(XMLObject *pXmlObj)
 {
-    XMLObject *pObj = pXmlObj->getCurrentChild("element");
-    if(pObj == Q_NULLPTR) return false;
+    XMLObject *pObj = pXmlObj;
 
     QString szID = pObj->getProperty("id");
     setElementId(szID);
@@ -447,9 +446,7 @@ bool ElementText::openFromXml(XMLObject *pXmlObj)
     backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
     QString value = pObj->getProperty("transparentBackground");
     transparentBackground_ = false;
-    if(value == "true") {
-        transparentBackground_ = true;
-    }
+    if(value == "true") transparentBackground_ = true;
 
     textColor = QColor(pObj->getProperty("textcolor"));
 
@@ -462,15 +459,11 @@ bool ElementText::openFromXml(XMLObject *pXmlObj)
 
     value = pObj->getProperty("hideOnClick");
     hideOnClick_ = false;
-    if(value == "true") {
-        hideOnClick_ = true;
-    }
+    if(value == "true") hideOnClick_ = true;
 
     value = pObj->getProperty("showOnInitial");
     showOnInitial_ = false;
-    if(value == "true") {
-        showOnInitial_ = true;
-    }
+    if(value == "true") showOnInitial_ = true;
 
     setAngle(pObj->getProperty("elemAngle").toInt());
 
@@ -600,98 +593,5 @@ void ElementText::readData(QDataStream &in)
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementText &text)
-{
-    out << text.elementId
-        << text.szTagSelected_
-        << text.x()
-        << text.y()
-        << text.zValue()
-        << text.elementWidth
-        << text.elementHeight
-        << text.elementText
-        << text.getHAlignString(text.szHAlign_)
-        << text.getVAlignString(text.szVAlign_)
-        << text.backgroundColor_
-        << text.transparentBackground_
-        << text.textColor
-        << text.font_
-        << text.borderWidth_
-        << text.borderColor_
-        << text.hideOnClick_
-        << text.showOnInitial_
-        << text.elemAngle;
-    return out;
-}
 
-QDataStream &operator>>(QDataStream &in, ElementText &text)
-{
-    QString id;
-    QString szTagSelected;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-    QString txt;
-    QString hAlign;
-    QString vAlign;
-    QColor backgroundColor;
-    bool transparentBackground;
-    QColor textColor;
-    QString font;
-    int borderWidth;
-    QColor borderColor;
-    bool hideOnClick;
-    bool showOnInitial;
-    qreal angle;
-
-    in >> id
-            >> szTagSelected
-            >> xpos
-            >> ypos
-            >> zvalue
-            >> width
-            >> height
-            >> txt
-            >> hAlign
-            >> vAlign
-            >> backgroundColor
-            >> transparentBackground
-            >> textColor
-            >> font
-            >> borderWidth
-            >> borderColor
-            >> hideOnClick
-            >> showOnInitial
-            >> angle;
-
-    text.setElementId(id);
-    int index = text.getIndexFromIDString(id);
-    if(text.iLastIndex_ < index) {
-        text.iLastIndex_ = index;
-    }
-    text.szTagSelected_ = szTagSelected;
-    text.setElementXPos(static_cast<int>(xpos));
-    text.setElementYPos(static_cast<int>(ypos));
-    text.setElementZValue(static_cast<int>(zvalue));
-    text.setElementWidth(width);
-    text.setElementHeight(height);
-    text.elementText = txt;
-    text.setHAlignString(hAlign, text.szHAlign_);
-    text.setVAlignString(vAlign, text.szVAlign_);
-    text.backgroundColor_ = backgroundColor;
-    text.transparentBackground_ = transparentBackground;
-    text.textColor = textColor;
-    text.font_ = font;
-    text.borderWidth_ = borderWidth;
-    text.borderColor_ = borderColor;
-    text.hideOnClick_ = hideOnClick;
-    text.showOnInitial_ = showOnInitial;
-    text.setAngle(angle);
-    text.updateBoundingElement();
-    text.updatePropertyModel();
-
-    return in;
-}
 

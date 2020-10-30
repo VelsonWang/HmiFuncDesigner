@@ -1376,7 +1376,8 @@ bool MainWindow::openFromXml(XMLObject *pXmlObj) {
     foreach(XMLObject* pPageObj, listPagesObj) {
         QString szPageId = pPageObj->getProperty("id");
         this->m_pListWidgetGraphPagesObj->addItem(szPageId);
-        addNewGraphPage(szPageId);
+        GraphPage *pObj = addNewGraphPage(szPageId);
+        pObj->openFromXml(pPageObj);
     }
 
     return true;
@@ -1469,13 +1470,13 @@ QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
 }
 
 
-void MainWindow::addNewGraphPage(const QString &szName)
+GraphPage *MainWindow::addNewGraphPage(const QString &szName)
 {
     QGraphicsView *view = createTabView();
 
     if (m_pGraphPageEditorObj->indexOf(view) != -1) {
         delete view;
-        return;
+        return Q_NULLPTR;
     }
 
     GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
@@ -1500,6 +1501,8 @@ void MainWindow::addNewGraphPage(const QString &szName)
     }
 
     connectGraphPage(graphPage);
+
+    return graphPage;
 }
 
 void MainWindow::connectGraphPage(GraphPage *graphPage)

@@ -29,9 +29,6 @@ public:
         return TextItemType;
     }
 
-    friend QDataStream &operator<<(QDataStream &out, const ElementText &textItem);
-    friend QDataStream &operator>>(QDataStream &in, ElementText &textItem);
-
 protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

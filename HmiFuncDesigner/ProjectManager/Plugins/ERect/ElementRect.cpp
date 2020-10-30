@@ -5,10 +5,8 @@
 
 int ElementRect::iLastIndex_ = 1;
 
-ElementRect::ElementRect(const QString &szProjPath,
-                         const QString &szProjName,
-                         QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementRect::ElementRect(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("Rect_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -20,8 +18,6 @@ ElementRect::ElementRect(const QString &szProjPath,
     borderColor_ = Qt::black;
     showOnInitial_ = true;
     init();
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     createPropertyList();
     updatePropertyModel();
 }
@@ -65,7 +61,7 @@ void ElementRect::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
+    m_pProjDataObj->getAllTagName(tagNames_);
     if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
@@ -331,103 +327,72 @@ void ElementRect::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsObject::mouseDoubleClickEvent(event);
 }
 
+bool ElementRect::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("tag", szTagSelected_);
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    pObj->setProperty("tagColorList", tagColorList_.join("|"));
+    pObj->setProperty("fillColor", fillColor_.name());
+    pObj->setProperty("isFill", isFill_?"true":"false");
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("elemAngle", QString::number(elemAngle));
 
-void ElementRect::writeAsXml(QXmlStreamWriter &writer)
-{
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("tagColorList", tagColorList_.join("|"));
-    writer.writeAttribute("fillColor", fillColor_.name());
-    writer.writeAttribute("isFill", isFill_?"true":"false");
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeEndElement();
+    return true;
 }
 
-void ElementRect::readFromXml(const QXmlStreamAttributes &attributes)
+
+bool ElementRect::openFromXml(XMLObject *pXmlObj)
 {
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    XMLObject *pObj = pXmlObj;
 
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
+    szTagSelected_ = pObj->getProperty("tag");
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
+    elementText = pObj->getProperty("elementtext");
 
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
+    QString listString = pObj->getProperty("tagColorList");
+    tagColorList_ = listString.split('|');
 
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
+    fillColor_ = QColor(pObj->getProperty("fillColor"));
 
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
+    QString value = pObj->getProperty("isFill");
+    isFill_ = false;
+    if(value == "true") isFill_ = true;
 
-    if (attributes.hasAttribute("tag")) {
-        szTagSelected_ = attributes.value("tag").toString();
-    }
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
 
-    if (attributes.hasAttribute("tagColorList")) {
-        QString listString = attributes.value("tagColorList").toString();
-        tagColorList_ = listString.split('|');
-    }
+    value = pObj->getProperty("showOnInitial");
+    showOnInitial_ = false;
+    if(value == "true") showOnInitial_ = true;
 
-    if (attributes.hasAttribute("fillColor")) {
-        fillColor_ = QColor(attributes.value("fillColor").toString());
-    }
-
-    if (attributes.hasAttribute("isFill")) {
-        QString value = attributes.value("isFill").toString();
-        isFill_ = false;
-        if(value == "true") {
-            isFill_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
-
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
-
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("elemAngle")) {
-        setAngle(attributes.value("elemAngle").toString().toInt());
-    }
+    setAngle(pObj->getProperty("elemAngle").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+
 
 void ElementRect::writeData(QDataStream &out)
 {
@@ -501,78 +466,3 @@ void ElementRect::readData(QDataStream &in)
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out, const ElementRect &rect)
-{
-    out << rect.elementId
-        << rect.x()
-        << rect.y()
-        << rect.zValue()
-        << rect.elementWidth
-        << rect.elementHeight
-        << rect.szTagSelected_
-        << rect.tagColorList_
-        << rect.fillColor_
-        << rect.isFill_
-        << rect.borderWidth_
-        << rect.borderColor_
-        << rect.showOnInitial_
-        << rect.elemAngle;
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementRect &rect)
-{
-    QString id;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-    QString szTagSelected;
-    QStringList tagColorList;
-    QString fillColor;
-    bool isFill;
-    int borderWidth;
-    QColor borderColor;
-    bool showOnInitial;
-    qreal angle;
-
-    in >> id
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> szTagSelected
-       >> tagColorList
-       >> fillColor
-       >> isFill
-       >> borderWidth
-       >> borderColor
-       >> showOnInitial
-       >> angle;
-
-    rect.setElementId(id);
-    int index = rect.getIndexFromIDString(id);
-    if(rect.iLastIndex_ < index) {
-        rect.iLastIndex_ = index;
-    }
-    rect.setElementXPos(static_cast<int>(xpos));
-    rect.setElementYPos(static_cast<int>(ypos));
-    rect.setElementZValue(static_cast<int>(zvalue));
-    rect.setElementWidth(width);
-    rect.setElementHeight(height);
-    rect.szTagSelected_ = szTagSelected;
-    rect.tagColorList_ = tagColorList;
-    rect.fillColor_ = fillColor;
-    rect.isFill_ = isFill;
-    rect.borderWidth_ = borderWidth;
-    rect.borderColor_ = borderColor;
-    rect.showOnInitial_ = showOnInitial;
-    rect.setAngle(angle);
-    rect.updateBoundingElement();
-    rect.updatePropertyModel();
-
-    return in;
-}

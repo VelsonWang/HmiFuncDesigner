@@ -1,5 +1,4 @@
-﻿
-#include "RectPlugin.h"
+﻿#include "RectPlugin.h"
 #include "ElementRect.h"
 
 
@@ -89,9 +88,7 @@ QString RectPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* RectPlugin::createElement(const QString &szProjPath,
-                                   const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr)
+Element* RectPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementRect(szProjPath, szProjName, propertyMgr);
+    return new ElementRect(pProjDataObj, propertyMgr);
 }
