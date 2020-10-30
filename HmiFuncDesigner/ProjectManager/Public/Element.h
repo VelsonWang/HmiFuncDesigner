@@ -12,12 +12,13 @@
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
 #include "XMLObject.h"
+#include "ProjectData.h"
 
 class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    Element(QtVariantPropertyManager *propertyMgr);
+    Element(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     virtual ~Element();
 
     void init();
@@ -130,6 +131,8 @@ protected:
 
     int iGraphPageWidth_; // 画面宽度
     int iGraphPageHeight_; // 画面高度
+
+    ProjectData* m_pProjDataObj;
 
 signals:
     void elementMoved(QPointF);

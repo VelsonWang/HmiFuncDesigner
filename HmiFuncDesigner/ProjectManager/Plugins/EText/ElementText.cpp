@@ -6,8 +6,8 @@
 
 int ElementText::iLastIndex_ = 1;
 
-ElementText::ElementText(QtVariantPropertyManager *propertyMgr)
-    : Element(propertyMgr)
+ElementText::ElementText(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("Text_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -65,7 +65,7 @@ void ElementText::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
+    m_pProjDataObj->getAllTagName(tagNames_);
     if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));

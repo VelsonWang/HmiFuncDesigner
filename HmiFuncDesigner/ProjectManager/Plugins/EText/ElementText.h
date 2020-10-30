@@ -12,7 +12,7 @@ class ElementText : public Element
     Q_OBJECT
 
 public:
-    explicit ElementText(QtVariantPropertyManager *propertyMgr);
+    explicit ElementText(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;

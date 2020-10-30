@@ -605,7 +605,7 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != Q_NULLPTR && plugin->getElementName() == typeId) {
-                Element *ele = plugin->createElement(variantPropertyManager_);
+                Element *ele = plugin->createElement(ProjectData::getInstance(), variantPropertyManager_);
                 if(ele != Q_NULLPTR) {
                     ele->setClickPosition(position);
                     ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
@@ -1057,7 +1057,7 @@ void GraphPage::readItems(QDataStream &in, int offset, bool select)
                 it.next();
                 IDrawApplicationPlugin *plugin = it.value();
                 if(plugin != Q_NULLPTR && plugin->getElementID() == objectType) {
-                    Element *ele = plugin->createElement(variantPropertyManager_);
+                    Element *ele = plugin->createElement(ProjectData::getInstance(), variantPropertyManager_);
                     if(ele != Q_NULLPTR) {
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         ele->readData(in);
@@ -1165,7 +1165,7 @@ Element *GraphPage::createElement(const QString &internalType)
             it.next();
             IDrawApplicationPlugin *plugin = it.value();
             if(plugin != Q_NULLPTR && plugin->getElementIDString() == internalType) {
-                return plugin->createElement(variantPropertyManager_);
+                return plugin->createElement(ProjectData::getInstance(), variantPropertyManager_);
             }
         }
     }

@@ -88,7 +88,7 @@ QString TextPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* TextPlugin::createElement(QtVariantPropertyManager *propertyMgr)
+Element* TextPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementText(propertyMgr);
+    return new ElementText(pProjDataObj, propertyMgr);
 }
