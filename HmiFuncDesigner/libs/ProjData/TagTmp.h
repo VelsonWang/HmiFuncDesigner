@@ -6,8 +6,9 @@
 #include <QList>
 #include "DBTag.h"
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-class TagTmp
+class PROJDATASHARED_EXPORT TagTmp
 {
 public:
     explicit TagTmp();

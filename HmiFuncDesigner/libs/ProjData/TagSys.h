@@ -6,10 +6,10 @@
 #include <QList>
 #include "DBTag.h"
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-class ProjectDataSQLiteDatabase;
 
-class TagSys
+class PROJDATASHARED_EXPORT TagSys
 {
 public:
     explicit TagSys();

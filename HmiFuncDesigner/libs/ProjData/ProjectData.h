@@ -1,5 +1,5 @@
-#ifndef _PROJECTDATA_H_
-#define _PROJECTDATA_H_
+#ifndef PROJECTDATA_H
+#define PROJECTDATA_H
 
 #include <QObject>
 #include <QString>
@@ -14,8 +14,9 @@
 #include "TagIO.h"
 #include "Script.h"
 #include "IGraphPageSaveLoad.h"
+#include "projdata_global.h"
 
-class ProjectData
+class PROJDATASHARED_EXPORT ProjectData
 {
 public:
     explicit ProjectData();
@@ -60,4 +61,4 @@ private:
 };
 
 
-#endif // _PROJECTDATA_H
+#endif // PROJECTDATA_H

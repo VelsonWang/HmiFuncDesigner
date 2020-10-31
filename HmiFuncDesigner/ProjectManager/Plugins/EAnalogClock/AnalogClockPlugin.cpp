@@ -88,9 +88,7 @@ QString AnalogClockPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* AnalogClockPlugin::createElement(const QString &szProjPath,
-                                    const QString &szProjName,
-                                    QtVariantPropertyManager *propertyMgr)
+Element* AnalogClockPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementAnalogClock(szProjPath, szProjName, propertyMgr);
+    return new ElementAnalogClock(pProjDataObj, propertyMgr);
 }

@@ -1,9 +1,5 @@
 #include "DeviceInfo.h"
-#include "ProjectDataSQLiteDatabase.h"
 #include "ulog.h"
-#include <QSqlQuery>
-#include <QSqlRecord>
-#include <QSqlError>
 
 int DeviceInfo::iStartNewDeviceID_ = 0;
 

@@ -10,16 +10,14 @@ class ElementArrow : public Element
 {
     Q_OBJECT
 public:
-    ElementArrow(const QString &szProjPath,
-                 const QString &szProjName,
-                 QtVariantPropertyManager *propertyMgr);
+    ElementArrow(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -28,9 +26,6 @@ public:
     int type() const override {
         return ArrowItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out,const ElementArrow &line);
-    friend QDataStream &operator>>(QDataStream &in,ElementArrow &line);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

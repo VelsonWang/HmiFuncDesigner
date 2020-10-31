@@ -5,9 +5,9 @@
 #include <QStringList>
 #include <QList>
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-
-class DeviceInfoObject
+class PROJDATASHARED_EXPORT DeviceInfoObject
 {
 public:
     explicit DeviceInfoObject()
@@ -64,7 +64,7 @@ public:
     QString szProperties_; // 设备私有属性
 };
 
-class ComDevice : public DeviceInfoObject
+class PROJDATASHARED_EXPORT ComDevice : public DeviceInfoObject
 {
 public:
     explicit ComDevice() : DeviceInfoObject()
@@ -134,7 +134,7 @@ public:
 };
 
 
-class NetDevice : public DeviceInfoObject
+class PROJDATASHARED_EXPORT NetDevice : public DeviceInfoObject
 {
 public:
     explicit NetDevice() : DeviceInfoObject()
@@ -195,9 +195,8 @@ public:
     int iPort1_;
 };
 
-class ProjectDataSQLiteDatabase;
 
-class DeviceInfo
+class PROJDATASHARED_EXPORT DeviceInfo
 {
 public:
     explicit DeviceInfo();

@@ -6,10 +6,8 @@ static const double Pi = 3.14159265358979323846264338327950288419717;
 static double TwoPi = 2.0 * Pi;
 int ElementArrow::iLastIndex_ = 1;
 
-ElementArrow::ElementArrow(const QString &szProjPath,
-                           const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr),
+ElementArrow::ElementArrow(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr),
       arrowSize(10)
 {
     elementId = QString(tr("Arrow_%1").arg(iLastIndex_ - 1, 4, 10, QChar('0')));
@@ -241,68 +239,48 @@ void ElementArrow::paint(QPainter *painter,
 }
 
 
-void ElementArrow::writeAsXml(QXmlStreamWriter &writer)
+bool ElementArrow::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeEndElement();
-}
+    XMLObject *pObj = pXmlObj;
 
-void ElementArrow::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
-
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
-
-    if (attributes.hasAttribute("elemAngle")) {
-        setAngle(attributes.value("elemAngle").toString().toInt());
-    }
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    setAngle(pObj->getProperty("elemAngle").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+bool ElementArrow::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("elemAngle", QString::number(elemAngle));
+
+    return true;
+}
+
 
 void ElementArrow::writeData(QDataStream &out)
 {
@@ -356,58 +334,3 @@ void ElementArrow::readData(QDataStream &in)
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementArrow &arrow)
-{
-    out << arrow.elementId
-        << arrow.x()
-        << arrow.y()
-        << arrow.zValue()
-        << arrow.elementWidth
-        << arrow.elementHeight
-        << arrow.borderWidth_
-        << arrow.borderColor_
-        << arrow.elemAngle;
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementArrow &arrow)
-{
-    QString id;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-    int borderWidth;
-    QColor borderColor;
-    qreal angle;
-
-    in >> id
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> borderWidth
-       >> borderColor
-       >> angle;
-
-    arrow.setElementId(id);
-    int index = arrow.getIndexFromIDString(id);
-    if(arrow.iLastIndex_ < index) {
-        arrow.iLastIndex_ = index;
-    }
-    arrow.setElementXPos(static_cast<int>(xpos));
-    arrow.setElementYPos(static_cast<int>(ypos));
-    arrow.setElementZValue(static_cast<int>(zvalue));
-    arrow.setElementWidth(width);
-    arrow.setElementHeight(height);
-    arrow.borderWidth_ = borderWidth;
-    arrow.borderColor_ = borderColor;
-    arrow.setAngle(angle);
-    arrow.updateBoundingElement();
-    arrow.updatePropertyModel();
-
-    return in;
-}

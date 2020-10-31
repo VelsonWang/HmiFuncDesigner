@@ -4,10 +4,11 @@
 #include <QString>
 #include <QObject>
 #include "XMLObject.h"
+#include "projdata_global.h"
 
 class DatabaseSettingPrivate;
 
-class DatabaseSetting
+class PROJDATASHARED_EXPORT DatabaseSetting
 {
 public:
     DatabaseSetting();

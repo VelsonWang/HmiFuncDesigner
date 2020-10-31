@@ -2,11 +2,11 @@ TEMPLATE = subdirs
 
 SUBDIRS += \
 ##############<基本图元>###################
-#    ELine \
-#    EArrow \
-#    EEllipse \
+    ELine \
+    EArrow \
+    EEllipse \
     ERect \
-    EText #\
+    EText \
 ###############<基本控件>##################
 #    EPushButton \
 #    EInputEdit \
@@ -19,5 +19,5 @@ SUBDIRS += \
 #    EValueStick \
 #    EJarShape \
 #    EComboBox \
-#    EAnalogClock
+    EAnalogClock
 

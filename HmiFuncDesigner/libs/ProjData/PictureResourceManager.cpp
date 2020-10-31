@@ -1,5 +1,4 @@
 #include "PictureResourceManager.h"
-#include "ProjectDataSQLiteDatabase.h"
 #include "ProjectData.h"
 #include <QFileInfo>
 #include <QFile>

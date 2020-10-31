@@ -1,4 +1,3 @@
-
 include(../../HmiFuncDesigner.pri)
 
 QT += core gui xml
@@ -19,13 +18,13 @@ INCLUDEPATH += $$PWD/GraphPage
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
 INCLUDEPATH += $$PWD/../../libs/qscintilla
+INCLUDEPATH += $$PWD/../../libs/ProjData
 INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
+
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
 include($$PWD/../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
-include($$PWD/ProjData/ProjData.pri)
-
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -41,6 +40,8 @@ LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lProjData
+
 
 SOURCES += main.cpp\
     CommunicationDeviceChild.cpp \

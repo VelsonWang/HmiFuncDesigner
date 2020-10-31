@@ -5,8 +5,9 @@
 #include <QStringList>
 #include <QList>
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-class ScriptObject
+class PROJDATASHARED_EXPORT ScriptObject
 {
 public:
     QString m_szName;
@@ -18,7 +19,7 @@ public:
 };
 
 
-class Script
+class PROJDATASHARED_EXPORT Script
 {
 public:
     Script();

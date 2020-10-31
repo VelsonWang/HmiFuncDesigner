@@ -6,8 +6,9 @@
 #include <QList>
 #include "DBTag.h"
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-class TagIO
+class PROJDATASHARED_EXPORT TagIO
 {
 public:
     explicit TagIO();
@@ -24,7 +25,7 @@ public:
 };
 
 
-class TagIOGroup
+class PROJDATASHARED_EXPORT TagIOGroup
 {
 public:
     explicit TagIOGroup();

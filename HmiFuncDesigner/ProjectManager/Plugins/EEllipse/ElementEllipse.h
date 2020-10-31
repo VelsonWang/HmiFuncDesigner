@@ -10,16 +10,14 @@ class ElementEllipse : public Element
 {
     Q_OBJECT
 public:
-    ElementEllipse(const QString &szProjPath,
-                   const QString &szProjName,
-                   QtVariantPropertyManager *propertyMgr);
+    ElementEllipse(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -28,9 +26,6 @@ public:
     int type() const override {
         return EllipseItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out,const ElementEllipse &rect);
-    friend QDataStream &operator>>(QDataStream &in,ElementEllipse &rect);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

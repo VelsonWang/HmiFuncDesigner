@@ -2,8 +2,9 @@
 #define IGRAPHPAGESAVELOAD_H
 
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-class IGraphPageSaveLoad
+class PROJDATASHARED_EXPORT IGraphPageSaveLoad
 {
 public:
     virtual ~IGraphPageSaveLoad() {}

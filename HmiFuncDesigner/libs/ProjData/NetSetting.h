@@ -4,11 +4,11 @@
 #include <QString>
 #include <QObject>
 #include "XMLObject.h"
+#include "projdata_global.h"
 
 class NetSettingPrivate;
-class ProjectDataSQLiteDatabase;
 
-class NetSetting
+class PROJDATASHARED_EXPORT NetSetting
 {
 public:
     NetSetting();

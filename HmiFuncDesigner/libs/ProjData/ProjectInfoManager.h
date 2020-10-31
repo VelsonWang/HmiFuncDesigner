@@ -3,10 +3,11 @@
 
 #include <QString>
 #include "XMLObject.h"
+#include "projdata_global.h"
 
 class ProjectInfoPrivate;
 
-class ProjectInfoManager
+class PROJDATASHARED_EXPORT ProjectInfoManager
 {
 public:
     ProjectInfoManager();

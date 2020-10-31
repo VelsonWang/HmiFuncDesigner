@@ -4,8 +4,9 @@
 #include <QString>
 #include <QObject>
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-class UserAuthorityPrivate
+class PROJDATASHARED_EXPORT UserAuthorityPrivate
 {
 public:
     explicit UserAuthorityPrivate()
@@ -61,7 +62,7 @@ public:
 
 
 
-class UserAuthority
+class PROJDATASHARED_EXPORT UserAuthority
 {
 public:
     explicit UserAuthority();

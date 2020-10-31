@@ -6,8 +6,9 @@
 #include <QImage>
 #include <QByteArray>
 #include "XMLObject.h"
+#include "projdata_global.h"
 
-class PictureInfo
+class PROJDATASHARED_EXPORT PictureInfo
 {
 public:
     PictureInfo();
@@ -24,7 +25,7 @@ public:
 };
 
 
-class PictureResourceManager
+class PROJDATASHARED_EXPORT PictureResourceManager
 {
 public:
     PictureResourceManager();

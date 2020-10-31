@@ -1,9 +1,6 @@
 ﻿#include "ElementAnalogClock.h"
 #include "Helper.h"
 #include "XMLObject.h"
-#include "ProjectData.h"
-#include "DrawListUtils.h"
-#include "ElementIDHelper.h"
 #include "variantmanager.h"
 #include <QMessageBox>
 #include <QDateTime>
@@ -12,10 +9,8 @@
 
 int ElementAnalogClock::iLastIndex_ = 1;
 
-ElementAnalogClock::ElementAnalogClock(const QString &szProjPath,
-                           const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementAnalogClock::ElementAnalogClock(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("AnalogClock_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -27,12 +22,6 @@ ElementAnalogClock::ElementAnalogClock(const QString &szProjPath,
     borderColor_ = Qt::black;
     period_ = 0.5;
     showOnInitial_ = true;
-
-    DrawListUtils::setProjectPath(szProjectPath_);
-    ElementIDHelper::setProjectPath(szProjectPath_);
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
-
     init();
     createPropertyList();
     updatePropertyModel();
@@ -379,97 +368,66 @@ void ElementAnalogClock::drawAnalogClock(QPainter *painter)
 }
 
 
-void ElementAnalogClock::writeAsXml(QXmlStreamWriter &writer)
+bool ElementAnalogClock::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-    writer.writeAttribute("period", QString::number(period_));
-    writer.writeAttribute("functions", funcs_.join("|"));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeEndElement();
-}
+    XMLObject *pObj = pXmlObj;
 
-void ElementAnalogClock::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("period")) {
-        period_ = attributes.value("period").toString().toDouble();
-    }
+    period_ = pObj->getProperty("period").toDouble();
 
-    if (attributes.hasAttribute("functions")) {
-        QString listString = attributes.value("functions").toString();
-        funcs_ = listString.split('|');
-    }
+    QString listString = pObj->getProperty("functions");
+    funcs_ = listString.split('|');
 
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
-    }
+    backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
 
-    if (attributes.hasAttribute("transparentBackground")) {
-        QString value = attributes.value("transparentBackground").toString();
-        transparentBackground_ = false;
-        if(value == "true") {
-            transparentBackground_ = true;
-        }
-    }
+    QString value = pObj->getProperty("transparentBackground");
+    transparentBackground_ = false;
+    if(value == "true") transparentBackground_ = true;
 
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
 
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
+    value = pObj->getProperty("showOnInitial");
+    showOnInitial_ = false;
+    if(value == "true") showOnInitial_ = true;
 
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+bool ElementAnalogClock::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("period", QString::number(period_));
+    pObj->setProperty("functions", funcs_.join("|"));
+    pObj->setProperty("backgroundColor", backgroundColor_.name());
+    pObj->setProperty("transparentBackground", transparentBackground_?"true":"false");
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    return true;
+}
+
 
 void ElementAnalogClock::writeData(QDataStream &out)
 {
@@ -583,76 +541,4 @@ void ElementAnalogClock::getSupportEvents(QStringList &listValue)
     }
 }
 
-
-QDataStream &operator<<(QDataStream &out,const ElementAnalogClock &clock)
-{
-    out << clock.elementId
-        << clock.period_
-        << clock.funcs_
-        << clock.backgroundColor_
-        << clock.transparentBackground_
-        << clock.borderColor_
-        << clock.borderWidth_
-        << clock.showOnInitial_
-        << clock.x()
-        << clock.y()
-        << clock.zValue()
-        << clock.elementWidth
-        << clock.elementHeight;
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementAnalogClock &clock)
-{
-    QString id;
-    double period;
-    QStringList funcs;
-    QColor backgroundColor;
-    bool transparentBackground;
-    QColor borderColor;
-    int borderWidth;
-    bool showOnInitial;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-
-    in >> id
-       >> period
-       >> funcs
-       >> backgroundColor
-       >> transparentBackground
-       >> borderColor
-       >> borderWidth
-       >> showOnInitial
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height;
-
-    clock.setElementId(id);
-    int index = clock.getIndexFromIDString(id);
-    if(clock.iLastIndex_ < index) {
-        clock.iLastIndex_ = index;
-    }
-    clock.period_ = period;
-    clock.funcs_ = funcs;
-    clock.backgroundColor_ = backgroundColor;
-    clock.transparentBackground_ = transparentBackground;
-    clock.borderColor_ = borderColor;
-    clock.borderWidth_ = borderWidth;
-    clock.showOnInitial_ = showOnInitial;
-    clock.setElementXPos(static_cast<int>(xpos));
-    clock.setElementYPos(static_cast<int>(ypos));
-    clock.setElementZValue(static_cast<int>(zvalue));
-    clock.setElementWidth(width);
-    clock.setElementHeight(height);
-    clock.updateBoundingElement();
-    clock.updatePropertyModel();
-
-    return in;
-}
 

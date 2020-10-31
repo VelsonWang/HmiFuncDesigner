@@ -133,7 +133,7 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/qscintilla/lexlib \
     $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
     $$IDE_SOURCE_TREE/libs/TagManager \
-    $$IDE_SOURCE_TREE/libs/ProjectDataUtils \
+    $$IDE_SOURCE_TREE/libs/ProjData \
     $$IDE_SOURCE_TREE/Devices/IDevicePlugin \
     $$IDE_SOURCE_TREE/ProjectManager/IDrawApplicationPlugin \
     $$IDE_SOURCE_TREE/ProjectManager/DrawApplication \
@@ -141,6 +141,7 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/ProjectManager/Public \
     $$IDE_SOURCE_TREE/ProjectManager
 	
+DEPENDPATH += $$clean_path($$LINK_LIBRARY_PATH)
 
 QTC_PLUGIN_DIRS_FROM_ENVIRONMENT = $$(QTC_PLUGIN_DIRS)
 QTC_PLUGIN_DIRS += $$split(QTC_PLUGIN_DIRS_FROM_ENVIRONMENT, $$QMAKE_DIRLIST_SEP)

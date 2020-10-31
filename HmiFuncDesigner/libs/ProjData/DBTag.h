@@ -2,9 +2,9 @@
 #define DB_TAG_H
 
 #include <QString>
+#include "projdata_global.h"
 
-
-struct TagSysDBItem
+struct PROJDATASHARED_EXPORT TagSysDBItem
 {
     explicit TagSysDBItem(const QString &sVarid=QString(),
                           const QString &sName=QString(),
@@ -48,7 +48,7 @@ struct TagSysDBItem
 
 //////////////////////////////////////////////////////////
 
-struct TagTmpDBItem
+struct PROJDATASHARED_EXPORT TagTmpDBItem
 {
     explicit TagTmpDBItem(const QString &sVarid=QString(),
                           const QString &sDataType=QString(),
@@ -99,7 +99,7 @@ struct TagTmpDBItem
 
 //////////////////////////////////////////////////////////
 
-struct TagIODBItem
+struct PROJDATASHARED_EXPORT TagIODBItem
 {
     explicit TagIODBItem(const QString &sVarid=QString(),
                          const QString &sGroupName=QString("group_1"),
@@ -185,7 +185,7 @@ struct TagIODBItem
 
 //////////////////////////////////////////////////////////
 
-struct TagIOGroupDBItem
+struct PROJDATASHARED_EXPORT TagIOGroupDBItem
 {
     explicit TagIOGroupDBItem(int id=-1,
                          const QString &groupName=QString("group1"),
