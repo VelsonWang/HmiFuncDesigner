@@ -13,7 +13,7 @@ SUBDIRS += \
 #    EPicture \
 #    EIndicationLamp \
 #    ESwitchButton \
-#    EClock \
+    EClock \
 #    EMovingText \
 #    ETagTextList \
 #    EValueStick \

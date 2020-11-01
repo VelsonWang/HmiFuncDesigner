@@ -1,5 +1,4 @@
-﻿
-#include "ClockPlugin.h"
+﻿#include "ClockPlugin.h"
 #include "ElementClock.h"
 
 
@@ -89,9 +88,7 @@ QString ClockPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ClockPlugin::createElement(const QString &szProjPath,
-                                    const QString &szProjName,
-                                    QtVariantPropertyManager *propertyMgr)
+Element* ClockPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementClock(szProjPath, szProjName, propertyMgr);
+    return new ElementClock(pProjDataObj, propertyMgr);
 }
