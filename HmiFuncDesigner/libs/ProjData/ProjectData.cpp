@@ -56,6 +56,11 @@ bool ProjectData::openFromXml(const QString &szProjFile)
             tagSys_.openFromXml(pTagsObj);
         }
 
+        // 脚本
+        script_.openFromXml(pProjObj);
+        // 图片资源管理
+        pictureResourceMgr_.openFromXml(pProjObj);
+
         // 加载画面
         XMLObject *pPagesObj = pProjObj->getCurrentChild("pages");
         if(pPagesObj != Q_NULLPTR) {
@@ -63,12 +68,6 @@ bool ProjectData::openFromXml(const QString &szProjFile)
                 pImplGraphPageSaveLoadObj_->openFromXml(pPagesObj);
             }
         }
-
-        // 脚本
-        script_.openFromXml(pProjObj);
-        // 图片资源管理
-        pictureResourceMgr_.openFromXml(pProjObj);
-
     }
 
     return true;
@@ -106,17 +105,17 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     // 系统标签变量
     tagSys_.saveToXml(pTagsObj);
 
+    // 脚本
+    script_.saveToXml(pProjObj);
+    // 图片资源管理
+    pictureResourceMgr_.saveToXml(pProjObj);
+
     // 保存画面
     XMLObject *pPagesObj = new XMLObject(pProjObj);
     pPagesObj->setTagName("pages");
     if(pImplGraphPageSaveLoadObj_) {
         pImplGraphPageSaveLoadObj_->saveToXml(pPagesObj);
     }
-
-    // 脚本
-    script_.saveToXml(pProjObj);
-    // 图片资源管理
-    pictureResourceMgr_.saveToXml(pProjObj);
 
     Helper::writeString(szProjFile, projObjs.write());
 

@@ -14,10 +14,10 @@ SUBDIRS += \
 #    EIndicationLamp \
 #    ESwitchButton \
     EClock \
-#    EMovingText \
+    EMovingText \
 #    ETagTextList \
 #    EValueStick \
 #    EJarShape \
-#    EComboBox \
+    EComboBox \
     EAnalogClock
 

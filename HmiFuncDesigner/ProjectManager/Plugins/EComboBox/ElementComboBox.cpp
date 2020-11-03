@@ -2,8 +2,6 @@
 #include "Helper.h"
 #include "XMLObject.h"
 #include "ProjectData.h"
-#include "DrawListUtils.h"
-#include "ElementIDHelper.h"
 #include "variantmanager.h"
 #include <QMessageBox>
 #include <QDateTime>
@@ -12,10 +10,8 @@
 
 int ElementComboBox::iLastIndex_ = 1;
 
-ElementComboBox::ElementComboBox(const QString &szProjPath,
-                                       const QString &szProjName,
-                                       QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementComboBox::ElementComboBox(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("ComboBox_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -28,12 +24,7 @@ ElementComboBox::ElementComboBox(const QString &szProjPath,
     borderWidth_ = 0;
     borderColor_ = Qt::black;
     showOnInitial_ = true;
-
-    DrawListUtils::setProjectPath(szProjectPath_);
-    ElementIDHelper::setProjectPath(szProjectPath_);
     init();
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     createPropertyList();
     updatePropertyModel();
 }
@@ -77,7 +68,7 @@ void ElementComboBox::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
+    m_pProjDataObj->getAllTagName(tagNames_);
     if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
@@ -464,125 +455,83 @@ void ElementComboBox::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-void ElementComboBox::writeAsXml(QXmlStreamWriter &writer)
-{
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-    writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("ComboBox", ComboBox_.join("|"));
-    writer.writeAttribute("elementText", elementText);
-    writer.writeAttribute("halign", getHAlignString(szHAlign_));
-    writer.writeAttribute("valign", getVAlignString(szVAlign_));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeEndElement();
+bool ElementComboBox::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("tag", szTagSelected_);
+    pObj->setProperty("ComboBox", ComboBox_.join("|"));
+    pObj->setProperty("elementText", elementText);
+    pObj->setProperty("halign", getHAlignString(szHAlign_));
+    pObj->setProperty("valign", getVAlignString(szVAlign_));
+    pObj->setProperty("backgroundColor", backgroundColor_.name());
+    pObj->setProperty("transparentBackground", transparentBackground_?"true":"false");
+    pObj->setProperty("textcolor", textColor.name());
+    pObj->setProperty("font", font_.toString());
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    return true;
 }
 
-void ElementComboBox::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
 
-    if (attributes.hasAttribute("tag")) {
-        szTagSelected_ = attributes.value("tag").toString();
-    }
+bool ElementComboBox::openFromXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = pXmlObj;
 
-    if (attributes.hasAttribute("ComboBox")) {
-        QString listString = attributes.value("ComboBox").toString();
-        ComboBox_ = listString.split('|');
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("elementText")) {
-        elementText = attributes.value("elementText").toString();
-    }
+    szTagSelected_ = pObj->getProperty("tag");
 
-    if (attributes.hasAttribute("halign")) {
-        QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
-    }
+    QString listString = pObj->getProperty("ComboBox");
+    ComboBox_ = listString.split('|');
 
-    if (attributes.hasAttribute("valign")) {
-        QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
-    }
+    elementText = pObj->getProperty("elementText");
 
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
-    }
+    QString align = pObj->getProperty("halign");
+    this->setHAlignString(align, szHAlign_);
 
-    if (attributes.hasAttribute("transparentBackground")) {
-        QString value = attributes.value("transparentBackground").toString();
-        transparentBackground_ = false;
-        if(value == "true") {
-            transparentBackground_ = true;
-        }
-    }
+    align = pObj->getProperty("valign");
+    this->setVAlignString(align, szVAlign_);
 
-    if (attributes.hasAttribute("textcolor")) {
-        textColor = QColor(attributes.value("textcolor").toString());
-    }
+    backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
 
-    if (attributes.hasAttribute("font")) {
-        QString szFont = attributes.value("font").toString();
-        font_.fromString(szFont);
-    }
+    QString value = pObj->getProperty("transparentBackground");
+    transparentBackground_ = false;
+    if(value == "true") transparentBackground_ = true;
 
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
+    textColor = QColor(pObj->getProperty("textcolor"));
 
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
+    QString szFont = pObj->getProperty("font");
+    font_.fromString(szFont);
 
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
 
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
+    value = pObj->getProperty("showOnInitial");
+    showOnInitial_ = false;
+    if(value == "true") showOnInitial_ = true;
 
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
 
 void ElementComboBox::writeData(QDataStream &out)
 {
@@ -672,96 +621,4 @@ void ElementComboBox::readData(QDataStream &in)
     this->updatePropertyModel();
 }
 
-
-QDataStream &operator<<(QDataStream &out, const ElementComboBox &ele)
-{
-    out << ele.elementId
-        << ele.szTagSelected_
-        << ele.ComboBox_
-        << ele.elementText
-        << ele.getHAlignString(ele.szHAlign_)
-        << ele.getVAlignString(ele.szVAlign_)
-        << ele.backgroundColor_
-        << ele.transparentBackground_
-        << ele.textColor
-        << ele.font_.toString()
-        << ele.borderColor_
-        << ele.borderWidth_
-        << ele.showOnInitial_
-        << ele.x()
-        << ele.y()
-        << ele.zValue()
-        << ele.elementWidth
-        << ele.elementHeight;
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementComboBox &ele)
-{
-    QString id;
-    QString szTagSelected;
-    QStringList ComboBox;
-    QString text;
-    QString hAlign;
-    QString vAlign;
-    QColor backgroundColor;
-    bool transparentBackground;
-    QColor textColor;
-    QString font;
-    QColor borderColor;
-    int borderWidth;
-    bool showOnInitial;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-
-    in >> id
-       >> szTagSelected
-       >> ComboBox
-       >> text
-       >> hAlign
-       >> vAlign
-       >> backgroundColor
-       >> transparentBackground
-       >> textColor
-       >> font
-       >> borderColor
-       >> borderWidth
-       >> showOnInitial
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height;
-
-    ele.setElementId(id);
-    int index = ele.getIndexFromIDString(id);
-    if(ele.iLastIndex_ < index) {
-        ele.iLastIndex_ = index;
-    }
-    ele.szTagSelected_ = szTagSelected;
-    ele.ComboBox_ = ComboBox;
-    ele.elementText = text;
-    ele.setHAlignString(hAlign, ele.szHAlign_);
-    ele.setVAlignString(vAlign, ele.szVAlign_);
-    ele.backgroundColor_ = backgroundColor;
-    ele.transparentBackground_ = transparentBackground;
-    ele.textColor = textColor;
-    ele.font_ = font;
-    ele.borderColor_ = borderColor;
-    ele.borderWidth_ = borderWidth;
-    ele.showOnInitial_ = showOnInitial;
-    ele.setElementXPos(static_cast<int>(xpos));
-    ele.setElementYPos(static_cast<int>(ypos));
-    ele.setElementZValue(static_cast<int>(zvalue));
-    ele.setElementWidth(width);
-    ele.setElementHeight(height);
-    ele.updateBoundingElement();
-    ele.updatePropertyModel();
-
-    return in;
-}
 
