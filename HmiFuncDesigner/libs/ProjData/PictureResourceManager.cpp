@@ -20,7 +20,6 @@ PictureInfo::~PictureInfo()
 bool PictureInfo::openFromXml(XMLObject *pXmlObj) {
     m_iID = pXmlObj->getProperty("id").toInt();
     m_iRefCnt = pXmlObj->getProperty("ref_cnt").toInt();
-
     m_szName = pXmlObj->getProperty("name");
     m_szFormat = pXmlObj->getProperty("format");
     QString szDatas = pXmlObj->getText();
@@ -74,8 +73,7 @@ bool PictureResourceManager::saveToXml(XMLObject *pXmlObj)
     pPicsObj->setTagName("pics");
     for(int i=0; i<m_listPictures.count(); i++) {
         PictureInfo *pObj = m_listPictures.at(i);
-        XMLObject *pPicObj = new XMLObject(pPicsObj);
-        pObj->saveToXml(pPicObj);
+        pObj->saveToXml(pPicsObj);
     }
     return true;
 }
