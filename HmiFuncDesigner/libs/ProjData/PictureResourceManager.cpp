@@ -82,9 +82,14 @@ bool PictureResourceManager::saveToXml(XMLObject *pXmlObj)
 
 bool PictureResourceManager::add(const QString &szName)
 {
+    QFileInfo info(szName);
+    if(!info.exists()) return false;
+
+    QString szPicName = info.fileName();
+
     bool bFound = false;
     foreach(PictureInfo *pObj, m_listPictures) {
-        if(szName == pObj->m_szName) {
+        if(szPicName == pObj->m_szName) {
             bFound = true;
             pObj->m_iRefCnt++;
         }
@@ -92,6 +97,11 @@ bool PictureResourceManager::add(const QString &szName)
     if(!bFound) {
         PictureInfo *pObj = new PictureInfo();
         pObj->m_iID = allocID();
+        pObj->m_iRefCnt = 1;
+        pObj->m_szName = szPicName;
+        pObj->m_szFormat = info.suffix();
+        QImage imageObj(szName);
+        pObj->m_datas = imageToBase64(imageObj, pObj->m_szFormat);
         m_listPictures.append(pObj);
     }
 
@@ -114,6 +124,17 @@ bool PictureResourceManager::del(const QString &szName)
     return true;
 }
 
+
+QImage PictureResourceManager::getPicture(const QString &szName)
+{
+    foreach(PictureInfo *pObj, m_listPictures) {
+        if(szName == pObj->m_szName) {
+            return base64ToImage(pObj->m_datas, pObj->m_szFormat);
+        }
+    }
+
+    return QImage();
+}
 
 /**
  * @brief PictureResourceManager::allocID

@@ -1,5 +1,4 @@
-﻿
-#include "JarShapePlugin.h"
+﻿#include "JarShapePlugin.h"
 #include "ElementJarShape.h"
 
 
@@ -89,9 +88,7 @@ QString JarShapePlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* JarShapePlugin::createElement(const QString &szProjPath,
-                                       const QString &szProjName,
-                                       QtVariantPropertyManager *propertyMgr)
+Element* JarShapePlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementJarShape(szProjPath, szProjName, propertyMgr);
+    return new ElementJarShape(pProjDataObj, propertyMgr);
 }

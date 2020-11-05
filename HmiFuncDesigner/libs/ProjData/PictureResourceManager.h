@@ -36,6 +36,8 @@ public:
     bool add(const QString &szName);
     bool del(const QString &szName);
 
+    QImage getPicture(const QString &szName);
+
     // 分配一个ID
     static int allocID();
 

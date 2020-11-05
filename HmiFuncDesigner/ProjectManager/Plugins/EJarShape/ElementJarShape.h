@@ -12,16 +12,14 @@ class ElementJarShape : public Element
     Q_OBJECT
 
 public:
-    explicit ElementJarShape(const QString &szProjPath,
-                             const QString &szProjName,
-                             QtVariantPropertyManager *propertyMgr);
+    explicit ElementJarShape(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -30,9 +28,6 @@ public:
     int type() const override {
         return JarShapeItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out, const ElementJarShape &textItem);
-    friend QDataStream &operator>>(QDataStream &in, ElementJarShape &textItem);
 
 protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

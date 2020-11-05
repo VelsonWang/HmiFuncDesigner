@@ -9,10 +9,8 @@
 
 int ElementJarShape::iLastIndex_ = 1;
 
-ElementJarShape::ElementJarShape(const QString &szProjPath,
-                                 const QString &szProjName,
-                                 QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementJarShape::ElementJarShape(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("JarShape_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -31,8 +29,6 @@ ElementJarShape::ElementJarShape(const QString &szProjPath,
     lowerLimitValue_ = 15;
     jarShape_ = "";
     init();
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     createPropertyList();
     updatePropertyModel();
 }
@@ -76,7 +72,7 @@ void ElementJarShape::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
+    m_pProjDataObj->getAllTagName(tagNames_);
     if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
@@ -735,124 +731,68 @@ void ElementJarShape::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsObject::mouseDoubleClickEvent(event);
 }
 
-
-void ElementJarShape::writeAsXml(QXmlStreamWriter &writer)
-{
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-	writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("jarShape", jarShape_);
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("lessThanLowerLimitColor", lessThanLowerLimitColor_.name());
-    writer.writeAttribute("normalColor", normalColor_.name());
-    writer.writeAttribute("greaterThanUpperLimitColor", greaterThanUpperLimitColor_.name());
-    writer.writeAttribute("upperLimitValue", QString::number(upperLimitValue_));
-    writer.writeAttribute("lowerLimitValue", QString::number(lowerLimitValue_));
-    writer.writeAttribute("maxValue", QString::number(maxValue_));
-    writer.writeAttribute("scaleNum", QString::number(scaleNum_));
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeEndElement();
+bool ElementJarShape::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("tag", szTagSelected_);
+    pObj->setProperty("jarShape", jarShape_);
+    pObj->setProperty("font", font_.toString());
+    pObj->setProperty("textcolor", textColor.name());
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("lessThanLowerLimitColor", lessThanLowerLimitColor_.name());
+    pObj->setProperty("normalColor", normalColor_.name());
+    pObj->setProperty("greaterThanUpperLimitColor", greaterThanUpperLimitColor_.name());
+    pObj->setProperty("upperLimitValue", QString::number(upperLimitValue_));
+    pObj->setProperty("lowerLimitValue", QString::number(lowerLimitValue_));
+    pObj->setProperty("maxValue", QString::number(maxValue_));
+    pObj->setProperty("scaleNum", QString::number(scaleNum_));
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    return true;
 }
 
-void ElementJarShape::readFromXml(const QXmlStreamAttributes &attributes)
+
+
+bool ElementJarShape::openFromXml(XMLObject *pXmlObj)
 {
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    XMLObject *pObj = pXmlObj;
 
-	if (attributes.hasAttribute("tag")) {
-		szTagSelected_ = attributes.value("tag").toString();
-	}
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("jarShape")) {
-        jarShape_ = attributes.value("jarShape").toString();
-    }
-
-    if (attributes.hasAttribute("font")) {
-        QString szFont = attributes.value("font").toString();
-        font_.fromString(szFont);
-    }
-
-    if (attributes.hasAttribute("textcolor")) {
-        textColor = QColor(attributes.value("textcolor").toString());
-    }
-
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
-
-    if (attributes.hasAttribute("lessThanLowerLimitColor")) {
-        lessThanLowerLimitColor_ = QColor(attributes.value("lessThanLowerLimitColor").toString());
-    }
-
-    if (attributes.hasAttribute("normalColor")) {
-        normalColor_ = QColor(attributes.value("normalColor").toString());
-    }
-
-    if (attributes.hasAttribute("greaterThanUpperLimitColor")) {
-        greaterThanUpperLimitColor_ = QColor(attributes.value("greaterThanUpperLimitColor").toString());
-    }
-
-    if (attributes.hasAttribute("upperLimitValue")) {
-        upperLimitValue_ = attributes.value("upperLimitValue").toDouble();
-    }
-
-    if (attributes.hasAttribute("lowerLimitValue")) {
-        lowerLimitValue_ = attributes.value("lowerLimitValue").toDouble();
-    }
-
-    if (attributes.hasAttribute("maxValue")) {
-        maxValue_ = attributes.value("maxValue").toDouble();
-    }
-
-    if (attributes.hasAttribute("scaleNum")) {
-        scaleNum_ = attributes.value("scaleNum").toInt();
-    }
-
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
+    szTagSelected_ = pObj->getProperty("tag");
+    jarShape_ = pObj->getProperty("jarShape");
+    font_.fromString(pObj->getProperty("font"));
+    textColor = QColor(pObj->getProperty("textcolor"));
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    lessThanLowerLimitColor_ = QColor(pObj->getProperty("lessThanLowerLimitColor"));
+    normalColor_ = QColor(pObj->getProperty("normalColor"));
+    greaterThanUpperLimitColor_ = QColor(pObj->getProperty("greaterThanUpperLimitColor"));
+    upperLimitValue_ = pObj->getProperty("upperLimitValue").toDouble();
+    lowerLimitValue_ = pObj->getProperty("lowerLimitValue").toDouble();
+    maxValue_ = pObj->getProperty("maxValue").toDouble();
+    scaleNum_ = pObj->getProperty("scaleNum").toInt();
+    showOnInitial_ = pObj->getProperty("showOnInitial") == "true";
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
 
 void ElementJarShape::writeData(QDataStream &out)
 {
@@ -945,99 +885,3 @@ void ElementJarShape::readData(QDataStream &in)
     this->updateBoundingElement();
     this->updatePropertyModel();
 }
-
-QDataStream &operator<<(QDataStream &out,const ElementJarShape &ele)
-{
-    out << ele.elementId
-        << ele.szTagSelected_
-        << ele.jarShape_
-        << ele.font_
-        << ele.textColor
-        << ele.borderColor_
-        << ele.lessThanLowerLimitColor_
-        << ele.normalColor_
-        << ele.greaterThanUpperLimitColor_
-        << ele.upperLimitValue_
-        << ele.lowerLimitValue_
-        << ele.maxValue_
-        << ele.scaleNum_
-        << ele.showOnInitial_
-        << ele.x()
-        << ele.y()
-        << ele.zValue()
-        << ele.elementWidth
-        << ele.elementHeight;
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementJarShape &ele)
-{
-    QString id;
-	QString szTagSelected;
-    QString jarShape;
-    QString font;
-    QColor textColor;
-    QColor borderColor;
-    QColor lessThanLowerLimitColor;
-    QColor normalColor;
-    QColor greaterThanUpperLimitColor;
-    double upperLimitValue;
-    double lowerLimitValue;
-    double maxValue;
-    int scaleNum;
-    bool showOnInitial;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-
-    in >> id
-	   >> szTagSelected
-       >> jarShape
-       >> font
-       >> textColor
-       >> borderColor
-       >> lessThanLowerLimitColor
-       >> normalColor
-       >> greaterThanUpperLimitColor
-       >> upperLimitValue
-       >> lowerLimitValue
-       >> maxValue
-       >> scaleNum
-       >> showOnInitial
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height;
-
-    ele.setElementId(id);
-    int index = ele.getIndexFromIDString(id);
-    if(ele.iLastIndex_ < index) {
-        ele.iLastIndex_ = index;
-    }
-    ele.szTagSelected_ = szTagSelected;
-    ele.jarShape_ = jarShape;
-    ele.font_ = font;
-    ele.textColor = textColor;
-    ele.borderColor_ = borderColor;
-    ele.lessThanLowerLimitColor_ = lessThanLowerLimitColor;
-    ele.normalColor_ = normalColor;
-    ele.greaterThanUpperLimitColor_ = greaterThanUpperLimitColor;
-    ele.upperLimitValue_ = upperLimitValue;
-    ele.lowerLimitValue_ = lowerLimitValue;
-    ele.maxValue_ = maxValue;
-    ele.scaleNum_ = scaleNum;
-    ele.showOnInitial_ = showOnInitial;
-    ele.setElementXPos(static_cast<int>(xpos));
-    ele.setElementYPos(static_cast<int>(ypos));
-    ele.setElementZValue(static_cast<int>(zvalue));
-    ele.setElementWidth(width);
-    ele.setElementHeight(height);
-    ele.updateBoundingElement();
-    ele.updatePropertyModel();
-
-    return in;
-}
-

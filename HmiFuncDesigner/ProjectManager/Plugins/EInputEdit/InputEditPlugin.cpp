@@ -1,5 +1,4 @@
-﻿
-#include "InputEditPlugin.h"
+﻿#include "InputEditPlugin.h"
 #include "ElementInputEdit.h"
 
 
@@ -89,9 +88,7 @@ QString InputEditPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* InputEditPlugin::createElement(const QString &szProjPath,
-                                        const QString &szProjName,
-                                        QtVariantPropertyManager *propertyMgr)
+Element* InputEditPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementInputEdit(szProjPath, szProjName, propertyMgr);
+    return new ElementInputEdit(pProjDataObj, propertyMgr);
 }
