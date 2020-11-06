@@ -16,6 +16,8 @@ public:
     int getIndexByGraphPage(GraphPage *);
     QList<GraphPage*>* getGraphPageList();
     void removeGraphPage(GraphPage *graphPage);
+    void getAllElementIDName(QStringList &szIDList);
+    void getAllGraphPageName(QStringList &szList);
 
 private:
     GraphPageManager();

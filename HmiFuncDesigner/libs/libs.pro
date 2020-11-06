@@ -7,12 +7,12 @@ SUBDIRS   = \
     Utils \
     edncrypt \
     Csv \
-    DrawUtils \
     qtpropertybrowser \
     qscintilla \
 #    Lua \
 #    Ftp \
-    ProjData
+    ProjData \
+    Core
 
 
 

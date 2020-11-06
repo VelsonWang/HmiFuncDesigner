@@ -192,6 +192,7 @@ private:
     QMap<QString, QString> mapShowNameToName_;
     QStringList tagNames_;
     QStringList elementIds_;
+    QStringList graphPageNames_;
 
 private:
     void addProperty(QtVariantProperty *property, const QString &id);

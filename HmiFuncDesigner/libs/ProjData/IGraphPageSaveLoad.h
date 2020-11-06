@@ -12,7 +12,8 @@ public:
 public:
     virtual bool openFromXml(XMLObject *pXmlObj) = 0;
     virtual bool saveToXml(XMLObject *pXmlObj) = 0;
-
+    virtual void getAllElementIDName(QStringList &szIDList) = 0;
+    virtual void getAllGraphPageName(QStringList &szList) = 0;
 };
 
 #endif // IGRAPHPAGESAVELOAD_H

@@ -36,6 +36,10 @@ public:
     QString getProjectNameWithSuffix(const QString &projectName);
     // 获取不包含后缀工程名称
     QString getProjectNameWithOutSuffix(const QString &projectName);
+    // 获取工程所有控件的ID名称
+    void getAllElementIDName(QStringList &szIDList);
+    // 获取工程所有画面名称
+    void getAllGraphPageName(QStringList &szList);
 
 public:
     QString szProjFile_; // 工程文件名

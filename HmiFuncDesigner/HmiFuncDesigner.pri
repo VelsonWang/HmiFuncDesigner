@@ -121,7 +121,6 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/Public \
     $$IDE_SOURCE_TREE/libs/Utils \
     $$IDE_SOURCE_TREE/libs/edncrypt \
-    $$IDE_SOURCE_TREE/libs/DrawUtils \
     $$IDE_SOURCE_TREE/libs/Csv \
     $$IDE_SOURCE_TREE/libs/XmlUtils \
     $$IDE_SOURCE_TREE/libs/Lua \
@@ -134,6 +133,7 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
     $$IDE_SOURCE_TREE/libs/TagManager \
     $$IDE_SOURCE_TREE/libs/ProjData \
+    $$IDE_SOURCE_TREE/libs/Core \
     $$IDE_SOURCE_TREE/Devices/IDevicePlugin \
     $$IDE_SOURCE_TREE/ProjectManager/IDrawApplicationPlugin \
     $$IDE_SOURCE_TREE/ProjectManager/DrawApplication \

@@ -32,7 +32,6 @@
 #include "MainWindow.h"
 #include "Helper.h"
 #include "ProjectData.h"
-#include "DrawListUtils.h"
 #include "ProjectInfoManager.h"
 #include "ProjectData.h"
 #include "qtvariantproperty.h"
@@ -233,11 +232,7 @@ void MainWindow::initUI()
     this->resize(screenWidth*3/4, screenHeight*3/4);
 
     Helper::WidgetMoveCenter(this);
-
-    DrawListUtils::setProjectPath(ProjectData::getInstance()->szProjPath_);
-
     m_pListWidgetGraphPagesObj->setContextMenuPolicy(Qt::DefaultContextMenu);
-
 
     //    setWindowState(Qt::WindowMaximized);
     setWindowTitle(tr("HmiFuncDesigner组态软件"));
@@ -1399,6 +1394,24 @@ bool MainWindow::saveToXml(XMLObject *pXmlObj) {
     return true;
 }
 
+/**
+ * @brief MainWindow::getAllElementIDName
+ * @details 获取工程所有控件的ID名称
+ * @param szIDList 所有控件的ID名称
+ */
+void MainWindow::getAllElementIDName(QStringList &szIDList) {
+    GraphPageManager::getInstance()->getAllElementIDName(szIDList);
+}
+
+/**
+ * @brief MainWindow::getAllElementIDName
+ * @details 获取工程所有画面名称
+ * @param szList 所有画面名称
+ */
+void MainWindow::getAllGraphPageName(QStringList &szList) {
+    GraphPageManager::getInstance()->getAllGraphPageName(szList);
+}
+
 
 /**
  * @brief MainWindow::onSlotNewGraphPage
@@ -1979,9 +1992,11 @@ reInput:
             goto reInput;
         }
 
-        for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
-            if ( szOldGraphPageName == DrawListUtils::drawList_.at(i) ) {
-                DrawListUtils::drawList_.replace(i, szNewGraphPageName);
+        QStringList szGraphPageNameList;
+        ProjectData::getInstance()->getAllGraphPageName(szGraphPageNameList);
+        for (int i = 0; i < szGraphPageNameList.count(); i++) {
+            if (szOldGraphPageName == szGraphPageNameList.at(i) ) {
+                szGraphPageNameList.replace(i, szNewGraphPageName);
                 QString szOldName = ProjectData::getInstance()->szProjPath_ + "/" + szOldGraphPageName + ".drw";
                 QString szNewName = ProjectData::getInstance()->szProjPath_ + "/" + szNewGraphPageName + ".drw";
                 QFile::rename(szOldName, szNewName);
@@ -2006,7 +2021,7 @@ reInput:
 void MainWindow::onDeleteGraphPage()
 {
     QString szGraphPageName = this->m_pListWidgetGraphPagesObj->currentItem()->text();
-
+#if 0
     for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
         if ( szGraphPageName == DrawListUtils::drawList_.at(i) ) {
             DrawListUtils::drawList_.removeAt(i);
@@ -2029,9 +2044,9 @@ void MainWindow::onDeleteGraphPage()
             //DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
 
             this->m_pListWidgetGraphPagesObj->clear();
-            foreach(QString szPageId, DrawListUtils::drawList_) {
+            //foreach(QString szPageId, DrawListUtils::drawList_) {
                 this->m_pListWidgetGraphPagesObj->addItem(szPageId);
-            }
+            //}
 
             if (this->m_pListWidgetGraphPagesObj->count() > 0) {
                 this->m_pListWidgetGraphPagesObj->setCurrentRow(0);
@@ -2041,6 +2056,7 @@ void MainWindow::onDeleteGraphPage()
             break;
         }
     }
+#endif
 }
 
 
@@ -2063,15 +2079,15 @@ void MainWindow::onPasteGraphPage()
     int iLast = 0;
 
 reGetNum:
-    iLast = DrawListUtils::getMaxDrawPageNum(m_szCopyGraphPageFileName);
+    //iLast = DrawListUtils::getMaxDrawPageNum(m_szCopyGraphPageFileName);
     QString strDrawPageName = m_szCopyGraphPageFileName + QString("-%1").arg(iLast);
-    if ( DrawListUtils::drawList_.contains(strDrawPageName )) {
+    //if ( DrawListUtils::drawList_.contains(strDrawPageName )) {
         m_szCopyGraphPageFileName = strDrawPageName;
         goto reGetNum;
-    }
+    //}
 
     this->m_pListWidgetGraphPagesObj->addItem(strDrawPageName);
-    DrawListUtils::drawList_.append(strDrawPageName);
+    //DrawListUtils::drawList_.append(strDrawPageName);
     //DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
     QString szFileName = ProjectData::getInstance()->szProjPath_ + "/" + m_szCopyGraphPageFileName + ".drw";
     QFile file(szFileName);

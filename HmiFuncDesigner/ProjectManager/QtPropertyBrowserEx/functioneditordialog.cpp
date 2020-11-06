@@ -4,8 +4,6 @@
 #include "XMLObject.h"
 #include "Element.h"
 #include "ProjectData.h"
-#include "DrawListUtils.h"
-#include "ElementIDHelper.h"
 #include <QListWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
@@ -510,19 +508,20 @@ void FunctionEditorDialog::createPropertyList()
                 }
             } else if(pArgItem->type == "GRAPHPAGELIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
-                DrawListUtils::loadDrawList(DrawListUtils::getProjectPath());
-                property->setAttribute(QLatin1String("enumNames"), DrawListUtils::drawList_);
+                graphPageNames_.clear();
+                ProjectData::getInstance()->getAllGraphPageName(graphPageNames_);
+                property->setAttribute(QLatin1String("enumNames"), graphPageNames_);
                 if(pArgItem->value == "")
-                    pArgItem->value = DrawListUtils::drawList_.at(0);
-                property->setValue(DrawListUtils::drawList_.indexOf(pArgItem->value));
+                    pArgItem->value = graphPageNames_.at(0);
+                property->setValue(graphPageNames_.indexOf(pArgItem->value));
                 addProperty(property, QLatin1String("graph"));
-                if(pArgItem->value == DrawListUtils::drawList_.at(0)) {
+                if(pArgItem->value == graphPageNames_.at(0)) {
                     propertyChanged(property, pArgItem->value);
                 }
             } else if(pArgItem->type == "ELEMENTIDLIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 elementIds_.clear();
-                ElementIDHelper::getAllElementIDName(ElementIDHelper::getProjectPath(), elementIds_);
+                ProjectData::getInstance()->getAllElementIDName(elementIds_);
                 property->setAttribute(QLatin1String("enumNames"), elementIds_);
                 if(pArgItem->value == "")
                     pArgItem->value = elementIds_.at(0);
@@ -561,7 +560,7 @@ void FunctionEditorDialog::propertyChanged(QtProperty *property, const QVariant 
             } else if (id == QLatin1String("tag")) {
                 szVal = tagNames_.at(value.toInt());
             } else if (id == QLatin1String("graph")) {
-                szVal = DrawListUtils::drawList_.at(value.toInt());
+                szVal = graphPageNames_.at(value.toInt());
             }  else if (id == QLatin1String("element")) {
                 szVal = elementIds_.at(value.toInt());
             }  else  {

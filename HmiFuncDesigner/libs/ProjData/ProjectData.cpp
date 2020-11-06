@@ -195,3 +195,27 @@ QString ProjectData::getProjectNameWithOutSuffix(const QString &projectName) {
     QFileInfo projFileInfo(projectName);
     return projFileInfo.baseName();
 }
+
+/**
+ * @brief ProjectData::getAllElementIDName
+ * @details 获取工程所有控件的ID名称
+ * @param szIDList 所有控件的ID名称
+ */
+void ProjectData::getAllElementIDName(QStringList &szIDList) {
+    if(pImplGraphPageSaveLoadObj_) {
+        pImplGraphPageSaveLoadObj_->getAllElementIDName(szIDList);
+    }
+}
+
+/**
+ * @brief ProjectData::getAllGraphPageName
+ * @details 获取工程所有画面名称
+ * @param szList 所有画面名称
+ */
+void ProjectData::getAllGraphPageName(QStringList &szList) {
+    if(pImplGraphPageSaveLoadObj_) {
+        pImplGraphPageSaveLoadObj_->getAllGraphPageName(szList);
+    }
+}
+
+

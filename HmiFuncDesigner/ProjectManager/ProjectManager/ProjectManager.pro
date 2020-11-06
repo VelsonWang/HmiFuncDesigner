@@ -19,6 +19,7 @@ INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
 INCLUDEPATH += $$PWD/../../libs/qscintilla
 INCLUDEPATH += $$PWD/../../libs/ProjData
+INCLUDEPATH += $$PWD/../../libs/Core
 INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
 
 
@@ -35,13 +36,12 @@ CONFIG(debug, debug|release) { #debug
     }
 }
 
-LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lProjData
-
+LIBS += -L$$LINK_LIBRARY_PATH -lCore
 
 SOURCES += main.cpp\
     CommunicationDeviceChild.cpp \

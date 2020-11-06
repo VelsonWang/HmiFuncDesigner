@@ -1,6 +1,5 @@
 #include "GraphPageListWidget.h"
 #include "Helper.h"
-#include "DrawListUtils.h"
 #include "ProjectData.h"
 #include <QMenu>
 #include <QAction>

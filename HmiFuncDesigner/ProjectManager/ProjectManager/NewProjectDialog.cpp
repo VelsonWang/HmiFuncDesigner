@@ -9,7 +9,6 @@
 #include <QMessageBox>
 #include <QSettings>
 #include "ConfigUtils.h"
-#include "DrawListUtils.h"
 #include "ProjectData.h"
 #include "ProjectInfoManager.h"
 #include "Singleton.h"
@@ -27,9 +26,10 @@ NewProjectDialog::NewProjectDialog(QWidget *parent)
     ui->editStationAddress->setText("192.168.1.10");
 
     ui->cboStartPage->clear();
-    DrawListUtils::loadDrawList(ProjectData::getInstance()->szProjPath_);
-    for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
-        QString strPageName = DrawListUtils::drawList_.at(i) + ".drw";
+    QStringList szGraphPageNameList;
+    ProjectData::getInstance()->getAllGraphPageName(szGraphPageNameList);
+    for (int i = 0; i < szGraphPageNameList.count(); i++) {
+        QString strPageName = szGraphPageNameList.at(i);
         ui->cboStartPage->addItem(strPageName);
     }
     ui->cboStartPage->addItem("None");
