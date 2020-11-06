@@ -18,7 +18,7 @@ bool TagIO::openFromXml(XMLObject *pXmlObj)
     listTagIODBItem_.clear();
     XMLObject *pTagIOsObj = pXmlObj->getCurrentChild("tag_ios");
     if(pTagIOsObj == Q_NULLPTR) return false;
-    QList<XMLObject* > listTagIOsObj = pTagIOsObj->getCurrentChildren("tag_io");
+    QVector<XMLObject* > listTagIOsObj = pTagIOsObj->getCurrentChildren("tag_io");
     foreach(XMLObject* pTagIOObj, listTagIOsObj) {
         TagIODBItem *pObj = new TagIODBItem();
         pObj->m_szTagID = pTagIOObj->getProperty("id");
@@ -111,7 +111,7 @@ bool TagIOGroup::openFromXml(XMLObject *pXmlObj)
     listTagIOGroupDBItem_.clear();
     XMLObject *pTagIOGroupsObj = pXmlObj->getCurrentChild("tag_io_groups");
     if(pTagIOGroupsObj == Q_NULLPTR) return false;
-    QList<XMLObject* > listTagIOGroupsObj = pTagIOGroupsObj->getCurrentChildren("tag_io_group");
+    QVector<XMLObject* > listTagIOGroupsObj = pTagIOGroupsObj->getCurrentChildren("tag_io_group");
     foreach(XMLObject* pTagIOGroupObj, listTagIOGroupsObj) {
         TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
         pObj->m_id = pTagIOGroupObj->getProperty("id").toInt();

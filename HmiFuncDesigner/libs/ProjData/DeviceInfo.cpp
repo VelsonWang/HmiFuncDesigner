@@ -21,7 +21,7 @@ bool DeviceInfo::openFromXml(XMLObject *pXmlObj) {
     listDeviceInfoObject_.clear();
     XMLObject *pDevicesObj = pXmlObj->getCurrentChild("devices");
     if(pDevicesObj == Q_NULLPTR) return false;
-    QList<XMLObject* > listUsersObj = pDevicesObj->getCurrentChildren("device");
+    QVector<XMLObject* > listUsersObj = pDevicesObj->getCurrentChildren("device");
     foreach(XMLObject* pDevObj, listUsersObj) {
         DeviceInfoObject *pObj = new DeviceInfoObject();
         pObj->iID_ = pDevObj->getProperty("id").toInt();

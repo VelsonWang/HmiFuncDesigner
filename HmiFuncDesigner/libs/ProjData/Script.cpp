@@ -40,7 +40,7 @@ bool Script::openFromXml(XMLObject *pXmlObj) {
     m_listScriptObjects.clear();
     XMLObject *pScriptsObj = pXmlObj->getCurrentChild("scripts");
     if(pScriptsObj == Q_NULLPTR) return false;
-    QList<XMLObject* > listScriptsObj = pScriptsObj->getCurrentChildren("script");
+    QVector<XMLObject* > listScriptsObj = pScriptsObj->getCurrentChildren("script");
     foreach(XMLObject* pScriptObj, listScriptsObj) {
         ScriptObject *pObj = new ScriptObject();
         pObj->m_szName = pScriptObj->getProperty("name");

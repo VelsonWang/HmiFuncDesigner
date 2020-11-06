@@ -28,7 +28,7 @@ void XMLObject::clear() {
 //
 // 获取本节点的所有子对象
 //
-QList<XMLObject* > XMLObject::getChildren() {
+QVector<XMLObject* > XMLObject::getChildren() {
     return m_children;
 }
 
@@ -204,8 +204,8 @@ XMLObject* XMLObject::getCurrentChild(const QString& name) {
 //
 // 获取当前节点的所有名称为name的子节点
 //
-QList<XMLObject* > XMLObject::getCurrentChildren(const QString& name) {
-    QList<XMLObject*> children;
+QVector<XMLObject* > XMLObject::getCurrentChildren(const QString& name) {
+    QVector<XMLObject*> children;
     foreach(XMLObject* xml, m_children) {
         if(xml->getTagName() == name)
             children.append(xml);
@@ -240,7 +240,7 @@ void XMLObject::getChildrenByParentTagName(QStringList &tagNames,
             children.append(this);
         } else {
             tagName = tagNames.at(1);
-            QList<XMLObject* > subChildren = getCurrentChildren(tagName);
+            QVector<XMLObject* > subChildren = getCurrentChildren(tagName);
             tagNames.removeFirst();
             foreach(XMLObject* xml, subChildren) {
                 QStringList copyTagNames = tagNames;

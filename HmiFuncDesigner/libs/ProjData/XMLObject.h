@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QMap>
-#include <QList>
+#include <QVector>
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 #include "projdata_global.h"
@@ -16,7 +16,7 @@ public:
     ~XMLObject();
     void clear();
 
-    QList<XMLObject* > getChildren();
+    QVector<XMLObject* > getChildren();
 
     QString getProperty(const QString& name);
     void setProperty(const QString& name, const QString& value);
@@ -37,14 +37,14 @@ public:
 
     QMap<QString, QString> getPropertys();
     XMLObject* getCurrentChild(const QString& name);
-    QList<XMLObject* > getCurrentChildren(const QString& name);
+    QVector<XMLObject* > getCurrentChildren(const QString& name);
     void getChildrenByParentTagName(QStringList &tagNames, QList<XMLObject* > &children);
 
     void showXMLObject();
 
 private:
-    QList<XMLObject*> m_children;
-    QMap<QString,QString> m_property;
+    QVector<XMLObject*> m_children;
+    QMap<QString, QString> m_property;
     XMLObject *m_parent;
     QString m_tagName;
     QString m_text;

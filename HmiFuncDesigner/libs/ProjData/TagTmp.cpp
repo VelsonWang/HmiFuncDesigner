@@ -17,7 +17,7 @@ bool TagTmp::openFromXml(XMLObject *pXmlObj) {
     listTagTmpDBItem_.clear();
     XMLObject *pTagTmpsObj = pXmlObj->getCurrentChild("tag_tmps");
     if(pTagTmpsObj == Q_NULLPTR) return false;
-    QList<XMLObject* > listTagTempsObj = pTagTmpsObj->getCurrentChildren("tag_tmp");
+    QVector<XMLObject* > listTagTempsObj = pTagTmpsObj->getCurrentChildren("tag_tmp");
     foreach(XMLObject* pTagTempObj, listTagTempsObj) {
         TagTmpDBItem *pObj = new TagTmpDBItem();
         pObj->m_szTagID = pTagTempObj->getProperty("id");

@@ -44,7 +44,7 @@ bool TagSys::openFromXml(XMLObject *pXmlObj) {
         return true;
     }
 
-    QList<XMLObject* > listTagSyssObj = pTagSyssObj->getCurrentChildren("tag_sys");
+    QVector<XMLObject* > listTagSyssObj = pTagSyssObj->getCurrentChildren("tag_sys");
     foreach(XMLObject* pTagSysObj, listTagSyssObj) {
         TagSysDBItem *pObj = new TagSysDBItem();
         pObj->m_szTagID = pTagSysObj->getProperty("id");

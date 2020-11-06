@@ -57,7 +57,7 @@ bool PictureResourceManager::openFromXml(XMLObject *pXmlObj)
     m_listPictures.clear();
     XMLObject *pPicsObj = pXmlObj->getCurrentChild("pics");
     if(pPicsObj == Q_NULLPTR) return false;
-    QList<XMLObject* > listPicsObj = pPicsObj->getCurrentChildren("pic");
+    QVector<XMLObject* > listPicsObj = pPicsObj->getCurrentChildren("pic");
     foreach(XMLObject* pPicObj, listPicsObj) {
         PictureInfo *pObj = new PictureInfo();
         pObj->openFromXml(pPicObj);

@@ -31,7 +31,7 @@ bool ProjectData::openFromXml(const QString &szProjFile)
     XMLObject xml;
     if(!xml.load(buffer, 0)) return false;
 
-    QList<XMLObject*> projObjs = xml.getChildren();
+    QVector<XMLObject*> projObjs = xml.getChildren();
     foreach(XMLObject* pProjObj, projObjs) {
         // 工程信息管理
         projInfoMgr_.openFromXml(pProjObj);
