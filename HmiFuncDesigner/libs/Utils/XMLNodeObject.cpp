@@ -1,22 +1,22 @@
-﻿#include "XMLObject.h"
+﻿#include "XMLNodeObject.h"
 
 #include <QDebug>
 
-XMLObject::XMLObject(XMLObject *parent) :
+XMLNodeObject::XMLNodeObject(XMLNodeObject *parent) :
     m_parent(parent) {
     if(m_parent != Q_NULLPTR) {
         m_parent->m_children.append(this);
     }
 }
 
-XMLObject::~XMLObject() {
+XMLNodeObject::~XMLNodeObject() {
     clear();
     if(m_parent != Q_NULLPTR) {
         m_parent->m_children.removeAll(this);
     }
 }
 
-void XMLObject::clear() {
+void XMLNodeObject::clear() {
     while(m_children.size() > 0) {
         delete m_children.first();
     }
@@ -28,7 +28,7 @@ void XMLObject::clear() {
 //
 // 获取本节点的所有子对象
 //
-QList<XMLObject* > XMLObject::getChildren() {
+QList<XMLNodeObject* > XMLNodeObject::getChildren() {
     return m_children;
 }
 
@@ -37,7 +37,7 @@ QList<XMLObject* > XMLObject::getChildren() {
 // <person age="29" name="jason" sex="male">hi, my name is jason.</person>
 // age 属性值为29
 //
-QString XMLObject::getProperty(const QString &name) {
+QString XMLNodeObject::getProperty(const QString &name) {
     return m_property.value(name);
 }
 
@@ -46,7 +46,7 @@ QString XMLObject::getProperty(const QString &name) {
 // setProperty("sex", "female")
 // <person sex="female">hi, my name is jason.</person>
 //
-void XMLObject::setProperty(const QString &name, const QString &value) {
+void XMLNodeObject::setProperty(const QString &name, const QString &value) {
     m_property.insert(name, value);
 }
 
@@ -55,7 +55,7 @@ void XMLObject::setProperty(const QString &name, const QString &value) {
 // <person age="29" name="jason" sex="male">hi, my name is jason.</person>
 // 标签名称为person
 //
-QString XMLObject::getTagName() {
+QString XMLNodeObject::getTagName() {
     return m_tagName;
 }
 
@@ -65,7 +65,7 @@ QString XMLObject::getTagName() {
 // <page name="jason">hi, my name is jason.</page>
 // 标签名称为page
 //
-void XMLObject::setTagName(const QString &tagName) {
+void XMLNodeObject::setTagName(const QString &tagName) {
     m_tagName = tagName;
 }
 
@@ -74,7 +74,7 @@ void XMLObject::setTagName(const QString &tagName) {
 // <person age="29" name="jason" sex="male">hi, my name is jason.</person>
 // 标签文本为 hi, my name is jason.
 //
-QString XMLObject::getText() {
+QString XMLNodeObject::getText() {
     return m_text;
 }
 
@@ -83,11 +83,11 @@ QString XMLObject::getText() {
 // setText("hello, jack!")
 // <person name="jason">hello, jack!</person>
 //
-void XMLObject::setText(const QString &text) {
+void XMLNodeObject::setText(const QString &text) {
     m_text = text;
 }
 
-void XMLObject::insertChild(int index, XMLObject *child) {
+void XMLNodeObject::insertChild(int index, XMLNodeObject *child) {
     if(child->m_parent == this)
         return;
 
@@ -103,7 +103,7 @@ void XMLObject::insertChild(int index, XMLObject *child) {
 }
 
 
-bool XMLObject::load(const QString &buffer, QString *error) {
+bool XMLNodeObject::load(const QString &buffer, QString *error) {
     QXmlStreamReader r(buffer);
     while(!r.atEnd()) {
         if(r.readNext() == QXmlStreamReader::StartElement) {
@@ -121,7 +121,7 @@ bool XMLObject::load(const QString &buffer, QString *error) {
     return false;
 }
 
-void XMLObject::load(QXmlStreamReader *r) {
+void XMLNodeObject::load(QXmlStreamReader *r) {
     clear();
     setTagName(r->name().toString());
 
@@ -132,7 +132,7 @@ void XMLObject::load(QXmlStreamReader *r) {
     while(b && !r->hasError()) {
         switch(r->readNext()) {
         case QXmlStreamReader::StartElement: {
-            XMLObject *xml = new XMLObject(this);
+            XMLNodeObject *xml = new XMLNodeObject(this);
             xml->load(r);
             break;
         }            
@@ -149,7 +149,7 @@ void XMLObject::load(QXmlStreamReader *r) {
     }
 }
 
-QString XMLObject::write() {
+QString XMLNodeObject::write() {
     QString ret;
     QXmlStreamWriter w(&ret);
 
@@ -161,7 +161,7 @@ QString XMLObject::write() {
     return ret;
 }
 
-void XMLObject::write(QXmlStreamWriter *w) {
+void XMLNodeObject::write(QXmlStreamWriter *w) {
     if(m_tagName == "")
         return;
     w->writeStartElement(m_tagName);
@@ -175,7 +175,7 @@ void XMLObject::write(QXmlStreamWriter *w) {
     if(m_text != "")
         w->writeCharacters(m_text);
 
-    foreach(XMLObject* xml, m_children)
+    foreach(XMLNodeObject* xml, m_children)
         xml->write(w);
 
     w->writeEndElement();
@@ -184,7 +184,7 @@ void XMLObject::write(QXmlStreamWriter *w) {
 //
 // 获取当前节点的所有属性值
 //
-QMap<QString,QString> XMLObject::getPropertys() {
+QMap<QString,QString> XMLNodeObject::getPropertys() {
     return m_property;
 }
 
@@ -192,8 +192,8 @@ QMap<QString,QString> XMLObject::getPropertys() {
 //
 // 获取当前节点的名称为name的子节点
 //
-XMLObject* XMLObject::getCurrentChild(const QString& name) {
-    foreach(XMLObject* xml, m_children) {
+XMLNodeObject* XMLNodeObject::getCurrentChild(const QString& name) {
+    foreach(XMLNodeObject* xml, m_children) {
         if(xml->getTagName() == name)
             return xml;
     }
@@ -204,9 +204,9 @@ XMLObject* XMLObject::getCurrentChild(const QString& name) {
 //
 // 获取当前节点的所有名称为name的子节点
 //
-QList<XMLObject* > XMLObject::getCurrentChildren(const QString& name) {
-    QList<XMLObject*> children;
-    foreach(XMLObject* xml, m_children) {
+QList<XMLNodeObject* > XMLNodeObject::getCurrentChildren(const QString& name) {
+    QList<XMLNodeObject*> children;
+    foreach(XMLNodeObject* xml, m_children) {
         if(xml->getTagName() == name)
             children.append(xml);
     }
@@ -228,10 +228,10 @@ QList<XMLObject* > XMLObject::getCurrentChildren(const QString& name) {
 // tagNmaes(0)=root_parent
 // tagNmaes(1)=parent1
 // tagNmaes(3)=child
-// QList<XMLObject* > children 找到的子节点
+// QList<XMLNodeObject* > children 找到的子节点
 //
-void XMLObject::getChildrenByParentTagName(QStringList &tagNames,
-                                QList<XMLObject* > &children) {
+void XMLNodeObject::getChildrenByParentTagName(QStringList &tagNames,
+                                QList<XMLNodeObject* > &children) {
     if(tagNames.size() < 1)
         return;
     QString tagName = tagNames.first();
@@ -240,9 +240,9 @@ void XMLObject::getChildrenByParentTagName(QStringList &tagNames,
             children.append(this);
         } else {
             tagName = tagNames.at(1);
-            QList<XMLObject* > subChildren = getCurrentChildren(tagName);
+            QList<XMLNodeObject* > subChildren = getCurrentChildren(tagName);
             tagNames.removeFirst();
-            foreach(XMLObject* xml, subChildren) {
+            foreach(XMLNodeObject* xml, subChildren) {
                 QStringList copyTagNames = tagNames;
                 xml->getChildrenByParentTagName(copyTagNames, children);
             }
@@ -251,7 +251,7 @@ void XMLObject::getChildrenByParentTagName(QStringList &tagNames,
 }
 
 
-void XMLObject::showXMLObject() {
+void XMLNodeObject::showXMLObject() {
     qDebug() << "====================================================";
     qDebug() << "TagName: " << getTagName();
     qDebug() << "Text: " << getText();
@@ -269,26 +269,26 @@ void XMLObject::showXMLObject() {
 
 #include <QCoreApplication>
 #include <QFile>
-#include "XMLObject.h"
+#include "XMLNodeObject.h"
 #include "FileHelper.h"
 #include <QDebug>
 
 void load(const QString &project_path)
 {
     QString buffer = FileHelper::readString(project_path + "/pages.xml");
-    XMLObject xml;
+    XMLNodeObject xml;
     if(!xml.load(buffer, 0))
         return;
 
-    QList<XMLObject*> children = xml.getChildren();
-    foreach(XMLObject* obj, children)
-        obj->showXMLObject();
+    QList<XMLNodeObject*> children = xml.getChildren();
+    foreach(XMLNodeObject* obj, children)
+        obj->showXMLNodeObject();
 
     qDebug() << "\n\n\n=========get child name is person=========\n";
     children.clear();
     children = xml.getCurrentChildren("person");
-    foreach(XMLObject* obj, children)
-        obj->showXMLObject();
+    foreach(XMLNodeObject* obj, children)
+        obj->showXMLNodeObject();
 
     qDebug() << "\n\n\n=========getChildrenByParentTagName=========\n";
     QStringList parents;
@@ -297,8 +297,8 @@ void load(const QString &project_path)
     parents<< "baby";
     children.clear();
     xml.getChildrenByParentTagName(parents, children);
-    foreach(XMLObject* obj, children){
-        obj->showXMLObject();
+    foreach(XMLNodeObject* obj, children){
+        obj->showXMLNodeObject();
         obj->setProperty("cb", "123");
     }
     FileHelper::writeString(project_path + "/pages.xml", xml.write());
@@ -306,32 +306,32 @@ void load(const QString &project_path)
 
 void save(const QString &project_path)
 {
-    XMLObject persons;
+    XMLNodeObject persons;
     persons.setTagName("persons");
 
-    XMLObject *person;
-    person = new XMLObject(&persons);
+    XMLNodeObject *person;
+    person = new XMLNodeObject(&persons);
     person->setTagName("person");
     person->setText("hi, my name is jason.");
     person->setProperty("name", "jason");
     person->setProperty("age", "29");
     person->setProperty("sex", "male");
 
-    person = new XMLObject(&persons);
+    person = new XMLNodeObject(&persons);
     person->setTagName("person");
     person->setText("hi, my name is velson.");
     person->setProperty("name", "velson");
     person->setProperty("age", "28");
     person->setProperty("sex", "male");
 
-    person = new XMLObject(&persons);
+    person = new XMLNodeObject(&persons);
     person->setTagName("person");
     person->setText("hi, my name is lucy.");
     person->setProperty("name", "lucy");
     person->setProperty("age", "25");
     person->setProperty("sex", "female");
 
-    XMLObject *baby = new XMLObject(person);
+    XMLNodeObject *baby = new XMLNodeObject(person);
     baby->setTagName("baby");
     baby->setText("lucy==baby");
     baby->setProperty("name", "baby");

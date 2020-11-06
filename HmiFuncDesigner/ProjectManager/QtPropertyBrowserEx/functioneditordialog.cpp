@@ -109,7 +109,7 @@ void FunctionEditorDialog::initListWidget()
         return;
     }
 
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+    QVector<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
     foreach(XMLObject* funcGroup, childrenFuncSupport) {
         QString szFuncGroupName = funcGroup->getProperty("funcName");
@@ -124,7 +124,7 @@ void FunctionEditorDialog::initListWidget()
         pTab->setCurrentIndex(0);
 
         // add child
-        QList<XMLObject*> childrenGroup = funcGroup->getChildren();
+        QVector<XMLObject*> childrenGroup = funcGroup->getChildren();
         if(childrenGroup.size() < 1)
             continue;
         foreach(XMLObject* func, childrenGroup) {
@@ -134,7 +134,7 @@ void FunctionEditorDialog::initListWidget()
             QListWidgetItem *pItem = new QListWidgetItem(funcName, pListWidget);
             pListWidget->addItem(pItem);
 
-            QList<XMLObject*> funcDesc = func->getChildren();
+            QVector<XMLObject*> funcDesc = func->getChildren();
             if(funcDesc.size() < 1)
                 continue;
             QString strDesc = "";

@@ -1,5 +1,5 @@
-﻿#ifndef XMLOBJECT_H
-#define XMLOBJECT_H
+﻿#ifndef XMLNODEOBJECT_H
+#define XMLNODEOBJECT_H
 
 #include <QObject>
 #include <QMap>
@@ -7,15 +7,15 @@
 #include <QXmlStreamReader>
 #include <QXmlStreamWriter>
 
-class XMLObject : public QObject
+class XMLNodeObject : public QObject
 {
     Q_OBJECT
 public:
-    explicit XMLObject(XMLObject *parent = 0);
-    ~XMLObject();
+    explicit XMLNodeObject(XMLNodeObject *parent = 0);
+    ~XMLNodeObject();
     void clear();
 
-    QList<XMLObject* > getChildren();
+    QList<XMLNodeObject* > getChildren();
 
     QString getProperty(const QString& name);
     void setProperty(const QString& name, const QString& value);
@@ -26,7 +26,7 @@ public:
     QString getText();
     void setText(const QString& text);
 
-    void insertChild(int index, XMLObject* child);
+    void insertChild(int index, XMLNodeObject* child);
 
     bool load(const QString &buffer, QString *error);
     void load(QXmlStreamReader *r);
@@ -35,18 +35,18 @@ public:
     void write(QXmlStreamWriter *w);
 
     QMap<QString, QString> getPropertys();
-    XMLObject* getCurrentChild(const QString& name);
-    QList<XMLObject* > getCurrentChildren(const QString& name);
-    void getChildrenByParentTagName(QStringList &tagNames, QList<XMLObject* > &children);
+    XMLNodeObject* getCurrentChild(const QString& name);
+    QList<XMLNodeObject* > getCurrentChildren(const QString& name);
+    void getChildrenByParentTagName(QStringList &tagNames, QList<XMLNodeObject* > &children);
 
     void showXMLObject();
 
 private:
-    QList<XMLObject*> m_children;
+    QList<XMLNodeObject*> m_children;
     QMap<QString,QString> m_property;
-    XMLObject *m_parent;
+    XMLNodeObject *m_parent;
     QString m_tagName;
     QString m_text;
 };
 
-#endif // XMLOBJECT_H
+#endif // XMLNODEOBJECT_H

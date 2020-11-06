@@ -605,13 +605,13 @@ void ElementClock::getSupportEvents(QStringList &listValue)
         return;
     }
 
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+    QVector<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
     foreach(XMLObject* eventGroup, childrenFuncSupport) {
         QString szEventGroupName = eventGroup->getProperty("name");
         if(szEventGroupName == "Clock") {
 
-            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
+            QVector<XMLObject*> childrenGroup = eventGroup->getChildren();
             if(childrenGroup.size() < 1)
                 continue;
 
@@ -620,7 +620,7 @@ void ElementClock::getSupportEvents(QStringList &listValue)
                 QString eventShowName = event->getProperty("ShowName");
                 listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
 
-                QList<XMLObject*> funcDesc = event->getChildren();
+                QVector<XMLObject*> funcDesc = event->getChildren();
                 if(funcDesc.size() < 1)
                     continue;
                 QString strDesc = event->getCurrentChild("desc")->getText();

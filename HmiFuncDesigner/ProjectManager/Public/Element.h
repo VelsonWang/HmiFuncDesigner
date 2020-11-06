@@ -11,7 +11,7 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "XMLObject.h"
+#include "XMLNodeObject.h"
 #include "ProjectData.h"
 
 class Element : public QGraphicsObject

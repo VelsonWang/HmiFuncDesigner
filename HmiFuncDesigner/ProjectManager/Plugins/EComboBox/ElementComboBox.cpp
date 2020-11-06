@@ -1,6 +1,6 @@
 ﻿#include "ElementComboBox.h"
 #include "Helper.h"
-#include "XMLObject.h"
+#include "XMLNodeObject.h"
 #include "ProjectData.h"
 #include "variantmanager.h"
 #include <QMessageBox>

@@ -47,7 +47,7 @@ void InsertFunctionDlg::treeWidgetInit() {
         return;
     }
 
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+    QVector<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
     foreach (XMLObject* funcGroup, childrenFuncSupport) {
         // qDebug() << funcGroup->get_title() << "  "  <<
@@ -57,7 +57,7 @@ void InsertFunctionDlg::treeWidgetInit() {
         pItem->setText(0, funcGroupName);
 
         // add child
-        QList<XMLObject*> childrenGroup = funcGroup->getChildren();
+        QVector<XMLObject*> childrenGroup = funcGroup->getChildren();
         if (childrenGroup.size() < 1) continue;
         foreach (XMLObject* func, childrenGroup) {
             QTreeWidgetItem* pChildItem = new QTreeWidgetItem();
@@ -65,7 +65,7 @@ void InsertFunctionDlg::treeWidgetInit() {
             pChildItem->setText(0, funcName);
             pItem->addChild(pChildItem);
 
-            QList<XMLObject*> funcDesc = func->getChildren();
+            QVector<XMLObject*> funcDesc = func->getChildren();
             if (funcDesc.size() < 1) continue;
             QString strDesc = "";
             QString strFuncOrgName = func->getCurrentChild("name")->getText();

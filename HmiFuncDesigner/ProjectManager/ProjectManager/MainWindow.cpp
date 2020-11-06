@@ -1367,7 +1367,7 @@ bool MainWindow::openFromXml(XMLObject *pXmlObj) {
     GraphPageManager::getInstance()->releaseAllGraphPage();
     this->m_pListWidgetGraphPagesObj->clear();
 
-    QList<XMLObject* > listPagesObj = pXmlObj->getCurrentChildren("page");
+    QVector<XMLObject* > listPagesObj = pXmlObj->getCurrentChildren("page");
     foreach(XMLObject* pPageObj, listPagesObj) {
         QString szPageId = pPageObj->getProperty("id");
         this->m_pListWidgetGraphPagesObj->addItem(szPageId);

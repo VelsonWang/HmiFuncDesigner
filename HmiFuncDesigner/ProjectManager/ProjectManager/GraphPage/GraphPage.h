@@ -17,7 +17,7 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "XMLObject.h"
+#include "XMLNodeObject.h"
 
 class GraphPage : public QGraphicsScene
 {
