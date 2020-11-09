@@ -17,6 +17,8 @@
 #include <QStringList>
 #include <QTime>
 #include <QDir>
+#include <QJsonObject>
+#include <QJsonValue>
 #include "AboutDialog.h"
 #include "ConfigUtils.h"
 #include "Helper.h"
@@ -43,6 +45,7 @@
 #include "SystemParametersChild.h"
 #include "CommunicationDeviceChild.h"
 #include "TagManagerChild.h"
+#include "Core.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -278,217 +281,357 @@ void MainWindow::createStatusBar()
  */
 void MainWindow::createActions()
 {
+    QAction *pActObj = Q_NULLPTR;
+
     // 新建工程
-    m_pActNewProjObj = new QAction(QIcon(":/images/newproject.png"), tr("新建工程"), this);
-    m_pActNewProjObj->setShortcut(QString("Ctrl+N"));
-    connect(m_pActNewProjObj, &QAction::triggered, this, &MainWindow::onNewPoject);
+    pActObj = new QAction(QIcon(":/images/newproject.png"), tr("New"), this);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+N"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onNewPoject);
+        Core::getInstance()->insertAction("Project.New", pActObj);
+    }
 
     //  打开工程
-    m_pActOpenProjObj = new QAction(QIcon(":/images/openproject.png"), tr("打开工程"), this);
-    m_pActOpenProjObj->setShortcut(QString("Ctrl+O"));
-    connect(m_pActOpenProjObj, &QAction::triggered, this, &MainWindow::onOpenProject);
+    pActObj = new QAction(QIcon(":/images/openproject.png"), tr("Open"), this);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+O"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onOpenProject);
+        Core::getInstance()->insertAction("Project.Open", pActObj);
+    }
 
     // 关闭工程
-    m_pActCloseProjObj = new QAction(QIcon(":/images/projectexit.png"), tr("关闭"), this);
-    connect(m_pActCloseProjObj, &QAction::triggered, this, &MainWindow::onCloseProject);
+    pActObj = new QAction(QIcon(":/images/projectexit.png"), tr("Close"), this);
+    if(pActObj) {
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onCloseProject);
+        Core::getInstance()->insertAction("Project.Close", pActObj);
+    }
 
     // 保存工程
-    m_pActSaveProjObj = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), this);
-    m_pActSaveProjObj->setShortcut(QString("Ctrl+S"));
-    connect(m_pActSaveProjObj, &QAction::triggered, this, &MainWindow::onSaveProject);
+    pActObj = new QAction(QIcon(":/images/saveproject.png"), tr("Save"), this);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+S"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onSaveProject);
+        Core::getInstance()->insertAction("Project.Save", pActObj);
+    }
 
     // 最近打开的工程
-    m_pActRecentProjListObj = new QAction(tr("最近打开的工程"), this);
+    pActObj = new QAction(tr("LastOpen"), this);
+    if(pActObj) {
+        Core::getInstance()->insertAction("Project.LastOpen", pActObj);
+        QJsonObject datJson;
+        datJson.insert("which", QJsonValue("LastOpen"));
+        QVariant datUser = QVariant(datJson);
+        pActObj->setData(datUser);
+    }
 
-    m_pActExitObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), this);
-    m_pActExitObj->setShortcut(QString("Ctrl+Q"));
-    connect(m_pActExitObj, &QAction::triggered, this, &MainWindow::onExit);
+    // 退出
+    pActObj = new QAction(QIcon(":/images/programexit.png"), tr("Exit"), this);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+Q"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onExit);
+        Core::getInstance()->insertAction("Project.Exit", pActObj);
+    }
 
     //-----------------------------<视图>---------------------------------------
 
     // 视图工具栏
-    m_pActToolBarObj = new QAction(tr("视图工具栏"), this);
-    m_pActToolBarObj->setCheckable(true);
+    pActObj = new QAction(tr("Toolbar"), this);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        Core::getInstance()->insertAction("Widget.Toolbar", pActObj);
+    }
 
     // 状态栏
-    m_pActStatusBarObj = new QAction(tr("状态栏"), this);
-    m_pActStatusBarObj->setCheckable(true);
+    pActObj = new QAction(tr("StatusBar"), this);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        Core::getInstance()->insertAction("Widget.StatusBar", pActObj);
+    }
 
     // 工作区
-    m_pActWorkSpaceObj = new QAction(tr("工作区"), this);
-    m_pActWorkSpaceObj->setCheckable(true);
+    pActObj = new QAction(tr("WorkSpace"), this);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        Core::getInstance()->insertAction("Widget.WorkSpace", pActObj);
+    }
 
     // 显示区
-    m_pActDisplayAreaObj = new QAction(tr("显示区"), this);
-    m_pActDisplayAreaObj->setCheckable(true);
+    pActObj = new QAction(tr("DisplayArea"), this);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        Core::getInstance()->insertAction("Widget.DisplayArea", pActObj);
+    }
 
     //-----------------------------<画面编辑器>----------------------------------
 
     // 窗口.图形元素
-    m_pActShowGraphObj = new QAction(tr("图形元素"), this);
-    m_pActShowGraphObj->setCheckable(true);
-    m_pActShowGraphObj->setChecked(true);
-    connect(m_pActShowGraphObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGraphObj(bool)));
+    pActObj = new QAction(tr("图形元素"), this);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        pActObj->setChecked(true);
+        connect(pActObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGraphObj(bool)));
+        Core::getInstance()->insertAction("Window.Element", pActObj);
+    }
 
     // 窗口.属性编辑器
-    m_pActShowPropEditorObj = new QAction(tr("属性编辑器"), this);
-    m_pActShowPropEditorObj->setCheckable(true);
-    m_pActShowPropEditorObj->setChecked(true);
-    connect(m_pActShowPropEditorObj, SIGNAL(triggered(bool)), SLOT(onSlotShowPropEditor(bool)));
-
-    // 画面.新建
-    m_pActNewGraphPageObj = new QAction(QIcon(":/DrawAppImages/filenew.png"), tr("新建"), this);
-    m_pActNewGraphPageObj->setShortcut(QString("Ctrl+N"));
-    connect(m_pActNewGraphPageObj, SIGNAL(triggered()), SLOT(onSlotNewGraphPage()));
+    pActObj = new QAction(tr("PropertyEditor"), this);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        pActObj->setChecked(true);
+        connect(pActObj, SIGNAL(triggered(bool)), SLOT(onSlotShowPropEditor(bool)));
+        Core::getInstance()->insertAction("Window.PropertyEditor", pActObj);
+    }
 
     // 关闭画面
-    m_pActCloseGraphPageObj = new QAction(tr("关闭"), this);
-    connect(m_pActCloseGraphPageObj, SIGNAL(triggered()), SLOT(onSlotCloseGraphPage()));
+    pActObj = new QAction(tr("Close"), this);
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotCloseGraphPage()));
+        Core::getInstance()->insertAction("GraphPage.Close", pActObj);
+    }
 
     // 关闭所有画面
-    m_pActCloseAllObj = new QAction(tr("关闭所有"), this);
-    connect(m_pActCloseAllObj, SIGNAL(triggered()), SLOT(onSlotCloseAll()));
+    pActObj = new QAction(tr("关闭所有"), this);
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotCloseAll()));
+        Core::getInstance()->insertAction("GraphPage.CloseAll", pActObj);
+    }
 
     // 显示栅格
-    m_pActShowGridObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("显示栅格"), this);
-    m_pActShowGridObj->setCheckable(true);
-    m_pActShowGridObj->setChecked(m_bGraphPageGridVisible);
-    connect(m_pActShowGridObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGrid(bool)));
+    pActObj = new QAction(QIcon(":/DrawAppImages/showgrid.png"), tr("ShowGrid"), this);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        pActObj->setChecked(m_bGraphPageGridVisible);
+        connect(pActObj, SIGNAL(triggered(bool)), SLOT(onSlotShowGrid(bool)));
+        Core::getInstance()->insertAction("GraphPage.ShowGrid", pActObj);
+    }
 
     // 画面放大
-    m_pActZoomInObj = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("放大"), this);
-    connect(m_pActZoomInObj, SIGNAL(triggered()), SLOT(onSlotZoomIn()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/zoom-in.png"), tr("ZoomIn"), this);
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotZoomIn()));
+        Core::getInstance()->insertAction("GraphPage.ZoomIn", pActObj);
+    }
 
     // 画面缩小
-    m_pActZoomOutObj = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("缩小"), this);
-    connect(m_pActZoomOutObj, SIGNAL(triggered()), SLOT(onSlotZoomOut()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/zoom-out.png"), tr("ZoomOut"), this);
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotZoomOut()));
+        Core::getInstance()->insertAction("GraphPage.ZoomOut", pActObj);
+    }
 
     // 撤销
-    m_pActUndoObj = m_pUndoGroupObj->createUndoAction(this);
-    m_pActUndoObj->setIcon(QIcon(":/DrawAppImages/undo.png"));
-    m_pActUndoObj->setText(tr("撤销"));
-    m_pActUndoObj->setShortcut(QKeySequence::Undo);
+    pActObj = m_pUndoGroupObj->createUndoAction(this);
+    if(pActObj) {
+        pActObj->setIcon(QIcon(":/DrawAppImages/undo.png"));
+        pActObj->setText(tr("Undo"));
+        pActObj->setShortcut(QKeySequence::Undo);
+        Core::getInstance()->insertAction("GraphPage.Undo", pActObj);
+    }
 
     // 重做
-    m_pActRedoObj = m_pUndoGroupObj->createRedoAction(this);
-    m_pActRedoObj->setText(tr("重做"));
-    m_pActRedoObj->setIcon(QIcon(":/DrawAppImages/redo.png"));
-    m_pActRedoObj->setShortcut(QKeySequence::Redo);
+    pActObj = m_pUndoGroupObj->createRedoAction(this);
+    if(pActObj) {
+        pActObj->setText(tr("Redo"));
+        pActObj->setIcon(QIcon(":/DrawAppImages/redo.png"));
+        pActObj->setShortcut(QKeySequence::Redo);
+        Core::getInstance()->insertAction("GraphPage.Redo", pActObj);
+    }
 
     // 删除画面
-    m_pActDeleteObj = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
-    m_pActDeleteObj->setShortcut(QKeySequence::Delete);
-    connect(m_pActDeleteObj, SIGNAL(triggered()), SLOT(onSlotEditDelete()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("Delete"));
+    if(pActObj) {
+        pActObj->setShortcut(QKeySequence::Delete);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotEditDelete()));
+        Core::getInstance()->insertAction("GraphPage.Delete", pActObj);
+    }
 
     // 拷贝画面
-    m_pActCopyObj = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("拷贝"));
-    m_pActCopyObj->setShortcut(QKeySequence::Copy);
-    connect(m_pActCopyObj, SIGNAL(triggered()), SLOT(onSlotEditCopy()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/editcopy.png"),tr("Copy"));
+    if(pActObj) {
+        pActObj->setShortcut(QKeySequence::Copy);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotEditCopy()));
+        Core::getInstance()->insertAction("GraphPage.Copy", pActObj);
+    }
 
     // 粘贴画面
-    m_pActPasteObj = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("粘贴"));
-    m_pActPasteObj->setShortcut(QKeySequence::Paste);
-    connect(m_pActPasteObj, SIGNAL(triggered()), SLOT(onSlotEditPaste()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/editpaste.png"),tr("Paste"));
+    if(pActObj) {
+        pActObj->setShortcut(QKeySequence::Paste);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotEditPaste()));
+        Core::getInstance()->insertAction("GraphPage.Paste", pActObj);
+    }
 
     // 顶部对齐
-    m_pActAlignTopObj = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("顶部对齐"));
-    m_pActAlignTopObj->setData(Qt::AlignTop);
-    connect(m_pActAlignTopObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/align-top.png"), tr("AlignTop"));
+    if(pActObj) {
+        pActObj->setData(Qt::AlignTop);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+        Core::getInstance()->insertAction("GraphPage.AlignTop", pActObj);
+    }
 
     // 底部对齐
-    m_pActAlignDownObj = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("底部对齐"));
-    m_pActAlignDownObj->setData(Qt::AlignBottom);
-    connect(m_pActAlignDownObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/align-bottom.png"), tr("AlignBottom"));
+    if(pActObj) {
+        pActObj->setData(Qt::AlignBottom);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+        Core::getInstance()->insertAction("GraphPage.AlignBottom", pActObj);
+    }
 
     // 右对齐
-    m_pActAlignRightObj = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("右对齐"));
-    m_pActAlignRightObj->setData(Qt::AlignRight);
-    connect(m_pActAlignRightObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/align-right.png"), tr("AlignRight"));
+    if(pActObj) {
+        pActObj->setData(Qt::AlignRight);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+        Core::getInstance()->insertAction("GraphPage.AlignRight", pActObj);
+    }
 
     // 左对齐
-    m_pActAalignLeftObj = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("左对齐"));
-    m_pActAalignLeftObj->setData(Qt::AlignLeft);
-    connect(m_pActAalignLeftObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/align-left.png"), tr("AlignLeft"));
+    if(pActObj) {
+        pActObj->setData(Qt::AlignLeft);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotAlignElements()));
+        Core::getInstance()->insertAction("GraphPage.AlignLeft", pActObj);
+    }
 
     // 水平均匀分布
-    m_pActHUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("水平均匀分布"));
-    connect(m_pActHUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotHUniformDistributeElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/align_hsame.png"), tr("Horizontal uniform distribution"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotHUniformDistributeElements()));
+        Core::getInstance()->insertAction("GraphPage.HUniformDistribute", pActObj);
+    }
 
     // 垂直均匀分布
-    m_pActVUniformDistributeObj = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("垂直均匀分布"));
-    connect(m_pActVUniformDistributeObj, SIGNAL(triggered()), SLOT(onSlotVUniformDistributeElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/align_vsame.png"), tr("Vertical uniform distribution"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotVUniformDistributeElements()));
+        Core::getInstance()->insertAction("GraphPage.VUniformDistribute", pActObj);
+    }
 
     // 设置选中控件大小一致
-    m_pActSetTheSameSizeObj = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("大小一致"));
-    connect(m_pActSetTheSameSizeObj, SIGNAL(triggered()), SLOT(onSlotSetTheSameSizeElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/the-same-size.png"), tr("SameSize"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotSetTheSameSizeElements()));
+        Core::getInstance()->insertAction("GraphPage.SameSize", pActObj);
+    }
 
     // 上移一层
-    m_pActUpLayerObj = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("上移一层"));
-    connect(m_pActUpLayerObj, SIGNAL(triggered()), SLOT(onSlotUpLayerElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/posfront.png"), tr("UpLayer"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotUpLayerElements()));
+        Core::getInstance()->insertAction("GraphPage.UpLayer", pActObj);
+    }
 
     // 下移一层
-    m_pActDownLayerObj = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("下移一层"));
-    connect(m_pActDownLayerObj, SIGNAL(triggered()), SLOT(onSlotDownLayerElements()));
+    pActObj = new QAction(QIcon(":/DrawAppImages/posback.png"), tr("DownLayer"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotDownLayerElements()));
+        Core::getInstance()->insertAction("GraphPage.DownLayer", pActObj);
+    }
 
     //-----------------------------<工具菜单>----------------------------------
     // 模拟仿真
-    m_pActSimulateObj = new QAction(QIcon(":/images/offline.png"), tr("模拟仿真"));
-    m_pActSimulateObj->setEnabled(false);
-    connect(m_pActSimulateObj, SIGNAL(triggered()), SLOT(onSlotSimulate()));
+    pActObj = new QAction(QIcon(":/images/offline.png"), tr("Simulate"));
+    if(pActObj) {
+        pActObj->setEnabled(false);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotSimulate()));
+        Core::getInstance()->insertAction("Tools.Simulate", pActObj);
+    }
 
     // 运行工程
-    m_pActRunObj = new QAction(QIcon(":/images/online.png"), tr("运行"));
-    m_pActRunObj->setEnabled(true);
-    connect(m_pActSimulateObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
+    pActObj = new QAction(QIcon(":/images/online.png"), tr("Run"));
+    if(pActObj) {
+        pActObj->setEnabled(true);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
+        Core::getInstance()->insertAction("Tools.Run", pActObj);
+    }
 
     // 下载工程
-    m_pActDownloadObj = new QAction(QIcon(":/images/download.png"), tr("下载"));
-    connect(m_pActDownloadObj, SIGNAL(triggered()), SLOT(onSlotDownloadProject()));
+    pActObj = new QAction(QIcon(":/images/download.png"), tr("Download"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotDownloadProject()));
+        Core::getInstance()->insertAction("Tools.Download", pActObj);
+    }
 
     // 上载工程
-    m_pActUpLoadObj = new QAction(QIcon(":/images/upload.png"), tr("上载"));
-    connect(m_pActUpLoadObj, SIGNAL(triggered()), SLOT(onSlotUpLoadProject()));
+    pActObj = new QAction(QIcon(":/images/upload.png"), tr("UpLoad"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotUpLoadProject()));
+        Core::getInstance()->insertAction("Tools.UpLoad", pActObj);
+    }
 
 
     //-----------------------------<窗口菜单>----------------------------------
 
-    m_pActCloseWndObj = new QAction(tr("关闭"));
-    m_pActCloseWndObj->setStatusTip(tr("关闭活动窗口"));
-    connect(m_pActCloseWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::closeActiveSubWindow);
+    // 关闭活动窗口
+    pActObj = new QAction(tr("Close"));
+    if(pActObj) {
+        pActObj->setStatusTip(tr("close active window"));
+        connect(pActObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::closeActiveSubWindow);
+        Core::getInstance()->insertAction("Window.Close", pActObj);
+    }
 
-    m_pActCloseAllWndObj = new QAction(tr("关闭所有"));
-    m_pActCloseAllWndObj->setStatusTip(tr("关闭所有窗口"));
-    connect(m_pActCloseAllWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::closeAllSubWindows);
+    // 关闭所有窗口
+    pActObj = new QAction(tr("CloseAll"));
+    if(pActObj) {
+        pActObj->setStatusTip(tr("close all window"));
+        connect(pActObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::closeAllSubWindows);
+        Core::getInstance()->insertAction("Window.CloseAll", pActObj);
+    }
 
-    m_pActTileWndObj = new QAction(tr("平铺窗口"));
-    m_pActTileWndObj->setStatusTip(tr("平铺所有窗口"));
-    connect(m_pActTileWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::tileSubWindows);
+    // 平铺所有窗口
+    pActObj = new QAction(tr("Tile"));
+    if(pActObj) {
+        pActObj->setStatusTip(tr("tile all window"));
+        connect(pActObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::tileSubWindows);
+        Core::getInstance()->insertAction("Window.Tile", pActObj);
+    }
 
-    m_pActCascadeWndObj = new QAction(tr("层叠窗口"), this);
-    m_pActCascadeWndObj->setStatusTip(tr("层叠所有窗口"));
-    connect(m_pActCascadeWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::cascadeSubWindows);
+    // 层叠所有窗口
+    pActObj = new QAction(tr("Cascade"), this);
+    if(pActObj) {
+        pActObj->setStatusTip(tr("cascade all window"));
+        connect(pActObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::cascadeSubWindows);
+        Core::getInstance()->insertAction("Window.Cascade", pActObj);
+    }
 
-    m_pActNextWndObj = new QAction(tr("下一窗口"), this);
-    m_pActNextWndObj->setShortcuts(QKeySequence::NextChild);
-    m_pActNextWndObj->setStatusTip(tr("移动焦点至下一下窗口"));
-    connect(m_pActNextWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::activateNextSubWindow);
+    // 下一窗口
+    pActObj = new QAction(tr("next"), this);
+    if(pActObj) {
+        pActObj->setShortcuts(QKeySequence::NextChild);
+        pActObj->setStatusTip(tr("move focus to the next window"));
+        connect(pActObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::activateNextSubWindow);
+        Core::getInstance()->insertAction("Window.Next", pActObj);
+    }
 
-    m_pActPreviousWndObj = new QAction(tr("前一窗口"), this);
-    m_pActPreviousWndObj->setShortcuts(QKeySequence::PreviousChild);
-    m_pActPreviousWndObj->setStatusTip(tr("移动焦点至前一下窗口"));
-    connect(m_pActPreviousWndObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::activatePreviousSubWindow);
+    // 前一窗口
+    pActObj = new QAction(tr("Previous"), this);
+    if(pActObj) {
+        pActObj->setShortcuts(QKeySequence::PreviousChild);
+        pActObj->setStatusTip(tr("move focus to the previous window"));
+        connect(pActObj, &QAction::triggered, m_pMdiAreaObj, &QMdiArea::activatePreviousSubWindow);
+        Core::getInstance()->insertAction("Window.Previous", pActObj);
+    }
 
-    m_pActWindowMenuSeparatorObj = new QAction(this);
-    m_pActWindowMenuSeparatorObj->setSeparator(true);
+    pActObj = new QAction(this);
+    if(pActObj) {
+        pActObj->setSeparator(true);
+        Core::getInstance()->insertAction("Window.Separator1", pActObj);
+    }
 
     //-----------------------------<帮助菜单>----------------------------------
     // 帮助
-    m_pActHelpObj = new QAction(tr("帮助"));
-    connect(m_pActHelpObj, SIGNAL(triggered()), SLOT(onSlotHelp()));
+    pActObj = new QAction(tr("Help"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotHelp()));
+        Core::getInstance()->insertAction("Help.Help", pActObj);
+    }
 
     // 关于
-    m_pActAboutObj = new QAction(tr("关于"));
-    connect(m_pActAboutObj, SIGNAL(triggered()), SLOT(onSlotAbout()));
+    pActObj = new QAction(tr("About"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotAbout()));
+        Core::getInstance()->insertAction("Help.About", pActObj);
+    }
 
 }
 
@@ -500,59 +643,56 @@ void MainWindow::createActions()
 void MainWindow::createMenus()
 {
     // 工程菜单
-    m_pMenuProjectObj = this->menuBar()->addMenu(tr("工程"));
-    m_pMenuProjectObj->addAction(m_pActNewProjObj);
-    m_pMenuProjectObj->addAction(m_pActOpenProjObj);
-    m_pMenuProjectObj->addAction(m_pActCloseProjObj);
-    m_pMenuProjectObj->addAction(m_pActSaveProjObj);
+    m_pMenuProjectObj = this->menuBar()->addMenu(tr("Project"));
+    m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.New"));
+    m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.Open"));
+    m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.Close"));
+    m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.Save"));
     m_pMenuProjectObj->addSeparator();
-    m_pMenuProjectObj->addAction(m_pActRecentProjListObj);
+    m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.LastOpen"));
     m_pMenuProjectObj->addSeparator();
-    m_pMenuProjectObj->addAction(m_pActExitObj);
+    m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.Exit"));
 
     // 视图菜单
-    m_pMenuViewObj = this->menuBar()->addMenu(tr("视图"));
-    m_pMenuViewObj->addAction(m_pActToolBarObj);
-    m_pMenuViewObj->addAction(m_pActStatusBarObj);
-    m_pMenuViewObj->addAction(m_pActWorkSpaceObj);
-    m_pMenuViewObj->addAction(m_pActDisplayAreaObj);
+    m_pMenuViewObj = this->menuBar()->addMenu(tr("View"));
+    m_pMenuViewObj->addAction(Core::getInstance()->getAction("Widget.Toolbar"));
+    m_pMenuViewObj->addAction(Core::getInstance()->getAction("Widget.StatusBar"));
+    m_pMenuViewObj->addAction(Core::getInstance()->getAction("Widget.WorkSpace"));
+    m_pMenuViewObj->addAction(Core::getInstance()->getAction("Widget.DisplayArea"));
 
     //-----------------------------<画面编辑器>----------------------------------
-    QMenu *filemenu = this->menuBar()->addMenu(tr("画面"));
-#if 0  // for test we need this
-    filemenu->addAction(m_pActNewGraphPageObj);
-    filemenu->addAction(m_pActOpenObj);
-#endif
-    filemenu->addSeparator();
-    filemenu->addAction(m_pActCloseGraphPageObj); // 画面.关闭
-    filemenu->addAction(m_pActCloseAllObj); // 画面.关闭所有
-    filemenu->addSeparator();
+    // 画面
+    QMenu *filemenu = this->menuBar()->addMenu(tr("GraphPage"));
+    filemenu->addAction(Core::getInstance()->getAction("GraphPage.Close")); // 画面.关闭
+    filemenu->addAction(Core::getInstance()->getAction("GraphPage.CloseAll")); // 画面.关闭所有
 
-
-    QMenu *windowMenu = this->menuBar()->addMenu(tr("窗口"));
-    windowMenu->addAction(m_pActShowGraphObj);
-    windowMenu->addAction(m_pActShowPropEditorObj);
+    // 窗口
+    QMenu *windowMenu = this->menuBar()->addMenu(tr("Window"));
+    windowMenu->addAction(Core::getInstance()->getAction("Window.Element"));
+    windowMenu->addAction(Core::getInstance()->getAction("Window.PropertyEditor"));
 
     //-----------------------------<工具菜单>----------------------------------
-    m_pMenuToolsObj = this->menuBar()->addMenu(tr("工具"));
-    m_pMenuToolsObj->addAction(m_pActSimulateObj); // 模拟仿真
-    m_pMenuToolsObj->addAction(m_pActRunObj); // 运行工程
-    m_pMenuToolsObj->addAction(m_pActDownloadObj); // 下载工程
-    m_pMenuToolsObj->addAction(m_pActUpLoadObj); // 上传工程
+    m_pMenuToolsObj = this->menuBar()->addMenu(tr("Tools"));
+    m_pMenuToolsObj->addAction(Core::getInstance()->getAction("Tools.Simulate")); // 模拟仿真
+    m_pMenuToolsObj->addAction(Core::getInstance()->getAction("Tools.Run")); // 运行工程
+    m_pMenuToolsObj->addAction(Core::getInstance()->getAction("Tools.Download")); // 下载工程
+    m_pMenuToolsObj->addAction(Core::getInstance()->getAction("Tools.UpLoad")); // 上传工程
 
     //-----------------------------<窗口菜单>----------------------------------
-    m_pActWindowMenuObj = this->menuBar()->addMenu(tr("窗口"));
+    m_pActWindowMenuObj = this->menuBar()->addMenu(tr("Window"));
     connect(m_pActWindowMenuObj, &QMenu::aboutToShow, this, &MainWindow::onSlotUpdateWindowMenu);
-    m_pActWindowMenuSeparatorObj = new QAction(this);
-    m_pActWindowMenuSeparatorObj->setSeparator(true);
+    QAction *pActObj = new QAction(this);
+    if(pActObj) {
+        pActObj->setSeparator(true);
+        Core::getInstance()->insertAction("Window.Separator0", pActObj);
+    }
     onSlotUpdateWindowMenu();
-
     menuBar()->addSeparator();
 
     //-----------------------------<帮助菜单>----------------------------------
     m_pMenuHelpObj = this->menuBar()->addMenu(tr("帮助"));
-    m_pMenuHelpObj->addAction(m_pActHelpObj); // 帮助
-    m_pMenuHelpObj->addAction(m_pActAboutObj); // 关于
+    m_pMenuHelpObj->addAction(Core::getInstance()->getAction("Help.Help")); // 帮助
+    m_pMenuHelpObj->addAction(Core::getInstance()->getAction("Help.About")); // 关于
 }
 
 
@@ -565,46 +705,45 @@ void MainWindow::createToolbars()
     //-----------------------------<工程工具栏>-----------------------------------
     m_pToolBarProjectObj = new QToolBar(this);
     m_pToolBarProjectObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarProjectObj->addAction(m_pActNewProjObj);
-    m_pToolBarProjectObj->addAction(m_pActOpenProjObj);
-    m_pToolBarProjectObj->addAction(m_pActCloseProjObj);
-    m_pToolBarProjectObj->addAction(m_pActSaveProjObj);
-    m_pToolBarProjectObj->addAction(m_pActExitObj);
+    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.New"));
+    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Open"));
+    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Close"));
+    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Save"));
+    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Exit"));
 
     //-----------------------------<画面编辑器>----------------------------------
     m_pToolBarGraphPageEditObj = new QToolBar(this);
-    //m_pToolBarGraphPageEditObj->addAction(m_pActSaveGraphPageObj);
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActShowGridObj); // 显示栅格
-    m_pToolBarGraphPageEditObj->addAction(m_pActZoomOutObj); //画面缩小
-    m_pToolBarGraphPageEditObj->addAction(m_pActZoomInObj); // 画面放大
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.ShowGrid")); // 显示栅格
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.ZoomOut")); //画面缩小
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.ZoomIn")); // 画面放大
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActUndoObj); // 撤销
-    m_pToolBarGraphPageEditObj->addAction(m_pActRedoObj); // 重做
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Undo")); // 撤销
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Redo")); // 重做
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActCopyObj); // 拷贝画面
-    m_pToolBarGraphPageEditObj->addAction(m_pActPasteObj); // 粘贴画面
-    m_pToolBarGraphPageEditObj->addAction(m_pActDeleteObj); // 删除画面
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Copy")); // 拷贝画面
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Paste")); // 粘贴画面
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Delete")); // 删除画面
     m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(m_pActAlignTopObj); // 顶部对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActAlignDownObj); // 底部对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActAalignLeftObj); // 左对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActAlignRightObj); // 右对齐
-    m_pToolBarGraphPageEditObj->addAction(m_pActHUniformDistributeObj); // 水平均匀分布
-    m_pToolBarGraphPageEditObj->addAction(m_pActVUniformDistributeObj); // 垂直均匀分布
-    m_pToolBarGraphPageEditObj->addAction(m_pActSetTheSameSizeObj); // 设置选中控件大小一致
-    m_pToolBarGraphPageEditObj->addAction(m_pActUpLayerObj); // 上移一层
-    m_pToolBarGraphPageEditObj->addAction(m_pActDownLayerObj); // 下移一层
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignTop")); // 顶部对齐
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignBottom")); // 底部对齐
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignLeft")); // 左对齐
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignRight")); // 右对齐
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.HUniformDistribute")); // 水平均匀分布
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.VUniformDistribute")); // 垂直均匀分布
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.SameSize")); // 设置选中控件大小一致
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.UpLayer")); // 上移一层
+    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.DownLayer")); // 下移一层
     m_pToolBarGraphPageEditObj->addSeparator();
 
     //-----------------------------<工具>----------------------------------
 
     m_pToolBarToolsObj = new QToolBar(this);
     m_pToolBarToolsObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarToolsObj->addAction(m_pActSimulateObj); // 模拟仿真
-    m_pToolBarToolsObj->addAction(m_pActRunObj); // 运行工程
-    m_pToolBarToolsObj->addAction(m_pActDownloadObj); // 下载工程
-    m_pToolBarToolsObj->addAction(m_pActUpLoadObj); // 上传工程
+    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.Simulate")); // 模拟仿真
+    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.Run")); // 运行工程
+    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.Download")); // 下载工程
+    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.UpLoad")); // 上传工程
 
 
 
@@ -621,18 +760,19 @@ void MainWindow::createToolbars()
 void MainWindow::onSlotUpdateWindowMenu()
 {
     m_pActWindowMenuObj->clear();
-    m_pActWindowMenuObj->addAction(m_pActCloseWndObj);
-    m_pActWindowMenuObj->addAction(m_pActCloseAllWndObj);
+    m_pActWindowMenuObj->addAction(Core::getInstance()->getAction("Window.Close"));
+    m_pActWindowMenuObj->addAction(Core::getInstance()->getAction("Window.CloseAll"));
     m_pActWindowMenuObj->addSeparator();
-    m_pActWindowMenuObj->addAction(m_pActTileWndObj);
-    m_pActWindowMenuObj->addAction(m_pActCascadeWndObj);
+    m_pActWindowMenuObj->addAction(Core::getInstance()->getAction("Window.Tile"));
+    m_pActWindowMenuObj->addAction(Core::getInstance()->getAction("Window.Cascade"));
     m_pActWindowMenuObj->addSeparator();
-    m_pActWindowMenuObj->addAction(m_pActNextWndObj);
-    m_pActWindowMenuObj->addAction(m_pActPreviousWndObj);
-    m_pActWindowMenuObj->addAction(m_pActWindowMenuSeparatorObj);
+    m_pActWindowMenuObj->addAction(Core::getInstance()->getAction("Window.Next"));
+    m_pActWindowMenuObj->addAction(Core::getInstance()->getAction("Window.Previous"));
+    m_pActWindowMenuObj->addAction(Core::getInstance()->getAction("Window.Separator1"));
 
     QList<QMdiSubWindow*> windows = m_pMdiAreaObj->subWindowList();
-    m_pActWindowMenuSeparatorObj->setVisible(!windows.isEmpty());
+    QAction *pActObj = Core::getInstance()->getAction("Window.Separator1");
+    if(pActObj) pActObj->setVisible(!windows.isEmpty());
 
     for (int i = 0; i < windows.size(); ++i) {
         QWidget* pWidgwtObj = windows.at(i)->widget();
@@ -982,14 +1122,16 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
  */
 void MainWindow::UpdateProjectName(const QString &szName)
 {
+    QAction *pActObj = Q_NULLPTR;
+    pActObj = Core::getInstance()->getAction("Tools.Run");
     if(!szName.isEmpty()) {
         QString szNameTmp = szName.mid(szName.lastIndexOf("/") + 1, szName.indexOf(".") - szName.lastIndexOf("/") - 1);
         this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
-        this->m_pActRunObj->setEnabled(true);
+        if(pActObj) pActObj->setEnabled(true);
     } else {
         ProjectData::getInstance()->szProjFile_ = "";
         ProjectData::getInstance()->szProjPath_ = "";
-        this->m_pActRunObj->setEnabled(false);
+        if(pActObj) pActObj->setEnabled(false);
         this->m_pProjectTreeViewObj->updateUI();
     }
 }
@@ -1250,20 +1392,23 @@ void MainWindow::loadRecentProjectList()
             connect(pAct, &QAction::triggered, this, [=]{
                 this->doOpenProject(pAct->text());
             });
-            this->m_pMenuProjectObj->insertAction(this->m_pActRecentProjListObj, pAct);
+            this->m_pMenuProjectObj->insertAction(Core::getInstance()->getAction("Project.LastOpen"), pAct);
         }
-        this->m_pMenuProjectObj->removeAction(this->m_pActRecentProjListObj);
+        this->m_pMenuProjectObj->removeAction(Core::getInstance()->getAction("Project.LastOpen"));
         return;
     }
 
     QList<QAction *> listActRemove;
     QList<QAction *> listAct = this->m_pMenuProjectObj->actions();
     for (int i = 0; i<listAct.size(); ++i) {
-        QAction *pAct = listAct.at(i);
-        if(pAct->isSeparator())
-            listActRemove.append(pAct);
-        if(pAct->text() == tr("最近文件列表"))
-            listActRemove.append(pAct);
+        QAction *pActObj = listAct.at(i);
+        if(pActObj->isSeparator()) listActRemove.append(pActObj);
+        QVariant datUser = pActObj->data();
+        if(datUser.isValid()) {
+            QJsonObject datJson = datUser.toJsonObject();
+            if(datJson["which"].toString() == "LastOpen")
+                listActRemove.append(pActObj);
+        }
     }
     for (int j = 0; j<listActRemove.size(); ++j) {
         this->m_pMenuProjectObj->removeAction(listActRemove.at(j));
@@ -1413,33 +1558,6 @@ void MainWindow::getAllGraphPageName(QStringList &szList) {
 }
 
 
-/**
- * @brief MainWindow::onSlotNewGraphPage
- * @details [画面.新建] 动作响应函数
- */
-void MainWindow::onSlotNewGraphPage()
-{
-    QString szName = QString("draw_new");
-    QInputDialog dlg(this);
-    dlg.setWindowTitle(tr("画面名称"));
-    dlg.setLabelText(tr("请输入画面名称"));
-    dlg.setOkButtonText(tr("确定"));
-    dlg.setCancelButtonText(tr("取消"));
-    dlg.setTextValue(szName);
-
-reInput:
-    dlg.setLabelText(tr("画面名称为空或画面名称重复"));
-    if ( dlg.exec() == QDialog::Accepted ) {
-        szName = dlg.textValue();
-        QList<QListWidgetItem*> listWidgetItem = this->m_pListWidgetGraphPagesObj->findItems(szName, Qt::MatchCaseSensitive);
-        if (listWidgetItem.size() > 0 || szName == "") {
-            goto reInput;
-        }
-        this->m_pListWidgetGraphPagesObj->addItem(szName);
-        addNewGraphPage(szName);
-    }
-}
-
 QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
 {
     QString title = m_pCurrentGraphPageObj->getGraphPageId();
@@ -1560,6 +1678,7 @@ QGraphicsView *MainWindow::createTabView()
 
 void MainWindow::slotUpdateActions()
 {
+    QAction *pActObj = Q_NULLPTR;
     static const QIcon unsaved(":/DrawAppImages/filesave.png");
 
     for (int i = 0; i < m_pGraphPageEditorObj->count(); i++) {
@@ -1572,20 +1691,24 @@ void MainWindow::slotUpdateActions()
         }
     }
 
-    m_pActZoomInObj->setEnabled(m_pGraphPageEditorObj->count() ? true : false);
-    m_pActZoomOutObj->setEnabled(m_pGraphPageEditorObj->count() ? true : false);
-    m_pActShowGridObj->setEnabled(m_pGraphPageEditorObj->count() ? true : false);
+    pActObj = Core::getInstance()->getAction("GraphPage.ZoomIn");
+    if(pActObj) pActObj->setEnabled(m_pGraphPageEditorObj->count() ? true : false);
 
-    if (!m_pCurrentGraphPageObj) {
-        return;
-    }
+    pActObj = Core::getInstance()->getAction("GraphPage.ZoomOut");
+    if(pActObj) pActObj->setEnabled(m_pGraphPageEditorObj->count() ? true : false);
+
+    pActObj = Core::getInstance()->getAction("GraphPage.ShowGrid");
+    if(pActObj) pActObj->setEnabled(m_pGraphPageEditorObj->count() ? true : false);
+
+    if (!m_pCurrentGraphPageObj) return;
 
     m_pUndoGroupObj->setActiveStack(m_pCurrentGraphPageObj->undoStack());
 
-    if (!m_pCurrentGraphPageObj->undoStack()->isClean() || m_pCurrentGraphPageObj->getUnsavedFlag()) {
-        m_pActSaveProjObj->setEnabled(true);
+    pActObj = Core::getInstance()->getAction("Project.Save");
+    if (pActObj && (!m_pCurrentGraphPageObj->undoStack()->isClean() || m_pCurrentGraphPageObj->getUnsavedFlag())) {
+        pActObj->setEnabled(true);
     } else {
-        m_pActSaveProjObj->setEnabled(false);
+        pActObj->setEnabled(false);
     }
 }
 
@@ -2190,17 +2313,36 @@ void MainWindow::onSlotTabCloseRequested(int index)
     */
 void MainWindow::onSlotUpdateMenus()
 {
-    bool hasMdiChild = (activeMdiChild() != 0);
-    m_pActSaveProjObj->setEnabled(hasMdiChild);
-    m_pActCloseProjObj->setEnabled(hasMdiChild);
+    QAction *pActObj = Q_NULLPTR;
 
-    m_pActCloseWndObj->setEnabled(hasMdiChild);
-    m_pActCloseAllWndObj->setEnabled(hasMdiChild);
-    m_pActTileWndObj->setEnabled(hasMdiChild);
-    m_pActCascadeWndObj->setEnabled(hasMdiChild);
-    m_pActNextWndObj->setEnabled(hasMdiChild);
-    m_pActPreviousWndObj->setEnabled(hasMdiChild);
-    m_pActWindowMenuSeparatorObj->setVisible(hasMdiChild);
+    bool hasMdiChild = (activeMdiChild() != Q_NULLPTR);
+
+    pActObj = Core::getInstance()->getAction("Project.Save");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("Project.Close");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("Window.Close");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("Window.CloseAll");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("Window.Tile");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("Window.Cascade");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("Window.Next");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("Window.Previous");
+    if(pActObj) pActObj->setEnabled(hasMdiChild);
+
+    pActObj = Core::getInstance()->getAction("GraphPage.ShowGrid");
+    if(pActObj) pActObj->setVisible(hasMdiChild);
 }
 
 

@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QTextCodec>
 #include <QFont>
-
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
@@ -22,6 +22,10 @@ int main(int argc, char *argv[])
     app.setWindowIcon(QIcon(":/images/appicon.png"));
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
+    QTranslator translator;
+    if(translator.load("chinese.qm", QApplication::applicationDirPath()))
+        qApp->installTranslator(&translator);
 
     QFont font;
     font.setFamily("宋体");

@@ -196,3 +196,6 @@ RC_FILE = ProjectManager.rc
 DISTFILES += \
     $$IDE_BIN_PATH/Config/DrawAppJScriptFun.xml \
     $$IDE_BIN_PATH/Config/ElementSupportEvents.xml
+
+TRANSLATIONS += chinese.ts
+

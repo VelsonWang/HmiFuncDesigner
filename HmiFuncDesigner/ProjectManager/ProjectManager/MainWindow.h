@@ -81,9 +81,8 @@ private:
 
 
 protected:
-    virtual bool eventFilter(QObject*, QEvent* e);
-    void closeEvent(QCloseEvent *event);  // 关闭事件
-
+    bool eventFilter(QObject*, QEvent* e) override;
+    void closeEvent(QCloseEvent *event) override;  // 关闭事件
 
 public:
     bool isGridVisible() const;
@@ -131,8 +130,6 @@ private slots:
     void onSlotShowGraphObj(bool);
     // 窗口.属性编辑器 动作响应函数
     void onSlotShowPropEditor(bool);
-    // 画面.新建
-    void onSlotNewGraphPage();
     // 显示栅格
     void onSlotShowGrid(bool);
     // 画面放大
@@ -241,74 +238,20 @@ private:
     MdiArea *m_pMdiAreaObj = Q_NULLPTR;
     ProjectTreeView *m_pProjectTreeViewObj = Q_NULLPTR;
     GraphPageListWidget *m_pListWidgetGraphPagesObj = Q_NULLPTR; // 画面名称列表
-
-
     QStatusBar *m_pStatusBarObj = Q_NULLPTR; // 状态栏
     QDockWidget *m_pDockProjectMgrObj = Q_NULLPTR; // 工程管理器停靠控件
     QDockWidget *m_pDockPropertyObj = Q_NULLPTR; // 属性停靠控件
     QDockWidget *m_pDockElemetsObj = Q_NULLPTR; // 图形元素停靠控件
     QTabWidget *m_pTabProjectMgrObj = Q_NULLPTR; // 工程管理器TabWidget控件
-
     QToolBar *m_pToolBarGraphPageEditObj = Q_NULLPTR; // 画面编辑工具条
-    QAction *m_pActShowGraphObj = Q_NULLPTR; // 窗口.图形元素
-    QAction *m_pActShowPropEditorObj = Q_NULLPTR; // 窗口.属性编辑器
-    QAction *m_pActNewGraphPageObj = Q_NULLPTR; // 画面.新建
-    QAction *m_pActShowGridObj = Q_NULLPTR; // 显示栅格
-    QAction *m_pActZoomInObj = Q_NULLPTR; // 画面放大
-    QAction *m_pActZoomOutObj = Q_NULLPTR; // 画面缩小
     QUndoGroup *m_pUndoGroupObj = Q_NULLPTR;
-    QAction *m_pActUndoObj = Q_NULLPTR; // 撤销
-    QAction *m_pActRedoObj = Q_NULLPTR; // 重做
-    QAction *m_pActCloseGraphPageObj = Q_NULLPTR; // 关闭画面
-    QAction *m_pActCloseAllObj = Q_NULLPTR; // 关闭所有画面
-    QAction *m_pActCopyObj = Q_NULLPTR; // 拷贝画面
-    QAction *m_pActPasteObj = Q_NULLPTR; // 粘贴画面
-    QAction *m_pActDeleteObj = Q_NULLPTR; // 删除画面
-    QAction *m_pActAlignTopObj = Q_NULLPTR; // 顶部对齐
-    QAction *m_pActAlignDownObj = Q_NULLPTR; // 底部对齐
-    QAction *m_pActAlignRightObj = Q_NULLPTR; // 右对齐
-    QAction *m_pActAalignLeftObj = Q_NULLPTR; // 左对齐
-    QAction *m_pActHUniformDistributeObj = Q_NULLPTR; // 水平均匀分布
-    QAction *m_pActVUniformDistributeObj = Q_NULLPTR; // 垂直均匀分布
-    QAction *m_pActSetTheSameSizeObj = Q_NULLPTR; // 设置选中控件大小一致
-    QAction *m_pActUpLayerObj = Q_NULLPTR; // 上移一层
-    QAction *m_pActDownLayerObj = Q_NULLPTR; // 下移一层
-
     QMenu *m_pMenuProjectObj = Q_NULLPTR; // 工程菜单
     QToolBar *m_pToolBarProjectObj = Q_NULLPTR; // 工程工具条
-    QAction *m_pActNewProjObj = Q_NULLPTR; // 新建工程
-    QAction *m_pActOpenProjObj = Q_NULLPTR; // 打开工程
-    QAction *m_pActCloseProjObj = Q_NULLPTR; // 关闭工程
-    QAction *m_pActSaveProjObj = Q_NULLPTR; // 保存工程
-    QAction *m_pActRecentProjListObj = Q_NULLPTR; // 最近打开工程
-    QAction *m_pActExitObj = Q_NULLPTR; // 退出
-
     QMenu *m_pMenuViewObj = Q_NULLPTR; // 视图
-    QAction *m_pActToolBarObj = Q_NULLPTR;
-    QAction *m_pActStatusBarObj = Q_NULLPTR;
-    QAction *m_pActWorkSpaceObj = Q_NULLPTR;
-    QAction *m_pActDisplayAreaObj = Q_NULLPTR;
-
     QMenu *m_pMenuToolsObj = Q_NULLPTR; // 工具菜单
     QToolBar *m_pToolBarToolsObj = Q_NULLPTR;
-    QAction *m_pActSimulateObj = Q_NULLPTR; // 模拟仿真
-    QAction *m_pActRunObj = Q_NULLPTR; // 运行工程
-    QAction *m_pActDownloadObj = Q_NULLPTR; // 下载工程
-    QAction *m_pActUpLoadObj = Q_NULLPTR; // 上传工程
-
     QMenu *m_pActWindowMenuObj = Q_NULLPTR; // 窗口菜单
-    QAction *m_pActCloseWndObj = Q_NULLPTR;
-    QAction *m_pActCloseAllWndObj = Q_NULLPTR;
-    QAction *m_pActTileWndObj = Q_NULLPTR; // 平铺
-    QAction *m_pActCascadeWndObj = Q_NULLPTR; // 层叠
-    QAction *m_pActNextWndObj = Q_NULLPTR;
-    QAction *m_pActPreviousWndObj = Q_NULLPTR;
-    QAction *m_pActWindowMenuSeparatorObj = Q_NULLPTR;
-
     QMenu *m_pMenuHelpObj = Q_NULLPTR; // 帮助菜单
-    QAction *m_pActHelpObj = Q_NULLPTR; // 帮助
-    QAction *m_pActAboutObj = Q_NULLPTR; // 关于
-
 };
 
 #endif // MAINWINDOW_H
