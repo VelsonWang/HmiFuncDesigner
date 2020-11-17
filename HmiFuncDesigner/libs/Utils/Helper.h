@@ -4,6 +4,7 @@
 #include <QTextCodec>
 #include <QString>
 #include <QWidget>
+#include <QMenu>
 
 class Helper
 {
@@ -22,6 +23,8 @@ public:
     static bool DeleteDir(const QString &dirName);
     // 桌面居中窗口
     static void WidgetMoveCenter(QWidget *w);
+
+    static void execMenuAtWidget(QMenu *menu, QWidget *widget);
 
     static QString GBK2UTF8(const QString &inStr);
     static QString UTF82GBK(const QString &inStr);
