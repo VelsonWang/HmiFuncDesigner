@@ -9,9 +9,7 @@
 #include "UserAuthority.h"
 #include "DeviceInfo.h"
 #include "PictureResourceManager.h"
-#include "TagSys.h"
-#include "TagTmp.h"
-#include "TagIO.h"
+#include "Tag.h"
 #include "Script.h"
 #include "IGraphPageSaveLoad.h"
 #include "projdata_global.h"
@@ -52,10 +50,7 @@ public:
     UserAuthority userAuthority_; // 用户权限
     DeviceInfo deviceInfo_; // 设备配置信息
     PictureResourceManager pictureResourceMgr_; // 图片资源管理
-    TagSys tagSys_; // 系统标签变量
-    TagTmp tagTmp_; // 中间标签变量
-    TagIO tagIO_; // 设备标签变量
-    TagIOGroup tagIOGroup_; // 设备标签变量组
+    TagManager tagMgr_; // 标签变量
     Script script_; // 脚本
     IGraphPageSaveLoad *pImplGraphPageSaveLoadObj_; // 画面
 

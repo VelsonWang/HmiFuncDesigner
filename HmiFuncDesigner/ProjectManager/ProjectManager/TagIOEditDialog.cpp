@@ -84,13 +84,13 @@ void TagIOEditDialog::on_btnOk_clicked()
             if(pObj->szProperties_ == "") {
                 devPlugin_->getDefaultDeviceProperty(m_properties);
             } else {
-                devPlugin_->devicePropertiesFromString(pObj->szProperties_, m_properties);
+                //devPlugin_->devicePropertiesFromString(pObj->szProperties_, m_properties);
             }
         }
         // 设置设备属性
         devPlugin_->setDeviceProperty(m_properties);
         // 获取寄存器区地址的下限和上限
-        devPlugin_->GetRegisterAreaLimit(area, lowerLimit, upperLimit);
+        //devPlugin_->GetRegisterAreaLimit(area, lowerLimit, upperLimit);
         if((iRegAddr + iOffset) < lowerLimit || (iRegAddr + iOffset) > upperLimit) {
             QMessageBox::warning(this,
                                  tr("提示"),
@@ -139,14 +139,14 @@ void TagIOEditDialog::on_cboDeviceName_currentTextChanged(const QString &deviceN
                 devPlugin_ = iDevPlugin;
                 if (iDevPlugin) {
                     // 获取设备支持的所有寄存器区
-                    QStringList listReg = iDevPlugin->GetDeviceSupportRegisterArea();
+                    //QStringList listReg = iDevPlugin->GetDeviceSupportRegisterArea();
                     ui->cboRegisterSection->clear();
-                    ui->cboRegisterSection->addItems(listReg);
+                    //ui->cboRegisterSection->addItems(listReg);
 
                     // 获取设备支持的所有数据类型
-                    QStringList listType = iDevPlugin->GetDeviceSupportDataType();
+                    //QStringList listType = iDevPlugin->GetDeviceSupportDataType();
                     ui->cboIODataType->clear();
-                    ui->cboIODataType->addItems(listType);
+                    //ui->cboIODataType->addItems(listType);
                 } else {
                     QMessageBox::critical(this,
                                           tr("系统错误"),

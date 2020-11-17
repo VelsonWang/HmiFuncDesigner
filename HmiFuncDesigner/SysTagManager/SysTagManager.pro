@@ -10,14 +10,18 @@ TEMPLATE = app
 
 DESTDIR = $$IDE_BIN_PATH
 
+LIBS += -L$$LINK_LIBRARY_PATH -lProjData
+LIBS += -L$$LINK_LIBRARY_PATH -lCore
+
 SOURCES += main.cpp \
-    SysTag.cpp
+    SysTag.cpp \
+    qtablewidgetex.cpp
 
 HEADERS  += \
-    SysTag.h
+    SysTag.h \
+    qtablewidgetex.h
 
-FORMS    += \
-    SysTag.ui
+FORMS    +=
 
 RESOURCES += \
     images.qrc

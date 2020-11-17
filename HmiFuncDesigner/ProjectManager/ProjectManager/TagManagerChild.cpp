@@ -24,8 +24,6 @@
 #include <QVBoxLayout>
 #include <QTableWidgetItem>
 #include "ProjectData.h"
-#include "DBTag.h"
-#include "TagSys.h"
 #include "IDevicePlugin.h"
 #include "TableviewDelegate.h"
 #include "MainWindow.h"
@@ -292,28 +290,28 @@ void TagManagerChild::initialTableTagSys()
  */
 void TagManagerChild::updateTableTagSys()
 {
-    TagSys &tagSys = ProjectData::getInstance()->tagSys_;
+//    TagSys &tagSys = ProjectData::getInstance()->tagSys_;
 
-    m_pTableTagSysObj->clearContents();
-    m_pTableTagSysObj->setRowCount(0);
+//    m_pTableTagSysObj->clearContents();
+//    m_pTableTagSysObj->setRowCount(0);
 
-    foreach (TagSysDBItem * itemTagSys, tagSys.listTagSysDBItem_) {
-        int iRowCount = m_pTableTagSysObj->rowCount();
-        m_pTableTagSysObj->insertRow(iRowCount);
+//    foreach (TagSysDBItem * itemTagSys, tagSys.listTagSysDBItem_) {
+//        int iRowCount = m_pTableTagSysObj->rowCount();
+//        m_pTableTagSysObj->insertRow(iRowCount);
 
-        QTableWidgetItem *pItemID = new QTableWidgetItem(itemTagSys->m_szTagID);
-        m_pTableTagSysObj->setItem(iRowCount, 0, pItemID);
-        QTableWidgetItem *pItemName = new QTableWidgetItem(itemTagSys->m_szName);
-        m_pTableTagSysObj->setItem(iRowCount, 1, pItemName);
-        QTableWidgetItem *pItemDescription = new QTableWidgetItem(itemTagSys->m_szDescription);
-        m_pTableTagSysObj->setItem(iRowCount, 2, pItemDescription);
-        QTableWidgetItem *pItemUnit = new QTableWidgetItem(itemTagSys->m_szUnit);
-        m_pTableTagSysObj->setItem(iRowCount, 3, pItemUnit);
-        QTableWidgetItem *pItemProjectConverter = new QTableWidgetItem(itemTagSys->m_szProjectConverter);
-        m_pTableTagSysObj->setItem(iRowCount, 4, pItemProjectConverter);
-        QTableWidgetItem *pItemComments = new QTableWidgetItem(itemTagSys->m_szComments);
-        m_pTableTagSysObj->setItem(iRowCount, 5, pItemComments);
-    }
+//        QTableWidgetItem *pItemID = new QTableWidgetItem(itemTagSys->m_szTagID);
+//        m_pTableTagSysObj->setItem(iRowCount, 0, pItemID);
+//        QTableWidgetItem *pItemName = new QTableWidgetItem(itemTagSys->m_szName);
+//        m_pTableTagSysObj->setItem(iRowCount, 1, pItemName);
+//        QTableWidgetItem *pItemDescription = new QTableWidgetItem(itemTagSys->m_szDescription);
+//        m_pTableTagSysObj->setItem(iRowCount, 2, pItemDescription);
+//        QTableWidgetItem *pItemUnit = new QTableWidgetItem(itemTagSys->m_szUnit);
+//        m_pTableTagSysObj->setItem(iRowCount, 3, pItemUnit);
+//        QTableWidgetItem *pItemProjectConverter = new QTableWidgetItem(itemTagSys->m_szProjectConverter);
+//        m_pTableTagSysObj->setItem(iRowCount, 4, pItemProjectConverter);
+//        QTableWidgetItem *pItemComments = new QTableWidgetItem(itemTagSys->m_szComments);
+//        m_pTableTagSysObj->setItem(iRowCount, 5, pItemComments);
+//    }
 }
 
 
@@ -463,13 +461,13 @@ int TagManagerChild::getTagTmpIdNumValue(int iRow)
  */
 void TagManagerChild::updateTableTagTmp()
 {
-    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-    m_pTableTagTmpObj->clearContents();
-    m_pTableTagTmpObj->setRowCount(0);
-    foreach (TagTmpDBItem * itemTagTmp, tagTmp.listTagTmpDBItem_) {
-        int iRow = tableTagTmpAddRow();
-        setTagTmpObjByRow(iRow, itemTagTmp);
-    }
+//    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+//    m_pTableTagTmpObj->clearContents();
+//    m_pTableTagTmpObj->setRowCount(0);
+//    foreach (TagTmpDBItem * itemTagTmp, tagTmp.listTagTmpDBItem_) {
+//        int iRow = tableTagTmpAddRow();
+//        setTagTmpObjByRow(iRow, itemTagTmp);
+//    }
 }
 
 
@@ -483,18 +481,18 @@ void TagManagerChild::tagTmpExportToCsv(const QString &path, const QString &/*gr
     QtCSV::StringData varData;
     int iRowCount = m_pTableTagTmpObj->rowCount();
     for(int i=0; i<iRowCount; i++) {
-        TagTmpDBItem * pTagTmp = getTagTmpObjByRow(i);
+//        TagTmpDBItem * pTagTmp = getTagTmpObjByRow(i);
 
-        QStringList varRow;
-        varRow << pTagTmp->m_szTagID << pTagTmp->m_szName << pTagTmp->m_szDataType
-               << pTagTmp->m_szDescription << pTagTmp->m_szInitVal << pTagTmp->m_szMinVal
-               << pTagTmp->m_szMaxVal << pTagTmp->m_szProjectConverter ;
-        varData.addRow(varRow);
+//        QStringList varRow;
+//        varRow << pTagTmp->m_szTagID << pTagTmp->m_szName << pTagTmp->m_szDataType
+//               << pTagTmp->m_szDescription << pTagTmp->m_szInitVal << pTagTmp->m_szMinVal
+//               << pTagTmp->m_szMaxVal << pTagTmp->m_szProjectConverter ;
+//        varData.addRow(varRow);
 
-        if(pTagTmp != Q_NULLPTR) {
-            delete pTagTmp;
-            pTagTmp = Q_NULLPTR;
-        }
+//        if(pTagTmp != Q_NULLPTR) {
+//            delete pTagTmp;
+//            pTagTmp = Q_NULLPTR;
+//        }
     }
 
     QString filepath = path + "/中间变量.csv";
@@ -513,35 +511,35 @@ void TagManagerChild::tagTmpExportToCsv(const QString &path, const QString &/*gr
  */
 void TagManagerChild::tagTmpImportFromCsv(const QString &path)
 {
-    QString filepath = path;
+//    QString filepath = path;
 
-    QList<QStringList> data = QtCSV::Reader::readToList(filepath,
-                                                        QString(","),
-                                                        QString("\""),
-                                                        QTextCodec::codecForName("GB18030"));
-    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-    for(int i=0; i<data.size(); i++) {
-        QStringList row = data.at(i);
-        if(row.at(0) == "ID") continue;
+//    QList<QStringList> data = QtCSV::Reader::readToList(filepath,
+//                                                        QString(","),
+//                                                        QString("\""),
+//                                                        QTextCodec::codecForName("GB18030"));
+//    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+//    for(int i=0; i<data.size(); i++) {
+//        QStringList row = data.at(i);
+//        if(row.at(0) == "ID") continue;
 
-        TagTmpDBItem * pTagTmp = new TagTmpDBItem();
-        int iRowCnt = m_pTableTagTmpObj->rowCount();
-        int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
-        pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
-        //pTagTmp->m_szTagID = row.at(0);
-        pTagTmp->m_szName = row.at(1);
-        pTagTmp->m_szDescription = row.at(2);
-        pTagTmp->m_szDataType = row.at(3);
-        pTagTmp->m_szInitVal = row.at(4);
-        pTagTmp->m_szMinVal = row.at(5);
-        pTagTmp->m_szMaxVal = row.at(6);
-        pTagTmp->m_szProjectConverter = row.at(7);
+//        TagTmpDBItem * pTagTmp = new TagTmpDBItem();
+//        int iRowCnt = m_pTableTagTmpObj->rowCount();
+//        int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
+//        pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+//        //pTagTmp->m_szTagID = row.at(0);
+//        pTagTmp->m_szName = row.at(1);
+//        pTagTmp->m_szDescription = row.at(2);
+//        pTagTmp->m_szDataType = row.at(3);
+//        pTagTmp->m_szInitVal = row.at(4);
+//        pTagTmp->m_szMinVal = row.at(5);
+//        pTagTmp->m_szMaxVal = row.at(6);
+//        pTagTmp->m_szProjectConverter = row.at(7);
 
-        int iRow = tableTagTmpAddRow();
-        setTagTmpObjByRow(iRow, pTagTmp);
+//        int iRow = tableTagTmpAddRow();
+//        setTagTmpObjByRow(iRow, pTagTmp);
 
-        tagTmp.listTagTmpDBItem_.append(pTagTmp);
-    }
+//        tagTmp.listTagTmpDBItem_.append(pTagTmp);
+//    }
 }
 
 /**
@@ -550,31 +548,31 @@ void TagManagerChild::tagTmpImportFromCsv(const QString &path)
  */
 void TagManagerChild::createTagTmp()
 {
-    TagTmpEditDialog *pDlg = new TagTmpEditDialog(this);
-    if(pDlg->exec() == QDialog::Accepted) {
-        int num = pDlg->createTagNum();
-        int iRowCnt = m_pTableTagTmpObj->rowCount();
-        int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
-        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-        for(int i=0; i<num; i++) {
-            TagTmpDBItem * pTagTmp = new TagTmpDBItem();
-            pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
-            pTagTmp->m_szName = pDlg->tagName();
-            pTagTmp->m_szDescription = pDlg->tagDescription();
-            pTagTmp->m_szDataType = pDlg->tagDataType();
-            pTagTmp->m_szInitVal = pDlg->tagInitValue();
-            pTagTmp->m_szMinVal = pDlg->tagMinValue();
-            pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
-            pTagTmp->m_szProjectConverter = "";
+//    TagTmpEditDialog *pDlg = new TagTmpEditDialog(this);
+//    if(pDlg->exec() == QDialog::Accepted) {
+//        int num = pDlg->createTagNum();
+//        int iRowCnt = m_pTableTagTmpObj->rowCount();
+//        int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
+//        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+//        for(int i=0; i<num; i++) {
+//            TagTmpDBItem * pTagTmp = new TagTmpDBItem();
+//            pTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+//            pTagTmp->m_szName = pDlg->tagName();
+//            pTagTmp->m_szDescription = pDlg->tagDescription();
+//            pTagTmp->m_szDataType = pDlg->tagDataType();
+//            pTagTmp->m_szInitVal = pDlg->tagInitValue();
+//            pTagTmp->m_szMinVal = pDlg->tagMinValue();
+//            pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
+//            pTagTmp->m_szProjectConverter = "";
 
-            int iRow = tableTagTmpAddRow();
-            setTagTmpObjByRow(iRow, pTagTmp);
+//            int iRow = tableTagTmpAddRow();
+//            setTagTmpObjByRow(iRow, pTagTmp);
 
-            tagTmp.listTagTmpDBItem_.append(pTagTmp);
-            id++;
-        }
-    }
-    delete pDlg;
+//            tagTmp.listTagTmpDBItem_.append(pTagTmp);
+//            id++;
+//        }
+//    }
+//    delete pDlg;
 }
 
 
@@ -584,27 +582,27 @@ void TagManagerChild::createTagTmp()
  */
 void TagManagerChild::appendTagTmp()
 {
-    int iRowCnt = m_pTableTagTmpObj->rowCount();
-    if(iRowCnt < 1) return;
+//    int iRowCnt = m_pTableTagTmpObj->rowCount();
+//    if(iRowCnt < 1) return;
 
-    int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
-    TagTmpDBItem * pNewTagTmp = new TagTmpDBItem();
-    pNewTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
-    pNewTagTmp->m_szName = "";
-    pNewTagTmp->m_szDescription = "";
-    pNewTagTmp->m_szDataType = "";
-    QTableWidgetItem *pItemDataType = m_pTableTagTmpObj->item(iRowCnt - 1, 3);
-    if(pItemDataType != Q_NULLPTR) {
-        pNewTagTmp->m_szDataType = pItemDataType->text();
-    }
-    pNewTagTmp->m_szInitVal = "0";
-    pNewTagTmp->m_szMinVal = "";
-    pNewTagTmp->m_szMaxVal = "";
-    pNewTagTmp->m_szProjectConverter = "";
-    int iRow = tableTagTmpAddRow();
-    setTagTmpObjByRow(iRow, pNewTagTmp);
-    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-    tagTmp.listTagTmpDBItem_.append(pNewTagTmp);
+//    int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
+//    TagTmpDBItem * pNewTagTmp = new TagTmpDBItem();
+//    pNewTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+//    pNewTagTmp->m_szName = "";
+//    pNewTagTmp->m_szDescription = "";
+//    pNewTagTmp->m_szDataType = "";
+//    QTableWidgetItem *pItemDataType = m_pTableTagTmpObj->item(iRowCnt - 1, 3);
+//    if(pItemDataType != Q_NULLPTR) {
+//        pNewTagTmp->m_szDataType = pItemDataType->text();
+//    }
+//    pNewTagTmp->m_szInitVal = "0";
+//    pNewTagTmp->m_szMinVal = "";
+//    pNewTagTmp->m_szMaxVal = "";
+//    pNewTagTmp->m_szProjectConverter = "";
+//    int iRow = tableTagTmpAddRow();
+//    setTagTmpObjByRow(iRow, pNewTagTmp);
+//    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+//    tagTmp.listTagTmpDBItem_.append(pNewTagTmp);
 }
 
 
@@ -619,45 +617,45 @@ TagTmpDBItem *TagManagerChild::getTagTmpObjByRow(int iRow)
     int iRowCnt = m_pTableTagTmpObj->rowCount();
     if(iRow < 0 || iRow >= iRowCnt) return Q_NULLPTR;
 
-    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-    TagTmpDBItem * pNewTagTmp = Q_NULLPTR;
-    QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(iRow, 0);
-    if(pItemID != Q_NULLPTR) {
-        pNewTagTmp = tagTmp.getTagTmpDBItemByID(pItemID->text());
-        if(pNewTagTmp == Q_NULLPTR) return Q_NULLPTR;
-        pNewTagTmp->m_szTagID = pItemID->text();
-    }
+//    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+//    TagTmpDBItem * pNewTagTmp = Q_NULLPTR;
+//    QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(iRow, 0);
+//    if(pItemID != Q_NULLPTR) {
+//        pNewTagTmp = tagTmp.getTagTmpDBItemByID(pItemID->text());
+//        if(pNewTagTmp == Q_NULLPTR) return Q_NULLPTR;
+//        pNewTagTmp->m_szTagID = pItemID->text();
+//    }
 
-    QTableWidgetItem *pItemName = m_pTableTagTmpObj->item(iRow, 1);
-    if(pItemName != Q_NULLPTR) {
-        pNewTagTmp->m_szName = pItemName->text();
-    }
-    QTableWidgetItem *pItemDescription = m_pTableTagTmpObj->item(iRow, 2);
-    if(pItemDescription != Q_NULLPTR) {
-        pNewTagTmp->m_szDescription = pItemDescription->text();
-    }
-    QTableWidgetItem *pItemDataType = m_pTableTagTmpObj->item(iRow, 3);
-    if(pItemDataType != Q_NULLPTR) {
-        pNewTagTmp->m_szDataType = pItemDataType->text();
-    }
-    QTableWidgetItem *pItemInitVal = m_pTableTagTmpObj->item(iRow, 4);
-    if(pItemInitVal != Q_NULLPTR) {
-        pNewTagTmp->m_szInitVal = pItemInitVal->text();
-    }
-    QTableWidgetItem *pItemMinVal = m_pTableTagTmpObj->item(iRow, 5);
-    if(pItemMinVal != Q_NULLPTR) {
-        pNewTagTmp->m_szMinVal = pItemMinVal->text();
-    }
-    QTableWidgetItem *pItemMaxVal = m_pTableTagTmpObj->item(iRow, 6);
-    if(pItemMaxVal != Q_NULLPTR) {
-        pNewTagTmp->m_szMaxVal = pItemMaxVal->text();
-    }
-    QTableWidgetItem *pItemProjectConverter = m_pTableTagTmpObj->item(iRow, 7);
-    if(pItemProjectConverter != Q_NULLPTR) {
-        pNewTagTmp->m_szProjectConverter = pItemProjectConverter->text();
-    }
+//    QTableWidgetItem *pItemName = m_pTableTagTmpObj->item(iRow, 1);
+//    if(pItemName != Q_NULLPTR) {
+//        pNewTagTmp->m_szName = pItemName->text();
+//    }
+//    QTableWidgetItem *pItemDescription = m_pTableTagTmpObj->item(iRow, 2);
+//    if(pItemDescription != Q_NULLPTR) {
+//        pNewTagTmp->m_szDescription = pItemDescription->text();
+//    }
+//    QTableWidgetItem *pItemDataType = m_pTableTagTmpObj->item(iRow, 3);
+//    if(pItemDataType != Q_NULLPTR) {
+//        pNewTagTmp->m_szDataType = pItemDataType->text();
+//    }
+//    QTableWidgetItem *pItemInitVal = m_pTableTagTmpObj->item(iRow, 4);
+//    if(pItemInitVal != Q_NULLPTR) {
+//        pNewTagTmp->m_szInitVal = pItemInitVal->text();
+//    }
+//    QTableWidgetItem *pItemMinVal = m_pTableTagTmpObj->item(iRow, 5);
+//    if(pItemMinVal != Q_NULLPTR) {
+//        pNewTagTmp->m_szMinVal = pItemMinVal->text();
+//    }
+//    QTableWidgetItem *pItemMaxVal = m_pTableTagTmpObj->item(iRow, 6);
+//    if(pItemMaxVal != Q_NULLPTR) {
+//        pNewTagTmp->m_szMaxVal = pItemMaxVal->text();
+//    }
+//    QTableWidgetItem *pItemProjectConverter = m_pTableTagTmpObj->item(iRow, 7);
+//    if(pItemProjectConverter != Q_NULLPTR) {
+//        pNewTagTmp->m_szProjectConverter = pItemProjectConverter->text();
+//    }
 
-    return pNewTagTmp;
+//    return pNewTagTmp;
 }
 
 
@@ -672,38 +670,38 @@ void TagManagerChild::setTagTmpObjByRow(int iRow, TagTmpDBItem *pObj)
     int iRowCnt = m_pTableTagTmpObj->rowCount();
     if(pObj == Q_NULLPTR || iRow < 0 || iRow >= iRowCnt) return;
 
-    QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(iRow, 0);
-    if(pItemID != Q_NULLPTR) {
-        pItemID->setText(pObj->m_szTagID);
-    }
-    QTableWidgetItem *pItemName = m_pTableTagTmpObj->item(iRow, 1);
-    if(pItemName != Q_NULLPTR) {
-        pItemName->setText(pObj->m_szName);
-    }
-    QTableWidgetItem *pItemDescription = m_pTableTagTmpObj->item(iRow, 2);
-    if(pItemDescription != Q_NULLPTR) {
-        pItemDescription->setText(pObj->m_szDescription);
-    }
-    QTableWidgetItem *pItemDataType = m_pTableTagTmpObj->item(iRow, 3);
-    if(pItemDataType != Q_NULLPTR) {
-        pItemDataType->setText(pObj->m_szDataType);
-    }
-    QTableWidgetItem *pItemInitVal = m_pTableTagTmpObj->item(iRow, 4);
-    if(pItemInitVal != Q_NULLPTR) {
-        pItemInitVal->setText(pObj->m_szInitVal);
-    }
-    QTableWidgetItem *pItemMinVal = m_pTableTagTmpObj->item(iRow, 5);
-    if(pItemMinVal != Q_NULLPTR) {
-        pItemMinVal->setText(pObj->m_szMinVal);
-    }
-    QTableWidgetItem *pItemMaxVal = m_pTableTagTmpObj->item(iRow, 6);
-    if(pItemMaxVal != Q_NULLPTR) {
-        pItemMaxVal->setText(pObj->m_szMaxVal);
-    }
-    QTableWidgetItem *pItemProjectConverter = m_pTableTagTmpObj->item(iRow, 7);
-    if(pItemProjectConverter != Q_NULLPTR) {
-        pItemProjectConverter->setText(pObj->m_szProjectConverter);
-    }
+//    QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(iRow, 0);
+//    if(pItemID != Q_NULLPTR) {
+//        pItemID->setText(pObj->m_szTagID);
+//    }
+//    QTableWidgetItem *pItemName = m_pTableTagTmpObj->item(iRow, 1);
+//    if(pItemName != Q_NULLPTR) {
+//        pItemName->setText(pObj->m_szName);
+//    }
+//    QTableWidgetItem *pItemDescription = m_pTableTagTmpObj->item(iRow, 2);
+//    if(pItemDescription != Q_NULLPTR) {
+//        pItemDescription->setText(pObj->m_szDescription);
+//    }
+//    QTableWidgetItem *pItemDataType = m_pTableTagTmpObj->item(iRow, 3);
+//    if(pItemDataType != Q_NULLPTR) {
+//        pItemDataType->setText(pObj->m_szDataType);
+//    }
+//    QTableWidgetItem *pItemInitVal = m_pTableTagTmpObj->item(iRow, 4);
+//    if(pItemInitVal != Q_NULLPTR) {
+//        pItemInitVal->setText(pObj->m_szInitVal);
+//    }
+//    QTableWidgetItem *pItemMinVal = m_pTableTagTmpObj->item(iRow, 5);
+//    if(pItemMinVal != Q_NULLPTR) {
+//        pItemMinVal->setText(pObj->m_szMinVal);
+//    }
+//    QTableWidgetItem *pItemMaxVal = m_pTableTagTmpObj->item(iRow, 6);
+//    if(pItemMaxVal != Q_NULLPTR) {
+//        pItemMaxVal->setText(pObj->m_szMaxVal);
+//    }
+//    QTableWidgetItem *pItemProjectConverter = m_pTableTagTmpObj->item(iRow, 7);
+//    if(pItemProjectConverter != Q_NULLPTR) {
+//        pItemProjectConverter->setText(pObj->m_szProjectConverter);
+//    }
 }
 
 /**
@@ -714,14 +712,14 @@ void TagManagerChild::copyCurTagTmp()
 {
     int iSelectedRow = m_iTableTagTmpSelectedRow;
     if(iSelectedRow >= 0) {
-        TagTmpDBItem * pNewTagTmp = getTagTmpObjByRow(iSelectedRow);
-        int iRowCnt = m_pTableTagTmpObj->rowCount();
-        int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
-        pNewTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
-        int iRow = tableTagTmpAddRow();
-        setTagTmpObjByRow(iRow, pNewTagTmp);
-        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-        tagTmp.listTagTmpDBItem_.append(pNewTagTmp);
+//        TagTmpDBItem * pNewTagTmp = getTagTmpObjByRow(iSelectedRow);
+//        int iRowCnt = m_pTableTagTmpObj->rowCount();
+//        int id = getTagTmpIdNumValue(iRowCnt - 1) + 1;
+//        pNewTagTmp->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+//        int iRow = tableTagTmpAddRow();
+//        setTagTmpObjByRow(iRow, pNewTagTmp);
+//        TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+//        tagTmp.listTagTmpDBItem_.append(pNewTagTmp);
     }
 }
 
@@ -734,28 +732,28 @@ void TagManagerChild::modifyCurTagTmp()
 {
     int iSelectedRow = m_iTableTagTmpSelectedRow;
     if(iSelectedRow >= 0) {
-        TagTmpDBItem *pTagTmp = getTagTmpObjByRow(iSelectedRow);
+//        TagTmpDBItem *pTagTmp = getTagTmpObjByRow(iSelectedRow);
 
-        TagTmpEditDialog *pDlg = new TagTmpEditDialog(this);
-        pDlg->setWindowTitle(tr("编辑中间变量"));
-        pDlg->hideCreateNumUI();
-        pDlg->setTagName(pTagTmp->m_szName);
-        pDlg->setTagDescription(pTagTmp->m_szDescription);
-        pDlg->setTagDataType(pTagTmp->m_szDataType);
-        pDlg->setTagInitValue(pTagTmp->m_szInitVal);
-        pDlg->setTagMinValue(pTagTmp->m_szMinVal);
-        pDlg->setTagMaxValue(pTagTmp->m_szMaxVal);
+//        TagTmpEditDialog *pDlg = new TagTmpEditDialog(this);
+//        pDlg->setWindowTitle(tr("编辑中间变量"));
+//        pDlg->hideCreateNumUI();
+//        pDlg->setTagName(pTagTmp->m_szName);
+//        pDlg->setTagDescription(pTagTmp->m_szDescription);
+//        pDlg->setTagDataType(pTagTmp->m_szDataType);
+//        pDlg->setTagInitValue(pTagTmp->m_szInitVal);
+//        pDlg->setTagMinValue(pTagTmp->m_szMinVal);
+//        pDlg->setTagMaxValue(pTagTmp->m_szMaxVal);
 
-        if(pDlg->exec() == QDialog::Accepted) {
-            pTagTmp->m_szName = pDlg->tagName();
-            pTagTmp->m_szDescription = pDlg->tagDescription();
-            pTagTmp->m_szDataType = pDlg->tagDataType();
-            pTagTmp->m_szInitVal = pDlg->tagInitValue();
-            pTagTmp->m_szMinVal = pDlg->tagMinValue();
-            pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
-            setTagTmpObjByRow(iSelectedRow, pTagTmp);
-        }
-        delete pDlg;
+//        if(pDlg->exec() == QDialog::Accepted) {
+//            pTagTmp->m_szName = pDlg->tagName();
+//            pTagTmp->m_szDescription = pDlg->tagDescription();
+//            pTagTmp->m_szDataType = pDlg->tagDataType();
+//            pTagTmp->m_szInitVal = pDlg->tagInitValue();
+//            pTagTmp->m_szMinVal = pDlg->tagMinValue();
+//            pTagTmp->m_szMaxVal = pDlg->tagMaxValue();
+//            setTagTmpObjByRow(iSelectedRow, pTagTmp);
+//        }
+//        delete pDlg;
     }
 }
 
@@ -766,27 +764,27 @@ void TagManagerChild::modifyCurTagTmp()
  */
 void TagManagerChild::deleteCurTagTmp()
 {
-    m_listTagTmpDeleteRows.clear();
-    QList<QTableWidgetItem *> pSelectItems = m_pTableTagTmpObj->selectedItems();
-    QMap<int, int> rowMap;
-    foreach (QTableWidgetItem *pItem, pSelectItems) {
-        rowMap.insert(pItem->row(), 0);
-    }
-    int rowToDel;
-    QMapIterator<int, int> rowMapIterator(rowMap);
-    rowMapIterator.toBack();
-    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
-    while (rowMapIterator.hasPrevious()) {
-        rowMapIterator.previous();
-        rowToDel = rowMapIterator.key();
-        QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(rowToDel, 0);
-        if(pItemID != Q_NULLPTR) {
-            m_listTagTmpDeleteRows << pItemID->text();
-            TagTmpDBItem *pTagTmpObj = tagTmp.getTagTmpDBItemByID(pItemID->text());
-            tagTmp.listTagTmpDBItem_.removeOne(pTagTmpObj);
-        }
-        m_pTableTagTmpObj->removeRow(rowToDel);
-    }
+//    m_listTagTmpDeleteRows.clear();
+//    QList<QTableWidgetItem *> pSelectItems = m_pTableTagTmpObj->selectedItems();
+//    QMap<int, int> rowMap;
+//    foreach (QTableWidgetItem *pItem, pSelectItems) {
+//        rowMap.insert(pItem->row(), 0);
+//    }
+//    int rowToDel;
+//    QMapIterator<int, int> rowMapIterator(rowMap);
+//    rowMapIterator.toBack();
+//    TagTmp &tagTmp = ProjectData::getInstance()->tagTmp_;
+//    while (rowMapIterator.hasPrevious()) {
+//        rowMapIterator.previous();
+//        rowToDel = rowMapIterator.key();
+//        QTableWidgetItem *pItemID = m_pTableTagTmpObj->item(rowToDel, 0);
+//        if(pItemID != Q_NULLPTR) {
+//            m_listTagTmpDeleteRows << pItemID->text();
+//            TagTmpDBItem *pTagTmpObj = tagTmp.getTagTmpDBItemByID(pItemID->text());
+//            tagTmp.listTagTmpDBItem_.removeOne(pTagTmpObj);
+//        }
+//        m_pTableTagTmpObj->removeRow(rowToDel);
+//    }
 }
 
 
@@ -892,9 +890,9 @@ void getRegTypeByDeviceName(const QString &deviceName,
                 IDevicePlugin *iDevPlugin = qobject_cast<IDevicePlugin *>(plugin);
                 if (iDevPlugin) {
                     // 获取设备支持的所有寄存器区
-                    listReg = iDevPlugin->GetDeviceSupportRegisterArea();
+                    //listReg = iDevPlugin->GetDeviceSupportRegisterArea();
                     // 获取设备支持的所有数据类型
-                    listType = iDevPlugin->GetDeviceSupportDataType();
+                    //listType = iDevPlugin->GetDeviceSupportDataType();
                 } else {
                     QMessageBox::critical(Q_NULLPTR,
                                           QObject::tr("系统错误"),
@@ -1012,15 +1010,15 @@ int TagManagerChild::getTagIOIdNumValue(int iRow)
  */
 void TagManagerChild::updateTableTagIO()
 {
-    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    if(m_szCurIOGroupName == QString()) return;
-    m_pTableTagIOObj->clearContents();
-    m_pTableTagIOObj->setRowCount(0);
-    foreach (TagIODBItem * itemTagIO, tagIO.listTagIODBItem_) {
-        if(m_szCurIOGroupName != itemTagIO->m_szGroupName) continue;
-        int iRow = tableTagIOAddRow();
-        setTagIOObjByRow(iRow, itemTagIO);
-    }
+//    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+//    if(m_szCurIOGroupName == QString()) return;
+//    m_pTableTagIOObj->clearContents();
+//    m_pTableTagIOObj->setRowCount(0);
+//    foreach (TagIODBItem * itemTagIO, tagIO.listTagIODBItem_) {
+//        if(m_szCurIOGroupName != itemTagIO->m_szGroupName) continue;
+//        int iRow = tableTagIOAddRow();
+//        setTagIOObjByRow(iRow, itemTagIO);
+//    }
 }
 
 /**
@@ -1031,78 +1029,78 @@ void TagManagerChild::updateTableTagIO()
  */
 TagIODBItem *TagManagerChild::getTagIOObjByRow(int iRow)
 {
-    int iRowCnt = m_pTableTagIOObj->rowCount();
-    if(iRow < 0 || iRow >= iRowCnt) return Q_NULLPTR;
+//    int iRowCnt = m_pTableTagIOObj->rowCount();
+//    if(iRow < 0 || iRow >= iRowCnt) return Q_NULLPTR;
 
-    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    TagIODBItem *pObj = Q_NULLPTR;
+//    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+//    TagIODBItem *pObj = Q_NULLPTR;
 
-    QTableWidgetItem *pItemID = m_pTableTagIOObj->item(iRow, 0);
-    if(pItemID != Q_NULLPTR) {
-        pObj->m_szTagID = pItemID->text();
-        pObj = tagIO.getTagIODBItemByID(pItemID->text());
-        if(pObj == Q_NULLPTR) return Q_NULLPTR;
-    }
-    QTableWidgetItem *pItemName = m_pTableTagIOObj->item(iRow, 1);
-    if(pItemName != Q_NULLPTR) {
-        pObj->m_szName = pItemName->text();
-    }
-    QTableWidgetItem *pItemDescription = m_pTableTagIOObj->item(iRow, 2);
-    if(pItemDescription != Q_NULLPTR) {
-        pObj->m_szDescription = pItemDescription->text();
-    }
-    QTableWidgetItem *pItemDeviceName = m_pTableTagIOObj->item(iRow, 3);
-    if(pItemDeviceName != Q_NULLPTR) {
-        pObj->m_szDeviceName = pItemDeviceName->text();
-    }
-    QTableWidgetItem *pItemDeviceAddr = m_pTableTagIOObj->item(iRow, 4);
-    if(pItemDeviceAddr != Q_NULLPTR) {
-        pObj->m_szDeviceAddr = pItemDeviceAddr->text();
-    }
-    QTableWidgetItem *pItemRegisterArea = m_pTableTagIOObj->item(iRow, 5);
-    if(pItemRegisterArea != Q_NULLPTR) {
-        pObj->m_szRegisterArea = pItemRegisterArea->text();
-    }
-    QTableWidgetItem *pItemRegisterAddr = m_pTableTagIOObj->item(iRow, 6);
-    if(pItemRegisterAddr != Q_NULLPTR) {
-        pObj->m_szRegisterAddr = pItemRegisterAddr->text();
-    }
-    QTableWidgetItem *pItemAddrOffset = m_pTableTagIOObj->item(iRow, 7);
-    if(pItemAddrOffset != Q_NULLPTR) {
-        pObj->m_szAddrOffset = pItemAddrOffset->text();
-    }
-    QTableWidgetItem *pItemReadWriteType = m_pTableTagIOObj->item(iRow, 8);
-    if(pItemReadWriteType != Q_NULLPTR) {
-        pObj->m_szReadWriteType = pItemReadWriteType->text();
-    }
-    QTableWidgetItem *pItemDataType = m_pTableTagIOObj->item(iRow, 9);
-    if(pItemDataType != Q_NULLPTR) {
-        pObj->m_szDataType = pItemDataType->text();
-    }
-    QTableWidgetItem *pItemInitVal = m_pTableTagIOObj->item(iRow, 10);
-    if(pItemInitVal != Q_NULLPTR) {
-        pObj->m_szInitVal = pItemInitVal->text();
-    }
-    QTableWidgetItem *pItemMinVal = m_pTableTagIOObj->item(iRow, 11);
-    if(pItemMinVal != Q_NULLPTR) {
-        pObj->m_szMinVal = pItemMinVal->text();
-    }
-    QTableWidgetItem *pItemMaxVal = m_pTableTagIOObj->item(iRow, 12);
-    if(pItemMaxVal != Q_NULLPTR) {
-        pObj->m_szMaxVal = pItemMaxVal->text();
-    }
-    QTableWidgetItem *pItemScale = m_pTableTagIOObj->item(iRow, 13);
-    if(pItemScale != Q_NULLPTR) {
-        pObj->m_szScale = pItemScale->text();
-    }
-    QTableWidgetItem *pItemProjectConverter = m_pTableTagIOObj->item(iRow, 14);
-    if(pItemProjectConverter != Q_NULLPTR) {
-        pObj->m_szProjectConverter = pItemProjectConverter->text();
-    }
+//    QTableWidgetItem *pItemID = m_pTableTagIOObj->item(iRow, 0);
+//    if(pItemID != Q_NULLPTR) {
+//        pObj->m_szTagID = pItemID->text();
+//        pObj = tagIO.getTagIODBItemByID(pItemID->text());
+//        if(pObj == Q_NULLPTR) return Q_NULLPTR;
+//    }
+//    QTableWidgetItem *pItemName = m_pTableTagIOObj->item(iRow, 1);
+//    if(pItemName != Q_NULLPTR) {
+//        pObj->m_szName = pItemName->text();
+//    }
+//    QTableWidgetItem *pItemDescription = m_pTableTagIOObj->item(iRow, 2);
+//    if(pItemDescription != Q_NULLPTR) {
+//        pObj->m_szDescription = pItemDescription->text();
+//    }
+//    QTableWidgetItem *pItemDeviceName = m_pTableTagIOObj->item(iRow, 3);
+//    if(pItemDeviceName != Q_NULLPTR) {
+//        pObj->m_szDeviceName = pItemDeviceName->text();
+//    }
+//    QTableWidgetItem *pItemDeviceAddr = m_pTableTagIOObj->item(iRow, 4);
+//    if(pItemDeviceAddr != Q_NULLPTR) {
+//        pObj->m_szDeviceAddr = pItemDeviceAddr->text();
+//    }
+//    QTableWidgetItem *pItemRegisterArea = m_pTableTagIOObj->item(iRow, 5);
+//    if(pItemRegisterArea != Q_NULLPTR) {
+//        pObj->m_szRegisterArea = pItemRegisterArea->text();
+//    }
+//    QTableWidgetItem *pItemRegisterAddr = m_pTableTagIOObj->item(iRow, 6);
+//    if(pItemRegisterAddr != Q_NULLPTR) {
+//        pObj->m_szRegisterAddr = pItemRegisterAddr->text();
+//    }
+//    QTableWidgetItem *pItemAddrOffset = m_pTableTagIOObj->item(iRow, 7);
+//    if(pItemAddrOffset != Q_NULLPTR) {
+//        pObj->m_szAddrOffset = pItemAddrOffset->text();
+//    }
+//    QTableWidgetItem *pItemReadWriteType = m_pTableTagIOObj->item(iRow, 8);
+//    if(pItemReadWriteType != Q_NULLPTR) {
+//        pObj->m_szReadWriteType = pItemReadWriteType->text();
+//    }
+//    QTableWidgetItem *pItemDataType = m_pTableTagIOObj->item(iRow, 9);
+//    if(pItemDataType != Q_NULLPTR) {
+//        pObj->m_szDataType = pItemDataType->text();
+//    }
+//    QTableWidgetItem *pItemInitVal = m_pTableTagIOObj->item(iRow, 10);
+//    if(pItemInitVal != Q_NULLPTR) {
+//        pObj->m_szInitVal = pItemInitVal->text();
+//    }
+//    QTableWidgetItem *pItemMinVal = m_pTableTagIOObj->item(iRow, 11);
+//    if(pItemMinVal != Q_NULLPTR) {
+//        pObj->m_szMinVal = pItemMinVal->text();
+//    }
+//    QTableWidgetItem *pItemMaxVal = m_pTableTagIOObj->item(iRow, 12);
+//    if(pItemMaxVal != Q_NULLPTR) {
+//        pObj->m_szMaxVal = pItemMaxVal->text();
+//    }
+//    QTableWidgetItem *pItemScale = m_pTableTagIOObj->item(iRow, 13);
+//    if(pItemScale != Q_NULLPTR) {
+//        pObj->m_szScale = pItemScale->text();
+//    }
+//    QTableWidgetItem *pItemProjectConverter = m_pTableTagIOObj->item(iRow, 14);
+//    if(pItemProjectConverter != Q_NULLPTR) {
+//        pObj->m_szProjectConverter = pItemProjectConverter->text();
+//    }
 
-    pObj->m_szGroupName = m_szCurIOGroupName;
+//    pObj->m_szGroupName = m_szCurIOGroupName;
 
-    return pObj;
+//    return pObj;
 }
 
 /**
@@ -1113,69 +1111,69 @@ TagIODBItem *TagManagerChild::getTagIOObjByRow(int iRow)
  */
 void TagManagerChild::setTagIOObjByRow(int iRow, TagIODBItem *pObj)
 {
-    int iRowCnt = m_pTableTagIOObj->rowCount();
-    if(iRow < 0 || iRow >= iRowCnt) return;
+//    int iRowCnt = m_pTableTagIOObj->rowCount();
+//    if(iRow < 0 || iRow >= iRowCnt) return;
 
-    QTableWidgetItem *pItemID = m_pTableTagIOObj->item(iRow, 0);
-    if(pItemID != Q_NULLPTR) {
-        pItemID->setText(pObj->m_szTagID);
-    }
-    QTableWidgetItem *pItemName = m_pTableTagIOObj->item(iRow, 1);
-    if(pItemName != Q_NULLPTR) {
-        pItemName->setText(pObj->m_szName);
-    }
-    QTableWidgetItem *pItemDescription = m_pTableTagIOObj->item(iRow, 2);
-    if(pItemDescription != Q_NULLPTR) {
-        pItemDescription->setText(pObj->m_szDescription);
-    }
-    QTableWidgetItem *pItemDeviceName = m_pTableTagIOObj->item(iRow, 3);
-    if(pItemDeviceName != Q_NULLPTR) {
-        pItemDeviceName->setText(pObj->m_szDeviceName);
-    }
-    QTableWidgetItem *pItemDeviceAddr = m_pTableTagIOObj->item(iRow, 4);
-    if(pItemDeviceAddr != Q_NULLPTR) {
-        pItemDeviceAddr->setText(pObj->m_szDeviceAddr);
-    }
-    QTableWidgetItem *pItemRegisterArea = m_pTableTagIOObj->item(iRow, 5);
-    if(pItemRegisterArea != Q_NULLPTR) {
-        pItemRegisterArea->setText(pObj->m_szRegisterArea);
-    }
-    QTableWidgetItem *pItemRegisterAddr = m_pTableTagIOObj->item(iRow, 6);
-    if(pItemRegisterAddr != Q_NULLPTR) {
-        pItemRegisterAddr->setText(pObj->m_szRegisterAddr);
-    }
-    QTableWidgetItem *pItemAddrOffset = m_pTableTagIOObj->item(iRow, 7);
-    if(pItemAddrOffset != Q_NULLPTR) {
-        pItemAddrOffset->setText(pObj->m_szAddrOffset);
-    }
-    QTableWidgetItem *pItemReadWriteType = m_pTableTagIOObj->item(iRow, 8);
-    if(pItemReadWriteType != Q_NULLPTR) {
-        pItemReadWriteType->setText(pObj->m_szReadWriteType);
-    }
-    QTableWidgetItem *pItemDataType = m_pTableTagIOObj->item(iRow, 9);
-    if(pItemDataType != Q_NULLPTR) {
-        pItemDataType->setText(pObj->m_szDataType);
-    }
-    QTableWidgetItem *pItemInitVal = m_pTableTagIOObj->item(iRow, 10);
-    if(pItemInitVal != Q_NULLPTR) {
-        pItemInitVal->setText(pObj->m_szInitVal);
-    }
-    QTableWidgetItem *pItemMinVal = m_pTableTagIOObj->item(iRow, 11);
-    if(pItemMinVal != Q_NULLPTR) {
-        pItemMinVal->setText(pObj->m_szMinVal);
-    }
-    QTableWidgetItem *pItemMaxVal = m_pTableTagIOObj->item(iRow, 12);
-    if(pItemMaxVal != Q_NULLPTR) {
-        pItemMaxVal->setText(pObj->m_szMaxVal);
-    }
-    QTableWidgetItem *pItemScale = m_pTableTagIOObj->item(iRow, 13);
-    if(pItemScale != Q_NULLPTR) {
-        pItemScale->setText(pObj->m_szScale);
-    }
-    QTableWidgetItem *pItemProjectConverter = m_pTableTagIOObj->item(iRow, 14);
-    if(pItemProjectConverter != Q_NULLPTR) {
-        pItemProjectConverter->setText(pObj->m_szProjectConverter);
-    }
+//    QTableWidgetItem *pItemID = m_pTableTagIOObj->item(iRow, 0);
+//    if(pItemID != Q_NULLPTR) {
+//        pItemID->setText(pObj->m_szTagID);
+//    }
+//    QTableWidgetItem *pItemName = m_pTableTagIOObj->item(iRow, 1);
+//    if(pItemName != Q_NULLPTR) {
+//        pItemName->setText(pObj->m_szName);
+//    }
+//    QTableWidgetItem *pItemDescription = m_pTableTagIOObj->item(iRow, 2);
+//    if(pItemDescription != Q_NULLPTR) {
+//        pItemDescription->setText(pObj->m_szDescription);
+//    }
+//    QTableWidgetItem *pItemDeviceName = m_pTableTagIOObj->item(iRow, 3);
+//    if(pItemDeviceName != Q_NULLPTR) {
+//        pItemDeviceName->setText(pObj->m_szDeviceName);
+//    }
+//    QTableWidgetItem *pItemDeviceAddr = m_pTableTagIOObj->item(iRow, 4);
+//    if(pItemDeviceAddr != Q_NULLPTR) {
+//        pItemDeviceAddr->setText(pObj->m_szDeviceAddr);
+//    }
+//    QTableWidgetItem *pItemRegisterArea = m_pTableTagIOObj->item(iRow, 5);
+//    if(pItemRegisterArea != Q_NULLPTR) {
+//        pItemRegisterArea->setText(pObj->m_szRegisterArea);
+//    }
+//    QTableWidgetItem *pItemRegisterAddr = m_pTableTagIOObj->item(iRow, 6);
+//    if(pItemRegisterAddr != Q_NULLPTR) {
+//        pItemRegisterAddr->setText(pObj->m_szRegisterAddr);
+//    }
+//    QTableWidgetItem *pItemAddrOffset = m_pTableTagIOObj->item(iRow, 7);
+//    if(pItemAddrOffset != Q_NULLPTR) {
+//        pItemAddrOffset->setText(pObj->m_szAddrOffset);
+//    }
+//    QTableWidgetItem *pItemReadWriteType = m_pTableTagIOObj->item(iRow, 8);
+//    if(pItemReadWriteType != Q_NULLPTR) {
+//        pItemReadWriteType->setText(pObj->m_szReadWriteType);
+//    }
+//    QTableWidgetItem *pItemDataType = m_pTableTagIOObj->item(iRow, 9);
+//    if(pItemDataType != Q_NULLPTR) {
+//        pItemDataType->setText(pObj->m_szDataType);
+//    }
+//    QTableWidgetItem *pItemInitVal = m_pTableTagIOObj->item(iRow, 10);
+//    if(pItemInitVal != Q_NULLPTR) {
+//        pItemInitVal->setText(pObj->m_szInitVal);
+//    }
+//    QTableWidgetItem *pItemMinVal = m_pTableTagIOObj->item(iRow, 11);
+//    if(pItemMinVal != Q_NULLPTR) {
+//        pItemMinVal->setText(pObj->m_szMinVal);
+//    }
+//    QTableWidgetItem *pItemMaxVal = m_pTableTagIOObj->item(iRow, 12);
+//    if(pItemMaxVal != Q_NULLPTR) {
+//        pItemMaxVal->setText(pObj->m_szMaxVal);
+//    }
+//    QTableWidgetItem *pItemScale = m_pTableTagIOObj->item(iRow, 13);
+//    if(pItemScale != Q_NULLPTR) {
+//        pItemScale->setText(pObj->m_szScale);
+//    }
+//    QTableWidgetItem *pItemProjectConverter = m_pTableTagIOObj->item(iRow, 14);
+//    if(pItemProjectConverter != Q_NULLPTR) {
+//        pItemProjectConverter->setText(pObj->m_szProjectConverter);
+//    }
 }
 
 
@@ -1189,15 +1187,15 @@ void TagManagerChild::tagIOExportToCsv(const QString &path, const QString &group
     QtCSV::StringData varData;
     int iRowCount = m_pTableTagIOObj->rowCount();
     for(int i=0; i<iRowCount; i++) {
-        TagIODBItem * pTagIO = getTagIOObjByRow(i);
+//        TagIODBItem * pTagIO = getTagIOObjByRow(i);
 
-        QStringList varRow;
-        varRow << pTagIO->m_szTagID << pTagIO->m_szGroupName << pTagIO->m_szName<< pTagIO->m_szDescription
-               << pTagIO->m_szDeviceName << pTagIO->m_szDeviceAddr << pTagIO->m_szRegisterArea << pTagIO->m_szRegisterAddr
-               << pTagIO->m_szAddrOffset << pTagIO->m_szReadWriteType << pTagIO->m_szDataType << pTagIO->m_szInitVal
-               << pTagIO->m_szMinVal << pTagIO->m_szMaxVal << pTagIO->m_szScale << pTagIO->m_szProjectConverter;
+//        QStringList varRow;
+//        varRow << pTagIO->m_szTagID << pTagIO->m_szGroupName << pTagIO->m_szName<< pTagIO->m_szDescription
+//               << pTagIO->m_szDeviceName << pTagIO->m_szDeviceAddr << pTagIO->m_szRegisterArea << pTagIO->m_szRegisterAddr
+//               << pTagIO->m_szAddrOffset << pTagIO->m_szReadWriteType << pTagIO->m_szDataType << pTagIO->m_szInitVal
+//               << pTagIO->m_szMinVal << pTagIO->m_szMaxVal << pTagIO->m_szScale << pTagIO->m_szProjectConverter;
 
-        varData.addRow(varRow);
+//        varData.addRow(varRow);
     }
 
     QString filepath = path + "/" + group + ".csv";
@@ -1224,40 +1222,40 @@ void TagManagerChild::tagIOImportFromCsv(const QString &path)
                                                         QString(","),
                                                         QString("\""),
                                                         QTextCodec::codecForName("GB18030"));
-    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    for(int i=0; i<data.size(); i++) {
-        QStringList row = data.at(i);
-        if(row.at(0) == "ID") continue;
+//    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+//    for(int i=0; i<data.size(); i++) {
+//        QStringList row = data.at(i);
+//        if(row.at(0) == "ID") continue;
 
-        TagIODBItem * pTagIO = new TagIODBItem();
-        int iRowCnt = m_pTableTagIOObj->rowCount();
-        int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
-        (void)id;
-        //pTagIO->m_szTagID = QString("tmp.%1").arg(QString::number(id));
+//        TagIODBItem * pTagIO = new TagIODBItem();
+//        int iRowCnt = m_pTableTagIOObj->rowCount();
+//        int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+//        (void)id;
+//        //pTagIO->m_szTagID = QString("tmp.%1").arg(QString::number(id));
 
-        // TODO
+//        // TODO
 
-        //pTagIO->m_szTagID = row.at(0);
-        pTagIO->m_szGroupName = row.at(1);
-        pTagIO->m_szName = row.at(2);
-        pTagIO->m_szDescription = row.at(3);
-        pTagIO->m_szDeviceName = row.at(4);
-        pTagIO->m_szDeviceAddr = row.at(5);
-        pTagIO->m_szRegisterArea = row.at(6);
-        pTagIO->m_szRegisterAddr = row.at(7);
-        pTagIO->m_szAddrOffset = row.at(9);
-        pTagIO->m_szReadWriteType = row.at(10);
-        pTagIO->m_szDataType = row.at(11);
-        pTagIO->m_szInitVal = row.at(12);
-        pTagIO->m_szMinVal = row.at(13);
-        pTagIO->m_szMaxVal = row.at(14);
-        pTagIO->m_szScale = row.at(15);
-        pTagIO->m_szProjectConverter = row.at(16);
+//        //pTagIO->m_szTagID = row.at(0);
+//        pTagIO->m_szGroupName = row.at(1);
+//        pTagIO->m_szName = row.at(2);
+//        pTagIO->m_szDescription = row.at(3);
+//        pTagIO->m_szDeviceName = row.at(4);
+//        pTagIO->m_szDeviceAddr = row.at(5);
+//        pTagIO->m_szRegisterArea = row.at(6);
+//        pTagIO->m_szRegisterAddr = row.at(7);
+//        pTagIO->m_szAddrOffset = row.at(9);
+//        pTagIO->m_szReadWriteType = row.at(10);
+//        pTagIO->m_szDataType = row.at(11);
+//        pTagIO->m_szInitVal = row.at(12);
+//        pTagIO->m_szMinVal = row.at(13);
+//        pTagIO->m_szMaxVal = row.at(14);
+//        pTagIO->m_szScale = row.at(15);
+//        pTagIO->m_szProjectConverter = row.at(16);
 
-        int iRow = tableTagIOAddRow();
-        setTagIOObjByRow(iRow, pTagIO);
-        tagIO.listTagIODBItem_.append(pTagIO);
-    }
+//        int iRow = tableTagIOAddRow();
+//        setTagIOObjByRow(iRow, pTagIO);
+//        tagIO.listTagIODBItem_.append(pTagIO);
+//    }
 }
 
 /**
@@ -1266,51 +1264,51 @@ void TagManagerChild::tagIOImportFromCsv(const QString &path)
  */
 void TagManagerChild::createTagIO()
 {
-    if(m_szCurIOGroupName == QString()) return;
+//    if(m_szCurIOGroupName == QString()) return;
 
-    // 判断是否已经建立通讯设备
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    if(deviceInfo.listDeviceInfoObject_.count() < 1) {
-        QMessageBox::warning(this,
-                             tr("提示"),
-                             QString(tr("不存在通讯设备，请先新建通讯设备！")));
-        return;
-    }
+//    // 判断是否已经建立通讯设备
+//    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+//    if(deviceInfo.listDeviceInfoObject_.count() < 1) {
+//        QMessageBox::warning(this,
+//                             tr("提示"),
+//                             QString(tr("不存在通讯设备，请先新建通讯设备！")));
+//        return;
+//    }
 
-    TagIOEditDialog *pDlg = new TagIOEditDialog(m_szProjectName, this);
-    if(pDlg->exec() == QDialog::Accepted) {
-        int num = pDlg->createTagNum();
-        int iOffset = pDlg->addrOffset();
-        int iRowCnt = m_pTableTagIOObj->rowCount();
-        int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
-        TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-        for(int i=0; i<num; i++) {
-            TagIODBItem * pTagIO = new TagIODBItem();
-            pTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
-            pTagIO->m_szGroupName = m_szCurIOGroupName;
-            pTagIO->m_szName = pDlg->tagName();
-            pTagIO->m_szDescription = pDlg->tagDesc();
-            pTagIO->m_szDeviceName = pDlg->deviceName();
-            pTagIO->m_szDeviceAddr = pDlg->deviceAddr();
-            pTagIO->m_szRegisterArea = pDlg->regSection();
-            pTagIO->m_szRegisterAddr = QString::number(pDlg->regAddr().toInt() + iOffset * i);
-            pTagIO->m_szAddrOffset = pDlg->regAddrOffset();
-            pTagIO->m_szReadWriteType = pDlg->typeReadWrite();
-            pTagIO->m_szDataType = pDlg->dataType();
-            pTagIO->m_szInitVal  = pDlg->tagInitValue();
-            pTagIO->m_szMinVal  = pDlg->tagMinValue();
-            pTagIO->m_szMaxVal  = pDlg->tagMaxValue();
-            pTagIO->m_szScale  = pDlg->scale();
-            pTagIO->m_szProjectConverter = "";
+//    TagIOEditDialog *pDlg = new TagIOEditDialog(m_szProjectName, this);
+//    if(pDlg->exec() == QDialog::Accepted) {
+//        int num = pDlg->createTagNum();
+//        int iOffset = pDlg->addrOffset();
+//        int iRowCnt = m_pTableTagIOObj->rowCount();
+//        int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+//        TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+//        for(int i=0; i<num; i++) {
+//            TagIODBItem * pTagIO = new TagIODBItem();
+//            pTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
+//            pTagIO->m_szGroupName = m_szCurIOGroupName;
+//            pTagIO->m_szName = pDlg->tagName();
+//            pTagIO->m_szDescription = pDlg->tagDesc();
+//            pTagIO->m_szDeviceName = pDlg->deviceName();
+//            pTagIO->m_szDeviceAddr = pDlg->deviceAddr();
+//            pTagIO->m_szRegisterArea = pDlg->regSection();
+//            pTagIO->m_szRegisterAddr = QString::number(pDlg->regAddr().toInt() + iOffset * i);
+//            pTagIO->m_szAddrOffset = pDlg->regAddrOffset();
+//            pTagIO->m_szReadWriteType = pDlg->typeReadWrite();
+//            pTagIO->m_szDataType = pDlg->dataType();
+//            pTagIO->m_szInitVal  = pDlg->tagInitValue();
+//            pTagIO->m_szMinVal  = pDlg->tagMinValue();
+//            pTagIO->m_szMaxVal  = pDlg->tagMaxValue();
+//            pTagIO->m_szScale  = pDlg->scale();
+//            pTagIO->m_szProjectConverter = "";
 
-            int iRow = tableTagIOAddRow();
-            setTagIOObjByRow(iRow, pTagIO);
+//            int iRow = tableTagIOAddRow();
+//            setTagIOObjByRow(iRow, pTagIO);
 
-            tagIO.listTagIODBItem_.append(pTagIO);
-            id++;
-        }
-    }
-    delete pDlg;
+//            tagIO.listTagIODBItem_.append(pTagIO);
+//            id++;
+//        }
+//    }
+//    delete pDlg;
 }
 
 /**
@@ -1325,46 +1323,46 @@ void TagManagerChild::appendTagIO()
 
     if(m_szCurIOGroupName == QString()) return;
 
-    int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
-    TagIODBItem * pNewTagIO = new TagIODBItem();
-    pNewTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
-    pNewTagIO->m_szGroupName = m_szCurIOGroupName;
-    pNewTagIO->m_szName = "";
-    pNewTagIO->m_szDescription = "";
-    pNewTagIO->m_szDeviceName = "";
-    QTableWidgetItem *pItemDeviceName = m_pTableTagIOObj->item(iRowCnt - 1, 3);
-    if(pItemDeviceName != Q_NULLPTR) {
-        pNewTagIO->m_szDeviceName = pItemDeviceName->text();
-    }
-    pNewTagIO->m_szDeviceAddr = "1";
-    pNewTagIO->m_szRegisterArea = "";
-    QTableWidgetItem *pItemRegisterArea = m_pTableTagIOObj->item(iRowCnt - 1, 5);
-    if(pItemRegisterArea != Q_NULLPTR) {
-        pNewTagIO->m_szRegisterArea = pItemRegisterArea->text();
-    }
-    pNewTagIO->m_szRegisterAddr = "0";
-    pNewTagIO->m_szAddrOffset = "0";
-    pNewTagIO->m_szReadWriteType = "";
-    QTableWidgetItem *pItemReadWriteType = m_pTableTagIOObj->item(iRowCnt - 1, 8);
-    if(pItemReadWriteType != Q_NULLPTR) {
-        pNewTagIO->m_szReadWriteType = pItemReadWriteType->text();
-    }
-    pNewTagIO->m_szDataType  = "";
-    QTableWidgetItem *pItemDataType = m_pTableTagIOObj->item(iRowCnt - 1, 9);
-    if(pItemDataType != Q_NULLPTR) {
-        pNewTagIO->m_szDataType = pItemDataType->text();
-    }
-    pNewTagIO->m_szInitVal  = "0";
-    pNewTagIO->m_szMinVal  = "";
-    pNewTagIO->m_szMaxVal  = "";
-    pNewTagIO->m_szScale  = "1";
-    pNewTagIO->m_szProjectConverter  = "";
+//    int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+//    TagIODBItem * pNewTagIO = new TagIODBItem();
+//    pNewTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
+//    pNewTagIO->m_szGroupName = m_szCurIOGroupName;
+//    pNewTagIO->m_szName = "";
+//    pNewTagIO->m_szDescription = "";
+//    pNewTagIO->m_szDeviceName = "";
+//    QTableWidgetItem *pItemDeviceName = m_pTableTagIOObj->item(iRowCnt - 1, 3);
+//    if(pItemDeviceName != Q_NULLPTR) {
+//        pNewTagIO->m_szDeviceName = pItemDeviceName->text();
+//    }
+//    pNewTagIO->m_szDeviceAddr = "1";
+//    pNewTagIO->m_szRegisterArea = "";
+//    QTableWidgetItem *pItemRegisterArea = m_pTableTagIOObj->item(iRowCnt - 1, 5);
+//    if(pItemRegisterArea != Q_NULLPTR) {
+//        pNewTagIO->m_szRegisterArea = pItemRegisterArea->text();
+//    }
+//    pNewTagIO->m_szRegisterAddr = "0";
+//    pNewTagIO->m_szAddrOffset = "0";
+//    pNewTagIO->m_szReadWriteType = "";
+//    QTableWidgetItem *pItemReadWriteType = m_pTableTagIOObj->item(iRowCnt - 1, 8);
+//    if(pItemReadWriteType != Q_NULLPTR) {
+//        pNewTagIO->m_szReadWriteType = pItemReadWriteType->text();
+//    }
+//    pNewTagIO->m_szDataType  = "";
+//    QTableWidgetItem *pItemDataType = m_pTableTagIOObj->item(iRowCnt - 1, 9);
+//    if(pItemDataType != Q_NULLPTR) {
+//        pNewTagIO->m_szDataType = pItemDataType->text();
+//    }
+//    pNewTagIO->m_szInitVal  = "0";
+//    pNewTagIO->m_szMinVal  = "";
+//    pNewTagIO->m_szMaxVal  = "";
+//    pNewTagIO->m_szScale  = "1";
+//    pNewTagIO->m_szProjectConverter  = "";
 
-    int iRow = tableTagIOAddRow();
-    setTagIOObjByRow(iRow, pNewTagIO);
+//    int iRow = tableTagIOAddRow();
+//    setTagIOObjByRow(iRow, pNewTagIO);
 
-    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    tagIO.listTagIODBItem_.append(pNewTagIO);
+//    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+//    tagIO.listTagIODBItem_.append(pNewTagIO);
 }
 
 
@@ -1376,17 +1374,17 @@ void TagManagerChild::copyCurTagIO()
 {
     if(m_szCurIOGroupName == QString()) return;
 
-    int iSelectedRow = m_iTableTagIOSelectedRow;
-    if(iSelectedRow >= 0) {
-        TagIODBItem * pNewTagIO = getTagIOObjByRow(iSelectedRow);
-        int iRowCnt = m_pTableTagIOObj->rowCount();
-        int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
-        pNewTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
-        int iRow = tableTagIOAddRow();
-        setTagIOObjByRow(iRow, pNewTagIO);
-        TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-        tagIO.listTagIODBItem_.append(pNewTagIO);
-    }
+//    int iSelectedRow = m_iTableTagIOSelectedRow;
+//    if(iSelectedRow >= 0) {
+//        TagIODBItem * pNewTagIO = getTagIOObjByRow(iSelectedRow);
+//        int iRowCnt = m_pTableTagIOObj->rowCount();
+//        int id = getTagIOIdNumValue(iRowCnt - 1) + 1;
+//        pNewTagIO->m_szTagID = QString("io.%1.%2").arg(m_szCurIOGroupName).arg(QString::number(id));
+//        int iRow = tableTagIOAddRow();
+//        setTagIOObjByRow(iRow, pNewTagIO);
+//        TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+//        tagIO.listTagIODBItem_.append(pNewTagIO);
+//    }
 }
 
 
@@ -1396,44 +1394,44 @@ void TagManagerChild::copyCurTagIO()
  */
 void TagManagerChild::modifyCurTagIO()
 {
-    int iSelectedRow = m_iTableTagIOSelectedRow;
-    if(iSelectedRow >= 0) {
-        TagIODBItem *pTagIO = getTagIOObjByRow(iSelectedRow);
+//    int iSelectedRow = m_iTableTagIOSelectedRow;
+//    if(iSelectedRow >= 0) {
+//        TagIODBItem *pTagIO = getTagIOObjByRow(iSelectedRow);
 
-        TagIOEditDialog *pDlg = new TagIOEditDialog(m_szProjectName, this);
-        pDlg->setWindowTitle(tr("编辑设备变量"));
-        pDlg->hideCreateNumUI();
-        pDlg->setTagName(pTagIO->m_szName);
-        pDlg->setTagDesc(pTagIO->m_szDescription);
-        pDlg->setDeviceName(pTagIO->m_szDeviceName);
-        pDlg->setDeviceAddr(pTagIO->m_szDeviceAddr);
-        pDlg->setRegSection(pTagIO->m_szRegisterArea);
-        pDlg->setRegAddr(pTagIO->m_szRegisterAddr);
-        pDlg->setRegAddrOffset(pTagIO->m_szAddrOffset);
-        pDlg->setTypeReadWrite(pTagIO->m_szReadWriteType);
-        pDlg->setDataType(pTagIO->m_szDataType);
-        pDlg->setTagInitValue(pTagIO->m_szInitVal);
-        pDlg->setTagMinValue(pTagIO->m_szMinVal);
-        pDlg->setTagMaxValue(pTagIO->m_szMaxVal);
-        pDlg->setScale(pTagIO->m_szScale);
-        if(pDlg->exec() == QDialog::Accepted) {
-            pTagIO->m_szName = pDlg->tagName();
-            pTagIO->m_szDescription = pDlg->tagDesc();
-            pTagIO->m_szDeviceName = pDlg->deviceName();
-            pTagIO->m_szDeviceAddr = pDlg->deviceAddr();
-            pTagIO->m_szRegisterArea = pDlg->regSection();
-            pTagIO->m_szRegisterAddr = pDlg->regAddr();
-            pTagIO->m_szAddrOffset = pDlg->regAddrOffset();
-            pTagIO->m_szReadWriteType = pDlg->typeReadWrite();
-            pTagIO->m_szDataType = pDlg->dataType();
-            pTagIO->m_szInitVal  = pDlg->tagInitValue();
-            pTagIO->m_szMinVal  = pDlg->tagMinValue();
-            pTagIO->m_szMaxVal  = pDlg->tagMaxValue();
-            pTagIO->m_szScale  = pDlg->scale();
-            setTagIOObjByRow(iSelectedRow, pTagIO);
-        }
-        delete pDlg;
-    }
+//        TagIOEditDialog *pDlg = new TagIOEditDialog(m_szProjectName, this);
+//        pDlg->setWindowTitle(tr("编辑设备变量"));
+//        pDlg->hideCreateNumUI();
+//        pDlg->setTagName(pTagIO->m_szName);
+//        pDlg->setTagDesc(pTagIO->m_szDescription);
+//        pDlg->setDeviceName(pTagIO->m_szDeviceName);
+//        pDlg->setDeviceAddr(pTagIO->m_szDeviceAddr);
+//        pDlg->setRegSection(pTagIO->m_szRegisterArea);
+//        pDlg->setRegAddr(pTagIO->m_szRegisterAddr);
+//        pDlg->setRegAddrOffset(pTagIO->m_szAddrOffset);
+//        pDlg->setTypeReadWrite(pTagIO->m_szReadWriteType);
+//        pDlg->setDataType(pTagIO->m_szDataType);
+//        pDlg->setTagInitValue(pTagIO->m_szInitVal);
+//        pDlg->setTagMinValue(pTagIO->m_szMinVal);
+//        pDlg->setTagMaxValue(pTagIO->m_szMaxVal);
+//        pDlg->setScale(pTagIO->m_szScale);
+//        if(pDlg->exec() == QDialog::Accepted) {
+//            pTagIO->m_szName = pDlg->tagName();
+//            pTagIO->m_szDescription = pDlg->tagDesc();
+//            pTagIO->m_szDeviceName = pDlg->deviceName();
+//            pTagIO->m_szDeviceAddr = pDlg->deviceAddr();
+//            pTagIO->m_szRegisterArea = pDlg->regSection();
+//            pTagIO->m_szRegisterAddr = pDlg->regAddr();
+//            pTagIO->m_szAddrOffset = pDlg->regAddrOffset();
+//            pTagIO->m_szReadWriteType = pDlg->typeReadWrite();
+//            pTagIO->m_szDataType = pDlg->dataType();
+//            pTagIO->m_szInitVal  = pDlg->tagInitValue();
+//            pTagIO->m_szMinVal  = pDlg->tagMinValue();
+//            pTagIO->m_szMaxVal  = pDlg->tagMaxValue();
+//            pTagIO->m_szScale  = pDlg->scale();
+//            setTagIOObjByRow(iSelectedRow, pTagIO);
+//        }
+//        delete pDlg;
+//    }
 }
 
 
@@ -1443,73 +1441,73 @@ void TagManagerChild::modifyCurTagIO()
  */
 void TagManagerChild::deleteCurTagIO()
 {
-    m_listTagIODeleteRows.clear();
-    QList<QTableWidgetItem *> pSelectItems = m_pTableTagIOObj->selectedItems();
-    QMap<int, int> rowMap;
-    foreach (QTableWidgetItem *pItem, pSelectItems) {
-        rowMap.insert(pItem->row(), 0);
-    }
-    int rowToDel;
-    QMapIterator<int, int> rowMapIterator(rowMap);
-    rowMapIterator.toBack();
-    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
-    while (rowMapIterator.hasPrevious()) {
-        rowMapIterator.previous();
-        rowToDel = rowMapIterator.key();
-        QTableWidgetItem *pItemID = m_pTableTagIOObj->item(rowToDel, 0);
-        if(pItemID != Q_NULLPTR) {
-            m_listTagIODeleteRows << pItemID->text();
-            TagIODBItem *pTagIOObj = tagIO.getTagIODBItemByID(pItemID->text());
-            tagIO.listTagIODBItem_.removeOne(pTagIOObj);
-        }
-        m_pTableTagIOObj->removeRow(rowToDel);
-    }
+//    m_listTagIODeleteRows.clear();
+//    QList<QTableWidgetItem *> pSelectItems = m_pTableTagIOObj->selectedItems();
+//    QMap<int, int> rowMap;
+//    foreach (QTableWidgetItem *pItem, pSelectItems) {
+//        rowMap.insert(pItem->row(), 0);
+//    }
+//    int rowToDel;
+//    QMapIterator<int, int> rowMapIterator(rowMap);
+//    rowMapIterator.toBack();
+//    TagIO &tagIO = ProjectData::getInstance()->tagIO_;
+//    while (rowMapIterator.hasPrevious()) {
+//        rowMapIterator.previous();
+//        rowToDel = rowMapIterator.key();
+//        QTableWidgetItem *pItemID = m_pTableTagIOObj->item(rowToDel, 0);
+//        if(pItemID != Q_NULLPTR) {
+//            m_listTagIODeleteRows << pItemID->text();
+//            TagIODBItem *pTagIOObj = tagIO.getTagIODBItemByID(pItemID->text());
+//            tagIO.listTagIODBItem_.removeOne(pTagIOObj);
+//        }
+//        m_pTableTagIOObj->removeRow(rowToDel);
+//    }
 }
 
 
 void TagManagerChild::on_tableTagIO_itemPressed(QTableWidgetItem *item)
 {
-    int iColumn = item->column();
-    int iRow = item->row();
-    m_iTableTagIOSelectedRow = iRow;
-    if(iColumn > 0 && iColumn < 14) {
-        if(iColumn == 3) { // 设备名
-            QAbstractItemDelegate *pDelegateObj = m_pTableTagIOObj->itemDelegateForColumn(3);
-            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
-            if(pComboBoxDelegateObj != Q_NULLPTR) {
-                QStringList szListDevNames;
-                DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-                for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
-                    DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-                    szListDevNames.append(pObj->szDeviceName_);
-                }
-                pComboBoxDelegateObj->setItems(szListDevNames);
-            }
-        }
-        else if(iColumn == 5) { // 寄存器区
-            QAbstractItemDelegate *pDelegateObj = m_pTableTagIOObj->itemDelegateForColumn(5);
-            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
-            TagIODBItem *pTagIOObj = getTagIOObjByRow(iRow);
-            if(pComboBoxDelegateObj != Q_NULLPTR && pTagIOObj != Q_NULLPTR) {
-                QStringList listReg;
-                QStringList listType;
-                getRegTypeByDeviceName(pTagIOObj->m_szDeviceName, listReg, listType);
-                pComboBoxDelegateObj->setItems(listReg);
-            }
-        }
-        else if(iColumn == 9) { // 数据类型
-            QAbstractItemDelegate *pDelegateObj = m_pTableTagIOObj->itemDelegateForColumn(9);
-            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
-            TagIODBItem *pTagIOObj = getTagIOObjByRow(iRow);
-            if(pComboBoxDelegateObj != Q_NULLPTR && pTagIOObj != Q_NULLPTR) {
-                QStringList listReg;
-                QStringList listType;
-                getRegTypeByDeviceName(pTagIOObj->m_szDeviceName, listReg, listType);
-                pComboBoxDelegateObj->setItems(listType);
-            }
-        }
-        m_pTableTagIOObj->editItem(item);
-    }
+//    int iColumn = item->column();
+//    int iRow = item->row();
+//    m_iTableTagIOSelectedRow = iRow;
+//    if(iColumn > 0 && iColumn < 14) {
+//        if(iColumn == 3) { // 设备名
+//            QAbstractItemDelegate *pDelegateObj = m_pTableTagIOObj->itemDelegateForColumn(3);
+//            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
+//            if(pComboBoxDelegateObj != Q_NULLPTR) {
+//                QStringList szListDevNames;
+//                DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+//                for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+//                    DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+//                    szListDevNames.append(pObj->szDeviceName_);
+//                }
+//                pComboBoxDelegateObj->setItems(szListDevNames);
+//            }
+//        }
+//        else if(iColumn == 5) { // 寄存器区
+//            QAbstractItemDelegate *pDelegateObj = m_pTableTagIOObj->itemDelegateForColumn(5);
+//            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
+//            TagIODBItem *pTagIOObj = getTagIOObjByRow(iRow);
+//            if(pComboBoxDelegateObj != Q_NULLPTR && pTagIOObj != Q_NULLPTR) {
+//                QStringList listReg;
+//                QStringList listType;
+//                getRegTypeByDeviceName(pTagIOObj->m_szDeviceName, listReg, listType);
+//                pComboBoxDelegateObj->setItems(listReg);
+//            }
+//        }
+//        else if(iColumn == 9) { // 数据类型
+//            QAbstractItemDelegate *pDelegateObj = m_pTableTagIOObj->itemDelegateForColumn(9);
+//            TableViewComboBoxDelegate * pComboBoxDelegateObj = dynamic_cast<TableViewComboBoxDelegate *>(pDelegateObj);
+//            TagIODBItem *pTagIOObj = getTagIOObjByRow(iRow);
+//            if(pComboBoxDelegateObj != Q_NULLPTR && pTagIOObj != Q_NULLPTR) {
+//                QStringList listReg;
+//                QStringList listType;
+//                getRegTypeByDeviceName(pTagIOObj->m_szDeviceName, listReg, listType);
+//                pComboBoxDelegateObj->setItems(listType);
+//            }
+//        }
+//        m_pTableTagIOObj->editItem(item);
+//    }
 }
 
 void TagManagerChild::on_tableTagTmp_itemPressed(QTableWidgetItem *item)
@@ -1536,14 +1534,14 @@ void TagManagerChild::on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item)
         // 修改选中中间变量
         modifyCurTagTmp();
     } else if(iColumn == 7) {
-        TagTmpDBItem *pTagTmp = getTagTmpObjByRow(iRow);
-        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectData::getInstance()->getProjectPath(m_szProjectName), this);
-        pDlg->SetData(pTagTmp->m_szProjectConverter);
-        if(pDlg->exec() == QDialog::Accepted) {
-            pTagTmp->m_szProjectConverter = pDlg->GetData();
-            setTagTmpObjByRow(iRow, pTagTmp);
-        }
-        delete pDlg;
+//        TagTmpDBItem *pTagTmp = getTagTmpObjByRow(iRow);
+//        TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectData::getInstance()->getProjectPath(m_szProjectName), this);
+//        pDlg->SetData(pTagTmp->m_szProjectConverter);
+//        if(pDlg->exec() == QDialog::Accepted) {
+//            pTagTmp->m_szProjectConverter = pDlg->GetData();
+//            setTagTmpObjByRow(iRow, pTagTmp);
+//        }
+//        delete pDlg;
     }
 }
 
@@ -1558,11 +1556,11 @@ void TagManagerChild::on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item)
     } else if(iColumn == 14) {
         TagIODBItem *pTagIO = getTagIOObjByRow(iRow);
         TagFuncEditDialog *pDlg = new TagFuncEditDialog(ProjectData::getInstance()->getProjectPath(m_szProjectName), this);
-        pDlg->SetData(pTagIO->m_szProjectConverter);
-        if(pDlg->exec() == QDialog::Accepted) {
-            pTagIO->m_szProjectConverter = pDlg->GetData();
-            setTagIOObjByRow(iRow, pTagIO);
-        }
+//        pDlg->SetData(pTagIO->m_szProjectConverter);
+//        if(pDlg->exec() == QDialog::Accepted) {
+//            pTagIO->m_szProjectConverter = pDlg->GetData();
+//            setTagIOObjByRow(iRow, pTagIO);
+//        }
         delete pDlg;
     }
 }
@@ -1612,49 +1610,49 @@ void TagManagerChild::onSlotExportTag()
     */
 void TagManagerChild::onSlotImportTag()
 {
-    QString szDirPath = QCoreApplication::applicationDirPath();
-    QString szSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),
-                                                          szDirPath,
-                                                          tr("csv file (*.csv)"));
-    if(szSaveCsvFile == "") return;
+//    QString szDirPath = QCoreApplication::applicationDirPath();
+//    QString szSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),
+//                                                          szDirPath,
+//                                                          tr("csv file (*.csv)"));
+//    if(szSaveCsvFile == "") return;
 
-    this->importFromCsv(szSaveCsvFile);
+//    this->importFromCsv(szSaveCsvFile);
 
-    QString szCsvName= szSaveCsvFile.mid(szSaveCsvFile.lastIndexOf("/") + 1, szSaveCsvFile.indexOf(".") - szSaveCsvFile.lastIndexOf("/") - 1);
-    QString szGroupName = szCsvName.right(szCsvName.length() - szCsvName.lastIndexOf("-") - 1);
+//    QString szCsvName= szSaveCsvFile.mid(szSaveCsvFile.lastIndexOf("/") + 1, szSaveCsvFile.indexOf(".") - szSaveCsvFile.lastIndexOf("/") - 1);
+//    QString szGroupName = szCsvName.right(szCsvName.length() - szCsvName.lastIndexOf("-") - 1);
 
-    if(szCsvName.startsWith(tr("中间变量"))) {
+//    if(szCsvName.startsWith(tr("中间变量"))) {
 
-    } else if(szCsvName.startsWith(tr("设备变量"))) {
-        bool bFound = false;
+//    } else if(szCsvName.startsWith(tr("设备变量"))) {
+//        bool bFound = false;
 
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if(szGroupName == pObj->m_szShowName) {
-                bFound = true;
-                break;
-            }
-        }
+//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
+//            if(szGroupName == pObj->m_szShowName) {
+//                bFound = true;
+//                break;
+//            }
+//        }
 
-        if(!bFound) {
-            TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-            TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-            pObj->m_id = tagIOGroup.getGroupCount() + 1;
-            pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-            pObj->m_szShowName = szGroupName;
-            tagIOGroup.listTagIOGroupDBItem_.append(pObj);
-            if(m_pMainWinObj) {
-                MainWindow *pWndObj = dynamic_cast<MainWindow *>(m_pMainWinObj);
-                if(pWndObj) {
-                    pWndObj->UpdateDeviceVariableTableGroup();
-                    pWndObj->onSlotTreeProjectViewClicked(tr("设备变量"));
-                    QApplication::processEvents();
-                    pWndObj->onSlotTreeProjectViewClicked(szGroupName);
-                    QApplication::processEvents();
-                }
-            }
-        }
-    }
+//        if(!bFound) {
+//            TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//            TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
+//            pObj->m_id = tagIOGroup.getGroupCount() + 1;
+//            pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
+//            pObj->m_szShowName = szGroupName;
+//            tagIOGroup.listTagIOGroupDBItem_.append(pObj);
+//            if(m_pMainWinObj) {
+//                MainWindow *pWndObj = dynamic_cast<MainWindow *>(m_pMainWinObj);
+//                if(pWndObj) {
+//                    pWndObj->UpdateDeviceVariableTableGroup();
+//                    pWndObj->onSlotTreeProjectViewClicked(tr("设备变量"));
+//                    QApplication::processEvents();
+//                    pWndObj->onSlotTreeProjectViewClicked(szGroupName);
+//                    QApplication::processEvents();
+//                }
+//            }
+//        }
+//    }
 }
 
 
@@ -1727,12 +1725,12 @@ void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
     //////////////////////////////////////////////////////////////////////////
 
     if(wndTitle().startsWith(tr("设备变量"))) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        QString szGroup = tagIOGroup.getGroupNameByShowName(m_szItemName);
-        m_szCurIOGroupName = QString();
-        if(szGroup != QString()) {
-            m_szCurIOGroupName = szGroup;
-        }
+//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//        QString szGroup = tagIOGroup.getGroupNameByShowName(m_szItemName);
+//        m_szCurIOGroupName = QString();
+//        if(szGroup != QString()) {
+//            m_szCurIOGroupName = szGroup;
+//        }
         // 刷新设备变量表
         this->updateTableTagIO();
         m_pStackedWidgetObj->setCurrentWidget(m_pTableTagIOObj);

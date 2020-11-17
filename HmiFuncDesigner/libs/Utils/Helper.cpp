@@ -1,4 +1,3 @@
-
 #include <QString>
 #include <QSettings>
 #include <QApplication>
@@ -8,7 +7,8 @@
 #include <QMessageBox>
 #include <QDebug>
 #include <QTextCodec>
-#include <QDesktopWidget>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QRect>
 
 #include "Helper.h"
@@ -160,8 +160,7 @@ bool Helper::DeleteDir(const QString &dirName)
 */
 void Helper::WidgetMoveCenter(QWidget *w)
 {
-    QDesktopWidget * pDesktopWidget = QApplication::desktop();
-    const QRect rect = pDesktopWidget->screenGeometry();
+    const QRect rect = QGuiApplication::primaryScreen()->geometry();
     int screenWidth = rect.width();
     int screenHeight = rect.height();
 

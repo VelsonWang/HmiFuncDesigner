@@ -29,14 +29,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD
 
 SOURCES += \
-    Core.cpp
+    Core.cpp \
+    TagEditDialog.cpp
 
 HEADERS += \
     Core_global.h \
-    Core.h
+    Core.h \
+    TagEditDialog.h
 
 unix {
     target.path = /usr/lib
     INSTALLS += target
 }
+
+FORMS += \
+    TagEditDialog.ui
 

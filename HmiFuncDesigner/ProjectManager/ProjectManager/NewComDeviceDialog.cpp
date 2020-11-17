@@ -132,7 +132,7 @@ void NewComDeviceDialog::on_btnProtocolSelect_clicked()
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
     if (pDevPluginObj) {
         SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
-        pDlg->SetProtocolList(pDevPluginObj->GetDeviceSupportProtocol());
+        //pDlg->SetProtocolList(pDevPluginObj->GetDeviceSupportProtocol());
         if(pDlg->exec() == QDialog::Accepted) {
             ui->editProtocol->setText(pDlg->GetProtocolName());
         }
@@ -217,7 +217,7 @@ void NewComDeviceDialog::load(int id)
         if(pObj->szProperties_ == "") {
             pDevPluginObj->getDefaultDeviceProperty(m_properties);
         } else {
-            pDevPluginObj->devicePropertiesFromString(pObj->szProperties_, m_properties);
+            //pDevPluginObj->devicePropertiesFromString(pObj->szProperties_, m_properties);
         }
         pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
     }
@@ -259,7 +259,7 @@ void NewComDeviceDialog::save(int id)
     QString pluginName = pObj->szDeviceName_;
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
     if (pDevPluginObj) {
-        pObj->szProperties_ = pDevPluginObj->devicePropertiesToString(m_properties);
+        //pObj->szProperties_ = pDevPluginObj->devicePropertiesToString(m_properties);
     }
 }
 

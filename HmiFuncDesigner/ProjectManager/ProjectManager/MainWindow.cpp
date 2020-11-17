@@ -2,7 +2,8 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QDebug>
-#include <QDesktopWidget>
+#include <QGuiApplication>
+#include <QScreen>
 #include <QDialog>
 #include <QDir>
 #include <QFileDialog>
@@ -228,8 +229,7 @@ void MainWindow::initUI()
     slotUpdateActions();
     connect(m_pGraphPageEditorObj, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
 
-    QDesktopWidget * pDesktopWidget = QApplication::desktop();
-    QRect rect = pDesktopWidget->screenGeometry();
+    QRect rect = QGuiApplication::primaryScreen()->geometry();
     int screenWidth = rect.width();
     int screenHeight = rect.height();
     this->resize(screenWidth*3/4, screenHeight*3/4);
@@ -863,12 +863,12 @@ QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
 void MainWindow::CreateDefaultIOTagGroup()
 {
     if (this->m_pProjectTreeViewObj->getDevTagGroupCount() == 0) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-        pObj->m_id = 1;
-        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-        pObj->m_szShowName = QString(tr("IO设备"));
-        tagIOGroup.listTagIOGroupDBItem_.append(pObj);
+//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
+//        pObj->m_id = 1;
+//        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
+//        pObj->m_szShowName = QString(tr("IO设备"));
+//        tagIOGroup.listTagIOGroupDBItem_.append(pObj);
         UpdateDeviceVariableTableGroup();
     }
 }
@@ -1052,14 +1052,14 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
         szWndTittle = szItemText;
         isTagWndFound = true;
     } else {
-        // 设备变量
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if (szItemText == pObj->m_szShowName) {
-                szWndTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
-                isTagWndFound = true;
-            }
-        }
+//        // 设备变量
+//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
+//            if (szItemText == pObj->m_szShowName) {
+//                szWndTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
+//                isTagWndFound = true;
+//            }
+//        }
     }
 
     /////////////////////////////////////////////////////////////////////////

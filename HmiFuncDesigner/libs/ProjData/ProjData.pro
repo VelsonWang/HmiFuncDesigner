@@ -29,39 +29,35 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD
 
 SOURCES += \
-    $$PWD/TagSys.cpp \
-    $$PWD/TagTmp.cpp \
-    $$PWD/TagIO.cpp \
-    $$PWD/ulog.cpp \
-    $$PWD/ProjectData.cpp \
-    $$PWD/ProjectInfoManager.cpp \
-    $$PWD/NetSetting.cpp \
-    $$PWD/DatabaseSetting.cpp \
-    $$PWD/UserAuthority.cpp \
-    $$PWD/DeviceInfo.cpp \
-    $$PWD/PictureResourceManager.cpp \
-    $$PWD/Script.cpp \
-    $$PWD/XMLObject.cpp \
-    $$PWD/Helper.cpp
+    Tag.cpp \
+    ulog.cpp \
+    ProjectData.cpp \
+    ProjectInfoManager.cpp \
+    NetSetting.cpp \
+    DatabaseSetting.cpp \
+    UserAuthority.cpp \
+    DeviceInfo.cpp \
+    PictureResourceManager.cpp \
+    Script.cpp \
+    XMLObject.cpp \
+    Helper.cpp
+
 
 HEADERS += \
-    $$PWD/projdata_global.h \
-    $$PWD/DBTag.h \
-    $$PWD/IGraphPageSaveLoad.h \
-    $$PWD/TagSys.h \
-    $$PWD/TagTmp.h \
-    $$PWD/TagIO.h \
-    $$PWD/ulog.h \
-    $$PWD/ProjectData.h \
-    $$PWD/ProjectInfoManager.h \
-    $$PWD/NetSetting.h \
-    $$PWD/DatabaseSetting.h \
-    $$PWD/UserAuthority.h \
-    $$PWD/DeviceInfo.h \
-    $$PWD/PictureResourceManager.h \
-    $$PWD/Script.h \
-    $$PWD/XMLObject.h \
-    $$PWD/Helper.h
+    projdata_global.h \
+    IGraphPageSaveLoad.h \
+    Tag.h \
+    ulog.h \
+    ProjectData.h \
+    ProjectInfoManager.h \
+    NetSetting.h \
+    DatabaseSetting.h \
+    UserAuthority.h \
+    DeviceInfo.h \
+    PictureResourceManager.h \
+    Script.h \
+    XMLObject.h \
+    Helper.h
 
 unix {
     target.path = /usr/lib

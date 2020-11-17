@@ -1,5 +1,10 @@
 #include "TCPIPModbus.h"
+#include <QDebug>
 
+#define COIL_STATUS    tr("线圈状态")
+#define DISCRETE_STATUS    tr("离散量状态")
+#define INPUT_REGISTER    tr("输入寄存器")
+#define HOLDING_REGISTER    tr("保持寄存器")
 
 
 TCPIPModbus::TCPIPModbus()
@@ -8,84 +13,69 @@ TCPIPModbus::TCPIPModbus()
 }
 
 
-/*
-* 获取设备类型名称
-*/
-QString TCPIPModbus::GetDeviceTypeName()
+///
+/// \brief TCPIPModbus::getBitMaxRegPacket
+/// \details 位组包最大寄存器个数
+/// \return 寄存器个数
+///
+int TCPIPModbus::getBitMaxRegPacket()
 {
-    return QString(tr("网络设备"));
+    return 100;
 }
 
-/*
-* 获取设备支持的所有协议
-*/
-QStringList TCPIPModbus::GetDeviceSupportProtocol()
+
+///
+/// \brief TCPIPModbus::getWordMaxRegPacket
+/// \details 字组包最大寄存器个数
+/// \return 寄存器个数
+///
+int TCPIPModbus::getWordMaxRegPacket()
 {
-    QStringList list;
-    list<<"TCPIPModbus";
-    return list;
+    return 20;
 }
 
-/*
-* 获取设备支持的所有寄存器区
-*/
-QStringList TCPIPModbus::GetDeviceSupportRegisterArea()
+
+///
+/// \brief TCPIPModbus::getCommFailRetryCount
+/// \details 通信失败重试次数
+/// \return 次数
+///
+int TCPIPModbus::getCommFailRetryTimes()
 {
-    QStringList list;
-    list << tr("DO线圈")
-         << tr("DI离散输入寄存器")
-         << tr("AO保持寄存器")
-         << tr("AI输入寄存器");
-    return list;
+    return 2;
 }
 
-/*
-* 获取设备支持的所有数据类型
-*/
-QStringList TCPIPModbus::GetDeviceSupportDataType()
+
+///
+/// \brief TCPIPModbus::getCommTimeout
+/// \details 通信超时时间
+/// \return 时间值
+///
+int TCPIPModbus::getCommTimeout()
 {
-    QStringList list;
-    list << tr("Bit1开关量")
-         << tr("Char8位有符号数")
-         << tr("Byte8位无符号数")
-         << tr("Short16位有符号数")
-         << tr("Word16位无符号数")
-         << tr("ASCII2个字符")
-         << tr("Long32位有符号数")
-         << tr("Dword32位无符号数")
-         << tr("Float单精度浮点数")
-         << tr("String字符串")
-         << tr("Double双精度浮点数")
-         << tr("BCD");
-    return list;
+    return 1;
 }
 
-/**
- * @brief TCPIPModbus::GetRegisterAreaLimit
- * @details 获取寄存器区地址的下限和上限
- * @param areaName 寄存器区名称
- * @param lowerLimit 寄存器区地址下限
- * @param upperLimit 寄存器区地址上限
- */
-void TCPIPModbus::GetRegisterAreaLimit(const QString &areaName,
-                                       quint32 &lowerLimit,
-                                       quint32 &upperLimit) {
-    lowerLimit = 0;
-    upperLimit = 0;
-    if(areaName == tr("DO线圈")) {
-        lowerLimit = 0x0000;
-        upperLimit = 0xFFFF;
-    } else if(areaName == tr("DI离散输入寄存器")) {
-        lowerLimit = 0x0000;
-        upperLimit = 0xFFFF;
-    } else if(areaName == tr("AO保持寄存器")) {
-        lowerLimit = 0x0000;
-        upperLimit = 0xFFFF;
-    } else if(areaName == tr("AI输入寄存器")) {
-        lowerLimit = 0x0000;
-        upperLimit = 0xFFFF;
-    }
-    if(!m_bStartAddrBit0) lowerLimit++;
+
+///
+/// \brief TCPIPModbus::getCommIntervalTime
+/// \details 通信间隔时间
+/// \return 时间值
+///
+int TCPIPModbus::getCommIntervalTime()
+{
+    return 200;
+}
+
+
+///
+/// \brief TCPIPModbus::getCommResumeTime
+/// \details 尝试恢复通讯间隔时间
+/// \return 时间值
+///
+int TCPIPModbus::getCommResumeTime()
+{
+    return 2;
 }
 
 ///
@@ -96,9 +86,7 @@ void TCPIPModbus::GetRegisterAreaLimit(const QString &areaName,
 void TCPIPModbus::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
-    properties.append(qMakePair(tr("通信失败重试次数n次"), QString("3")));
-    properties.append(qMakePair(tr("通信超时时间n毫秒"), QString("1000")));
-    properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("15000")));
+    properties.append(qMakePair(tr("设备ID"), QString("1")));
     properties.append(qMakePair(tr("内存地址起始位为0"), QString("true")));
     properties.append(qMakePair(tr("写线圈功能码为15"), QString("false")));
     properties.append(qMakePair(tr("写寄存器功能码为16"), QString("false")));
@@ -117,9 +105,7 @@ void TCPIPModbus::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& pro
 void TCPIPModbus::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
 {
     properties_type.clear();
-    properties_type.append(qMakePair(tr("通信失败重试次数n次"), QString("int")));
-    properties_type.append(qMakePair(tr("通信超时时间n毫秒"), QString("int")));
-    properties_type.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("int")));
+    properties_type.append(qMakePair(tr("设备ID"), QString("int")));
     properties_type.append(qMakePair(tr("内存地址起始位为0"), QString("bool")));
     properties_type.append(qMakePair(tr("写线圈功能码为15"), QString("bool")));
     properties_type.append(qMakePair(tr("写寄存器功能码为16"), QString("bool")));
@@ -129,67 +115,60 @@ void TCPIPModbus::getDefaultDevicePropertyDataType(QVector<QPair<QString, QStrin
     properties_type.append(qMakePair(tr("64位低字节在前高字节在后"), QString("bool")));
 }
 
-
-
 ///
-/// \brief TCPIPModbus::devicePropertiesToString
-/// \details 保存属性为字符串
+/// \brief TCPIPModbus::writeAsXml
+/// \details 保存属性至xml节点
+/// \param xml xml节点
 /// \param properties 属性
-/// \return 属性字符串
 ///
-QString TCPIPModbus::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
+void TCPIPModbus::writeAsXml(QXmlStreamWriter &xml, QVector<QPair<QString, QString>>& properties)
 {
-    QStringList szListProperties;
-    szListProperties << QString(tr("retryTimes=%1")).arg(getValue2ByValue1(tr("通信失败重试次数n次"), properties));
-    szListProperties << QString(tr("commTimeout=%1")).arg(getValue2ByValue1(tr("通信超时时间n毫秒"), properties));
-    szListProperties << QString(tr("commResumeTime=%1")).arg(getValue2ByValue1(tr("尝试恢复通讯间隔时间n毫秒"), properties));
-    szListProperties << QString(tr("startAddrBit=%1")).arg(getValue2ByValue1(tr("内存地址起始位为0"), properties));
-    szListProperties << QString(tr("writeCoilFn=%1")).arg(getValue2ByValue1(tr("写线圈功能码为15"), properties));
-    szListProperties << QString(tr("writeRegFn=%1")).arg(getValue2ByValue1(tr("写寄存器功能码为16"), properties));
-    szListProperties << QString(tr("addr8=%1")).arg(getValue2ByValue1(tr("8位逆序"), properties));
-    szListProperties << QString(tr("addr16=%1")).arg(getValue2ByValue1(tr("16位低字节在前高字节在后"), properties));
-    szListProperties << QString(tr("addr32=%1")).arg(getValue2ByValue1(tr("32位低字节在前高字节在后"), properties));
-    szListProperties << QString(tr("addr64=%1")).arg(getValue2ByValue1(tr("64位低字节在前高字节在后"), properties));
-    return szListProperties.join("|");
+    xml.writeStartElement("property");
+    xml.writeAttribute("id", getValue2ByValue1(tr("设备ID"), properties));
+    xml.writeAttribute("startAddrBit", getValue2ByValue1(tr("内存地址起始位为0"), properties));
+    xml.writeAttribute("writeCoilFn", getValue2ByValue1(tr("写线圈功能码为15"), properties));
+    xml.writeAttribute("writeRegFn", getValue2ByValue1(tr("写寄存器功能码为16"), properties));
+    xml.writeAttribute("addr8", getValue2ByValue1(tr("8位逆序"), properties));
+    xml.writeAttribute("addr16", getValue2ByValue1(tr("16位低字节在前高字节在后"), properties));
+    xml.writeAttribute("addr32", getValue2ByValue1(tr("32位低字节在前高字节在后"), properties));
+    xml.writeAttribute("addr64", getValue2ByValue1(tr("64位低字节在前高字节在后"), properties));
+    xml.writeEndElement();
 }
 
 
 ///
-/// \brief TCPIPModbus::devicePropertiesFromString
-/// \details 从字符串加载属性
-/// \param szProperty 属性字符串
+/// \brief TCPIPModbus::readFromXml
+/// \details 从xml节点加载属性
+/// \param xml xml节点
 /// \param properties 属性
 ///
-void TCPIPModbus::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
+void TCPIPModbus::readFromXml(QXmlStreamReader &xml, QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
-
-    QStringList szListProperties = szProperty.split('|');
-    foreach(QString szProp, szListProperties) {
-        QStringList szListKeyVal = szProp.split('=');
-        if(szListKeyVal.size() == 2) {
-            if(szListKeyVal.at(0) == "retryTimes") {
-                properties.append(qMakePair(tr("通信失败重试次数n次"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "commTimeout") {
-                properties.append(qMakePair(tr("通信超时时间n毫秒"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "commResumeTime") {
-                properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "startAddrBit") {
-                properties.append(qMakePair(tr("内存地址起始位为0"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "writeCoilFn") {
-                properties.append(qMakePair(tr("写线圈功能码为15"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "writeRegFn") {
-                properties.append(qMakePair(tr("写寄存器功能码为16"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "addr8") {
-                properties.append(qMakePair(tr("8位逆序"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "addr16") {
-                properties.append(qMakePair(tr("16位低字节在前高字节在后"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "addr32") {
-                properties.append(qMakePair(tr("32位低字节在前高字节在后"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "addr64") {
-                properties.append(qMakePair(tr("64位低字节在前高字节在后"), szListKeyVal.at(1)));
-            }
-        }
+    QXmlStreamAttributes attributes = xml.attributes();
+    if (attributes.hasAttribute("id")) {
+        properties.append(qMakePair(tr("设备ID"), attributes.value("id").toString()));
+    }
+    if (attributes.hasAttribute("startAddrBit")) {
+        properties.append(qMakePair(tr("内存地址起始位为0"), attributes.value("startAddrBit").toString()));
+    }
+    if (attributes.hasAttribute("writeCoilFn")) {
+        properties.append(qMakePair(tr("写线圈功能码为15"), attributes.value("writeCoilFn").toString()));
+    }
+    if (attributes.hasAttribute("writeRegFn")) {
+        properties.append(qMakePair(tr("写寄存器功能码为16"), attributes.value("writeRegFn").toString()));
+    }
+    if (attributes.hasAttribute("addr8")) {
+        properties.append(qMakePair(tr("8位逆序"), attributes.value("addr8").toString()));
+    }
+    if (attributes.hasAttribute("addr16")) {
+        properties.append(qMakePair(tr("16位低字节在前高字节在后"), attributes.value("addr16").toString()));
+    }
+    if (attributes.hasAttribute("addr32")) {
+        properties.append(qMakePair(tr("32位低字节在前高字节在后"), attributes.value("addr32").toString()));
+    }
+    if (attributes.hasAttribute("addr64")) {
+        properties.append(qMakePair(tr("64位低字节在前高字节在后"), attributes.value("addr64").toString()));
     }
 }
 
@@ -207,4 +186,201 @@ void TCPIPModbus::setDeviceProperty(QVector<QPair<QString, QString>>& properties
     m_bStartAddrBit0 = (szVal.toLower() == "true") ? true : false;
 }
 
+
+///
+/// \brief TCPIPModbus::GetDeviceSupportProtocol
+/// \details 获取设备支持的所有协议
+/// \return
+///
+QStringList TCPIPModbus::getDeviceSupportProtocol()
+{
+    QStringList list;
+    list<<"TCPIPModbus";
+    return list;
+}
+
+///
+/// \brief TCPIPModbus::getDeviceSupportRegisterArea
+/// \details 获取设备支持的所有寄存器区
+/// \return
+///
+QStringList TCPIPModbus::getDeviceSupportRegisterArea()
+{
+    QStringList list;
+    list << COIL_STATUS
+         << DISCRETE_STATUS
+         << INPUT_REGISTER
+         << HOLDING_REGISTER;
+    return list;
+}
+
+///
+/// \brief TCPIPModbus::getDeviceSupportRegisterArea
+/// \details 获取指定数据类型和读写属性设备支持的寄存器区
+/// \param szDataType 数据类型
+/// \param bWriteable 读写属性
+/// \return 寄存器区
+///
+QStringList TCPIPModbus::getDeviceSupportRegisterArea(const QString &szDataType, bool bWriteable)
+{
+    Q_UNUSED(szDataType)
+    Q_UNUSED(bWriteable)
+    return QStringList();
+}
+
+///
+/// \brief TCPIPModbus::GetDeviceSupportDataType
+/// \details 获取设备支持的所有数据类型
+/// \param szAreaName 寄存器区
+/// \return
+///
+QStringList TCPIPModbus::getDeviceSupportDataType(const QString &szAreaName)
+{
+    QStringList list;
+
+    if(szAreaName == COIL_STATUS || szAreaName == DISCRETE_STATUS) {
+        list << tr("bool");
+    }
+    else if(szAreaName == HOLDING_REGISTER || szAreaName == INPUT_REGISTER ||
+            szAreaName == tr("所有") || szAreaName == "ALL") {
+        list << tr("int16")
+             << tr("uint16")
+             << tr("int32")
+             << tr("uint32")
+             << tr("float32")
+             << tr("double")
+             << tr("bcd16")
+             << tr("bcd32");
+    }
+    return list;
+}
+
+
+/**
+ * @brief TCPIPModbus::getRegisterAreaLimit
+ * @details 获取寄存器区地址的下限和上限
+ * @param szAreaName 寄存器区名称
+ * @param iLowerLimit 寄存器区地址下限
+ * @param iUpperLimit 寄存器区地址上限
+ */
+void TCPIPModbus::getRegisterAreaLimit(const QString &szAreaName,
+                                       quint32 &iLowerLimit,
+                                       quint32 &iUpperLimit)
+{
+    iLowerLimit = 0;
+    iUpperLimit = 0;
+    if(szAreaName == COIL_STATUS) {
+        iLowerLimit = 0x0000;
+        iUpperLimit = 0xFFFF;
+    } else if(szAreaName == DISCRETE_STATUS) {
+        iLowerLimit = 0x0000;
+        iUpperLimit = 0xFFFF;
+    } else if(szAreaName == INPUT_REGISTER) {
+        iLowerLimit = 0x0000;
+        iUpperLimit = 0xFFFF;
+    } else if(szAreaName == HOLDING_REGISTER) {
+        iLowerLimit = 0x0000;
+        iUpperLimit = 0xFFFF;
+    }
+    if(!m_bStartAddrBit0) iLowerLimit++;
+}
+
+///
+/// \brief TCPIPModbus::getAddressTypeAlias
+/// \details 获取地址类型别名
+/// \param szAreaName 寄存器区名称
+/// \param szDataType 数据类型
+/// \param szAddrOffset 地址偏移量
+/// \return 地址类型别名
+///
+QString TCPIPModbus::getAddressTypeAlias(const QString &szDataType,
+                                         const QString &szAreaName,
+                                         const QString &szAddrOffset,
+                                         const QString &szAreaName2,
+                                         const QString &szAddrOffset2)
+{
+    Q_UNUSED(szDataType)
+    Q_UNUSED(szAreaName2)
+    Q_UNUSED(szAddrOffset2)
+    QString szAddrTypeAlias = "";
+    if(szAreaName == COIL_STATUS) {
+        szAddrTypeAlias = "0x";
+    } else if(szAreaName == DISCRETE_STATUS) {
+        szAddrTypeAlias = "1x";
+    } else if(szAreaName == INPUT_REGISTER) {
+        szAddrTypeAlias = "3x";
+    } else if(szAreaName == HOLDING_REGISTER) {
+        szAddrTypeAlias = "4x";
+    }
+    szAddrTypeAlias += QString("%1").arg(szAddrOffset, 5, QChar('0'));
+    return szAddrTypeAlias;
+}
+
+
+///
+/// \brief TCPIPModbus::getAddressTypeAlias
+/// \details 获取地址类型别名
+/// \param szAreaName 寄存器区名称
+/// \return 地址类型别名
+///
+QString TCPIPModbus::getAddressTypeAlias(const QString &szAreaName)
+{
+    QString szAddrTypeAlias = "";
+    if(szAreaName == COIL_STATUS) {
+        szAddrTypeAlias = "0x";
+    } else if(szAreaName == DISCRETE_STATUS) {
+        szAddrTypeAlias = "1x";
+    } else if(szAreaName == INPUT_REGISTER) {
+        szAddrTypeAlias = "3x";
+    } else if(szAreaName == HOLDING_REGISTER) {
+        szAddrTypeAlias = "4x";
+    }
+    return szAddrTypeAlias;
+}
+
+
+///
+/// \brief TCPIPModbus::getAddressType
+/// \details 获取指定地址类型别名的地址类型
+/// \param szAddressTypeAlias 地址类型别名
+/// \return 寄存器区名称
+///
+QString TCPIPModbus::getAddressType(const QString &szAddressTypeAlias)
+{
+    QString szAddrType = "";
+    if(szAddressTypeAlias.toLower() == "0x") {
+        szAddrType = COIL_STATUS;
+    } else if(szAddressTypeAlias.toLower() == "1x") {
+        szAddrType = DISCRETE_STATUS;
+    } else if(szAddressTypeAlias.toLower() == "3x") {
+        szAddrType = INPUT_REGISTER;
+    } else if(szAddressTypeAlias.toLower() == "4x") {
+        szAddrType = HOLDING_REGISTER;
+    }
+    return szAddrType;
+}
+
+
+///
+/// \brief TCPIPModbus::getAutoAddrMapItemList
+/// \details 获取寄存器地址映射列表
+/// \param listAutoAddrMapItem
+///
+void TCPIPModbus::getAutoAddrMapItemList(QList<PAutoAddrMapItem> &listAutoAddrMapItem)
+{
+    Q_UNUSED(listAutoAddrMapItem)
+}
+
+
+///
+/// \brief TCPIPModbus::getDeviceSupportRegisterAreaSubArea
+/// \details 获取设备支持的地址类型所有子寄存器区名称
+/// \param szAreaName 寄存器区名称
+/// \return 地址类型所有子寄存器区名称
+///
+QStringList TCPIPModbus::getDeviceSupportRegisterAreaSubArea(const QString &szAreaName)
+{
+    Q_UNUSED(szAreaName)
+    return QStringList();
+}
 

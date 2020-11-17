@@ -1,5 +1,5 @@
 
-include(../../HmiFuncDesignerDevicePlugin.pri)
+include(../../ConfigurationDevicePlugin.pri)
 
 SOURCES += FX2N.cpp
 

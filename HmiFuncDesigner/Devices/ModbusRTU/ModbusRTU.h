@@ -14,29 +14,32 @@ class ModbusRTU : public QObject, IDevicePlugin
 public:
     ModbusRTU();
 
-    // 获取设备类型名称
-    QString GetDeviceTypeName() Q_DECL_OVERRIDE;
-    // 获取设备支持的所有协议
-    QStringList GetDeviceSupportProtocol() Q_DECL_OVERRIDE;
-    // 获取设备支持的所有寄存器区
-    QStringList GetDeviceSupportRegisterArea() Q_DECL_OVERRIDE;
-    // 获取设备支持的所有数据类型
-    QStringList GetDeviceSupportDataType() Q_DECL_OVERRIDE;
-    // 获取寄存器区地址的下限和上限
-    void GetRegisterAreaLimit(const QString &areaName,
-                              quint32 &lowerLimit,
-                              quint32 &upperLimit) Q_DECL_OVERRIDE;
+    // 位组包最大寄存器个数
+    int getBitMaxRegPacket() Q_DECL_OVERRIDE;
+    // 字组包最大寄存器个数
+    int getWordMaxRegPacket() Q_DECL_OVERRIDE;
+    // 通信失败重试次数
+    int getCommFailRetryTimes() Q_DECL_OVERRIDE;
+    // 通信超时时间
+    int getCommTimeout() Q_DECL_OVERRIDE;
+    // 通信间隔时间
+    int getCommIntervalTime() Q_DECL_OVERRIDE;
+    // 尝试恢复通讯间隔时间
+    int getCommResumeTime() Q_DECL_OVERRIDE;
 
     // 获取设备默认属性
     void getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
     // 获取设备默认属性数据类型
     void getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type) Q_DECL_OVERRIDE;
-    // 保存属性为字符串
-    QString devicePropertiesToString(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
-    // 从字符串加载属性
-    void devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+    // 保存属性
+    void writeProperties(QString &szProperties, QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+    // 加载属性
+    void readProperties(QString &szProperties, QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
     // 设置设备属性
     void setDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+
+    // 获取设备描述信息
+    QString getDeviceDescInfo() Q_DECL_OVERRIDE;
 
 private:
     QVector<QPair<QString, QString>> m_properties; // 插件私有属性

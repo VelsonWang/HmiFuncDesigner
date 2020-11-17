@@ -6,7 +6,6 @@
 #include <QMessageBox>
 #include <QDebug>
 #include "ProjectData.h"
-#include "DBTag.h"
 #include "NewVariableGroupDialog.h"
 
 ProjectTreeView::ProjectTreeView(QWidget *parent) : QTreeView(parent)
@@ -46,11 +45,11 @@ void ProjectTreeView::contextMenuEvent(QContextMenuEvent * event)
     if (szCurItemText == tr("设备变量"))
         found = true;
 
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-        if (szCurItemText == pObj->m_szShowName)
-            found = true;
-    }
+//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
+//        if (szCurItemText == pObj->m_szShowName)
+//            found = true;
+//    }
 
     if (!found) return;
 
@@ -222,18 +221,18 @@ void ProjectTreeView::updateDeviceTagGroup()
 {
     if(m_pDevTagObj == Q_NULLPTR) return;
 
-    while(!m_pDevVariableTabListObj.empty())
-        m_pDevVariableTabListObj.takeFirst();
-    m_pDevTagObj->removeRows(0, m_pDevTagObj->rowCount());
+//    while(!m_pDevVariableTabListObj.empty())
+//        m_pDevVariableTabListObj.takeFirst();
+//    m_pDevTagObj->removeRows(0, m_pDevTagObj->rowCount());
 
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-        QStandardItem *pDevVarTab = new QStandardItem(QIcon(":/images/pj_zone.png"), pObj->m_szShowName);
-        pDevVarTab->setEditable(false);
-        m_pDevVariableTabListObj.append(pDevVarTab);
-        m_pDevTagObj->appendRow(pDevVarTab);
-    }
-    QApplication::processEvents();
+//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
+//        QStandardItem *pDevVarTab = new QStandardItem(QIcon(":/images/pj_zone.png"), pObj->m_szShowName);
+//        pDevVarTab->setEditable(false);
+//        m_pDevVariableTabListObj.append(pDevVarTab);
+//        m_pDevTagObj->appendRow(pDevVarTab);
+//    }
+//    QApplication::processEvents();
 }
 
 
@@ -247,15 +246,15 @@ void ProjectTreeView::onSlotTagIOGroupAdd()
     pDlg->SetDialogName("新建数据组");
     pDlg->SetLabelName("数据组名：");
     if (pDlg->exec() == QDialog::Accepted) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-        pObj->m_id = tagIOGroup.getGroupCount() + 1;
-        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-        pObj->m_szShowName = pDlg->GetGroupName();
-        tagIOGroup.listTagIOGroupDBItem_.append(pObj);
-        updateDeviceTagGroup();
-        QString szTitleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
-        emit sigNotifySetWindowSetTitle(szTitleNew);
+//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
+//        pObj->m_id = tagIOGroup.getGroupCount() + 1;
+//        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
+//        pObj->m_szShowName = pDlg->GetGroupName();
+//        tagIOGroup.listTagIOGroupDBItem_.append(pObj);
+//        updateDeviceTagGroup();
+//        QString szTitleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
+//        emit sigNotifySetWindowSetTitle(szTitleNew);
     }
 }
 
@@ -276,14 +275,14 @@ void ProjectTreeView::onSlotTagIOGroupRename()
     pDlg->SetLabelName("数据组名：");
     pDlg->SetGroupName(szText);
     if (pDlg->exec() == QDialog::Accepted) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(szText);
-        QString szTitleNew = QString("%1%2%3")
-                .arg("设备变量")
-                .arg("-")
-                .arg(pDlg->GetGroupName());
-        emit sigNotifySetWindowSetTitle(szTitleNew);
-        pObj->m_szShowName = pDlg->GetGroupName();
+//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//        TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(szText);
+//        QString szTitleNew = QString("%1%2%3")
+//                .arg("设备变量")
+//                .arg("-")
+//                .arg(pDlg->GetGroupName());
+//        emit sigNotifySetWindowSetTitle(szTitleNew);
+//        pObj->m_szShowName = pDlg->GetGroupName();
         updateDeviceTagGroup();
     }
 }
@@ -299,13 +298,13 @@ void ProjectTreeView::onSlotTagIODeleteGroup()
     QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
     QStandardItem *pItemObj = pModelObj->itemFromIndex(ModelIndex);
 
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(pItemObj->text());
-    tagIOGroup.listTagIOGroupDBItem_.removeOne(pObj);
-    if(pObj != Q_NULLPTR) {
-        delete pObj;
-        pObj = Q_NULLPTR;
-    }
+//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//    TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(pItemObj->text());
+//    tagIOGroup.listTagIOGroupDBItem_.removeOne(pObj);
+//    if(pObj != Q_NULLPTR) {
+//        delete pObj;
+//        pObj = Q_NULLPTR;
+//    }
     updateDeviceTagGroup();
 }
 
@@ -320,20 +319,20 @@ void ProjectTreeView::onSlotTagIOGroupCopy()
     QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
     QStandardItem *pItemObj = pModelObj->itemFromIndex(ModelIndex);
 
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    // check the same name first
-    QString szName = QString("复制_%1").arg(pItemObj->text());
-    int iCnt = tagIOGroup.getGroupCountByShowName(szName);
-    if(iCnt > 0) {
-        QMessageBox::information(this, "系统提示", "同名文件存在，请先修改名称！");
-        return;
-    }
+//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//    // check the same name first
+//    QString szName = QString("复制_%1").arg(pItemObj->text());
+//    int iCnt = tagIOGroup.getGroupCountByShowName(szName);
+//    if(iCnt > 0) {
+//        QMessageBox::information(this, "系统提示", "同名文件存在，请先修改名称！");
+//        return;
+//    }
 
-    TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-    pObj->m_id = tagIOGroup.getGroupCount() + 1;
-    pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-    pObj->m_szShowName = szName;
-    tagIOGroup.listTagIOGroupDBItem_.append(pObj);
+//    TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
+//    pObj->m_id = tagIOGroup.getGroupCount() + 1;
+//    pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
+//    pObj->m_szShowName = szName;
+//    tagIOGroup.listTagIOGroupDBItem_.append(pObj);
     updateDeviceTagGroup();
 
     // FIXME 拷贝组内变量
