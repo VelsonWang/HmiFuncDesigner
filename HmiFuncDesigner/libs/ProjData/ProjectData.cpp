@@ -2,6 +2,7 @@
 #include "XMLObject.h"
 #include "Helper.h"
 #include <QFileInfo>
+#include <QDataStream>
 #include <QDebug>
 
 
@@ -27,9 +28,46 @@ ProjectData* ProjectData::getInstance()
 
 bool ProjectData::openFromXml(const QString &szProjFile)
 {
-    QString buffer = Helper::readString(szProjFile);
+    QFileInfo fileInfoSrc(szProjFile);
+    if(fileInfoSrc.size() <= 512) return false;
+
+    // 读取文件头信息
+    QFile fileProj;
+    fileProj.setFileName(szProjFile);
+    if(!fileProj.open(QIODevice::ReadOnly)) return false;
+
+    memset((void *)&headerObj_, 0, sizeof(TFileHeader));
+    QDataStream in(&fileProj);
+    if(in.readRawData((char *)&headerObj_, sizeof(TFileHeader)) != sizeof(TFileHeader)) {
+        fileProj.close();
+        return false;
+    }
+
+    if(headerObj_.byOpenVerifyPassword != 0) {
+        char tmpBuf[32] = {0};
+        memcpy((void *)tmpBuf, (void *)headerObj_.szPassword, 32);
+        memcpy((void *)&headerObj_.szPassword[16], (void *)&tmpBuf[0], 8);
+        memcpy((void *)&headerObj_.szPassword[24], (void *)&tmpBuf[8], 8);
+        memcpy((void *)&headerObj_.szPassword[0], (void *)&tmpBuf[16], 8);
+        memcpy((void *)&headerObj_.szPassword[8], (void *)&tmpBuf[24], 8);
+    } else {
+        memset((void *)headerObj_.szPassword, 0, 32);
+    }
+
+    // 读取工程数据
+    int iSize = headerObj_.dwProjSize;
+    QByteArray baProjData;
+    baProjData.resize(iSize);
+    if(in.readRawData((char *)baProjData.data(), iSize) != iSize) {
+        fileProj.close();
+        return false;
+    }
+    fileProj.close();
+
+    QString szProjData = QString::fromLatin1(baProjData);
+
     XMLObject xml;
-    if(!xml.load(buffer, 0)) return false;
+    if(!xml.load(szProjData, Q_NULLPTR)) return false;
 
     QVector<XMLObject*> projObjs = xml.getChildren();
     foreach(XMLObject* pProjObj, projObjs) {
@@ -105,7 +143,44 @@ bool ProjectData::saveToXml(const QString &szProjFile)
         pImplGraphPageSaveLoadObj_->saveToXml(pPagesObj);
     }
 
-    Helper::writeString(szProjFile, projObjs.write());
+    QByteArray baProjData = projObjs.write().toLatin1();
+
+    QFile fileProj;
+    fileProj.setFileName(szProjFile);
+    if(!fileProj.open(QIODevice::WriteOnly|QIODevice::Truncate))
+        return false;
+
+    // 写文件头
+    quint8 buf[1024] = {0};
+    headerObj_.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+    headerObj_.wVersion = 0x0001;
+    headerObj_.dwProjSize = baProjData.length();
+    headerObj_.byEncrypt = 0; // 工程暂时不做加密
+    headerObj_.byOpenVerifyPassword = 0; // 打开工程暂时不需要验证密码
+    if(headerObj_.byOpenVerifyPassword != 0) {
+        char tmpBuf[32] = {0};
+        memcpy((void *)tmpBuf, (void *)headerObj_.szPassword, 32);
+        memcpy((void *)&headerObj_.szPassword[0], (void *)&tmpBuf[16], 8);
+        memcpy((void *)&headerObj_.szPassword[8], (void *)&tmpBuf[24], 8);
+        memcpy((void *)&headerObj_.szPassword[16], (void *)&tmpBuf[0], 8);
+        memcpy((void *)&headerObj_.szPassword[24], (void *)&tmpBuf[8], 8);
+    } else {
+        memset((void *)headerObj_.szPassword, 0, 32);
+    }
+
+    memcpy((void *)buf, (void *)&headerObj_, sizeof(TFileHeader));
+    QDataStream out(&fileProj);
+    if(out.writeRawData((const char *)buf, headerObj_.wSize) != headerObj_.wSize) {
+        fileProj.close();
+        return false;
+    }
+
+    if(out.writeRawData(baProjData, baProjData.size()) != baProjData.size()) {
+        fileProj.close();
+        return false;
+    }
+
+    fileProj.close();
 
     return true;
 }

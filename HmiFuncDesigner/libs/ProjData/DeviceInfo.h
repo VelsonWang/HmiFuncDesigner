@@ -205,8 +205,9 @@ public:
     bool openFromXml(XMLObject *pXmlObj);
     bool saveToXml(XMLObject *pXmlObj);
 
-    DeviceInfoObject *getDeviceInfoObjectByID(int id);
-    DeviceInfoObject *getDeviceInfoObjectByName(const QString &name);
+    DeviceInfoObject *newObject();
+    DeviceInfoObject *getObjectByID(int id);
+    DeviceInfoObject *getObjectByName(const QString &name);
 
     // 分配一个设备ID
     static int allocNewDeviceID();

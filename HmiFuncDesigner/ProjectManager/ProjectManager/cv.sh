@@ -56,7 +56,7 @@ BEGIN\n\
     BEGIN\n\
         BLOCK \"080403A8\"\n\
         BEGIN\n\
-            VALUE \"CompanyName\"      , \"SHENZHEN ZHILAI SCI AND TECH CO., LTD\\\\0\"\n\
+            VALUE \"CompanyName\"      , \"NONE CO., LTD\\\\0\"\n\
             VALUE \"FileDescription\"  , \"ProjectManager\\\\0\"\n\
             VALUE \"ProductName\"      , \"ProjectManager\\\\0\"\n\
             VALUE \"LegalTrademarks\"  , \"ProjectManager\\\\0\"\n\

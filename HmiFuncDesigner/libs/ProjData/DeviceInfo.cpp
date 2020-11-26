@@ -70,8 +70,16 @@ bool DeviceInfo::saveToXml(XMLObject *pXmlObj) {
     return true;
 }
 
+DeviceInfoObject *DeviceInfo::newObject() {
+    DeviceInfoObject *pObj = new DeviceInfoObject();
+    if(pObj != Q_NULLPTR) {
+        pObj->iID_ = allocNewDeviceID();
+        listDeviceInfoObject_.append(pObj);
+    }
+    return pObj;
+}
 
-DeviceInfoObject *DeviceInfo::getDeviceInfoObjectByID(int id) {
+DeviceInfoObject *DeviceInfo::getObjectByID(int id) {
     for(int i=0; i<listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
         if(pObj->iID_ == id) return pObj;
@@ -79,7 +87,7 @@ DeviceInfoObject *DeviceInfo::getDeviceInfoObjectByID(int id) {
     return Q_NULLPTR;
 }
 
-DeviceInfoObject *DeviceInfo::getDeviceInfoObjectByName(const QString &name) {
+DeviceInfoObject *DeviceInfo::getObjectByName(const QString &name) {
     for(int i=0; i<listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
         if(pObj->szDeviceName_ == name) return pObj;

@@ -205,13 +205,6 @@ void CommunicationDeviceChild::onSlotNewDevice()
         itemList = m_pCommDevModelObj->findItems(tr("新建串口设备"));
         if(itemList.size() == 0) return;
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
-        QStringList list;
-        DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-        for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
-            DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-            list << pObj->szDeviceName_;
-        }
-        pNewComDeviceDlg->SetListDeviceName(list);
         pNewComDeviceDlg->load(-1);
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
             pNewComDeviceDlg->save(-1);
@@ -299,13 +292,6 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
 
     if(pItemObj->text() == tr("新建串口设备")) {
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
-        QStringList list;
-
-        DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-        for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
-            list << deviceInfo.listDeviceInfoObject_.at(i)->szDeviceName_;
-        }
-        pNewComDeviceDlg->SetListDeviceName(list);
         pNewComDeviceDlg->load(-1);
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
             pNewComDeviceDlg->save(-1);
@@ -331,11 +317,6 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
                 if(pObj->szDeviceType_ == "COM") {
                     NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
                     pNewComDeviceDlg->load(pObj->iID_);
-                    QStringList list;
-                    for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
-                        list << deviceInfo.listDeviceInfoObject_.at(i)->szDeviceName_;
-                    }
-                    pNewComDeviceDlg->SetListDeviceName(list);
                     if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
                         pObj->szDeviceName_ = pNewComDeviceDlg->GetDeviceName();
                         pNewComDeviceDlg->save(pObj->iID_);

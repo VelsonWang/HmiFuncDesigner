@@ -18,7 +18,7 @@ class NewComDeviceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewComDeviceDialog(QWidget *parent = 0);
+    explicit NewComDeviceDialog(QWidget *parent = Q_NULLPTR);
     ~NewComDeviceDialog();
 
     void load(int id);
@@ -26,8 +26,6 @@ public:
 
 public:
     QString GetDeviceName() const;
-    // 设置已经建立的设备名称列表
-    void SetListDeviceName(QStringList l);
     // 更新PropertyEditor数据
     void updatePropertyEditor();
 
@@ -60,7 +58,7 @@ public:
 
 private:
     Ui::NewComDeviceDialog *ui;
-    QStringList m_ListDeviceName;
+    QString m_szPluginName;
     QtVariantPropertyManager *m_pVariantPropertyManager;
     QtTreePropertyBrowser *m_pPropertyEditor;
     QtVariantEditorFactory *m_pVariantEditorFactory;

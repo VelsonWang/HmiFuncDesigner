@@ -1,0 +1,1 @@
+单个modbus rtu设备和modbus tcp设备通信都很正常，当串口有多个地址设备时，modbus rtu只能读取第一个设备的数据，modbus tcp也只能显示第一个设备的数据，请问有解决这个问题的新版本吗

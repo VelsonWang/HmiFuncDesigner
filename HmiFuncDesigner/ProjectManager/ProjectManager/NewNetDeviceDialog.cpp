@@ -164,7 +164,7 @@ void NewNetDeviceDialog::load(int id)
 {
     if(id < 0) return;
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
     if(pObj == Q_NULLPTR) return;
     ui->editDeviceName->setText(pObj->szDeviceName_);
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
@@ -199,13 +199,11 @@ void NewNetDeviceDialog::load(int id)
 void NewNetDeviceDialog::save(int id)
 {
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
 
     if(pObj == Q_NULLPTR) {
-        pObj = new DeviceInfoObject();
+        pObj = deviceInfo.newObject();
         if(pObj == Q_NULLPTR) return;
-        deviceInfo.listDeviceInfoObject_.append(pObj);
-        pObj->iID_ = deviceInfo.allocNewDeviceID();
     }
 
     pObj->szDeviceType_ = "NET";

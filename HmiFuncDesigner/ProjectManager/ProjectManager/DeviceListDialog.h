@@ -14,7 +14,7 @@ class DeviceListDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit DeviceListDialog(QString stype = "COM", QWidget *parent = 0);
+    explicit DeviceListDialog(QString stype = "COM", QWidget *parent = Q_NULLPTR);
     ~DeviceListDialog();
     // 取得设备名称
     QString GetDeviceName() const;

@@ -14,6 +14,23 @@
 #include "IGraphPageSaveLoad.h"
 #include "projdata_global.h"
 
+#pragma pack(push)
+#pragma pack(1)
+typedef struct FileHeader
+{
+    quint16 wSize; // 文件头部大小(2 Byte)
+    quint16 wVersion; // 文件头版本(2 Byte)
+    quint32 dwProjSize; // 工程数据大小(4 Byte)
+    quint8 byEncrypt; // 工程加密
+    quint8 byOpenVerifyPassword; // 打开工程需要验证密码
+    char szPassword[32]; // 打开工程的密码
+
+} TFileHeader, *PFileHeader;
+#pragma pack(pop)
+
+
+////////////////////////////////////////////////////////////////////////////////
+
 class PROJDATASHARED_EXPORT ProjectData
 {
 public:
@@ -53,7 +70,7 @@ public:
     TagManager tagMgr_; // 标签变量
     Script script_; // 脚本
     IGraphPageSaveLoad *pImplGraphPageSaveLoadObj_; // 画面
-
+    TFileHeader headerObj_;
 private:  
 
     Q_DISABLE_COPY(ProjectData)

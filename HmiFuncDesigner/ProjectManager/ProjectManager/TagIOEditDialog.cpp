@@ -78,7 +78,7 @@ void TagIOEditDialog::on_btnOk_clicked()
     QString area = ui->cboRegisterSection->currentText();
     if(devPlugin_ != Q_NULLPTR) {
         DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-        DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByName(m_szDeviceName);
+        DeviceInfoObject *pObj = deviceInfo.getObjectByName(m_szDeviceName);
         QVector<QPair<QString, QString>> m_properties;
         if(pObj != Q_NULLPTR) {
             if(pObj->szProperties_ == "") {

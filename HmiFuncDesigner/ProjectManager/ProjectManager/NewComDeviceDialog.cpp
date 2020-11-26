@@ -19,6 +19,7 @@
 #include "variantmanager.h"
 #include "variantfactory.h"
 #include "DevicePluginLoader.h"
+#include <QDebug>
 
 NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
     QDialog(parent),
@@ -97,14 +98,14 @@ void NewComDeviceDialog::on_btnDeviceSelect_clicked()
     DeviceListDialog *pDlg = new DeviceListDialog("COM", this);
     if(pDlg->exec() == QDialog::Accepted) {
         QString devName = pDlg->GetDeviceName();
-
+        m_szPluginName = devName;
         // 查找相同的设备名称
         int findCnt = 0;
+        DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
 continueFind:
-        for(int i=0; i<this->m_ListDeviceName.count(); i++)
-        {
-            if(this->m_ListDeviceName.at(i) == devName)
-            {
+        for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+            DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+            if(pObj->szDeviceName_ == devName) {
                 findCnt++;
                 devName = pDlg->GetDeviceName() + QString("_%1").arg(findCnt);
                 goto continueFind;
@@ -112,9 +113,7 @@ continueFind:
         }
 
         ui->editDeviceName->setText(devName);
-
-        QString pluginName = devName;
-        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(m_szPluginName);
         if (pDevPluginObj) {
             pDevPluginObj->getDefaultDeviceProperty(m_properties);
             pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
@@ -128,23 +127,16 @@ continueFind:
 */
 void NewComDeviceDialog::on_btnProtocolSelect_clicked()
 {
-    QString pluginName = ui->editDeviceName->text();
-    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(m_szPluginName);
     if (pDevPluginObj) {
         SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
+        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
+        qDebug() << pDevPluginObj->getDeviceDescInfo();
         //pDlg->SetProtocolList(pDevPluginObj->GetDeviceSupportProtocol());
         if(pDlg->exec() == QDialog::Accepted) {
             ui->editProtocol->setText(pDlg->GetProtocolName());
         }
     }
-}
-
-/*
-* 设置已经建立的设备名称列表
-*/
-void NewComDeviceDialog::SetListDeviceName(QStringList l)
-{
-    this->m_ListDeviceName = l;
 }
 
 void NewComDeviceDialog::on_btnCheck_clicked()
@@ -154,8 +146,7 @@ void NewComDeviceDialog::on_btnCheck_clicked()
     }
 }
 
-void NewComDeviceDialog::on_btnOk_clicked()
-{
+void NewComDeviceDialog::on_btnOk_clicked() {
     if(check_data()) {
         QDialog::accept();
     }
@@ -190,7 +181,7 @@ void NewComDeviceDialog::load(int id)
 {
     if(id < 0) return;
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
     if(pObj == Q_NULLPTR) return;
     ui->editDeviceName->setText(pObj->szDeviceName_);
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
@@ -228,12 +219,10 @@ void NewComDeviceDialog::load(int id)
 void NewComDeviceDialog::save(int id)
 {
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getDeviceInfoObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
     if(pObj == Q_NULLPTR) {
-        pObj = new DeviceInfoObject();
+        pObj = deviceInfo.newObject();
         if(pObj == Q_NULLPTR) return;
-        deviceInfo.listDeviceInfoObject_.append(pObj);
-        pObj->iID_ = deviceInfo.allocNewDeviceID();
     }
     pObj->szDeviceType_ = "COM";
     pObj->szDeviceName_ = ui->editDeviceName->text();
