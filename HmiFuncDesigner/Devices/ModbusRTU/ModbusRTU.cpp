@@ -180,6 +180,17 @@ void ModbusRTU::setDeviceProperty(QVector<QPair<QString, QString>>& properties) 
 /// \return 设备描述信息
 ///
 QString ModbusRTU::getDeviceDescInfo() {
+#if 0
+    <?xml version="1.0"/>
+    <Device Name="ModbusRTU" AllDataType="bool|int16|uint16|int32|uint32|float32|double|bcd16|bcd32" SupportProtocol="ModbusRTU">
+        <RegAreas>
+            <RegArea Name="线圈状态" Alias="0x" Min="0x0000" Max="0xFFFF" DataType="bool" SubArea=""/>
+            <RegArea Name="离散量状态" Alias="1x" Min="0x0000" Max="0xFFFF" DataType="bool" SubArea=""/>
+            <RegArea Name="输入寄存器" Alias="3x" Min="0x0000" Max="0xFFFF" DataType="int16|uint16|int32|uint32|float32|double|bcd16|bcd32" SubArea=""/>
+            <RegArea Name="保持寄存器" Alias="4x" Min="0x0000" Max="0xFFFF" DataType="int16|uint16|int32|uint32|float32|double|bcd16|bcd32" SubArea=""/>
+        </RegAreas>
+    </Device>
+#endif
     QString szDeviceDescInfo;
     QStringList szListDataType;
     QStringList szListSubArea;
@@ -205,7 +216,7 @@ QString ModbusRTU::getDeviceDescInfo() {
     // 设备支持的所有协议
     QStringList szListSupportProtocol;
     szListSupportProtocol << "ModbusRTU";
-    writer.writeAttribute("", szListSupportProtocol.join("|"));
+    writer.writeAttribute("SupportProtocol", szListSupportProtocol.join("|"));
 
     // 设备支持的所有寄存器区
     writer.writeStartElement("RegAreas"); // <RegAreas>

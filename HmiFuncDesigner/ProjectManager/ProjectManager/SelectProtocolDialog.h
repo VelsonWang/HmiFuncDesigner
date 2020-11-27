@@ -13,7 +13,7 @@ class SelectProtocolDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit SelectProtocolDialog(QWidget *parent = 0);
+    explicit SelectProtocolDialog(QWidget *parent = Q_NULLPTR);
     ~SelectProtocolDialog();
 
     // 设置支持的协议列表

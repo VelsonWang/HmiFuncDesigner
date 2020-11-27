@@ -19,7 +19,6 @@
 #include "variantmanager.h"
 #include "variantfactory.h"
 #include "DevicePluginLoader.h"
-#include <QDebug>
 
 NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
     QDialog(parent),
@@ -105,7 +104,7 @@ void NewComDeviceDialog::on_btnDeviceSelect_clicked()
 continueFind:
         for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
             DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-            if(pObj->szDeviceName_ == devName) {
+            if(pObj->szName_ == devName) {
                 findCnt++;
                 devName = pDlg->GetDeviceName() + QString("_%1").arg(findCnt);
                 goto continueFind;
@@ -130,11 +129,13 @@ void NewComDeviceDialog::on_btnProtocolSelect_clicked()
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(m_szPluginName);
     if (pDevPluginObj) {
         SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
-        qDebug() << __FILE__ << __FUNCTION__ << __LINE__;
-        qDebug() << pDevPluginObj->getDeviceDescInfo();
-        //pDlg->SetProtocolList(pDevPluginObj->GetDeviceSupportProtocol());
-        if(pDlg->exec() == QDialog::Accepted) {
-            ui->editProtocol->setText(pDlg->GetProtocolName());
+        QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
+        XMLObject xmlObj;
+        if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+            pDlg->SetProtocolList(xmlObj.getProperty("SupportProtocol").split("|"));
+            if(pDlg->exec() == QDialog::Accepted) {
+                ui->editProtocol->setText(pDlg->GetProtocolName());
+            }
         }
     }
 }
@@ -183,7 +184,8 @@ void NewComDeviceDialog::load(int id)
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
     if(pObj == Q_NULLPTR) return;
-    ui->editDeviceName->setText(pObj->szDeviceName_);
+    ui->editDeviceName->setText(pObj->szName_);
+    m_szPluginName = pObj->szDeviceName_;
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
     ui->editProtocol->setText(pObj->szProtocol_);
     ui->cboLink->setCurrentText(pObj->szLink_);
@@ -208,7 +210,7 @@ void NewComDeviceDialog::load(int id)
         if(pObj->szProperties_ == "") {
             pDevPluginObj->getDefaultDeviceProperty(m_properties);
         } else {
-            //pDevPluginObj->devicePropertiesFromString(pObj->szProperties_, m_properties);
+            pDevPluginObj->readProperties(pObj->szProperties_, m_properties);
         }
         pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
     }
@@ -225,7 +227,8 @@ void NewComDeviceDialog::save(int id)
         if(pObj == Q_NULLPTR) return;
     }
     pObj->szDeviceType_ = "COM";
-    pObj->szDeviceName_ = ui->editDeviceName->text();
+    pObj->szName_ = ui->editDeviceName->text();
+    pObj->szDeviceName_ = m_szPluginName;
     pObj->iFrameLen_ = ui->editFrameLen->text().toInt();
     pObj->szProtocol_ = ui->editProtocol->text();
     pObj->szLink_ = ui->cboLink->currentText();
@@ -248,7 +251,7 @@ void NewComDeviceDialog::save(int id)
     QString pluginName = pObj->szDeviceName_;
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
     if (pDevPluginObj) {
-        //pObj->szProperties_ = pDevPluginObj->devicePropertiesToString(m_properties);
+        pDevPluginObj->writeProperties(pObj->szProperties_, m_properties);
     }
 }
 

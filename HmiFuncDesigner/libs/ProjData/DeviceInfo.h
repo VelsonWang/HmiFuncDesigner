@@ -35,6 +35,7 @@ public:
     {
         iID_ = obj.iID_;
         szDeviceType_ = obj.szDeviceType_;
+        szName_ = obj.szName_;
         szDeviceName_ = obj.szDeviceName_;
         iFrameLen_ = obj.iFrameLen_;
         szProtocol_ = obj.szProtocol_;
@@ -51,7 +52,8 @@ public:
 public:
     int iID_;
     QString szDeviceType_; //COM, NET, BUS, OPC
-    QString szDeviceName_;
+    QString szName_; // 显示名称
+    QString szDeviceName_; // 设备插件名称
     int iFrameLen_;
     QString szProtocol_;
     QString szLink_;

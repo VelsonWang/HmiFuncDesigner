@@ -27,7 +27,8 @@ bool DeviceInfo::openFromXml(XMLObject *pXmlObj) {
         pObj->iID_ = pDevObj->getProperty("id").toInt();
         if(iStartNewDeviceID_ < pObj->iID_) iStartNewDeviceID_ = pObj->iID_;
         pObj->szDeviceType_ = pDevObj->getProperty("type");
-        pObj->szDeviceName_ = pDevObj->getProperty("name");
+        pObj->szName_ = pDevObj->getProperty("name");
+        pObj->szDeviceName_ = pDevObj->getProperty("dev_name");
         pObj->iFrameLen_ = pDevObj->getProperty("frame_len").toInt();
         pObj->szProtocol_ = pDevObj->getProperty("protocol");
         pObj->szLink_ = pDevObj->getProperty("link");
@@ -54,7 +55,8 @@ bool DeviceInfo::saveToXml(XMLObject *pXmlObj) {
         pDevObj->setTagName("device");
         pDevObj->setProperty("id", QString::number(pObj->iID_));
         pDevObj->setProperty("type", pObj->szDeviceType_);
-        pDevObj->setProperty("name", pObj->szDeviceName_);
+        pDevObj->setProperty("name", pObj->szName_);
+        pDevObj->setProperty("dev_name", pObj->szDeviceName_);
         pDevObj->setProperty("frame_len", QString::number(pObj->iFrameLen_));
         pDevObj->setProperty("protocol", pObj->szProtocol_);
         pDevObj->setProperty("link", pObj->szLink_);
@@ -90,7 +92,7 @@ DeviceInfoObject *DeviceInfo::getObjectByID(int id) {
 DeviceInfoObject *DeviceInfo::getObjectByName(const QString &name) {
     for(int i=0; i<listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
-        if(pObj->szDeviceName_ == name) return pObj;
+        if(pObj->szName_ == name) return pObj;
     }
     return Q_NULLPTR;
 }
