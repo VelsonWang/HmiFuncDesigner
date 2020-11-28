@@ -2,8 +2,6 @@
 #include "XMLObject.h"
 #include "Helper.h"
 #include <QFileInfo>
-#include <QDataStream>
-#include <QDebug>
 
 
 ProjectData::ProjectData() : szProjVersion_("V1.0.0")
@@ -36,12 +34,15 @@ bool ProjectData::openFromXml(const QString &szProjFile)
     fileProj.setFileName(szProjFile);
     if(!fileProj.open(QIODevice::ReadOnly)) return false;
 
-    memset((void *)&headerObj_, 0, sizeof(TFileHeader));
-    QDataStream in(&fileProj);
-    if(in.readRawData((char *)&headerObj_, sizeof(TFileHeader)) != sizeof(TFileHeader)) {
+    quint8 buf[1024] = {0};
+    quint16 wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+
+    if(fileProj.read((char *)buf, wSize) != wSize) {
         fileProj.close();
         return false;
     }
+
+    memcpy((void *)&headerObj_, (void *)buf, sizeof(TFileHeader));
 
     if(headerObj_.byOpenVerifyPassword != 0) {
         char tmpBuf[32] = {0};
@@ -55,10 +56,9 @@ bool ProjectData::openFromXml(const QString &szProjFile)
     }
 
     // 读取工程数据
-    int iSize = headerObj_.dwProjSize;
     QByteArray baProjData;
-    baProjData.resize(iSize);
-    if(in.readRawData((char *)baProjData.data(), iSize) != iSize) {
+    baProjData.resize(headerObj_.dwProjSize);
+    if(fileProj.read((char *)baProjData.data(), headerObj_.dwProjSize) != headerObj_.dwProjSize) {
         fileProj.close();
         return false;
     }
@@ -169,13 +169,12 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     }
 
     memcpy((void *)buf, (void *)&headerObj_, sizeof(TFileHeader));
-    QDataStream out(&fileProj);
-    if(out.writeRawData((const char *)buf, headerObj_.wSize) != headerObj_.wSize) {
+    if(fileProj.write((const char *)buf, headerObj_.wSize) != headerObj_.wSize) {
         fileProj.close();
         return false;
     }
 
-    if(out.writeRawData(baProjData, baProjData.size()) != baProjData.size()) {
+    if(fileProj.write(baProjData, baProjData.size()) != baProjData.size()) {
         fileProj.close();
         return false;
     }

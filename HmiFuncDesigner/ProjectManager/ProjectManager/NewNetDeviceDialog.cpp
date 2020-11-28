@@ -71,14 +71,14 @@ void NewNetDeviceDialog::on_btnDeviceSelect_clicked()
     if(pDlg->exec() == QDialog::Accepted)
     {
         QString devName = pDlg->GetDeviceName();
-
+        m_szPluginName = devName;
         // 查找相同的设备名称
         int findCnt = 0;
+        DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
 continueFind:
-        for(int i=0; i<this->m_ListDeviceName.count(); i++)
-        {
-            if(this->m_ListDeviceName.at(i) == devName)
-            {
+        for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+            DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+            if(pObj->szName_ == devName) {
                 findCnt++;
                 devName = pDlg->GetDeviceName() + QString("_%1").arg(findCnt);
                 goto continueFind;
@@ -86,9 +86,7 @@ continueFind:
         }
 
         ui->editDeviceName->setText(devName);
-
-        QString pluginName = devName;
-        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(m_szPluginName);
         if (pDevPluginObj) {
             pDevPluginObj->getDefaultDeviceProperty(m_properties);
             pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
@@ -102,24 +100,20 @@ continueFind:
 */
 void NewNetDeviceDialog::on_btnProtocolSelect_clicked()
 {
-    QString pluginName = ui->editDeviceName->text();
-    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
+    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(m_szPluginName);
     if (pDevPluginObj) {
         SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
-        //pDlg->SetProtocolList(pDevPluginObj->GetDeviceSupportProtocol());
-        if(pDlg->exec() == QDialog::Accepted) {
-            ui->editProtocol->setText(pDlg->GetProtocolName());
+        QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
+        XMLObject xmlObj;
+        if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+            pDlg->SetProtocolList(xmlObj.getProperty("SupportProtocol").split("|"));
+            if(pDlg->exec() == QDialog::Accepted) {
+                ui->editProtocol->setText(pDlg->GetProtocolName());
+            }
         }
     }
 }
 
-/*
-* 设置已经建立的设备名称列表
-*/
-void NewNetDeviceDialog::SetListDeviceName(QStringList l)
-{
-    this->m_ListDeviceName = l;
-}
 
 void NewNetDeviceDialog::on_btnCheck_clicked()
 {
@@ -160,13 +154,14 @@ QString NewNetDeviceDialog::GetDeviceName() const {
 }
 
 
-void NewNetDeviceDialog::load(int id)
+void NewNetDeviceDialog::load(const QString &szName)
 {
-    if(id < 0) return;
+    if(szName == "") return;
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
     if(pObj == Q_NULLPTR) return;
-    ui->editDeviceName->setText(pObj->szDeviceName_);
+    ui->editDeviceName->setText(pObj->szName_);
+    m_szPluginName = pObj->szDeviceName_;
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
     ui->editProtocol->setText(pObj->szProtocol_);
     ui->cboLink->setCurrentText(pObj->szLink_);
@@ -189,17 +184,17 @@ void NewNetDeviceDialog::load(int id)
         if(pObj->szProperties_ == "") {
             pDevPluginObj->getDefaultDeviceProperty(m_properties);
         } else {
-            //pDevPluginObj->devicePropertiesFromString(pObj->szProperties_, m_properties);
+            pDevPluginObj->readProperties(pObj->szProperties_, m_properties);
         }
         pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
     }
     this->updatePropertyEditor();
 }
 
-void NewNetDeviceDialog::save(int id)
+void NewNetDeviceDialog::save(const QString &szName)
 {
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
 
     if(pObj == Q_NULLPTR) {
         pObj = deviceInfo.newObject();
@@ -207,7 +202,8 @@ void NewNetDeviceDialog::save(int id)
     }
 
     pObj->szDeviceType_ = "NET";
-    pObj->szDeviceName_ = ui->editDeviceName->text();
+    pObj->szName_ = ui->editDeviceName->text();
+    pObj->szDeviceName_ = m_szPluginName;
     pObj->iFrameLen_ = ui->editFrameLen->text().toInt();
     pObj->szProtocol_ = ui->editProtocol->text();
     pObj->szLink_ = ui->cboLink->currentText();
@@ -228,7 +224,7 @@ void NewNetDeviceDialog::save(int id)
     QString pluginName = pObj->szDeviceName_;
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
     if (pDevPluginObj) {
-        //pObj->szProperties_ = pDevPluginObj->devicePropertiesToString(m_properties);
+        pDevPluginObj->writeProperties(pObj->szProperties_, m_properties);
     }
 }
 

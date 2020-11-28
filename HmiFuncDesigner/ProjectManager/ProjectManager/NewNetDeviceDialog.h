@@ -22,13 +22,11 @@ public:
     explicit NewNetDeviceDialog(QWidget *parent = 0);
     ~NewNetDeviceDialog();
 
-    void load(int id);
-    void save(int id);
+    void load(const QString &szName);
+    void save(const QString &szName);
 
 public:
     QString GetDeviceName() const;
-    // 设置已经建立的设备名称列表
-    void SetListDeviceName(QStringList l);
     // 更新PropertyEditor数据
     void updatePropertyEditor();
 
@@ -61,7 +59,7 @@ public:
 
 private:
     Ui::NewNetDeviceDialog *ui;
-    QStringList m_ListDeviceName;
+    QString m_szPluginName;
     QtVariantPropertyManager *m_pVariantPropertyManager;
     QtTreePropertyBrowser *m_pPropertyEditor;
     QtVariantEditorFactory *m_pVariantEditorFactory;

@@ -8,6 +8,11 @@ BINARY_ARTIFACTS_BRANCH = 0.0
 # turn off qDebug messages
 CONFIG(release, debug|release) { #release
 #    DEFINES += QT_NO_DEBUG_OUTPUT
+    DEFINES += BUILD_RELEASE
+}
+
+CONFIG(debug, debug|release) { #debug
+    DEFINES += BUILD_DEBUG
 }
 
 

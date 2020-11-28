@@ -134,29 +134,29 @@ void ModbusRTU::readProperties(QString &szProperties, QVector<QPair<QString, QSt
     properties.clear();
     QStringList szListProperties = szProperties.split("|");
     foreach(QString szKeyValue, szListProperties) {
-        if (szKeyValue.startsWith("id")) {
-            properties.append(qMakePair(tr("设备ID"), szKeyValue.replace("id", "")));
+        if (szKeyValue.startsWith("id=")) {
+            properties.append(qMakePair(tr("设备ID"), szKeyValue.replace("id=", "")));
         }
-        if (szKeyValue.startsWith("startAddrBit")) {
-            properties.append(qMakePair(tr("内存地址起始位为0"), szKeyValue.replace("startAddrBit", "")));
+        if (szKeyValue.startsWith("startAddrBit=")) {
+            properties.append(qMakePair(tr("内存地址起始位为0"), szKeyValue.replace("startAddrBit=", "")));
         }
-        if (szKeyValue.startsWith("writeCoilFn")) {
-            properties.append(qMakePair(tr("写线圈功能码为15"), szKeyValue.replace("writeCoilFn", "")));
+        if (szKeyValue.startsWith("writeCoilFn=")) {
+            properties.append(qMakePair(tr("写线圈功能码为15"), szKeyValue.replace("writeCoilFn=", "")));
         }
-        if (szKeyValue.startsWith("writeRegFn")) {
-            properties.append(qMakePair(tr("写寄存器功能码为16"), szKeyValue.replace("writeRegFn", "")));
+        if (szKeyValue.startsWith("writeRegFn=")) {
+            properties.append(qMakePair(tr("写寄存器功能码为16"), szKeyValue.replace("writeRegFn=", "")));
         }
-        if (szKeyValue.startsWith("addr8")) {
-            properties.append(qMakePair(tr("8位逆序"), szKeyValue.replace("addr8", "")));
+        if (szKeyValue.startsWith("addr8=")) {
+            properties.append(qMakePair(tr("8位逆序"), szKeyValue.replace("addr8=", "")));
         }
-        if (szKeyValue.startsWith("addr16")) {
-            properties.append(qMakePair(tr("16位低字节在前高字节在后"), szKeyValue.replace("addr16", "")));
+        if (szKeyValue.startsWith("addr16=")) {
+            properties.append(qMakePair(tr("16位低字节在前高字节在后"), szKeyValue.replace("addr16=", "")));
         }
-        if (szKeyValue.startsWith("addr32")) {
-            properties.append(qMakePair(tr("32位低字节在前高字节在后"), szKeyValue.replace("addr32", "")));
+        if (szKeyValue.startsWith("addr32=")) {
+            properties.append(qMakePair(tr("32位低字节在前高字节在后"), szKeyValue.replace("addr32=", "")));
         }
-        if (szKeyValue.startsWith("addr64")) {
-            properties.append(qMakePair(tr("64位低字节在前高字节在后"), szKeyValue.replace("addr64", "")));
+        if (szKeyValue.startsWith("addr64=")) {
+            properties.append(qMakePair(tr("64位低字节在前高字节在后"), szKeyValue.replace("addr64=", "")));
         }
     }
 }

@@ -19,6 +19,7 @@
 #include "variantmanager.h"
 #include "variantfactory.h"
 #include "DevicePluginLoader.h"
+#include <QDebug>
 
 NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
     QDialog(parent),
@@ -55,10 +56,10 @@ NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
     ui->cboStopbit->addItem("2");
     ui->cboStopbit->setCurrentText("1");
 
-    ui->cboVerifybit->addItem("无校验");
-    ui->cboVerifybit->addItem("奇校验");
-    ui->cboVerifybit->addItem("偶校验");
-    ui->cboVerifybit->setCurrentText("无校验");
+    ui->cboVerifybit->addItem("NONE");
+    ui->cboVerifybit->addItem("ODD");
+    ui->cboVerifybit->addItem("EVEN");
+    ui->cboVerifybit->setCurrentText("NONE");
 
     ui->editTimeout->setText("50");
 
@@ -178,11 +179,11 @@ QString NewComDeviceDialog::GetDeviceName() const
     return ui->editDeviceName->text();
 }
 
-void NewComDeviceDialog::load(int id)
+void NewComDeviceDialog::load(const QString &szName)
 {
-    if(id < 0) return;
+    if(szName == "") return;
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
     if(pObj == Q_NULLPTR) return;
     ui->editDeviceName->setText(pObj->szName_);
     m_szPluginName = pObj->szDeviceName_;
@@ -218,10 +219,10 @@ void NewComDeviceDialog::load(int id)
 }
 
 
-void NewComDeviceDialog::save(int id)
+void NewComDeviceDialog::save(const QString &szName)
 {
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
-    DeviceInfoObject *pObj = deviceInfo.getObjectByID(id);
+    DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
     if(pObj == Q_NULLPTR) {
         pObj = deviceInfo.newObject();
         if(pObj == Q_NULLPTR) return;

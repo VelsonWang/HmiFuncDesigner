@@ -21,8 +21,8 @@ public:
     explicit NewComDeviceDialog(QWidget *parent = Q_NULLPTR);
     ~NewComDeviceDialog();
 
-    void load(int id);
-    void save(int id);
+    void load(const QString &szName);
+    void save(const QString &szName);
 
 public:
     QString GetDeviceName() const;
