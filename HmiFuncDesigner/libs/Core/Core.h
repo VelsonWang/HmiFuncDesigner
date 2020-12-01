@@ -11,8 +11,16 @@ class QActionArray
 public:
     QActionArray() : m_type(""), m_pActionObj(Q_NULLPTR){}
     ~QActionArray() {
-        qDeleteAll(m_children.values());
-        if(m_pActionObj != Q_NULLPTR) delete m_pActionObj;
+        QMap<QString, QActionArray*>::iterator iter;
+        iter = m_children.begin();
+        while (iter != m_children.end()) {
+            QActionArray* pObj = iter.value();
+            ++iter;
+            delete pObj;
+        }
+
+        m_children.clear();
+        //if(m_pActionObj != Q_NULLPTR) delete m_pActionObj;
     }
     QString m_type;
     QMap<QString, QActionArray*> m_children;

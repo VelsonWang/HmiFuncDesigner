@@ -965,6 +965,26 @@ void MainWindow::readSettings()
     }
 }
 
+/**
+ * @brief MainWindow::copySystemTags
+ * @dettails 拷贝系统变量
+ */
+void MainWindow::copySystemTags()
+{
+    QString szTagFile = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
+    QString szTags = "";
+    QFile readFile(szTagFile);
+    if (readFile.open(QIODevice::ReadOnly)) {
+        QTextStream in(&readFile);
+        in.setCodec("utf-8");
+        szTags = in.readAll();
+        readFile.close();
+        XMLObject xml;
+        if(xml.load(szTags, Q_NULLPTR)) {
+            ProjectData::getInstance()->tagMgr_.openFromXml(&xml);
+        }
+    }
+}
 
 /**
     * @brief MainWindow::onNewPoject
@@ -986,6 +1006,8 @@ void MainWindow::onNewPoject()
         updateRecentProjectList(ProjectData::getInstance()->szProjFile_);
         CreateDefaultIOTagGroup();
         UpdateDeviceVariableTableGroup();
+        // 拷贝系统变量
+        copySystemTags();
     }
 }
 
@@ -1043,51 +1065,54 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
     if(ProjectData::getInstance()->szProjFile_ == "") return;
 
-    QMdiSubWindow *pWndObj = findMdiChild(szItemText);
+    QStringList szListUserData = szItemText.split("|");
+    if(szListUserData.size() != 2) return;
+
+    QMdiSubWindow *pWndObj = findMdiChild(szListUserData.at(1));
     if(pWndObj == Q_NULLPTR) {
         ChildInterface *pIFaceChildObj = Q_NULLPTR;
-        if(szItemText == QString("SystemParameters").toUpper()) { // 系统参数
+        if(szListUserData.at(0) == QString("SystemParameters").toUpper()) { // 系统参数
             SystemParametersChild *pObj = new SystemParametersChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szItemText);
+            pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
-            pIFaceChildObj->m_szItemName = szItemText;
-        } else if(szItemText == QString("CommunicationDevice").toUpper() ||
-                  szItemText == QString("ComDevice").toUpper() ||
-                  szItemText == QString("NetDevice").toUpper()) { // 通讯设备, 串口设备, 网络设备
+            pIFaceChildObj->m_szItemName = szListUserData.at(0);
+        } else if(szListUserData.at(0) == QString("CommunicationDevice").toUpper() ||
+                  szListUserData.at(0) == QString("ComDevice").toUpper() ||
+                  szListUserData.at(0) == QString("NetDevice").toUpper()) { // 通讯设备, 串口设备, 网络设备
             CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szItemText);
+            pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
-            pIFaceChildObj->m_szItemName = szItemText;
-        } else if(szItemText == QString("TagMgr").toUpper()) { // 变量管理
+            pIFaceChildObj->m_szItemName = szListUserData.at(0);
+        } else if(szListUserData.at(0) == QString("TagMgr").toUpper()) { // 变量管理
             TagManagerChild *pObj = new TagManagerChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szItemText);
+            pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
-            pIFaceChildObj->m_szItemName = szItemText;
-        } else if(szItemText == QString("RealTimeDatabase").toUpper()) { // 实时数据库
+            pIFaceChildObj->m_szItemName = szListUserData.at(0);
+        } else if(szListUserData.at(0) == QString("RealTimeDatabase").toUpper()) { // 实时数据库
             RealTimeDatabaseChild *pObj = new RealTimeDatabaseChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szItemText);
+            pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
-            pIFaceChildObj->m_szItemName = szItemText;
-        } else if(szItemText == QString("ScriptEditor").toUpper()) { // 脚本编辑器
+            pIFaceChildObj->m_szItemName = szListUserData.at(0);
+        } else if(szListUserData.at(0) == QString("ScriptEditor").toUpper()) { // 脚本编辑器
             ScriptManageChild *pObj = new ScriptManageChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szItemText);
+            pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
-            pIFaceChildObj->m_szItemName = szItemText;
+            pIFaceChildObj->m_szItemName = szListUserData.at(0);
         }
     }
 

@@ -212,6 +212,8 @@ private:
     void createMenus();
     // 创建工具条
     void createToolbars();
+    // 拷贝系统变量
+    void copySystemTags();
 
 private:
     QString m_szCurItem;

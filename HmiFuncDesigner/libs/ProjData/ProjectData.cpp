@@ -64,7 +64,7 @@ bool ProjectData::openFromXml(const QString &szProjFile)
     }
     fileProj.close();
 
-    QString szProjData = QString::fromLatin1(baProjData);
+    QString szProjData = QString::fromUtf8(baProjData);
 
     XMLObject xml;
     if(!xml.load(szProjData, Q_NULLPTR)) return false;
@@ -143,7 +143,7 @@ bool ProjectData::saveToXml(const QString &szProjFile)
         pImplGraphPageSaveLoadObj_->saveToXml(pPagesObj);
     }
 
-    QByteArray baProjData = projObjs.write().toLatin1();
+    QByteArray baProjData = projObjs.write().toUtf8();
 
     QFile fileProj;
     fileProj.setFileName(szProjFile);

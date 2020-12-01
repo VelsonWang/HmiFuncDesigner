@@ -131,7 +131,6 @@ protected:
 
 public:
     TagTableModel *m_pTagTableModel = Q_NULLPTR;
-    TagManager m_tagMgr;
 
 private:
     bool m_bCopyOrCutDone = false; // true-执行过复制或剪切, false-未执行过复制或剪切

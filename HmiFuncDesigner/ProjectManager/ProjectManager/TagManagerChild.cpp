@@ -261,7 +261,7 @@ void QTableWidgetEx::clearTable() {
 void QTableWidgetEx::updateTable() {
     clearTable();
     QVector<QStringList> rowsDat;
-    foreach (Tag *pTagObj, m_tagMgr.m_vecTags) {
+    foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
         QStringList rowDat;
         setRowData(rowDat, pTagObj);
         rowsDat.append(rowDat);
@@ -334,8 +334,8 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index) {
 
     QStringList rowDat = m_pTagTableModel->m_tagRows.at(index.row());
     int iTagID = rowDat.at(0).toInt();
-    for(int i=0; i<m_tagMgr.m_vecTags.count(); i++) {
-        Tag *pTagObj = m_tagMgr.m_vecTags[i];
+    for(int i=0; i<ProjectData::getInstance()->tagMgr_.m_vecTags.count(); i++) {
+        Tag *pTagObj = ProjectData::getInstance()->tagMgr_.m_vecTags[i];
         if(pTagObj->m_iID == iTagID) {
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
@@ -554,9 +554,9 @@ void QTableWidgetEx::onAddTag() {
     if(dlg.exec() == QDialog::Accepted) {
         Tag *pTagObj = new Tag();
         pTagObj->fromJsonObject(dlg.getTagObj());
-        pTagObj->m_iID = m_tagMgr.allocID();
+        pTagObj->m_iID = ProjectData::getInstance()->tagMgr_.allocID();
         pTagObj->m_szDevType = "SYSTEM";
-        m_tagMgr.m_vecTags.append(pTagObj);
+        ProjectData::getInstance()->tagMgr_.m_vecTags.append(pTagObj);
         updateTable();
     }
 }
@@ -580,7 +580,7 @@ void QTableWidgetEx::onCopyTag() {
     while (tagIDMapIterator.hasNext()) {
         tagIDMapIterator.next();
         int iTagID = tagIDMapIterator.key();
-        foreach (Tag *pTagObj, m_tagMgr.m_vecTags) {
+        foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
             if(pTagObj->m_iID == iTagID) {
                 emit copyOrCutTagToClipboard();
                 setActionEnable(TagAct_Paste, true);
@@ -604,8 +604,8 @@ void QTableWidgetEx::onPasteTag()
 
     Tag *pTagObj = new Tag;
     if(pTagObj->fromXmlNodeString(szTagObj)) {
-        pTagObj->m_iID = m_tagMgr.allocID();
-        m_tagMgr.m_vecTags.append(pTagObj);
+        pTagObj->m_iID = ProjectData::getInstance()->tagMgr_.allocID();
+        ProjectData::getInstance()->tagMgr_.m_vecTags.append(pTagObj);
         updateTable();
     } else {
         delete pTagObj;
@@ -637,14 +637,14 @@ void QTableWidgetEx::onDeleteTag() {
         tagIDMapIterator.previous();
         iIDToDel = tagIDMapIterator.key();
         Tag *pFindTagObj = Q_NULLPTR;
-        foreach (Tag *pTagObj, m_tagMgr.m_vecTags) {
+        foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
             if(pTagObj->m_iID == iIDToDel) {
                 pFindTagObj = pTagObj;
                 break;
             }
         }
         if(pFindTagObj != Q_NULLPTR) {
-            m_tagMgr.m_vecTags.removeOne(pFindTagObj);
+            ProjectData::getInstance()->tagMgr_.m_vecTags.removeOne(pFindTagObj);
             bUpdate = true;
         }
     }
@@ -661,7 +661,7 @@ void QTableWidgetEx::onEditTag() {
     int iRow = this->currentIndex().row();
     QStringList rowDat = m_pTagTableModel->m_tagRows.at(iRow);
     int iTagID = rowDat.at(0).toInt();
-    foreach (Tag *pTagObj, m_tagMgr.m_vecTags) {
+    foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
         if(pTagObj->m_iID == iTagID) {
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
@@ -807,8 +807,6 @@ void TagManagerChild::importFromCsv(const QString &path)
 */
 void TagManagerChild::contextMenuEvent(QContextMenuEvent * /*event*/)
 {  
-    if(m_szItemName == tr("变量管理") || m_szItemName == tr("系统变量")) return;
-
     QMenu *pMenu = new QMenu(this);
 
     QAction *pAddAct = new QAction(QIcon(":/images/data_add.png"), tr("增加"), this);
@@ -1824,25 +1822,7 @@ void TagManagerChild::buildUserInterface(QMainWindow* pMainWin)
 
     //////////////////////////////////////////////////////////////////////////
 
-    if(wndTitle().startsWith(tr("设备变量"))) {
-        //        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        //        QString szGroup = tagIOGroup.getGroupNameByShowName(m_szItemName);
-        //        m_szCurIOGroupName = QString();
-        //        if(szGroup != QString()) {
-        //            m_szCurIOGroupName = szGroup;
-        //        }
-        // 刷新设备变量表
-        //        this->updateTableTagIO();
-        //        m_pStackedWidgetObj->setCurrentWidget(m_pTableTagIOObj);
-    } else if(wndTitle().startsWith(tr("中间变量"))) {
-        // 刷新中间变量表
-        //        this->updateTableTagTmp();
-        //        m_pStackedWidgetObj->setCurrentWidget(m_pTableTagTmpObj);
-    } else if(wndTitle().startsWith(tr("系统变量"))) {
-        // 刷新系统变量表
-        //        this->updateTableTagSys();
-        //        m_pStackedWidgetObj->setCurrentWidget(m_pTableTagSysObj);
-    }
+    m_pTagMgrTableViewObj->updateTable();
 }
 
 void TagManagerChild::removeUserInterface(QMainWindow* pMainWin)
