@@ -59,11 +59,11 @@ void CommunicationDeviceChild::listViewUISetting()
 
 void CommunicationDeviceChild::listViewUpdate()
 {
-    if(m_szItemName == tr("通讯设备")) {
+    if(m_szItemName == QString("CommunicationDevice").toUpper()) { // 通讯设备
         listViewCommunicationDeviceUpdate();
-    } else if(m_szItemName == tr("串口设备")) {
+    } else if(m_szItemName == QString("ComDevice").toUpper()) { // 串口设备
         listViewCOMDeviceUpdate();
-    } else if(m_szItemName == tr("网络设备")) {
+    } else if(m_szItemName == QString("NetDevice").toUpper()) { // 网络设备
         listViewNetDeviceUpdate();
     }
 }
@@ -79,21 +79,25 @@ void CommunicationDeviceChild::listViewCommunicationDeviceUpdate()
 
     QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), tr("新建串口设备"));
     pNewComDevice->setEditable(false);
+    pNewComDevice->setData(QString("NewComDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewComDevice);
 
     QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), tr("新建网络设备"));
     pNewNetDevice->setEditable(false);
+    pNewNetDevice->setData(QString("NewNetDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewNetDevice);
 
     QStandardItem *pNewBusDevice = new QStandardItem(QIcon(":/images/pm_bus.png"), tr("新建总线设备"));
     pNewBusDevice->setEditable(false);
+    pNewBusDevice->setData(QString("NewBusDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewBusDevice);
 
     QStandardItem *pNewOPCDevice = new QStandardItem(QIcon(":/images/pm_opc.PNG"), tr("新建OPC设备"));
     pNewOPCDevice->setEditable(false);
+    pNewOPCDevice->setData(QString("NewOPCDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewOPCDevice);
 
-    //////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
 
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
@@ -101,10 +105,12 @@ void CommunicationDeviceChild::listViewCommunicationDeviceUpdate()
         if(pObj->szDeviceType_ == "COM") {
             QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), pObj->szName_);
             pNewComDevice->setEditable(false);
+            pNewComDevice->setData(pObj->szName_, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pNewComDevice);
         } else if(pObj->szDeviceType_ == "NET") {
             QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), pObj->szName_);
             pNewNetDevice->setEditable(false);
+            pNewNetDevice->setData(pObj->szName_, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pNewNetDevice);
         }
     }
@@ -121,6 +127,7 @@ void CommunicationDeviceChild::listViewCOMDeviceUpdate()
 
     QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), tr("新建串口设备"));
     pNewComDevice->setEditable(false);
+    pNewComDevice->setData(QString("NewComDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewComDevice);
 
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
@@ -129,6 +136,7 @@ void CommunicationDeviceChild::listViewCOMDeviceUpdate()
         if(pObj->szDeviceType_ == "COM") {
             QStandardItem *pComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), pObj->szName_);
             pComDevice->setEditable(false);
+            pComDevice->setData(pObj->szName_, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pComDevice);
         }
     }
@@ -145,6 +153,7 @@ void CommunicationDeviceChild::listViewNetDeviceUpdate()
 
     QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), tr("新建网络设备"));
     pNewNetDevice->setEditable(false);
+    pNewNetDevice->setData(QString("pNewNetDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewNetDevice);
 
     DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
@@ -153,6 +162,7 @@ void CommunicationDeviceChild::listViewNetDeviceUpdate()
         if(pObj->szDeviceType_ == "NET") {
             QStandardItem *pNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), pObj->szName_);
             pNetDevice->setEditable(false);
+            pNetDevice->setData(pObj->szName_, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pNetDevice);
         }
     }
@@ -201,7 +211,7 @@ void CommunicationDeviceChild::onSlotNewDevice()
     QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
     QList<QStandardItem *> itemList;
 
-    if(m_szItemName == tr("串口设备")) {
+    if(m_szItemName == QString("ComDevice").toUpper()) { // 串口设备
         itemList = m_pCommDevModelObj->findItems(tr("新建串口设备"));
         if(itemList.size() == 0) return;
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
@@ -209,7 +219,7 @@ void CommunicationDeviceChild::onSlotNewDevice()
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
             pNewComDeviceDlg->save("");
         }
-    } else if(m_szItemName == tr("网络设备")) {
+    } else if(m_szItemName == QString("NetDevice").toUpper()) { // 网络设备
         itemList = m_pCommDevModelObj->findItems(tr("新建网络设备"));
         if(itemList.size() == 0) return;
         NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this);
@@ -279,15 +289,15 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
 {
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(index);
     if(m_szProjectName == "") return;
-    QString szProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
+    QString szItemText = pItemObj->data(Qt::UserRole + 1).toString();
 
-    if(pItemObj->text() == tr("新建串口设备")) {
+    if(pItemObj->text() == QString("ComDevice").toUpper()) { // 串口设备
         NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
         pNewComDeviceDlg->load("");
         if(pNewComDeviceDlg->exec() == QDialog::Accepted) {
             pNewComDeviceDlg->save("");
         }
-    } else if(pItemObj->text() == tr("新建网络设备")) {
+    } else if(pItemObj->text() == QString("NetDevice").toUpper()) { // 网络设备
         NewNetDeviceDialog *pNewNetDeviceDlg = new NewNetDeviceDialog(this);
         pNewNetDeviceDlg->load("");
         if(pNewNetDeviceDlg->exec() == QDialog::Accepted) {

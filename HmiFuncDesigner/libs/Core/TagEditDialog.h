@@ -21,7 +21,10 @@ public:
     // 更新UI
     void updateUI();
     // 设置地址类型和数据类型
-    void setAddrTypeAndDataType(QMap<QString, QStringList> mapAddrType, QMap<QString, QStringList> mapDataType);
+    void setAddrTypeAndDataType(QMap<QString, QStringList> mapDevToAddrType,
+                                QMap<QString, QStringList> mapAddrTypeToSubAddrType,
+                                QMap<QString, QStringList> mapAddrTypeToDataType);
+
     // 设置地址类型的限制范围
     void setAddrTypeLimit(QMap<QString, QMap<QString, quint32>> mapLimit);
     // 设置变量信息
@@ -38,11 +41,14 @@ private slots:
     void on_cboAddrType_currentTextChanged(const QString &szAddrType);
     // 地址类型改变
     void on_cboAddrType2_currentTextChanged(const QString &szAddrType);
+    // 设备改变
+    void on_cboDev_currentIndexChanged(const QString &szDev);
 
 private:
     Ui::TagEditDialog *ui;
     QJsonObject m_jsonTagObj; // 变量
-    QMap<QString, QStringList> m_mapAddrType;
+    QMap<QString, QStringList> m_mapDevToAddrType;
+    QMap<QString, QStringList> m_mapAddrTypeToSubAddrType;
     QMap<QString, QStringList> m_mapAddrTypeToDataType;
     QMap<QString, QMap<QString, quint32>> m_mapAddrTypeToLimit;
 };

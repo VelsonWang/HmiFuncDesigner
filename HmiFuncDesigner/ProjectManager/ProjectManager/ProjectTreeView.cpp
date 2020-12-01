@@ -94,7 +94,8 @@ void ProjectTreeView::onSlotClicked(const QModelIndex &index)
     if(pModelObj != Q_NULLPTR) {
         QStandardItem *pItemObj = pModelObj->itemFromIndex(index);
         if(pItemObj != Q_NULLPTR) {
-            emit sigNotifyClicked(pItemObj->text());
+            QVariant userDat = pItemObj->data(Qt::UserRole + 1);
+            emit sigNotifyClicked(userDat.toString());
         }
     }
 }
@@ -125,53 +126,58 @@ void ProjectTreeView::updateUI()
 
     m_pProjectItemObj = new QStandardItem(QIcon(":/images/pj_pro.png"), tr("未创建工程"));
     m_pProjectItemObj->setEditable(false);
+    m_pProjectItemObj->setData(QString("Project").toUpper(), Qt::UserRole + 1);
+
     m_pSystemParametersObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("系统参数"));
     m_pSystemParametersObj->setEditable(false);
+    m_pSystemParametersObj->setData(QString("SystemParameters").toUpper(), Qt::UserRole + 1);
     m_pProjectItemObj->appendRow(m_pSystemParametersObj);
 
     //////////////////////////////////////////////////////
 
     m_pCommunicationDeviceObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("通讯设备"));
     m_pCommunicationDeviceObj->setEditable(false);
+    m_pCommunicationDeviceObj->setData(QString("CommunicationDevice").toUpper(), Qt::UserRole + 1);
+
     m_pComDeviceObj = new QStandardItem(QIcon(":/images/pj_com.png"), tr("串口设备"));
     m_pComDeviceObj->setEditable(false);
+    m_pComDeviceObj->setData(QString("ComDevice").toUpper(), Qt::UserRole + 1);
     m_pCommunicationDeviceObj->appendRow(m_pComDeviceObj);
+
     m_pNetDeviceObj = new QStandardItem(QIcon(":/images/pj_net.png"), tr("网络设备"));
     m_pNetDeviceObj->setEditable(false);
+    m_pNetDeviceObj->setData(QString("NetDevice").toUpper(), Qt::UserRole + 1);
     m_pCommunicationDeviceObj->appendRow(m_pNetDeviceObj);
-
 
     m_pProjectItemObj->appendRow(m_pCommunicationDeviceObj);
 
-    m_pDataBaseConfigObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("变量管理"));
-    m_pDataBaseConfigObj->setEditable(false);
-    m_pDevTagObj = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("设备变量"));
-    m_pDevTagObj->setEditable(false);
-
-    m_pDataBaseConfigObj->appendRow(m_pDevTagObj);
-    m_pTmpVariableObj = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("中间变量"));
-    m_pTmpVariableObj->setEditable(false);
-    m_pDataBaseConfigObj->appendRow(m_pTmpVariableObj);
-    m_pSysVariableObj = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("系统变量"));
-    m_pSysVariableObj->setEditable(false);
-    m_pDataBaseConfigObj->appendRow(m_pSysVariableObj);
-    m_pProjectItemObj->appendRow(m_pDataBaseConfigObj);
+    m_pTagMgrObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("变量管理"));
+    m_pTagMgrObj->setEditable(false);
+    m_pTagMgrObj->setData(QString("TagMgr").toUpper(), Qt::UserRole + 1);
+    m_pProjectItemObj->appendRow(m_pTagMgrObj);
 
     m_pDataBaseManagerObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("数据库管理"));
     m_pDataBaseManagerObj->setEditable(false);
+    m_pDataBaseManagerObj->setData(QString("DataBaseManager").toUpper(), Qt::UserRole + 1);
+
     m_pRealTimeDatabaseObj = new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
     m_pRealTimeDatabaseObj->setEditable(false);
+    m_pRealTimeDatabaseObj->setData(QString("RealTimeDatabase").toUpper(), Qt::UserRole + 1);
     m_pDataBaseManagerObj->appendRow(m_pRealTimeDatabaseObj);
+
     //m_pHistoryDatabaseObj = new QStandardItem(QIcon(":/images/db_hisdbview.png"), tr("历史数据库"));
     //m_pHistoryDatabaseObj->setEditable(false);
+    //m_pHistoryDatabaseObj->setData(QString("HistoryDatabase").toUpper(), Qt::UserRole + 1);
     //m_pDataBaseManagerObj->appendRow(m_pHistoryDatabaseObj);
     m_pProjectItemObj->appendRow(m_pDataBaseManagerObj);
 
     m_pLogicProgramObj = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
     m_pLogicProgramObj->setEditable(false);
+    m_pLogicProgramObj->setData(QString("LogicProgram").toUpper(), Qt::UserRole + 1);
 
     m_pScriptEditorObj = new QStandardItem(QIcon(":/images/pj_script.png"), tr("脚本编辑器"));
     m_pScriptEditorObj->setEditable(false);
+    m_pScriptEditorObj->setData(QString("ScriptEditor").toUpper(), Qt::UserRole + 1);
     m_pLogicProgramObj->appendRow(m_pScriptEditorObj);
     m_pProjectItemObj->appendRow(m_pLogicProgramObj);
 

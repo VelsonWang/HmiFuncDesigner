@@ -58,7 +58,7 @@ private:
     QStandardItem *m_pCommunicationDeviceObj = Q_NULLPTR;
     QStandardItem *m_pComDeviceObj = Q_NULLPTR;
     QStandardItem *m_pNetDeviceObj = Q_NULLPTR;
-    QStandardItem *m_pDataBaseConfigObj = Q_NULLPTR;
+    QStandardItem *m_pTagMgrObj = Q_NULLPTR;
     QStandardItem *m_pDevTagObj = Q_NULLPTR;
     QList<QStandardItem *> m_pDevVariableTabListObj;
     QStandardItem *m_pTmpVariableObj = Q_NULLPTR;

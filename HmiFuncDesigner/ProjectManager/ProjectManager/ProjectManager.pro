@@ -59,9 +59,7 @@ SOURCES += main.cpp\
     ScriptManageChild.cpp \
     SystemParametersChild.cpp \
     TableviewDelegate.cpp \
-    TagIOEditDialog.cpp \
     TagManagerChild.cpp \
-    TagTmpEditDialog.cpp \
     UserAuthorityDialog.cpp \
     NewComDeviceDialog.cpp \
     NewVariableGroupDialog.cpp \
@@ -113,9 +111,7 @@ HEADERS  += MainWindow.h \
     ScriptManageChild.h \
     SystemParametersChild.h \
     TableviewDelegate.h \
-    TagIOEditDialog.h \
     TagManagerChild.h \
-    TagTmpEditDialog.h \
     UserAuthorityDialog.h \
     NewComDeviceDialog.h \
     NewVariableGroupDialog.h \
@@ -158,8 +154,6 @@ FORMS    += \
     NewProjectDialog.ui \
     NetSettingDialog.ui \
     DatabaseSettingDialog.ui \
-    TagIOEditDialog.ui \
-    TagTmpEditDialog.ui \
     UserAuthorityDialog.ui \
     NewComDeviceDialog.ui \
     NewVariableGroupDialog.ui \

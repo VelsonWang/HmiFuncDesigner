@@ -1043,67 +1043,47 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
     if(ProjectData::getInstance()->szProjFile_ == "") return;
 
-    QString szWndTittle = szItemText;
-
-    if(szItemText == tr("变量管理") || szItemText == tr("设备变量")) return;
-
-    bool isTagWndFound = false;
-    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
-        szWndTittle = szItemText;
-        isTagWndFound = true;
-    } else {
-//        // 设备变量
-//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-//        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-//            if (szItemText == pObj->m_szShowName) {
-//                szWndTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
-//                isTagWndFound = true;
-//            }
-//        }
-    }
-
-    /////////////////////////////////////////////////////////////////////////
-
-    QMdiSubWindow *pWndObj = findMdiChild(szWndTittle);
+    QMdiSubWindow *pWndObj = findMdiChild(szItemText);
     if(pWndObj == Q_NULLPTR) {
         ChildInterface *pIFaceChildObj = Q_NULLPTR;
-        if(szItemText == tr("系统参数")) {
+        if(szItemText == QString("SystemParameters").toUpper()) { // 系统参数
             SystemParametersChild *pObj = new SystemParametersChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szWndTittle);
+            pObj->setWindowTitle(szItemText);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
-        } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") ||
-                  szItemText == tr("网络设备")) {
+        } else if(szItemText == QString("CommunicationDevice").toUpper() ||
+                  szItemText == QString("ComDevice").toUpper() ||
+                  szItemText == QString("NetDevice").toUpper()) { // 通讯设备, 串口设备, 网络设备
             CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szWndTittle);
+            pObj->setWindowTitle(szItemText);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
-        } else if(isTagWndFound) { // 标签变量
+        } else if(szItemText == QString("TagMgr").toUpper()) { // 变量管理
             TagManagerChild *pObj = new TagManagerChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szWndTittle);
+            pObj->setWindowTitle(szItemText);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
-        } else if(szItemText == tr("实时数据库")) {
+        } else if(szItemText == QString("RealTimeDatabase").toUpper()) { // 实时数据库
             RealTimeDatabaseChild *pObj = new RealTimeDatabaseChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szWndTittle);
+            pObj->setWindowTitle(szItemText);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
             pIFaceChildObj->m_szItemName = szItemText;
-        } else if(szItemText == tr("脚本编辑器")) {
+        } else if(szItemText == QString("ScriptEditor").toUpper()) { // 脚本编辑器
             ScriptManageChild *pObj = new ScriptManageChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szWndTittle);
+            pObj->setWindowTitle(szItemText);
             pObj->showMaximized();
             pIFaceChildObj = pObj;
             pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;

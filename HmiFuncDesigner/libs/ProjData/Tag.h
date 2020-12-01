@@ -33,7 +33,7 @@ public:
 public:
     ////////////////////<基本信息>//////////////////////////
 
-    int m_iID = 0; //变量ID
+    int m_iID = 0; // 变量ID
     QString m_szName = ""; // 变量名称
     QString m_szUnit = ""; // 变量单位
     QString m_szAddrType = ""; // 地址类型
@@ -44,7 +44,7 @@ public:
     int m_iWriteable = 1; // 读写类型  0-只读, 1-可写
     QString m_szRemark = ""; // 变量描述
     QString m_szOwnGroup = ""; // 变量所属组
-    QString m_szDevType = ""; // 变量设备类型-设备协议名称, 内存标量-MEMORY, 系统变量-SYSTEM
+    QString m_szDevType = ""; // 变量设备类型-设备协议名称, 内存变量-MEMORY, 系统变量-SYSTEM
 
 private:
     bool saveToXmlInner(XMLObject *pXmlObj);

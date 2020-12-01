@@ -5,29 +5,144 @@
 #include "ListViewEx.h"
 #include "TagFuncEditDialog.h"
 #include "../../Public/Public.h"
-#include "ProjectData.h"
-#include <QList>
 #include <QString>
 #include <QWidget>
-#include <QStandardItemModel>
 #include <QTableWidgetItem>
 #include <QStringList>
 #include <QVBoxLayout>
-#include <QComboBox>
 #include <QMap>
-#include <QStackedWidget>
 #include <QTableWidget>
-#include <QDir>
-#include <QFile>
-#include <QPluginLoader>
-#include <QMessageBox>
 #include <QToolBar>
+#include <QStringList>
+#include <QAbstractTableModel>
+#include <QVector>
+#include "Tag.h"
 
-//////////////////////////////////////////////////////////
+class TagTableModel : public QAbstractTableModel
+{
+    Q_OBJECT
+
+public:
+    enum Column {
+        TagID = 0,
+        Name = 1,
+        Addr = 2,
+        DataType = 3,
+        ReadWrite = 4,
+        Unit = 5,
+        Remark = 6,
+        // ...
+
+        MaxColumns = 7
+    };
+
+public:
+    explicit TagTableModel(QObject *parent=nullptr) : QAbstractTableModel(parent) {}
+
+    Qt::ItemFlags flags(const QModelIndex &index) const;
+
+    QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+
+    int rowCount(const QModelIndex &parent=QModelIndex()) const;
+    int columnCount(const QModelIndex &parent=QModelIndex()) const;
+
+    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
+    bool setHeaderData(int, Qt::Orientation, const QVariant&, int=Qt::EditRole) { return false; }
+
+    bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
+    bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
+
+public:
+    void AppendRow(QStringList rowDat);
+    void AppendRows(QVector<QStringList> rowsDat);
+    void InsertRow(int i, QStringList rowDat);
+    QStringList GetRow(int i);
+    void UpdateRow(int i, QStringList rowDat);
+    void UpdateRows(QVector<QStringList> rowsDat);
+
+public:
+    QVector<QStringList> m_tagRows;
+};
+
+//-----------------------------------------------------------------------------
+
+class Tag;
+
+typedef enum {
+    TagAct_Add = 0,
+    TagAct_Copy,
+    TagAct_Cut,
+    TagAct_Paste,
+    TagAct_Delete,
+    TagAct_Edit,
+
+    TagAct_None = 255
+} TagTableActonType;
+
+class QTableWidgetEx : public QTableView
+{
+    Q_OBJECT
+public:
+    QTableWidgetEx(QWidget *parent = Q_NULLPTR);
+    ~QTableWidgetEx();
+
+    // 清空变量表
+    void clearTable();
+    // 刷新变量表
+    void updateTable();
+    // 启用或禁用功能菜单
+    void setActionEnable(TagTableActonType id, bool enable);
+
+public slots:
+    // 单元格被双击
+    void onDoubleClicked(const QModelIndex &index);
+
+    // 添加变量
+    void onAddTag();
+    // 复制
+    void onCopyTag();
+    // 粘贴
+    void onPasteTag();
+    // 删除
+    void onDeleteTag();
+    // 属性
+    void onEditTag();
+
+signals:
+    // 单击空白区域
+    void clickedBlankArea();
+    // 已经拷贝或剪切变量值剪切板
+    void copyOrCutTagToClipboard();
+    // 剪切的变量值已经被粘贴
+    void cutTagIsPasted();
+    // 更新保存按钮状态
+    void notifyUpdateSaveButtonStatus(bool bEnable);
+
+private:
+    // 初始化变量表控件
+    void initTagsTable();
+    // 设置行数据
+    void setRowData(QStringList &rowDat, Tag *pObj);
+
+protected:
+    void contextMenuEvent(QContextMenuEvent * event);
+    void mousePressEvent(QMouseEvent *event);
+
+public:
+    TagTableModel *m_pTagTableModel = Q_NULLPTR;
+    TagManager m_tagMgr;
+
+private:
+    bool m_bCopyOrCutDone = false; // true-执行过复制或剪切, false-未执行过复制或剪切
+    QMap<TagTableActonType, QAction*> m_mapIdToAction;
+
+};
 
 
-struct TagTmpDBItem;
-struct TagIODBItem;
+
+//------------------------------------------------------------------------------
+
 
 class TagManagerChild : public QWidget, public ChildInterface
 {
@@ -51,14 +166,7 @@ private:
 
 private:
     void initUi();
-    // 初始化系统变量表
-    void initialTableTagSys();
-    // 刷新系统变量表
-    void updateTableTagSys();
 
-
-    // 初始化中间变量表
-    void initialTableTagTmp();
     // 中间变量表新增一行
     int tableTagTmpAddRow();
     // 获取指定行中间变量id数值部分
@@ -73,10 +181,6 @@ private:
     void createTagTmp();
     // 追加中间变量
     void appendTagTmp();
-    // 获取指定行中间变量对象
-    TagTmpDBItem *getTagTmpObjByRow(int iRow);
-    // 设置指定行中间变量对象
-    void setTagTmpObjByRow(int iRow, TagTmpDBItem *pObj);
     // 拷贝选中中间变量
     void copyCurTagTmp();
     // 修改选中中间变量
@@ -84,9 +188,6 @@ private:
     // 删除选中中间变量
     void deleteCurTagTmp();
 
-
-    // 初始化设备变量表
-    void initialTableTagIO();
     // 设备变量表新增一行
     int tableTagIOAddRow();
     // 获取指定行设备变量id数值部分
@@ -97,10 +198,6 @@ private:
     void tagIOExportToCsv(const QString &path, const QString & /*group*/);
     // 从CSV文件导入设备变量至设备变量表
     void tagIOImportFromCsv(const QString &path);
-    // 获取指定行设备变量对象
-    TagIODBItem *getTagIOObjByRow(int iRow);
-    // 设置指定行设备变量对象
-    void setTagIOObjByRow(int iRow, TagIODBItem *pObj);
     // 创建设备变量
     void createTagIO();
     // 追加设备变量
@@ -135,16 +232,6 @@ public slots:
 public:
     QString m_szCurIOGroupName;
 
-private slots:
-    void on_tableTagIO_itemPressed(QTableWidgetItem *item);
-    void on_tableTagTmp_itemPressed(QTableWidgetItem *item);
-    void on_tableTagTmp_itemDoubleClicked(QTableWidgetItem *item);
-    void on_tableTagIO_itemDoubleClicked(QTableWidgetItem *item);
-    void on_tableTagIO_cellClicked(int row, int column);
-    void on_tableTagIO_cellDoubleClicked(int row, int column);
-    void on_tableTagTmp_cellClicked(int row, int column);
-    void on_tableTagTmp_cellDoubleClicked(int row, int column);
-
 private:
     int m_iTableTagTmpSelectedRow = -1;
     int m_iTableTagIOSelectedRow = -1;
@@ -164,10 +251,7 @@ private:
 
 public:
     QVBoxLayout *m_pTopVLayoutObj;
-    QStackedWidget *m_pStackedWidgetObj;
-    QTableWidget *m_pTableTagIOObj;
-    QTableWidget *m_pTableTagTmpObj;
-    QTableWidget *m_pTableTagSysObj;
+    QTableWidgetEx *m_pTagMgrTableViewObj;
 };
 
 #endif // TAGMANAGERWIN_H

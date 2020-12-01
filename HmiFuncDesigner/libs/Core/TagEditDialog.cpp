@@ -8,7 +8,8 @@ TagEditDialog::TagEditDialog(QWidget *parent)
       ui(new Ui::TagEditDialog) {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
-    m_mapAddrType.clear();
+    m_mapDevToAddrType.clear();
+    m_mapAddrTypeToSubAddrType.clear();
     m_mapAddrTypeToDataType.clear();
     ui->tabWidget->setCurrentIndex(0);
     ui->cboAddrType2->setEnabled(false);
@@ -66,11 +67,14 @@ QJsonObject TagEditDialog::getTagObj() {
 /// \brief TagEditDialog::setAddrTypeAndDataType
 /// @details 设置地址类型和数据类型
 /// \param mapAddrType 地址类型1=地址类型2x,地址类型2y,地址类型2z
-/// \param mapDataType 地址类型=数据类型,数据类型,数据类型
+/// \param mapDataType 数据类型=数据类型,数据类型,数据类型
 ///
-void TagEditDialog::setAddrTypeAndDataType(QMap<QString, QStringList> mapAddrType, QMap<QString, QStringList> mapDataType) {
-    m_mapAddrType = mapAddrType;
-    m_mapAddrTypeToDataType = mapDataType;
+void TagEditDialog::setAddrTypeAndDataType(QMap<QString, QStringList> mapDevToAddrType,
+                                           QMap<QString, QStringList> mapAddrTypeToSubAddrType,
+                                           QMap<QString, QStringList> mapAddrTypeToDataType) {
+    m_mapDevToAddrType = mapDevToAddrType;
+    m_mapAddrTypeToSubAddrType = mapAddrTypeToSubAddrType;
+    m_mapAddrTypeToDataType = mapAddrTypeToDataType;
 }
 
 
@@ -160,6 +164,7 @@ void TagEditDialog::on_btnOk_clicked() {
     m_jsonTagObj["unit"] = ui->editTagUnit->text();
     m_jsonTagObj["writeable"] = ui->cboReadWriteType->currentText();
     m_jsonTagObj["remark"] = ui->editTagDesc->toPlainText();
+    m_jsonTagObj["dev_type"] = ui->cboDev->currentText();
 
     this->accept();
 }
@@ -180,21 +185,17 @@ void TagEditDialog::on_btnCancel_clicked()
 ///
 void TagEditDialog::on_cboAddrType_currentTextChanged(const QString &szAddrType)
 {  
-    QStringList listSubAddrType;
-    listSubAddrType.clear();
-
-    listSubAddrType = m_mapAddrType[szAddrType];
+    QStringList szListSubAddrType;
+    szListSubAddrType = m_mapAddrTypeToSubAddrType[szAddrType];
     ui->cboAddrType2->clear();
-    ui->cboAddrType2->addItems(listSubAddrType);
-    //ui->cboAddrType2->setCurrentIndex(-1);
+    ui->cboAddrType2->addItems(szListSubAddrType);
+    ui->cboAddrType2->setCurrentIndex(-1);
 
-    ui->cboAddrType2->setEnabled((listSubAddrType.size() > 0));
-    ui->editAddrOffset2->setEnabled((listSubAddrType.size() > 0));
+    ui->cboAddrType2->setEnabled((szListSubAddrType.size() > 0));
+    ui->editAddrOffset2->setEnabled((szListSubAddrType.size() > 0));
 
-    if(listSubAddrType.size() < 1) {
-        ui->cboDataType->clear();
-        ui->cboDataType->addItems(m_mapAddrTypeToDataType[szAddrType]);
-    }
+    ui->cboDataType->clear();
+    ui->cboDataType->addItems(m_mapAddrTypeToDataType[szAddrType]);
 }
 
 void TagEditDialog::on_cboAddrType2_currentTextChanged(const QString &szAddrType)
@@ -213,17 +214,18 @@ void TagEditDialog::updateUI()
     ui->cboAddrType2->setEnabled(false);
     ui->editAddrOffset2->setEnabled(false);
 
-    QStringList listAddrType = m_mapAddrType.keys();
-    ui->cboAddrType->clear();
-    ui->cboAddrType->addItems(listAddrType);
-    ui->cboAddrType->setCurrentIndex(-1);
-    ui->cboAddrType2->clear();
-    ui->cboAddrType2->addItems(listAddrType);
-    ui->cboAddrType2->setCurrentIndex(-1);
-    ui->cboReadWriteType->setCurrentIndex(1);
+    QStringList listDevs = m_mapDevToAddrType.keys();
+    ui->cboDev->clear();
+    ui->cboDev->addItems(listDevs);
 
     if(!m_jsonTagObj.isEmpty()) {
+        ui->cboDev->setCurrentText(m_jsonTagObj["dev_type"].toString());
         ui->editTagName->setText(m_jsonTagObj["name"].toString());
+
+        QStringList szListAddrTypes = m_mapDevToAddrType[m_jsonTagObj["dev_type"].toString()];
+        ui->cboAddrType->clear();
+        ui->cboAddrType->addItems(szListAddrTypes);
+
         QString szAddrType = m_jsonTagObj["addr_type"].toString();
         if(szAddrType != "") {
             ui->cboAddrType->setCurrentText(szAddrType);
@@ -248,9 +250,16 @@ void TagEditDialog::updateUI()
     }
 }
 
-
-
-
-
-
-
+///
+/// \brief TagEditDialog::on_cboDev_currentIndexChanged
+/// \details 设备改变
+/// \param szDev 设备名称
+///
+void TagEditDialog::on_cboDev_currentIndexChanged(const QString &szDev)
+{
+    QStringList szListAddrType;
+    szListAddrType = m_mapDevToAddrType[szDev];
+    ui->cboAddrType->clear();
+    ui->cboAddrType->addItems(szListAddrType);
+    ui->cboAddrType->setCurrentIndex(0);
+}
