@@ -185,6 +185,7 @@ void TagEditDialog::on_btnCancel_clicked()
 ///
 void TagEditDialog::on_cboAddrType_currentTextChanged(const QString &szAddrType)
 {  
+    if(szAddrType == "") return;
     QStringList szListSubAddrType;
     szListSubAddrType = m_mapAddrTypeToSubAddrType[szAddrType];
     ui->cboAddrType2->clear();
@@ -200,6 +201,7 @@ void TagEditDialog::on_cboAddrType_currentTextChanged(const QString &szAddrType)
 
 void TagEditDialog::on_cboAddrType2_currentTextChanged(const QString &szAddrType)
 {
+    if(szAddrType == "") return;
     ui->cboDataType->clear();
     ui->cboDataType->addItems(m_mapAddrTypeToDataType[szAddrType]);
 }
@@ -235,7 +237,9 @@ void TagEditDialog::updateUI()
         ui->editAddrOffset->setText(m_jsonTagObj["offset"].toString());
 
         QString szAddrType2 = m_jsonTagObj["addr2"].toString();
-        ui->cboAddrType2->setCurrentText(szAddrType2);
+        if(szAddrType2 != "") {
+            ui->cboAddrType2->setCurrentText(szAddrType2);
+        }
 
         ui->editAddrOffset2->setText(m_jsonTagObj["offset2"].toString());
 

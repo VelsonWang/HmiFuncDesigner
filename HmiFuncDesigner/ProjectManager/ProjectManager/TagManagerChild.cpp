@@ -279,14 +279,16 @@ void QTableWidgetEx::updateTable() {
 void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj) {
     rowDat.clear();
     rowDat << QString::number(pObj->m_iID); // 变量ID
-    rowDat << QString("$%1").arg(pObj->m_szName); // 变量名称
-    rowDat << pObj->m_szDataType; // 数据类型
+
+    if(pObj->m_szDevType == "SYSTEM") rowDat << QString("$%1").arg(pObj->m_szName); // 变量名称
+    else  rowDat << pObj->m_szName;
 
     if(pObj->m_szDevType == "MEMORY") { // 内存变量
         rowDat << "AutoAlloc"; // 地址类型
     } else if(pObj->m_szDevType == "SYSTEM") { // 系统变量
         rowDat << "AutoAlloc"; // 地址类型
     } else {
+        QString szAddrType = "";
         IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_szDevType);
         if (pDevPluginObj) {
             QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
@@ -296,7 +298,7 @@ void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj) {
                 if(pRegAreasObj) {
                     QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
                     foreach(XMLObject* pXmlObj, pRegAreaObjs) {
-                        if(pXmlObj->getProperty("Name") == pObj->m_szName || pXmlObj->getProperty("Alias") == pObj->m_szName) {
+                        if(pXmlObj->getProperty("Name") == pObj->m_szAddrType || pXmlObj->getProperty("Alias") == pObj->m_szAddrType) {
                             QString szAddrTypeAlias = pObj->m_szAddrType;
                             szAddrTypeAlias += pObj->m_szAddrOffset;
                             if(pObj->m_szAddrType2 != "") {
@@ -304,14 +306,15 @@ void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj) {
                                 szAddrTypeAlias += pObj->m_szAddrType2;
                                 szAddrTypeAlias += pObj->m_szAddrOffset2;
                             }
-                            rowDat << szAddrTypeAlias; // 地址类型
+                            szAddrType = szAddrTypeAlias; // 地址类型
                         }
                     }
                 }
             }
         }
+        rowDat << szAddrType;
     }
-
+    rowDat << pObj->m_szDataType; // 数据类型
     QString szWriteable = "只读";
     if (pObj->m_iWriteable == 0) szWriteable = tr("只读");
     else if (pObj->m_iWriteable == 1) szWriteable = tr("可读可写");
@@ -379,8 +382,12 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index) {
                                 QString szAddrType = pXmlObj->getProperty("Name");
                                 if(pXmlObj->getProperty("Alias") != "") szAddrType = pXmlObj->getProperty("Alias");
                                 szListAddrType << szAddrType;
-                                mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
-                                mapAddrTypeToSubAddrType.insert(szAddrType, pXmlObj->getProperty("SubArea").split("|"));
+
+                                if(pXmlObj->getProperty("DataType").trimmed() != "") mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
+                                else mapAddrTypeToDataType.insert(szAddrType, QStringList());
+
+                                if(pXmlObj->getProperty("SubArea").trimmed() != "") mapAddrTypeToSubAddrType.insert(szAddrType, pXmlObj->getProperty("SubArea").split("|"));
+                                else mapAddrTypeToSubAddrType.insert(szAddrType, QStringList());
                             }
                         }
                     }
@@ -538,8 +545,12 @@ void QTableWidgetEx::onAddTag() {
                         QString szAddrType = pXmlObj->getProperty("Name");
                         if(pXmlObj->getProperty("Alias") != "") szAddrType = pXmlObj->getProperty("Alias");
                         szListAddrType << szAddrType;
-                        mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
-                        mapAddrTypeToSubAddrType.insert(szAddrType, pXmlObj->getProperty("SubArea").split("|"));
+
+                        if(pXmlObj->getProperty("DataType").trimmed() != "") mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
+                        else mapAddrTypeToDataType.insert(szAddrType, QStringList());
+
+                        if(pXmlObj->getProperty("SubArea").trimmed() != "") mapAddrTypeToSubAddrType.insert(szAddrType, pXmlObj->getProperty("SubArea").split("|"));
+                        else mapAddrTypeToSubAddrType.insert(szAddrType, QStringList());
                     }
                 }
             }
@@ -705,8 +716,12 @@ void QTableWidgetEx::onEditTag() {
                                 QString szAddrType = pXmlObj->getProperty("Name");
                                 if(pXmlObj->getProperty("Alias") != "") szAddrType = pXmlObj->getProperty("Alias");
                                 szListAddrType << szAddrType;
-                                mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
-                                mapAddrTypeToSubAddrType.insert(szAddrType, pXmlObj->getProperty("SubArea").split("|"));
+
+                                if(pXmlObj->getProperty("DataType").trimmed() != "") mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
+                                else mapAddrTypeToDataType.insert(szAddrType, QStringList());
+
+                                if(pXmlObj->getProperty("SubArea").trimmed() != "") mapAddrTypeToSubAddrType.insert(szAddrType, pXmlObj->getProperty("SubArea").split("|"));
+                                else mapAddrTypeToSubAddrType.insert(szAddrType, QStringList());
                             }
                         }
                     }
