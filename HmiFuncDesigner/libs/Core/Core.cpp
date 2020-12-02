@@ -45,7 +45,10 @@ void Core::insertAction(const QString& szKey, QAction *pActObj)
         pActGroupObjs = pTmpActObjs;
     }
 
-    if(pActGroupObjs->m_pActionObj != Q_NULLPTR) delete pActGroupObjs->m_pActionObj;
+    if(pActGroupObjs->m_pActionObj != Q_NULLPTR) {
+        delete pActGroupObjs->m_pActionObj;
+        pActGroupObjs->m_pActionObj = Q_NULLPTR;
+    }
     pActGroupObjs->m_pActionObj = pActObj;
 }
 

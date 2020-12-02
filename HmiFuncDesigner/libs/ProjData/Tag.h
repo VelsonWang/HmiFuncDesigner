@@ -25,7 +25,7 @@ public:
     bool saveToXml(XMLObject *pXmlObj);
 
     QString toXmlNodeString();
-    bool fromXmlNodeString(const QString szNode);
+    bool fromXmlNodeString(const QString &szNode);
 
     QJsonObject toJsonObject();
     void fromJsonObject(QJsonObject jsonObj);
@@ -62,6 +62,8 @@ public:
 
     //分配一个 ID
     int allocID();
+
+    Tag *getTag(int id);
 
 public:
     QVector<Tag *> m_vecTags;

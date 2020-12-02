@@ -18,7 +18,7 @@ XMLNodeObject::~XMLNodeObject() {
 
 void XMLNodeObject::clear() {
     while(m_children.size() > 0) {
-        delete m_children.first();
+        delete m_children.takeFirst();
     }
     m_property.clear();
     m_tagName = "";

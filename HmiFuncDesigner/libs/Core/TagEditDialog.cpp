@@ -156,15 +156,15 @@ void TagEditDialog::on_btnOk_clicked() {
     }
 
     m_jsonTagObj["name"] = ui->editTagName->text();
-    m_jsonTagObj["addr_type"] = ui->cboAddrType->currentText();
-    m_jsonTagObj["addr_offset"] = ui->editAddrOffset->text();
-    m_jsonTagObj["addr_type2"] = ui->cboAddrType2->currentText();
-    m_jsonTagObj["addr_offset2"] = ui->editAddrOffset2->text();
-    m_jsonTagObj["data_type"] = ui->cboDataType->currentText();
+    m_jsonTagObj["addr"] = ui->cboAddrType->currentText();
+    m_jsonTagObj["offset"] = ui->editAddrOffset->text();
+    m_jsonTagObj["addr2"] = ui->cboAddrType2->currentText();
+    m_jsonTagObj["offset2"] = ui->editAddrOffset2->text();
+    m_jsonTagObj["type"] = ui->cboDataType->currentText();
     m_jsonTagObj["unit"] = ui->editTagUnit->text();
-    m_jsonTagObj["writeable"] = ui->cboReadWriteType->currentText();
+    m_jsonTagObj["writeable"] = ui->cboReadWriteType->currentIndex();
     m_jsonTagObj["remark"] = ui->editTagDesc->toPlainText();
-    m_jsonTagObj["dev_type"] = ui->cboDev->currentText();
+    m_jsonTagObj["dev"] = ui->cboDev->currentText();
 
     this->accept();
 }
@@ -219,27 +219,27 @@ void TagEditDialog::updateUI()
     ui->cboDev->addItems(listDevs);
 
     if(!m_jsonTagObj.isEmpty()) {
-        ui->cboDev->setCurrentText(m_jsonTagObj["dev_type"].toString());
+        ui->cboDev->setCurrentText(m_jsonTagObj["dev"].toString());
         ui->editTagName->setText(m_jsonTagObj["name"].toString());
 
-        QStringList szListAddrTypes = m_mapDevToAddrType[m_jsonTagObj["dev_type"].toString()];
+        QStringList szListAddrTypes = m_mapDevToAddrType[m_jsonTagObj["dev"].toString()];
         ui->cboAddrType->clear();
         ui->cboAddrType->addItems(szListAddrTypes);
 
-        QString szAddrType = m_jsonTagObj["addr_type"].toString();
+        QString szAddrType = m_jsonTagObj["addr"].toString();
         if(szAddrType != "") {
             ui->cboAddrType->setCurrentText(szAddrType);
             on_cboAddrType_currentTextChanged(szAddrType);
         }
 
-        ui->editAddrOffset->setText(m_jsonTagObj["addr_offset"].toString());
+        ui->editAddrOffset->setText(m_jsonTagObj["offset"].toString());
 
-        QString szAddrType2 = m_jsonTagObj["addr_type2"].toString();
+        QString szAddrType2 = m_jsonTagObj["addr2"].toString();
         ui->cboAddrType2->setCurrentText(szAddrType2);
 
-        ui->editAddrOffset2->setText(m_jsonTagObj["addr_offset2"].toString());
+        ui->editAddrOffset2->setText(m_jsonTagObj["offset2"].toString());
 
-        QString szDataType = m_jsonTagObj["data_type"].toString();
+        QString szDataType = m_jsonTagObj["type"].toString();
         if(szDataType != "") {
             ui->cboDataType->setCurrentText(szDataType);
         }

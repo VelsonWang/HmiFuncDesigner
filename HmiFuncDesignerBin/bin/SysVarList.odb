@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <tags application_version="V1.0.0">
-    <tag addr_offset="0" addr_offset2="0" addr_type="AutoAlloc" addr_type2="" data_type="uint16" dev_type="SYSTEM" group="" id="1" name="年" remark="" unit="" writeable="0"/>
-    <tag addr_offset="0" addr_offset2="0" addr_type="AutoAlloc" addr_type2="" data_type="uint16" dev_type="SYSTEM" group="" id="2" name="月" remark="" unit="" writeable="0"/>
-    <tag addr_offset="0" addr_offset2="0" addr_type="AutoAlloc" addr_type2="" data_type="uint16" dev_type="SYSTEM" group="" id="3" name="日" remark="" unit="" writeable="0"/>
-    <tag addr_offset="0" addr_offset2="0" addr_type="AutoAlloc" addr_type2="" data_type="uint16" dev_type="SYSTEM" group="" id="4" name="时" remark="" unit="" writeable="0"/>
-    <tag addr_offset="0" addr_offset2="0" addr_type="AutoAlloc" addr_type2="" data_type="uint16" dev_type="SYSTEM" group="" id="5" name="分" remark="" unit="" writeable="0"/>
-    <tag addr_offset="0" addr_offset2="0" addr_type="AutoAlloc" addr_type2="" data_type="uint16" dev_type="SYSTEM" group="" id="6" name="秒" remark="" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="1" name="年" remark="" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="2" name="月" remark="" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="3" name="日" remark="" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="4" name="时" remark="" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="5" name="分" remark="" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="6" name="秒" remark="" unit="" writeable="0"/>
 </tags>

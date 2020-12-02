@@ -32,15 +32,22 @@ IDevicePlugin * DevicePluginLoader::getPluginObject(const QString &szPluginName)
     pluginsDir.cdUp();
     pluginsDir.cd("deviceplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
-        if(fileName.indexOf(pluginName) == -1) continue;
-        QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
-        QObject *plugin = pluginLoader.instance();
-        if (plugin) {
-            IDevicePlugin *pDevPluginObj = qobject_cast<IDevicePlugin *>(plugin);
-            if (pDevPluginObj == Q_NULLPTR) {
-                QMessageBox::critical(Q_NULLPTR, QObject::tr("系统错误"), QObject::tr("插件加载失败！\n") + fileName);
+#ifdef Q_OS_WIN
+        QString szFileEndWith = QString(".dll");
+#endif
+#ifdef Q_OS_LINUX
+        QString szFileEndWith = QString(".so");
+#endif
+        if(fileName.indexOf(pluginName) != -1 && fileName.endsWith(szFileEndWith)) {
+            QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(fileName));
+            QObject *plugin = pluginLoader.instance();
+            if (plugin) {
+                IDevicePlugin *pDevPluginObj = qobject_cast<IDevicePlugin *>(plugin);
+                if (pDevPluginObj == Q_NULLPTR) {
+                    QMessageBox::critical(Q_NULLPTR, QObject::tr("系统错误"), QObject::tr("插件加载失败！\n") + fileName);
+                }
+                return pDevPluginObj;
             }
-            return pDevPluginObj;
         }
     }
     return Q_NULLPTR;
