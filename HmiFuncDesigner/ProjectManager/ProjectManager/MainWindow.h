@@ -18,8 +18,8 @@
 #include "ProjectTreeView.h"
 #include "GraphPageListWidget.h"
 #include "ChildInterface.h"
-#include "GraphPageEditor.h"
 #include "IGraphPageSaveLoad.h"
+#include "qformwidgetview.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -220,7 +220,7 @@ private:
     QString m_szCurTreeViewItem;
     GraphPage *m_pCurrentGraphPageObj = Q_NULLPTR;
     QGraphicsView *m_pCurrentViewObj = Q_NULLPTR;
-    GraphPageEditor *m_pGraphPageEditorObj = Q_NULLPTR;
+    QFormWidgetView *m_pGraphPageEditorViewObj = Q_NULLPTR;
     ElementLibraryWidget *m_pElementWidgetObj = Q_NULLPTR;
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;

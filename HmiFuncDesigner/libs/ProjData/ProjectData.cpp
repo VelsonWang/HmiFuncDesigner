@@ -1,7 +1,9 @@
 #include "ProjectData.h"
 #include "XMLObject.h"
 #include "Helper.h"
+#include "DataAES.h"
 #include <QFileInfo>
+
 
 
 ProjectData::ProjectData() : szProjVersion_("V1.0.0")
@@ -56,13 +58,20 @@ bool ProjectData::openFromXml(const QString &szProjFile)
     }
 
     // 读取工程数据
-    QByteArray baProjData;
-    baProjData.resize(headerObj_.dwProjSize);
-    if(fileProj.read((char *)baProjData.data(), headerObj_.dwProjSize) != headerObj_.dwProjSize) {
+    QByteArray baTmpProjData;
+    baTmpProjData.resize(headerObj_.dwProjSize);
+    if(fileProj.read((char *)baTmpProjData.data(), headerObj_.dwProjSize) != headerObj_.dwProjSize) {
         fileProj.close();
         return false;
     }
     fileProj.close();
+
+    QByteArray baProjData;
+    if(headerObj_.byEncrypt) {
+        if(DataAES::Decrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) return false;
+    } else {
+        baProjData = baTmpProjData;
+    }
 
     QString szProjData = QString::fromUtf8(baProjData);
 
@@ -143,7 +152,13 @@ bool ProjectData::saveToXml(const QString &szProjFile)
         pImplGraphPageSaveLoadObj_->saveToXml(pPagesObj);
     }
 
-    QByteArray baProjData = projObjs.write().toUtf8();
+    QByteArray baProjData;
+    QByteArray baTmpProjData = projObjs.write().toUtf8();
+    if(headerObj_.byEncrypt) {
+        if(DataAES::Encrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) return false;
+    } else {
+        baProjData = baTmpProjData;
+    }
 
     QFile fileProj;
     fileProj.setFileName(szProjFile);
@@ -155,7 +170,6 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     headerObj_.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
     headerObj_.wVersion = 0x0001;
     headerObj_.dwProjSize = baProjData.length();
-    headerObj_.byEncrypt = 0; // 工程暂时不做加密
     headerObj_.byOpenVerifyPassword = 0; // 打开工程暂时不需要验证密码
     if(headerObj_.byOpenVerifyPassword != 0) {
         char tmpBuf[32] = {0};

@@ -24,6 +24,7 @@ NewProjectDialog::NewProjectDialog(QWidget *parent)
     ui->editProjectDescription->setText("demo1 project");
     ui->editStationNumber->setText("0");
     ui->editStationAddress->setText("192.168.1.10");
+    ui->chkProjectEncrypt->setChecked(true);
 
     ui->cboStartPage->clear();
     QStringList szGraphPageNameList;
@@ -59,7 +60,9 @@ NewProjectDialog::NewProjectDialog(QWidget *parent)
     settingsDev.endGroup();
 }
 
-NewProjectDialog::~NewProjectDialog() { delete ui; }
+NewProjectDialog::~NewProjectDialog() {
+    delete ui;
+}
 
 void NewProjectDialog::on_btnFileDialog_clicked() {
     QString dir = QFileDialog::getExistingDirectory(this,
@@ -160,6 +163,7 @@ bool NewProjectDialog::save() {
     projInfoMgr.setStartPage(ui->cboStartPage->currentText());
     projInfoMgr.setStationAddress(ui->editStationAddress->text());
     projInfoMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
+    ProjectData::getInstance()->headerObj_.byEncrypt = ui->chkProjectEncrypt->isChecked() ? 1 : 0;
     projInfoMgr.setPageScanPeriod(ui->editPageScanPeriod->text().toInt());
     projInfoMgr.setDataScanPeriod(ui->editDataScanPeriod->text().toInt());
     return true;

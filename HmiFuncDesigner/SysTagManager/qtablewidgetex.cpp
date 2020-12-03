@@ -198,11 +198,11 @@ void QTableWidgetEx::initTagsTable() {
     this->horizontalHeader()->show();
     this->verticalHeader()->hide();
     this->setColumnWidth(0, 60); // 变量ID
-    this->setColumnWidth(1, 80); // 变量名称
-    this->setColumnWidth(2, 80); // 数据类型
-    this->setColumnWidth(3, 80); // 读写
-    this->setColumnWidth(4, 60); // 单位
-    this->setColumnWidth(5, 80); // 变量描述
+    this->setColumnWidth(1, 100); // 变量名称
+    this->setColumnWidth(2, 100); // 数据类型
+    this->setColumnWidth(3, 100); // 读写
+    this->setColumnWidth(4, 100); // 单位
+    this->setColumnWidth(5, 160); // 变量描述
     this->setWordWrap(false);
     this->clearSelection();
 
@@ -282,9 +282,9 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index) {
             QMap<QString, QStringList> mapAddrTypeToSubAddrType;
             QMap<QString, QStringList> mapAddrTypeToDataType;
             QStringList szListAddrType;
-            szListAddrType << "AutoAlloc";
+            szListAddrType << tr("自动分配");
             mapDevToAddrType.insert("SYSTEM", szListAddrType);
-            mapAddrTypeToSubAddrType.insert("AutoAlloc", QStringList());
+            mapAddrTypeToSubAddrType.insert(tr("自动分配"), QStringList());
             QStringList szListDataType;
             szListDataType << tr("bool")
                            << tr("int8")
@@ -297,7 +297,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index) {
                            << tr("double")
                            << tr("bcd16")
                            << tr("bcd32");
-            mapAddrTypeToDataType.insert("AutoAlloc", szListDataType);
+            mapAddrTypeToDataType.insert(tr("自动分配"), szListDataType);
             dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
             QJsonObject jsonTagObj = pTagObj->toJsonObject();
             dlg.setTagObj(jsonTagObj);
@@ -305,6 +305,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index) {
             if(dlg.exec() == QDialog::Accepted) {
                 jsonTagObj = dlg.getTagObj();
                 pTagObj->fromJsonObject(jsonTagObj);
+                if(pTagObj->m_szAddrType == tr("自动分配")) pTagObj->m_szAddrType = "AutoAlloc";
                 updateTable();
             }
             return;
@@ -411,9 +412,9 @@ void QTableWidgetEx::onAddTag() {
     QMap<QString, QStringList> mapAddrTypeToSubAddrType;
     QMap<QString, QStringList> mapAddrTypeToDataType;
     QStringList szListAddrType;
-    szListAddrType << "AutoAlloc";
+    szListAddrType << tr("自动分配");
     mapDevToAddrType.insert("SYSTEM", szListAddrType);
-    mapAddrTypeToSubAddrType.insert("AutoAlloc", QStringList());
+    mapAddrTypeToSubAddrType.insert(tr("自动分配"), QStringList());
     QStringList szListDataType;
     szListDataType << tr("bool")
                    << tr("int8")
@@ -426,7 +427,7 @@ void QTableWidgetEx::onAddTag() {
                    << tr("double")
                    << tr("bcd16")
                    << tr("bcd32");
-    mapAddrTypeToDataType.insert("AutoAlloc", szListDataType);
+    mapAddrTypeToDataType.insert(tr("自动分配"), szListDataType);
     dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
     QJsonObject jsonTagObj;
     dlg.setTagObj(jsonTagObj);
@@ -435,6 +436,7 @@ void QTableWidgetEx::onAddTag() {
         Tag *pTagObj = new Tag();
         pTagObj->fromJsonObject(dlg.getTagObj());
         pTagObj->m_iID = m_tagMgr.allocID();
+        if(pTagObj->m_szAddrType == tr("自动分配")) pTagObj->m_szAddrType = "AutoAlloc";
         pTagObj->m_szDevType = "SYSTEM";
         m_tagMgr.m_vecTags.append(pTagObj);
         updateTable();
@@ -547,9 +549,9 @@ void QTableWidgetEx::onEditTag() {
             QMap<QString, QStringList> mapAddrTypeToSubAddrType;
             QMap<QString, QStringList> mapAddrTypeToDataType;
             QStringList szListAddrType;
-            szListAddrType << "AutoAlloc";
+            szListAddrType << tr("自动分配");
             mapDevToAddrType.insert("SYSTEM", szListAddrType);
-            mapAddrTypeToSubAddrType.insert("AutoAlloc", QStringList());
+            mapAddrTypeToSubAddrType.insert(tr("自动分配"), QStringList());
             QStringList szListDataType;
             szListDataType << tr("bool")
                            << tr("int8")
@@ -562,7 +564,7 @@ void QTableWidgetEx::onEditTag() {
                            << tr("double")
                            << tr("bcd16")
                            << tr("bcd32");
-            mapAddrTypeToDataType.insert("AutoAlloc", szListDataType);
+            mapAddrTypeToDataType.insert(tr("自动分配"), szListDataType);
             dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
             dlg.setWindowTitle(tr("编辑变量"));
             QJsonObject jsonTagObj = pTagObj->toJsonObject();
@@ -570,6 +572,7 @@ void QTableWidgetEx::onEditTag() {
             dlg.updateUI();
             if(dlg.exec() == QDialog::Accepted) {
                 pTagObj->fromJsonObject(dlg.getTagObj());
+                if(pTagObj->m_szAddrType == tr("自动分配")) pTagObj->m_szAddrType = "AutoAlloc";
                 updateTable();
             }
             return;

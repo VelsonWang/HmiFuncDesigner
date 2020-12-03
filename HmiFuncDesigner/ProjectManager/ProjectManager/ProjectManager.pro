@@ -46,8 +46,22 @@ LIBS += -L$$LINK_LIBRARY_PATH -lCore
 SOURCES += main.cpp\
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
-    GraphPage/GraphPageEditor.cpp \
     GraphPage/GraphPageListWidget.cpp \
+    GraphPage/formresizer.cpp \
+    GraphPage/qabstractbuttonhost.cpp \
+    GraphPage/qabstracthost.cpp \
+    GraphPage/qabstractwidgethost.cpp \
+    GraphPage/qdesignerformhost.cpp \
+    GraphPage/qdesignermimedata.cpp \
+    GraphPage/qformhost.cpp \
+    GraphPage/qformlistwidget.cpp \
+    GraphPage/qformwidgetview.cpp \
+    GraphPage/qhostfactory.cpp \
+    GraphPage/qpushbuttonhost.cpp \
+    GraphPage/qselectwidget.cpp \
+    GraphPage/qwidgethost.cpp \
+    GraphPage/sizehandlerect.cpp \
+    GraphPage/widgethost.cpp \
     ListViewEx.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
@@ -98,8 +112,22 @@ HEADERS  += MainWindow.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
     DevicePluginLoader.h \
-    GraphPage/GraphPageEditor.h \
     GraphPage/GraphPageListWidget.h \
+    GraphPage/formresizer.h \
+    GraphPage/qabstractbuttonhost.h \
+    GraphPage/qabstracthost.h \
+    GraphPage/qabstractwidgethost.h \
+    GraphPage/qdesignerformhost.h \
+    GraphPage/qdesignermimedata.h \
+    GraphPage/qformhost.h \
+    GraphPage/qformlistwidget.h \
+    GraphPage/qformwidgetview.h \
+    GraphPage/qhostfactory.h \
+    GraphPage/qpushbuttonhost.h \
+    GraphPage/qselectwidget.h \
+    GraphPage/qwidgethost.h \
+    GraphPage/sizehandlerect.h \
+    GraphPage/widgethost.h \
     ListViewEx.h \
     MdiArea.h \
     NewProjectDialog.h \

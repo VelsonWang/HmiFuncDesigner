@@ -29,6 +29,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD
 
 SOURCES += \
+    DataAES.cpp \
     Tag.cpp \
     ulog.cpp \
     ProjectData.cpp \
@@ -44,6 +45,7 @@ SOURCES += \
 
 
 HEADERS += \
+    DataAES.h \
     projdata_global.h \
     IGraphPageSaveLoad.h \
     Tag.h \
