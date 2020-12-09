@@ -1,4 +1,4 @@
-#include "qwidgethost.h"
+#include "QWidgetHost.h"
 
 #include <QWidget>
 

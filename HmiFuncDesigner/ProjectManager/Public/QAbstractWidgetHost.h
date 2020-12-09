@@ -1,7 +1,7 @@
 #ifndef QABSTRACTWIDGETHOST_H
 #define QABSTRACTWIDGETHOST_H
 
-#include "qabstracthost.h"
+#include "QAbstractHost.h"
 
 class QAbstractWidgetHost : public QAbstractHost
 {

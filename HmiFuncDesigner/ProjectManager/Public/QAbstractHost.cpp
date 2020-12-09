@@ -1,4 +1,4 @@
-#include "qabstracthost.h"
+#include "QAbstractHost.h"
 #include <QMouseEvent>
 #include <QFocusEvent>
 #include <QPaintEvent>

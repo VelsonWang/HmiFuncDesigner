@@ -45,25 +45,30 @@ const QString MimeType = "rti/designer";
 GraphPage::GraphPage(const QRectF &rect,
                      QtVariantPropertyManager *propertyMgr,
                      QtTreePropertyBrowser *propertyEditor,
-                     QObject *parent) :
-    QGraphicsScene(parent),
+                     QAbstractHost *parent) :
+    QAbstractWidgetHost(parent),
     filename(QString()),
     unsavedFlag_(false),
     variantPropertyManager_(propertyMgr),
     propertyEditor_(propertyEditor)
 {
-    setItemIndexMethod(QGraphicsScene::NoIndex);
+    setProperty("title", FORM_TITLE);
 
-    if (static_cast<int>(rect.width()) == 0 || static_cast<int>(rect.height()) == 0) {
-        setSceneRect(0, 0, 800, 480);
-    } else {
-        setSceneRect(rect);
-    }
+
+
+
+//    setItemIndexMethod(QGraphicsScene::NoIndex);
+
+//    if (static_cast<int>(rect.width()) == 0 || static_cast<int>(rect.height()) == 0) {
+//        setSceneRect(0, 0, 800, 480);
+//    } else {
+//        setSceneRect(rect);
+//    }
 
     gridVisible = false;
 
-    graphPageWidth = static_cast<int>(sceneRect().width());
-    graphPageHeight = static_cast<int>(sceneRect().height());
+//    graphPageWidth = static_cast<int>(sceneRect().width());
+//    graphPageHeight = static_cast<int>(sceneRect().height());
     graphPagePriority.clear();
     graphPagePriority.append(tr("主要的"));
     graphPageBackground = QColor(Qt::white);
@@ -83,6 +88,12 @@ GraphPage::GraphPage(const QRectF &rect,
                     this, SLOT(slotGraphPagePropertyChanged(QtProperty *, const QVariant &)));
     connect(this, SIGNAL(selectionChanged()), SLOT(slotSelectionChanged()));
 }
+
+void GraphPage::createObject()
+{
+    m_object = new QWidget();
+}
+
 
 void GraphPage::setActive(bool active)
 {
@@ -107,44 +118,44 @@ void GraphPage::setUnsavedFlag(bool bFlag)
 
 void GraphPage::fillGridPixmap()
 {
-    gridPixmap = QPixmap(QSize(static_cast<int>(sceneRect().width()),
-                               static_cast<int>(sceneRect().height())));
-    gridPixmap.fill(graphPageBackground);
+//    gridPixmap = QPixmap(QSize(static_cast<int>(sceneRect().width()),
+//                               static_cast<int>(sceneRect().height())));
+//    gridPixmap.fill(graphPageBackground);
 
-    QPainter painter(&gridPixmap);
+//    QPainter painter(&gridPixmap);
 
-    const int maxX = static_cast<int>(std::ceil(width())/gridSize)*gridSize;
-    const int maxY = static_cast<int>(std::ceil(height())/gridSize)*gridSize;
+//    const int maxX = static_cast<int>(std::ceil(width())/gridSize)*gridSize;
+//    const int maxY = static_cast<int>(std::ceil(height())/gridSize)*gridSize;
 
-    if (graphPageBackground == Qt::black) {
-        painter.setPen(Qt::white);
-        painter.setBrush(Qt::NoBrush);
-    } else {
-        painter.setPen(Qt::black);
-        painter.setBrush(Qt::NoBrush);
-    }
+//    if (graphPageBackground == Qt::black) {
+//        painter.setPen(Qt::white);
+//        painter.setBrush(Qt::NoBrush);
+//    } else {
+//        painter.setPen(Qt::black);
+//        painter.setBrush(Qt::NoBrush);
+//    }
 
-    for (int i = 0; i < maxX; i += gridSize) {
-        for (int j = 0; j < maxY; j += gridSize) {
-            painter.drawPoint(i,j);
-        }
-    }
+//    for (int i = 0; i < maxX; i += gridSize) {
+//        for (int j = 0; j < maxY; j += gridSize) {
+//            painter.drawPoint(i,j);
+//        }
+//    }
 }
 
 void GraphPage::setGridVisible(bool on)
 {
-    gridVisible = on;
+//    gridVisible = on;
 
-    if (gridVisible) {
-        fillGridPixmap();
-    }
-    else {
-        gridPixmap = QPixmap(QSize(static_cast<int>(sceneRect().width()),
-                                   static_cast<int>(sceneRect().height())));
-        gridPixmap.fill(graphPageBackground);
-    }
+//    if (gridVisible) {
+//        fillGridPixmap();
+//    }
+//    else {
+//        gridPixmap = QPixmap(QSize(static_cast<int>(sceneRect().width()),
+//                                   static_cast<int>(sceneRect().height())));
+//        gridPixmap.fill(graphPageBackground);
+//    }
 
-    invalidate(sceneRect(), BackgroundLayer);
+//    invalidate(sceneRect(), BackgroundLayer);
 }
 
 bool GraphPage::isGridVisible() const
@@ -176,9 +187,9 @@ void GraphPage::updateExpandState()
 
 void GraphPage::slotGraphPagePropertyChanged(QtProperty *property, const QVariant &value)
 {
-    if (!selectedItems().isEmpty()) {
-        return;
-    }
+//    if (!selectedItems().isEmpty()) {
+//        return;
+//    }
 
     if (!active()) {
         return;
@@ -372,24 +383,24 @@ void GraphPage::createContextMenuActions()
 
 void GraphPage::updateActions()
 {
-    actionCopy->setEnabled(selectedItems().count() == 0 ? false : true);
-    actionDelete->setEnabled(selectedItems().count() == 0 ? false : true);
-    saveAsLibraryAction->setEnabled(selectedItems().count() == 0 ? false : true);
-    downLayerAction_->setEnabled(selectedItems().count() == 0 ? false : true);
-    upLayerAction_->setEnabled(selectedItems().count() == 0 ? false : true);
-    alignTopAction->setEnabled(selectedItems().count() < 2 ? false : true);
-    alignDownAction->setEnabled(selectedItems().count() < 2 ? false : true);
-    alignRightAction->setEnabled(selectedItems().count() < 2 ? false : true);
-    alignLeftAction->setEnabled(selectedItems().count() < 2 ? false : true);
-    hUniformDistributeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
-    vUniformDistributeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
-    setTheSameSizeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
+//    actionCopy->setEnabled(selectedItems().count() == 0 ? false : true);
+//    actionDelete->setEnabled(selectedItems().count() == 0 ? false : true);
+//    saveAsLibraryAction->setEnabled(selectedItems().count() == 0 ? false : true);
+//    downLayerAction_->setEnabled(selectedItems().count() == 0 ? false : true);
+//    upLayerAction_->setEnabled(selectedItems().count() == 0 ? false : true);
+//    alignTopAction->setEnabled(selectedItems().count() < 2 ? false : true);
+//    alignDownAction->setEnabled(selectedItems().count() < 2 ? false : true);
+//    alignRightAction->setEnabled(selectedItems().count() < 2 ? false : true);
+//    alignLeftAction->setEnabled(selectedItems().count() < 2 ? false : true);
+//    hUniformDistributeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
+//    vUniformDistributeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
+//    setTheSameSizeAction_->setEnabled(selectedItems().count() < 2 ? false : true);
 }
 
 
 void GraphPage::slotElementPropertyChanged(QtProperty *property, const QVariant &value)
 {
-    if (selectedItems().isEmpty() || !currentItem) return;
+//    if (selectedItems().isEmpty() || !currentItem) return;
 
     currentItem->updateElementProperty(property, value);
     unsavedFlag_ = true;
@@ -401,14 +412,14 @@ void GraphPage::slotSelectionChanged()
 {
     updateActions();
 
-    if (selectedItems().isEmpty()) {
-        propertyEditor_->clear();
-        currentItem = Q_NULLPTR;
-        return;
-    }
+//    if (selectedItems().isEmpty()) {
+//        propertyEditor_->clear();
+//        currentItem = Q_NULLPTR;
+//        return;
+//    }
 
-    propertyEditor_->clear();
-    currentItem = dynamic_cast<Element *>(selectedItems().first());
+//    propertyEditor_->clear();
+//    currentItem = dynamic_cast<Element *>(selectedItems().first());
 
     if (!currentItem) {
         return;
@@ -468,8 +479,8 @@ QString GraphPage::getGraphPageId() const
 
 void GraphPage::setGraphPageBackground(const QColor &color)
 {
-    graphPageBackground = color;
-    setBackgroundBrush(graphPageBackground);
+//    graphPageBackground = color;
+//    setBackgroundBrush(graphPageBackground);
 }
 
 QColor GraphPage::getGraphPageBackground() const
@@ -484,8 +495,8 @@ int GraphPage::getGraphPageWidth() const
 
 void GraphPage::setGraphPageWidth(int width)
 {
-    graphPageWidth = width;
-    setSceneRect(0, 0, graphPageWidth, graphPageHeight);
+//    graphPageWidth = width;
+//    setSceneRect(0, 0, graphPageWidth, graphPageHeight);
 }
 
 int GraphPage::getGraphPageHeight() const
@@ -495,8 +506,8 @@ int GraphPage::getGraphPageHeight() const
 
 void GraphPage::setGraphPageHeight(int height)
 {
-    graphPageHeight = height;
-    setSceneRect(0, 0, graphPageWidth, graphPageHeight);
+//    graphPageHeight = height;
+//    setSceneRect(0, 0, graphPageWidth, graphPageHeight);
 }
 
 void GraphPage::dragEnterEvent(QGraphicsSceneDragDropEvent *event)
@@ -544,32 +555,32 @@ void GraphPage::dragMoveEvent(QGraphicsSceneDragDropEvent *event)
 
 void GraphPage::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsScene::mousePressEvent(event);
+//    QGraphicsScene::mousePressEvent(event);
 
-    if (!itemAt(event->scenePos(), QTransform())) {
-        fillGraphPagePropertyModel();
-    }
+//    if (!itemAt(event->scenePos(), QTransform())) {
+//        fillGraphPagePropertyModel();
+//    }
 }
 
 
 void GraphPage::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsScene::mouseDoubleClickEvent(event);
+//    QGraphicsScene::mouseDoubleClickEvent(event);
 
-    if (!itemAt(event->scenePos(), QTransform())) {
-        fillGraphPagePropertyModel();
-    }
+//    if (!itemAt(event->scenePos(), QTransform())) {
+//        fillGraphPagePropertyModel();
+//    }
 }
 
 void GraphPage::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 {
-    QGraphicsScene::mouseMoveEvent(event);
-    foreach (QGraphicsItem *item, selectedItems()) {
-        Element *ele = dynamic_cast<Element *>(item);
-        if (ele != Q_NULLPTR) {
-            ele->RestrictedRectangularRegion();
-        }
-    }
+//    QGraphicsScene::mouseMoveEvent(event);
+//    foreach (QGraphicsItem *item, selectedItems()) {
+//        Element *ele = dynamic_cast<Element *>(item);
+//        if (ele != Q_NULLPTR) {
+//            ele->RestrictedRectangularRegion();
+//        }
+//    }
 }
 
 void GraphPage::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
@@ -616,19 +627,19 @@ void GraphPage::createItems(const QString &typeId, QPointF position)
 
 void GraphPage::slotGroupElements()
 {
-    if (selectedItems().isEmpty()) {
-        return;
-    }
+//    if (selectedItems().isEmpty()) {
+//        return;
+//    }
 
     ElementGroup *group = new ElementGroup;
 
-    foreach (QGraphicsItem *item, selectedItems()) {
-        group->addToGroup(item);
-    }
+//    foreach (QGraphicsItem *item, selectedItems()) {
+//        group->addToGroup(item);
+//    }
 
     group->setClickPosition(QPointF(500, 500));
     group->setHandlesChildEvents(false);
-    addItem(group);
+//    addItem(group);
 }
 
 void GraphPage::slotUngroupElements()
@@ -669,7 +680,7 @@ void GraphPage::slotAlignElements()
     if (!action)
         return;
     Qt::Alignment alignment = static_cast<Qt::Alignment>(action->data().toInt());
-    onAlignElements(alignment, selectedItems());
+//    onAlignElements(alignment, selectedItems());
 }
 
 /**
@@ -723,7 +734,7 @@ void GraphPage::onHUniformDistributeElements(QList<QGraphicsItem*> items)
  */
 void GraphPage::slotHUniformDistributeElements()
 {
-    onHUniformDistributeElements(selectedItems());
+//    onHUniformDistributeElements(selectedItems());
 }
 
 
@@ -779,7 +790,7 @@ void GraphPage::onVUniformDistributeElements(QList<QGraphicsItem*> items)
  */
 void GraphPage::slotVUniformDistributeElements()
 {
-    onVUniformDistributeElements(selectedItems());
+//    onVUniformDistributeElements(selectedItems());
 }
 
 
@@ -817,7 +828,7 @@ void GraphPage::onSetTheSameSizeElements(QList<QGraphicsItem*> items)
             pEle->updateBoundingElement();
         }
     }
-    this->update();
+//    this->update();
 }
 
 
@@ -827,7 +838,7 @@ void GraphPage::onSetTheSameSizeElements(QList<QGraphicsItem*> items)
  */
 void GraphPage::slotSetTheSameSizeElements()
 {
-    onSetTheSameSizeElements(selectedItems());
+//    onSetTheSameSizeElements(selectedItems());
 }
 
 
@@ -867,7 +878,7 @@ void GraphPage::onUpLayerElements(QList<QGraphicsItem*> items)
  */
 void GraphPage::slotUpLayerElements()
 {
-    onUpLayerElements(selectedItems());
+//    onUpLayerElements(selectedItems());
 }
 
 
@@ -886,7 +897,7 @@ void GraphPage::onDownLayerElements(QList<QGraphicsItem*> items)
  */
 void GraphPage::slotDownLayerElements()
 {
-    onDownLayerElements(selectedItems());
+//    onDownLayerElements(selectedItems());
 }
 
 
@@ -904,7 +915,7 @@ void GraphPage::onEditDelete(QList<QGraphicsItem*> items)
  */
 void GraphPage::slotEditDelete()
 {
-    onEditDelete(selectedItems());
+//    onEditDelete(selectedItems());
 }
 
 void GraphPage::removeElementEvent()
@@ -920,9 +931,9 @@ void GraphPage::addElementEvent()
 void GraphPage::keyPressEvent(QKeyEvent *event)
 {
     if (event->key() == Qt::Key_Delete) {
-        if (!selectedItems().isEmpty()) {
-            slotEditDelete();
-        }
+//        if (!selectedItems().isEmpty()) {
+//            slotEditDelete();
+//        }
     } else if (event->matches(QKeySequence::Copy)) {
         slotEditCopy();
     } else if (event->matches(QKeySequence::Paste)) {
@@ -942,35 +953,35 @@ void GraphPage::keyPressEvent(QKeyEvent *event)
 
 void GraphPage::moveSelectedElements(int xOffset, int yOffset)
 {
-    foreach (QGraphicsItem *item, selectedItems()) {
-        Element *ele = dynamic_cast<Element *>(item);
-        if (ele) {
-            int x = ele->getElementXPos() + xOffset;
-            if(x < 0) {
-                xOffset = 0 - ele->getElementXPos();
-            }
-            if(x > this->getGraphPageWidth() - ele->getElementWidth()) {
-                xOffset = this->getGraphPageWidth() - ele->getElementWidth() - ele->getElementXPos();
-            }
+//    foreach (QGraphicsItem *item, selectedItems()) {
+//        Element *ele = dynamic_cast<Element *>(item);
+//        if (ele) {
+//            int x = ele->getElementXPos() + xOffset;
+//            if(x < 0) {
+//                xOffset = 0 - ele->getElementXPos();
+//            }
+//            if(x > this->getGraphPageWidth() - ele->getElementWidth()) {
+//                xOffset = this->getGraphPageWidth() - ele->getElementWidth() - ele->getElementXPos();
+//            }
 
-            int y = ele->getElementYPos() + yOffset;
-            if(y < 0) {
-                yOffset = 0 - ele->getElementYPos();
-            }
-            if(y > this->getGraphPageHeight() - ele->getElementHeight()) {
-                yOffset = this->getGraphPageHeight() - ele->getElementHeight() - ele->getElementYPos();
-            }
+//            int y = ele->getElementYPos() + yOffset;
+//            if(y < 0) {
+//                yOffset = 0 - ele->getElementYPos();
+//            }
+//            if(y > this->getGraphPageHeight() - ele->getElementHeight()) {
+//                yOffset = this->getGraphPageHeight() - ele->getElementHeight() - ele->getElementYPos();
+//            }
 
-            ele->moveTo(xOffset, yOffset);
-        }
-    }
+//            ele->moveTo(xOffset, yOffset);
+//        }
+//    }
 }
 
 void GraphPage::slotSelectAll()
 {
-    foreach (QGraphicsItem *item, items()) {
-        item->setSelected(true);
-    }
+//    foreach (QGraphicsItem *item, items()) {
+//        item->setSelected(true);
+//    }
 }
 
 
@@ -989,7 +1000,7 @@ void GraphPage::onEditCopy(QList<QGraphicsItem*> items)
  */
 void GraphPage::slotEditCopy()
 {
-    onEditCopy(selectedItems());
+//    onEditCopy(selectedItems());
 }
 
 void GraphPage::copyItems(const QList<QGraphicsItem *> &items)
@@ -1115,7 +1126,7 @@ bool GraphPage::openFromXml(XMLObject *pXmlObj) {
                 ele->openFromXml(pElementObj);
                 ele->setSelected(false);
                 connectItem(ele);
-                addItem(ele);
+//                addItem(ele);
             }
         }
     }
@@ -1134,11 +1145,11 @@ bool GraphPage::saveToXml(XMLObject *pXmlObj) {
     pPageObj->setProperty("background", this->getGraphPageBackground().name());
     pPageObj->setProperty("functions", this->getSelectedFunctions().join("|"));
 
-    QListIterator <QGraphicsItem*> it(this->items());
-    while (it.hasNext()) {
-        Element *pEleObj = static_cast<Element *>(it.next());
-        pEleObj->saveToXml(pPageObj);
-    }
+//    QListIterator <QGraphicsItem*> it(this->items());
+//    while (it.hasNext()) {
+//        Element *pEleObj = static_cast<Element *>(it.next());
+//        pEleObj->saveToXml(pPageObj);
+//    }
 
     return true;
 }
@@ -1218,7 +1229,7 @@ void GraphPage::readLibraryTag(QXmlStreamReader &xml)
                         ele->setGraphPageSize(getGraphPageWidth(), getGraphPageHeight());
                         //ele->readFromXml(xml.attributes());
                         connectItem(ele);
-                        addItem(ele);
+//                        addItem(ele);
                     }
                 }
             }
@@ -1319,20 +1330,20 @@ void GraphPage::writeGraphPage(QFile &file, GraphPage *graphPage)
 
 void GraphPage::writeLibrary(QFile &file, GraphPage *graphPage)
 {
-    QXmlStreamWriter writer(&file);
-    writer.setAutoFormatting(true);
-    writer.writeStartDocument();
-    writer.writeStartElement("Library");
+//    QXmlStreamWriter writer(&file);
+//    writer.setAutoFormatting(true);
+//    writer.writeStartDocument();
+//    writer.writeStartElement("Library");
 
-    QListIterator <QGraphicsItem*> it(graphPage->selectedItems());
+//    QListIterator <QGraphicsItem*> it(graphPage->selectedItems());
 
-    while (it.hasNext()) {
-        Element *ele = static_cast<Element *>(it.next());
-        //ele->writeAsXml(writer);
-    }
+//    while (it.hasNext()) {
+//        Element *ele = static_cast<Element *>(it.next());
+//        //ele->writeAsXml(writer);
+//    }
 
-    writer.writeEndElement();
-    writer.writeEndDocument();
+//    writer.writeEndElement();
+//    writer.writeEndDocument();
 }
 
 
@@ -1345,10 +1356,10 @@ void GraphPage::writeLibrary(QFile &file, GraphPage *graphPage)
  */
 void GraphPage::updateAllElementGraphPageSize(int width, int height)
 {
-    foreach (QGraphicsItem *item, items()) {
-        Element *pEle = dynamic_cast<Element *>(item);
-        if (pEle != Q_NULLPTR) {
-            pEle->setGraphPageSize(width, height);
-        }
-    }
+//    foreach (QGraphicsItem *item, items()) {
+//        Element *pEle = dynamic_cast<Element *>(item);
+//        if (pEle != Q_NULLPTR) {
+//            pEle->setGraphPageSize(width, height);
+//        }
+//    }
 }

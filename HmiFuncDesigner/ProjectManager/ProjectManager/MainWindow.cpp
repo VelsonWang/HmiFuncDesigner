@@ -1962,8 +1962,8 @@ void MainWindow::onSlotAlignElements()
 
     Qt::Alignment alignment = static_cast<Qt::Alignment>(action->data().toInt());
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onAlignElements(alignment, items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onAlignElements(alignment, items);
     }
 }
 
@@ -1975,8 +1975,8 @@ void MainWindow::onSlotAlignElements()
 void MainWindow::onSlotHUniformDistributeElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onHUniformDistributeElements(items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onHUniformDistributeElements(items);
     }
 }
 
@@ -1988,8 +1988,8 @@ void MainWindow::onSlotHUniformDistributeElements()
 void MainWindow::onSlotVUniformDistributeElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onVUniformDistributeElements(items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onVUniformDistributeElements(items);
     }
 }
 
@@ -2001,8 +2001,8 @@ void MainWindow::onSlotVUniformDistributeElements()
 void MainWindow::onSlotSetTheSameSizeElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onSetTheSameSizeElements(items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onSetTheSameSizeElements(items);
     }
 }
 
@@ -2014,8 +2014,8 @@ void MainWindow::onSlotSetTheSameSizeElements()
 void MainWindow::onSlotUpLayerElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onUpLayerElements(items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onUpLayerElements(items);
     }
 }
 
@@ -2027,8 +2027,8 @@ void MainWindow::onSlotUpLayerElements()
 void MainWindow::onSlotDownLayerElements()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onDownLayerElements(items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onDownLayerElements(items);
     }
 }
 
@@ -2040,8 +2040,8 @@ void MainWindow::onSlotDownLayerElements()
 void MainWindow::onSlotEditDelete()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onEditDelete(items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onEditDelete(items);
     }
 }
 
@@ -2053,8 +2053,8 @@ void MainWindow::onSlotEditDelete()
 void MainWindow::onSlotEditCopy()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onEditCopy(items);
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onEditCopy(items);
     }
 }
 
@@ -2066,8 +2066,8 @@ void MainWindow::onSlotEditCopy()
 void MainWindow::onSlotEditPaste()
 {
     if(m_pCurrentGraphPageObj != Q_NULLPTR) {
-        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
-        m_pCurrentGraphPageObj->onEditPaste();
+//        QList<QGraphicsItem*> items = m_pCurrentGraphPageObj->selectedItems();
+//        m_pCurrentGraphPageObj->onEditPaste();
     }
 }
 

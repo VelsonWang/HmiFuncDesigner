@@ -19,7 +19,11 @@
 #include "qttreepropertybrowser.h"
 #include "XMLNodeObject.h"
 
-class GraphPage : public QGraphicsScene
+#include "QAbstractWidgetHost.h"
+
+#define FORM_TITLE "form"
+
+class GraphPage : public QAbstractWidgetHost
 {
     Q_OBJECT
 
@@ -27,7 +31,7 @@ public:
     GraphPage(const QRectF &rect,
               QtVariantPropertyManager *propertyMgr,
               QtTreePropertyBrowser *propertyEditor,
-              QObject *parent = Q_NULLPTR);
+              QAbstractHost *parent = Q_NULLPTR);
 
     void setGridVisible(bool);
     bool isGridVisible() const;
@@ -77,6 +81,9 @@ protected:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
     void keyPressEvent(QKeyEvent *event);
+
+protected:
+    void createObject();
 
 private:
     void createItems(const QString &, QPointF);

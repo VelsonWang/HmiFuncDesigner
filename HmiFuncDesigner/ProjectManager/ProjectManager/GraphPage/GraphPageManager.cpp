@@ -59,20 +59,20 @@ QList<GraphPage*> *GraphPageManager::getGraphPageList()
  * @param szIDList
  */
 void GraphPageManager::getAllElementIDName(QStringList &szIDList) {
-    QListIterator <GraphPage*> iter(graphPageList_);
-    GraphPage *graphPage = Q_NULLPTR;
-    QString szPageId = "";
-    while (iter.hasNext()) {
-        graphPage = iter.next();
-        szPageId = graphPage->getGraphPageId();
-        QString szID = "";
-        QListIterator <QGraphicsItem*> it(graphPage->items());
-        while (it.hasNext()) {
-            Element *pEleObj = static_cast<Element *>(it.next());
-            szID = pEleObj->getElementId();
-            szIDList.append(szPageId + "." + szID);
-        }
-    }
+//    QListIterator <GraphPage*> iter(graphPageList_);
+//    GraphPage *graphPage = Q_NULLPTR;
+//    QString szPageId = "";
+//    while (iter.hasNext()) {
+//        graphPage = iter.next();
+//        szPageId = graphPage->getGraphPageId();
+//        QString szID = "";
+//        QListIterator <QGraphicsItem*> it(graphPage->items());
+//        while (it.hasNext()) {
+//            Element *pEleObj = static_cast<Element *>(it.next());
+//            szID = pEleObj->getElementId();
+//            szIDList.append(szPageId + "." + szID);
+//        }
+//    }
 }
 
 

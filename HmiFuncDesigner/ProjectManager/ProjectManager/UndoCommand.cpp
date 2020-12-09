@@ -14,18 +14,18 @@ AddCommand::AddCommand(const QList<QGraphicsItem *> &addItems,
 
 void AddCommand::undo() {
 
-    foreach (QGraphicsItem *item, items) {
-        graphPage->removeItem(item);
-    }
-    graphPage->removeElementEvent();
+//    foreach (QGraphicsItem *item, items) {
+//        graphPage->removeItem(item);
+//    }
+//    graphPage->removeElementEvent();
 }
 
 void AddCommand::redo() {
 
-    foreach (QGraphicsItem *item, items) {
-        graphPage->addItem(item);
-    }
-    graphPage->addElementEvent();
+//    foreach (QGraphicsItem *item, items) {
+//        graphPage->addItem(item);
+//    }
+//    graphPage->addElementEvent();
 }
 
 
@@ -41,22 +41,22 @@ RemoveCommand::RemoveCommand(const QList<QGraphicsItem *> &delItems,
 
 void RemoveCommand::undo() {
 
-    foreach (QGraphicsItem *item, items) {
-        graphPage->addItem(item);
-    }
-    graphPage->addElementEvent();
+//    foreach (QGraphicsItem *item, items) {
+//        graphPage->addItem(item);
+//    }
+//    graphPage->addElementEvent();
 }
 
 void RemoveCommand::redo() {
 
-    foreach (QGraphicsItem *item, items) {
-        Element *pEle = dynamic_cast<Element *>(item);
-        if(pEle != Q_NULLPTR) {
-            pEle->release(); // 释放占用的资源
-        }
-        graphPage->removeItem(item);
-    }
-    graphPage->removeElementEvent();
+//    foreach (QGraphicsItem *item, items) {
+//        Element *pEle = dynamic_cast<Element *>(item);
+//        if(pEle != Q_NULLPTR) {
+//            pEle->release(); // 释放占用的资源
+//        }
+//        graphPage->removeItem(item);
+//    }
+//    graphPage->removeElementEvent();
 }
 
 

@@ -44,10 +44,11 @@ LIBS += -L$$LINK_LIBRARY_PATH -lProjData
 LIBS += -L$$LINK_LIBRARY_PATH -lCore
 
 SOURCES += main.cpp\
-    ../Public/qabstracthost.cpp \
-    ../Public/qabstractwidgethost.cpp \
-    ../Public/qwidgethost.cpp \
-    ../Public/qabstractbuttonhost.cpp \
+    ../Public/QAbstractButtonHost.cpp \
+    ../Public/QAbstractHost.cpp \
+    ../Public/QAbstractWidgetHost.cpp \
+    ../Public/QWidgetHost.cpp \
+    ElementTreeWidget.cpp \
     GraphPage/widgethost.cpp \
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
@@ -55,7 +56,6 @@ SOURCES += main.cpp\
     GraphPage/formresizer.cpp \
     GraphPage/qdesignerformhost.cpp \
     GraphPage/qdesignermimedata.cpp \
-    GraphPage/qformhost.cpp \
     GraphPage/qformlistwidget.cpp \
     GraphPage/qformwidgetview.cpp \
     GraphPage/qhostfactory.cpp \
@@ -100,7 +100,6 @@ SOURCES += main.cpp\
     ElementLibraryWidget.cpp \
     ElementLibraryListWidget.cpp \
     ElementLibraryListWidgetItem.cpp \
-    ElementSimpleListWidget.cpp \
     GraphPage/GraphPageTreeView.cpp \
     ../Public/PubTool.cpp \
     ../Public/Element.cpp \
@@ -108,10 +107,11 @@ SOURCES += main.cpp\
     PluginManager.cpp
 
 HEADERS  += MainWindow.h \
-    ../Public/qabstracthost.h \
-    ../Public/qabstractwidgethost.h \
-    ../Public/qwidgethost.h \
-    ../Public/qabstractbuttonhost.h \
+    ../Public/QAbstractButtonHost.h \
+    ../Public/QAbstractHost.h \
+    ../Public/QAbstractWidgetHost.h \
+    ../Public/QWidgetHost.h \
+    ElementTreeWidget.h \
     GraphPage/widgethost.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
@@ -120,7 +120,6 @@ HEADERS  += MainWindow.h \
     GraphPage/formresizer.h \
     GraphPage/qdesignerformhost.h \
     GraphPage/qdesignermimedata.h \
-    GraphPage/qformhost.h \
     GraphPage/qformlistwidget.h \
     GraphPage/qformwidgetview.h \
     GraphPage/qhostfactory.h \
@@ -166,7 +165,6 @@ HEADERS  += MainWindow.h \
     ElementLibraryWidget.h \
     ElementLibraryListWidget.h \
     ElementLibraryListWidgetItem.h \
-    ElementSimpleListWidget.h \
     GraphPage/GraphPageTreeView.h \
     ../Public/PublicDefine.h \
     ../Public/PubTool.h \

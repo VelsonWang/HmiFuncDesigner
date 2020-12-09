@@ -1,4 +1,4 @@
-#include "qabstractwidgethost.h"
+#include "QAbstractWidgetHost.h"
 #include <QDynamicPropertyChangeEvent>
 
 QAbstractWidgetHost::QAbstractWidgetHost(QAbstractHost *parent):

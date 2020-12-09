@@ -1,5 +1,5 @@
 #include "qdesignermimedata.h"
-#include "qabstracthost.h"
+#include "QAbstractHost.h"
 #include "qhostfactory.h"
 
 #include <QPainter>

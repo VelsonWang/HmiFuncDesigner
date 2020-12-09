@@ -1,6 +1,6 @@
 #include "qformlistwidget.h"
 #include "qdesignerformhost.h"
-#include "qabstracthost.h"
+#include "QAbstractHost.h"
 
 
 #include <QVBoxLayout>

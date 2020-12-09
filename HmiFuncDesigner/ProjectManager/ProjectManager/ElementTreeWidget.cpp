@@ -1,4 +1,4 @@
-﻿#include "ElementSimpleListWidget.h"
+﻿#include "ElementTreeWidget.h"
 #include "PluginManager.h"
 #include "StyleHelper.h"
 #include <QMimeData>
@@ -22,8 +22,9 @@ protected:
     ElementTreeWidget *m_view;
 };
 
-void QWidgetDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
+void QWidgetDelegate::paint(QPainter *painter,
+                            const QStyleOptionViewItem &option,
+                            const QModelIndex &index) const {
     QStyleOptionViewItemV3 opt = option;
     QColor c;
     QTreeWidgetItem *item = m_view->itemFromIndex(index);
@@ -41,8 +42,8 @@ void QWidgetDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     QItemDelegate::paint(painter,opt,index);
 }
 
-QSize QWidgetDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
-{
+QSize QWidgetDelegate::sizeHint(const QStyleOptionViewItem &option,
+                                const QModelIndex &index) const {
     QSize sz = QItemDelegate::sizeHint(option,index);
     sz.setHeight(25);
     return sz;
@@ -50,8 +51,8 @@ QSize QWidgetDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
 
 ////////////////////////////////////////////////////////////////////////////////
 
-ElementTreeWidget::ElementTreeWidget(QString name, QTreeWidget *parent) : QTreeWidget(parent)
-{
+ElementTreeWidget::ElementTreeWidget(QTreeWidget *parent)
+    : QTreeWidget(parent) {
     setFocusPolicy(Qt::NoFocus);
     setIndentation(0);
     setRootIsDecorated(false);
@@ -66,23 +67,31 @@ ElementTreeWidget::ElementTreeWidget(QString name, QTreeWidget *parent) : QTreeW
     setIconSize(QSize(24,24));
     setItemDelegate(new QWidgetDelegate(this));
     m_expandIcon = StyleHelper::drawIndicatorIcon(this->palette(), this->style());
-    initWidgetbox();
-    addElements(name);
+    this->expandAll();
 }
 
-void ElementTreeWidget::addElements(QString name)
-{
-    QMap<QString, IDrawApplicationPlugin*> pluginMap = PluginManager::getInstance()->getPluginByType(name);
+ElementTreeWidget::~ElementTreeWidget() {
+
+    QList<TItemInfo*> listItemInfo = m_infoToItem.keys();
+    m_infoToItem.clear();
+    m_itemToInfo.clear();
+    m_nameToGroup.clear();
+    qDeleteAll(listItemInfo);
+    listItemInfo.clear();
+}
+
+void ElementTreeWidget::addElements(const QString &szGroupName) {
+    QMap<QString, IDrawApplicationPlugin*> pluginMap = PluginManager::getInstance()->getPluginByType(szGroupName);
     QMapIterator<QString, IDrawApplicationPlugin*> iter(pluginMap);
-    while(iter.hasNext())
-    {
+    while(iter.hasNext()) {
         iter.next();
         IDrawApplicationPlugin* plugin = iter.value();
         if(plugin != Q_NULLPTR) {
-            QIcon ico = plugin->getElementIcon();
-            QString eleName = plugin->getElementName();
-            QTreeWidgetItem *pItemObj = new QTreeWidgetItem(ico, eleName);
-            addItem(pItemObj);
+            TItemInfo *pInfoObj = new TItemInfo();
+            pInfoObj->showGroup = szGroupName;
+            pInfoObj->showIcon = plugin->getElementIcon();
+            pInfoObj->showName = plugin->getElementName();
+            addWidget(pInfoObj);
         }
     }
 }
@@ -110,21 +119,17 @@ void ElementTreeWidget::mousePressEvent(QMouseEvent *event)
 }
 
 void ElementTreeWidget::mouseMoveEvent(QMouseEvent *event) {
-
     if (event->buttons() & Qt::LeftButton) {
          int distance = (event->pos() - startPos).manhattanLength();
          if (distance >= QApplication::startDragDistance())
              startDrag();
      }
-
      QTreeWidget::mouseMoveEvent(event);
 }
 
 void ElementTreeWidget::startDrag() {
-
     QTreeWidgetItem *pItemObj = currentItem();
     if (pItemObj) {
-
         TItemInfo *info = m_itemToInfo.value(pItemObj);
         if(info != Q_NULLPTR) {
             QMimeData *mimeData = new QMimeData;
@@ -137,8 +142,9 @@ void ElementTreeWidget::startDrag() {
     }
 }
 
-void ElementTreeWidget::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
-{
+void ElementTreeWidget::drawRow(QPainter *painter,
+                                const QStyleOptionViewItem &options,
+                                const QModelIndex &index) const{
     QTreeWidgetItem *item = itemFromIndex(index);
 
     QColor c;
@@ -154,36 +160,23 @@ void ElementTreeWidget::drawRow(QPainter *painter, const QStyleOptionViewItem &o
     QTreeWidget::drawRow(painter, opt, index);
 }
 
-void ElementTreeWidget::initWidgetbox()
-{
-    QMapIterator<QString, TItemInfo*> it(QHostFactory::get_host_info());
 
-    while(it.hasNext())
-    {
-        it.next();
-        add_widget(it.value());
-    }
-    this->expandAll();
-}
 
-void ElementTreeWidget::addWidget(TItemInfo *info)
-{
-    QString group = info->showGroup;
-    QString name = info->showName;
-    if(group == "" || name == "") return;
-    QTreeWidgetItem *p = m_nameToGroup.value(group);
+void ElementTreeWidget::addWidget(TItemInfo *info) {
+    if(info->showGroup == "" || info->showName == "") return;
+    QTreeWidgetItem *pItemObj = m_nameToGroup.value(info->showGroup);
     QTreeWidgetItem *item;
-    if(p == Q_NULLPTR) {
-        p = new QTreeWidgetItem(this);
-        p->setText(0, group);
-        p->setFlags(Qt::ItemIsEnabled);
-        p->setIcon(0, m_expandIcon);
-        m_nameToGroup.insert(group, p);
+    if(pItemObj == Q_NULLPTR) {
+        pItemObj = new QTreeWidgetItem(this);
+        pItemObj->setText(0, info->showGroup);
+        pItemObj->setFlags(Qt::ItemIsEnabled);
+        pItemObj->setIcon(0, m_expandIcon);
+        m_nameToGroup.insert(info->showGroup, pItemObj);
     }
 
-    item = new QTreeWidgetItem(p);
-    item->setText(0, name);
-    item->setIcon(0, QIcon(info->showIcon));
+    item = new QTreeWidgetItem(pItemObj);
+    item->setText(0, info->showName);
+    item->setIcon(0, info->showIcon);
     item->setFlags(Qt::ItemIsEnabled);
     m_infoToItem.insert(info, item);
     m_itemToInfo.insert(item, info);

@@ -1,4 +1,4 @@
-#include "qabstractbuttonhost.h"
+#include "QAbstractButtonHost.h"
 
 #include <QAbstractButton>
 

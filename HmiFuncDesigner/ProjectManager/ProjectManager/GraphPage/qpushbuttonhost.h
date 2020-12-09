@@ -1,7 +1,7 @@
 #ifndef QPUSHBUTTONHOST_H
 #define QPUSHBUTTONHOST_H
 
-#include "qabstractbuttonhost.h"
+#include "QAbstractButtonHost.h"
 
 class QPushButtonHost: public QAbstractButtonHost
 {

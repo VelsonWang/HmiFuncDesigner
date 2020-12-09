@@ -1,7 +1,7 @@
 #include "qhostfactory.h"
 
-#include "qabstracthost.h"
-#include "qformhost.h"
+#include "QAbstractHost.h"
+#include "GraphPage.h"
 
 
 QMap<QString,tagHostInfo*> QHostFactory::m_meta_map;
@@ -28,28 +28,28 @@ void QHostFactory::registerHost(const QString name, GET_SHOW_ICON icon, GET_SHOW
 QAbstractHost* QHostFactory::createHost(const QString &name)
 {
     QAbstractHost* host=NULL;
-    if(name==FORM_TITLE)
-    {
-        host=new QFormHost;
-        host->init();
-        host->setAttribute(HOST_TYPE,FORM_TITLE);
-    }
-    else
-    {
-        tagHostInfo *info=m_meta_map.value(name);
-        if(info==NULL)
-        {
-            return NULL;
-        }
-        const QMetaObject* obj=info->m_host_object;
+//    if(name==FORM_TITLE)
+//    {
+//        host=new GraphPage;
+//        host->init();
+//        host->setAttribute(HOST_TYPE,FORM_TITLE);
+//    }
+//    else
+//    {
+//        tagHostInfo *info=m_meta_map.value(name);
+//        if(info==NULL)
+//        {
+//            return NULL;
+//        }
+//        const QMetaObject* obj=info->m_host_object;
 
-        if(obj!=NULL)
-        {
-            host=(QAbstractHost*)obj->newInstance();
-            host->init();
-            host->setAttribute(HOST_TYPE,name);
-        }
-    }
+//        if(obj!=NULL)
+//        {
+//            host=(QAbstractHost*)obj->newInstance();
+//            host->init();
+//            host->setAttribute(HOST_TYPE,name);
+//        }
+//    }
 
     return host;
 }

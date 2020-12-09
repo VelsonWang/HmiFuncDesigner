@@ -2,7 +2,7 @@
 #include "widgethost.h"
 #include "qselectwidget.h"
 #include "qdesignermimedata.h"
-#include "qabstracthost.h"
+#include "QAbstractHost.h"
 #include <QLayout>
 #include <QPainter>
 #include <QStringList>

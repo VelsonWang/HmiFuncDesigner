@@ -1,7 +1,7 @@
 #ifndef QABSTRACTBUTTONHOST_H
 #define QABSTRACTBUTTONHOST_H
 
-#include "qwidgethost.h"
+#include "QWidgetHost.h"
 
 class QAbstractButtonHost :public QWidgetHost
 {

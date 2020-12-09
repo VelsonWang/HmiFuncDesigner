@@ -3,7 +3,7 @@
 
 #include <QWidget>
 #include <QList>
-#include "ElementSimpleListWidget.h"
+#include "ElementTreeWidget.h"
 #include "ElementLibraryListWidget.h"
 #include "ui_ElementLibraryWidget.h"
 
@@ -16,7 +16,7 @@ public:
     ~ElementLibraryWidget();
 
 private:
-    ElementTreeWidget elementListWidget;
+    ElementTreeWidget m_elementTreeWidgetObj;
     ElementLibraryListWidget libraryListWidget;
 };
 
