@@ -12,8 +12,8 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     m_parent(parent),
     m_object(Q_NULLPTR)
 {
-    setProperty("title",OBJECT_TITLE);
-    setAttribute("uuid",QUuid::createUuid().toString());
+    setProperty("title", OBJECT_TITLE);
+    setAttribute("uuid", QUuid::createUuid().toString());
 
     if(m_parent!=Q_NULLPTR)
     {

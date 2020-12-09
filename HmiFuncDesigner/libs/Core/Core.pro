@@ -30,11 +30,13 @@ INCLUDEPATH += $$PWD
 
 SOURCES += \
     Core.cpp \
+    StyleHelper.cpp \
     TagEditDialog.cpp
 
 HEADERS += \
     Core_global.h \
     Core.h \
+    StyleHelper.h \
     TagEditDialog.h
 
 unix {

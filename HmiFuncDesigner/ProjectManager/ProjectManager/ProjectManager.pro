@@ -44,13 +44,15 @@ LIBS += -L$$LINK_LIBRARY_PATH -lProjData
 LIBS += -L$$LINK_LIBRARY_PATH -lCore
 
 SOURCES += main.cpp\
+    ../Public/qabstracthost.cpp \
+    ../Public/qabstractwidgethost.cpp \
+    ../Public/qwidgethost.cpp \
+    ../Public/qabstractbuttonhost.cpp \
+    GraphPage/widgethost.cpp \
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
     GraphPage/GraphPageListWidget.cpp \
     GraphPage/formresizer.cpp \
-    GraphPage/qabstractbuttonhost.cpp \
-    GraphPage/qabstracthost.cpp \
-    GraphPage/qabstractwidgethost.cpp \
     GraphPage/qdesignerformhost.cpp \
     GraphPage/qdesignermimedata.cpp \
     GraphPage/qformhost.cpp \
@@ -59,9 +61,7 @@ SOURCES += main.cpp\
     GraphPage/qhostfactory.cpp \
     GraphPage/qpushbuttonhost.cpp \
     GraphPage/qselectwidget.cpp \
-    GraphPage/qwidgethost.cpp \
     GraphPage/sizehandlerect.cpp \
-    GraphPage/widgethost.cpp \
     ListViewEx.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
@@ -93,7 +93,6 @@ SOURCES += main.cpp\
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
-#    DrawMainWindow.cpp \
     GetWidthHeightDialog.cpp \
     GraphPage/GraphPage.cpp \
     GraphPage/GraphPageManager.cpp \
@@ -109,14 +108,16 @@ SOURCES += main.cpp\
     PluginManager.cpp
 
 HEADERS  += MainWindow.h \
+    ../Public/qabstracthost.h \
+    ../Public/qabstractwidgethost.h \
+    ../Public/qwidgethost.h \
+    ../Public/qabstractbuttonhost.h \
+    GraphPage/widgethost.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
     DevicePluginLoader.h \
     GraphPage/GraphPageListWidget.h \
     GraphPage/formresizer.h \
-    GraphPage/qabstractbuttonhost.h \
-    GraphPage/qabstracthost.h \
-    GraphPage/qabstractwidgethost.h \
     GraphPage/qdesignerformhost.h \
     GraphPage/qdesignermimedata.h \
     GraphPage/qformhost.h \
@@ -125,9 +126,7 @@ HEADERS  += MainWindow.h \
     GraphPage/qhostfactory.h \
     GraphPage/qpushbuttonhost.h \
     GraphPage/qselectwidget.h \
-    GraphPage/qwidgethost.h \
     GraphPage/sizehandlerect.h \
-    GraphPage/widgethost.h \
     ListViewEx.h \
     MdiArea.h \
     NewProjectDialog.h \
@@ -160,7 +159,6 @@ HEADERS  += MainWindow.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
-#    DrawMainWindow.h \
     GetWidthHeightDialog.h \
     GraphPage/GraphPage.h \
     GraphPage/GraphPageManager.h \

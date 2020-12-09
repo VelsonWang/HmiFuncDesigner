@@ -12,11 +12,11 @@ class ElementLibraryWidget : public QWidget, public Ui::ElementLibraryWidget
     Q_OBJECT
     
 public:
-    explicit ElementLibraryWidget(QWidget *parent = 0);
+    explicit ElementLibraryWidget(QWidget *parent = Q_NULLPTR);
     ~ElementLibraryWidget();
 
 private:
-    QList<ElementSimpleListWidget *> elementListWidget;
+    ElementTreeWidget elementListWidget;
     ElementLibraryListWidget libraryListWidget;
 };
 

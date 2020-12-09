@@ -5,7 +5,7 @@
 QFormHost::QFormHost(QAbstractHost *parent):
     QAbstractWidgetHost(parent)
 {
-    setProperty("title",FORM_TITLE);
+    setProperty("title", FORM_TITLE);
 }
 
 void QFormHost::createObject()
