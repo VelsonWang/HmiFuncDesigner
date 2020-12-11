@@ -46,17 +46,6 @@ bool ProjectData::openFromXml(const QString &szProjFile)
 
     memcpy((void *)&headerObj_, (void *)buf, sizeof(TFileHeader));
 
-    if(headerObj_.byOpenVerifyPassword != 0) {
-        char tmpBuf[32] = {0};
-        memcpy((void *)tmpBuf, (void *)headerObj_.szPassword, 32);
-        memcpy((void *)&headerObj_.szPassword[16], (void *)&tmpBuf[0], 8);
-        memcpy((void *)&headerObj_.szPassword[24], (void *)&tmpBuf[8], 8);
-        memcpy((void *)&headerObj_.szPassword[0], (void *)&tmpBuf[16], 8);
-        memcpy((void *)&headerObj_.szPassword[8], (void *)&tmpBuf[24], 8);
-    } else {
-        memset((void *)headerObj_.szPassword, 0, 32);
-    }
-
     // 读取工程数据
     QByteArray baTmpProjData;
     baTmpProjData.resize(headerObj_.dwProjSize);
@@ -170,18 +159,6 @@ bool ProjectData::saveToXml(const QString &szProjFile)
     headerObj_.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
     headerObj_.wVersion = 0x0001;
     headerObj_.dwProjSize = baProjData.length();
-    headerObj_.byOpenVerifyPassword = 0; // 打开工程暂时不需要验证密码
-    if(headerObj_.byOpenVerifyPassword != 0) {
-        char tmpBuf[32] = {0};
-        memcpy((void *)tmpBuf, (void *)headerObj_.szPassword, 32);
-        memcpy((void *)&headerObj_.szPassword[0], (void *)&tmpBuf[16], 8);
-        memcpy((void *)&headerObj_.szPassword[8], (void *)&tmpBuf[24], 8);
-        memcpy((void *)&headerObj_.szPassword[16], (void *)&tmpBuf[0], 8);
-        memcpy((void *)&headerObj_.szPassword[24], (void *)&tmpBuf[8], 8);
-    } else {
-        memset((void *)headerObj_.szPassword, 0, 32);
-    }
-
     memcpy((void *)buf, (void *)&headerObj_, sizeof(TFileHeader));
     if(fileProj.write((const char *)buf, headerObj_.wSize) != headerObj_.wSize) {
         fileProj.close();

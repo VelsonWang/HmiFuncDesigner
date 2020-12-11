@@ -90,6 +90,7 @@ SOURCES += main.cpp\
     InsertFunctionDialog.cpp \
     InsertTagDialog.cpp \
     ScriptRunConditionEditorDlg.cpp \
+    VerifyPasswordDialog.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
@@ -155,6 +156,7 @@ HEADERS  += MainWindow.h \
     InsertTagDialog.h \
     ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
+    VerifyPasswordDialog.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \

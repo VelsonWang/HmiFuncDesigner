@@ -123,6 +123,8 @@ private slots:
     void onCloseProject();
     // 保存工程
     void onSaveProject();
+    // 设置打开工程的密码
+    void onSetOpenProjPassword();
     // 退出
     void onExit();
 

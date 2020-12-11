@@ -1,5 +1,6 @@
 docs
 lib
+tmp
 build-*
 HmiFuncDesignerBin/bin/bearer/
 HmiFuncDesignerBin/bin/iconengines/
@@ -49,6 +50,7 @@ HmiRunTimeBin/*.dll
 HmiRunTimeBin/ViewElements/
 
 third/
+
 
 delobj.bat
 

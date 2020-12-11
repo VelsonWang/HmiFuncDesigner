@@ -46,6 +46,7 @@
 #include "CommunicationDeviceChild.h"
 #include "TagManagerChild.h"
 #include "Core.h"
+#include "VerifyPasswordDialog.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -55,6 +56,7 @@
 #include <QScrollArea>
 #include <QToolBar>
 #include <QInputDialog>
+#include <QCryptographicHash>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -313,6 +315,14 @@ void MainWindow::createActions()
         pActObj->setShortcut(QString("Ctrl+S"));
         connect(pActObj, &QAction::triggered, this, &MainWindow::onSaveProject);
         Core::getInstance()->insertAction("Project.Save", pActObj);
+    }
+
+    // 设置打开工程的密码
+    pActObj = new QAction(tr("设置打开工程的密码"), Q_NULLPTR);
+    if(pActObj) {
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onSetOpenProjPassword);
+        Core::getInstance()->insertAction("Project.OpenPassword", pActObj);
+        pActObj->setEnabled(false);
     }
 
     // 最近打开的工程
@@ -649,6 +659,7 @@ void MainWindow::createMenus()
     m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.Open"));
     m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.Close"));
     m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.Save"));
+    m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.OpenPassword"));
     m_pMenuProjectObj->addSeparator();
     m_pMenuProjectObj->addAction(Core::getInstance()->getAction("Project.LastOpen"));
     m_pMenuProjectObj->addSeparator();
@@ -1017,6 +1028,45 @@ void MainWindow::doOpenProject(QString proj)
         return;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+
+    QFileInfo fileInfoSrc(proj);
+    if(fileInfoSrc.size() <= 512) {
+        QMessageBox::information(this, tr("系统提示"), tr("读取工程数据出错，文件头数据有误！"));
+        return;
+    }
+
+    // 读取文件头信息
+    if(!fileProj.open(QIODevice::ReadOnly)) {
+        QMessageBox::information(this, tr("系统提示"), tr("打开工程：") + proj + tr("失败！"));
+        return;
+    }
+
+    quint8 buf[1024] = {0};
+    quint16 wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+
+    if(fileProj.read((char *)buf, wSize) != wSize) {
+        fileProj.close();
+        QMessageBox::information(this, tr("系统提示"), tr("读取文件头数据出错！"));
+        return;
+    }
+    fileProj.close();
+
+    TFileHeader headerObj;
+    memcpy((void *)&headerObj, (void *)buf, sizeof(TFileHeader));
+
+    if(headerObj.byOpenVerifyPassword != 0) {
+        QByteArray baPwd;
+        baPwd.append((const char *)headerObj.szPassword, headerObj.byOpenVerifyPassword);
+        VerifyPasswordDialog dlg;
+        dlg.setTargetPassword(baPwd.toHex());
+        if(dlg.exec() == QDialog::Rejected) {
+            return;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
     ProjectData::getInstance()->szProjFile_ = proj;
     UpdateProjectName(proj);
     QString strFile = Helper::AppDir() + "/lastpath.ini";
@@ -1029,6 +1079,9 @@ void MainWindow::doOpenProject(QString proj)
     // 加载设备变量组信息
     UpdateDeviceVariableTableGroup();
     updateRecentProjectList(proj);
+
+    QAction *pActObj = Core::getInstance()->getAction("Project.OpenPassword");
+    if(pActObj) pActObj->setEnabled(true);
 }
 
 /**
@@ -1162,6 +1215,30 @@ void MainWindow::onSaveProject()
     }
 }
 
+///
+/// \brief MainWindow::onSetOpenProjPassword
+/// \details 设置打开工程的密码
+///
+void MainWindow::onSetOpenProjPassword()
+{
+    VerifyPasswordDialog dlg(false, this);
+    if(dlg.exec() == QDialog::Accepted) {
+        QString szPwd = dlg.getSetPassword();
+        if(szPwd.isEmpty()) {
+            ProjectData::getInstance()->headerObj_.byOpenVerifyPassword = 0;
+            memset(ProjectData::getInstance()->headerObj_.szPassword, 0, 32);
+        } else {
+            memset(ProjectData::getInstance()->headerObj_.szPassword, 0, 32);
+            QCryptographicHash crypt(QCryptographicHash::Md5);
+            crypt.reset();
+            crypt.addData(szPwd.toStdString().c_str(), szPwd.toStdString().length());
+            QByteArray baPwd = crypt.result();
+            qDebug() << "szPassword MD5: " << baPwd.toHex();
+            ProjectData::getInstance()->headerObj_.byOpenVerifyPassword = baPwd.length();
+            memcpy_s(ProjectData::getInstance()->headerObj_.szPassword, 32, baPwd.data(), baPwd.length());
+        }
+    }
+}
 
 /**
     * @brief MainWindow::onCloseProject
@@ -1185,6 +1262,9 @@ void MainWindow::onCloseProject()
     onSlotCloseAll();
     onSlotTabProjectMgrCurChanged(0);
     m_pTabProjectMgrObj->setCurrentIndex(0);
+
+    QAction *pActObj = Core::getInstance()->getAction("Project.OpenPassword");
+    if(pActObj) pActObj->setEnabled(false);
 }
 
 
