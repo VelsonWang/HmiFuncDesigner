@@ -25,6 +25,7 @@ public:
     QAbstractHost* getSelectWidgetObj();
     QAbstractHost* getRootHost();
     void setSelectWidgetObj(QAbstractHost* host);
+    void updateGeometry();
 
     void sameLeft();
     void sameTop();

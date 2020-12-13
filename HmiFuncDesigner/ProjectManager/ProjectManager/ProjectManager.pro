@@ -49,6 +49,8 @@ SOURCES += main.cpp\
     ../Public/QAbstractWidgetHost.cpp \
     ../Public/QWidgetHost.cpp \
     ElementTreeWidget.cpp \
+    GraphPage/GraphPageView.cpp \
+    GraphPage/QFormListWidget.cpp \
     GraphPage/widgethost.cpp \
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
@@ -56,8 +58,6 @@ SOURCES += main.cpp\
     GraphPage/formresizer.cpp \
     GraphPage/qdesignerformhost.cpp \
     GraphPage/qdesignermimedata.cpp \
-    GraphPage/qformlistwidget.cpp \
-    GraphPage/qformwidgetview.cpp \
     GraphPage/qhostfactory.cpp \
     GraphPage/qpushbuttonhost.cpp \
     GraphPage/qselectwidget.cpp \
@@ -100,7 +100,6 @@ SOURCES += main.cpp\
     UndoCommand.cpp \
     ElementLibraryWidget.cpp \
     ElementLibraryListWidget.cpp \
-    ElementLibraryListWidgetItem.cpp \
     GraphPage/GraphPageTreeView.cpp \
     ../Public/PubTool.cpp \
     ../Public/Element.cpp \
@@ -113,6 +112,8 @@ HEADERS  += MainWindow.h \
     ../Public/QAbstractWidgetHost.h \
     ../Public/QWidgetHost.h \
     ElementTreeWidget.h \
+    GraphPage/GraphPageView.h \
+    GraphPage/QFormListWidget.h \
     GraphPage/widgethost.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
@@ -121,8 +122,6 @@ HEADERS  += MainWindow.h \
     GraphPage/formresizer.h \
     GraphPage/qdesignerformhost.h \
     GraphPage/qdesignermimedata.h \
-    GraphPage/qformlistwidget.h \
-    GraphPage/qformwidgetview.h \
     GraphPage/qhostfactory.h \
     GraphPage/qpushbuttonhost.h \
     GraphPage/qselectwidget.h \
@@ -166,7 +165,6 @@ HEADERS  += MainWindow.h \
     UndoCommand.h \
     ElementLibraryWidget.h \
     ElementLibraryListWidget.h \
-    ElementLibraryListWidgetItem.h \
     GraphPage/GraphPageTreeView.h \
     ../Public/PublicDefine.h \
     ../Public/PubTool.h \

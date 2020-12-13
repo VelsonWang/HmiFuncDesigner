@@ -22,6 +22,7 @@ public:
     void showForm(QAbstractHost* host);
     void clear();
     void setSelectObj(QAbstractHost* host);
+    void updateGeometry(QAbstractHost* host);
 
 public slots:
     void sameLeft();
@@ -44,7 +45,7 @@ signals:
 protected:
     QList<QAction*> m_form_action_list;
     QList<QDesignerFormHost*> m_forms;
-    QMap<QAbstractHost*,QDesignerFormHost*> m_host_to_form;
+    QMap<QAbstractHost*, QDesignerFormHost*> m_host_to_form;
     QDesignerFormHost* m_current_form;
 };
 

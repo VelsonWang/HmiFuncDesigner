@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QString>
 #include <QAction>
+#include <QToolBar>
 #include "Core_global.h"
 
 class QActionArray
@@ -41,10 +42,14 @@ public:
     void insertAction(const QString& szKey, QAction *pActObj);
     // 获取全局action
     QAction* getAction(const QString &szKey);
+    // 添加全局工具条
+    void insertToolBar(const QString& szKey, QToolBar *pToolBarObj);
+    // 获取全局工具条
+    QToolBar* getToolBar(const QString &szKey);
 
 protected:
     QActionArray m_actions; // 全局action
-
+    QMap<QString, QToolBar*> m_mapToolBar; // 全局工具条
 
 private:  
 

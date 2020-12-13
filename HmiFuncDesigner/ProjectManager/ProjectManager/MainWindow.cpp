@@ -80,17 +80,6 @@ void MainWindow::initUI()
     centralWidgetLayout->setSpacing(0);
     centralWidgetLayout->setContentsMargins(1, 1, 1, 1);
 
-    m_pGraphPageEditorViewObj = new QFormWidgetView(m_pCentralWidgetObj);
-    ProjectData::getInstance()->pImplGraphPageSaveLoadObj_ = this;
-    QSizePolicy sizePolicyGraphPageTabWidget(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    sizePolicyGraphPageTabWidget.setHorizontalStretch(0);
-    sizePolicyGraphPageTabWidget.setVerticalStretch(0);
-    m_pGraphPageEditorViewObj->setSizePolicy(sizePolicyGraphPageTabWidget);
-    m_pGraphPageEditorViewObj->installEventFilter(this);
-    centralWidgetLayout->addWidget(m_pGraphPageEditorViewObj);
-
-
-
     m_pMdiAreaObj = new MdiArea(m_pCentralWidgetObj);
     QSizePolicy sizePolicyMdiArea(QSizePolicy::Preferred, QSizePolicy::Preferred);
     sizePolicyMdiArea.setHorizontalStretch(0);
@@ -154,7 +143,7 @@ void MainWindow::initUI()
     // 图形元素停靠控件
     m_pDockElemetsObj = new QDockWidget(this);
     m_pDockElemetsObj->setWindowTitle(tr("图形元素"));
-    this->addDockWidget(Qt::RightDockWidgetArea, m_pDockElemetsObj);
+    this->addDockWidget(Qt::LeftDockWidgetArea, m_pDockElemetsObj);
     QWidget *dockElemetsWidget = new QWidget();
     QVBoxLayout *dockElemetsLayout = new QVBoxLayout(dockElemetsWidget);
     dockElemetsLayout->setSpacing(0);
@@ -195,7 +184,6 @@ void MainWindow::initUI()
     createToolbars();
 
     m_pCurrentGraphPageObj = Q_NULLPTR;
-    m_pCurrentViewObj = Q_NULLPTR;
     m_bGraphPageGridVisible = true;
     m_iCurrentGraphPageIndex = 0;
 
@@ -228,6 +216,14 @@ void MainWindow::initUI()
     connect(m_pVariantPropertyMgrObj, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
             this, SLOT(propertyValueChanged(QtProperty *, const QVariant &)));
 
+    m_pGraphPageEditorViewObj = new GraphPageView(m_pVariantPropertyMgrObj, m_pPropertyEditorObj, m_pCentralWidgetObj);
+    ProjectData::getInstance()->pImplGraphPageSaveLoadObj_ = this;
+    QSizePolicy sizePolicyGraphPageTabWidget(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    sizePolicyGraphPageTabWidget.setHorizontalStretch(0);
+    sizePolicyGraphPageTabWidget.setVerticalStretch(0);
+    m_pGraphPageEditorViewObj->setSizePolicy(sizePolicyGraphPageTabWidget);
+    m_pGraphPageEditorViewObj->installEventFilter(this);
+    centralWidgetLayout->addWidget(m_pGraphPageEditorViewObj);
 
     slotUpdateActions();
     //connect(m_pGraphPageEditorObj, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
@@ -688,7 +684,7 @@ void MainWindow::createMenus()
     m_pMenuToolsObj->addAction(Core::getInstance()->getAction("Tools.UpLoad")); // 上传工程
 
     //-----------------------------<窗口菜单>----------------------------------
-    m_pActWindowMenuObj = this->menuBar()->addMenu(tr("Window"));
+    m_pActWindowMenuObj = this->menuBar()->addMenu(tr("窗口"));
     connect(m_pActWindowMenuObj, &QMenu::aboutToShow, this, &MainWindow::onSlotUpdateWindowMenu);
     QAction *pActObj = new QAction();
     if(pActObj) {
@@ -711,55 +707,58 @@ void MainWindow::createMenus()
     */
 void MainWindow::createToolbars()
 {
+    QToolBar *pToolBarObj = new QToolBar();
     //-----------------------------<工程工具栏>-----------------------------------
-    m_pToolBarProjectObj = new QToolBar(this);
-    m_pToolBarProjectObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.New"));
-    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Open"));
-    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Close"));
-    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Save"));
-    m_pToolBarProjectObj->addAction(Core::getInstance()->getAction("Project.Exit"));
+    pToolBarObj = new QToolBar(this);
+    Core::getInstance()->insertToolBar("ToolBar.Project", pToolBarObj);
+    pToolBarObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    pToolBarObj->addAction(Core::getInstance()->getAction("Project.New"));
+    pToolBarObj->addAction(Core::getInstance()->getAction("Project.Open"));
+    pToolBarObj->addAction(Core::getInstance()->getAction("Project.Close"));
+    pToolBarObj->addAction(Core::getInstance()->getAction("Project.Save"));
+    pToolBarObj->addAction(Core::getInstance()->getAction("Project.Exit"));
 
     //-----------------------------<画面编辑器>----------------------------------
-    m_pToolBarGraphPageEditObj = new QToolBar(this);
-    m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.ShowGrid")); // 显示栅格
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.ZoomOut")); //画面缩小
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.ZoomIn")); // 画面放大
-    m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Undo")); // 撤销
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Redo")); // 重做
-    m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Copy")); // 拷贝画面
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Paste")); // 粘贴画面
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.Delete")); // 删除画面
-    m_pToolBarGraphPageEditObj->addSeparator();
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignTop")); // 顶部对齐
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignBottom")); // 底部对齐
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignLeft")); // 左对齐
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.AlignRight")); // 右对齐
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.HUniformDistribute")); // 水平均匀分布
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.VUniformDistribute")); // 垂直均匀分布
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.SameSize")); // 设置选中控件大小一致
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.UpLayer")); // 上移一层
-    m_pToolBarGraphPageEditObj->addAction(Core::getInstance()->getAction("GraphPage.DownLayer")); // 下移一层
-    m_pToolBarGraphPageEditObj->addSeparator();
+    pToolBarObj = new QToolBar(this);
+    Core::getInstance()->insertToolBar("ToolBar.GraphPage", pToolBarObj);
+    pToolBarObj->addSeparator();
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.ShowGrid")); // 显示栅格
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.ZoomOut")); //画面缩小
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.ZoomIn")); // 画面放大
+    pToolBarObj->addSeparator();
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.Undo")); // 撤销
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.Redo")); // 重做
+    pToolBarObj->addSeparator();
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.Copy")); // 拷贝画面
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.Paste")); // 粘贴画面
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.Delete")); // 删除画面
+    pToolBarObj->addSeparator();
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.AlignTop")); // 顶部对齐
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.AlignBottom")); // 底部对齐
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.AlignLeft")); // 左对齐
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.AlignRight")); // 右对齐
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.HUniformDistribute")); // 水平均匀分布
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.VUniformDistribute")); // 垂直均匀分布
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.SameSize")); // 设置选中控件大小一致
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.UpLayer")); // 上移一层
+    pToolBarObj->addAction(Core::getInstance()->getAction("GraphPage.DownLayer")); // 下移一层
+    pToolBarObj->addSeparator();
 
     //-----------------------------<工具>----------------------------------
+    pToolBarObj = new QToolBar(this);
+    Core::getInstance()->insertToolBar("ToolBar.Tools", pToolBarObj);
+    pToolBarObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    pToolBarObj->addAction(Core::getInstance()->getAction("Tools.Simulate")); // 模拟仿真
+    pToolBarObj->addAction(Core::getInstance()->getAction("Tools.Run")); // 运行工程
+    pToolBarObj->addAction(Core::getInstance()->getAction("Tools.Download")); // 下载工程
+    pToolBarObj->addAction(Core::getInstance()->getAction("Tools.UpLoad")); // 上传工程
 
-    m_pToolBarToolsObj = new QToolBar(this);
-    m_pToolBarToolsObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.Simulate")); // 模拟仿真
-    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.Run")); // 运行工程
-    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.Download")); // 下载工程
-    m_pToolBarToolsObj->addAction(Core::getInstance()->getAction("Tools.UpLoad")); // 上传工程
+    //--------------------------------------------------------------------------
 
-
-
-    this->addToolBar(Qt::TopToolBarArea, m_pToolBarProjectObj);
-    this->addToolBar(Qt::TopToolBarArea, m_pToolBarToolsObj);
+    this->addToolBar(Qt::TopToolBarArea, Core::getInstance()->getToolBar("ToolBar.Project"));
+    this->addToolBar(Qt::TopToolBarArea, Core::getInstance()->getToolBar("ToolBar.Tools"));
     //addToolBarBreak();
-    this->addToolBar(Qt::TopToolBarArea, m_pToolBarGraphPageEditObj);
+    this->addToolBar(Qt::TopToolBarArea, Core::getInstance()->getToolBar("ToolBar.GraphPage"));
 }
 
 /**
@@ -1686,37 +1685,8 @@ QString MainWindow::fixedWindowTitle(const QGraphicsView *viewGraphPage) const
 
 GraphPage *MainWindow::addNewGraphPage(const QString &szName)
 {   
-//    QGraphicsView *view = createTabView();
-
-//    if (m_pGraphPageEditorObj->indexOf(view) != -1) {
-//        delete view;
-//        return Q_NULLPTR;
-//    }
-
-//    GraphPage *graphPage = new GraphPage(QRectF(), m_pVariantPropertyMgrObj, m_pPropertyEditorObj);
-//    graphPage->setGridVisible(m_bGraphPageGridVisible);
-//    m_pCurrentGraphPageObj = graphPage;
-//    view->setScene(graphPage);
-//    view->setFixedSize(graphPage->getGraphPageWidth(), graphPage->getGraphPageHeight());
-//    m_pCurrentViewObj = dynamic_cast<QGraphicsView *>(view);
-//    //QString title = fixedWindowTitle(view);
-//    graphPage->setGraphPageId(szName);
-//    m_pGraphPageEditorObj->addTab(m_pCurrentViewObj, szName);
-//    m_pGraphPageEditorObj->setCurrentWidget(m_pCurrentViewObj);
-//    GraphPageManager::getInstance()->addGraphPage(graphPage);
-
-//    m_pUndoGroupObj->addStack(graphPage->undoStack());
-//    m_pUndoGroupObj->setActiveStack(graphPage->undoStack());
-
-//    QList<QListWidgetItem*> listWidgetItem = this->m_pListWidgetGraphPagesObj->findItems(szName, Qt::MatchCaseSensitive);
-//    if (listWidgetItem.size() > 0) {
-//        this->m_pListWidgetGraphPagesObj->setCurrentItem(listWidgetItem.at(0));
-//        m_pGraphPageEditorObj->setCurrentIndex(this->m_pListWidgetGraphPagesObj->currentRow());
-//    }
-
-//    connectGraphPage(graphPage);
-
-//    return graphPage;
+    GraphPage *pGraphPageObj = m_pGraphPageEditorViewObj->createGraphPage(szName);
+    return pGraphPageObj;
 }
 
 void MainWindow::connectGraphPage(GraphPage *graphPage)
@@ -2003,10 +1973,10 @@ void MainWindow::onSlotZoomIn()
         m_pCurrentGraphPageObj->setGraphPageHeight(static_cast<int>(height * 1.25));
         m_pCurrentGraphPageObj->setGridVisible(m_pCurrentGraphPageObj->isGridVisible());
     }
-    if (m_pCurrentViewObj != Q_NULLPTR) {
-        m_pCurrentViewObj->scale(1.25, 1.25);
-        m_pCurrentViewObj->setFixedSize(m_pCurrentGraphPageObj->getGraphPageWidth(), m_pCurrentGraphPageObj->getGraphPageHeight());
-    }
+//    if (m_pCurrentViewObj != Q_NULLPTR) {
+//        m_pCurrentViewObj->scale(1.25, 1.25);
+//        m_pCurrentViewObj->setFixedSize(m_pCurrentGraphPageObj->getGraphPageWidth(), m_pCurrentGraphPageObj->getGraphPageHeight());
+//    }
 }
 
 
@@ -2023,10 +1993,10 @@ void MainWindow::onSlotZoomOut()
         m_pCurrentGraphPageObj->setGraphPageHeight(static_cast<int>(height * 1/1.25));
         m_pCurrentGraphPageObj->setGridVisible(m_pCurrentGraphPageObj->isGridVisible());
     }
-    if (m_pCurrentViewObj != Q_NULLPTR) {
-        m_pCurrentViewObj->scale(1/1.25, 1/1.25);
-        m_pCurrentViewObj->setFixedSize(m_pCurrentGraphPageObj->getGraphPageWidth(), m_pCurrentGraphPageObj->getGraphPageHeight());
-    }
+//    if (m_pCurrentViewObj != Q_NULLPTR) {
+//        m_pCurrentViewObj->scale(1/1.25, 1/1.25);
+//        m_pCurrentViewObj->setFixedSize(m_pCurrentGraphPageObj->getGraphPageWidth(), m_pCurrentGraphPageObj->getGraphPageHeight());
+//    }
 }
 
 
@@ -2362,18 +2332,19 @@ void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
     */
 void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 {
+    QToolBar *pToolBarObj = Core::getInstance()->getToolBar("ToolBar.GraphPage");
     if(ProjectData::getInstance()->szProjFile_ == "") {
         m_pMdiAreaObj->setVisible(true);
         m_pGraphPageEditorViewObj->setVisible(false);
         m_pDockPropertyObj->setVisible(false); // 属性停靠控件
         m_pDockElemetsObj->setVisible(false); // 图形元素停靠控件
-        m_pToolBarGraphPageEditObj->setVisible(false); // 画面编辑工具条
+        if(pToolBarObj) pToolBarObj->setVisible(false); // 画面编辑工具条
     } else {
         m_pMdiAreaObj->setVisible(index == 0);
         m_pGraphPageEditorViewObj->setVisible(index == 1);
         m_pDockPropertyObj->setVisible(index == 1); // 属性停靠控件
         m_pDockElemetsObj->setVisible(index == 1); // 图形元素停靠控件
-        m_pToolBarGraphPageEditObj->setVisible(index == 1);
+        if(pToolBarObj) pToolBarObj->setVisible(index == 1);
     }
 }
 

@@ -477,6 +477,10 @@ void QDesignerFormHost::setSelectWidgetObj(QAbstractHost *host)
     }
 }
 
+void QDesignerFormHost::updateGeometry() {
+    m_widget_host->updateFormGeometry();
+}
+
 void QDesignerFormHost::sameLeft()
 {
     if(m_selection->selectedWidgets().size()<=1)

@@ -78,3 +78,24 @@ QAction* Core::getAction(const QString &szKey)
 
     return pActGroupObjs->m_pActionObj;
 }
+
+
+/**
+ * @brief Core::insertToolBar
+ * @details 添加全局工具条
+ * @param szKey 工具条对象对应的ID
+ * @param pToolBarObj 工具条对象
+ */
+void Core::insertToolBar(const QString& szKey, QToolBar *pToolBarObj) {
+    m_mapToolBar.insert(szKey.toLower(), pToolBarObj);
+}
+
+/**
+ * @brief Core::getToolBar
+ * @details 获取全局工具条
+ * @param szKey 工具条对象对应的ID
+ * @return 工具条对象
+ */
+QToolBar* Core::getToolBar(const QString &szKey) {
+    return m_mapToolBar.value(szKey.toLower());
+}

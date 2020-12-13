@@ -28,7 +28,8 @@ class GraphPage : public QAbstractWidgetHost
     Q_OBJECT
 
 public:
-    GraphPage(const QRectF &rect,
+    GraphPage(int iWidth,
+              int iHeight,
               QtVariantPropertyManager *propertyMgr,
               QtTreePropertyBrowser *propertyEditor,
               QAbstractHost *parent = Q_NULLPTR);
@@ -53,9 +54,6 @@ public:
 
     QUndoStack *undoStack() const;
 
-    void setActive(bool);
-    bool active();
-
     void fillGraphPagePropertyModel();
 
     bool openFromXml(XMLObject *pXmlObj);
@@ -70,6 +68,8 @@ public:
     void connectItem(Element *item);
     bool getUnsavedFlag();
     void setUnsavedFlag(bool bFlag = true);
+
+    void selected();
 
 protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
@@ -166,14 +166,11 @@ private:
     static const int gridSize = 20;
     static const int pasteOffset = 20;
     QString graphPageId;
-    QString graphPagePriority;
     QString filename;
     QColor graphPageBackground;
     int graphPageWidth;
     int graphPageHeight;
     QStringList funcs_;
-
-    bool onActive;
     bool unsavedFlag_;
 
     QUndoStack *m_undoStack;

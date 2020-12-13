@@ -3,6 +3,21 @@
 
 #include <QListWidget>
 #include <QMouseEvent>
+#include <QListWidgetItem>
+
+class ElementLibraryListWidgetItem : public QListWidgetItem
+{
+public:
+    ElementLibraryListWidgetItem();
+
+    void setFilePath(const QString &);
+    QString getFilePath() const;
+
+private:
+    QString m_szFilePath;
+};
+
+//------------------------------------------------------------------------------
 
 class ElementLibraryListWidget : public QListWidget
 {

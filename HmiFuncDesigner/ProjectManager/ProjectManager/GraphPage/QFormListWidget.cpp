@@ -1,8 +1,6 @@
-#include "qformlistwidget.h"
+#include "QFormListWidget.h"
 #include "qdesignerformhost.h"
 #include "QAbstractHost.h"
-
-
 #include <QVBoxLayout>
 #include <QVariant>
 #include <QApplication>
@@ -12,7 +10,7 @@ QFormListWidget::QFormListWidget(QWidget *parent):
     QWidget(parent),
     m_current_form(Q_NULLPTR)
 {
-    QVBoxLayout *l=new QVBoxLayout;
+    QVBoxLayout *l = new QVBoxLayout(parent);
     l->setMargin(0);
     l->setSpacing(0);
     this->setLayout(l);
@@ -78,8 +76,8 @@ void QFormListWidget::insertForm(QAbstractHost *host, int index)
     {
         index=m_forms.size();
     }
-    QDesignerFormHost *form=new QDesignerFormHost(host,this);
-    connect(form,SIGNAL(select(QAbstractHost*)),this,SIGNAL(select(QAbstractHost*)));
+    QDesignerFormHost *form = new QDesignerFormHost(host,this);
+    connect(form, SIGNAL(selectObj(QAbstractHost*)), this, SIGNAL(selectObj(QAbstractHost*)));
     form->setSelectWidgetObj(host);
     m_forms.insert(index,form);
     m_host_to_form.insert(host,form);
@@ -125,7 +123,6 @@ void QFormListWidget::removeForm(QAbstractHost *host)
 
 void QFormListWidget::showForm(QAbstractHost *host)
 {
-
     QDesignerFormHost *form=m_host_to_form.value(host);
     if(m_current_form==form)
     {
@@ -140,6 +137,15 @@ void QFormListWidget::showForm(QAbstractHost *host)
     {
         m_current_form->show();
     }
+}
+
+void QFormListWidget::updateGeometry(QAbstractHost* host)
+{
+    QDesignerFormHost *pObj = m_host_to_form.value(host);
+    if(pObj != Q_NULLPTR) {
+        pObj->updateGeometry();
+    }
+
 }
 
 void QFormListWidget::clear()

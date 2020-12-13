@@ -19,7 +19,7 @@
 #include "GraphPageListWidget.h"
 #include "ChildInterface.h"
 #include "IGraphPageSaveLoad.h"
-#include "qformwidgetview.h"
+#include "GraphPageView.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -221,8 +221,7 @@ private:
     QString m_szCurItem;
     QString m_szCurTreeViewItem;
     GraphPage *m_pCurrentGraphPageObj = Q_NULLPTR;
-    QGraphicsView *m_pCurrentViewObj = Q_NULLPTR;
-    QFormWidgetView *m_pGraphPageEditorViewObj = Q_NULLPTR;
+    GraphPageView *m_pGraphPageEditorViewObj = Q_NULLPTR;
     ElementLibraryWidget *m_pElementWidgetObj = Q_NULLPTR;
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;
@@ -247,13 +246,10 @@ private:
     QDockWidget *m_pDockPropertyObj = Q_NULLPTR; // 属性停靠控件
     QDockWidget *m_pDockElemetsObj = Q_NULLPTR; // 图形元素停靠控件
     QTabWidget *m_pTabProjectMgrObj = Q_NULLPTR; // 工程管理器TabWidget控件
-    QToolBar *m_pToolBarGraphPageEditObj = Q_NULLPTR; // 画面编辑工具条
     QUndoGroup *m_pUndoGroupObj = Q_NULLPTR;
     QMenu *m_pMenuProjectObj = Q_NULLPTR; // 工程菜单
-    QToolBar *m_pToolBarProjectObj = Q_NULLPTR; // 工程工具条
     QMenu *m_pMenuViewObj = Q_NULLPTR; // 视图
     QMenu *m_pMenuToolsObj = Q_NULLPTR; // 工具菜单
-    QToolBar *m_pToolBarToolsObj = Q_NULLPTR;
     QMenu *m_pActWindowMenuObj = Q_NULLPTR; // 窗口菜单
     QMenu *m_pMenuHelpObj = Q_NULLPTR; // 帮助菜单
 };

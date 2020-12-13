@@ -1,10 +1,24 @@
 ﻿#include "ElementLibraryListWidget.h"
-#include "ElementLibraryListWidgetItem.h"
 #include <QFileDialog>
 #include <QApplication>
 #include <QtDebug>
 #include <QMimeData>
 #include <QDrag>
+
+
+ElementLibraryListWidgetItem::ElementLibraryListWidgetItem() {
+}
+
+void ElementLibraryListWidgetItem::setFilePath(const QString &path) {
+    m_szFilePath = path;
+}
+
+QString ElementLibraryListWidgetItem::getFilePath() const {
+    return m_szFilePath;
+}
+
+
+//------------------------------------------------------------------------------
 
 ElementLibraryListWidget::ElementLibraryListWidget(QListWidget *parent)
     : QListWidget(parent)
@@ -13,22 +27,18 @@ ElementLibraryListWidget::ElementLibraryListWidget(QListWidget *parent)
 }
 
 void ElementLibraryListWidget::mousePressEvent(QMouseEvent *event) {
-
     if (event->button() == Qt::LeftButton) {
         startPos = event->pos();
     }
-
     QListWidget::mousePressEvent(event);
 }
 
 void ElementLibraryListWidget::mouseMoveEvent(QMouseEvent *event) {
-
     if (event->buttons() & Qt::LeftButton) {
          int distance = (event->pos() - startPos).manhattanLength();
          if (distance >= QApplication::startDragDistance())
              startDrag();
      }
-
      QListWidget::mouseMoveEvent(event);
 }
 

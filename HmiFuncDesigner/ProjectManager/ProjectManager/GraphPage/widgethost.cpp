@@ -6,7 +6,7 @@
 
 WidgetHost::WidgetHost(QWidget *parent):
     QScrollArea(parent),
-    m_formResizer(new FormResizer(this))
+    m_formResizer(new FormResizer())
 {
     setWidget(m_formResizer);
     setFrameStyle(QFrame::NoFrame);
