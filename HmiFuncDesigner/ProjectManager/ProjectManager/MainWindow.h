@@ -8,18 +8,14 @@
 #include <QUndoView>
 #include <QUndoGroup>
 #include <QUndoStack>
-#include "GraphPageTreeView.h"
 #include "ElementLibraryWidget.h"
-#include "GraphPage.h"
-#include "GraphPageManager.h"
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
 #include "ProjectTreeView.h"
-#include "GraphPageListWidget.h"
 #include "ChildInterface.h"
 #include "IGraphPageSaveLoad.h"
-#include "GraphPageView.h"
+#include "GraphPageListWidget.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -39,7 +35,7 @@
 #include <QWidget>
 #include <QSignalMapper>
 
-
+class QAbstractPage;
 
 class MainWindow : public QMainWindow, public IGraphPageSaveLoad
 {
@@ -89,27 +85,17 @@ public:
 
 private:
     void createUndoView();
-    GraphPage *addNewGraphPage(const QString &szName);
-    QString fixedWindowTitle(const QGraphicsView *viewGraphPage) const;
     int exitResponse();
     void updateGraphPageViewInfo(const QString &);
-    void connectGraphPage(GraphPage *graphPage);
-    void disconnectGraphPage(GraphPage *graphPage);
-    void removeGraphPage(QGraphicsView *view);
-    bool createDocument(GraphPage *graphPage, QGraphicsView *view);
     // 清空画面列表控件
     void clearGraphPageListWidget();
 
 public slots:
-    void slotNewElementAdded();
-    void slotElementsDeleted();
     void slotElementIdChanged();
     void slotElementPropertyChanged();
     void slotGraphPagePropertyChanged();
-    void propertyValueChanged(QtProperty *property, const QVariant &value);
 
 private slots:
-    QGraphicsView *createTabView();
     void slotUpdateActions();
     void slotChangeGraphPage(int);
     void slotChangeGraphPageName();
@@ -128,16 +114,6 @@ private slots:
     // 退出
     void onExit();
 
-    // 窗口.图形元素 动作响应函数
-    void onSlotShowGraphObj(bool);
-    // 窗口.属性编辑器 动作响应函数
-    void onSlotShowPropEditor(bool);
-    // 显示栅格
-    void onSlotShowGrid(bool);
-    // 画面放大
-    void onSlotZoomIn();
-    // 画面缩小
-    void onSlotZoomOut();
     // 关闭画面
     void onSlotCloseGraphPage();
     // 关闭所有画面
@@ -148,18 +124,6 @@ private slots:
     void onSlotEditPaste();
     // 删除画面
     void onSlotEditDelete();
-    // 对齐操作
-    void onSlotAlignElements();
-    // 水平均匀分布
-    void onSlotHUniformDistributeElements();
-    // 垂直均匀分布
-    void onSlotVUniformDistributeElements();
-    // 设置选中控件大小一致
-    void onSlotSetTheSameSizeElements();
-    // 上移一层
-    void onSlotUpLayerElements();
-    // 下移一层
-    void onSlotDownLayerElements();
     // 画面名称被单击
     void onSlotGraphPageNameClicked(QListWidgetItem *pItemObj);
     // 创建指定名称的画面
@@ -220,31 +184,18 @@ private:
 private:
     QString m_szCurItem;
     QString m_szCurTreeViewItem;
-    GraphPage *m_pCurrentGraphPageObj = Q_NULLPTR;
-    GraphPageView *m_pGraphPageEditorViewObj = Q_NULLPTR;
-    ElementLibraryWidget *m_pElementWidgetObj = Q_NULLPTR;
+    QWidget *m_pDesignerWidgetObj = Q_NULLPTR;
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;
     QString m_szCopyGraphPageFileName;
     QWidget* m_childCurrent = Q_NULLPTR;
     QSignalMapper* m_windowMapper = Q_NULLPTR;
-
-    QtVariantPropertyManager *m_pVariantPropertyMgrObj = Q_NULLPTR;
-    QtTreePropertyBrowser *m_pPropertyEditorObj = Q_NULLPTR;
-    QtVariantEditorFactory *m_pVariantEditorFactoryObj = Q_NULLPTR;
-    QMap<QtProperty *, QString> m_mapPropertyObjToId;
-    QMap<QString, QtVariantProperty *> m_mapIdToPropertyObj;
-    QMap<QString, bool> m_mapIdToExpanded;
-    QVBoxLayout *m_pElemetsLayoutObj = Q_NULLPTR;
-    QVBoxLayout *m_pPropertyLayoutObj = Q_NULLPTR;
     QWidget *m_pCentralWidgetObj = Q_NULLPTR;
     MdiArea *m_pMdiAreaObj = Q_NULLPTR;
     ProjectTreeView *m_pProjectTreeViewObj = Q_NULLPTR;
     GraphPageListWidget *m_pListWidgetGraphPagesObj = Q_NULLPTR; // 画面名称列表
     QStatusBar *m_pStatusBarObj = Q_NULLPTR; // 状态栏
     QDockWidget *m_pDockProjectMgrObj = Q_NULLPTR; // 工程管理器停靠控件
-    QDockWidget *m_pDockPropertyObj = Q_NULLPTR; // 属性停靠控件
-    QDockWidget *m_pDockElemetsObj = Q_NULLPTR; // 图形元素停靠控件
     QTabWidget *m_pTabProjectMgrObj = Q_NULLPTR; // 工程管理器TabWidget控件
     QUndoGroup *m_pUndoGroupObj = Q_NULLPTR;
     QMenu *m_pMenuProjectObj = Q_NULLPTR; // 工程菜单
@@ -252,6 +203,7 @@ private:
     QMenu *m_pMenuToolsObj = Q_NULLPTR; // 工具菜单
     QMenu *m_pActWindowMenuObj = Q_NULLPTR; // 窗口菜单
     QMenu *m_pMenuHelpObj = Q_NULLPTR; // 帮助菜单
+    QMap<QString, QAbstractPage*> m_mapNameToPage;
 };
 
 #endif // MAINWINDOW_H

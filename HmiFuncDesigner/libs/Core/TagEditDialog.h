@@ -1,17 +1,17 @@
-#ifndef TagEditDialog_H
-#define TagEditDialog_H
+#ifndef TAGEDITDIALOG_H
+#define TAGEDITDIALOG_H
 
 #include <QDialog>
 #include <QMap>
 #include <QStringList>
 #include <QJsonObject>
-#include "Core_global.h"
+#include "corelibglobal.h"
 
 namespace Ui {
 class TagEditDialog;
 }
 
-class CORESHARED_EXPORT TagEditDialog : public QDialog
+class CORELIB_EXPORT TagEditDialog : public QDialog
 {
     Q_OBJECT
 

@@ -1,5 +1,5 @@
-#include "TagEditDialog.h"
-#include "ui_TagEditDialog.h"
+#include "tageditdialog.h"
+#include "ui_tageditdialog.h"
 #include <QMessageBox>
 
 

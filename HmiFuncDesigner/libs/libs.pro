@@ -1,8 +1,7 @@
-
 include(../HmiFuncDesigner.pri)
 
 TEMPLATE  = subdirs
-
+CONFIG += ordered
 SUBDIRS   = \
     Utils \
     edncrypt \
@@ -12,9 +11,10 @@ SUBDIRS   = \
 #    Lua \
 #    Ftp \
     ProjData \
-    Core
-
-
+    shared \
+    gradienteditor \
+    core \
+    running
 
 
 for(l, SUBDIRS) {

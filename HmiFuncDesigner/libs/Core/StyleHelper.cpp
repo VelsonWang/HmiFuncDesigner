@@ -1,4 +1,5 @@
-#include "StyleHelper.h"
+#include "stylehelper.h"
+
 #include <QPixmapCache>
 #include <QWidget>
 #include <QRect>
@@ -125,12 +126,12 @@ QColor StyleHelper::highlightColor(bool lightColored)
     QColor result = baseColor(lightColored);
     if (!lightColored)
         result.setHsv(result.hue(),
-                      clamp(result.saturation()),
-                      clamp(result.value() * 1.16));
+                  clamp(result.saturation()),
+                  clamp(result.value() * 1.16));
     else
         result.setHsv(result.hue(),
-                      clamp(result.saturation()),
-                      clamp(result.value() * 1.06));
+                  clamp(result.saturation()),
+                  clamp(result.value() * 1.06));
     return result;
 }
 
@@ -189,8 +190,8 @@ void StyleHelper::verticalGradient(QPainter *painter, const QRect &spanRect, con
         QString key;
         QColor keyColor = baseColor(lightColored);
         key.sprintf("mh_vertical %d %d %d %d %d",
-                    spanRect.width(), spanRect.height(), clipRect.width(),
-                    clipRect.height(), keyColor.rgb());;
+            spanRect.width(), spanRect.height(), clipRect.width(),
+            clipRect.height(), keyColor.rgb());;
 
         QPixmap pixmap;
         if (!QPixmapCache::find(key, pixmap)) {
@@ -209,7 +210,7 @@ void StyleHelper::verticalGradient(QPainter *painter, const QRect &spanRect, con
 }
 
 void StyleHelper::horizontalGradientHelper(QPainter *p, const QRect &spanRect, const
-                                           QRect &rect, bool lightColored)
+QRect &rect, bool lightColored)
 {//纵向渐变色绘制，原理基本横向绘制
     if (lightColored) {
         QLinearGradient shadowGradient(rect.topLeft(), rect.bottomLeft());
@@ -232,12 +233,12 @@ void StyleHelper::horizontalGradientHelper(QPainter *p, const QRect &spanRect, c
     p->fillRect(rect, grad);
 
     QLinearGradient shadowGradient(spanRect.topLeft(), spanRect.topRight());
-    shadowGradient.setColorAt(0, QColor(0, 0, 0, 30));
+        shadowGradient.setColorAt(0, QColor(0, 0, 0, 30));
     QColor lighterHighlight;
     lighterHighlight = highlight.lighter(100);
     lighterHighlight.setAlpha(80);
     shadowGradient.setColorAt(0.7, lighterHighlight);
-    shadowGradient.setColorAt(1, QColor(0, 0, 0, 40));
+        shadowGradient.setColorAt(1, QColor(0, 0, 0, 40));
     p->fillRect(rect, shadowGradient);
 }
 
@@ -247,8 +248,8 @@ void StyleHelper::horizontalGradient(QPainter *painter, const QRect &spanRect, c
         QString key;
         QColor keyColor = baseColor(lightColored);
         key.sprintf("mh_horizontal %d %d %d %d %d %d",
-                    spanRect.width(), spanRect.height(), clipRect.width(),
-                    clipRect.height(), keyColor.rgb(), spanRect.x());
+            spanRect.width(), spanRect.height(), clipRect.width(),
+            clipRect.height(), keyColor.rgb(), spanRect.x());
 
         QPixmap pixmap;
         if (!QPixmapCache::find(key, pixmap)) {
@@ -310,20 +311,20 @@ void StyleHelper::drawArrow(QStyle::PrimitiveElement element, QPainter *painter,
         imagePainter.translate(0.5, 0.5);
         QPolygon a;
         switch (element) {
-        case QStyle::PE_IndicatorArrowUp:
-            a.setPoints(3, border, sqsize/2,  sqsize/2, border,  sqsize - border, sqsize/2);
-            break;
-        case QStyle::PE_IndicatorArrowDown:
-            a.setPoints(3, border, sqsize/2,  sqsize/2, sqsize - border,  sqsize - border, sqsize/2);
-            break;
-        case QStyle::PE_IndicatorArrowRight:
-            a.setPoints(3, sqsize - border, sqsize/2,  sqsize/2, border,  sqsize/2, sqsize - border);
-            break;
-        case QStyle::PE_IndicatorArrowLeft:
-            a.setPoints(3, border, sqsize/2,  sqsize/2, border,  sqsize/2, sqsize - border);
-            break;
-        default:
-            break;
+            case QStyle::PE_IndicatorArrowUp:
+                a.setPoints(3, border, sqsize/2,  sqsize/2, border,  sqsize - border, sqsize/2);
+                break;
+            case QStyle::PE_IndicatorArrowDown:
+                a.setPoints(3, border, sqsize/2,  sqsize/2, sqsize - border,  sqsize - border, sqsize/2);
+                break;
+            case QStyle::PE_IndicatorArrowRight:
+                a.setPoints(3, sqsize - border, sqsize/2,  sqsize/2, border,  sqsize/2, sqsize - border);
+                break;
+            case QStyle::PE_IndicatorArrowLeft:
+                a.setPoints(3, border, sqsize/2,  sqsize/2, border,  sqsize/2, sqsize - border);
+                break;
+            default:
+                break;
         }
 
         int bsx = 0;
@@ -369,8 +370,8 @@ void StyleHelper::menuGradient(QPainter *painter, const QRect &spanRect, const Q
     if (usePixmapCache()) {
         QString key;
         key.sprintf("mh_menu %d %d %d %d %d",
-                    spanRect.width(), spanRect.height(), clipRect.width(),
-                    clipRect.height(), StyleHelper::baseColor().rgb());
+            spanRect.width(), spanRect.height(), clipRect.width(),
+            clipRect.height(), StyleHelper::baseColor().rgb());
 
         QPixmap pixmap;
         if (!QPixmapCache::find(key, pixmap)) {
@@ -489,12 +490,12 @@ void StyleHelper::drawCornerImage(const QImage &img, QPainter *painter, QRect re
                                  rect.width() - right - left, bottom), img,
                            QRect(left, size.height() - bottom,
                                  size.width() - right - left, bottom));
-        if (left > 0) //bottom-left
-            painter->drawImage(QRect(rect.left(), rect.top() + rect.height() - bottom, left, bottom), img,
-                               QRect(0, size.height() - bottom, left, bottom));
-        if (right > 0) //bottom-right
-            painter->drawImage(QRect(rect.left() + rect.width() - right, rect.top() + rect.height() - bottom, right, bottom), img,
-                               QRect(size.width() - right, size.height() - bottom, right, bottom));
+    if (left > 0) //bottom-left
+        painter->drawImage(QRect(rect.left(), rect.top() + rect.height() - bottom, left, bottom), img,
+                           QRect(0, size.height() - bottom, left, bottom));
+    if (right > 0) //bottom-right
+        painter->drawImage(QRect(rect.left() + rect.width() - right, rect.top() + rect.height() - bottom, right, bottom), img,
+                           QRect(size.width() - right, size.height() - bottom, right, bottom));
     }
 }
 

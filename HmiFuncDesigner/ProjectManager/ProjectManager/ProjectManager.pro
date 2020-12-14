@@ -14,14 +14,15 @@ DESTDIR = $$IDE_BIN_PATH
 INCLUDEPATH += .
 INCLUDEPATH += $$PWD/widget
 INCLUDEPATH += $$PWD/ProjData
-INCLUDEPATH += $$PWD/GraphPage
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
 INCLUDEPATH += $$PWD/../../libs/qscintilla
 INCLUDEPATH += $$PWD/../../libs/ProjData
-INCLUDEPATH += $$PWD/../../libs/Core
 INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
-
+INCLUDEPATH += $$PWD/../../libs/core
+INCLUDEPATH += $$PWD/../../libs/shared
+INCLUDEPATH += $$PWD/../../libs/gradienteditor
+INCLUDEPATH += $$PWD/../../libs/running
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
@@ -41,27 +42,16 @@ LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lProjData
-LIBS += -L$$LINK_LIBRARY_PATH -lCore
+LIBS += -L$$LINK_LIBRARY_PATH -lcore
+LIBS += -L$$LINK_LIBRARY_PATH -lshared
+LIBS += -L$$LINK_LIBRARY_PATH -lgradientEditor
+LIBS += -L$$LINK_LIBRARY_PATH -lrunning
 
 SOURCES += main.cpp\
-    ../Public/QAbstractButtonHost.cpp \
-    ../Public/QAbstractHost.cpp \
-    ../Public/QAbstractWidgetHost.cpp \
-    ../Public/QWidgetHost.cpp \
     ElementTreeWidget.cpp \
-    GraphPage/GraphPageView.cpp \
-    GraphPage/QFormListWidget.cpp \
-    GraphPage/widgethost.cpp \
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
-    GraphPage/GraphPageListWidget.cpp \
-    GraphPage/formresizer.cpp \
-    GraphPage/qdesignerformhost.cpp \
-    GraphPage/qdesignermimedata.cpp \
-    GraphPage/qhostfactory.cpp \
-    GraphPage/qpushbuttonhost.cpp \
-    GraphPage/qselectwidget.cpp \
-    GraphPage/sizehandlerect.cpp \
+    GraphPageListWidget.cpp \
     ListViewEx.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
@@ -95,37 +85,20 @@ SOURCES += main.cpp\
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
     GetWidthHeightDialog.cpp \
-    GraphPage/GraphPage.cpp \
-    GraphPage/GraphPageManager.cpp \
     UndoCommand.cpp \
     ElementLibraryWidget.cpp \
     ElementLibraryListWidget.cpp \
-    GraphPage/GraphPageTreeView.cpp \
     ../Public/PubTool.cpp \
     ../Public/Element.cpp \
     ../Public/ElementGroup.cpp \
     PluginManager.cpp
 
 HEADERS  += MainWindow.h \
-    ../Public/QAbstractButtonHost.h \
-    ../Public/QAbstractHost.h \
-    ../Public/QAbstractWidgetHost.h \
-    ../Public/QWidgetHost.h \
     ElementTreeWidget.h \
-    GraphPage/GraphPageView.h \
-    GraphPage/QFormListWidget.h \
-    GraphPage/widgethost.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
     DevicePluginLoader.h \
-    GraphPage/GraphPageListWidget.h \
-    GraphPage/formresizer.h \
-    GraphPage/qdesignerformhost.h \
-    GraphPage/qdesignermimedata.h \
-    GraphPage/qhostfactory.h \
-    GraphPage/qpushbuttonhost.h \
-    GraphPage/qselectwidget.h \
-    GraphPage/sizehandlerect.h \
+    GraphPageListWidget.h \
     ListViewEx.h \
     MdiArea.h \
     NewProjectDialog.h \
@@ -160,12 +133,9 @@ HEADERS  += MainWindow.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
     GetWidthHeightDialog.h \
-    GraphPage/GraphPage.h \
-    GraphPage/GraphPageManager.h \
     UndoCommand.h \
     ElementLibraryWidget.h \
     ElementLibraryListWidget.h \
-    GraphPage/GraphPageTreeView.h \
     ../Public/PublicDefine.h \
     ../Public/PubTool.h \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
@@ -193,7 +163,6 @@ FORMS    += \
     InsertTagDialog.ui \
     ScriptRunConditionEditorDlg.ui \
     widget/QIPAddressEdit.ui \
-#    DrawMainWindow.ui \
     ElementLibraryWidget.ui \
     GetWidthHeightDialog.ui
 
@@ -215,5 +184,6 @@ DISTFILES += \
     $$IDE_BIN_PATH/Config/DrawAppJScriptFun.xml \
     $$IDE_BIN_PATH/Config/ElementSupportEvents.xml
 
+CODECFORTR = UTF-8
 TRANSLATIONS += chinese.ts
 

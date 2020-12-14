@@ -3,6 +3,10 @@
 #include "qtsingleapplication.h"
 #include "ConfigUtils.h"
 #include "PluginManager.h"
+#include "../../libs/shared/pluginloader.h"
+#include "../../libs/shared/qbaseinit.h"
+#include "../../libs/core/qbaseinit.h"
+#include "../../libs/core/qsoftcore.h"
 #include <QApplication>
 #include <QTextCodec>
 #include <QFont>
@@ -32,6 +36,12 @@ int main(int argc, char *argv[])
     font.setPointSize(10);
     app.setFont(font);
 
+    qRegisterBaseProperty();
+    qRegisterBasePropertyEditor();
+    qRegisterBaseHost();
+    qRegisterBaseDriver();
+
+    PluginLoader::load_plugin(app.applicationDirPath() + "/plugins.xml");
     // 加载元素插件
     PluginManager::getInstance()->loadPlugin();
 

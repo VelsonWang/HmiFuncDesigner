@@ -1,0 +1,258 @@
+#include "qabstractproperty.h"
+
+#include "../xmlobject.h"
+
+#include <QTimer>
+
+QAbstractProperty::QAbstractProperty(QAbstractProperty *parent):
+    m_parent(parent)
+{
+    if(m_parent!=NULL)
+    {
+        parent->m_children.append(this);
+        connect(this,SIGNAL(value_chaged(QVariant,QVariant)),m_parent,SLOT(child_value_changed(QVariant,QVariant)));
+    }
+    set_attribute(ATTR_RESET_ABLEABLE,m_parent==NULL);
+    set_attribute(ATTR_VISIBLE,true);
+    set_attribute(ATTR_EDITABLE,true);
+    set_attribute(ATTR_CAN_SAME,false);
+}
+
+QAbstractProperty::~QAbstractProperty()
+{
+    while(m_children.size()>0)
+    {
+        delete m_children.first();
+    }
+    if(m_parent!=NULL)
+    {
+        m_parent->m_children.removeAll(this);
+    }
+}
+
+void QAbstractProperty::set_value(const QVariant &value)
+{
+    QVariant old=m_value;
+    if(old!=value)
+    {
+        m_value=value;
+        emit value_chaged(old,m_value);
+    }
+    emit refresh();
+}
+
+void QAbstractProperty::set_default()
+{
+    m_defaultValue=m_value;
+    emit refresh();
+}
+
+bool QAbstractProperty::modified()
+{
+    return m_defaultValue!=m_value;
+}
+
+void QAbstractProperty::child_value_changed(const QVariant &, const QVariant &)
+{
+
+}
+
+void QAbstractProperty::connect_children()
+{
+    foreach(QAbstractProperty* child,m_children)
+    {
+        connect(child,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(child_value_changed(QVariant,QVariant)));
+    }
+}
+
+void QAbstractProperty::disconnect_children()
+{
+    foreach(QAbstractProperty* child,m_children)
+    {
+        disconnect(child,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(child_value_changed(QVariant,QVariant)));
+    }
+}
+
+void QAbstractProperty::toObject(XMLObject *xml)
+{
+    if(xml!=NULL)
+    {
+        xml->clear();
+        xml->set_title(PROPERTY_TITLE);
+        write_value();
+
+        QMapIterator<QString,QVariant>      it(m_propertys);
+
+        while(it.hasNext())
+        {
+            it.next();
+            xml->set_property(it.key(),it.value().toString());
+        }
+
+        XMLObject *obj;
+        foreach(QAbstractProperty* child,m_children)
+        {
+            obj=new XMLObject;
+            child->toObject(obj);
+            xml->inser_child(-1,obj);
+        }
+    }
+}
+
+void QAbstractProperty::fromObject(XMLObject *xml)
+{
+    if(xml!=NULL)
+    {
+        if(xml->get_title()!=PROPERTY_TITLE)
+        {
+            return;
+        }
+
+
+        QMapIterator<QString,QString>      it(xml->get_propertys());
+
+        while(it.hasNext())
+        {
+            it.next();
+            m_propertys.insert(it.key(),it.value());
+        }
+
+        QList<XMLObject*> children=xml->getChildren();
+        foreach(XMLObject* obj,children)
+        {
+            QAbstractProperty *pro=getChild(obj->get_property("name"));
+            if(pro!=NULL)
+            {
+                pro->fromObject(obj);
+            }
+        }
+
+        make_value();
+        refresh();
+    }
+}
+
+void QAbstractProperty::make_value()
+{
+    if(m_propertys.keys().contains("value"))
+    {
+        m_value=m_propertys.value("value");
+    }
+}
+
+void QAbstractProperty::write_value()
+{
+    m_propertys.insert("value",m_value);
+}
+
+QVariant QAbstractProperty::get_attribute(const QString &key)
+{
+    int index=key.indexOf(":");
+    if(index>0)
+    {
+        QString c=key.left(index);
+        QString k=key.mid(index+1);
+        foreach(QAbstractProperty* p,m_children)
+        {
+            if(p->get_property("name").toString()==c)
+            {
+                return p->get_attribute(k);
+            }
+        }
+    }
+
+    return m_attributes.value(key);
+}
+
+QVariant QAbstractProperty::get_property(const QString &key)
+{
+    return m_propertys.value(key);
+}
+
+void QAbstractProperty::set_attribute(const QString &key, const QVariant &value)
+{
+    int index=key.indexOf(":");
+    if(index>0)
+    {
+        QString c=key.left(index);
+        QString k=key.mid(index+1);
+        foreach(QAbstractProperty* p,m_children)
+        {
+            if(p->get_property("name").toString()==c)
+            {
+                p->set_attribute(k,value);
+                break;
+            }
+        }
+    }
+    else
+    {
+        m_attributes.insert(key,value);
+    }
+}
+
+void QAbstractProperty::set_property(const QString &key, const QVariant &value)
+{
+    if(value.isValid())
+    {
+        m_propertys.insert(key,value);
+    }
+    else
+    {
+        m_propertys.remove(key);
+    }
+}
+
+QAbstractProperty & QAbstractProperty::operator =(const QAbstractProperty &pro)
+{
+    this->m_propertys=pro.m_propertys;
+    set_value(pro.m_value);
+    return *this;
+}
+
+QVariant QAbstractProperty::get_value()
+{
+    return m_value;
+}
+
+void QAbstractProperty::reset()
+{
+    emit_edit_value(m_defaultValue);
+}
+
+QAbstractProperty* QAbstractProperty::getChild(const QString &name)
+{
+    foreach(QAbstractProperty* pro,m_children)
+    {
+        if(pro->get_property("name").toString()==name)
+        {
+            return pro;
+        }
+    }
+    return NULL;
+}
+
+QList<QAbstractProperty*> QAbstractProperty::getChildren()
+{
+    return m_children;
+}
+
+void QAbstractProperty::emit_edit_value(const QVariant &value)
+{
+    emit edit_value(value);
+}
+
+QAbstractProperty* QAbstractProperty::getParent()
+{
+    return m_parent;
+}
+
+void QAbstractProperty::set_host(QAbstractHost *host)
+{
+    m_host=host;
+}
+
+QAbstractHost *QAbstractProperty::get_host()
+{
+    return m_host;
+}
