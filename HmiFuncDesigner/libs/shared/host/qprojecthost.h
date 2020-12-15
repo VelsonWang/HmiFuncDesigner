@@ -11,16 +11,13 @@ class SHAREDLIB_EXPORT QProjectHost : public QAbstractHost
 public:
     QProjectHost(QAbstractHost *parent = 0);
     virtual void    show_form_by_uuid(const QString &uuid);
+
 protected:
     void initProperty();
-public slots:
-    void    set_language(const QString &language);
-    QString current_language();
 
+public slots:
     virtual void    show_form(const QString &name);
     virtual void    show_dialog(const QString &name);
-
-
 
 protected:
     void    createObject();

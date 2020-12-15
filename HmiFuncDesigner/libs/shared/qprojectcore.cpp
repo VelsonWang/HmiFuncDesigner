@@ -1,8 +1,6 @@
 #include "qprojectcore.h"
-
 #include "xmlobject.h"
 #include "qpagemanager.h"
-#include "qlanguagemanager.h"
 #include "qusermanager.h"
 #include "host/qprojecthost.h"
 #include "host/qformhost.h"
@@ -14,7 +12,6 @@
 #include "resource/qresourcemanager.h"
 #include "qdrivermanager.h"
 #include "driver/qabstractdriver.h"
-
 #include <QFile>
 #include <QDir>
 #include <QUuid>
@@ -25,14 +22,12 @@ QProjectCore::QProjectCore(QObject *parent) :
     m_project_host(NULL),
     m_is_open(false),
     m_page_manager(new QPageManager),
-    m_language_manager(new QLanguageManager),
     m_user_manager(new QUserManager),
     m_data_manager(new QDataManager),
     m_resource_manager(new QResourceManager),
     m_driver_manager(new QDriverManager)
 {
     connect(m_user_manager,SIGNAL(refresh(tagUserInfo*)),this,SLOT(user_refresh(tagUserInfo*)));
-    connect(m_language_manager,SIGNAL(refresh(QLanguage*)),this,SLOT(language_refresh(QLanguage*)));
     connect(m_page_manager,SIGNAL(host_name_changed(QAbstractHost*)),this,SLOT(form_refresh(QAbstractHost*)));
 }
 
@@ -40,7 +35,6 @@ QProjectCore::~QProjectCore()
 {
     close();
     delete m_page_manager;
-    delete m_language_manager;
     delete m_user_manager;
     delete m_data_manager;
     delete m_resource_manager;
@@ -81,7 +75,6 @@ bool QProjectCore::open(const QString &fileName)
     m_project_host->setPropertyValue("projectPath",m_project_path);
 
     m_page_manager->load(m_project_path);
-    m_language_manager->load(m_project_path);
     m_data_manager->load(m_project_path);
     m_resource_manager->load(m_project_path);
     m_driver_manager->load(m_project_path);
@@ -110,39 +103,6 @@ bool QProjectCore::open(const QString &fileName)
         {
             item.m_text=info->m_name;
             item.m_value=info->m_uuid;
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
-
-    }
-
-    pro=m_project_host->getProperty("start_language");
-    if(pro!=NULL)
-    {
-        QString str=pro->get_value().toString();
-        if(m_language_manager->get_language(str)==NULL)
-        {
-            if(m_language_manager->get_all_languages().size()>0)
-            {
-                pro->set_value(m_language_manager->get_all_languages().at(0)->getUuid());
-            }
-            else
-            {
-                pro->set_value("");
-            }
-        }
-
-        m_language_manager->set_current_language(pro->get_value().toString());
-
-        QList<QLanguage*> list=m_language_manager->get_all_languages();
-        tagComboItem item;
-        ComboItems items;
-        foreach(QLanguage* l,list)
-        {
-            item.m_text=l->get_language_name();
-            item.m_value=l->getUuid();
             items.append(item);
         }
         QVariant v;
@@ -182,12 +142,10 @@ bool QProjectCore::open(const QString &fileName)
 
     }
 
-    m_project_host->setLanguageManager(m_language_manager);
     m_project_host->setPageManager(m_page_manager);
 
     foreach(QAbstractHost* h,m_page_manager->getPages())
     {
-        h->setLanguageManager(m_language_manager);
         h->setPageManager(m_page_manager);
     }
 
@@ -210,19 +168,11 @@ void QProjectCore::close()
         }
 
         m_project_path="";
-
         m_page_manager->clear();
-
-        m_language_manager->clear();
-
         m_data_manager->clear();
-
         m_resource_manager->clear();
-
         m_driver_manager->clear();
-
         m_user_manager->clear();
-
         m_is_open=false;
     }
 }
@@ -258,26 +208,15 @@ void QProjectCore::save()
     }
 
     m_page_manager->save(m_project_path);
-
-    m_language_manager->save(m_project_path);
-
     m_data_manager->save(m_project_path);
-
     m_resource_manager->save(m_project_path);
-
     m_driver_manager->save(m_project_path);
-
     m_user_manager->save(m_project_path);
 }
 
 QPageManager* QProjectCore::get_page_manager()
 {
     return m_page_manager;
-}
-
-QLanguageManager* QProjectCore::getLanguageManager()
-{
-    return m_language_manager;
 }
 
 QUserManager *QProjectCore::get_user_manager()
@@ -347,7 +286,7 @@ bool QProjectCore::createNewProj(const QString &szfile)
     m_project_name = m_project_path.mid(index+1);
     m_page_manager->load(NULL);
     m_is_open = true;
-
+    emit opened_signals();
     return true;
 }
 
@@ -403,31 +342,6 @@ void QProjectCore::user_refresh(tagUserInfo *info)
     }
 }
 
-void QProjectCore::language_refresh(QLanguage *language)
-{
-    QAbstractProperty* pro=m_project_host->getProperty("start_language");
-    if(pro!=NULL)
-    {
-
-        QList<QLanguage*> list=m_language_manager->get_all_languages();
-        tagComboItem item;
-        ComboItems items;
-        foreach(QLanguage* l,list)
-        {
-            item.m_text=l->get_language_name();
-            item.m_value=l->getUuid();
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
-        if(language!=NULL && pro->get_value().toString()==language->getUuid())
-        {
-            pro->set_value("");
-            pro->set_value(language->getUuid());
-        }
-    }
-}
 
 void QProjectCore::form_refresh(QAbstractHost *form)
 {

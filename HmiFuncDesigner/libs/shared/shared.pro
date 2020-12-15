@@ -60,7 +60,6 @@ HEADERS += \
     host/qformhost.h \
     qpagemanager.h \
     qlanguage.h \
-    qlanguagemanager.h \
     qusermanager.h \
     host/qlabelhost.h \
     host/qlcdnumberhost.h \
@@ -138,7 +137,6 @@ SOURCES += \
     host/qformhost.cpp \
     qpagemanager.cpp \
     qlanguage.cpp \
-    qlanguagemanager.cpp \
     qusermanager.cpp \
     host/qlabelhost.cpp \
     host/qlcdnumberhost.cpp \

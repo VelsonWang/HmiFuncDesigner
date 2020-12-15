@@ -1,8 +1,6 @@
 #include "qprojecthost.h"
-
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
-#include "../qlanguagemanager.h"
 #include "../qlanguage.h"
 #include "../qpagemanager.h"
 
@@ -85,34 +83,6 @@ void QProjectHost::initProperty()
         pro->setAttribute("group","Attributes");
         m_object->setProperty("running_size",QSize(800,600));
         insertProperty(pro);
-    }
-}
-
-void QProjectHost::set_language(const QString &language)
-{
-    QList<QLanguage*> languages=m_language_manager->get_all_languages();
-
-    foreach(QLanguage* l,languages)
-    {
-        if(l->get_language_name()==language)
-        {
-            m_language_manager->set_current_language(l->getUuid());
-            return;
-        }
-    }
-    m_language_manager->set_current_language("");
-}
-
-QString QProjectHost::current_language()
-{
-    QLanguage *l=m_language_manager->get_current_language();
-    if(l==NULL)
-    {
-        return "";
-    }
-    else
-    {
-        return l->get_language_name();
     }
 }
 

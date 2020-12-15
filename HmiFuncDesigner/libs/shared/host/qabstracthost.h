@@ -15,7 +15,6 @@
 
 class QAbstractProperty;
 class XMLObject;
-class QLanguageManager;
 class QPageManager;
 class QScriptEngine;
 class QDataManager;
@@ -63,9 +62,6 @@ public:
     QString getUuid();
     void setUuid(const QString& uuid);
 
-    void setLanguageManager(QLanguageManager* language);
-    QLanguageManager* getLanguageManager();
-
     void setPageManager(QPageManager* page);
     void setDataManager(QDataManager* data);
     void setResourceManager(QResourceManager* resource);
@@ -105,7 +101,6 @@ protected:
 
 protected slots:
     void onPropertyRefresh();
-    void onCurLanguageChanged();
     void onCurTextChanged(const QString &uuid);
 
 signals:
@@ -128,7 +123,6 @@ protected:
     QObject* m_object;
     QMap<QString, QString> m_attributes;
     QTimer* m_timer;
-    QLanguageManager* m_language_manager;
     QPageManager* m_page_manager;
     QDataManager* m_data_manager;
     QScriptEngine* m_engine;

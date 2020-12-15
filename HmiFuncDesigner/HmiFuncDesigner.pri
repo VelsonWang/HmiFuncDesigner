@@ -127,7 +127,6 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/Utils \
     $$IDE_SOURCE_TREE/libs/edncrypt \
     $$IDE_SOURCE_TREE/libs/Csv \
-    $$IDE_SOURCE_TREE/libs/XmlUtils \
     $$IDE_SOURCE_TREE/libs/Lua \
     $$IDE_SOURCE_TREE/libs/qtsingleapplication \
     $$IDE_SOURCE_TREE/libs/qscintilla \
@@ -136,15 +135,13 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/qscintilla/include \
     $$IDE_SOURCE_TREE/libs/qscintilla/lexlib \
     $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
-    $$IDE_SOURCE_TREE/libs/TagManager \
-    $$IDE_SOURCE_TREE/libs/ProjData \
     $$IDE_SOURCE_TREE/libs/core \
     $$IDE_SOURCE_TREE/libs/shared \
+    $$IDE_SOURCE_TREE/libs/shared/projdata \
     $$IDE_SOURCE_TREE/libs/gradienteditor \
     $$IDE_SOURCE_TREE/libs/running \
     $$IDE_SOURCE_TREE/Devices/IDevicePlugin \
     $$IDE_SOURCE_TREE/ProjectManager/IDrawApplicationPlugin \
-    $$IDE_SOURCE_TREE/ProjectManager/DrawApplication \
     $$IDE_SOURCE_TREE/ProjectManager/QtPropertyBrowserEx \
     $$IDE_SOURCE_TREE/ProjectManager/Public \
     $$IDE_SOURCE_TREE/ProjectManager

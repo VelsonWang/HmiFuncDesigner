@@ -173,9 +173,9 @@ void QObjectListView::init()
         list+=h->getChildren();
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
-        connect(h,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        connect(h,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-        connect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        connect(h,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
         connect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
     }
@@ -351,9 +351,9 @@ void QObjectListView::insert_host_slot(const QList<QAbstractHost *> &list, const
         m_host_to_item.insert(h,item);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
-        connect(h,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        connect(h,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-        connect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        connect(h,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
         connect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
 
@@ -370,9 +370,9 @@ void QObjectListView::insert_host_slot(const QList<QAbstractHost *> &list, const
             connect(wid,SIGNAL(remove()),this,SLOT(button_remove()));
             m_item_to_host.insert(temp,hh);
             m_host_to_item.insert(hh,temp);
-            connect(hh,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+            connect(hh,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                     this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-            connect(hh,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+            connect(hh,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                     this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
             connect(hh,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
             ch+=hh->getChildren();
@@ -389,9 +389,9 @@ void QObjectListView::remove_host_slot(const QList<QAbstractHost *> &list)
     while(l.size()>0)
     {
         QAbstractHost* h=l.takeFirst();
-        disconnect(h,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        disconnect(h,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-        disconnect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        disconnect(h,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
         disconnect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
         QTreeWidgetItem *item;
@@ -557,9 +557,9 @@ void QObjectListView::insert_page_slot(QAbstractHost *page)
     item->setExpanded(true);
     item->setSelected(true);
 
-    connect(page,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+    connect(page,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
             this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-    connect(page,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+    connect(page,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
             this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
 
     QList<QAbstractHost*> ch=page->getChildren();
@@ -575,9 +575,9 @@ void QObjectListView::insert_page_slot(QAbstractHost *page)
         connect(wid,SIGNAL(remove()),this,SLOT(button_remove()));
         m_item_to_host.insert(temp,hh);
         m_host_to_item.insert(hh,temp);
-        connect(hh,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        connect(hh,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-        connect(hh,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        connect(hh,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
         connect(hh,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
         ch+=hh->getChildren();
@@ -595,9 +595,9 @@ void QObjectListView::remove_page_slot(QAbstractHost *page)
     while(l.size()>0)
     {
         QAbstractHost* h=l.takeFirst();
-        disconnect(h,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        disconnect(h,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-        disconnect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        disconnect(h,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
         disconnect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
         QTreeWidgetItem *item;

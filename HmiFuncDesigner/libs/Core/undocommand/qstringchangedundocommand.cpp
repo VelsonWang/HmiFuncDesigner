@@ -1,10 +1,6 @@
 #include "qstringchangedundocommand.h"
-
 #include "../qsoftcore.h"
-
-
 #include "../../shared/qprojectcore.h"
-#include "../../shared/qlanguagemanager.h"
 #include "../../shared/qlanguage.h"
 #include "../../shared/property/qabstractproperty.h"
 #include "../../shared/host/qabstracthost.h"
@@ -48,12 +44,10 @@ void QStringChangedUndoCommand::redo()
             pro->setProperty("tr",m_new_tr);
             pro->setProperty("uuid",m_new_tr?m_uuid:QVariant());
         }
-        QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
         if(m_old_tr)
         {
             if(!m_new_tr)
             {
-                manager->remove_text(m_uuid);
                 h->setPropertyValue(m_property_name,m_new_text);
             }
             else
@@ -62,7 +56,6 @@ void QStringChangedUndoCommand::redo()
                 while(it.hasNext())
                 {
                     it.next();
-                    manager->set_text(m_uuid,it.value(),it.key());
                 }
             }
         }
@@ -74,7 +67,6 @@ void QStringChangedUndoCommand::redo()
                 while(it.hasNext())
                 {
                     it.next();
-                    manager->add_translate(it.key(),m_uuid,it.value());
                 }
             }
             else
@@ -96,12 +88,10 @@ void QStringChangedUndoCommand::undo()
             pro->setProperty("tr",m_old_tr);
             pro->setProperty("uuid",m_old_tr?m_uuid:QVariant());
         }
-        QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
         if(m_new_tr)
         {
             if(!m_old_tr)
             {
-                manager->remove_text(m_uuid);
                 h->setPropertyValue(m_property_name,m_old_text);
             }
             else
@@ -110,7 +100,6 @@ void QStringChangedUndoCommand::undo()
                 while(it.hasNext())
                 {
                     it.next();
-                    manager->set_text(m_uuid,it.value(),it.key());
                 }
             }
         }
@@ -122,7 +111,6 @@ void QStringChangedUndoCommand::undo()
                 while(it.hasNext())
                 {
                     it.next();
-                    manager->add_translate(it.key(),m_uuid,it.value());
                 }
             }
             else

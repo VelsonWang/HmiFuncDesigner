@@ -1,6 +1,5 @@
 #ifndef QTABLEWIDGETEX_H
 #define QTABLEWIDGETEX_H
-
 #include <QTableWidget>
 #include <QStringList>
 #include <QAbstractTableModel>

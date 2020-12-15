@@ -1,19 +1,14 @@
 #include "qformwidgetview.h"
-
 #include "qformlistwidget.h"
 #include "qnewpagedialog.h"
-
 #include "../../../libs/core/styledbar.h"
 #include "../../../libs/core/qsoftcore.h"
 #include "../../../libs/core/qactiontoolbar.h"
-
 #include "../../../libs/shared/host/qformhost.h"
 #include "../../../libs/shared/qhostfactory.h"
 #include "../../../libs/shared/qprojectcore.h"
 #include "../../../libs/shared/qpagemanager.h"
 #include "../../../libs/shared/qlanguage.h"
-#include "../../../libs/shared/qlanguagemanager.h"
-
 #include <QVBoxLayout>
 #include <QStringList>
 #include <QPainter>
@@ -21,8 +16,7 @@
 QFormWidgetView::QFormWidgetView(QWidget *parent) :
     QWidget(parent),
     m_formWidget(new QFormListWidget),
-    m_styledBar(new StyledBar),
-    m_languageComboBox(new QComboBox(this))
+    m_styledBar(new StyledBar)
 {
     this->setAutoFillBackground(false);
     QVBoxLayout *l=new QVBoxLayout;
@@ -137,11 +131,9 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
 
     QHBoxLayout *h=new QHBoxLayout;
 
-    m_languageComboBox->setFixedWidth(150);
     h->setMargin(0);
     h->setSpacing(0);
     h->addWidget(toolbar,1);
-    h->addWidget(m_languageComboBox,0);
     m_styledBar->setLayout(h);
 
     connect(m_formWidget,SIGNAL(select(QAbstractHost*)),this,SIGNAL(select(QAbstractHost*)));
@@ -167,27 +159,6 @@ void QFormWidgetView::project_opened()
     if(pages.size()>0)
     {
         m_formWidget->show_form(pages.first());
-    }
-
-    disconnect(m_languageComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(language_combo_changed()));
-
-    QLanguageManager *l_manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
-
-    QList<QLanguage*>  list=l_manager->get_all_languages();
-    foreach(QLanguage*l ,list)
-    {
-        m_languageComboBox->addItem(l->get_language_name());
-        m_language_uuid.append(l->getUuid());
-    }
-    QLanguage *c=l_manager->get_current_language();
-    connect(m_languageComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(language_combo_changed()));
-    if(c==NULL)
-    {
-        m_languageComboBox->setCurrentIndex(-1);
-    }
-    else
-    {
-        m_languageComboBox->setCurrentIndex(m_languageComboBox->findText(c->get_language_name()));
     }
 
     QSoftCore *core=QSoftCore::getCore();
@@ -265,8 +236,6 @@ void QFormWidgetView::project_opened()
 void QFormWidgetView::project_closed()
 {
     //emit select(NULL);
-    disconnect(m_languageComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(language_combo_changed()));
-    m_languageComboBox->clear();
     m_language_uuid.clear();
     m_formWidget->clear();
     m_undo_stack->clear();
@@ -353,21 +322,6 @@ void QFormWidgetView::set_undo_stack(QUndoStack *stack)
 {
     m_undo_stack=stack;
     m_formWidget->set_undo_stack(stack);
-}
-
-void QFormWidgetView::language_combo_changed()
-{
-    int index=m_languageComboBox->currentIndex();
-    QString uuid;
-    if(index>=0 && index<m_language_uuid.size())
-    {
-        uuid=m_language_uuid.at(index);
-    }
-    else
-    {
-        uuid="";
-    }
-    QSoftCore::getCore()->getProjectCore()->getLanguageManager()->set_current_language(uuid);
 }
 
 void QFormWidgetView::set_select(QAbstractHost *host)

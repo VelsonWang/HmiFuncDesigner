@@ -26,10 +26,10 @@ QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
     m_selection(new Selection((QWidget*)host->getObject())),
     m_click(false)
 {
-    connect(m_root_host,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
-            this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-    connect(m_root_host,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
-            this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
+    connect(m_root_host, SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
+            this, SLOT(remove_host_slot(QList<QAbstractHost*>)));
+    connect(m_root_host, SIGNAL(notifyInsertChildren(QList<QAbstractHost*>, QList<int>)),
+            this, SLOT(insert_host_slot(QList<QAbstractHost*>, QList<int>)));
     m_widget_to_host.insert(m_root_host->getObject(),m_root_host);
     install_all_event(m_root_host);
 
@@ -38,9 +38,9 @@ QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
     while(children.size()>0)
     {
         QAbstractHost *h=children.takeFirst();
-        connect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        connect(h,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-        connect(h,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        connect(h,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));m_widget_to_host.insert(h->getObject(),h);
         children+=h->getChildren();
         if(h->property("accept_drop").toBool())
@@ -880,9 +880,9 @@ void QDesignerFormHost::insert_host_slot(QList<QAbstractHost *> hosts, QList<int
     {
         QAbstractHost* h=hosts.at(i);
         install_all_event(h);
-        connect(h,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        connect(h,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-        connect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        connect(h,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
         m_widget_to_host.insert(h->getObject(),h);
         if(h->property("accept_drop").toBool())
@@ -893,9 +893,9 @@ void QDesignerFormHost::insert_host_slot(QList<QAbstractHost *> hosts, QList<int
         while(c.size()>0)
         {
             QAbstractHost *hh=c.takeFirst();
-            connect(hh,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+            connect(hh,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                     this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-            connect(hh,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+            connect(hh,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                     this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
             m_widget_to_host.insert(hh->getObject(),hh);
             c+=hh->getChildren();
@@ -915,17 +915,17 @@ void QDesignerFormHost::remove_host_slot(QList<QAbstractHost *> hosts)
     {
         QList<QAbstractHost*> children=h->getChildren();
         remove_all_event(h);
-        disconnect(h,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+        disconnect(h,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-        disconnect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+        disconnect(h,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
         m_widget_to_host.remove(h->getObject());
         while(children.size()>0)
         {
             QAbstractHost *hh=children.takeFirst();
-            disconnect(hh,SIGNAL(insert_children_signal(QList<QAbstractHost*>,QList<int>)),
+            disconnect(hh,SIGNAL(notifyInsertChildren(QList<QAbstractHost*>,QList<int>)),
                     this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
-            disconnect(hh,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
+            disconnect(hh,SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
                     this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
             m_widget_to_host.remove(hh->getObject());
             children+=hh->getChildren();

@@ -42,8 +42,6 @@ HEADERS += \
     undocommand/qbaseundocommand.h \
     undocommand/quserpropertyundocommand.h \
     undocommand/quseraddundocommand.h \
-    undocommand/qlanguagepropertyundocommand.h \
-    undocommand/qlanguageaddundocommand.h \
     undocommand/qpropertychangedundocommand.h \
     qpropertylist/qenumpropertyeditor.h \
     qrenamedialog.h \
@@ -125,8 +123,6 @@ SOURCES += \
     undocommand/qbaseundocommand.cpp \
     undocommand/quserpropertyundocommand.cpp \
     undocommand/quseraddundocommand.cpp \
-    undocommand/qlanguagepropertyundocommand.cpp \
-    undocommand/qlanguageaddundocommand.cpp \
     undocommand/qpropertychangedundocommand.cpp \
     qpropertylist/qenumpropertyeditor.cpp \
     qrenamedialog.cpp \

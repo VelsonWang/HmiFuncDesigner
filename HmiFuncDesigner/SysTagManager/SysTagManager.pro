@@ -1,4 +1,3 @@
-
 include(../HmiFuncDesigner.pri)
 
 QT += core gui
@@ -10,8 +9,8 @@ TEMPLATE = app
 
 DESTDIR = $$IDE_BIN_PATH
 
-LIBS += -L$$LINK_LIBRARY_PATH -lProjData
 LIBS += -L$$LINK_LIBRARY_PATH -lcore
+LIBS += -L$$LINK_LIBRARY_PATH -lshared
 
 SOURCES += main.cpp \
     SysTag.cpp \

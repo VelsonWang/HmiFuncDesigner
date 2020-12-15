@@ -68,7 +68,6 @@ void QNewPageDialog::ok(QAbstractHost *host)
     QProjectCore *core=QSoftCore::getCore()->getProjectCore();
     host->setPageManager(core->get_page_manager());
     host->setDataManager(core->get_data_manager());
-    host->setLanguageManager(core->getLanguageManager());
     host->setResourceManager(core->get_resource_manager());
     QList<QAbstractHost*> list;
     list.append(host);

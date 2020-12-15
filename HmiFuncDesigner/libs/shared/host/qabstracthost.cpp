@@ -5,7 +5,6 @@
 #include "../xmlobject.h"
 #include "../qhostfactory.h"
 #include "../qlanguage.h"
-#include "../qlanguagemanager.h"
 #include "../qcommonstruct.h"
 #include "../qdatamanager.h"
 #include "../property/stylesheetitem/qabstractstylesheetitem.h"
@@ -87,7 +86,6 @@ void QAbstractHost::insertChildren(const QList<int> &indexs, const QList<QAbstra
         }
         m_children.insert(index,h);
         h->setPageManager(m_page_manager);
-        h->setLanguageManager(m_language_manager);
         h->setDataManager(m_data_manager);
         h->setResourceManager(m_resource_manager);
         ind.append(index);
@@ -615,64 +613,27 @@ void QAbstractHost::setUuid(const QString &uuid)
     m_attributes.insert("uuid",uuid);
 }
 
-void QAbstractHost::setLanguageManager(QLanguageManager *language)
-{
-    m_language_manager=language;
-    connect(language,SIGNAL(notifyCurLanguageChanged()),this,SLOT(onCurLanguageChanged()));
-    connect(language,SIGNAL(notifyCurTextChanged(QString)),this,SLOT(onCurTextChanged(QString)));
-    foreach(QAbstractHost* host,m_children)
-    {
-        host->setLanguageManager(language);
-    }
-    onCurLanguageChanged();
-}
-
-QLanguageManager* QAbstractHost::getLanguageManager()
-{
-    return m_language_manager;
-}
-
-void QAbstractHost::onCurLanguageChanged()
-{
-    QLanguage* l=m_language_manager->get_current_language();
-    foreach(QAbstractProperty* pro,m_propertys)
-    {
-        if(pro->getProperty("tr").toBool())
-        {
-            tagTranslateInfo *info=NULL;
-            if(l!=NULL)info=l->get_translate(pro->getProperty("uuid").toString());
-            if(info==NULL)
-            {
-                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),"");
-            }
-            else
-            {
-                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),info->m_translate);
-            }
-        }
-    }
-}
 
 void QAbstractHost::onCurTextChanged(const QString &uuid)
 {
-    QLanguage* l=m_language_manager->get_current_language();
-    foreach(QAbstractProperty* pro,m_propertys)
-    {
-        if(pro->getProperty("uuid").toString()==uuid)
-        {
-            tagTranslateInfo *info=NULL;
-            if(l!=NULL)info=l->get_translate(uuid);
-            if(info==NULL)
-            {
-                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),"");
-            }
-            else
-            {
-                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),info->m_translate);
-            }
-            return;
-        }
-    }
+//    QLanguage* l=m_language_manager->get_current_language();
+//    foreach(QAbstractProperty* pro,m_propertys)
+//    {
+//        if(pro->getProperty("uuid").toString()==uuid)
+//        {
+//            tagTranslateInfo *info=NULL;
+//            if(l!=NULL)info=l->get_translate(uuid);
+//            if(info==NULL)
+//            {
+//                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),"");
+//            }
+//            else
+//            {
+//                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),info->m_translate);
+//            }
+//            return;
+//        }
+//    }
 }
 
 QString QAbstractHost::functionInformation(const QString &name)

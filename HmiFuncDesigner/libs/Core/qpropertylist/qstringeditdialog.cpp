@@ -7,7 +7,6 @@
 
 #include "../../shared/property/qabstractproperty.h"
 #include "../../shared/qprojectcore.h"
-#include "../../shared/qlanguagemanager.h"
 #include "../../shared/qlanguage.h"
 #include "../../shared/host/qabstracthost.h"
 
@@ -87,20 +86,20 @@ QStringEditDialog::QStringEditDialog(QAbstractProperty *property,QUndoStack* sta
     ui->translateTree->setRootIsDecorated(false);
     //ui->translateTree->header()->setMovable(false);
 
-    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
+//    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
 
-    QList<QLanguage*> language=manager->get_all_languages();
-    foreach(QLanguage* l,language)
-    {
-        QTreeWidgetItem* item=new QTreeWidgetItem(ui->translateTree);
-        item->setText(0,l->get_language_name());
-        tagTranslateInfo *info=l->get_translate(m_property->getProperty("uuid").toString());
-        QString trs=(info!=NULL?info->m_translate:"");
-        item->setText(1,trs);
-        item->setToolTip(1,trs);
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
-        m_items.insert(item,l);
-    }
+//    QList<QLanguage*> language=manager->get_all_languages();
+//    foreach(QLanguage* l,language)
+//    {
+//        QTreeWidgetItem* item=new QTreeWidgetItem(ui->translateTree);
+//        item->setText(0,l->get_language_name());
+//        tagTranslateInfo *info=l->get_translate(m_property->getProperty("uuid").toString());
+//        QString trs=(info!=NULL?info->m_translate:"");
+//        item->setText(1,trs);
+//        item->setToolTip(1,trs);
+//        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+//        m_items.insert(item,l);
+//    }
     ui->text->setText(m_property->get_value().toString());
 
     connect(ui->translateTree,SIGNAL(clicked(QModelIndex)),ui->translateTree,SLOT(edit(QModelIndex)));
@@ -150,12 +149,12 @@ void QStringEditDialog::on_okBtn_clicked()
     }
     if(old_tr)
     {
-        QList<QLanguage*>   lan=QSoftCore::getCore()->getProjectCore()->getLanguageManager()->get_all_languages();
-        foreach(QLanguage* l,lan)
-        {
-            tagTranslateInfo *info=l->get_translate(uuid);
-            old_translate.insert(l->getUuid(),info==NULL?"":info->m_translate);
-        }
+//        QList<QLanguage*>   lan=QSoftCore::getCore()->getProjectCore()->getLanguageManager()->get_all_languages();
+//        foreach(QLanguage* l,lan)
+//        {
+//            tagTranslateInfo *info=l->get_translate(uuid);
+//            old_translate.insert(l->getUuid(),info==NULL?"":info->m_translate);
+//        }
     }
     else
     {
