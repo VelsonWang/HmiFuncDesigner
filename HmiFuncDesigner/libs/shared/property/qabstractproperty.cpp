@@ -12,10 +12,10 @@ QAbstractProperty::QAbstractProperty(QAbstractProperty *parent):
         parent->m_children.append(this);
         connect(this,SIGNAL(value_chaged(QVariant,QVariant)),m_parent,SLOT(child_value_changed(QVariant,QVariant)));
     }
-    set_attribute(ATTR_RESET_ABLEABLE,m_parent==NULL);
-    set_attribute(ATTR_VISIBLE,true);
-    set_attribute(ATTR_EDITABLE,true);
-    set_attribute(ATTR_CAN_SAME,false);
+    setAttribute(ATTR_RESET_ABLEABLE,m_parent==NULL);
+    setAttribute(ATTR_VISIBLE,true);
+    setAttribute(ATTR_EDITABLE,true);
+    setAttribute(ATTR_CAN_SAME,false);
 }
 
 QAbstractProperty::~QAbstractProperty()
@@ -41,7 +41,7 @@ void QAbstractProperty::set_value(const QVariant &value)
     emit refresh();
 }
 
-void QAbstractProperty::set_default()
+void QAbstractProperty::setDefault()
 {
     m_defaultValue=m_value;
     emit refresh();
@@ -78,7 +78,7 @@ void QAbstractProperty::toObject(XMLObject *xml)
     if(xml!=NULL)
     {
         xml->clear();
-        xml->set_title(PROPERTY_TITLE);
+        xml->setTagName(PROPERTY_TITLE);
         write_value();
 
         QMapIterator<QString,QVariant>      it(m_propertys);
@@ -86,7 +86,7 @@ void QAbstractProperty::toObject(XMLObject *xml)
         while(it.hasNext())
         {
             it.next();
-            xml->set_property(it.key(),it.value().toString());
+            xml->setProperty(it.key(),it.value().toString());
         }
 
         XMLObject *obj;
@@ -103,13 +103,13 @@ void QAbstractProperty::fromObject(XMLObject *xml)
 {
     if(xml!=NULL)
     {
-        if(xml->get_title()!=PROPERTY_TITLE)
+        if(xml->getTagName()!=PROPERTY_TITLE)
         {
             return;
         }
 
 
-        QMapIterator<QString,QString>      it(xml->get_propertys());
+        QMapIterator<QString,QString>      it(xml->getPropertys());
 
         while(it.hasNext())
         {
@@ -120,7 +120,7 @@ void QAbstractProperty::fromObject(XMLObject *xml)
         QList<XMLObject*> children=xml->getChildren();
         foreach(XMLObject* obj,children)
         {
-            QAbstractProperty *pro=getChild(obj->get_property("name"));
+            QAbstractProperty *pro=getChild(obj->getProperty("name"));
             if(pro!=NULL)
             {
                 pro->fromObject(obj);
@@ -145,7 +145,7 @@ void QAbstractProperty::write_value()
     m_propertys.insert("value",m_value);
 }
 
-QVariant QAbstractProperty::get_attribute(const QString &key)
+QVariant QAbstractProperty::getAttribute(const QString &key)
 {
     int index=key.indexOf(":");
     if(index>0)
@@ -154,9 +154,9 @@ QVariant QAbstractProperty::get_attribute(const QString &key)
         QString k=key.mid(index+1);
         foreach(QAbstractProperty* p,m_children)
         {
-            if(p->get_property("name").toString()==c)
+            if(p->getProperty("name").toString()==c)
             {
-                return p->get_attribute(k);
+                return p->getAttribute(k);
             }
         }
     }
@@ -164,12 +164,12 @@ QVariant QAbstractProperty::get_attribute(const QString &key)
     return m_attributes.value(key);
 }
 
-QVariant QAbstractProperty::get_property(const QString &key)
+QVariant QAbstractProperty::getProperty(const QString &key)
 {
     return m_propertys.value(key);
 }
 
-void QAbstractProperty::set_attribute(const QString &key, const QVariant &value)
+void QAbstractProperty::setAttribute(const QString &key, const QVariant &value)
 {
     int index=key.indexOf(":");
     if(index>0)
@@ -178,9 +178,9 @@ void QAbstractProperty::set_attribute(const QString &key, const QVariant &value)
         QString k=key.mid(index+1);
         foreach(QAbstractProperty* p,m_children)
         {
-            if(p->get_property("name").toString()==c)
+            if(p->getProperty("name").toString()==c)
             {
-                p->set_attribute(k,value);
+                p->setAttribute(k,value);
                 break;
             }
         }
@@ -191,7 +191,7 @@ void QAbstractProperty::set_attribute(const QString &key, const QVariant &value)
     }
 }
 
-void QAbstractProperty::set_property(const QString &key, const QVariant &value)
+void QAbstractProperty::setProperty(const QString &key, const QVariant &value)
 {
     if(value.isValid())
     {
@@ -224,7 +224,7 @@ QAbstractProperty* QAbstractProperty::getChild(const QString &name)
 {
     foreach(QAbstractProperty* pro,m_children)
     {
-        if(pro->get_property("name").toString()==name)
+        if(pro->getProperty("name").toString()==name)
         {
             return pro;
         }

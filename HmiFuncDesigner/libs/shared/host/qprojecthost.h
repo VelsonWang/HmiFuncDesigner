@@ -12,7 +12,7 @@ public:
     QProjectHost(QAbstractHost *parent = 0);
     virtual void    show_form_by_uuid(const QString &uuid);
 protected:
-    void init_property();
+    void initProperty();
 public slots:
     void    set_language(const QString &language);
     QString current_language();
@@ -23,7 +23,7 @@ public slots:
 
 
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 #endif // QPROJECTHOST_H

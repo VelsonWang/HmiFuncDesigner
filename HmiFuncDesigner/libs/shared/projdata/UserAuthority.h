@@ -3,10 +3,10 @@
 
 #include <QString>
 #include <QObject>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
-class PROJDATASHARED_EXPORT UserAuthorityPrivate
+class SHAREDLIB_EXPORT UserAuthorityPrivate
 {
 public:
     explicit UserAuthorityPrivate()
@@ -62,7 +62,7 @@ public:
 
 
 
-class PROJDATASHARED_EXPORT UserAuthority
+class SHAREDLIB_EXPORT UserAuthority
 {
 public:
     explicit UserAuthority();

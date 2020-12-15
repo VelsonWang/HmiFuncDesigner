@@ -38,7 +38,7 @@ void QShowWidget::set_item_sheet(const QString &sheet)
 void QShowWidget::set_host(QAbstractHost *host)
 {
     m_host=host;
-    QWidget* wid=(QWidget*)host->get_object();
+    QWidget* wid=(QWidget*)host->getObject();
     QSize sz=wid->size();
     if(sz.width()<145)
     {
@@ -66,7 +66,7 @@ void QShowWidget::set_host(QAbstractHost *host)
 bool QShowWidget::eventFilter(QObject *o, QEvent *e)
 {
 
-    if(m_host!=NULL && o==m_host->get_object())
+    if(m_host!=NULL && o==m_host->getObject())
     {
         if(e->type()==QEvent::Paint)
         {

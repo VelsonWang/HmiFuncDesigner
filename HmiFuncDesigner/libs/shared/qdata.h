@@ -38,11 +38,11 @@ public:
     QList<tagDataInfo*> get_datas();
     QStringList     get_all_data_names();
 
-    void    to_object(XMLObject* xml);
-    void    from_object(XMLObject* xml);
+    void    toObject(XMLObject* xml);
+    void    fromObject(XMLObject* xml);
 
-    QString get_uuid();
-    void    set_uuid(const QString &uuid);
+    QString getUuid();
+    void setUuid(const QString &uuid);
 
     QString get_name();
     void    set_name(const QString &name);

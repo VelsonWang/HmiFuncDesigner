@@ -29,7 +29,7 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     m_engine(new QScriptEngine)
 {
     setProperty("title",OBJECT_TITLE);
-    set_attribute("uuid",QUuid::createUuid().toString());
+    setAttribute("uuid",QUuid::createUuid().toString());
 
     setProperty("function_list",QStringList()<<"destroyed(QObject*)"<<"destroyed()"<<"deleteLater()"
                 <<"exec(QString,QMap<QString,QString>)"<<"translateChanged(QString)"
@@ -39,7 +39,7 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     {
         m_parent->m_children.append(this);
     }
-    connect(m_timer,SIGNAL(timeout()),this,SLOT(property_refresh()));
+    connect(m_timer,SIGNAL(timeout()),this,SLOT(onPropertyRefresh()));
 }
 
 QAbstractHost::~QAbstractHost()
@@ -75,25 +75,25 @@ void QAbstractHost::insertChildren(const QList<int> &indexs, const QList<QAbstra
             index=m_children.size();
         }
         h->m_parent=this;
-        if(h->get_object()->isWidgetType())
+        if(h->getObject()->isWidgetType())
         {
-            QWidget* w=(QWidget*)h->get_object();
+            QWidget* w=(QWidget*)h->getObject();
             w->setParent((QWidget*)m_object);
             w->setVisible(true);
         }
         else
         {
-            h->get_object()->setParent(m_object);
+            h->getObject()->setParent(m_object);
         }
         m_children.insert(index,h);
-        h->set_page_manager(m_page_manager);
-        h->set_language_manager(m_language_manager);
-        h->set_data_manager(m_data_manager);
-        h->set_resource_manager(m_resource_manager);
+        h->setPageManager(m_page_manager);
+        h->setLanguageManager(m_language_manager);
+        h->setDataManager(m_data_manager);
+        h->setResourceManager(m_resource_manager);
         ind.append(index);
         list.append(h);
     }
-    emit insertChildren_signal(list,ind);
+    emit notifyInsertChildren(list,ind);
 }
 
 void QAbstractHost::removeChildren(const QList<QAbstractHost *> &children)
@@ -113,7 +113,7 @@ void QAbstractHost::removeChildren(const QList<QAbstractHost *> &children)
     {
         return;
     }
-    emit removeChildren_signal(list);
+    emit notifyRemoveChildren(list);
 
     foreach(QAbstractHost* h,list)
     {
@@ -159,7 +159,7 @@ int QAbstractHost::getChildCount()
     return m_children.size();
 }
 
-QAbstractProperty* QAbstractHost::get_property(const QString &name)
+QAbstractProperty* QAbstractHost::getProperty(const QString &name)
 {
     QStringList list=name.split(".");
     if(list.size()>=0)
@@ -178,14 +178,14 @@ QAbstractProperty* QAbstractHost::get_property(const QString &name)
     return NULL;
 }
 
-QList<QAbstractProperty*> QAbstractHost::get_propertys()
+QList<QAbstractProperty*> QAbstractHost::getPropertys()
 {
     return m_propertys;
 }
 
-QVariant QAbstractHost::get_property_value(const QString &name)
+QVariant QAbstractHost::getPropertyValue(const QString &name)
 {
-    QAbstractProperty *pro=get_property(name);
+    QAbstractProperty *pro=getProperty(name);
     if(pro!=NULL)
     {
         return pro->get_value();
@@ -196,9 +196,9 @@ QVariant QAbstractHost::get_property_value(const QString &name)
     }
 }
 
-void QAbstractHost::set_property_value(const QString &name, const QVariant &value)
+void QAbstractHost::setPropertyValue(const QString &name, const QVariant &value)
 {
-    QAbstractProperty *pro=get_property(name);
+    QAbstractProperty *pro=getProperty(name);
     if(pro!=NULL)
     {
         pro->set_value(value);
@@ -207,15 +207,15 @@ void QAbstractHost::set_property_value(const QString &name, const QVariant &valu
         {
             p=p->getParent();
         }
-        m_object->setProperty(p->get_property("name").toByteArray(),p->get_value());
-        if(pro->get_attribute("group")=="Style Sheet")
+        m_object->setProperty(p->getProperty("name").toByteArray(),p->get_value());
+        if(pro->getAttribute("group")=="Style Sheet")
         {
-            make_stylesheet();
+            makeStyleSheet();
         }
     }
 }
 
-void QAbstractHost::insert_property(QAbstractProperty *property, int index)
+void QAbstractHost::insertProperty(QAbstractProperty *property, int index)
 {
     if(m_propertys.contains(property))
     {
@@ -228,10 +228,10 @@ void QAbstractHost::insert_property(QAbstractProperty *property, int index)
     }
     property->set_host(this);
     m_propertys.insert(index,property);
-    m_nameToProperty.insert(property->get_property("name").toString(),property);
+    m_nameToProperty.insert(property->getProperty("name").toString(),property);
 }
 
-void QAbstractHost::remove_property(const QString &name)
+void QAbstractHost::removeProperty(const QString &name)
 {
     QAbstractProperty *pro=m_nameToProperty.value(name);
     m_nameToProperty.remove(name);
@@ -242,21 +242,21 @@ void QAbstractHost::remove_property(const QString &name)
     }
 }
 
-void QAbstractHost::set_default()
+void QAbstractHost::setDefault()
 {
     foreach(QAbstractProperty* pro,m_propertys)
     {
-        pro->set_default();
+        pro->setDefault();
         if(m_object!=NULL)
         {
-            m_object->setProperty(pro->get_property("name").toByteArray(),pro->get_value());
+            m_object->setProperty(pro->getProperty("name").toByteArray(),pro->get_value());
         }
-        make_stylesheet();
+        makeStyleSheet();
     }
     foreach(QAbstractHost* h,m_children)
     {
-        h->set_default();
-        h->make_stylesheet();
+        h->setDefault();
+        h->makeStyleSheet();
     }
 
     m_timer->start(50);
@@ -278,7 +278,7 @@ void QAbstractHost::insertAction(const QString &name, QAction *ac, int index)
     m_nameToAction.insert(name,ac);
 }
 
-void QAbstractHost::remove_action(const QString &name)
+void QAbstractHost::removeAction(const QString &name)
 {
     QAction* ac=m_nameToAction.value(name);
     m_nameToAction.remove(name);
@@ -294,61 +294,61 @@ QAction* QAbstractHost::getAction(const QString &name)
     return m_nameToAction.value(name);
 }
 
-QList<QAction*> QAbstractHost::get_actions()
+QList<QAction*> QAbstractHost::getActions()
 {
     return m_actions;
 }
 
-QObject* QAbstractHost::get_object()
+QObject* QAbstractHost::getObject()
 {
     return m_object;
 }
 
-void QAbstractHost::set_attribute(const QString &key, const QString &value)
+void QAbstractHost::setAttribute(const QString &key, const QString &value)
 {
     m_attributes.insert(key,value);
 }
 
-QString QAbstractHost::get_attribute(const QString &key)
+QString QAbstractHost::getAttribute(const QString &key)
 {
     return m_attributes.value(key);
 }
 
-void QAbstractHost::init_property()
+void QAbstractHost::initProperty()
 {
     QAbstractProperty* pro;
 
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=NULL)
     {
-        pro->set_property("name","objectName");
-        pro->set_attribute("show_name",tr("Name"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
-        insert_property(pro);
+        pro->setProperty("name","objectName");
+        pro->setAttribute("show_name",tr("Name"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
+        insertProperty(pro);
     }
 }
 
-void QAbstractHost::to_object(XMLObject *xml)
+void QAbstractHost::toObject(XMLObject *xml)
 {
     if(xml!=NULL)
     {
         xml->clear();
 
-        xml->set_title(property("title").toString());
+        xml->setTagName(property("title").toString());
 
 
         QMapIterator<QString,QString>       it(m_attributes);
         while(it.hasNext())
         {
             it.next();
-            xml->set_property(it.key(),it.value());
+            xml->setProperty(it.key(),it.value());
         }
 
         XMLObject* obj;
         foreach(QAbstractProperty* pro,m_propertys)
         {
-            if(pro->modified() || pro->get_attribute(ATTR_NEEDSAVE).toBool())
+            if(pro->modified() || pro->getAttribute(ATTR_NEEDSAVE).toBool())
             {
                 obj=new XMLObject;
                 pro->toObject(obj);
@@ -359,17 +359,17 @@ void QAbstractHost::to_object(XMLObject *xml)
         foreach(QAbstractHost* h,m_children)
         {
             obj=new XMLObject;
-            h->to_object(obj);
+            h->toObject(obj);
             xml->inser_child(-1,obj);
         }
     }
 }
 
-void QAbstractHost::from_object(XMLObject *xml)
+void QAbstractHost::fromObject(XMLObject *xml)
 {
     if(xml!=NULL)
     {
-        if(xml->get_title()!=property("title").toString())
+        if(xml->getTagName()!=property("title").toString())
         {
             return;
         }
@@ -380,51 +380,51 @@ void QAbstractHost::from_object(XMLObject *xml)
         while(it.hasNext())
         {
             it.next();
-            m_attributes.insert(it.key(),xml->get_property(it.key()));
+            m_attributes.insert(it.key(),xml->getProperty(it.key()));
         }
 
-        if(get_uuid()=="")
+        if(getUuid()=="")
         {
-            set_uuid(QUuid::createUuid().toString());
+            setUuid(QUuid::createUuid().toString());
         }
 
         QList<XMLObject*>   children=xml->getChildren();
         foreach(XMLObject* obj,children)
         {
-            if(obj->get_title()==PROPERTY_TITLE)
+            if(obj->getTagName()==PROPERTY_TITLE)
             {
-                QString name=obj->get_property("name");
+                QString name=obj->getProperty("name");
                 QAbstractProperty *pro=m_nameToProperty.value(name);
                 if(pro!=NULL)
                 {
                     pro->fromObject(obj);
-                    pro->set_attribute(ATTR_NEEDSAVE,true);
+                    pro->setAttribute(ATTR_NEEDSAVE,true);
                 }
             }
             else
             {
-                QString name=obj->get_property(HOST_TYPE);
+                QString name=obj->getProperty(HOST_TYPE);
 
                 QAbstractHost *h=QHostFactory::create_host(name);
                 if(h!=NULL)
                 {
-                    h->from_object(obj);
+                    h->fromObject(obj);
                     h->m_parent=this;
-                    if(h->get_object()->isWidgetType())
+                    if(h->getObject()->isWidgetType())
                     {
-                        QWidget* w=(QWidget*)h->get_object();
+                        QWidget* w=(QWidget*)h->getObject();
                         w->setParent((QWidget*)m_object);
                         w->setVisible(true);
                     }
                     else
                     {
-                        h->get_object()->setParent(m_object);
+                        h->getObject()->setParent(m_object);
                     }
                     m_children.append(h);
                 }
             }
         }
-        make_stylesheet();
+        makeStyleSheet();
     }
 }
 
@@ -436,36 +436,36 @@ void QAbstractHost::clear()
     }
 }
 
-QString QAbstractHost::get_show_name()
+QString QAbstractHost::getShowName()
 {
     return "";
 }
 
-QString QAbstractHost::get_show_icon()
+QString QAbstractHost::getShowIcon()
 {
     return "";
 }
 
-QString QAbstractHost::get_show_group()
+QString QAbstractHost::getShowGroup()
 {
     return "";
 }
 
-void QAbstractHost::create_object()
+void QAbstractHost::createObject()
 {
 }
 
 void QAbstractHost::init()
 {
-    create_object();
-    init_property();
+    createObject();
+    initProperty();
 
     if(m_object!=NULL)
     {
         m_object->installEventFilter(this);
         foreach(QAbstractProperty* pro,m_propertys)
         {
-            pro->set_value(m_object->property(pro->get_property("name").toByteArray()));
+            pro->set_value(m_object->property(pro->getProperty("name").toByteArray()));
         }
     }
 
@@ -477,53 +477,53 @@ bool QAbstractHost::eventFilter(QObject *o, QEvent *e)
     {
         if(e->type()==QEvent::Paint)
         {
-            return handle_paint_event((QPaintEvent*)e);
+            return handlePaintEvent((QPaintEvent*)e);
         }
         else if(e->type()==QEvent::MouseButtonPress)
         {
-            return handle_mouse_press_event((QMouseEvent*)e);
+            return handleMousePressEvent((QMouseEvent*)e);
         }
         else if(e->type()==QEvent::MouseButtonRelease)
         {
-            return handle_mouse_release_event((QMouseEvent*)e);
+            return handleMouseReleaseEvent((QMouseEvent*)e);
         }
         else if(e->type()==QEvent::MouseMove)
         {
-            return handle_mouse_move_event((QMouseEvent*)e);
+            return handleMouseMoveEvent((QMouseEvent*)e);
         }
         else if(e->type()==QEvent::MouseButtonDblClick)
         {
-            return handle_double_clicked_event((QMouseEvent*)e);
+            return handleDoubleClickedEvent((QMouseEvent*)e);
         }
         else if(e->type()==QEvent::FocusIn)
         {
-            return handle_focus_in_event((QFocusEvent*)e);
+            return handleFocusInEvent((QFocusEvent*)e);
         }
         else if(e->type()==QEvent::FocusOut)
         {
-            return handle_focus_out_event((QFocusEvent*)e);
+            return handleFocusOutEvent((QFocusEvent*)e);
         }
         else if(e->type()==QEvent::ContextMenu)
         {
-            return handle_context_menu_event((QContextMenuEvent*)e);
+            return handleContextMenuEvent((QContextMenuEvent*)e);
         }
     }
     return QObject::eventFilter(o,e);
 }
 
-bool QAbstractHost::handle_context_menu_event(QContextMenuEvent *)
+bool QAbstractHost::handleContextMenuEvent(QContextMenuEvent *)
 {
     return false;
 }
 
-bool QAbstractHost::handle_paint_event(QPaintEvent *)
+bool QAbstractHost::handlePaintEvent(QPaintEvent *)
 {
     return false;
 }
 
-bool QAbstractHost::handle_mouse_press_event(QMouseEvent *e)
+bool QAbstractHost::handleMousePressEvent(QMouseEvent *e)
 {
-    QString str=get_property_value("mousePress").toString();
+    QString str=getPropertyValue("mousePress").toString();
     if(str!="")
     {
         QMap<QString,QString> param;
@@ -535,38 +535,9 @@ bool QAbstractHost::handle_mouse_press_event(QMouseEvent *e)
     return false;
 }
 
-bool QAbstractHost::handle_mouse_release_event(QMouseEvent *e)
+bool QAbstractHost::handleMouseReleaseEvent(QMouseEvent *e)
 {
-    QString str=get_property_value("mouseRelease").toString();
-    if(str!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_x",QString::number(e->x()));
-        param.insert("_y",QString::number(e->y()));
-        param.insert("_button",QString::number(e->button()));
-        exec(str,param);
-        return true;
-    }
-    return false;
-}
-
-bool QAbstractHost::handle_mouse_move_event(QMouseEvent *e)
-{
-    QString str=get_property_value("mouseMove").toString();
-    if(str!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_x",QString::number(e->x()));
-        param.insert("_y",QString::number(e->y()));
-        param.insert("_button",QString::number(e->button()));
-        exec(str,param);
-    }
-    return false;
-}
-
-bool QAbstractHost::handle_double_clicked_event(QMouseEvent *e)
-{
-    QString str=get_property_value("doubleClick").toString();
+    QString str=getPropertyValue("mouseRelease").toString();
     if(str!="")
     {
         QMap<QString,QString> param;
@@ -579,17 +550,46 @@ bool QAbstractHost::handle_double_clicked_event(QMouseEvent *e)
     return false;
 }
 
-bool QAbstractHost::handle_focus_in_event(QFocusEvent *)
+bool QAbstractHost::handleMouseMoveEvent(QMouseEvent *e)
+{
+    QString str=getPropertyValue("mouseMove").toString();
+    if(str!="")
+    {
+        QMap<QString,QString> param;
+        param.insert("_x",QString::number(e->x()));
+        param.insert("_y",QString::number(e->y()));
+        param.insert("_button",QString::number(e->button()));
+        exec(str,param);
+    }
+    return false;
+}
+
+bool QAbstractHost::handleDoubleClickedEvent(QMouseEvent *e)
+{
+    QString str=getPropertyValue("doubleClick").toString();
+    if(str!="")
+    {
+        QMap<QString,QString> param;
+        param.insert("_x",QString::number(e->x()));
+        param.insert("_y",QString::number(e->y()));
+        param.insert("_button",QString::number(e->button()));
+        exec(str,param);
+        return true;
+    }
+    return false;
+}
+
+bool QAbstractHost::handleFocusInEvent(QFocusEvent *)
 {
     return false;
 }
 
-bool QAbstractHost::handle_focus_out_event(QFocusEvent *)
+bool QAbstractHost::handleFocusOutEvent(QFocusEvent *)
 {
     return false;
 }
 
-void QAbstractHost::property_refresh()
+void QAbstractHost::onPropertyRefresh()
 {
     if(m_object==NULL)
     {
@@ -597,7 +597,7 @@ void QAbstractHost::property_refresh()
     }
     foreach(QAbstractProperty* pro,m_propertys)
     {
-        QVariant v=m_object->property(pro->get_property("name").toByteArray());
+        QVariant v=m_object->property(pro->getProperty("name").toByteArray());
         if(v!=pro->get_value())
         {
             pro->set_value(v);
@@ -605,70 +605,70 @@ void QAbstractHost::property_refresh()
     }
 }
 
-QString QAbstractHost::get_uuid()
+QString QAbstractHost::getUuid()
 {
     return m_attributes.value("uuid");
 }
 
-void QAbstractHost::set_uuid(const QString &uuid)
+void QAbstractHost::setUuid(const QString &uuid)
 {
     m_attributes.insert("uuid",uuid);
 }
 
-void QAbstractHost::set_language_manager(QLanguageManager *language)
+void QAbstractHost::setLanguageManager(QLanguageManager *language)
 {
     m_language_manager=language;
-    connect(language,SIGNAL(current_language_changed()),this,SLOT(current_language_changed()));
-    connect(language,SIGNAL(current_text_changed(QString)),this,SLOT(current_text_changed(QString)));
+    connect(language,SIGNAL(notifyCurLanguageChanged()),this,SLOT(onCurLanguageChanged()));
+    connect(language,SIGNAL(notifyCurTextChanged(QString)),this,SLOT(onCurTextChanged(QString)));
     foreach(QAbstractHost* host,m_children)
     {
-        host->set_language_manager(language);
+        host->setLanguageManager(language);
     }
-    current_language_changed();
+    onCurLanguageChanged();
 }
 
-QLanguageManager* QAbstractHost::get_language_manager()
+QLanguageManager* QAbstractHost::getLanguageManager()
 {
     return m_language_manager;
 }
 
-void QAbstractHost::current_language_changed()
+void QAbstractHost::onCurLanguageChanged()
 {
     QLanguage* l=m_language_manager->get_current_language();
     foreach(QAbstractProperty* pro,m_propertys)
     {
-        if(pro->get_property("tr").toBool())
+        if(pro->getProperty("tr").toBool())
         {
             tagTranslateInfo *info=NULL;
-            if(l!=NULL)info=l->get_translate(pro->get_property("uuid").toString());
+            if(l!=NULL)info=l->get_translate(pro->getProperty("uuid").toString());
             if(info==NULL)
             {
-                pro->get_host()->set_property_value(pro->get_property("name").toString(),"");
+                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),"");
             }
             else
             {
-                pro->get_host()->set_property_value(pro->get_property("name").toString(),info->m_translate);
+                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),info->m_translate);
             }
         }
     }
 }
 
-void QAbstractHost::current_text_changed(const QString &uuid)
+void QAbstractHost::onCurTextChanged(const QString &uuid)
 {
     QLanguage* l=m_language_manager->get_current_language();
     foreach(QAbstractProperty* pro,m_propertys)
     {
-        if(pro->get_property("uuid").toString()==uuid)
+        if(pro->getProperty("uuid").toString()==uuid)
         {
             tagTranslateInfo *info=NULL;
             if(l!=NULL)info=l->get_translate(uuid);
             if(info==NULL)
             {
-                pro->get_host()->set_property_value(pro->get_property("name").toString(),"");
+                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),"");
             }
             else
             {
-                pro->get_host()->set_property_value(pro->get_property("name").toString(),info->m_translate);
+                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),info->m_translate);
             }
             return;
         }
@@ -697,17 +697,17 @@ QString QAbstractHost::functionInformation(const QString &name)
         pro=m_nameToProperty.value(para,NULL);
         if(pro!=NULL)
         {
-            if(pro->get_property("type")=="Enum")
+            if(pro->getProperty("type")=="Enum")
             {
-                ComboItems items=pro->get_attribute("items").value<ComboItems>();
+                ComboItems items=pro->getAttribute("items").value<ComboItems>();
                 foreach(tagComboItem item,items)
                 {
                     ret+=("    "+item.m_value.toString()+" = "+item.m_text+"\n");
                 }
             }
-            else if(pro->get_property("type")=="Cursor")
+            else if(pro->getProperty("type")=="Cursor")
             {
-                ComboItems items=pro->get_attribute("items").value<ComboItems>();
+                ComboItems items=pro->getAttribute("items").value<ComboItems>();
                 foreach(tagComboItem item,items)
                 {
                     QCursor c=item.m_value.value<QCursor>();
@@ -724,34 +724,34 @@ QString QAbstractHost::functionInformation(const QString &name)
     return ret;
 }
 
-void QAbstractHost::set_page_manager(QPageManager *page)
+void QAbstractHost::setPageManager(QPageManager *page)
 {
     m_page_manager=page;
     foreach(QAbstractHost* h,m_children)
     {
-        h->set_page_manager(page);
+        h->setPageManager(page);
     }
 }
 
-void QAbstractHost::set_data_manager(QDataManager *data)
+void QAbstractHost::setDataManager(QDataManager *data)
 {
     m_data_manager=data;
     foreach(QAbstractHost* h,m_children)
     {
-        h->set_data_manager(data);
+        h->setDataManager(data);
     }
 }
 
-void QAbstractHost::set_resource_manager(QResourceManager *resource)
+void QAbstractHost::setResourceManager(QResourceManager *resource)
 {
     m_resource_manager=resource;
     foreach(QAbstractHost* h,m_children)
     {
-        h->set_resource_manager(resource);
+        h->setResourceManager(resource);
     }
 }
 
-QScriptEngine* QAbstractHost::get_script_engine()
+QScriptEngine* QAbstractHost::getScriptEngine()
 {
     return m_engine;
 }
@@ -776,7 +776,7 @@ void QAbstractHost::exec(const QString &code, const QMap<QString, QString> &para
     }
 }
 
-void QAbstractHost::make_stylesheet()
+void QAbstractHost::makeStyleSheet()
 {
     QString str;
     QString temp;
@@ -785,7 +785,7 @@ void QAbstractHost::make_stylesheet()
     {
         if(pro->inherits("QStylesheetProperty"))
         {
-            QAbstractStylesheetItem *item=QStylesheetItemFactory::createItem(pro->get_property("name").toString());
+            QAbstractStylesheetItem *item=QStylesheetItemFactory::createItem(pro->getProperty("name").toString());
             if(item!=NULL)
             {
                 tagStylesheetItems list=pro->get_value().value<tagStylesheetItems>();
@@ -860,14 +860,14 @@ void QAbstractHost::setParent(QAbstractHost *parent, int index)
             m_object->setParent(NULL);
         }
     }
-    emit parent_changed();
+    emit notifyParentChanged();
 }
 
-QString QAbstractHost::get_host_type()
+QString QAbstractHost::getHostType()
 {
     if(m_parent!=NULL)
     {
-        return m_parent->get_host_type();
+        return m_parent->getHostType();
     }
     else
     {

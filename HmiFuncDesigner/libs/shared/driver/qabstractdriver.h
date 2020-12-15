@@ -55,7 +55,7 @@ public:
     void                        set_name(const QString &name);
     QStringList                 get_all_data_names();
 
-    static QString get_show_group();
+    static QString getShowGroup();
 
     void                        changed_data(const QString &uuid,const QString &key,const QVariant &value);
 signals:
@@ -63,7 +63,7 @@ signals:
     void    remove_data_signals(tagDriverDataInfo* data);
     void    data_refresh(tagDriverDataInfo *data);
 protected:
-    void init_property();
+    void initProperty();
 protected:
     QList<tagDriverDataInfo*>       m_datas;
     QMap<QString,tagDriverDataInfo*>    m_uuid_to_data;

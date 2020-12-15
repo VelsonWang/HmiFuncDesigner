@@ -25,7 +25,7 @@ void PluginLoader::load_plugin(const QString &xml_file_name)
     {
         return;
     }
-    if(xml.get_title()!="Plugin")
+    if(xml.getTagName()!="Plugin")
     {
         return;
     }
@@ -33,7 +33,7 @@ void PluginLoader::load_plugin(const QString &xml_file_name)
     QString path=QApplication::applicationDirPath();
     foreach(XMLObject* obj,paths)
     {
-        QString p=path+"/"+obj->get_property("path");//获取插件路径
+        QString p=path+"/"+obj->getProperty("path");//获取插件路径
         QDir dir(p);
         QFileInfoList list=dir.entryInfoList(QDir::Files);
         for(int i=0;i<list.size();i++)

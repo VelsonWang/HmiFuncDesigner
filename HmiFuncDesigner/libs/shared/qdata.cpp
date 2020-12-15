@@ -128,43 +128,43 @@ QStringList     QData::get_all_data_names()
     return list;
 }
 
-void QData::to_object(XMLObject *xml)
+void QData::toObject(XMLObject *xml)
 {
     xml->clear();
-    xml->set_title("Group");
-    xml->set_property("uuid",m_uuid);
-    xml->set_property("name",m_name);
+    xml->setTagName("Group");
+    xml->setProperty("uuid",m_uuid);
+    xml->setProperty("name",m_name);
 
     foreach(tagDataInfo* data,m_datas)
     {
         XMLObject* obj=new XMLObject(xml);
-        obj->set_title("Data");
-        obj->set_property("uuid",data->m_uuid);
-        obj->set_property("name",data->m_name);
-        obj->set_property("type",data->m_type);
-        obj->set_property("value",data->m_value.toString());
-        obj->set_property("save_period",QString::number(data->m_save_time));
-        obj->set_property("hold",data->m_hold?"true":"false");
-        obj->set_property("information",data->m_information);
+        obj->setTagName("Data");
+        obj->setProperty("uuid",data->m_uuid);
+        obj->setProperty("name",data->m_name);
+        obj->setProperty("type",data->m_type);
+        obj->setProperty("value",data->m_value.toString());
+        obj->setProperty("save_period",QString::number(data->m_save_time));
+        obj->setProperty("hold",data->m_hold?"true":"false");
+        obj->setProperty("information",data->m_information);
     }
 }
 
-void QData::from_object(XMLObject *xml)
+void QData::fromObject(XMLObject *xml)
 {
     clear();
 
-    if(xml->get_title()!="Group")
+    if(xml->getTagName()!="Group")
     {
         return;
     }
 
-    m_name=xml->get_property("name");
+    m_name=xml->getProperty("name");
     if(m_name=="")
     {
         return;
     }
 
-    m_uuid=xml->get_property("uuid");
+    m_uuid=xml->getProperty("uuid");
     if(m_uuid=="")
     {
         m_uuid=QUuid::createUuid().toString();
@@ -178,25 +178,25 @@ void QData::from_object(XMLObject *xml)
     tagDataInfo *data;
     foreach(XMLObject* obj,data_object)
     {
-        if(obj->get_title()=="Data")
+        if(obj->getTagName()=="Data")
         {
-            uuid=obj->get_property("uuid");
+            uuid=obj->getProperty("uuid");
             if(uuid=="")
             {
                 uuid=QUuid::createUuid().toString();
             }
             data=new tagDataInfo;
             data->m_uuid=uuid;
-            data->m_type=obj->get_property("type");
+            data->m_type=obj->getProperty("type");
             if(data->m_type=="")
             {
                 data->m_type="String";
             }
-            data->m_name=obj->get_property("name");
-            data->m_value=obj->get_property("value");
-            data->m_information=obj->get_property("information");
-            data->m_save_time=obj->get_property("save_period").toInt();
-            data->m_hold=(obj->get_property("hold")=="true");
+            data->m_name=obj->getProperty("name");
+            data->m_value=obj->getProperty("value");
+            data->m_information=obj->getProperty("information");
+            data->m_save_time=obj->getProperty("save_period").toInt();
+            data->m_hold=(obj->getProperty("hold")=="true");
             data->m_data=this;
             setProperty(data->m_name.toLocal8Bit(),data->m_value);
             m_datas.append(data);
@@ -205,12 +205,12 @@ void QData::from_object(XMLObject *xml)
     }
 }
 
-void QData::set_uuid(const QString &uuid)
+void QData::setUuid(const QString &uuid)
 {
     m_uuid=uuid;
 }
 
-QString QData::get_uuid()
+QString QData::getUuid()
 {
     return m_uuid;
 }

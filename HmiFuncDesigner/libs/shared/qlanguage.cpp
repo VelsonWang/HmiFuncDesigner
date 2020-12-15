@@ -13,33 +13,33 @@ QLanguage::~QLanguage()
     clear();
 }
 
-void QLanguage::to_object(XMLObject *xml)
+void QLanguage::toObject(XMLObject *xml)
 {
-    xml->set_title("Language");
-    xml->set_property("name",m_language_name);
-    xml->set_property("information",m_information);
-    xml->set_property("uuid",m_uuid);
+    xml->setTagName("Language");
+    xml->setProperty("name",m_language_name);
+    xml->setProperty("information",m_information);
+    xml->setProperty("uuid",m_uuid);
 
     QMapIterator<QString,tagTranslateInfo*>   it(m_translates);
     while(it.hasNext())
     {
         it.next();
         XMLObject *tr=new XMLObject(xml);
-        tr->set_title("Tr");
-        tr->set_property("translate",it.value()->m_translate);
-        tr->set_property("uuid",it.value()->m_uuid);
+        tr->setTagName("Tr");
+        tr->setProperty("translate",it.value()->m_translate);
+        tr->setProperty("uuid",it.value()->m_uuid);
     }
 }
 
-void QLanguage::from_object(XMLObject *xml)
+void QLanguage::fromObject(XMLObject *xml)
 {
     clear();
 
-    if(xml->get_title()=="Language")
+    if(xml->getTagName()=="Language")
     {
-        m_language_name=xml->get_property("name");
-        m_information=xml->get_property("information");
-        m_uuid=xml->get_property("uuid");
+        m_language_name=xml->getProperty("name");
+        m_information=xml->getProperty("information");
+        m_uuid=xml->getProperty("uuid");
         if(m_uuid=="")
         {
             m_uuid=QUuid::createUuid().toString();
@@ -49,8 +49,8 @@ void QLanguage::from_object(XMLObject *xml)
         foreach(XMLObject *obj,children)
         {
             tagTranslateInfo* info=new tagTranslateInfo;
-            info->m_translate=obj->get_property("translate");
-            info->m_uuid=obj->get_property("uuid");
+            info->m_translate=obj->getProperty("translate");
+            info->m_uuid=obj->getProperty("uuid");
             if(info->m_uuid=="")
             {
                 info->m_uuid=QUuid::createUuid().toString();
@@ -144,12 +144,12 @@ void QLanguage::set_information(const QString &information)
     m_information=information;
 }
 
-void QLanguage::set_uuid(const QString &uuid)
+void QLanguage::setUuid(const QString &uuid)
 {
     m_uuid=uuid;
 }
 
-QString QLanguage::get_uuid()
+QString QLanguage::getUuid()
 {
     return m_uuid;
 }

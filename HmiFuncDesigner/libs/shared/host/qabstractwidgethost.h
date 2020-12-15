@@ -12,7 +12,7 @@ public:
     QAbstractWidgetHost(QAbstractHost *parent = 0);
 
 protected:
-    void    init_property();
+    void    initProperty();
 public slots:
     void   setGeometry(int x,int y,int width,int height);
     int    x();

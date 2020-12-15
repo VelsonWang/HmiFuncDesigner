@@ -17,10 +17,10 @@ INCLUDEPATH += $$PWD/ProjData
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
 INCLUDEPATH += $$PWD/../../libs/qscintilla
-INCLUDEPATH += $$PWD/../../libs/ProjData
 INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
 INCLUDEPATH += $$PWD/../../libs/core
 INCLUDEPATH += $$PWD/../../libs/shared
+INCLUDEPATH += $$PWD/../../libs/shared/projdata
 INCLUDEPATH += $$PWD/../../libs/gradienteditor
 INCLUDEPATH += $$PWD/../../libs/running
 
@@ -41,7 +41,6 @@ LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lProjData
 LIBS += -L$$LINK_LIBRARY_PATH -lcore
 LIBS += -L$$LINK_LIBRARY_PATH -lshared
 LIBS += -L$$LINK_LIBRARY_PATH -lgradientEditor
@@ -85,7 +84,6 @@ SOURCES += main.cpp\
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
     GetWidthHeightDialog.cpp \
-    UndoCommand.cpp \
     ElementLibraryWidget.cpp \
     ElementLibraryListWidget.cpp \
     ../Public/PubTool.cpp \
@@ -133,7 +131,6 @@ HEADERS  += MainWindow.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
     GetWidthHeightDialog.h \
-    UndoCommand.h \
     ElementLibraryWidget.h \
     ElementLibraryListWidget.h \
     ../Public/PublicDefine.h \

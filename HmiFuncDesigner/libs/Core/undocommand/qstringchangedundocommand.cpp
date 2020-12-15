@@ -42,19 +42,19 @@ void QStringChangedUndoCommand::redo()
     QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->get_host_by_uuid(m_host_uuid);
     if(h!=NULL)
     {
-        QAbstractProperty* pro=h->get_property(m_property_name);
+        QAbstractProperty* pro=h->getProperty(m_property_name);
         if(pro!=NULL)
         {
-            pro->set_property("tr",m_new_tr);
-            pro->set_property("uuid",m_new_tr?m_uuid:QVariant());
+            pro->setProperty("tr",m_new_tr);
+            pro->setProperty("uuid",m_new_tr?m_uuid:QVariant());
         }
-        QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
+        QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
         if(m_old_tr)
         {
             if(!m_new_tr)
             {
                 manager->remove_text(m_uuid);
-                h->set_property_value(m_property_name,m_new_text);
+                h->setPropertyValue(m_property_name,m_new_text);
             }
             else
             {
@@ -79,7 +79,7 @@ void QStringChangedUndoCommand::redo()
             }
             else
             {
-                h->set_property_value(m_property_name,m_new_text);
+                h->setPropertyValue(m_property_name,m_new_text);
             }
         }
     }
@@ -90,19 +90,19 @@ void QStringChangedUndoCommand::undo()
     QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->get_host_by_uuid(m_host_uuid);
     if(h!=NULL)
     {
-        QAbstractProperty* pro=h->get_property(m_property_name);
+        QAbstractProperty* pro=h->getProperty(m_property_name);
         if(pro!=NULL)
         {
-            pro->set_property("tr",m_old_tr);
-            pro->set_property("uuid",m_old_tr?m_uuid:QVariant());
+            pro->setProperty("tr",m_old_tr);
+            pro->setProperty("uuid",m_old_tr?m_uuid:QVariant());
         }
-        QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
+        QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
         if(m_new_tr)
         {
             if(!m_old_tr)
             {
                 manager->remove_text(m_uuid);
-                h->set_property_value(m_property_name,m_old_text);
+                h->setPropertyValue(m_property_name,m_old_text);
             }
             else
             {
@@ -127,7 +127,7 @@ void QStringChangedUndoCommand::undo()
             }
             else
             {
-                h->set_property_value(m_property_name,m_old_text);
+                h->setPropertyValue(m_property_name,m_old_text);
             }
         }
     }

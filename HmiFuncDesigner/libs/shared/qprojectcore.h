@@ -18,6 +18,7 @@ class QScriptEngine;
 class QDataManager;
 class QResourceManager;
 class QDriverManager;
+class XMLObject;
 
 struct tagUserInfo;
 
@@ -28,15 +29,20 @@ public:
     explicit QProjectCore(QObject *parent = 0);
     ~QProjectCore();
 
-    bool    open(const QString &fileName);
+    bool open(const QString &fileName);
 
     void    close();
     bool    is_opened();
 
     bool    create_new(const QString &path,const QString &name);
 
+
+    bool createNewProj(const QString &szfile);
+    bool openProj(XMLObject *pXmlObj);
+    void saveProj(XMLObject *pXmlObj);
+
     QPageManager* get_page_manager();
-    QLanguageManager *get_language_manager();
+    QLanguageManager *getLanguageManager();
     QUserManager    *get_user_manager();
     QDataManager    *get_data_manager();
     QResourceManager *get_resource_manager();

@@ -4,10 +4,10 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
-class PROJDATASHARED_EXPORT ScriptObject
+class SHAREDLIB_EXPORT ScriptObject
 {
 public:
     QString m_szName;
@@ -19,7 +19,7 @@ public:
 };
 
 
-class PROJDATASHARED_EXPORT Script
+class SHAREDLIB_EXPORT Script
 {
 public:
     Script();

@@ -68,5 +68,5 @@ void QDriverAddUndoCommand::add()
 void QDriverAddUndoCommand::remove()
 {
     QDriverManager *manager=QSoftCore::getCore()->getProjectCore()->get_driver_manager();
-    manager->remove_driver(m_driver->get_uuid());
+    manager->remove_driver(m_driver->getUuid());
 }

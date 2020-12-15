@@ -53,5 +53,5 @@ void QDataGroupAddUndoCommand::add()
 
 void QDataGroupAddUndoCommand::remove()
 {
-    QSoftCore::getCore()->getProjectCore()->get_data_manager()->remove_group(m_data.get_uuid());
+    QSoftCore::getCore()->getProjectCore()->get_data_manager()->remove_group(m_data.getUuid());
 }

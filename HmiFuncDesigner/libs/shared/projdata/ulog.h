@@ -9,7 +9,7 @@
 #include <QMutexLocker>
 #include <QMutex>
 #include <stdlib.h>
-#include "projdata_global.h"
+#include "sharedlibglobal.h"
 
 enum ELogLevel{
     LOG_DEBUG,
@@ -19,7 +19,7 @@ enum ELogLevel{
     LOG_FATAL
 };
 
-class PROJDATASHARED_EXPORT ULog : public QObject
+class SHAREDLIB_EXPORT ULog : public QObject
 {
     Q_OBJECT
 
@@ -69,7 +69,7 @@ private:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class PROJDATASHARED_EXPORT QLogHelper
+class SHAREDLIB_EXPORT QLogHelper
 {
 
 public:

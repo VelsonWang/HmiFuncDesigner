@@ -1,10 +1,10 @@
 #ifndef IGRAPHPAGESAVELOAD_H
 #define IGRAPHPAGESAVELOAD_H
 
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
-class PROJDATASHARED_EXPORT IGraphPageSaveLoad
+class SHAREDLIB_EXPORT IGraphPageSaveLoad
 {
 public:
     virtual ~IGraphPageSaveLoad() {}

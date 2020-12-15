@@ -41,8 +41,8 @@ bool QRunningManager::load(const QString &path)
         return false;
     }
     m_project->init_script_engine();
-    connect(m_project->get_project_host(),SIGNAL(show_widget(QWidget*)),this,SLOT(show_widget(QWidget*)));
-    connect(m_project->get_project_host(),SIGNAL(show_dialog(QAbstractHost*)),this,SLOT(show_dialog(QAbstractHost*)));
+    connect(m_project->get_project_host(),SIGNAL(notifyShowWidget(QWidget*)),this,SLOT(onShowWidget(QWidget*)));
+    connect(m_project->get_project_host(),SIGNAL(notifyShowDialog(QAbstractHost*)),this,SLOT(onShowDialog(QAbstractHost*)));
     return true;
 }
 
@@ -56,7 +56,7 @@ void QRunningManager::release()
     m_last_widget=NULL;
 }
 
-void QRunningManager::show_widget(QWidget *widget)
+void QRunningManager::onShowWidget(QWidget *widget)
 {
     if(widget==NULL)
     {
@@ -76,12 +76,12 @@ void QRunningManager::show_widget(QWidget *widget)
     widget->raise();
 }
 
-void QRunningManager::show_dialog(QAbstractHost *host)
+void QRunningManager::onShowDialog(QAbstractHost *host)
 {
     m_dialog_base_widget->setVisible(true);
     m_dialog_base_widget->raise();
 
-    QWidget* wid=(QWidget*)host->get_object();
+    QWidget* wid=(QWidget*)host->getObject();
 
     QBaseDialog dlg(m_main_window);
 
@@ -105,19 +105,19 @@ bool QRunningManager::eventFilter(QObject *o, QEvent *e)
 void QRunningManager::start()
 {
     QProjectHost* host=(QProjectHost*)m_project->get_project_host();
-    QString start_page=host->get_property_value("start_page").toString();
+    QString start_page=host->getPropertyValue("start_page").toString();
 
     QPageManager *manager=m_project->get_page_manager();
     QList<QAbstractHost*> list=manager->getPages();
     foreach(QAbstractHost* page,list)
     {
-        ((QWidget*)page->get_object())->setVisible(false);
+        ((QWidget*)page->getObject())->setVisible(false);
     }
 
-    QSize sz=host->get_property_value("running_size").toSize();
+    QSize sz=host->getPropertyValue("running_size").toSize();
     m_main_window->setFixedSize(sz);
 
-    m_main_window->setWindowTitle(host->get_property_value("objectName").toString());
+    m_main_window->setWindowTitle(host->getPropertyValue("objectName").toString());
 
     QDesktopWidget *desk=qApp->desktop();
 

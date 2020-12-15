@@ -161,7 +161,7 @@ void QFormWidgetView::project_opened()
 
     foreach(QAbstractHost* h,pages)
     {
-        h->get_object()->setProperty("no-ManhattanStyle",true);
+        h->getObject()->setProperty("no-ManhattanStyle",true);
         m_formWidget->insert_form(h);
     }
     if(pages.size()>0)
@@ -171,13 +171,13 @@ void QFormWidgetView::project_opened()
 
     disconnect(m_languageComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(language_combo_changed()));
 
-    QLanguageManager *l_manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
+    QLanguageManager *l_manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
 
     QList<QLanguage*>  list=l_manager->get_all_languages();
     foreach(QLanguage*l ,list)
     {
         m_languageComboBox->addItem(l->get_language_name());
-        m_language_uuid.append(l->get_uuid());
+        m_language_uuid.append(l->getUuid());
     }
     QLanguage *c=l_manager->get_current_language();
     connect(m_languageComboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(language_combo_changed()));
@@ -367,7 +367,7 @@ void QFormWidgetView::language_combo_changed()
     {
         uuid="";
     }
-    QSoftCore::getCore()->getProjectCore()->get_language_manager()->set_current_language(uuid);
+    QSoftCore::getCore()->getProjectCore()->getLanguageManager()->set_current_language(uuid);
 }
 
 void QFormWidgetView::set_select(QAbstractHost *host)

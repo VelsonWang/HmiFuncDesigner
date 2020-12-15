@@ -20,14 +20,14 @@ void QDriverManager::save(const QString &path)
 {
     XMLObject xml;
 
-    xml.set_title("Drivers");
+    xml.setTagName("Drivers");
 
     foreach(QAbstractDriver* driver,m_drivers)
     {
         XMLObject* o=new XMLObject(&xml);
-        o->set_title("Driver");
-        o->set_property("type",driver->get_attribute(HOST_TYPE));
-        o->set_property("name",driver->get_name());
+        o->setTagName("Driver");
+        o->setProperty("type",driver->getAttribute(HOST_TYPE));
+        o->setProperty("name",driver->get_name());
         driver->save(path+"/drivers/"+driver->get_name()+".xml");
     }
 
@@ -59,7 +59,7 @@ void QDriverManager::load(const QString &path)
         return;
     }
 
-    if(xml.get_title()!="Drivers")
+    if(xml.getTagName()!="Drivers")
     {
         return;
     }
@@ -68,10 +68,10 @@ void QDriverManager::load(const QString &path)
 
     foreach(XMLObject* c,list)
     {
-        if(c->get_title()=="Driver")
+        if(c->getTagName()=="Driver")
         {
-            QString type=c->get_property("type");
-            QString name=c->get_property("name");
+            QString type=c->getProperty("type");
+            QString name=c->getProperty("name");
             QAbstractDriver *driver=QDriverFactory::create_driver(type);
 
             if(driver!=NULL)
@@ -79,8 +79,8 @@ void QDriverManager::load(const QString &path)
                 if(driver->load(path+"/drivers/"+name+".xml"))
                 {
                     m_drivers.append(driver);
-                    m_uuid_to_driver.insert(driver->get_uuid(),driver);
-                    driver->set_default();
+                    m_uuid_to_driver.insert(driver->getUuid(),driver);
+                    driver->setDefault();
                 }
                 else
                 {
@@ -131,6 +131,6 @@ void QDriverManager::insert_driver(int index, QAbstractDriver *driver)
     }
 
     m_drivers.insert(index,driver);
-    m_uuid_to_driver.insert(driver->get_uuid(),driver);
+    m_uuid_to_driver.insert(driver->getUuid(),driver);
     emit insert_driver_signal(driver,index);
 }

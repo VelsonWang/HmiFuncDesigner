@@ -6,12 +6,12 @@
 #include <QMetaType>
 #include <QJsonObject>
 #include <QJsonValue>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
 
 
-class PROJDATASHARED_EXPORT Tag
+class SHAREDLIB_EXPORT Tag
 {
 public:
     Tag();
@@ -51,7 +51,7 @@ private:
 };
 Q_DECLARE_METATYPE(Tag)
 
-class PROJDATASHARED_EXPORT TagManager
+class SHAREDLIB_EXPORT TagManager
 {
 public:
     TagManager();

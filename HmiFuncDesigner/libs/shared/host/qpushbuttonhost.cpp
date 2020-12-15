@@ -9,31 +9,31 @@ QPushButtonHost::QPushButtonHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QPushButtonHost::get_show_name()
+QString QPushButtonHost::getShowName()
 {
     return tr("Push Button");
 }
 
-QString QPushButtonHost::get_show_group()
+QString QPushButtonHost::getShowGroup()
 {
     return tr("Buttons");
 }
 
-QString QPushButtonHost::get_show_icon()
+QString QPushButtonHost::getShowIcon()
 {
     return ":/images/pushbutton.png";
 }
 
-void QPushButtonHost::create_object()
+void QPushButtonHost::createObject()
 {
     m_object=new QPushButton();
     m_object->setObjectName("pushbutton");
 }
 
-void QPushButtonHost::init_property()
+void QPushButtonHost::initProperty()
 {
-    QAbstractButtonHost::init_property();
+    QAbstractButtonHost::initProperty();
 
-    set_property_value("geometry",QRect(0,0,100,30));
-    set_property_value("text","button");
+    setPropertyValue("geometry",QRect(0,0,100,30));
+    setPropertyValue("text","button");
 }

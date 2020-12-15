@@ -15,7 +15,7 @@ QPropertyBaseEditor::QPropertyBaseEditor(QAbstractProperty *pro,QUndoStack* stac
 {
     this->setFocusPolicy(Qt::StrongFocus);
     m_resetButton=new QToolButton(this);
-    m_resetButton->setVisible(m_property->get_attribute(ATTR_RESET_ABLEABLE).toBool());
+    m_resetButton->setVisible(m_property->getAttribute(ATTR_RESET_ABLEABLE).toBool());
     m_resetButton->setIcon(QIcon(":/images/reset.png"));
     m_resetButton->setIconSize(QSize(8,8));
     m_resetButton->setSizePolicy(QSizePolicy(QSizePolicy::Fixed,QSizePolicy::MinimumExpanding));
@@ -24,11 +24,11 @@ QPropertyBaseEditor::QPropertyBaseEditor(QAbstractProperty *pro,QUndoStack* stac
     m_resetButton->setEnabled(m_property->modified());
 
     connect(m_resetButton,SIGNAL(clicked()),this,SLOT(reset()));
-    connect(m_property,SIGNAL(refresh()),this,SLOT(property_refresh()));
+    connect(m_property,SIGNAL(refresh()),this,SLOT(onPropertyRefresh()));
 
     this->setProperty("no-ManhattanStyle",true);
 
-    m_widget=QPropertyFactory::create_editor(pro->get_property("type").toString(),pro,stack);
+    m_widget=QPropertyFactory::create_editor(pro->getProperty("type").toString(),pro,stack);
     if(m_widget==NULL)
     {
         QLabel *lable=new QLabel;
@@ -70,7 +70,7 @@ bool QPropertyBaseEditor::eventFilter(QObject *o, QEvent *e)
     return QWidget::eventFilter(o,e);
 }
 
-void QPropertyBaseEditor::property_refresh()
+void QPropertyBaseEditor::onPropertyRefresh()
 {
     m_resetButton->setEnabled(m_property->modified());
 }

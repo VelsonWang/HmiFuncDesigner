@@ -6,7 +6,7 @@ QEnumPropertyEditor::QEnumPropertyEditor(QAbstractProperty *property,QUndoStack*
     QComboBox(parent),
     m_property(property)
 {
-    m_items=m_property->get_attribute("items").value<ComboItems>();
+    m_items=m_property->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item,m_items)
     {
         this->addItem(QIcon(item.m_icon),item.m_text);

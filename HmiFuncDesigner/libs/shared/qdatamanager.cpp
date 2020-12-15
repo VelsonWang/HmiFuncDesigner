@@ -29,18 +29,18 @@ void QDataManager::load(const QString &path)
         XMLObject xml;
         if(xml.load(buffer,0))
         {
-            if(xml.get_title()=="Groups")
+            if(xml.getTagName()=="Groups")
             {
                 QList<XMLObject*> groups=xml.getChildren();
 
                 foreach(XMLObject *o,groups)
                 {
-                    if(o->get_title()=="Group")
+                    if(o->getTagName()=="Group")
                     {
                         QData *data=new QData;
-                        data->from_object(o);
+                        data->fromObject(o);
                         m_datas.append(data);
-                        m_uuid_to_data.insert(data->get_uuid(),data);
+                        m_uuid_to_data.insert(data->getUuid(),data);
                     }
                 }
             }
@@ -53,12 +53,12 @@ void QDataManager::save(const QString &path)
 
     XMLObject xml;
 
-    xml.set_title("Groups");
+    xml.setTagName("Groups");
 
     foreach(QData *data,m_datas)
     {
         XMLObject* g=new XMLObject(&xml);
-        data->to_object(g);
+        data->toObject(g);
     }
 
     QString str=xml.write();
@@ -121,7 +121,7 @@ void QDataManager::insert_group(const QData &data, int index)
     QData *dt=new QData;
     dt->copy(data);
     m_datas.insert(index,dt);
-    m_uuid_to_data.insert(dt->get_uuid(),dt);
+    m_uuid_to_data.insert(dt->getUuid(),dt);
     emit insert_group_signal(dt,index);
 }
 

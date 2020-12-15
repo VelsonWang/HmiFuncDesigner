@@ -61,8 +61,8 @@ QDriverListView::QDriverListView(QWidget *parent) :
     while(it.hasNext())
     {
         it.next();
-        group=it.value()->get_show_group();
-        name=it.value()->get_show_name();
+        group=it.value()->getShowGroup();
+        name=it.value()->getShowName();
         QTreeWidgetItem *par=m_group_to_item.value(group);
         if(par==NULL)
         {

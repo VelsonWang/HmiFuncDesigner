@@ -47,7 +47,7 @@ void QPropertyView::selectWidget(QAbstractHost *host)
     }
     else
     {
-        m_propertyView->setPropertys(host->get_propertys());
+        m_propertyView->setPropertys(host->getPropertys());
     }
 }
 

@@ -276,7 +276,7 @@ void QTemplateTreeWidget::init()
         return;
     }
 
-    if(xml.get_title()!="Templates")
+    if(xml.getTagName()!="Templates")
     {
         return;
     }
@@ -285,17 +285,17 @@ void QTemplateTreeWidget::init()
 
     foreach(XMLObject* c,list)
     {
-        if(c->get_title()=="Template")
+        if(c->getTagName()=="Template")
         {
-            int type=c->get_property("level").toInt();
+            int type=c->getProperty("level").toInt();
             QString path;
             if(type<2)
             {
-                path=qApp->applicationDirPath()+"/template/"+m_type+"/"+c->get_property("path");
+                path=qApp->applicationDirPath()+"/template/"+m_type+"/"+c->getProperty("path");
             }
             else
             {
-                path=c->get_property("path");
+                path=c->getProperty("path");
             }
             QFile file(path);
             if(file.open(QFile::ReadOnly))
@@ -304,12 +304,12 @@ void QTemplateTreeWidget::init()
                 XMLObject o;
                 if(o.load(buff,0))
                 {
-                    if(o.get_title()==m_type)
+                    if(o.getTagName()==m_type)
                     {
                         tagTemplateInfo *info=new tagTemplateInfo;
                         info->m_type=type;
-                        info->m_name=c->get_property("name");
-                        info->m_file_name=c->get_property("path");
+                        info->m_name=c->getProperty("name");
+                        info->m_file_name=c->getProperty("path");
                         add_item(info);
                     }
                 }
@@ -363,7 +363,7 @@ void QTemplateTreeWidget::double_clicked(QTreeWidgetItem *item)
 void QTemplateTreeWidget::save()
 {
     XMLObject xml;
-    xml.set_title("Templates");
+    xml.setTagName("Templates");
 
     foreach(tagTemplateInfo* info,m_infos)
     {
@@ -372,10 +372,10 @@ void QTemplateTreeWidget::save()
             continue;
         }
         XMLObject* o=new XMLObject(&xml);
-        o->set_title("Template");
-        o->set_property("path",info->m_file_name);
-        o->set_property("name",info->m_name);
-        o->set_property("level",QString::number(info->m_type));
+        o->setTagName("Template");
+        o->setProperty("path",info->m_file_name);
+        o->setProperty("name",info->m_name);
+        o->setProperty("level",QString::number(info->m_type));
     }
 
     QFile f(qApp->applicationDirPath()+"/template/"+m_type+"/templates.xml");

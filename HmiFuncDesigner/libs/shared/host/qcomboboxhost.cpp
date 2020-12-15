@@ -9,22 +9,22 @@ QComboBoxHost::QComboBoxHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QComboBoxHost::get_show_name()
+QString QComboBoxHost::getShowName()
 {
     return tr("Combo Box");
 }
 
-QString QComboBoxHost::get_show_group()
+QString QComboBoxHost::getShowGroup()
 {
     return tr("Input Widgets");
 }
 
-QString QComboBoxHost::get_show_icon()
+QString QComboBoxHost::getShowIcon()
 {
     return ":/images/combobox.png";
 }
 
-void QComboBoxHost::create_object()
+void QComboBoxHost::createObject()
 {
     m_object=new QComboBox();
     m_object->setObjectName("combobox");

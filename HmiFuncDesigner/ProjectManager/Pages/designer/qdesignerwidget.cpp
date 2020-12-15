@@ -1,13 +1,10 @@
 #include "qdesignerwidget.h"
 
 #include "widgetbox/qwidgetboxview.h"
-
 #include "property/qpropertyview.h"
 #include "form/qformwidgetview.h"
 #include "objectlist/qobjectlistwidget.h"
-
 #include "../../libs/core/minisplitter.h"
-
 #include <QVBoxLayout>
 
 QDesignerWidget::QDesignerWidget(QWidget *parent) :
@@ -22,13 +19,24 @@ QDesignerWidget::QDesignerWidget(QWidget *parent) :
     l->setMargin(0);
     l->setSpacing(0);
 
+    QVariant var;
+    var.setValue(m_widgetBox);
+    this->setProperty("WidgetBoxView", var);
 
 
     MiniSplitter *splitter=new MiniSplitter(Qt::Horizontal);
-
     l->addWidget(splitter);
+#if 1
+    splitter->addWidget(m_formWidgetView);
 
+    MiniSplitter *s=new MiniSplitter(Qt::Vertical);
+    s->addWidget(m_propertyView);
+    s->addWidget(m_objectListWidget);
+    splitter->addWidget(s);
 
+    splitter->setStretchFactor(0,1);
+    splitter->setStretchFactor(1,0);
+#else
     splitter->addWidget(m_widgetBox);
     splitter->addWidget(m_formWidgetView);
 
@@ -40,7 +48,7 @@ QDesignerWidget::QDesignerWidget(QWidget *parent) :
     splitter->setStretchFactor(0,0);
     splitter->setStretchFactor(1,1);
     splitter->setStretchFactor(2,0);
-
+#endif
 
     connect(m_formWidgetView,SIGNAL(select(QAbstractHost*)),m_propertyView,SLOT(selectWidget(QAbstractHost*)));
     connect(m_formWidgetView,SIGNAL(select(QAbstractHost*)),m_objectListWidget,SLOT(set_select(QAbstractHost*)));

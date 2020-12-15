@@ -8,7 +8,7 @@ QDriverFactory::QDriverFactory()
 {
 }
 
-void QDriverFactory::register_driver(const QString name,GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *driver)
+void QDriverFactory::register_driver(const QString name, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *driver)
 {
     tagDriverInfo *info=m_meta_map.value(name);
     if(info==NULL)
@@ -17,8 +17,8 @@ void QDriverFactory::register_driver(const QString name,GET_SHOW_NAME get_name, 
     }
     info->m_driver_object=driver;
     info->m_name=name;
-    info->get_show_name=get_name;
-    info->get_show_group=get_group;
+    info->getShowName=get_name;
+    info->getShowGroup=get_group;
     m_meta_map.insert(name,info);
 }
 
@@ -36,8 +36,8 @@ QAbstractDriver* QDriverFactory::create_driver(const QString &name)
     {
         driver=(QAbstractDriver*)obj->newInstance();
         driver->init();
-        driver->set_attribute(HOST_TYPE,name);
-        driver->set_property_value("driver_type",info->get_show_group()+"."+info->get_show_name());
+        driver->setAttribute(HOST_TYPE,name);
+        driver->setPropertyValue("driver_type",info->getShowGroup()+"."+info->getShowName());
     }
 
     return driver;

@@ -3,12 +3,12 @@
 
 #include <QString>
 #include <QObject>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
 class DatabaseSettingPrivate;
 
-class PROJDATASHARED_EXPORT DatabaseSetting
+class SHAREDLIB_EXPORT DatabaseSetting
 {
 public:
     DatabaseSetting();

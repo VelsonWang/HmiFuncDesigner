@@ -1,7 +1,7 @@
 #include "functioneditordialog.h"
 #include "ui_functioneditordialog.h"
 #include "Helper.h"
-#include "XMLObject.h"
+#include "xmlobject.h"
 #include "Element.h"
 #include "ProjectData.h"
 #include <QListWidget>
@@ -109,7 +109,7 @@ void FunctionEditorDialog::initListWidget()
         return;
     }
 
-    QVector<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
     foreach(XMLObject* funcGroup, childrenFuncSupport) {
         QString szFuncGroupName = funcGroup->getProperty("funcName");
@@ -124,7 +124,7 @@ void FunctionEditorDialog::initListWidget()
         pTab->setCurrentIndex(0);
 
         // add child
-        QVector<XMLObject*> childrenGroup = funcGroup->getChildren();
+        QList<XMLObject*> childrenGroup = funcGroup->getChildren();
         if(childrenGroup.size() < 1)
             continue;
         foreach(XMLObject* func, childrenGroup) {
@@ -134,7 +134,7 @@ void FunctionEditorDialog::initListWidget()
             QListWidgetItem *pItem = new QListWidgetItem(funcName, pListWidget);
             pListWidget->addItem(pItem);
 
-            QVector<XMLObject*> funcDesc = func->getChildren();
+            QList<XMLObject*> funcDesc = func->getChildren();
             if(funcDesc.size() < 1)
                 continue;
             QString strDesc = "";

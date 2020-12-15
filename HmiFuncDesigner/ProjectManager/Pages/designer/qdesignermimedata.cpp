@@ -25,7 +25,7 @@ void QDesignerDnDItem::init( QAbstractHost *host,const QPoint &global_mouse_pos)
 {
     Q_ASSERT(host != 0);
     m_host = host;
-    m_hot_spot = global_mouse_pos - ((QWidget*)m_host->get_object())->mapToGlobal(QPoint(0,0));
+    m_hot_spot = global_mouse_pos - ((QWidget*)m_host->getObject())->mapToGlobal(QPoint(0,0));
 }
 
 QDesignerDnDItem::~QDesignerDnDItem()
@@ -62,7 +62,7 @@ WidgetBoxDnDItem::WidgetBoxDnDItem(const QString &name,const QPoint &global_mous
         return;
     }
     m_name=name;
-    QWidget* wid=(QWidget*)host->get_object();
+    QWidget* wid=(QWidget*)host->getObject();
     wid->move(global_mouse_pos - QPoint(5, 5));
     wid->setWindowOpacity(0.5);
     init(host,global_mouse_pos);
@@ -92,7 +92,7 @@ QDesignerMimeData::QDesignerMimeData(const QDesignerDnDItems &items, QDrag *drag
     case 0:
         break;
     case 1: {
-        QWidget *deco = (QWidget*)m_items.first()->host()->get_object();
+        QWidget *deco = (QWidget*)m_items.first()->host()->getObject();
         decorationTopLeft = deco->pos();
         const QPixmap widgetPixmap = QPixmap::grabWidget(deco);
         QImage image(widgetPixmap.size(), QImage::Format_ARGB32);
@@ -107,9 +107,9 @@ QDesignerMimeData::QDesignerMimeData(const QDesignerDnDItems &items, QDrag *drag
     default: {
         const QDesignerDnDItems::const_iterator cend = m_items.constEnd();
         QDesignerDnDItems::const_iterator it =m_items.constBegin();
-        QRect unitedGeometry = ((QWidget*)(*it)->host()->get_object())->geometry();
+        QRect unitedGeometry = ((QWidget*)(*it)->host()->getObject())->geometry();
         for (++it; it != cend; ++it )
-            unitedGeometry  = unitedGeometry .united(((QWidget*)(*it)->host()->get_object())->geometry());
+            unitedGeometry  = unitedGeometry .united(((QWidget*)(*it)->host()->getObject())->geometry());
 
         // paint with offset. At the same time, create a mask bitmap, containing widget rectangles.
         QImage image(unitedGeometry.size(), QImage::Format_ARGB32);
@@ -121,7 +121,7 @@ QDesignerMimeData::QDesignerMimeData(const QDesignerDnDItems &items, QDrag *drag
         QPainter maskPainter(&mask);
         decorationTopLeft = unitedGeometry.topLeft();
         for (it = m_items.constBegin() ; it != cend; ++it ) {
-            QWidget *w = (QWidget*)(*it)->host()->get_object();
+            QWidget *w = (QWidget*)(*it)->host()->getObject();
             const QPixmap wp = QPixmap::grabWidget(w);
             const QPoint pos = w->pos() - decorationTopLeft;
             painter.drawPixmap(pos, wp);
@@ -138,7 +138,7 @@ QDesignerMimeData::QDesignerMimeData(const QDesignerDnDItems &items, QDrag *drag
     }
     // determine hot spot and reconstruct the exact starting position as form window
     // introduces some offset when detecting DnD
-    m_globalStartPos =  ((QWidget*)m_items.first()->host()->get_object())->pos() +  m_items.first()->hotSpot();
+    m_globalStartPos =  ((QWidget*)m_items.first()->host()->getObject())->pos() +  m_items.first()->hotSpot();
     m_hotSpot = m_globalStartPos - decorationTopLeft;
     drag->setHotSpot(m_hotSpot);
 
@@ -168,7 +168,7 @@ Qt::DropAction QDesignerMimeData::execDrag(const QDesignerDnDItems &items, QWidg
     QWidgetList reshowWidgets;
     const QDesignerDnDItems::const_iterator cend = items.constEnd();
     for (QDesignerDnDItems::const_iterator it = items.constBegin(); it != cend; ++it )
-        if (QWidget *w = (QWidget*)(*it)->host()->get_object())
+        if (QWidget *w = (QWidget*)(*it)->host()->getObject())
             if ((*it)->type() ==  QDesignerDnDItemInterface::MoveDrop)
                 reshowWidgets.push_back(w);
 
@@ -214,7 +214,7 @@ void QDesignerMimeData::moveDecoration(const QPoint &globalPos) const
     const QPoint relativeDistance = globalPos - m_globalStartPos;
     const QDesignerDnDItems::const_iterator cend = m_items.constEnd();
     for (QDesignerDnDItems::const_iterator it =m_items.constBegin(); it != cend; ++it ) {
-        QWidget *w = (QWidget*)(*it)->host()->get_object();
+        QWidget *w = (QWidget*)(*it)->host()->getObject();
         w->move(w->pos() + relativeDistance);
     }
 }

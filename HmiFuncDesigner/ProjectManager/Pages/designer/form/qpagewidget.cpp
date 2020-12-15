@@ -44,7 +44,7 @@ QPageWidget::QPageWidget(const QString &type, QWidget *parent):
     QStringList l;
     foreach(QAbstractHost* host,list)
     {
-        l.append(host->get_property_value("objectName").toString());
+        l.append(host->getPropertyValue("objectName").toString());
     }
 
     m_temp_widget->set_name_list(l);
@@ -63,7 +63,7 @@ void QPageWidget::add_file(const QString &file)
     {
         return;
     }
-    if(xml.get_title()!=m_type)
+    if(xml.getTagName()!=m_type)
     {
         return;
     }

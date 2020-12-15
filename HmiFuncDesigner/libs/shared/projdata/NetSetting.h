@@ -3,12 +3,12 @@
 
 #include <QString>
 #include <QObject>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
 class NetSettingPrivate;
 
-class PROJDATASHARED_EXPORT NetSetting
+class SHAREDLIB_EXPORT NetSetting
 {
 public:
     NetSetting();

@@ -10,8 +10,8 @@ QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent):
     m_propertys.insert("type","Alignment");
 
     m_horizonta=new QEnumProperty(this);
-    m_horizonta->set_attribute("show_name",tr("Horizonta"));
-    m_horizonta->set_property("name","Horizonta");
+    m_horizonta->setAttribute("show_name",tr("Horizonta"));
+    m_horizonta->setProperty("name","Horizonta");
     ComboItems items;
     tagComboItem item;
     item.m_text=tr("AlignLeft");
@@ -27,11 +27,11 @@ QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent):
     items.append(item);
     QVariant v;
     v.setValue<ComboItems>(items);
-    m_horizonta->set_attribute("items",v);
+    m_horizonta->setAttribute("items",v);
 
     m_vertical=new QEnumProperty(this);
-    m_vertical->set_attribute("show_name",tr("Vertical"));
-    m_vertical->set_property("name","Vertical");
+    m_vertical->setAttribute("show_name",tr("Vertical"));
+    m_vertical->setProperty("name","Vertical");
 
     items.clear();
     item.m_text=tr("AlignTop");
@@ -47,7 +47,7 @@ QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent):
     items.append(item);
 
     v.setValue<ComboItems>(items);
-    m_vertical->set_attribute("items",v);
+    m_vertical->setAttribute("items",v);
 }
 
 QString QAlignmentProperty::get_value_text()

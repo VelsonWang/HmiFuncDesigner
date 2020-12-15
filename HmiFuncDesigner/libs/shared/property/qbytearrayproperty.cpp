@@ -3,7 +3,7 @@
 QByteArrayProperty::QByteArrayProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","ByteArray");
+    setProperty("type","ByteArray");
 }
 
 QString QByteArrayProperty::get_value_text()

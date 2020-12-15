@@ -13,78 +13,78 @@ QProjectHost::QProjectHost(QAbstractHost *parent):
     setProperty("title",PROJECT_HOST_TITLE);
 }
 
-void QProjectHost::create_object()
+void QProjectHost::createObject()
 {
     m_object=new QObject;
 }
 
-void QProjectHost::init_property()
+void QProjectHost::initProperty()
 {
-    QAbstractHost::init_property();
+    QAbstractHost::initProperty();
     QAbstractProperty* pro;
 
     pro=m_nameToProperty.value("objectName");
 
-    pro->set_attribute(ATTR_EDITABLE,false);
+    pro->setAttribute(ATTR_EDITABLE,false);
 
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=NULL)
     {
-        pro->set_property("name","projectPath");
-        pro->set_attribute("show_name",tr("Project Path"));
-        pro->set_attribute(ATTR_EDITABLE,false);
-        pro->set_attribute("group","Attributes");
-        insert_property(pro);
+        pro->setProperty("name","projectPath");
+        pro->setAttribute("show_name",tr("Project Path"));
+        pro->setAttribute(ATTR_EDITABLE,false);
+        pro->setAttribute("group","Attributes");
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","start_user");
-        pro->set_attribute("show_name",tr("User"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
-        insert_property(pro);
+        pro->setProperty("name","start_user");
+        pro->setAttribute("show_name",tr("User"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","start_language");
-        pro->set_attribute("show_name",tr("Language"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
-        insert_property(pro);
+        pro->setProperty("name","start_language");
+        pro->setAttribute("show_name",tr("Language"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","start_page");
-        pro->set_attribute("show_name",tr("Page"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
-        insert_property(pro);
+        pro->setProperty("name","start_page");
+        pro->setAttribute("show_name",tr("Page"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Size");
     if(pro!=NULL)
     {
-        pro->set_property("name","designer_size");
-        pro->set_attribute("show_name",tr("Design Size"));
-        pro->set_attribute("group","Attributes");
+        pro->setProperty("name","designer_size");
+        pro->setAttribute("show_name",tr("Design Size"));
+        pro->setAttribute("group","Attributes");
         m_object->setProperty("designer_size",QSize(800,600));
-        insert_property(pro);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Size");
     if(pro!=NULL)
     {
-        pro->set_property("name","running_size");
-        pro->set_attribute("show_name",tr("Running Size"));
-        pro->set_attribute("group","Attributes");
+        pro->setProperty("name","running_size");
+        pro->setAttribute("show_name",tr("Running Size"));
+        pro->setAttribute("group","Attributes");
         m_object->setProperty("running_size",QSize(800,600));
-        insert_property(pro);
+        insertProperty(pro);
     }
 }
 
@@ -96,7 +96,7 @@ void QProjectHost::set_language(const QString &language)
     {
         if(l->get_language_name()==language)
         {
-            m_language_manager->set_current_language(l->get_uuid());
+            m_language_manager->set_current_language(l->getUuid());
             return;
         }
     }
@@ -121,10 +121,10 @@ void QProjectHost::show_form(const QString &name)
     QList<QAbstractHost*> pages=m_page_manager->getPages_by_title("form");
     foreach(QAbstractHost* p,pages)
     {
-        qDebug(p->get_property_value("objectName").toByteArray());
-        if(p->get_property_value("objectName").toString()==name)
+        qDebug(p->getPropertyValue("objectName").toByteArray());
+        if(p->getPropertyValue("objectName").toString()==name)
         {
-            show_form_by_uuid(p->get_uuid());
+            show_form_by_uuid(p->getUuid());
             return;
         }
     }
@@ -141,7 +141,7 @@ void QProjectHost::show_form_by_uuid(const QString &uuid)
 
     if(host!=NULL)
     {
-        QWidget* wid=(QWidget*)host->get_object();
-        emit show_widget(wid);
+        QWidget* wid=(QWidget*)host->getObject();
+        emit notifyShowWidget(wid);
     }
 }

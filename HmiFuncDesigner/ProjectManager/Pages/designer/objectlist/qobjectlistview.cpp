@@ -114,7 +114,7 @@ void QObjectListView::init()
         QAbstractHost* h=list.takeFirst();
         if(h->getParent()==NULL)
         {
-            title=h->get_host_type();
+            title=h->getHostType();
             if(title=="form")
             {
                 if(m_form_item==NULL)
@@ -165,7 +165,7 @@ void QObjectListView::init()
         QTreeWidgetItem *item=new QTreeWidgetItem(par);
         QListViewWidget *wid=new QListViewWidget;
         wid->set_icon(get_host_icon(h));
-        wid->set_text(h->get_property_value("objectName").toString());
+        wid->set_text(h->getPropertyValue("objectName").toString());
         setItemWidget(item,0,wid);
         connect(wid,SIGNAL(remove()),this,SLOT(button_remove()));
         m_host_to_item.insert(h,item);
@@ -177,7 +177,7 @@ void QObjectListView::init()
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
         connect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-        connect(h,SIGNAL(parent_changed()),this,SLOT(host_parent_changed()));
+        connect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
     }
 
     if(m_form_item!=NULL)
@@ -261,10 +261,10 @@ QItemSelectionModel::SelectionFlags QObjectListView::selectionCommand(const QMod
 
 QString QObjectListView::get_host_icon(QAbstractHost *host)
 {
-    tagHostInfo *info=QHostFactory::get_host_info(host->get_attribute(HOST_TYPE));
+    tagHostInfo *info=QHostFactory::get_host_info(host->getAttribute(HOST_TYPE));
     if(info!=NULL)
     {
-        return info->get_show_icon();
+        return info->getShowIcon();
     }
     else
     {
@@ -344,7 +344,7 @@ void QObjectListView::insert_host_slot(const QList<QAbstractHost *> &list, const
         parent->insertChild(index,item);
         QListViewWidget *wid=new QListViewWidget;
         wid->set_icon(get_host_icon(h));
-        wid->set_text(h->get_property_value("objectName").toString());
+        wid->set_text(h->getPropertyValue("objectName").toString());
         setItemWidget(item,0,wid);
         connect(wid,SIGNAL(remove()),this,SLOT(button_remove()));
         m_item_to_host.insert(item,h);
@@ -355,7 +355,7 @@ void QObjectListView::insert_host_slot(const QList<QAbstractHost *> &list, const
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
         connect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-        connect(h,SIGNAL(parent_changed()),this,SLOT(host_parent_changed()));
+        connect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
 
         QList<QAbstractHost*> ch=h->getChildren();
         while(ch.size()>0)
@@ -365,7 +365,7 @@ void QObjectListView::insert_host_slot(const QList<QAbstractHost *> &list, const
             QTreeWidgetItem *temp=new QTreeWidgetItem(p);
             QListViewWidget *wid=new QListViewWidget;
             wid->set_icon(get_host_icon(hh));
-            wid->set_text(hh->get_property_value("objectName").toString());
+            wid->set_text(hh->getPropertyValue("objectName").toString());
             setItemWidget(item,0,wid);
             connect(wid,SIGNAL(remove()),this,SLOT(button_remove()));
             m_item_to_host.insert(temp,hh);
@@ -374,7 +374,7 @@ void QObjectListView::insert_host_slot(const QList<QAbstractHost *> &list, const
                     this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
             connect(hh,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
                     this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-            connect(hh,SIGNAL(parent_changed()),this,SLOT(host_parent_changed()));
+            connect(hh,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
             ch+=hh->getChildren();
         }
 
@@ -393,7 +393,7 @@ void QObjectListView::remove_host_slot(const QList<QAbstractHost *> &list)
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
         disconnect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-        disconnect(h,SIGNAL(parent_changed()),this,SLOT(host_parent_changed()));
+        disconnect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
         QTreeWidgetItem *item;
         item=m_host_to_item.value(h);
         if(item!=NULL)
@@ -449,10 +449,10 @@ void QObjectListView::button_remove()
                 QUndoCommand *cmd=new QUndoCommand;
                 new QPageAddUndoCommand(it.key(),manager->getPages().indexOf(it.key()),PAT_REMOVE,cmd);
 
-                QAbstractProperty* pro=QSoftCore::getCore()->getProjectCore()->get_project_host()->get_property("start_page");
+                QAbstractProperty* pro=QSoftCore::getCore()->getProjectCore()->get_project_host()->getProperty("start_page");
                 if(pro!=NULL)
                 {
-                    if(pro->get_value().toString()==it.key()->get_uuid())
+                    if(pro->get_value().toString()==it.key()->getUuid())
                     {
                         QList<QAbstractHost*> list=QSoftCore::getCore()
                                 ->getProjectCore()->get_page_manager()->getPages_by_title("form");
@@ -460,14 +460,14 @@ void QObjectListView::button_remove()
                         QString str;
                         if(list.size()>0)
                         {
-                            str=list.first()->get_uuid();
+                            str=list.first()->getUuid();
                         }
                         else
                         {
                             str="";
                         }
 
-                        new QPropertyChangedUndoCommand(QSoftCore::getCore()->getProjectCore()->get_project_host()->get_uuid(),
+                        new QPropertyChangedUndoCommand(QSoftCore::getCore()->getProjectCore()->get_project_host()->getUuid(),
                                                         "start_page",pro->get_value(),str,cmd);
                     }
                 }
@@ -490,7 +490,7 @@ void QObjectListView::host_name_changed(QAbstractHost *host)
     if(item!=NULL)
     {
         QListViewWidget *wid=(QListViewWidget*)itemWidget(item,0);
-        wid->set_text(host->get_property_value("objectName").toString());
+        wid->set_text(host->getPropertyValue("objectName").toString());
     }
 }
 
@@ -498,7 +498,7 @@ void QObjectListView::insert_page_slot(QAbstractHost *page)
 {
     disconnect(this,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
            this,SLOT(select_changed(QTreeWidgetItem*,QTreeWidgetItem*)));
-    QString type=page->get_host_type();
+    QString type=page->getHostType();
     QPageManager *manager=QSoftCore::getCore()->getProjectCore()->get_page_manager();
 
     int index=manager->getPages_by_title(type).indexOf(page);
@@ -548,7 +548,7 @@ void QObjectListView::insert_page_slot(QAbstractHost *page)
     par->insertChild(index,item);
     QListViewWidget *wid=new QListViewWidget;
     wid->set_icon(get_host_icon(page));
-    wid->set_text(page->get_property_value("objectName").toString());
+    wid->set_text(page->getPropertyValue("objectName").toString());
     setItemWidget(item,0,wid);
     connect(wid,SIGNAL(remove()),this,SLOT(button_remove()));
     m_item_to_host.insert(item,page);
@@ -570,7 +570,7 @@ void QObjectListView::insert_page_slot(QAbstractHost *page)
         QTreeWidgetItem *temp=new QTreeWidgetItem(p);
         QListViewWidget *wid=new QListViewWidget;
         wid->set_icon(get_host_icon(hh));
-        wid->set_text(hh->get_property_value("objectName").toString());
+        wid->set_text(hh->getPropertyValue("objectName").toString());
         setItemWidget(temp,0,wid);
         connect(wid,SIGNAL(remove()),this,SLOT(button_remove()));
         m_item_to_host.insert(temp,hh);
@@ -579,7 +579,7 @@ void QObjectListView::insert_page_slot(QAbstractHost *page)
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
         connect(hh,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-        connect(hh,SIGNAL(parent_changed()),this,SLOT(host_parent_changed()));
+        connect(hh,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
         ch+=hh->getChildren();
     }
     connect(this,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
@@ -599,7 +599,7 @@ void QObjectListView::remove_page_slot(QAbstractHost *page)
                 this,SLOT(insert_host_slot(QList<QAbstractHost*>,QList<int>)));
         disconnect(h,SIGNAL(remove_children_signal(QList<QAbstractHost*>)),
                 this,SLOT(remove_host_slot(QList<QAbstractHost*>)));
-        disconnect(h,SIGNAL(parent_changed()),this,SLOT(host_parent_changed()));
+        disconnect(h,SIGNAL(notifyParentChanged()),this,SLOT(host_parent_changed()));
         QTreeWidgetItem *item;
         item=m_host_to_item.value(h);
         if(item!=NULL)
@@ -614,7 +614,7 @@ void QObjectListView::remove_page_slot(QAbstractHost *page)
         }
     }
 
-    QString type=page->get_host_type();
+    QString type=page->getHostType();
     if(type=="form")
     {
         if(m_form_item->childCount()==0)

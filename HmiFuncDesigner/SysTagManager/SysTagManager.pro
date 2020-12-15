@@ -11,7 +11,7 @@ TEMPLATE = app
 DESTDIR = $$IDE_BIN_PATH
 
 LIBS += -L$$LINK_LIBRARY_PATH -lProjData
-LIBS += -L$$LINK_LIBRARY_PATH -lCore
+LIBS += -L$$LINK_LIBRARY_PATH -lcore
 
 SOURCES += main.cpp \
     SysTag.cpp \

@@ -8,6 +8,7 @@
 #include <QMap>
 
 class QAbstractHost;
+class XMLObject;
 
 class SHAREDLIB_EXPORT QPageManager: public QObject
 {
@@ -15,9 +16,12 @@ class SHAREDLIB_EXPORT QPageManager: public QObject
 public:
     QPageManager();
 
-    void    load(const QString &project_path);
+    void load(const QString &project_path);
+    void save(const QString& project_path);
 
-    void    save(const QString& project_path);
+    void newPage(XMLObject *pXmlObj);
+    void load(XMLObject *pXmlObj);
+    void save(XMLObject *pXmlObj);
 
     void    clear();
 

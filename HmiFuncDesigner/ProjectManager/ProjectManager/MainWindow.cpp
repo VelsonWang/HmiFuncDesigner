@@ -63,6 +63,7 @@
 #include <QToolBar>
 #include <QInputDialog>
 #include <QCryptographicHash>
+#include <QSplitter>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -136,28 +137,42 @@ void MainWindow::initUI()
     projectTabWidgetLayout->addWidget(m_pProjectTreeViewObj);
 
     m_pTabProjectMgrObj->addTab(projectTabWidget, QString(tr("工程")));
-    QWidget *graphPageWidget = new QWidget();
-    QVBoxLayout *graphPageWidgetLayout = new QVBoxLayout(graphPageWidget);
-    graphPageWidgetLayout->setSpacing(0);
-    graphPageWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    QWidget *pWidgetCtrlObj = new QWidget();
+    QVBoxLayout *pWidgetsLayoutObj = new QVBoxLayout(pWidgetCtrlObj);
+    pWidgetsLayoutObj->setSpacing(0);
+    pWidgetsLayoutObj->setContentsMargins(0, 0, 0, 0);
+    pWidgetCtrlObj->setLayout(pWidgetsLayoutObj);
+
+    QSplitter *pSplitterObj = new QSplitter(Qt::Vertical);
 
     // 画面名称列表
-    m_pListWidgetGraphPagesObj = new GraphPageListWidget(graphPageWidget);
+    m_pListWidgetGraphPagesObj = new GraphPageListWidget(pWidgetCtrlObj);
     connect(m_pListWidgetGraphPagesObj, SIGNAL(itemClicked(QListWidgetItem *)),
             this, SLOT(onSlotGraphPageNameClicked(QListWidgetItem *)));
     connect(m_pListWidgetGraphPagesObj, SIGNAL(notifyCreateGraphPageUseName(const QString &)),
             this, SLOT(onSlotCreateGraphPageUseName(const QString &)));
+    pSplitterObj->addWidget(m_pListWidgetGraphPagesObj);
 
-    graphPageWidgetLayout->addWidget(m_pListWidgetGraphPagesObj);
-    m_pTabProjectMgrObj->addTab(graphPageWidget, QString(tr("画面")));
+    // 图形元素控件
+    QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
+    if(pPageObj) {
+        m_pDesignerWidgetObj = dynamic_cast<QWidget *>(pPageObj->get_widget());
+        if(m_pDesignerWidgetObj) {
+            centralWidgetLayout->addWidget(m_pDesignerWidgetObj);
+            QVariant variant = m_pDesignerWidgetObj->property("WidgetBoxView");
+            QWidget *pWidgetObj = variant.value<QWidget *>();
+            pSplitterObj->addWidget(pWidgetObj);
+        }
+    }
+
+    pSplitterObj->setStretchFactor(0, 0);
+    pSplitterObj->setStretchFactor(1, 1);
+    pWidgetsLayoutObj->addWidget(pSplitterObj);
+
+    m_pTabProjectMgrObj->addTab(pWidgetCtrlObj, QString(tr("画面")));
     dockWidgetContentsLayout->addWidget(m_pTabProjectMgrObj);
     m_pTabProjectMgrObj->setCurrentIndex(0);
     m_pDockProjectMgrObj->setWidget(dockWidgetContents);
-
-    QSizePolicy dockPropertySizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    dockPropertySizePolicy.setHorizontalStretch(0);
-    dockPropertySizePolicy.setVerticalStretch(0);
-    dockWidgetContents->setSizePolicy(dockPropertySizePolicy);
 
     m_pUndoGroupObj = new QUndoGroup(this);
 
@@ -180,14 +195,6 @@ void MainWindow::initUI()
     //--------------------------------------------------------------------------
 
     ProjectData::getInstance()->pImplGraphPageSaveLoadObj_ = this;
-
-    QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
-    if(pPageObj) {
-        m_pDesignerWidgetObj = dynamic_cast<QWidget *>(pPageObj->get_widget());
-        if(m_pDesignerWidgetObj) {
-            centralWidgetLayout->addWidget(m_pDesignerWidgetObj);
-        }
-    }
 
     slotUpdateActions();
     //connect(m_pGraphPageEditorObj, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
@@ -853,6 +860,8 @@ void MainWindow::onNewPoject()
         UpdateDeviceVariableTableGroup();
         // 拷贝系统变量
         copySystemTags();
+
+        QSoftCore::getCore()->getProjectCore()->createNewProj(ProjectData::getInstance()->szProjFile_);
     }
 }
 
@@ -1428,17 +1437,16 @@ void MainWindow::updateRecentProjectList(QString newProj)
  * @return true-成功，false-失败
  */
 bool MainWindow::openFromXml(XMLObject *pXmlObj) {
-//    GraphPageManager::getInstance()->releaseAllGraphPage();
 //    this->m_pListWidgetGraphPagesObj->clear();
 
-//    QVector<XMLObject* > listPagesObj = pXmlObj->getCurrentChildren("page");
+//    QVector<XMLObject* > listPagesObj = pXmlObj->getCurrentChildren("form");
 //    foreach(XMLObject* pPageObj, listPagesObj) {
 //        QString szPageId = pPageObj->getProperty("id");
 //        this->m_pListWidgetGraphPagesObj->addItem(szPageId);
 //        GraphPage *pObj = addNewGraphPage(szPageId);
 //        pObj->openFromXml(pPageObj);
 //    }
-
+    QSoftCore::getCore()->getProjectCore()->openProj(pXmlObj);
     return true;
 }
 
@@ -1455,6 +1463,8 @@ bool MainWindow::saveToXml(XMLObject *pXmlObj) {
 //        GraphPage *pObj = pGraphPageListObj->at(i);
 //        pObj->saveToXml(pXmlObj);
 //    }
+
+    QSoftCore::getCore()->getProjectCore()->saveProj(pXmlObj);
     return true;
 }
 

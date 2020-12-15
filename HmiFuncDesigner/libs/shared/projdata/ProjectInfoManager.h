@@ -2,12 +2,12 @@
 #define PROJECTINFOMANAGER_H
 
 #include <QString>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
 class ProjectInfoPrivate;
 
-class PROJDATASHARED_EXPORT ProjectInfoManager
+class SHAREDLIB_EXPORT ProjectInfoManager
 {
 public:
     ProjectInfoManager();

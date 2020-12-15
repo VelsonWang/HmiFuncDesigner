@@ -11,9 +11,9 @@ QAbstractWidgetHost::QAbstractWidgetHost(QAbstractHost *parent):
 {
 }
 
-void QAbstractWidgetHost::init_property()
+void QAbstractWidgetHost::initProperty()
 {
-    QAbstractHost::init_property();
+    QAbstractHost::initProperty();
 
     QWidget* wid=(QWidget*)m_object;
     wid->setMouseTracking(true);
@@ -43,53 +43,53 @@ void QAbstractWidgetHost::init_property()
     pro=QPropertyFactory::create_property("Rect");
     if(pro!=NULL)
     {
-        pro->set_property("name","geometry");
-        pro->set_attribute("show_name",tr("Geometry"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","geometry");
+        pro->setAttribute("show_name",tr("Geometry"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
+        pro->setAttribute(ATTR_CAN_SAME,true);
         m_object->setProperty("geometry",QRect(0,0,100,70));
-        insert_property(pro);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","enabled");
-        pro->set_attribute("show_name",tr("Enabled"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","enabled");
+        pro->setAttribute("show_name",tr("Enabled"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Font");
     if(pro!=NULL)
     {
-        pro->set_property("name","font");
-        pro->set_attribute("show_name",tr("Font"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","font");
+        pro->setAttribute("show_name",tr("Font"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Cursor");
     if(pro!=NULL)
     {
-        pro->set_property("name","cursor");
-        pro->set_attribute("show_name",tr("Cursor"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","cursor");
+        pro->setAttribute("show_name",tr("Cursor"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","focusPolicy");
-        pro->set_attribute("show_name",tr("FocusPolicy"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","focusPolicy");
+        pro->setAttribute("show_name",tr("FocusPolicy"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
         item.m_text="TabFocus";
@@ -109,128 +109,128 @@ void QAbstractWidgetHost::init_property()
         items.append(item);
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("String");
     if(pro!=NULL)
     {
-        pro->set_property("name","toolTip");
-        pro->set_attribute("show_name",tr("ToolTip"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","toolTip");
+        pro->setAttribute("show_name",tr("ToolTip"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","mousePress");
-        pro->set_attribute("show_name",tr("MousePress"));
-        pro->set_attribute("group","Events");
-        pro->set_attribute("param",QStringList()<<"_x"<<"_y"<<"_button");
-        pro->set_attribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
-        insert_property(pro);
-    }
-
-    pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
-    {
-        pro->set_property("name","mouseMove");
-        pro->set_attribute("show_name",tr("MouseMove"));
-        pro->set_attribute("group","Events");
-        pro->set_attribute("param",QStringList()<<"_x"<<"_y"<<"_button");
-        pro->set_attribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
-        insert_property(pro);
+        pro->setProperty("name","mousePress");
+        pro->setAttribute("show_name",tr("MousePress"));
+        pro->setAttribute("group","Events");
+        pro->setAttribute("param",QStringList()<<"_x"<<"_y"<<"_button");
+        pro->setAttribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","mouseRelease");
-        pro->set_attribute("show_name",tr("MouseRelease"));
-        pro->set_attribute("group","Events");
-        pro->set_attribute("param",QStringList()<<"_x"<<"_y"<<"_button");
-        pro->set_attribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
-        insert_property(pro);
+        pro->setProperty("name","mouseMove");
+        pro->setAttribute("show_name",tr("MouseMove"));
+        pro->setAttribute("group","Events");
+        pro->setAttribute("param",QStringList()<<"_x"<<"_y"<<"_button");
+        pro->setAttribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","doubleClick");
-        pro->set_attribute("show_name",tr("DoubleClick"));
-        pro->set_attribute("group","Events");
-        pro->set_attribute("param",QStringList()<<"_x"<<"_y"<<"_button");
-        pro->set_attribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
-        insert_property(pro);
+        pro->setProperty("name","mouseRelease");
+        pro->setAttribute("show_name",tr("MouseRelease"));
+        pro->setAttribute("group","Events");
+        pro->setAttribute("param",QStringList()<<"_x"<<"_y"<<"_button");
+        pro->setAttribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
+        insertProperty(pro);
+    }
+
+    pro=QPropertyFactory::create_property("Script");
+    if(pro!=NULL)
+    {
+        pro->setProperty("name","doubleClick");
+        pro->setAttribute("show_name",tr("DoubleClick"));
+        pro->setAttribute("group","Events");
+        pro->setAttribute("param",QStringList()<<"_x"<<"_y"<<"_button");
+        pro->setAttribute("method_tips",tr("[_x,_y] is the mouse position.\n[_button] is the mouse button type {0:nobutton 1:leftbutton 2:rightbutton 3:middlebutton}."));
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("StyleSheet");
     if(pro!=NULL)
     {
-        pro->set_property("name","background");
-        pro->set_attribute("show_name",tr("Background"));
-        pro->set_attribute("group","Style Sheet");
+        pro->setProperty("name","background");
+        pro->setAttribute("show_name",tr("Background"));
+        pro->setAttribute("group","Style Sheet");
 
-        insert_property(pro);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("StyleSheet");
     if(pro!=NULL)
     {
-        pro->set_property("name","border");
-        pro->set_attribute("show_name",tr("Border"));
-        pro->set_attribute("group","Style Sheet");
+        pro->setProperty("name","border");
+        pro->setAttribute("show_name",tr("Border"));
+        pro->setAttribute("group","Style Sheet");
 
-        insert_property(pro);
+        insertProperty(pro);
     }
 }
 
 void QAbstractWidgetHost::setGeometry(int x, int y, int width, int height)
 {
     QRect rect(x,y,width,height);
-    set_property_value("geometry",rect);
+    setPropertyValue("geometry",rect);
 }
 
 void QAbstractWidgetHost::setEnabled(bool enabled)
 {
-    set_property_value("enabled",enabled);
+    setPropertyValue("enabled",enabled);
 }
 
 void QAbstractWidgetHost::setToolTip(const QString &tooltip)
 {
-    set_property_value("toolTip",tooltip);
+    setPropertyValue("toolTip",tooltip);
 }
 
 int QAbstractWidgetHost::x()
 {
-    return get_property_value("geometry").toRect().x();
+    return getPropertyValue("geometry").toRect().x();
 }
 
 int QAbstractWidgetHost::y()
 {
-    return get_property_value("geometry").toRect().y();
+    return getPropertyValue("geometry").toRect().y();
 }
 
 int QAbstractWidgetHost::width()
 {
-    return get_property_value("geometry").toRect().width();
+    return getPropertyValue("geometry").toRect().width();
 }
 
 int QAbstractWidgetHost::height()
 {
-    return get_property_value("geometry").toRect().height();
+    return getPropertyValue("geometry").toRect().height();
 }
 
 bool QAbstractWidgetHost::enabled()
 {
-    return get_property_value("enabled").toBool();
+    return getPropertyValue("enabled").toBool();
 }
 
 QString QAbstractWidgetHost::toolTip()
 {
-    return get_property_value("toolTip").toString();
+    return getPropertyValue("toolTip").toString();
 }
 
 void QAbstractWidgetHost::setCursor(int cursor)
@@ -238,11 +238,11 @@ void QAbstractWidgetHost::setCursor(int cursor)
     QCursor c((Qt::CursorShape)cursor);
     QVariant v;
     v.setValue<QCursor>(c);
-    set_property_value("cursor",v);
+    setPropertyValue("cursor",v);
 }
 
 int QAbstractWidgetHost::cursor()
 {
-    QCursor c=get_property_value("cursor").value<QCursor>();
+    QCursor c=getPropertyValue("cursor").value<QCursor>();
     return c.shape();
 }

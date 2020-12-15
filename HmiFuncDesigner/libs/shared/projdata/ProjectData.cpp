@@ -1,5 +1,5 @@
 #include "ProjectData.h"
-#include "XMLObject.h"
+#include "../../shared/xmlobject.h"
 #include "Helper.h"
 #include "DataAES.h"
 #include <QFileInfo>
@@ -67,7 +67,7 @@ bool ProjectData::openFromXml(const QString &szProjFile)
     XMLObject xml;
     if(!xml.load(szProjData, Q_NULLPTR)) return false;
 
-    QVector<XMLObject*> projObjs = xml.getChildren();
+    QList<XMLObject*> projObjs = xml.getChildren();
     foreach(XMLObject* pProjObj, projObjs) {
         // 工程信息管理
         projInfoMgr_.openFromXml(pProjObj);
@@ -92,7 +92,7 @@ bool ProjectData::openFromXml(const QString &szProjFile)
         pictureResourceMgr_.openFromXml(pProjObj);
 
         // 加载画面
-        XMLObject *pPagesObj = pProjObj->getCurrentChild("pages");
+        XMLObject *pPagesObj = pProjObj->getCurrentChild("forms");
         if(pPagesObj != Q_NULLPTR) {
             if(pImplGraphPageSaveLoadObj_) {
                 pImplGraphPageSaveLoadObj_->openFromXml(pPagesObj);
@@ -136,7 +136,7 @@ bool ProjectData::saveToXml(const QString &szProjFile)
 
     // 保存画面
     XMLObject *pPagesObj = new XMLObject(pProjObj);
-    pPagesObj->setTagName("pages");
+    pPagesObj->setTagName("forms");
     if(pImplGraphPageSaveLoadObj_) {
         pImplGraphPageSaveLoadObj_->saveToXml(pPagesObj);
     }

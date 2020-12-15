@@ -9,22 +9,22 @@ QWidgetHost::QWidgetHost(QAbstractHost *parent):
     setProperty("accept_drop",true);
 }
 
-QString QWidgetHost::get_show_name()
+QString QWidgetHost::getShowName()
 {
     return tr("Widget");
 }
 
-QString QWidgetHost::get_show_group()
+QString QWidgetHost::getShowGroup()
 {
     return tr("Containners");
 }
 
-QString QWidgetHost::get_show_icon()
+QString QWidgetHost::getShowIcon()
 {
     return ":/images/widget.png";
 }
 
-void QWidgetHost::create_object()
+void QWidgetHost::createObject()
 {
     m_object=new QWidget();
     m_object->setObjectName("widget");

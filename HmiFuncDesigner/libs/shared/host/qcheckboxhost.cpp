@@ -13,31 +13,31 @@ QCheckBoxHost::QCheckBoxHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QCheckBoxHost::get_show_name()
+QString QCheckBoxHost::getShowName()
 {
     return tr("Check Box");
 }
 
-QString QCheckBoxHost::get_show_group()
+QString QCheckBoxHost::getShowGroup()
 {
     return tr("Buttons");
 }
 
 
-QString QCheckBoxHost::get_show_icon()
+QString QCheckBoxHost::getShowIcon()
 {
     return ":/images/checkbox.png";
 }
 
-void QCheckBoxHost::create_object()
+void QCheckBoxHost::createObject()
 {
     m_object=new QCheckBox();
     m_object->setObjectName("checkbox");
 }
 
-void QCheckBoxHost::init_property()
+void QCheckBoxHost::initProperty()
 {
-    QAbstractButtonHost::init_property();
+    QAbstractButtonHost::initProperty();
 
     QAbstractProperty *pro;
 
@@ -61,43 +61,43 @@ void QCheckBoxHost::init_property()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","tristate");
-        pro->set_attribute("show_name",tr("Tristate"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro,1);
+        pro->setProperty("name","tristate");
+        pro->setAttribute("show_name",tr("Tristate"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro,1);
     }
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","stateChanged");
-        pro->set_attribute("show_name",tr("StateChanged"));
-        pro->set_attribute("group","Events");
-        insert_property(pro);
+        pro->setProperty("name","stateChanged");
+        pro->setAttribute("show_name",tr("StateChanged"));
+        pro->setAttribute("group","Events");
+        insertProperty(pro);
     }
 
     QCheckBox *b=(QCheckBox*)m_object;
     connect(b,SIGNAL(stateChanged(int)),this,SLOT(stateChanged(int)));
 
-    set_property_value("geometry",QRect(0,0,100,20));
-    set_property_value("text","checkbox");
-    remove_property("checkable");
+    setPropertyValue("geometry",QRect(0,0,100,20));
+    setPropertyValue("text","checkbox");
+    removeProperty("checkable");
 }
 
 void QCheckBoxHost::setTristate(bool tristate)
 {
-    set_property_value("tristate",tristate);
+    setPropertyValue("tristate",tristate);
 }
 
 bool QCheckBoxHost::tristate()
 {
-    return get_property_value("tristate").toBool();
+    return getPropertyValue("tristate").toBool();
 }
 
 void QCheckBoxHost::stateChanged(int state)
 {
-    QString code=get_property_value("stateChanged").toString();
+    QString code=getPropertyValue("stateChanged").toString();
     if(code!="")
     {
         QMap<QString,QString> param;

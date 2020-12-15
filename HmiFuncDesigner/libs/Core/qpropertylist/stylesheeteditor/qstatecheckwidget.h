@@ -13,7 +13,7 @@ class QStateCheckWidget : public QWidget
     Q_OBJECT
 public:
     explicit QStateCheckWidget(QAbstractProperty *property,const QString &title,QWidget *parent = 0);
-    QString get_title();
+    QString getTagName();
 protected:
     void    paintEvent(QPaintEvent *);
 signals:

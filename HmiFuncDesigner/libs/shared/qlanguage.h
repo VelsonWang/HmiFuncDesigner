@@ -20,10 +20,10 @@ public:
     QLanguage();
     ~QLanguage();
 
-    void    to_object(XMLObject* xml);
-    void    from_object(XMLObject* xml);
+    void toObject(XMLObject* xml);
+    void fromObject(XMLObject* xml);
 
-    void    clear();
+    void clear();
 
     QString get_language_name();
     void    set_language_name(const QString &name);
@@ -41,8 +41,8 @@ public:
     QString get_information();
     void    set_information(const QString &information);
 
-    void    set_uuid(const QString &uuid);
-    QString get_uuid();
+    void    setUuid(const QString &uuid);
+    QString getUuid();
 
     QLanguage& operator =(const QLanguage &l);
 protected:

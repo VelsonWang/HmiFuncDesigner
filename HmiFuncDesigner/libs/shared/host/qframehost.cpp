@@ -13,41 +13,41 @@ QFrameHost::QFrameHost(QAbstractHost *parent):
     setProperty("accept_drop",true);
 }
 
-QString QFrameHost::get_show_name()
+QString QFrameHost::getShowName()
 {
     return tr("Frame");
 }
 
-QString QFrameHost::get_show_group()
+QString QFrameHost::getShowGroup()
 {
     return tr("Containners");
 }
 
 
-QString QFrameHost::get_show_icon()
+QString QFrameHost::getShowIcon()
 {
     return ":/images/frame.png";
 }
 
-void QFrameHost::create_object()
+void QFrameHost::createObject()
 {
     m_object=new QFrame();
     m_object->setObjectName("frame");
 }
 
-void QFrameHost::init_property()
+void QFrameHost::initProperty()
 {
-    QWidgetHost::init_property();
+    QWidgetHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","frameShape");
-        pro->set_attribute("show_name",tr("FrameShape"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","frameShape");
+        pro->setAttribute("show_name",tr("FrameShape"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -81,17 +81,17 @@ void QFrameHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","frameShadow");
-        pro->set_attribute("show_name",tr("FrameShadow"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","frameShadow");
+        pro->setAttribute("show_name",tr("FrameShadow"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -109,27 +109,27 @@ void QFrameHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 }
 
 void QFrameHost::setFrameShape(int frameShape)
 {
-    set_property_value("frameShape",frameShape);
+    setPropertyValue("frameShape",frameShape);
 }
 
 int QFrameHost::frameShape()
 {
-    return get_property_value("frameShape").toInt();
+    return getPropertyValue("frameShape").toInt();
 }
 
 void QFrameHost::setFrameShadow(int frameShadow)
 {
-    set_property_value("frameShadow",frameShadow);
+    setPropertyValue("frameShadow",frameShadow);
 }
 
 int QFrameHost::frameShadow()
 {
-    return get_property_value("frameShape").toInt();
+    return getPropertyValue("frameShape").toInt();
 }

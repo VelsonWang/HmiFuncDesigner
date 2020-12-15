@@ -77,7 +77,7 @@ QHostObjectMap::QHostObjectMap(QAbstractProperty *property,QAbstractHost *host)
         m_infos.insert(info->m_name,info);
     }
 
-    m_param_list=property->get_attribute("param").toStringList();
+    m_param_list=property->getAttribute("param").toStringList();
 }
 
 tagHostInfo *QHostObjectMap::make_info(QAbstractHost *host)
@@ -85,9 +85,9 @@ tagHostInfo *QHostObjectMap::make_info(QAbstractHost *host)
     tagHostInfo *info=new tagHostInfo;
     info->m_host=host;
     info->m_type="form";
-    info->m_name=host->get_property_value("objectName").toString();
+    info->m_name=host->getPropertyValue("objectName").toString();
 
-    QList<QAbstractHost*>    list=host->getChildren();
+    QList<QAbstractHost*> list=host->getChildren();
 
     foreach(QAbstractHost* h,list)
     {

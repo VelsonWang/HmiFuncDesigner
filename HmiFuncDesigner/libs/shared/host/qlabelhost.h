@@ -9,9 +9,9 @@ class QLabelHost : public QFrameHost
 public:
     Q_INVOKABLE QLabelHost(QAbstractHost *parent = 0);
 
-    static QString get_show_name();
-    static QString get_show_icon();
-    static QString get_show_group();
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
 public slots:
     void    setText(const QString & text);
     QString text();
@@ -22,9 +22,9 @@ public slots:
     void    setAlignment(int alignment);
     int     alignment();
 protected:
-    void    init_property();
+    void    initProperty();
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 #endif // QLABELHOST_H

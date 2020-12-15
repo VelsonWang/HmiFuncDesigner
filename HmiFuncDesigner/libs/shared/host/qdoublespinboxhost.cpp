@@ -13,94 +13,94 @@ QDoubleSpinBoxHost::QDoubleSpinBoxHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QDoubleSpinBoxHost::get_show_name()
+QString QDoubleSpinBoxHost::getShowName()
 {
     return tr("Double Spin Box");
 }
 
-QString QDoubleSpinBoxHost::get_show_group()
+QString QDoubleSpinBoxHost::getShowGroup()
 {
     return tr("Input Widgets");
 }
 
-QString QDoubleSpinBoxHost::get_show_icon()
+QString QDoubleSpinBoxHost::getShowIcon()
 {
     return ":/images/doublespinbox.png";
 }
 
-void QDoubleSpinBoxHost::create_object()
+void QDoubleSpinBoxHost::createObject()
 {
     m_object=new QDoubleSpinBox();
     m_object->setObjectName("doublespinbox");
 }
 
-void QDoubleSpinBoxHost::init_property()
+void QDoubleSpinBoxHost::initProperty()
 {
-    QAbstractSpinBoxHost::init_property();
+    QAbstractSpinBoxHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Float");
     if(pro!=NULL)
     {
-        pro->set_property("name","maximum");
-        pro->set_attribute("show_name",tr("Maximum"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro,1);
+        pro->setProperty("name","maximum");
+        pro->setAttribute("show_name",tr("Maximum"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro,1);
     }
 
     pro=QPropertyFactory::create_property("Float");
     if(pro!=NULL)
     {
-        pro->set_property("name","minimum");
-        pro->set_attribute("show_name",tr("Minimum"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","minimum");
+        pro->setAttribute("show_name",tr("Minimum"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Float");
     if(pro!=NULL)
     {
-        pro->set_property("name","value");
-        pro->set_attribute("show_name",tr("Value"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","value");
+        pro->setAttribute("show_name",tr("Value"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Float");
     if(pro!=NULL)
     {
-        pro->set_property("name","singleStep");
-        pro->set_attribute("show_name",tr("SingleStep"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","singleStep");
+        pro->setAttribute("show_name",tr("SingleStep"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Number");
     if(pro!=NULL)
     {
-        pro->set_property("name","decimals");
-        pro->set_attribute("show_name",tr("Decimals"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","decimals");
+        pro->setAttribute("show_name",tr("Decimals"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","valueChanged");
-        pro->set_attribute("show_name",tr("ValueChanged"));
-        pro->set_attribute("group","Events");
+        pro->setProperty("name","valueChanged");
+        pro->setAttribute("show_name",tr("ValueChanged"));
+        pro->setAttribute("group","Events");
         m_object->setProperty("valueChanged","");
-        insert_property(pro);
+        insertProperty(pro);
     }
 
-    set_property_value("geometry",QRect(0,0,100,20));
+    setPropertyValue("geometry",QRect(0,0,100,20));
 
     QDoubleSpinBox *s=(QDoubleSpinBox*)m_object;
     connect(s,SIGNAL(valueChanged(QString)),this,SLOT(valueChanged(QString)));
@@ -108,37 +108,37 @@ void QDoubleSpinBoxHost::init_property()
 
 void QDoubleSpinBoxHost::setValue(float value)
 {
-    set_property_value("value",value);
+    setPropertyValue("value",value);
 }
 
 float QDoubleSpinBoxHost::value()
 {
-    return get_property_value("value").toFloat();
+    return getPropertyValue("value").toFloat();
 }
 
 void QDoubleSpinBoxHost::setSingleStep(float singleStep)
 {
-    set_property_value("singleStep",singleStep);
+    setPropertyValue("singleStep",singleStep);
 }
 
 float QDoubleSpinBoxHost::singleStep()
 {
-    return get_property_value("singleStep").toFloat();
+    return getPropertyValue("singleStep").toFloat();
 }
 
 void QDoubleSpinBoxHost::setDecimals(int decimals)
 {
-    set_property_value("decimals",decimals);
+    setPropertyValue("decimals",decimals);
 }
 
 int QDoubleSpinBoxHost::decimals()
 {
-    return get_property_value("decimals").toInt();
+    return getPropertyValue("decimals").toInt();
 }
 
 void QDoubleSpinBoxHost::valueChanged(const QString &value)
 {
-    QString code=get_property_value("valueChanged").toString();
+    QString code=getPropertyValue("valueChanged").toString();
     if(code!="")
     {
         QMap<QString,QString> param;

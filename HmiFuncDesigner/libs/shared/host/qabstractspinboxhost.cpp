@@ -11,49 +11,49 @@ QAbstractSpinBoxHost::QAbstractSpinBoxHost(QAbstractHost *parent):
 {
 }
 
-void QAbstractSpinBoxHost::init_property()
+void QAbstractSpinBoxHost::initProperty()
 {
-    QWidgetHost::init_property();
+    QWidgetHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","frame");
-        pro->set_attribute("show_name",tr("Frame"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","frame");
+        pro->setAttribute("show_name",tr("Frame"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","wrapping");
-        pro->set_attribute("show_name",tr("Wrapping"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","wrapping");
+        pro->setAttribute("show_name",tr("Wrapping"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","readOnly");
-        pro->set_attribute("show_name",tr("ReadOnly"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","readOnly");
+        pro->setAttribute("show_name",tr("ReadOnly"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","buttonSymbols");
-        pro->set_attribute("show_name",tr("ButtonSymbols"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","buttonSymbols");
+        pro->setAttribute("show_name",tr("ButtonSymbols"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -67,17 +67,17 @@ void QAbstractSpinBoxHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","alignment");
-        pro->set_attribute("show_name",tr("Alignment"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","alignment");
+        pro->setAttribute("show_name",tr("Alignment"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -95,59 +95,59 @@ void QAbstractSpinBoxHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 
-    set_property_value("alignment",Qt::AlignLeft);
+    setPropertyValue("alignment",Qt::AlignLeft);
 }
 
 void QAbstractSpinBoxHost::setFrame(bool frame)
 {
-    set_property_value("frame",frame);
+    setPropertyValue("frame",frame);
 }
 
 bool QAbstractSpinBoxHost::frame()
 {
-    return get_property_value("frame").toBool();
+    return getPropertyValue("frame").toBool();
 }
 
 void QAbstractSpinBoxHost::setWraping(bool wraping)
 {
-    set_property_value("wraping",wraping);
+    setPropertyValue("wraping",wraping);
 }
 
 bool QAbstractSpinBoxHost::wraping()
 {
-    return get_property_value("wraping").toBool();
+    return getPropertyValue("wraping").toBool();
 }
 
 void QAbstractSpinBoxHost::setReadOnly(bool readonly)
 {
-    set_property_value("readOnly",readonly);
+    setPropertyValue("readOnly",readonly);
 }
 
 bool QAbstractSpinBoxHost::readonly()
 {
-    return get_property_value("readOnly").toBool();
+    return getPropertyValue("readOnly").toBool();
 }
 
 void QAbstractSpinBoxHost::setButtonSymbols(int buttonSymbols)
 {
-    set_property_value("buttonSymbols",buttonSymbols);
+    setPropertyValue("buttonSymbols",buttonSymbols);
 }
 
 int QAbstractSpinBoxHost::buttonSymbols()
 {
-    return get_property_value("buttonSymbols").toInt();
+    return getPropertyValue("buttonSymbols").toInt();
 }
 
 void QAbstractSpinBoxHost::setAlignment(int alignment)
 {
-    set_property_value("alignment",alignment);
+    setPropertyValue("alignment",alignment);
 }
 
 int QAbstractSpinBoxHost::alignment()
 {
-    return get_property_value("alignment").toInt();
+    return getPropertyValue("alignment").toInt();
 }

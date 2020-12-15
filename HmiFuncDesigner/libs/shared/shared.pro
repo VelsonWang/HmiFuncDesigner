@@ -185,3 +185,37 @@ RESOURCES += \
 
 #DISTFILES += qabstractplugin.json
 
+
+################################################################################
+
+INCLUDEPATH += $$PWD/projdata
+
+SOURCES += \
+    projdata/DataAES.cpp \
+    projdata/Tag.cpp \
+    projdata/ulog.cpp \
+    projdata/ProjectData.cpp \
+    projdata/ProjectInfoManager.cpp \
+    projdata/NetSetting.cpp \
+    projdata/DatabaseSetting.cpp \
+    projdata/UserAuthority.cpp \
+    projdata/DeviceInfo.cpp \
+    projdata/PictureResourceManager.cpp \
+    projdata/Script.cpp \
+    projdata/Helper.cpp
+
+
+HEADERS += \
+    projdata/DataAES.h \
+    projdata/IGraphPageSaveLoad.h \
+    projdata/Tag.h \
+    projdata/ulog.h \
+    projdata/ProjectData.h \
+    projdata/ProjectInfoManager.h \
+    projdata/NetSetting.h \
+    projdata/DatabaseSetting.h \
+    projdata/UserAuthority.h \
+    projdata/DeviceInfo.h \
+    projdata/PictureResourceManager.h \
+    projdata/Script.h \
+    projdata/Helper.h

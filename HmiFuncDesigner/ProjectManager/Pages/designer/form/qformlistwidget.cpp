@@ -74,7 +74,7 @@ QFormListWidget::~QFormListWidget()
 
 void QFormListWidget::insert_form(QAbstractHost *host, int index)
 {
-    if(host==NULL || m_host_to_form.keys().contains(host) || !host->get_object()->isWidgetType())
+    if(host==NULL || m_host_to_form.keys().contains(host) || !host->getObject()->isWidgetType())
     {
         return;
     }

@@ -10,42 +10,42 @@ QTCPDriverHost::QTCPDriverHost(QAbstractHost *parent):
 {
 }
 
-void QTCPDriverHost::create_object()
+void QTCPDriverHost::createObject()
 {
     m_object=new QTCPDriverObject();
     m_object->setObjectName("tcp");
 }
 
-void QTCPDriverHost::init_property()
+void QTCPDriverHost::initProperty()
 {
-    QAbstractDriver::init_property();
+    QAbstractDriver::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=NULL)
     {
-        pro->set_property("name","ip_address");
-        pro->set_attribute("show_name",tr("IP Address"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
+        pro->setProperty("name","ip_address");
+        pro->setAttribute("show_name",tr("IP Address"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
         m_object->setProperty("ip_address","192.168.1.1");
-        insert_property(pro);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Number");
     if(pro!=NULL)
     {
-        pro->set_property("name","ip_port");
-        pro->set_attribute("show_name",tr("IP Port"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
+        pro->setProperty("name","ip_port");
+        pro->setAttribute("show_name",tr("IP Port"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
         m_object->setProperty("ip_port",100);
-        insert_property(pro);
+        insertProperty(pro);
     }
 }
 
-QString QTCPDriverHost::get_show_name()
+QString QTCPDriverHost::getShowName()
 {
     return tr("TCP");
 }

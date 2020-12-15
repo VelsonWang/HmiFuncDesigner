@@ -718,7 +718,7 @@ void QScriptEditView::insertMethod(const QMetaMethod &method, QAbstractHost *hos
         }
         else
         {
-            str=temp->get_property_value("objectName").toString()+"."+str;
+            str=temp->getPropertyValue("objectName").toString()+"."+str;
         }
         temp=temp->getParent();
     }

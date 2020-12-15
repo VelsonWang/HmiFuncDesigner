@@ -23,7 +23,7 @@ QStateCheckWidget::QStateCheckWidget(QAbstractProperty *property, const QString 
 
     foreach(tagSheetItem item,items.values())
     {
-        if(item.m_un_used.contains(property->get_property("name").toString()))
+        if(item.m_un_used.contains(property->getProperty("name").toString()))
         {
             continue;
         }
@@ -70,7 +70,7 @@ void QStateCheckWidget::check_changed()
     emit changed();
 }
 
-QString QStateCheckWidget::get_title()
+QString QStateCheckWidget::getTagName()
 {
     QString str;
     foreach(QItemCheckBox* c,m_widgets)

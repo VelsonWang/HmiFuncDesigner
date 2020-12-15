@@ -19,7 +19,7 @@ void QGradientItem::read(XMLObject *xml)
     {
         delete m_children.first();
     }
-    m_attributes=xml->get_propertys();
+    m_attributes=xml->getPropertys();
 
     QAbstractStylesheetItem *item;
 
@@ -28,7 +28,7 @@ void QGradientItem::read(XMLObject *xml)
     foreach(XMLObject* c,list)
     {
         item=new QAbstractStylesheetItem(this);
-        item->setProperty("title",c->get_property("title"));
+        item->setProperty("title",c->getProperty("title"));
         item->read(c);
     }
 }

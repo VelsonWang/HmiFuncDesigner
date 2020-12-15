@@ -13,70 +13,70 @@ QDateEditHost::QDateEditHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QDateEditHost::get_show_name()
+QString QDateEditHost::getShowName()
 {
     return tr("Date Edit");
 }
 
-QString QDateEditHost::get_show_group()
+QString QDateEditHost::getShowGroup()
 {
     return tr("Input Widgets");
 }
 
-QString QDateEditHost::get_show_icon()
+QString QDateEditHost::getShowIcon()
 {
     return ":/images/dateedit.png";
 }
 
-void QDateEditHost::create_object()
+void QDateEditHost::createObject()
 {
     m_object=new QDateEdit();
     m_object->setObjectName("dateedit");
 }
 
-void QDateEditHost::init_property()
+void QDateEditHost::initProperty()
 {
-    QAbstractSpinBoxHost::init_property();
+    QAbstractSpinBoxHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Date");
     if(pro!=NULL)
     {
-        pro->set_property("name","maximumDate");
-        pro->set_attribute("show_name",tr("MaximumDate"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro,1);
+        pro->setProperty("name","maximumDate");
+        pro->setAttribute("show_name",tr("MaximumDate"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro,1);
     }
 
     pro=QPropertyFactory::create_property("Date");
     if(pro!=NULL)
     {
-        pro->set_property("name","minimumDate");
-        pro->set_attribute("show_name",tr("MinimumDate"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","minimumDate");
+        pro->setAttribute("show_name",tr("MinimumDate"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Date");
     if(pro!=NULL)
     {
-        pro->set_property("name","date");
-        pro->set_attribute("show_name",tr("Date"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","date");
+        pro->setAttribute("show_name",tr("Date"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","currentSection");
-        pro->set_attribute("show_name",tr("CurrentSection"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","currentSection");
+        pro->setAttribute("show_name",tr("CurrentSection"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -94,21 +94,21 @@ void QDateEditHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","dateChanged");
-        pro->set_attribute("show_name",tr("DateChanged"));
-        pro->set_attribute("group","Events");
-        insert_property(pro);
+        pro->setProperty("name","dateChanged");
+        pro->setAttribute("show_name",tr("DateChanged"));
+        pro->setAttribute("group","Events");
+        insertProperty(pro);
     }
 
-    set_property_value("geometry",QRect(0,0,100,20));
+    setPropertyValue("geometry",QRect(0,0,100,20));
 
     QDateEdit *e=(QDateEdit*)m_object;
     connect(e,SIGNAL(dateChanged(QDate)),this,SLOT(dateChanged(QDate)));
@@ -117,40 +117,40 @@ void QDateEditHost::init_property()
 void QDateEditHost::setDate(int year, int month, int day)
 {
     QDate dt(year,month,day);
-    set_property_value("date",dt);
+    setPropertyValue("date",dt);
 }
 
 int QDateEditHost::year()
 {
-    QDate dt=get_property_value("date").toDate();
+    QDate dt=getPropertyValue("date").toDate();
     return dt.year();
 }
 
 int QDateEditHost::month()
 {
-    QDate dt=get_property_value("date").toDate();
+    QDate dt=getPropertyValue("date").toDate();
     return dt.month();
 }
 
 int QDateEditHost::day()
 {
-    QDate dt=get_property_value("date").toDate();
+    QDate dt=getPropertyValue("date").toDate();
     return dt.day();
 }
 
 void QDateEditHost::setCurrentSection(int currentSection)
 {
-    set_property_value("currentSection",currentSection);
+    setPropertyValue("currentSection",currentSection);
 }
 
 int QDateEditHost::currentSection()
 {
-    return get_property_value("currentSection").toInt();
+    return getPropertyValue("currentSection").toInt();
 }
 
 void QDateEditHost::dateChanged(const QDate &date)
 {
-    QString code=get_property_value("dateChanged").toString();
+    QString code=getPropertyValue("dateChanged").toString();
     if(code!="")
     {
         QMap<QString,QString> param;

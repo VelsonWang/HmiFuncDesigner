@@ -20,8 +20,10 @@ protected:
 
 public slots:
     void    reset();
+
 protected slots:
-    void    property_refresh();
+    void onPropertyRefresh();
+
 protected:
     QToolButton                     *m_resetButton;
     QAbstractProperty               *m_property;

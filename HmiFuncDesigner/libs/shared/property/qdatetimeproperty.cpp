@@ -3,7 +3,7 @@
 QDateTimeProperty::QDateTimeProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","DateTime");
+    setProperty("type","DateTime");
 }
 
 QString QDateTimeProperty::get_value_text()

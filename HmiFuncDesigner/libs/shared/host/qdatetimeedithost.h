@@ -9,9 +9,9 @@ class QDateTimeEditHost: public QAbstractSpinBoxHost
 public:
     Q_INVOKABLE QDateTimeEditHost(QAbstractHost *parent = 0);
 
-    static QString get_show_name();
-    static QString get_show_icon();
-    static QString get_show_group();
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
 public slots:
     void    setDateTime(int year,int month,int day,int hour,int minute,int second);
     int     year();
@@ -26,9 +26,9 @@ public slots:
 protected slots:
     void	dateTimeChanged(const QDateTime &datetime);
 protected:
-    void init_property();
+    void initProperty();
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 

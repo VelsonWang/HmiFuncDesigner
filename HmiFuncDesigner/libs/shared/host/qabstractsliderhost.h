@@ -23,7 +23,7 @@ public slots:
 protected slots:
     void    valueChanged(int value);
 protected:
-    void init_property();
+    void initProperty();
 };
 
 #endif // QABSTRACTSLIDERHOST_H

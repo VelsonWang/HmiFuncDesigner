@@ -10,7 +10,6 @@ SUBDIRS   = \
     qscintilla \
 #    Lua \
 #    Ftp \
-    ProjData \
     shared \
     gradienteditor \
     core \

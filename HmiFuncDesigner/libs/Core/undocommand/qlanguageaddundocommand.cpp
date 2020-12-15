@@ -43,7 +43,7 @@ void QLanguageAddUndoCommand::redo()
     }
     else
     {
-        QSoftCore::getCore()->getProjectCore()->get_language_manager()->emit_refresh(NULL);
+        QSoftCore::getCore()->getProjectCore()->getLanguageManager()->emit_refresh(NULL);
     }
 }
 
@@ -60,13 +60,13 @@ void QLanguageAddUndoCommand::undo()
     }
     else
     {
-        QSoftCore::getCore()->getProjectCore()->get_language_manager()->emit_refresh(NULL);
+        QSoftCore::getCore()->getProjectCore()->getLanguageManager()->emit_refresh(NULL);
     }
 }
 
 void QLanguageAddUndoCommand::add()
 {
-    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
+    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
     QLanguage *l=new QLanguage;
     *l=*m_language;
     manager->insert_language(l,m_index);
@@ -74,8 +74,8 @@ void QLanguageAddUndoCommand::add()
 
 void QLanguageAddUndoCommand::remove()
 {
-    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
-    manager->remove_language(m_language->get_uuid());
+    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
+    manager->remove_language(m_language->getUuid());
 }
 
 int QLanguageAddUndoCommand::id()const

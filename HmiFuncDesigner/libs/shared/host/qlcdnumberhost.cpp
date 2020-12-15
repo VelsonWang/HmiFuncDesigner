@@ -13,80 +13,80 @@ QLCDNumberHost::QLCDNumberHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QLCDNumberHost::get_show_name()
+QString QLCDNumberHost::getShowName()
 {
     return tr("LCD Number");
 }
 
-QString QLCDNumberHost::get_show_group()
+QString QLCDNumberHost::getShowGroup()
 {
     return tr("Display Widgets");
 }
 
-QString QLCDNumberHost::get_show_icon()
+QString QLCDNumberHost::getShowIcon()
 {
     return ":/images/lcdnumber.png";
 }
 
-void QLCDNumberHost::create_object()
+void QLCDNumberHost::createObject()
 {
     m_object=new QLCDNumber();
     m_object->setObjectName("lcdnumber");
 }
 
-void QLCDNumberHost::init_property()
+void QLCDNumberHost::initProperty()
 {
-    QFrameHost::init_property();
+    QFrameHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Number");
     if(pro!=NULL)
     {
-        pro->set_property("name","digitCount");
-        pro->set_attribute("show_name",tr("DigitCount"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","digitCount");
+        pro->setAttribute("show_name",tr("DigitCount"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Number");
     if(pro!=NULL)
     {
-        pro->set_property("name","numDigits");
-        pro->set_attribute("show_name",tr("NumDigits"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","numDigits");
+        pro->setAttribute("show_name",tr("NumDigits"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Number");
     if(pro!=NULL)
     {
-        pro->set_property("name","intValue");
-        pro->set_attribute("show_name",tr("IntValue"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro,1);
+        pro->setProperty("name","intValue");
+        pro->setAttribute("show_name",tr("IntValue"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro,1);
     }
 
     pro=QPropertyFactory::create_property("Float");
     if(pro!=NULL)
     {
-        pro->set_property("name","value");
-        pro->set_attribute("show_name",tr("Value"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro,2);
+        pro->setProperty("name","value");
+        pro->setAttribute("show_name",tr("Value"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro,2);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","mode");
-        pro->set_attribute("show_name",tr("Mode"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","mode");
+        pro->setAttribute("show_name",tr("Mode"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -108,18 +108,18 @@ void QLCDNumberHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
+        pro->setAttribute("items",v);
 
-        insert_property(pro);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","segmentStyle");
-        pro->set_attribute("show_name",tr("SegmentStyle"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","segmentStyle");
+        pro->setAttribute("show_name",tr("SegmentStyle"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -137,70 +137,70 @@ void QLCDNumberHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
+        pro->setAttribute("items",v);
 
-        insert_property(pro);
+        insertProperty(pro);
     }
 
-    set_property_value("geometry",QRect(0,0,100,30));
+    setPropertyValue("geometry",QRect(0,0,100,30));
 }
 
 void QLCDNumberHost::setIntValue(int intValue)
 {
-    set_property_value("intValue",intValue);
+    setPropertyValue("intValue",intValue);
 }
 
 int QLCDNumberHost::intValue()
 {
-    return get_property_value("intValue").toInt();
+    return getPropertyValue("intValue").toInt();
 }
 
 void QLCDNumberHost::setValue(float value)
 {
-    set_property_value("value",value);
+    setPropertyValue("value",value);
 }
 
 float QLCDNumberHost::value()
 {
-    return get_property_value("value").toFloat();
+    return getPropertyValue("value").toFloat();
 }
 
 void QLCDNumberHost::setMode(int mode)
 {
-    set_property_value("mode",mode);
+    setPropertyValue("mode",mode);
 }
 
 int QLCDNumberHost::mode()
 {
-    return get_property_value("mode").toInt();
+    return getPropertyValue("mode").toInt();
 }
 
 void QLCDNumberHost::setSegmentStyle(int segmentStyle)
 {
-    set_property_value("segmentStyle",segmentStyle);
+    setPropertyValue("segmentStyle",segmentStyle);
 }
 
 int QLCDNumberHost::segmentStyle()
 {
-    return get_property_value("segmentStyle").toInt();
+    return getPropertyValue("segmentStyle").toInt();
 }
 
 void QLCDNumberHost::setDigitCount(int digitCount)
 {
-    set_property_value("digitCount",digitCount);
+    setPropertyValue("digitCount",digitCount);
 }
 
 int QLCDNumberHost::digitCount()
 {
-    return get_property_value("digitCount").toInt();
+    return getPropertyValue("digitCount").toInt();
 }
 
 void QLCDNumberHost::setNumDigits(int numDigits)
 {
-    set_property_value("numDigits",numDigits);
+    setPropertyValue("numDigits",numDigits);
 }
 
 int QLCDNumberHost::numDigits()
 {
-    return get_property_value("numDigits").toInt();
+    return getPropertyValue("numDigits").toInt();
 }

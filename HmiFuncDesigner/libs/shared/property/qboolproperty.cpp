@@ -9,7 +9,7 @@
 QBoolProperty::QBoolProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","Bool");
+    setProperty("type","Bool");
 }
 
 QString QBoolProperty::get_value_text()

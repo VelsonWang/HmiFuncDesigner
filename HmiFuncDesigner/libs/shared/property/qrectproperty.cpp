@@ -5,23 +5,23 @@
 QRectProperty::QRectProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","Rect");
+    setProperty("type","Rect");
 
     m_x=new QIntProperty(this);
-    m_x->set_attribute("show_name",tr("x"));
-    m_x->set_property("name","x");
+    m_x->setAttribute("show_name",tr("x"));
+    m_x->setProperty("name","x");
 
     m_y=new QIntProperty(this);
-    m_y->set_attribute("show_name",tr("y"));
-    m_y->set_property("name","y");
+    m_y->setAttribute("show_name",tr("y"));
+    m_y->setProperty("name","y");
 
     m_width=new QIntProperty(this);
-    m_width->set_attribute("show_name",tr("Width"));
-    m_width->set_property("name","Width");
+    m_width->setAttribute("show_name",tr("Width"));
+    m_width->setProperty("name","Width");
 
     m_height=new QIntProperty(this);
-    m_height->set_attribute("show_name",tr("Height"));
-    m_height->set_property("name","Height");
+    m_height->setAttribute("show_name",tr("Height"));
+    m_height->setProperty("name","Height");
 }
 
 void QRectProperty::set_value(const QVariant &value)
@@ -30,7 +30,7 @@ void QRectProperty::set_value(const QVariant &value)
 
     disconnect_children();
 
-    if(m_x->get_attribute(ATTR_VISIBLE).toBool())
+    if(m_x->getAttribute(ATTR_VISIBLE).toBool())
     {
         m_x->set_value(re.x());
         m_y->set_value(re.y());
@@ -60,7 +60,7 @@ void QRectProperty::child_value_changed(const QVariant &, const QVariant &)
 
 QString QRectProperty::get_value_text()
 {
-    if(m_x->get_attribute(ATTR_VISIBLE).toBool())
+    if(m_x->getAttribute(ATTR_VISIBLE).toBool())
     {
         return QString("[(%1,%2),%3 x %4]")
             .arg(m_x->get_value().toInt())
@@ -82,7 +82,7 @@ QIcon QRectProperty::get_value_icon()
 QVariant QRectProperty::get_value()
 {
     QVariant v=QAbstractProperty::get_value();
-    if(!m_x->get_attribute(ATTR_VISIBLE).toBool())
+    if(!m_x->getAttribute(ATTR_VISIBLE).toBool())
     {
         QRect rect=v.toRect();
         rect.setRect(0,0,rect.width(),rect.height());

@@ -9,10 +9,10 @@ class QTCPDriverHost : public QAbstractDriver
 public:
     Q_INVOKABLE QTCPDriverHost(QAbstractHost* parent=0);
 
-    static QString get_show_name();
+    static QString getShowName();
 protected:
-    void    create_object();
-    void    init_property();
+    void    createObject();
+    void    initProperty();
 };
 
 class QTCPDriverObject: public QAbstractDriverObject

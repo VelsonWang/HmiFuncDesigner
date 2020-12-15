@@ -10,24 +10,24 @@ QFormHost::QFormHost(QAbstractHost *parent):
     setProperty("title",FORM_TITLE);
 }
 
-void QFormHost::create_object()
+void QFormHost::createObject()
 {
     m_object=new QWidget();
 }
 
-void QFormHost::init_property()
+void QFormHost::initProperty()
 {
-    QAbstractWidgetHost::init_property();
+    QAbstractWidgetHost::initProperty();
 
 
-    QAbstractProperty *pro=this->get_property("geometry");
-    pro->set_attribute("show_name",tr("Size"));
-    pro->set_attribute(QString("x:")+ATTR_VISIBLE,false);
-    pro->set_attribute(QString("y:")+ATTR_VISIBLE,false);
+    QAbstractProperty *pro=this->getProperty("geometry");
+    pro->setAttribute("show_name",tr("Size"));
+    pro->setAttribute(QString("x:")+ATTR_VISIBLE,false);
+    pro->setAttribute(QString("y:")+ATTR_VISIBLE,false);
 
 
-    pro=this->get_property("objectName");
-    pro->set_attribute("editabled",false);
+    pro=this->getProperty("objectName");
+    pro->setAttribute("editabled",false);
 
-    set_property_value("geometry",QRect(0,0,800,600));
+    setPropertyValue("geometry",QRect(0,0,800,600));
 }

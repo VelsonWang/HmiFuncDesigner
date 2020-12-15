@@ -9,9 +9,9 @@ class QWidgetHost : public QAbstractWidgetHost
 public:
     Q_INVOKABLE QWidgetHost(QAbstractHost *parent = 0);
 
-    static QString get_show_name();
-    static QString get_show_icon();
-    static QString get_show_group();
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
 public slots:
     void   setVisible(bool visible);
     bool   visible();
@@ -19,7 +19,7 @@ public slots:
     void    set_focus();
     void    kill_focus();
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 #endif // QWIDGETHOST_H

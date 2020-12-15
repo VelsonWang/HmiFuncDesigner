@@ -48,10 +48,10 @@ void QLanguageManager::load(const QString &path)
                 if(xml.load(str,0))
                 {
                     QLanguage *l=new QLanguage;
-                    l->from_object(&xml);
+                    l->fromObject(&xml);
                     l->set_file_name(info.fileName());
                     m_languages.append(l);
-                    m_id_to_language.insert(l->get_uuid(),l);
+                    m_id_to_language.insert(l->getUuid(),l);
                 }
                 f.close();
             }
@@ -68,7 +68,7 @@ void QLanguageManager::save(const QString &path)
     foreach(QLanguage* l,m_languages)
     {
         XMLObject xml;
-        l->to_object(&xml);
+        l->toObject(&xml);
         QString str=xml.write();
 
         QFile f(filePath+"/"+l->get_file_name());
@@ -130,7 +130,7 @@ void QLanguageManager::set_current_language(const QString &uuid)
     if(m_current_language!=l)
     {
         m_current_language=l;
-        emit current_language_changed();
+        emit notifyCurLanguageChanged();
     }
 }
 
@@ -142,7 +142,7 @@ void QLanguageManager::set_text(const QString &translate_uuid, const QString &te
         l->set_translate(translate_uuid,text);
         if(l==m_current_language)
         {
-            emit current_text_changed(translate_uuid);
+            emit notifyCurTextChanged(translate_uuid);
         }
     }
 }
@@ -160,14 +160,14 @@ void QLanguageManager::remove_text(const QString &translate_uuid)
 
 void QLanguageManager::insert_language(QLanguage *l, int index)
 {
-    if(l!=NULL && l->get_language_name()!="" && l->get_uuid()!="")
+    if(l!=NULL && l->get_language_name()!="" && l->getUuid()!="")
     {
         if(index<0 || index>m_languages.size())
         {
             index=m_languages.size();
         }
         m_languages.insert(index,l);
-        m_id_to_language.insert(l->get_uuid(),l);
+        m_id_to_language.insert(l->getUuid(),l);
         emit insert_language_signal(index,l);
     }
 }
@@ -200,7 +200,7 @@ void QLanguageManager::add_translate(const QString &language_uuid, const QString
         l->add_translate(info);
         if(l==m_current_language)
         {
-            emit current_text_changed(translate_uuid);
+            emit notifyCurTextChanged(translate_uuid);
         }
     }
 }

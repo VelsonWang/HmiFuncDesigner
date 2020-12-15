@@ -87,7 +87,7 @@ void QAddSheetItemDialog::make_title()
         str+=s;
     }
 
-    str+=m_check_widget->get_title();
+    str+=m_check_widget->getTagName();
 
     ui->title->setText(str);
 }
@@ -97,7 +97,7 @@ void QAddSheetItemDialog::check_changed()
     make_title();
 }
 
-QString QAddSheetItemDialog::get_title()
+QString QAddSheetItemDialog::getTagName()
 {
     return m_title;
 }

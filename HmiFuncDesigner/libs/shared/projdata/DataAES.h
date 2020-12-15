@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <string>
-#include "projdata_global.h"
+#include "sharedlibglobal.h"
 
 #define AES_DEFAULT_KEY "JasonWangEasyHMI"
 
@@ -109,7 +109,7 @@ public:
 
 //----------------------------------------------------------------------------------------
 
-class PROJDATASHARED_EXPORT DataAES
+class SHAREDLIB_EXPORT DataAES
 {
 private:
     DataAES() = default;

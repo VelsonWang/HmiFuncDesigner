@@ -9,31 +9,31 @@ QCommDriverHost::QCommDriverHost(QAbstractHost *parent):
 {
 }
 
-void QCommDriverHost::create_object()
+void QCommDriverHost::createObject()
 {
     m_object=new QCommDriverObject();
     m_object->setObjectName("comm");
 }
 
-void QCommDriverHost::init_property()
+void QCommDriverHost::initProperty()
 {
-    QAbstractDriver::init_property();
+    QAbstractDriver::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Number");
     if(pro!=NULL)
     {
-        pro->set_property("name","serial_number");
-        pro->set_attribute("show_name",tr("Serial Number"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_NEEDSAVE,true);
+        pro->setProperty("name","serial_number");
+        pro->setAttribute("show_name",tr("Serial Number"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE,true);
         m_object->setProperty("serial_number",1);
-        insert_property(pro);
+        insertProperty(pro);
     }
 }
 
-QString QCommDriverHost::get_show_name()
+QString QCommDriverHost::getShowName()
 {
     return tr("Serial");
 }

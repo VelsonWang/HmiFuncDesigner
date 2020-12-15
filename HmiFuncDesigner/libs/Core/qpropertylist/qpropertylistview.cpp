@@ -24,7 +24,7 @@ QWidget *QPropertyEditorDelegate::createEditor(QWidget *parent, const QStyleOpti
     {
         QTreeWidgetItem *item=m_listView->indexToItem(index);
         QAbstractProperty *property=m_listView->itemToProperty(item);
-        if(property!=NULL && property->get_attribute(ATTR_EDITABLE).toBool())
+        if(property!=NULL && property->getAttribute(ATTR_EDITABLE).toBool())
         {
             wid=new QPropertyBaseEditor(property,m_listView->m_undo_stack,parent);
         }
@@ -194,14 +194,14 @@ void QPropertyListView::insertItem(QAbstractProperty *property, QAbstractPropert
     {
         return;
     }
-    if(!property->get_attribute(ATTR_VISIBLE).toBool())
+    if(!property->getAttribute(ATTR_VISIBLE).toBool())
     {
         return;
     }
     QTreeWidgetItem *parentItem;
     if(parent==NULL)
     {
-        QString str=property->get_attribute("group").toString();
+        QString str=property->getAttribute("group").toString();
         if(str=="")
         {
             str=tr("Common");
@@ -226,8 +226,8 @@ void QPropertyListView::insertItem(QAbstractProperty *property, QAbstractPropert
         return;
     }
     QTreeWidgetItem *item=new QTreeWidgetItem(parentItem);
-    item->setText(0,property->get_attribute("show_name").toString());
-    item->setToolTip(0,property->get_attribute("show_name").toString());
+    item->setText(0,property->getAttribute("show_name").toString());
+    item->setToolTip(0,property->getAttribute("show_name").toString());
     item->setText(1,property->get_value_text());
     item->setToolTip(1,property->get_value_text());
     item->setIcon(1,property->get_value_icon());

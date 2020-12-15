@@ -61,7 +61,7 @@ void QPropertyChangedUndoCommand::redo()
     QAbstractHost* h=QSoftCore::getCore()->getProjectCore()->get_host_by_uuid(m_host_uuid);
     if(h!=NULL)
     {
-        h->set_property_value(m_property_name,m_new_value);
+        h->setPropertyValue(m_property_name,m_new_value);
     }
 }
 
@@ -72,6 +72,6 @@ void QPropertyChangedUndoCommand::undo()
     QAbstractHost* h=QSoftCore::getCore()->getProjectCore()->get_host_by_uuid(m_host_uuid);
     if(h!=NULL)
     {
-        h->set_property_value(m_property_name,m_old_value);
+        h->setPropertyValue(m_property_name,m_old_value);
     }
 }

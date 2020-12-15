@@ -5,10 +5,10 @@
 #include <QList>
 #include <QImage>
 #include <QByteArray>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
-class PROJDATASHARED_EXPORT PictureInfo
+class SHAREDLIB_EXPORT PictureInfo
 {
 public:
     PictureInfo();
@@ -25,7 +25,7 @@ public:
 };
 
 
-class PROJDATASHARED_EXPORT PictureResourceManager
+class SHAREDLIB_EXPORT PictureResourceManager
 {
 public:
     PictureResourceManager();

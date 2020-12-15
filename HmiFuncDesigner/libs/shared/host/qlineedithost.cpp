@@ -15,93 +15,93 @@ QLineEditHost::QLineEditHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QLineEditHost::get_show_name()
+QString QLineEditHost::getShowName()
 {
     return tr("Line Edit");
 }
 
-QString QLineEditHost::get_show_group()
+QString QLineEditHost::getShowGroup()
 {
     return tr("Input Widgets");
 }
 
-QString QLineEditHost::get_show_icon()
+QString QLineEditHost::getShowIcon()
 {
     return ":/images/lineedit.png";
 }
 
-void QLineEditHost::create_object()
+void QLineEditHost::createObject()
 {
     m_object=new QLineEdit();
     m_object->setObjectName("lineedit");
 }
 
-void QLineEditHost::init_property()
+void QLineEditHost::initProperty()
 {
-    QWidgetHost::init_property();
+    QWidgetHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=NULL)
     {
-        pro->set_property("name","text");
-        pro->set_attribute("show_name",tr("Text"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","text");
+        pro->setAttribute("show_name",tr("Text"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Align");
     if(pro!=NULL)
     {
-        pro->set_property("name","alignment");
-        pro->set_attribute("show_name",tr("Alignment"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","alignment");
+        pro->setAttribute("show_name",tr("Alignment"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","readOnly");
-        pro->set_attribute("show_name",tr("ReadOnly"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","readOnly");
+        pro->setAttribute("show_name",tr("ReadOnly"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","frame");
-        pro->set_attribute("show_name",tr("Frame"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","frame");
+        pro->setAttribute("show_name",tr("Frame"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","textChanged");
-        pro->set_attribute("show_name",tr("TextChanged"));
-        pro->set_attribute("group","Events");
-        insert_property(pro);
+        pro->setProperty("name","textChanged");
+        pro->setAttribute("show_name",tr("TextChanged"));
+        pro->setAttribute("group","Events");
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","editFinish");
-        pro->set_attribute("show_name",tr("EditFinish"));
-        pro->set_attribute("group","Events");
-        insert_property(pro);
+        pro->setProperty("name","editFinish");
+        pro->setAttribute("show_name",tr("EditFinish"));
+        pro->setAttribute("group","Events");
+        insertProperty(pro);
     }
 
-    set_property_value("geometry",QRect(0,0,80,20));
+    setPropertyValue("geometry",QRect(0,0,80,20));
 
     QLineEdit* e=(QLineEdit*)m_object;
     connect(e,SIGNAL(textChanged(QString)),this,SLOT(textChanged(QString)));
@@ -110,47 +110,47 @@ void QLineEditHost::init_property()
 
 void QLineEditHost::setText(const QString text)
 {
-    set_property_value("text",text);
+    setPropertyValue("text",text);
 }
 
 QString QLineEditHost::text()
 {
-    return get_property_value("text").toString();
+    return getPropertyValue("text").toString();
 }
 
 void QLineEditHost::setAlignment(int alignment)
 {
-    set_property_value("alignment",alignment);
+    setPropertyValue("alignment",alignment);
 }
 
 int QLineEditHost::alignment()
 {
-    return get_property_value("alignment").toInt();
+    return getPropertyValue("alignment").toInt();
 }
 
 void QLineEditHost::setReadOnly(bool readOnly)
 {
-    set_property_value("readOnly",readOnly);
+    setPropertyValue("readOnly",readOnly);
 }
 
 bool QLineEditHost::readOnly()
 {
-    return get_property_value("readOnly").toBool();
+    return getPropertyValue("readOnly").toBool();
 }
 
 void QLineEditHost::setFrame(bool frame)
 {
-    set_property_value("frame",frame);
+    setPropertyValue("frame",frame);
 }
 
 bool QLineEditHost::frame()
 {
-    return get_property_value("frame").toBool();
+    return getPropertyValue("frame").toBool();
 }
 
 void QLineEditHost::textChanged(const QString &text)
 {
-    QString code=get_property_value("textChanged").toString();
+    QString code=getPropertyValue("textChanged").toString();
     if(code!="")
     {
         QMap<QString,QString> param;
@@ -161,7 +161,7 @@ void QLineEditHost::textChanged(const QString &text)
 
 void QLineEditHost::editFinish()
 {
-    QString code=get_property_value("editFinish").toString();
+    QString code=getPropertyValue("editFinish").toString();
     if(code!="")
     {
         QMap<QString,QString> param;

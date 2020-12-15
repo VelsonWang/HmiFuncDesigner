@@ -6,7 +6,7 @@
 #include <QTreeWidgetItem>
 #include "ConfigUtils.h"
 #include "Helper.h"
-#include "XMLObject.h"
+#include "xmlobject.h"
 #include "ui_InsertFunctionDialog.h"
 
 #include <QDebug>
@@ -44,17 +44,17 @@ void InsertFunctionDialog::treeWidgetInit() {
     return;
   }
 
-  QVector<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+  QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
   foreach (XMLObject* funcGroup, childrenFuncSupport) {
-    // qDebug() << funcGroup->get_title() << "  "  <<
-    // funcGroup->get_property("name");
+    // qDebug() << funcGroup->getTagName() << "  "  <<
+    // funcGroup->getProperty("name");
     QTreeWidgetItem* pItem = new QTreeWidgetItem(ui->treeWidgetFunc);
     QString funcGroupName = funcGroup->getProperty("funcName");
     pItem->setText(0, funcGroupName);
 
     // add child
-    QVector<XMLObject*> childrenGroup = funcGroup->getChildren();
+    QList<XMLObject*> childrenGroup = funcGroup->getChildren();
     if (childrenGroup.size() < 1) continue;
     foreach (XMLObject* func, childrenGroup) {
       QTreeWidgetItem* pChildItem = new QTreeWidgetItem();
@@ -62,7 +62,7 @@ void InsertFunctionDialog::treeWidgetInit() {
       pChildItem->setText(0, funcName);
       pItem->addChild(pChildItem);
 
-      QVector<XMLObject*> funcDesc = func->getChildren();
+      QList<XMLObject*> funcDesc = func->getChildren();
       if (funcDesc.size() < 1) continue;
       QString strDesc = "";
       QString strFuncOrgName = func->getCurrentChild("name")->getText();

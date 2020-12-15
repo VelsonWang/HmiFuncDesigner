@@ -35,18 +35,17 @@ public:
     virtual QString get_value_text()=0;
     virtual QIcon   get_value_icon()=0;
 
-    void            set_default();
-
-    bool            modified();
+    void setDefault();
+    bool modified();
 
     virtual void    toObject(XMLObject* xml);
     virtual void    fromObject(XMLObject* xml);
 
-    void            set_attribute(const QString &key,const QVariant& value);
-    QVariant        get_attribute(const QString &key);
+    void            setAttribute(const QString &key, const QVariant& value);
+    QVariant        getAttribute(const QString &key);
 
-    void            set_property(const QString &key,const QVariant& value);
-    QVariant        get_property(const QString &key);
+    void            setProperty(const QString &key, const QVariant& value);
+    QVariant        getProperty(const QString &key);
 
 
     QAbstractProperty& operator =(const QAbstractProperty &pro);

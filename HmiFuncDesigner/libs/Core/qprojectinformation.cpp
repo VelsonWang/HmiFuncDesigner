@@ -12,12 +12,12 @@ QProjectInformation::~QProjectInformation()
     m_uuid_to_property.clear();
 }
 
-tagProperty* QProjectInformation::get_property(const QString &uuid)
+tagProperty* QProjectInformation::getProperty(const QString &uuid)
 {
     return m_uuid_to_property.value(uuid);
 }
 
-QList<tagProperty*> QProjectInformation::get_propertys()
+QList<tagProperty*> QProjectInformation::getPropertys()
 {
     return m_propertys;
 }

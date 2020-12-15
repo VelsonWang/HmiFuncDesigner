@@ -13,71 +13,71 @@ QTimeEditHost::QTimeEditHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QTimeEditHost::get_show_name()
+QString QTimeEditHost::getShowName()
 {
     return tr("Time Edit");
 }
 
-QString QTimeEditHost::get_show_group()
+QString QTimeEditHost::getShowGroup()
 {
     return tr("Input Widgets");
 }
 
 
-QString QTimeEditHost::get_show_icon()
+QString QTimeEditHost::getShowIcon()
 {
     return ":/images/timeedit.png";
 }
 
-void QTimeEditHost::create_object()
+void QTimeEditHost::createObject()
 {
     m_object=new QTimeEdit();
     m_object->setObjectName("timeedit");
 }
 
-void QTimeEditHost::init_property()
+void QTimeEditHost::initProperty()
 {
-    QAbstractSpinBoxHost::init_property();
+    QAbstractSpinBoxHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Time");
     if(pro!=NULL)
     {
-        pro->set_property("name","maximumTime");
-        pro->set_attribute("show_name",tr("MaximumTime"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro,1);
+        pro->setProperty("name","maximumTime");
+        pro->setAttribute("show_name",tr("MaximumTime"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro,1);
     }
 
     pro=QPropertyFactory::create_property("Time");
     if(pro!=NULL)
     {
-        pro->set_property("name","minimumTime");
-        pro->set_attribute("show_name",tr("MinimumTime"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","minimumTime");
+        pro->setAttribute("show_name",tr("MinimumTime"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Time");
     if(pro!=NULL)
     {
-        pro->set_property("name","time");
-        pro->set_attribute("show_name",tr("Time"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","time");
+        pro->setAttribute("show_name",tr("Time"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","currentSection");
-        pro->set_attribute("show_name",tr("CurrentSection"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
+        pro->setProperty("name","currentSection");
+        pro->setAttribute("show_name",tr("CurrentSection"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
         ComboItems items;
         tagComboItem item;
 
@@ -95,20 +95,20 @@ void QTimeEditHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 
 
     pro=QPropertyFactory::create_property("Script");
     if(pro!=NULL)
     {
-        pro->set_property("name","timeChanged");
-        pro->set_attribute("show_name",tr("TimeChanged"));
-        pro->set_attribute("group","Events");
-        insert_property(pro);
+        pro->setProperty("name","timeChanged");
+        pro->setAttribute("show_name",tr("TimeChanged"));
+        pro->setAttribute("group","Events");
+        insertProperty(pro);
     }
-    set_property_value("geometry",QRect(0,0,100,20));
+    setPropertyValue("geometry",QRect(0,0,100,20));
 
     QDateTimeEdit* e=(QDateTimeEdit*)m_object;
     connect(e,SIGNAL(timeChanged(QTime)),this,SLOT(timeChanged(QTime)));
@@ -117,40 +117,40 @@ void QTimeEditHost::init_property()
 void QTimeEditHost::setTime(int hour, int minute, int second)
 {
     QTime ti(hour,minute,second);
-    set_property_value("time",ti);
+    setPropertyValue("time",ti);
 }
 
 int QTimeEditHost::hour()
 {
-    QTime ti=get_property_value("time").toTime();
+    QTime ti=getPropertyValue("time").toTime();
     return ti.hour();
 }
 
 int QTimeEditHost::minute()
 {
-    QTime ti=get_property_value("time").toTime();
+    QTime ti=getPropertyValue("time").toTime();
     return ti.minute();
 }
 
 int QTimeEditHost::second()
 {
-    QTime ti=get_property_value("time").toTime();
+    QTime ti=getPropertyValue("time").toTime();
     return ti.second();
 }
 
 void QTimeEditHost::setCurrentSection(int currentSection)
 {
-    set_property_value("currentSection",currentSection);
+    setPropertyValue("currentSection",currentSection);
 }
 
 int QTimeEditHost::currentSection()
 {
-    return get_property_value("currentSection").toInt();
+    return getPropertyValue("currentSection").toInt();
 }
 
 void QTimeEditHost::timeChanged(const QTime &time)
 {
-    QString code=get_property_value("stateChanged").toString();
+    QString code=getPropertyValue("stateChanged").toString();
     if(code!="")
     {
         QMap<QString,QString> param;

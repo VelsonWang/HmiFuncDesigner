@@ -56,14 +56,14 @@ void QTempWidget::set_current(tagTemplateInfo *info)
         {
             return;
         }
-        h->set_default();
+        h->setDefault();
         m_info_to_host.insert(info,h);
-        h->get_object()->installEventFilter(this);
+        h->getObject()->installEventFilter(this);
     }
 
     m_current=info;
 
-    QWidget* wid=(QWidget*)h->get_object();
+    QWidget* wid=(QWidget*)h->getObject();
 
     QPixmap widgetPixmap = QPixmap::grabWidget(wid);
     QSize sz=widgetPixmap.size();
@@ -120,7 +120,7 @@ void QTempWidget::on_okbtn_clicked()
     QAbstractHost* h=m_info_to_host.value(m_current);
     if(h!=NULL)
     {
-        h->set_property_value("objectName",str);
+        h->setPropertyValue("objectName",str);
         m_info_to_host.remove(m_current);
         emit ok(h);
     }

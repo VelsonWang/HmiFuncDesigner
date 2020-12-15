@@ -9,8 +9,8 @@
 QStylesheetProperty::QStylesheetProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","StyleSheet");
-    set_attribute(ATTR_RESET_ABLEABLE,false);
+    setProperty("type","StyleSheet");
+    setAttribute(ATTR_RESET_ABLEABLE,false);
 }
 
 QString QStylesheetProperty::get_value_text()
@@ -25,12 +25,12 @@ QIcon QStylesheetProperty::get_value_icon()
 
 void QStylesheetProperty::fromObject(XMLObject *xml)
 {
-    if(xml==NULL || xml->get_title()!=PROPERTY_TITLE)
+    if(xml==NULL || xml->getTagName()!=PROPERTY_TITLE)
     {
         return;
     }
 
-    QMapIterator<QString,QString>      it(xml->get_propertys());
+    QMapIterator<QString,QString>      it(xml->getPropertys());
 
     while(it.hasNext())
     {
@@ -38,7 +38,7 @@ void QStylesheetProperty::fromObject(XMLObject *xml)
         m_propertys.insert(it.key(),it.value());
     }
 
-    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(get_property("name").toString());
+    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(getProperty("name").toString());
 
     if(maker==NULL)
     {
@@ -56,7 +56,7 @@ void QStylesheetProperty::fromObject(XMLObject *xml)
         maker->clear();
         maker->read(c);
         item=maker->value().value<tagStylesheetItem>();
-        item.m_attributes.insert("title",c->get_property("title"));
+        item.m_attributes.insert("title",c->getProperty("title"));
         items.append(item);
     }
 
@@ -74,16 +74,16 @@ void QStylesheetProperty::toObject(XMLObject *xml)
         return;
     }
 
-    xml->set_title(PROPERTY_TITLE);
+    xml->setTagName(PROPERTY_TITLE);
 
     QMapIterator<QString,QVariant>      it(m_propertys);
 
     while(it.hasNext())
     {
         it.next();
-        xml->set_property(it.key(),it.value().toString());
+        xml->setProperty(it.key(),it.value().toString());
     }
-    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(get_property("name").toString());
+    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(getProperty("name").toString());
     if(maker!=NULL)
     {
         foreach(tagStylesheetItem item,items)

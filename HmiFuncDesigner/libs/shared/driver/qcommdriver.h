@@ -9,10 +9,10 @@ class QCommDriverHost : public QAbstractDriver
 public:
     Q_INVOKABLE QCommDriverHost(QAbstractHost* parent=0);
 
-    static QString get_show_name();
+    static QString getShowName();
 protected:
-    void    create_object();
-    void    init_property();
+    void    createObject();
+    void    initProperty();
 };
 
 class QCommDriverObject: public QAbstractDriverObject

@@ -18,11 +18,11 @@ QFontProperty::QFontProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
     static QFontDatabase fontDatabase;
-    set_property("type","Font");
+    setProperty("type","Font");
 
     m_family=new QEnumProperty(this);
-    m_family->set_attribute("show_name",tr("Family"));
-    m_family->set_property("name","Family");
+    m_family->setAttribute("show_name",tr("Family"));
+    m_family->setProperty("name","Family");
     QStringList list=fontDatabase.families();
     tagComboItem item;
     ComboItems  items;
@@ -34,29 +34,29 @@ QFontProperty::QFontProperty(QAbstractProperty *parent):
     }
     QVariant v;
     v.setValue<ComboItems>(items);
-    m_family->set_attribute("items",v);
+    m_family->setAttribute("items",v);
 
 
     m_pointSize=new QIntProperty(this);
-    m_pointSize->set_attribute("show_name",tr("Size"));
-    m_pointSize->set_property("name","Size");
+    m_pointSize->setAttribute("show_name",tr("Size"));
+    m_pointSize->setProperty("name","Size");
 
     m_bold=new QBoolProperty(this);
-    m_bold->set_attribute("show_name",tr("Bold"));
-    m_bold->set_property("name","Bold");
+    m_bold->setAttribute("show_name",tr("Bold"));
+    m_bold->setProperty("name","Bold");
 
 
     m_italic=new QBoolProperty(this);
-    m_italic->set_attribute("show_name",tr("Italic"));
-    m_italic->set_property("name","Italic");
+    m_italic->setAttribute("show_name",tr("Italic"));
+    m_italic->setProperty("name","Italic");
 
     m_underline=new QBoolProperty(this);
-    m_underline->set_attribute("show_name",tr("Underline"));
-    m_underline->set_property("name","Underline");
+    m_underline->setAttribute("show_name",tr("Underline"));
+    m_underline->setProperty("name","Underline");
 
     m_strikeout=new QBoolProperty(this);
-    m_strikeout->set_attribute("show_name",tr("Strikeout"));
-    m_strikeout->set_property("name","Strikeout");
+    m_strikeout->setAttribute("show_name",tr("Strikeout"));
+    m_strikeout->setProperty("name","Strikeout");
 }
 
 void QFontProperty::set_value(const QVariant &value)

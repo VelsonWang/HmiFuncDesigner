@@ -13,39 +13,39 @@ QSliderHost::QSliderHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QSliderHost::get_show_name()
+QString QSliderHost::getShowName()
 {
     return tr("Slider");
 }
 
-QString QSliderHost::get_show_group()
+QString QSliderHost::getShowGroup()
 {
     return tr("Input Widgets");
 }
 
-QString QSliderHost::get_show_icon()
+QString QSliderHost::getShowIcon()
 {
     return ":/images/hslider.png";
 }
 
-void QSliderHost::create_object()
+void QSliderHost::createObject()
 {
     m_object=new QSlider();
     m_object->setObjectName("slider");
 }
 
-void QSliderHost::init_property()
+void QSliderHost::initProperty()
 {
-    QAbstractSliderHost::init_property();
+    QAbstractSliderHost::initProperty();
 
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->set_property("name","tickPosition");
-        pro->set_attribute("show_name",tr("TickPosition"));
-        pro->set_attribute("group","Attributes");
+        pro->setProperty("name","tickPosition");
+        pro->setAttribute("show_name",tr("TickPosition"));
+        pro->setAttribute("group","Attributes");
         ComboItems items;
         tagComboItem item;
         item.m_text="NoTicks";
@@ -74,9 +74,9 @@ void QSliderHost::init_property()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        insert_property(pro);
+        pro->setAttribute("items",v);
+        insertProperty(pro);
     }
 
-    set_property_value("geometry",QRect(0,0,100,20));
+    setPropertyValue("geometry",QRect(0,0,100,20));
 }

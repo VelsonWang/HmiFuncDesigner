@@ -5,15 +5,15 @@
 QPointProperty::QPointProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","Point");
+    setProperty("type","Point");
 
     m_x=new QIntProperty(this);
-    m_x->set_attribute("show_name",tr("x"));
-    m_x->set_property("name","x");
+    m_x->setAttribute("show_name",tr("x"));
+    m_x->setProperty("name","x");
 
     m_y=new QIntProperty(this);
-    m_y->set_attribute("show_name",tr("y"));
-    m_y->set_property("name","y");
+    m_y->setAttribute("show_name",tr("y"));
+    m_y->setProperty("name","y");
 }
 
 void QPointProperty::set_value(const QVariant &value)

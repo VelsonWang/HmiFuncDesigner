@@ -32,14 +32,14 @@ void QFileManager::load()
     XMLObject xml;
     if(xml.load(buff,0))
     {
-        if(xml.get_title()=="Res")
+        if(xml.getTagName()=="Res")
         {
             QList<XMLObject*>   list=xml.getChildren();
             foreach(XMLObject* c,list)
             {
-                if(c->get_title()=="Group")
+                if(c->getTagName()=="Group")
                 {
-                    load(path+c->get_property("name")+".res");
+                    load(path+c->getProperty("name")+".res");
                 }
             }
         }
@@ -221,13 +221,13 @@ void QFileManager::rename(const QString &uuid, const QString &new_group_name)
 void QFileManager::save_group_list()
 {
     XMLObject xml;
-    xml.set_title("Res");
+    xml.setTagName("Res");
 
     foreach(tagFileGroupInfo *group,m_groups)
     {
         XMLObject *c=new XMLObject(&xml);
-        c->set_title("Group");
-        c->set_property("name",group->m_group_name);
+        c->setTagName("Group");
+        c->setProperty("name",group->m_group_name);
     }
 
     QString buff=xml.write();

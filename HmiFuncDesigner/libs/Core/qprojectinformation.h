@@ -29,8 +29,8 @@ public:
     explicit QProjectInformation(QObject *parent = 0);
     ~QProjectInformation();
     
-    tagProperty*    get_property(const QString &uuid);
-    QList<tagProperty*> get_propertys();
+    tagProperty*    getProperty(const QString &uuid);
+    QList<tagProperty*> getPropertys();
     void            add_property(tagProperty* property);
 
     tagProjectDataInfo*    get_project_data(const QString &uuid);

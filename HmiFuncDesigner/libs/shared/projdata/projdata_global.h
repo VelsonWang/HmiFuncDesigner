@@ -4,9 +4,9 @@
 #include <QtCore/qglobal.h>
 
 #if defined(PROJDATA_LIBRARY)
-#  define PROJDATASHARED_EXPORT Q_DECL_EXPORT
+#  define CORELIB_EXPORT Q_DECL_EXPORT
 #else
-#  define PROJDATASHARED_EXPORT Q_DECL_IMPORT
+#  define CORELIB_EXPORT Q_DECL_IMPORT
 #endif
 
 #endif // PROJDATA_GLOBAL_H

@@ -4,10 +4,10 @@
 #include <QString>
 #include <QStringList>
 #include <QList>
-#include "XMLObject.h"
-#include "projdata_global.h"
+#include "../xmlobject.h"
+#include "sharedlibglobal.h"
 
-class PROJDATASHARED_EXPORT DeviceInfoObject
+class SHAREDLIB_EXPORT DeviceInfoObject
 {
 public:
     explicit DeviceInfoObject()
@@ -66,7 +66,7 @@ public:
     QString szProperties_; // 设备私有属性
 };
 
-class PROJDATASHARED_EXPORT ComDevice : public DeviceInfoObject
+class SHAREDLIB_EXPORT ComDevice : public DeviceInfoObject
 {
 public:
     explicit ComDevice() : DeviceInfoObject()
@@ -136,7 +136,7 @@ public:
 };
 
 
-class PROJDATASHARED_EXPORT NetDevice : public DeviceInfoObject
+class SHAREDLIB_EXPORT NetDevice : public DeviceInfoObject
 {
 public:
     explicit NetDevice() : DeviceInfoObject()
@@ -198,7 +198,7 @@ public:
 };
 
 
-class PROJDATASHARED_EXPORT DeviceInfo
+class SHAREDLIB_EXPORT DeviceInfo
 {
 public:
     explicit DeviceInfo();

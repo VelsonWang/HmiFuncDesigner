@@ -64,7 +64,7 @@ bool QProjectCore::open(const QString &fileName)
         return false;
     }
 
-    if(xml.get_title()!=PROJECT_HOST_TITLE)
+    if(xml.getTagName()!=PROJECT_HOST_TITLE)
     {
         return false;
     }
@@ -76,25 +76,18 @@ bool QProjectCore::open(const QString &fileName)
 
     m_project_host=new QProjectHost;
     m_project_host->init();
-    m_project_host->from_object(&xml);
-    m_project_host->set_property_value("objectName",m_project_name);
-    m_project_host->set_property_value("projectPath",m_project_path);
-
+    m_project_host->fromObject(&xml);
+    m_project_host->setPropertyValue("objectName",m_project_name);
+    m_project_host->setPropertyValue("projectPath",m_project_path);
 
     m_page_manager->load(m_project_path);
-
     m_language_manager->load(m_project_path);
-
     m_data_manager->load(m_project_path);
-
     m_resource_manager->load(m_project_path);
-
     m_driver_manager->load(m_project_path);
-
     m_user_manager->load(m_project_path);
 
-
-    QAbstractProperty* pro=m_project_host->get_property("start_user");
+    QAbstractProperty* pro=m_project_host->getProperty("start_user");
     if(pro!=NULL)
     {
         QString str=pro->get_value().toString();
@@ -121,11 +114,11 @@ bool QProjectCore::open(const QString &fileName)
         }
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
+        pro->setAttribute("items",v);
 
     }
 
-    pro=m_project_host->get_property("start_language");
+    pro=m_project_host->getProperty("start_language");
     if(pro!=NULL)
     {
         QString str=pro->get_value().toString();
@@ -133,7 +126,7 @@ bool QProjectCore::open(const QString &fileName)
         {
             if(m_language_manager->get_all_languages().size()>0)
             {
-                pro->set_value(m_language_manager->get_all_languages().at(0)->get_uuid());
+                pro->set_value(m_language_manager->get_all_languages().at(0)->getUuid());
             }
             else
             {
@@ -149,16 +142,16 @@ bool QProjectCore::open(const QString &fileName)
         foreach(QLanguage* l,list)
         {
             item.m_text=l->get_language_name();
-            item.m_value=l->get_uuid();
+            item.m_value=l->getUuid();
             items.append(item);
         }
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
+        pro->setAttribute("items",v);
 
     }
 
-    pro=m_project_host->get_property("start_page");
+    pro=m_project_host->getProperty("start_page");
     if(pro!=NULL)
     {
         QString str=pro->get_value().toString();
@@ -167,7 +160,7 @@ bool QProjectCore::open(const QString &fileName)
         {
             if(pages.size()>0)
             {
-                pro->set_value(pages.at(0)->get_uuid());
+                pro->set_value(pages.at(0)->getUuid());
             }
             else
             {
@@ -179,29 +172,26 @@ bool QProjectCore::open(const QString &fileName)
         ComboItems items;
         foreach(QAbstractHost* p,pages)
         {
-            item.m_text=p->get_property_value("objectName").toString();
-            item.m_value=p->get_uuid();
+            item.m_text=p->getPropertyValue("objectName").toString();
+            item.m_value=p->getUuid();
             items.append(item);
         }
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
+        pro->setAttribute("items",v);
 
     }
 
-    m_project_host->set_language_manager(m_language_manager);
-    m_project_host->set_page_manager(m_page_manager);
+    m_project_host->setLanguageManager(m_language_manager);
+    m_project_host->setPageManager(m_page_manager);
 
     foreach(QAbstractHost* h,m_page_manager->getPages())
     {
-        h->set_language_manager(m_language_manager);
-        h->set_page_manager(m_page_manager);
+        h->setLanguageManager(m_language_manager);
+        h->setPageManager(m_page_manager);
     }
 
-    m_project_host->set_default();
-
-
-
+    m_project_host->setDefault();
     m_is_open=true;
 
     emit opened_signals();
@@ -256,7 +246,7 @@ void QProjectCore::save()
 
     XMLObject xml;
 
-    m_project_host->to_object(&xml);
+    m_project_host->toObject(&xml);
 
     QString str=xml.write();
     QFile f(m_project_path+"/config.sfb");
@@ -285,7 +275,7 @@ QPageManager* QProjectCore::get_page_manager()
     return m_page_manager;
 }
 
-QLanguageManager* QProjectCore::get_language_manager()
+QLanguageManager* QProjectCore::getLanguageManager()
 {
     return m_language_manager;
 }
@@ -348,6 +338,40 @@ bool QProjectCore::create_new(const QString &path, const QString &name)
     return open(base_path+"/config.sfb");
 }
 
+bool QProjectCore::createNewProj(const QString &szfile)
+{
+    close();
+    int index = szfile.lastIndexOf("/");
+    m_project_path = szfile.left(index);
+    index = m_project_path.lastIndexOf("/");
+    m_project_name = m_project_path.mid(index+1);
+    m_page_manager->load(NULL);
+    m_is_open = true;
+
+    return true;
+}
+
+
+bool QProjectCore::openProj(XMLObject *pXmlObj)
+{
+    close();
+
+    m_page_manager->load(pXmlObj);
+    m_is_open=true;
+
+    emit opened_signals();
+    return true;
+}
+
+void QProjectCore::saveProj(XMLObject *pXmlObj)
+{
+    if(!m_is_open)
+    {
+        return;
+    }
+    m_page_manager->save(pXmlObj);
+}
+
 bool QProjectCore::is_opened()
 {
     return m_is_open;
@@ -355,7 +379,7 @@ bool QProjectCore::is_opened()
 
 void QProjectCore::user_refresh(tagUserInfo *info)
 {
-    QAbstractProperty* pro=m_project_host->get_property("start_user");
+    QAbstractProperty* pro=m_project_host->getProperty("start_user");
     if(pro!=NULL)
     {
 
@@ -370,7 +394,7 @@ void QProjectCore::user_refresh(tagUserInfo *info)
         }
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
+        pro->setAttribute("items",v);
         if(info!=NULL && pro->get_value().toString()==info->m_uuid)
         {
             pro->set_value("");
@@ -381,7 +405,7 @@ void QProjectCore::user_refresh(tagUserInfo *info)
 
 void QProjectCore::language_refresh(QLanguage *language)
 {
-    QAbstractProperty* pro=m_project_host->get_property("start_language");
+    QAbstractProperty* pro=m_project_host->getProperty("start_language");
     if(pro!=NULL)
     {
 
@@ -391,27 +415,27 @@ void QProjectCore::language_refresh(QLanguage *language)
         foreach(QLanguage* l,list)
         {
             item.m_text=l->get_language_name();
-            item.m_value=l->get_uuid();
+            item.m_value=l->getUuid();
             items.append(item);
         }
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        if(language!=NULL && pro->get_value().toString()==language->get_uuid())
+        pro->setAttribute("items",v);
+        if(language!=NULL && pro->get_value().toString()==language->getUuid())
         {
             pro->set_value("");
-            pro->set_value(language->get_uuid());
+            pro->set_value(language->getUuid());
         }
     }
 }
 
 void QProjectCore::form_refresh(QAbstractHost *form)
 {
-    if(form !=NULL && (form->get_host_type()!="form" || form->getParent()!=NULL))
+    if(form !=NULL && (form->getHostType()!="form" || form->getParent()!=NULL))
     {
         return;
     }
-    QAbstractProperty* pro=m_project_host->get_property("start_page");
+    QAbstractProperty* pro=m_project_host->getProperty("start_page");
     if(pro!=NULL)
     {
         QList<QAbstractHost*> list=m_page_manager->getPages_by_title("form");
@@ -419,17 +443,17 @@ void QProjectCore::form_refresh(QAbstractHost *form)
         ComboItems items;
         foreach(QAbstractHost* host,list)
         {
-            item.m_text=host->get_property_value("objectName").toString();
-            item.m_value=host->get_uuid();
+            item.m_text=host->getPropertyValue("objectName").toString();
+            item.m_value=host->getUuid();
             items.append(item);
         }
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->set_attribute("items",v);
-        if(form!=NULL && pro->get_value().toString()==form->get_uuid())
+        pro->setAttribute("items",v);
+        if(form!=NULL && pro->get_value().toString()==form->getUuid())
         {
             pro->set_value("");
-            pro->set_value(form->get_uuid());
+            pro->set_value(form->getUuid());
         }
     }
 }
@@ -442,7 +466,7 @@ QAbstractHost* QProjectCore::get_host_by_uuid(const QString &uuid)
     while(list.size()>0)
     {
         QAbstractHost* h=list.takeFirst();
-        if(h->get_uuid()==uuid)
+        if(h->getUuid()==uuid)
         {
             return h;
         }
@@ -452,7 +476,7 @@ QAbstractHost* QProjectCore::get_host_by_uuid(const QString &uuid)
 
     foreach(QAbstractDriver* driver,drivers)
     {
-        if(driver->get_uuid()==uuid)
+        if(driver->getUuid()==uuid)
         {
             return driver;
         }
@@ -489,7 +513,7 @@ void QProjectCore::init_script_engine()
 
 void QProjectCore::init_script_engine(QAbstractHost *host)
 {
-    QScriptEngine *engine=host->get_script_engine();
+    QScriptEngine *engine=host->getScriptEngine();
 
     QScriptValue global = engine->globalObject();
 
@@ -518,7 +542,7 @@ void QProjectCore::init_script_engine(QAbstractHost *host)
             if(project || h->property("title").toString()=="keyboard")
             {
                 temp=get_script_object(host,engine);
-                global.setProperty(h->get_property_value("objectName").toString(),temp);
+                global.setProperty(h->getPropertyValue("objectName").toString(),temp);
             }
         }
     }
@@ -536,7 +560,7 @@ void QProjectCore::init_script_engine(QAbstractHost *host)
     else
     {
         temp=get_script_object(host,engine);
-        global.setProperty(host->get_property_value("objectName").toString(),temp);
+        global.setProperty(host->getPropertyValue("objectName").toString(),temp);
     }
 
     engine->setGlobalObject(global);
@@ -554,7 +578,7 @@ QScriptValue QProjectCore::get_script_object(QAbstractHost *host,QScriptEngine *
     foreach(QAbstractHost* h,host->getChildren())
     {
         QScriptValue temp=get_script_object(h,engine);
-        value.setProperty(h->get_property_value("objectName").toString(),temp);
+        value.setProperty(h->getPropertyValue("objectName").toString(),temp);
     }
     return value;
 }

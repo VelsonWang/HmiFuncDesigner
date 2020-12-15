@@ -14,30 +14,30 @@ QRadioButtonHost::QRadioButtonHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QRadioButtonHost::get_show_name()
+QString QRadioButtonHost::getShowName()
 {
     return tr("Radio Button");
 }
 
-QString QRadioButtonHost::get_show_group()
+QString QRadioButtonHost::getShowGroup()
 {
     return tr("Buttons");
 }
 
-QString QRadioButtonHost::get_show_icon()
+QString QRadioButtonHost::getShowIcon()
 {
     return ":/images/radiobutton.png";
 }
 
-void QRadioButtonHost::create_object()
+void QRadioButtonHost::createObject()
 {
     m_object=new QRadioButton();
     m_object->setObjectName("radiobutton");
 }
 
-void QRadioButtonHost::init_property()
+void QRadioButtonHost::initProperty()
 {
-    QAbstractButtonHost::init_property();
+    QAbstractButtonHost::initProperty();
 
     SheetItems items=property("sheet_state").value<SheetItems>();
 
@@ -52,7 +52,7 @@ void QRadioButtonHost::init_property()
     v.setValue<SheetItems>(items);
     setProperty("sheet_state",v);
 
-    set_property_value("geometry",QRect(0,0,100,20));
-    set_property_value("text","radio button");
-    remove_property("checkable");
+    setPropertyValue("geometry",QRect(0,0,100,20));
+    setPropertyValue("text","radio button");
+    removeProperty("checkable");
 }

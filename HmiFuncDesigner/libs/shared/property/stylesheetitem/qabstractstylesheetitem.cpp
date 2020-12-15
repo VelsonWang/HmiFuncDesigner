@@ -55,7 +55,7 @@ void QAbstractStylesheetItem::read(XMLObject *xml)
 {
     QString value;
     bool setvalue=false;
-    m_attributes=xml->get_propertys();
+    m_attributes=xml->getPropertys();
     if(m_attributes.keys().contains("value"))
     {
         value=m_attributes.value("value");
@@ -69,7 +69,7 @@ void QAbstractStylesheetItem::read(XMLObject *xml)
 
     foreach(XMLObject* c,list)
     {
-        item=getChild(c->get_property("title"));
+        item=getChild(c->getProperty("title"));
         if(item!=NULL)
         {
             item->read(c);
@@ -89,20 +89,20 @@ void QAbstractStylesheetItem::write(XMLObject *xml)
         return;
     }
 
-    xml->set_title("Item");
+    xml->setTagName("Item");
 
     QMapIterator<QString,QString> it(m_attributes);
     while(it.hasNext())
     {
         it.next();
-        xml->set_property(it.key(),it.value());
+        xml->setProperty(it.key(),it.value());
     }
 
-    xml->set_property("title",property("title").toString());
+    xml->setProperty("title",property("title").toString());
 
     if(m_children.size()==0)
     {
-        xml->set_property("value",m_value.toString());
+        xml->setProperty("value",m_value.toString());
     }
     else
     {

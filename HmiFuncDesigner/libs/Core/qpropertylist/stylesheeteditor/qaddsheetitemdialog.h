@@ -17,7 +17,7 @@ public:
     explicit QAddSheetItemDialog(QAbstractProperty* property,const QString &title="",QWidget *parent = 0);
     ~QAddSheetItemDialog();
 
-    QString get_title();
+    QString getTagName();
 protected slots:
     void    make_title();
     void    check_changed();

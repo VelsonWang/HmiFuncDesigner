@@ -9,7 +9,7 @@ class QAbstractSpinBoxHost :public QWidgetHost
 public:
     QAbstractSpinBoxHost(QAbstractHost *parent = 0);
 protected:
-    void init_property();
+    void initProperty();
 public slots:
     void    setFrame(bool frame);
     bool    frame();

@@ -116,8 +116,8 @@ void WidgetBoxTreeWidget::init_widgetbox()
 
 void WidgetBoxTreeWidget::add_widget(tagHostInfo *info)
 {
-    QString group=info->get_show_group();
-    QString name=info->get_show_name();
+    QString group=info->getShowGroup();
+    QString name=info->getShowName();
     if(group=="" || name=="")
     {
         return;
@@ -135,7 +135,7 @@ void WidgetBoxTreeWidget::add_widget(tagHostInfo *info)
 
     item=new QTreeWidgetItem(p);
     item->setText(0,name);
-    item->setIcon(0,QIcon(info->get_show_icon()));
+    item->setIcon(0,QIcon(info->getShowIcon()));
     item->setFlags(Qt::ItemIsEnabled);
     m_info_to_item.insert(info,item);
     m_item_to_info.insert(item,info);

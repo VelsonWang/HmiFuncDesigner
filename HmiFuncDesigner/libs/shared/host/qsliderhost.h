@@ -9,13 +9,13 @@ class QSliderHost: public QAbstractSliderHost
 public:
     Q_INVOKABLE QSliderHost(QAbstractHost *parent = 0);
 
-    static QString get_show_name();
-    static QString get_show_icon();
-    static QString get_show_group();
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
 protected:
-    void init_property();
+    void initProperty();
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 #endif // QSLIDERHOST_H

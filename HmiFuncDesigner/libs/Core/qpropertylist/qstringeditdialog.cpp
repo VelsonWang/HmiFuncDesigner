@@ -87,14 +87,14 @@ QStringEditDialog::QStringEditDialog(QAbstractProperty *property,QUndoStack* sta
     ui->translateTree->setRootIsDecorated(false);
     //ui->translateTree->header()->setMovable(false);
 
-    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
+    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
 
     QList<QLanguage*> language=manager->get_all_languages();
     foreach(QLanguage* l,language)
     {
         QTreeWidgetItem* item=new QTreeWidgetItem(ui->translateTree);
         item->setText(0,l->get_language_name());
-        tagTranslateInfo *info=l->get_translate(m_property->get_property("uuid").toString());
+        tagTranslateInfo *info=l->get_translate(m_property->getProperty("uuid").toString());
         QString trs=(info!=NULL?info->m_translate:"");
         item->setText(1,trs);
         item->setToolTip(1,trs);
@@ -104,7 +104,7 @@ QStringEditDialog::QStringEditDialog(QAbstractProperty *property,QUndoStack* sta
     ui->text->setText(m_property->get_value().toString());
 
     connect(ui->translateTree,SIGNAL(clicked(QModelIndex)),ui->translateTree,SLOT(edit(QModelIndex)));
-    ui->enabled->setChecked(m_property->get_property("tr").toBool());
+    ui->enabled->setChecked(m_property->getProperty("tr").toBool());
     on_enabled_clicked();
 }
 
@@ -125,12 +125,12 @@ void QStringEditDialog::on_enabled_clicked()
 void QStringEditDialog::on_okBtn_clicked()
 {
     bool new_tr=ui->enabled->isChecked();
-    bool old_tr=m_property->get_property("tr").toBool();
+    bool old_tr=m_property->getProperty("tr").toBool();
     QMap<QString,QString> old_translate;
     QMap<QString,QString> new_translate;
     QString old_text;
     QString new_text;
-    QString uuid=m_property->get_property("uuid").toString();
+    QString uuid=m_property->getProperty("uuid").toString();
     if(uuid=="")
     {
         uuid=QUuid::createUuid().toString();
@@ -141,7 +141,7 @@ void QStringEditDialog::on_okBtn_clicked()
         while(it.hasNext())
         {
             it.next();
-            new_translate.insert(it.value()->get_uuid(),it.key()->text(1));
+            new_translate.insert(it.value()->getUuid(),it.key()->text(1));
         }
     }
     else
@@ -150,11 +150,11 @@ void QStringEditDialog::on_okBtn_clicked()
     }
     if(old_tr)
     {
-        QList<QLanguage*>   lan=QSoftCore::getCore()->getProjectCore()->get_language_manager()->get_all_languages();
+        QList<QLanguage*>   lan=QSoftCore::getCore()->getProjectCore()->getLanguageManager()->get_all_languages();
         foreach(QLanguage* l,lan)
         {
             tagTranslateInfo *info=l->get_translate(uuid);
-            old_translate.insert(l->get_uuid(),info==NULL?"":info->m_translate);
+            old_translate.insert(l->getUuid(),info==NULL?"":info->m_translate);
         }
     }
     else
@@ -163,8 +163,8 @@ void QStringEditDialog::on_okBtn_clicked()
     }
 
 
-    QStringChangedUndoCommand *cmd=new QStringChangedUndoCommand(m_property->get_host()->get_uuid(),
-                                                                 m_property->get_property("name").toString(),
+    QStringChangedUndoCommand *cmd=new QStringChangedUndoCommand(m_property->get_host()->getUuid(),
+                                                                 m_property->getProperty("name").toString(),
                                                                  uuid,
                                                                  old_tr,
                                                                  new_tr,

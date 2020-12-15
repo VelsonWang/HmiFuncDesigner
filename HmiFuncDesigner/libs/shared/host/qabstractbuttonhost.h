@@ -21,6 +21,6 @@ public slots:
 protected slots:
     void    clicked_slot();
 protected:
-    void init_property();
+    void initProperty();
 };
 #endif // QABSTRACTBUTTONHOST_H

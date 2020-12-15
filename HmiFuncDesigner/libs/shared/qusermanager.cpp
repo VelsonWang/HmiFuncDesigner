@@ -40,20 +40,20 @@ void QUserManager::load(const QString &path)
 
     if(xml.load(str,0))
     {
-        if(xml.get_title()=="Users")
+        if(xml.getTagName()=="Users")
         {
             QList<XMLObject*> children=xml.getChildren();
 
             foreach(XMLObject* u,children)
             {
-                if(u->get_title()=="User")
+                if(u->getTagName()=="User")
                 {
                     tagUserInfo* info=new tagUserInfo;
-                    info->m_name=u->get_property("name");
-                    info->m_level=u->get_property("level").toInt();
-                    info->m_password=u->get_property("password");
-                    info->m_information=u->get_property("information");
-                    info->m_uuid=u->get_property("uuid");
+                    info->m_name=u->getProperty("name");
+                    info->m_level=u->getProperty("level").toInt();
+                    info->m_password=u->getProperty("password");
+                    info->m_information=u->getProperty("information");
+                    info->m_uuid=u->getProperty("uuid");
                     if(info->m_uuid=="")
                     {
                         info->m_uuid=QUuid::createUuid().toString();
@@ -77,17 +77,17 @@ void QUserManager::save(const QString &path)
     }
 
     XMLObject xml;
-    xml.set_title("Users");
+    xml.setTagName("Users");
 
     foreach(tagUserInfo *info,m_users)
     {
         XMLObject *u=new XMLObject(&xml);
-        u->set_title("User");
-        u->set_property("name",info->m_name);
-        u->set_property("level",QString::number(info->m_level));
-        u->set_property("password",info->m_password);
-        u->set_property("information",info->m_information);
-        u->set_property("uuid",info->m_uuid);
+        u->setTagName("User");
+        u->setProperty("name",info->m_name);
+        u->setProperty("level",QString::number(info->m_level));
+        u->setProperty("password",info->m_password);
+        u->setProperty("information",info->m_information);
+        u->setProperty("uuid",info->m_uuid);
     }
     QString s=xml.write();
     f.resize(0);

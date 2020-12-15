@@ -22,7 +22,7 @@ int QLanguagePropertyUndoCommand::id()const
 
 void QLanguagePropertyUndoCommand::redo()
 {
-    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
+    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
     QLanguage *temp=manager->get_language(m_language_uuid);
     if(temp!=NULL)
     {
@@ -41,7 +41,7 @@ void QLanguagePropertyUndoCommand::redo()
 
 void QLanguagePropertyUndoCommand::undo()
 {
-    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->get_language_manager();
+    QLanguageManager *manager=QSoftCore::getCore()->getProjectCore()->getLanguageManager();
     QLanguage *temp=manager->get_language(m_language_uuid);
     if(temp!=NULL)
     {

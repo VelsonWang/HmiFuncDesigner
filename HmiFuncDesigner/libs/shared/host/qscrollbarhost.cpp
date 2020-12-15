@@ -9,29 +9,29 @@ QScrollBarHost::QScrollBarHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QScrollBarHost::get_show_name()
+QString QScrollBarHost::getShowName()
 {
     return tr("Scroll Bar");
 }
 
-QString QScrollBarHost::get_show_group()
+QString QScrollBarHost::getShowGroup()
 {
     return tr("Input Widgets");
 }
 
-QString QScrollBarHost::get_show_icon()
+QString QScrollBarHost::getShowIcon()
 {
     return ":/images/hscrollbar.png";
 }
 
-void QScrollBarHost::create_object()
+void QScrollBarHost::createObject()
 {
     m_object=new QScrollBar();
     m_object->setObjectName("scrollbar");
 }
 
-void QScrollBarHost::init_property()
+void QScrollBarHost::initProperty()
 {
-    QAbstractSliderHost::init_property();
-    set_property_value("geometry",QRect(0,0,100,20));
+    QAbstractSliderHost::initProperty();
+    setPropertyValue("geometry",QRect(0,0,100,20));
 }

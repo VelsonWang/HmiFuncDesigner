@@ -12,7 +12,7 @@
 #include "Tag.h"
 #include "Script.h"
 #include "IGraphPageSaveLoad.h"
-#include "projdata_global.h"
+#include "sharedlibglobal.h"
 
 #pragma pack(push)
 #pragma pack(1)
@@ -31,7 +31,7 @@ typedef struct FileHeader
 
 ////////////////////////////////////////////////////////////////////////////////
 
-class PROJDATASHARED_EXPORT ProjectData
+class SHAREDLIB_EXPORT ProjectData
 {
 public:
     explicit ProjectData();

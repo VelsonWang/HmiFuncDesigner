@@ -28,114 +28,111 @@ public:
     explicit QAbstractHost(QAbstractHost *parent = 0);
     ~QAbstractHost();
 
-    void insertChildren(const QList<int> &indexs,const QList<QAbstractHost*> &children);
+    void insertChildren(const QList<int> &indexs, const QList<QAbstractHost*> &children);
     void removeChildren(const QList<QAbstractHost*> &children);
-
-    void setParent(QAbstractHost* parent,int index);
-
+    void setParent(QAbstractHost* parent, int index);
     QList<QAbstractHost*> getChildren();
     QAbstractHost* getChild(int index);
     QAbstractHost* getParent();
     int getChildCount();
 
-    QList<QAbstractProperty*>   get_propertys();
-    QAbstractProperty*          get_property(const QString &name);
+    QList<QAbstractProperty*> getPropertys();
+    QAbstractProperty* getProperty(const QString &name);
 
-    QVariant                    get_property_value(const QString &name);
-    void                        set_property_value(const QString &name,const QVariant &value);
+    QVariant getPropertyValue(const QString &name);
+    void setPropertyValue(const QString &name, const QVariant &value);
 
-    void                        set_default();
+    void setDefault();
 
-    void                    set_attribute(const QString& key,const QString& value);
-    QString                 get_attribute(const QString& key);
+    void setAttribute(const QString& key, const QString& value);
+    QString getAttribute(const QString& key);
 
-    QList<QAction*>         get_actions();
-    QAction*                getAction(const QString& name);
+    QList<QAction*> getActions();
+    QAction* getAction(const QString& name);
 
-    QObject*                get_object();
+    QObject* getObject();
 
-    void                    to_object(XMLObject* xml);
-    void                    from_object(XMLObject* xml);
+    void toObject(XMLObject* xml);
+    void fromObject(XMLObject* xml);
 
-    void                    clear();
+    void clear();
+    void init();
 
-    void                    init();
+    virtual void createObject();
 
-    virtual void            create_object();
+    QString getUuid();
+    void setUuid(const QString& uuid);
 
-    QString                 get_uuid();
-    void                    set_uuid(const QString& uuid);
+    void setLanguageManager(QLanguageManager* language);
+    QLanguageManager* getLanguageManager();
 
-    void                    set_language_manager(QLanguageManager* language);
-    QLanguageManager*       get_language_manager();
+    void setPageManager(QPageManager* page);
+    void setDataManager(QDataManager* data);
+    void setResourceManager(QResourceManager* resource);
 
-    void                    set_page_manager(QPageManager* page);
+    virtual QString functionInformation(const QString &name);
 
-    void                    set_data_manager(QDataManager* data);
+    QScriptEngine* getScriptEngine();
 
-    void                    set_resource_manager(QResourceManager* resource);
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
 
-    virtual QString         functionInformation(const QString &name);
+    void makeStyleSheet();
+    QString getHostType();
 
-    QScriptEngine           *get_script_engine();
-
-    static QString          get_show_name();
-    static QString          get_show_icon();
-    static QString          get_show_group();
-
-    void                    make_stylesheet();
-    QString                 get_host_type();
 protected:
-    void                    insert_property(QAbstractProperty* property,int index=-1);
-    void                    remove_property(const QString &name);
+    void insertProperty(QAbstractProperty* property, int index=-1);
+    void removeProperty(const QString &name);
 
-    void                    insertAction(const QString& name,QAction* ac,int index=-1);
-    void                    remove_action(const QString& name);
+    void insertAction(const QString& name, QAction* ac, int index=-1);
+    void removeAction(const QString& name);
 
-    virtual   void          init_property();
-    bool                    eventFilter(QObject *, QEvent *);
+    virtual void initProperty();
+    bool eventFilter(QObject *, QEvent *);
 
-    void                    exec(const QString &code,const QMap<QString,QString> &param);
+    void exec(const QString &code, const QMap<QString, QString> &param);
+
 protected:
-    virtual   bool          handle_paint_event(QPaintEvent* event);
-    virtual   bool          handle_focus_in_event(QFocusEvent *event);
-    virtual   bool          handle_focus_out_event(QFocusEvent *event);
-    virtual   bool          handle_mouse_release_event(QMouseEvent* event);
-    virtual   bool          handle_mouse_press_event(QMouseEvent* event);
-    virtual   bool          handle_mouse_move_event(QMouseEvent* event);
-    virtual   bool          handle_double_clicked_event(QMouseEvent* event);
-    virtual   bool          handle_context_menu_event(QContextMenuEvent *event);
+    virtual bool handlePaintEvent(QPaintEvent* event);
+    virtual bool handleFocusInEvent(QFocusEvent *event);
+    virtual bool handleFocusOutEvent(QFocusEvent *event);
+    virtual bool handleMouseReleaseEvent(QMouseEvent* event);
+    virtual bool handleMousePressEvent(QMouseEvent* event);
+    virtual bool handleMouseMoveEvent(QMouseEvent* event);
+    virtual bool handleDoubleClickedEvent(QMouseEvent* event);
+    virtual bool handleContextMenuEvent(QContextMenuEvent *event);
 
 protected slots:
-    void                    property_refresh();
-    void                    current_language_changed();
-    void                    current_text_changed(const QString &uuid);
-signals:
-    void                    show_widget(QWidget* wid);
-    void                    show_dialog(QAbstractHost* host);
+    void onPropertyRefresh();
+    void onCurLanguageChanged();
+    void onCurTextChanged(const QString &uuid);
 
-    void                    insertChildren_signal(const QList<QAbstractHost*> &host,const QList<int> &index);
-    void                    removeChildren_signal(const QList<QAbstractHost*> &host);
-    void                    parent_changed();
+signals:
+    void notifyShowWidget(QWidget* wid);
+    void notifyShowDialog(QAbstractHost* host);
+
+    void notifyInsertChildren(const QList<QAbstractHost*> &host, const QList<int> &index);
+    void notifyRemoveChildren(const QList<QAbstractHost*> &host);
+    void notifyParentChanged();
+
 public slots:
     
 protected:
-    QList<QAbstractHost*>               m_children;
-    QAbstractHost*                      m_parent;
-    QList<QAbstractProperty*>           m_propertys;
-    QMap<QString,QAbstractProperty*>    m_nameToProperty;
-    QList<QAction*>                     m_actions;
-    QMap<QString,QAction*>              m_nameToAction;
-
-    QObject*                            m_object;
-
-    QMap<QString,QString>               m_attributes;
-    QTimer                              *m_timer;
-    QLanguageManager                    *m_language_manager;
-    QPageManager                        *m_page_manager;
-    QDataManager                        *m_data_manager;
-    QScriptEngine                       *m_engine;
-    QResourceManager                    *m_resource_manager;
+    QList<QAbstractHost*> m_children;
+    QAbstractHost* m_parent;
+    QList<QAbstractProperty*> m_propertys;
+    QMap<QString, QAbstractProperty*> m_nameToProperty;
+    QList<QAction*> m_actions;
+    QMap<QString, QAction*> m_nameToAction;
+    QObject* m_object;
+    QMap<QString, QString> m_attributes;
+    QTimer* m_timer;
+    QLanguageManager* m_language_manager;
+    QPageManager* m_page_manager;
+    QDataManager* m_data_manager;
+    QScriptEngine* m_engine;
+    QResourceManager* m_resource_manager;
 };
 
 #endif // QABSTRACTHOST_H

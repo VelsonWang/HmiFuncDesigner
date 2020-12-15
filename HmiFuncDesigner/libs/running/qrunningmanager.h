@@ -29,8 +29,8 @@ signals:
     void    start_signal();
     void    stop_signal();
 public slots:
-    void    show_widget(QWidget* widget);
-    void    show_dialog(QAbstractHost* host);
+    void onShowWidget(QWidget* widget);
+    void onShowDialog(QAbstractHost* host);
 protected:
     QProjectCore        *m_project;
     QMainWindow         *m_main_window;

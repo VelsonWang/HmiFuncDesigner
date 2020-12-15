@@ -66,29 +66,29 @@ QNewPageDialog::~QNewPageDialog()
 void QNewPageDialog::ok(QAbstractHost *host)
 {
     QProjectCore *core=QSoftCore::getCore()->getProjectCore();
-    host->set_page_manager(core->get_page_manager());
-    host->set_data_manager(core->get_data_manager());
-    host->set_language_manager(core->get_language_manager());
-    host->set_resource_manager(core->get_resource_manager());
+    host->setPageManager(core->get_page_manager());
+    host->setDataManager(core->get_data_manager());
+    host->setLanguageManager(core->getLanguageManager());
+    host->setResourceManager(core->get_resource_manager());
     QList<QAbstractHost*> list;
     list.append(host);
     while(list.size()>0)
     {
         QAbstractHost* h=list.takeFirst();
-        h->set_uuid(QUuid::createUuid().toString());
+        h->setUuid(QUuid::createUuid().toString());
         list+=h->getChildren();
     }
-    host->set_default();
+    host->setDefault();
     int index=core->get_page_manager()->getPages().size();
     QUndoCommand *cmd=new QUndoCommand;
     new QPageAddUndoCommand(host,index,PAT_ADD,cmd);
-    QAbstractProperty* pro=core->get_project_host()->get_property("start_page");
+    QAbstractProperty* pro=core->get_project_host()->getProperty("start_page");
     if(pro!=NULL)
     {
         if(pro->get_value().toString()=="")
         {
-            new QPropertyChangedUndoCommand(core->get_project_host()->get_uuid(),
-                                            "start_page",pro->get_value(),host->get_uuid(),cmd);
+            new QPropertyChangedUndoCommand(core->get_project_host()->getUuid(),
+                                            "start_page",pro->get_value(),host->getUuid(),cmd);
         }
     }
     m_undo_stack->push(cmd);

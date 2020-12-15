@@ -36,8 +36,8 @@ public:
     void emit_refresh(QLanguage* language);
     void add_translate(const QString &language_uuid,const QString &translate_uuid,const QString &text);
 signals:
-    void current_language_changed();
-    void current_text_changed(const QString &uuid);
+    void notifyCurLanguageChanged();
+    void notifyCurTextChanged(const QString &uuid);
     void refresh(QLanguage* language);
     void insert_language_signal(int index,QLanguage* l);
     void remove_language_signal(QLanguage* l);

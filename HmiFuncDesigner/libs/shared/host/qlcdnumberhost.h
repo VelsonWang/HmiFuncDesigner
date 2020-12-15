@@ -9,9 +9,9 @@ class QLCDNumberHost : public QFrameHost
 public:
     Q_INVOKABLE QLCDNumberHost(QAbstractHost *parent = 0);
 
-    static QString get_show_name();
-    static QString get_show_icon();
-    static QString get_show_group();
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
 public slots:
     void    setIntValue(int intValue);
     int     intValue();
@@ -31,9 +31,9 @@ public slots:
     void    setNumDigits(int numDigits);
     int     numDigits();
 protected:
-    void    init_property();
+    void    initProperty();
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 #endif // QLCDNUMBERHOST_H

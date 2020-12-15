@@ -100,7 +100,7 @@ void QWidgetView::initWidgetList()
         {
             item=new QTreeWidgetItem(par);
         }
-        item->setText(0,host->get_property_value("objectName").toString());
+        item->setText(0,host->getPropertyValue("objectName").toString());
         item->setIcon(0,get_host_icon(host));
         m_items.insert(host,item);
         list+=host->getChildren();
@@ -186,10 +186,10 @@ QAbstractHost *QWidgetView::currentHost()
 
 QIcon QWidgetView::get_host_icon(QAbstractHost *host)
 {
-    tagHostInfo *info=QHostFactory::get_host_info(host->get_attribute(HOST_TYPE));
+    tagHostInfo *info=QHostFactory::get_host_info(host->getAttribute(HOST_TYPE));
     if(info!=NULL)
     {
-        return QIcon(info->get_show_icon());
+        return QIcon(info->getShowIcon());
     }
     else
     {

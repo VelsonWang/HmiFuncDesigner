@@ -21,9 +21,9 @@ void QHostFactory::register_host(const QString name, GET_SHOW_ICON icon, GET_SHO
     }
     info->m_host_object=host;
     info->m_name=name;
-    info->get_show_icon=icon;
-    info->get_show_name=get_name;
-    info->get_show_group=get_group;
+    info->getShowIcon=icon;
+    info->getShowName=get_name;
+    info->getShowGroup=get_group;
     m_meta_map.insert(name,info);
 }
 
@@ -34,7 +34,7 @@ QAbstractHost* QHostFactory::create_host(const QString &name)
     {
         host=new QFormHost;
         host->init();
-        host->set_attribute(HOST_TYPE,FORM_TITLE);
+        host->setAttribute(HOST_TYPE,FORM_TITLE);
     }
     else
     {
@@ -49,7 +49,7 @@ QAbstractHost* QHostFactory::create_host(const QString &name)
         {
             host=(QAbstractHost*)obj->newInstance();
             host->init();
-            host->set_attribute(HOST_TYPE,name);
+            host->setAttribute(HOST_TYPE,name);
         }
     }
 
@@ -70,19 +70,19 @@ QAbstractHost* QHostFactory::create_host(XMLObject *xml)
 
     QAbstractHost* ret=NULL;
 
-    if(xml->get_title()==FORM_TITLE)
+    if(xml->getTagName()==FORM_TITLE)
     {
         ret=new QFormHost;
         ret->init();
-        ret->from_object(xml);
-        ret->set_attribute(HOST_TYPE,FORM_TITLE);
+        ret->fromObject(xml);
+        ret->setAttribute(HOST_TYPE,FORM_TITLE);
     }
     else
     {
-        ret=create_host(xml->get_property(HOST_TYPE));
+        ret=create_host(xml->getProperty(HOST_TYPE));
         if(ret!=NULL)
         {
-            ret->from_object(xml);
+            ret->fromObject(xml);
         }
     }
     return ret;

@@ -10,9 +10,10 @@ class QTimeEditHost: public QAbstractSpinBoxHost
 public:
     Q_INVOKABLE QTimeEditHost(QAbstractHost *parent = 0);
 
-    static QString get_show_name();
-    static QString get_show_icon();
-    static QString get_show_group();
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
+
 public slots:
     void    setTime(int hour,int minute,int second);
     int     hour();
@@ -21,12 +22,15 @@ public slots:
 
     void    setCurrentSection(int currentSection);
     int     currentSection();
+
 protected slots:
-    void    timeChanged(const QTime &time);
+    void timeChanged(const QTime &time);
+
 protected:
-    void init_property();
+    void initProperty();
+
 protected:
-    void    create_object();
+    void createObject();
 };
 
 

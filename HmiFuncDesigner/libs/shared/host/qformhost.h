@@ -14,9 +14,9 @@ public:
     QFormHost(QAbstractHost *parent = 0);
 
 protected:
-    void    init_property();
+    void    initProperty();
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 #endif // QFORMHOST_H

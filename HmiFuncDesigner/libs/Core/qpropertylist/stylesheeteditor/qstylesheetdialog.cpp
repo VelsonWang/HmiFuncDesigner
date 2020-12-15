@@ -60,10 +60,10 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
 
     QAbstractHost* host=m_property->get_host();
 
-    m_host=QHostFactory::create_host(host->get_attribute(HOST_TYPE));
+    m_host=QHostFactory::create_host(host->getAttribute(HOST_TYPE));
 
-    QList<QAbstractProperty*> list=host->get_propertys();
-    if(host->get_attribute(HOST_TYPE)=="form")
+    QList<QAbstractProperty*> list=host->getPropertys();
+    if(host->getAttribute(HOST_TYPE)=="form")
     {
         m_host->setProperty("need_frame",true);
     }
@@ -73,16 +73,16 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
     }
     foreach(QAbstractProperty *pro,list)
     {
-        if(pro->get_attribute("group")!="Events")
+        if(pro->getAttribute("group")!="Events")
         {
-            m_host->set_property_value(pro->get_property("name").toString(),pro->get_value());
+            m_host->setPropertyValue(pro->getProperty("name").toString(),pro->get_value());
         }
     }
 
     m_show_widget->set_host(m_host);
 
     tagStylesheetItems items=m_property->get_value().value<tagStylesheetItems>();
-    QString name=m_property->get_property("name").toString();
+    QString name=m_property->getProperty("name").toString();
     QAbstractStylesheetItem *maker;
     if(items.size()==0)
     {
@@ -133,7 +133,7 @@ void QStyleSheetDialog::add_item(QAbstractStylesheetItem *item)
     m_items.append(item);
     m_item_list->add(item);
 
-    QBaseEditorWidget *wid=create_editor_widget(m_property->get_property("name").toString());
+    QBaseEditorWidget *wid=create_editor_widget(m_property->getProperty("name").toString());
     if(wid!=NULL)
     {
         connect(wid,SIGNAL(changed()),this,SLOT(item_changed()));
@@ -180,8 +180,8 @@ void QStyleSheetDialog::item_changed()
     }
     QVariant v;
     v.setValue<tagStylesheetItems>(items);
-    m_host->set_property_value(m_property->get_property("name").toString(),v);
-    m_host->make_stylesheet();
+    m_host->setPropertyValue(m_property->getProperty("name").toString(),v);
+    m_host->makeStyleSheet();
 }
 
 void QStyleSheetDialog::clear()
@@ -229,18 +229,18 @@ void QStyleSheetDialog::clearall()
 void QStyleSheetDialog::ok()
 {
 
-    if(m_host->get_object()->property("styleSheet").toString()!=
-            m_property->get_host()->get_object()->property("styleSheet").toString())
+    if(m_host->getObject()->property("styleSheet").toString()!=
+            m_property->get_host()->getObject()->property("styleSheet").toString())
     {
         QUndoCommand *cmd=new QUndoCommand;
 
-        QVariant v=m_host->get_property_value(m_property->get_property("name").toString());
+        QVariant v=m_host->getPropertyValue(m_property->getProperty("name").toString());
         foreach(QBaseEditorWidget *e,m_editor_to_item.keys())
         {
             e->add_resource(cmd);
         }
-        new QPropertyChangedUndoCommand(m_property->get_host()->get_uuid(),
-                                        m_property->get_property("name").toString(),
+        new QPropertyChangedUndoCommand(m_property->get_host()->getUuid(),
+                                        m_property->getProperty("name").toString(),
                                         m_property->get_value(),
                                         v,cmd);
         foreach(QBaseEditorWidget *e,m_editor_to_item.keys())
@@ -259,7 +259,7 @@ void QStyleSheetDialog::add()
 
     dlg.exec();
 
-    QString title=dlg.get_title();
+    QString title=dlg.getTagName();
 
     if(title!="")
     {
@@ -272,7 +272,7 @@ void QStyleSheetDialog::add()
             }
         }
 
-        QAbstractStylesheetItem* maker=QStylesheetItemFactory::createItem(m_property->get_property("name").toString());
+        QAbstractStylesheetItem* maker=QStylesheetItemFactory::createItem(m_property->getProperty("name").toString());
         if(maker!=NULL)
         {
             tagStylesheetItem it;
@@ -304,7 +304,7 @@ void QStyleSheetDialog::changed(QAbstractStylesheetItem *item)
 
     dlg.exec();
 
-    QString title=dlg.get_title();
+    QString title=dlg.getTagName();
 
     if(title!="")
     {

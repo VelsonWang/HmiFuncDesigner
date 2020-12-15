@@ -5,12 +5,12 @@
 QEnumProperty::QEnumProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","Enum");
+    setProperty("type","Enum");
 }
 
 QIcon QEnumProperty::get_value_icon()
 {
-    ComboItems items=this->get_attribute("items").value<ComboItems>();
+    ComboItems items=this->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item,items)
     {
         if(item.m_value==get_value())
@@ -24,7 +24,7 @@ QIcon QEnumProperty::get_value_icon()
 
 QString QEnumProperty::get_value_text()
 {
-    ComboItems items=this->get_attribute("items").value<ComboItems>();
+    ComboItems items=this->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item,items)
     {
         if(item.m_value==get_value())

@@ -3,7 +3,7 @@
 QScriptProperty::QScriptProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","Script");
+    setProperty("type","Script");
 }
 
 QString QScriptProperty::get_value_text()

@@ -13,102 +13,102 @@ QLabelHost::QLabelHost(QAbstractHost *parent):
     setProperty("accept_drop",false);
 }
 
-QString QLabelHost::get_show_name()
+QString QLabelHost::getShowName()
 {
     return tr("Label");
 }
 
-QString QLabelHost::get_show_group()
+QString QLabelHost::getShowGroup()
 {
     return tr("Display Widgets");
 }
 
-QString QLabelHost::get_show_icon()
+QString QLabelHost::getShowIcon()
 {
     return ":/images/label.png";
 }
 
-void QLabelHost::create_object()
+void QLabelHost::createObject()
 {
     m_object=new QLabel();
     m_object->setObjectName("label");
 }
 
-void QLabelHost::init_property()
+void QLabelHost::initProperty()
 {
-    QFrameHost::init_property();
+    QFrameHost::initProperty();
 
     QAbstractProperty* pro;
 
     pro=QPropertyFactory::create_property("String");
     if(pro!=NULL)
     {
-        pro->set_property("name","text");
-        pro->set_attribute("show_name",tr("Text"));
-        pro->set_attribute("group","Attributes");
-        insert_property(pro,1);
+        pro->setProperty("name","text");
+        pro->setAttribute("show_name",tr("Text"));
+        pro->setAttribute("group","Attributes");
+        insertProperty(pro,1);
     }
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=NULL)
     {
-        pro->set_property("name","wordWrap");
-        pro->set_attribute("show_name",tr("WordWrap"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","wordWrap");
+        pro->setAttribute("show_name",tr("WordWrap"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("Alignment");
     if(pro!=NULL)
     {
-        pro->set_property("name","alignment");
-        pro->set_attribute("show_name",tr("Alignment"));
-        pro->set_attribute("group","Attributes");
-        pro->set_attribute(ATTR_CAN_SAME,true);
-        insert_property(pro);
+        pro->setProperty("name","alignment");
+        pro->setAttribute("show_name",tr("Alignment"));
+        pro->setAttribute("group","Attributes");
+        pro->setAttribute(ATTR_CAN_SAME,true);
+        insertProperty(pro);
     }
 
     pro=QPropertyFactory::create_property("StyleSheet");
     if(pro!=NULL)
     {
-        pro->set_property("name","text_sheet");
-        pro->set_attribute("show_name",tr("Text"));
-        pro->set_attribute("group","Style Sheet");
+        pro->setProperty("name","text_sheet");
+        pro->setAttribute("show_name",tr("Text"));
+        pro->setAttribute("group","Style Sheet");
 
-        insert_property(pro);
+        insertProperty(pro);
     }
 
-    set_property_value("geometry",QRect(0,0,80,20));
-    set_property_value("text","label");
+    setPropertyValue("geometry",QRect(0,0,80,20));
+    setPropertyValue("text","label");
 }
 
 void QLabelHost::setText(const QString &text)
 {
-    set_property_value("text",text);
+    setPropertyValue("text",text);
 }
 
 QString QLabelHost::text()
 {
-    return get_property_value("text").toString();
+    return getPropertyValue("text").toString();
 }
 
 void QLabelHost::setWordWrap(bool wordWrap)
 {
-    set_property_value("wordWrap",wordWrap);
+    setPropertyValue("wordWrap",wordWrap);
 }
 
 bool QLabelHost::wordWrap()
 {
-    return get_property_value("wordWrap").toBool();
+    return getPropertyValue("wordWrap").toBool();
 }
 
 void QLabelHost::setAlignment(int alignment)
 {
-    set_property_value("alignment",(Qt::AlignmentFlag)alignment);
+    setPropertyValue("alignment",(Qt::AlignmentFlag)alignment);
 }
 
 int QLabelHost::alignment()
 {
-    return get_property_value("alignment").toInt();
+    return getPropertyValue("alignment").toInt();
 }

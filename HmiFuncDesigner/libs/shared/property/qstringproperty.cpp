@@ -3,9 +3,9 @@
 QStringProperty::QStringProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    set_property("type","String");
-    set_property("tr","false");
-    set_attribute(ATTR_RESET_ABLEABLE,false);
+    setProperty("type","String");
+    setProperty("tr","false");
+    setAttribute(ATTR_RESET_ABLEABLE,false);
 }
 
 QString QStringProperty::get_value_text()

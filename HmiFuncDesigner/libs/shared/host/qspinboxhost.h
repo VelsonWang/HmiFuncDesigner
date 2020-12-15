@@ -9,9 +9,9 @@ class QSpinBoxHost: public QAbstractSpinBoxHost
 public:
     Q_INVOKABLE QSpinBoxHost(QAbstractHost *parent = 0);
 
-    static QString get_show_name();
-    static QString get_show_icon();
-    static QString get_show_group();
+    static QString getShowName();
+    static QString getShowIcon();
+    static QString getShowGroup();
 public slots:
     void    setValue(int value);
     int     value();
@@ -21,9 +21,9 @@ public slots:
 protected slots:
     void    valueChanged(const QString &value);
 protected:
-    void init_property();
+    void initProperty();
 protected:
-    void    create_object();
+    void    createObject();
 };
 
 #endif // QSPINBOXHOST_H

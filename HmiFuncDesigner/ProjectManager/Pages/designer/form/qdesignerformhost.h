@@ -42,15 +42,16 @@ protected:
     void    install_all_event(QAbstractHost* host);
     void    remove_all_event(QAbstractHost* host);
 protected:
-    bool    handle_paint_event(QAbstractHost *host,QPaintEvent *e);
-    bool    handle_mouse_press_event(QAbstractHost *host,QMouseEvent *e);
-    bool    handle_mouse_release_event(QAbstractHost *host,QMouseEvent *e);
-    bool    handle_mouse_move_event(QAbstractHost *host,QMouseEvent *e);
+    bool    handlePaintEvent(QAbstractHost *host,QPaintEvent *e);
+    bool    handleMousePressEvent(QAbstractHost *host,QMouseEvent *e);
+    bool    handleMouseReleaseEvent(QAbstractHost *host,QMouseEvent *e);
+    bool    handleMouseMoveEvent(QAbstractHost *host,QMouseEvent *e);
     bool    handle_mouse_db_clicked_event(QAbstractHost *host,QMouseEvent *e);
 
     bool    handle_drop_event(QAbstractHost* host,QDropEvent *e);
     bool    handle_drag_enter_event(QAbstractHost *host,QDragEnterEvent *e);
     bool    handle_drag_leave_event(QAbstractHost *host,QDragLeaveEvent *e);
+
 protected slots:
     void    host_destory();
     void    form_size_changed(const QRect &,const QRect &);
