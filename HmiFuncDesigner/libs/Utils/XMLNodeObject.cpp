@@ -109,7 +109,7 @@ bool XMLNodeObject::load(const QString &buffer, QString *error) {
         if(r.readNext() == QXmlStreamReader::StartElement) {
             load(&r);
             if(r.hasError()) {
-                if(error!=NULL) {
+                if(error!=Q_NULLPTR) {
                     *error=r.errorString();
                 }
                 return false;

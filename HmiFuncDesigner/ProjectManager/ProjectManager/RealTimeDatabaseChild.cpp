@@ -8,7 +8,8 @@
 #include <QModelIndex>
 #include "ConfigUtils.h"
 #include "Helper.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 
 RealTimeDatabaseChild::RealTimeDatabaseChild(QWidget *parent) : QWidget(parent)
 {
@@ -60,7 +61,7 @@ void RealTimeDatabaseChild::onSlotListViewProjectDoubleClicked(const QModelIndex
     QModelIndex idx = m_pListViewObj->selectionModel()->currentIndex();
     QStandardItem *item = m_pListViewModelObj->itemFromIndex(idx);
 
-    if (item == NULL) return;
+    if (item == Q_NULLPTR) return;
 
     QString program = "";
 
@@ -89,7 +90,7 @@ void RealTimeDatabaseChild::buildUserInterface(QMainWindow* pMainWin)
     if(pMainWin == Q_NULLPTR) return;
 
     if(m_pMainWinObj == Q_NULLPTR) {
-        m_szProjPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
+        m_szProjPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
         ListViewInitUi();
     }
 }

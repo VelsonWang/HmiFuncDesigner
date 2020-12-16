@@ -2,82 +2,113 @@
 #define QPROJECTCORE_H
 
 #include "sharedlibglobal.h"
-
 #include <QObject>
+#include <QString>
+#include "./projdata/projectinfomanager.h"
+#include "./projdata/netsetting.h"
+#include "./projdata/databasesetting.h"
+#include "./projdata/userauthority.h"
+#include "./projdata/deviceinfo.h"
+#include "./projdata/pictureresourcemanager.h"
+#include "./projdata/tag.h"
+#include "./projdata/script.h"
+#include "sharedlibglobal.h"
+
+#pragma pack(push)
+#pragma pack(1)
+typedef struct FileHeader
+{
+    quint16 wSize; // 文件头部大小(2 Byte)
+    quint16 wVersion; // 文件头版本(2 Byte)
+    quint32 dwProjSize; // 工程数据大小(4 Byte)
+    quint8 byEncrypt; // 工程加密
+    quint8 byOpenVerifyPassword; // 打开工程需要验证密码
+    char szPassword[32]; // 打开工程的密码
+
+} TFileHeader, *PFileHeader;
+#pragma pack(pop)
+
+
+////////////////////////////////////////////////////////////////////////////////
 
 class QProjectHost;
 class QFormHost;
-
 class QPageManager;
-class QUserManager;
 class QAbstractHost;
-class QLanguage;
 class QScriptValue;
 class QScriptEngine;
-class QDataManager;
-class QResourceManager;
-class QDriverManager;
 class XMLObject;
 
-struct tagUserInfo;
 
 class SHAREDLIB_EXPORT QProjectCore : public QObject
 {
     Q_OBJECT
 public:
-    explicit QProjectCore(QObject *parent = 0);
+    explicit QProjectCore(QObject *parent = Q_NULLPTR);
     ~QProjectCore();
 
-    bool open(const QString &fileName);
+    void close();
+    bool isOpened();
 
-    void    close();
-    bool    is_opened();
+    bool openFromXml(const QString &szProjFile);
+    bool saveToXml(const QString &szProjFile);
 
-    bool    create_new(const QString &path,const QString &name);
+    //获取工程所有变量的名称
+    void getAllTagName(QStringList &varList, const QString &type = "ALL");
+
+    // 获取工程路径
+    QString getProjectPath(const QString &projectName);
+    // 获取包含后缀工程名称
+    QString getProjectNameWithSuffix(const QString &projectName);
+    // 获取不包含后缀工程名称
+    QString getProjectNameWithOutSuffix(const QString &projectName);
+    // 获取工程所有控件的ID名称
+    void getAllElementIDName(QStringList &szIDList);
+    // 获取工程所有画面名称
+    void getAllGraphPageName(QStringList &szList);
 
 
     bool createNewProj(const QString &szfile);
-    bool openProj(XMLObject *pXmlObj);
-    void saveProj(XMLObject *pXmlObj);
 
-    QPageManager* get_page_manager();
-    QUserManager    *get_user_manager();
-    QDataManager    *get_data_manager();
-    QResourceManager *get_resource_manager();
-    QDriverManager  *get_driver_manager();
-    QAbstractHost   *get_project_host();
-    QAbstractHost   *get_host_by_uuid(const QString& uuid);
 
-    void        init_script_engine();
+    QPageManager* getPageManager();
+    QAbstractHost* getProjectHost();
+    QAbstractHost* getHostByUuid(const QString& uuid);
+
+    void initScriptEngine();
+
 protected:
-    void        init_script_engine(QAbstractHost* host);
-    QScriptValue        get_script_object(QAbstractHost* host,QScriptEngine *engine);
-
-public slots:
-    void    save();
+    void initScriptEngine(QAbstractHost* host);
+    QScriptValue getScriptObject(QAbstractHost* host, QScriptEngine *engine);
 
 signals:
-    void    opened_signals();
-    void    closed_signals();
+    void notifyOpened();
+    void notifyClosed();
 
-public slots:
 protected slots:
-    void    user_refresh(tagUserInfo *info);
-    void    form_refresh(QAbstractHost* form);
+    void onFormRefresh(QAbstractHost* form);
+
+public:
+    QString m_szProjFile; // 工程文件名
+    QString m_szProjPath; // 工程文件所在的路径
+    QString m_szProjName; // 工程文件名称
+    QString m_szProjVersion; // 工程管理器版本
+    ProjectInfoManager projInfoMgr_; // 工程信息管理
+    NetSetting netSetting_; // 网络配置
+    DatabaseSetting dbSetting_; // 数据库配置
+    UserAuthority userAuthority_; // 用户权限
+    DeviceInfo deviceInfo_; // 设备配置信息
+    PictureResourceManager pictureResourceMgr_; // 图片资源管理
+    TagManager tagMgr_; // 标签变量
+    Script script_; // 脚本
+    TFileHeader headerObj_;
 
 protected:
-    void    copy_file(const QString &old_file,const QString &new_file);
+    QProjectHost* m_pProjectHostObj;
+    bool m_bOpen;
+    QPageManager* m_pPageManagerObj;
 
-protected:
-    QProjectHost    *m_project_host;
-    QString         m_project_path;
-    QString         m_project_name;
-    bool            m_is_open;
-    QPageManager    *m_page_manager;
-    QUserManager    *m_user_manager;
-    QDataManager    *m_data_manager;
-    QResourceManager* m_resource_manager;
-    QDriverManager  *m_driver_manager;
 };
+
 
 #endif // QPROJECTCORE_H

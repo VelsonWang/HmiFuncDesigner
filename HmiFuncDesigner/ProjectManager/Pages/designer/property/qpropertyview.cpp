@@ -12,7 +12,7 @@ QPropertyView::QPropertyView(QWidget *parent) :
     QWidget(parent),
     m_propertyView(new QPropertyListView(this)),
     m_styledBar(new StyledBar(this)),
-    m_select(NULL)
+    m_select(Q_NULLPTR)
 {
     this->setMinimumSize(200,200);
     QVBoxLayout *l=new QVBoxLayout();
@@ -41,7 +41,7 @@ void QPropertyView::selectWidget(QAbstractHost *host)
         return;
     }
     m_select=host;
-    if(host==NULL)
+    if(host==Q_NULLPTR)
     {
         m_propertyView->setPropertys(QList<QAbstractProperty*>());
     }

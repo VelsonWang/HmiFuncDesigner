@@ -42,7 +42,7 @@ void QSpinBoxHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","maximum");
         pro->setAttribute("show_name",tr("Maximum"));
@@ -52,7 +52,7 @@ void QSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","minimum");
         pro->setAttribute("show_name",tr("Minimum"));
@@ -62,7 +62,7 @@ void QSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
@@ -72,7 +72,7 @@ void QSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","singleStep");
         pro->setAttribute("show_name",tr("SingleStep"));
@@ -83,7 +83,7 @@ void QSpinBoxHost::initProperty()
 
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","valueChanged");
         pro->setAttribute("show_name",tr("ValueChanged"));

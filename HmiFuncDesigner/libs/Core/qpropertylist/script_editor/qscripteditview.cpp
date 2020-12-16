@@ -92,7 +92,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
 
 
     ac=core->getAction("ScriptEdit.Save");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::Save);
         connect(ac,SIGNAL(triggered()),this,SIGNAL(save()));
@@ -105,7 +105,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     list.append(ac);
 
     ac=core->getAction("ScriptEdit.Undo");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::Undo);
         connect(document(),SIGNAL(undoAvailable(bool)),ac,SLOT(setEnabled(bool)));
@@ -115,7 +115,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     }
 
     ac=core->getAction("ScriptEdit.Redo");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::Redo);
         connect(document(),SIGNAL(redoAvailable(bool)),ac,SLOT(setEnabled(bool)));
@@ -129,7 +129,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     list.append(ac);
 
     ac=core->getAction("ScriptEdit.Cut");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::Cut);
         connect(this,SIGNAL(copyAvailable(bool)),ac,SLOT(setEnabled(bool)));
@@ -139,7 +139,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     }
 
     ac=core->getAction("ScriptEdit.Copy");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::Copy);
         connect(this,SIGNAL(copyAvailable(bool)),ac,SLOT(setEnabled(bool)));
@@ -149,7 +149,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     }
 
     ac=core->getAction("ScriptEdit.Paste");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::Paste);
         connect(ac,SIGNAL(triggered()),this,SLOT(paste()));
@@ -166,7 +166,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     list.append(ac);
 
     ac=core->getAction("ScriptEdit.Zoomin");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::ZoomIn);
         connect(ac,SIGNAL(triggered()),this,SLOT(zoomIn()));
@@ -174,7 +174,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     }
 
     ac=core->getAction("ScriptEdit.Zoomout");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::ZoomOut);
         connect(ac,SIGNAL(triggered()),this,SLOT(zoomOut()));
@@ -182,7 +182,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     }
 
     ac=core->getAction("ScriptEdit.Font");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence("Ctrl+D"));
         list.append(ac);
@@ -194,7 +194,7 @@ QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *hos
     list.append(ac);
 
     ac=core->getAction("ScriptEdit.Search");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setShortcut(QKeySequence::Find);
         connect(ac,SIGNAL(triggered()),this,SIGNAL(find()));
@@ -247,7 +247,7 @@ void QScriptEditView::clipboardDataChanged()
     {
         QSoftCore *core=QSoftCore::getCore();
         QAction *ac=core->getAction("ScriptEdit.Paste");
-        if(ac!=NULL)
+        if(ac!=Q_NULLPTR)
         {
             ac->setEnabled(md->hasText());
         }

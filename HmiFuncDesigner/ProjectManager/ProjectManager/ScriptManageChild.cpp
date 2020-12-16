@@ -3,7 +3,8 @@
 #include <QCoreApplication>
 #include <QListWidgetItem>
 #include <QMenu>
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include "ConfigUtils.h"
 #include "ScriptConditionConfigForm.h"
 #include "ScriptEditorDlg.h"
@@ -88,7 +89,7 @@ void ScriptManageChild::NewScript()
 {
     if (m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
+    QString strProjectPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
 
     /////////////////////////////////////////////////////////////////////////////
@@ -103,7 +104,7 @@ void ScriptManageChild::NewScript()
         pObj->m_szDescription = pDlg->GetDescription();
         pObj->m_szRunMode = pDlg->GetRunMode();
         pObj->m_szRunModeArgs = pDlg->GetRunModeArgs();
-        ProjectData::getInstance()->script_.AddScriptObject(pObj);
+        QSoftCore::getCore()->getProjectCore()->script_.AddScriptObject(pObj);
         updateUI();
     }
     delete pDlg;
@@ -119,7 +120,7 @@ void ScriptManageChild::ModifyScript()
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
     ScriptConditionConfigForm *pDlg = new ScriptConditionConfigForm(this);
     pDlg->setWindowTitle(tr("脚本属性"));
-    ScriptObject *pObj = ProjectData::getInstance()->script_.GetScriptObject(pCurItem->text());
+    ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.GetScriptObject(pCurItem->text());
     pDlg->SetName(pObj->m_szName);
     pDlg->SetInUse(pObj->m_bInUse);
     pDlg->SetDescription(pObj->m_szDescription);
@@ -152,8 +153,8 @@ void ScriptManageChild::ModifyScript()
 void ScriptManageChild::DeleteScript()
 {
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
-    ScriptObject *pObj = ProjectData::getInstance()->script_.GetScriptObject(pCurItem->text());
-    ProjectData::getInstance()->script_.DeleteScriptObject(pObj);
+    ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.GetScriptObject(pCurItem->text());
+    QSoftCore::getCore()->getProjectCore()->script_.DeleteScriptObject(pObj);
     m_pListWidgetObj->removeItemWidget(pCurItem);
 
     updateUI();
@@ -165,8 +166,8 @@ void ScriptManageChild::updateUI()
     m_pListWidgetObj->clear();
     QListWidgetItem *pNewItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), tr("新建脚本"));
     m_pListWidgetObj->addItem(pNewItemObj);
-    for (int i = 0; i < ProjectData::getInstance()->script_.m_listScriptObjects.count(); i++) {
-        ScriptObject *pObj = ProjectData::getInstance()->script_.m_listScriptObjects.at(i);
+    for (int i = 0; i < QSoftCore::getCore()->getProjectCore()->script_.m_listScriptObjects.count(); i++) {
+        ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.m_listScriptObjects.at(i);
         QListWidgetItem *pItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), pObj->m_szName);
         m_pListWidgetObj->addItem(pItemObj);
     }

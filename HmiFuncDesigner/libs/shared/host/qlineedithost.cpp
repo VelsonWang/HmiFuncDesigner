@@ -43,7 +43,7 @@ void QLineEditHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("ByteArray");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","text");
         pro->setAttribute("show_name",tr("Text"));
@@ -53,7 +53,7 @@ void QLineEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Align");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));
@@ -64,7 +64,7 @@ void QLineEditHost::initProperty()
 
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","readOnly");
         pro->setAttribute("show_name",tr("ReadOnly"));
@@ -74,7 +74,7 @@ void QLineEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","frame");
         pro->setAttribute("show_name",tr("Frame"));
@@ -84,7 +84,7 @@ void QLineEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","textChanged");
         pro->setAttribute("show_name",tr("TextChanged"));
@@ -93,7 +93,7 @@ void QLineEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","editFinish");
         pro->setAttribute("show_name",tr("EditFinish"));

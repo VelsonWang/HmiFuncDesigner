@@ -9,8 +9,9 @@
 #include <QMessageBox>
 #include <QSettings>
 #include "ConfigUtils.h"
-#include "ProjectData.h"
-#include "ProjectInfoManager.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
+#include "projectinfomanager.h"
 #include "Singleton.h"
 #include "ui_NewProjectDialog.h"
 
@@ -28,7 +29,7 @@ NewProjectDialog::NewProjectDialog(QWidget *parent)
 
     ui->cboStartPage->clear();
     QStringList szGraphPageNameList;
-    ProjectData::getInstance()->getAllGraphPageName(szGraphPageNameList);
+    QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(szGraphPageNameList);
     for (int i = 0; i < szGraphPageNameList.count(); i++) {
         QString strPageName = szGraphPageNameList.at(i);
         ui->cboStartPage->addItem(strPageName);
@@ -122,11 +123,11 @@ void NewProjectDialog::on_btnCheck_clicked() {
 void NewProjectDialog::on_btnOk_clicked() {
     if (check_data()) {
         QString szProjPath = ui->editProjectPath->text();
-        ProjectData::getInstance()->szProjPath_ = szProjPath;
+        QSoftCore::getCore()->getProjectCore()->m_szProjPath = szProjPath;
         QString szProjName = ui->editProjectName->text();
-        ProjectData::getInstance()->szProjName_ = szProjName;
+        QSoftCore::getCore()->getProjectCore()->m_szProjName = szProjName;
         QString szFile = szProjPath + "/" + szProjName + ".pdt";
-        ProjectData::getInstance()->szProjFile_ = szFile;
+        QSoftCore::getCore()->getProjectCore()->m_szProjFile = szFile;
         QDialog::accept();
     }
 }
@@ -137,8 +138,8 @@ void NewProjectDialog::on_btnExit_clicked() {
 
 
 bool NewProjectDialog::load() {
-    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    projInfoMgr.setProjectName(ProjectData::getInstance()->szProjName_);
+    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
+    projInfoMgr.setProjectName(QSoftCore::getCore()->getProjectCore()->m_szProjName);
     ui->editProjectName->setText(projInfoMgr.getProjectName());
     ui->editProjectDescription->setPlainText(projInfoMgr.getProjectDescription());
     ui->cboDevType->setCurrentText(projInfoMgr.getDeviceType());
@@ -148,13 +149,13 @@ bool NewProjectDialog::load() {
     ui->chkProjectEncrypt->setChecked(projInfoMgr.getProjectEncrypt());
     ui->editPageScanPeriod->setText(QString::number(projInfoMgr.getPageScanPeriod()));
     ui->editDataScanPeriod->setText(QString::number(projInfoMgr.getDataScanPeriod()));
-    projInfoMgr.setProjectPath(ProjectData::getInstance()->szProjPath_);
+    projInfoMgr.setProjectPath(QSoftCore::getCore()->getProjectCore()->m_szProjPath);
     ui->editProjectPath->setText(projInfoMgr.getProjectPath());
     return true;
 }
 
 bool NewProjectDialog::save() {
-    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
     projInfoMgr.setProjectName(ui->editProjectName->text());
     projInfoMgr.setProjectDescription(ui->editProjectDescription->toPlainText());
     projInfoMgr.setProjectPath(ui->editProjectPath->text());
@@ -163,7 +164,7 @@ bool NewProjectDialog::save() {
     projInfoMgr.setStartPage(ui->cboStartPage->currentText());
     projInfoMgr.setStationAddress(ui->editStationAddress->text());
     projInfoMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
-    ProjectData::getInstance()->headerObj_.byEncrypt = ui->chkProjectEncrypt->isChecked() ? 1 : 0;
+    QSoftCore::getCore()->getProjectCore()->headerObj_.byEncrypt = ui->chkProjectEncrypt->isChecked() ? 1 : 0;
     projInfoMgr.setPageScanPeriod(ui->editPageScanPeriod->text().toInt());
     projInfoMgr.setDataScanPeriod(ui->editDataScanPeriod->text().toInt());
     return true;

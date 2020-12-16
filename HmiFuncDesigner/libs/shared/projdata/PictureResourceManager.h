@@ -6,7 +6,7 @@
 #include <QImage>
 #include <QByteArray>
 #include "../xmlobject.h"
-#include "sharedlibglobal.h"
+#include "../sharedlibglobal.h"
 
 class SHAREDLIB_EXPORT PictureInfo
 {

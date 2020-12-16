@@ -4,9 +4,9 @@
 void QAbstractPage::init_plugin()//初始化插件
 {
     m_undo_stack=new QUndoStack;
-    m_widget=NULL;
+    m_widget=Q_NULLPTR;
     create_widget();//创建页面插件
-    if(m_widget!=NULL)
+    if(m_widget!=Q_NULLPTR)
     {
         m_widget->setVisible(false);
     }

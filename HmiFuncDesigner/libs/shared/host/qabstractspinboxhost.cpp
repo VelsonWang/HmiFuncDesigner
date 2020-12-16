@@ -18,7 +18,7 @@ void QAbstractSpinBoxHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","frame");
         pro->setAttribute("show_name",tr("Frame"));
@@ -28,7 +28,7 @@ void QAbstractSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","wrapping");
         pro->setAttribute("show_name",tr("Wrapping"));
@@ -38,7 +38,7 @@ void QAbstractSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","readOnly");
         pro->setAttribute("show_name",tr("ReadOnly"));
@@ -48,7 +48,7 @@ void QAbstractSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","buttonSymbols");
         pro->setAttribute("show_name",tr("ButtonSymbols"));
@@ -72,7 +72,7 @@ void QAbstractSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));

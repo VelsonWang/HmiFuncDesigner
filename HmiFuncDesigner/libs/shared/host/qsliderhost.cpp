@@ -41,7 +41,7 @@ void QSliderHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","tickPosition");
         pro->setAttribute("show_name",tr("TickPosition"));

@@ -39,7 +39,6 @@ int main(int argc, char *argv[])
     qRegisterBaseProperty();
     qRegisterBasePropertyEditor();
     qRegisterBaseHost();
-    qRegisterBaseDriver();
 
     PluginLoader::load_plugin(app.applicationDirPath() + "/plugins.xml");
     // 加载元素插件

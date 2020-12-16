@@ -64,10 +64,10 @@ QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
 
 QDesignerFormHost::~QDesignerFormHost()
 {
-    ((QWidget*)m_root_host->getObject())->setParent(NULL);
+    ((QWidget*)m_root_host->getObject())->setParent(Q_NULLPTR);
     delete m_widget_host;
-    m_widget_host=NULL;
-    if(m_rubber!=NULL)
+    m_widget_host=Q_NULLPTR;
+    if(m_rubber!=Q_NULLPTR)
     {
         delete m_rubber;
     }
@@ -78,7 +78,7 @@ QDesignerFormHost::~QDesignerFormHost()
 bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
 {
     QAbstractHost *h=host_from_object(o);
-    if(h!=NULL)
+    if(h!=Q_NULLPTR)
     {
         switch(e->type())
         {
@@ -120,7 +120,7 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
 void QDesignerFormHost::show()
 {
     m_widget_host->show();
-    select_widget(NULL);
+    select_widget(Q_NULLPTR);
 }
 
 void QDesignerFormHost::hide()
@@ -131,16 +131,16 @@ void QDesignerFormHost::hide()
 QAbstractHost* QDesignerFormHost::host_from_object(QObject *obj)
 {
     QAbstractHost* h;
-    while(obj!=NULL)
+    while(obj!=Q_NULLPTR)
     {
         h=m_widget_to_host.value(obj);
-        if(h!=NULL)
+        if(h!=Q_NULLPTR)
         {
             return h;
         }
         obj=obj->parent();
     }
-    return NULL;
+    return Q_NULLPTR;
 }
 
 bool QDesignerFormHost::handlePaintEvent(QAbstractHost *host, QPaintEvent *e)
@@ -239,7 +239,7 @@ bool QDesignerFormHost::handleMousePressEvent(QAbstractHost *host, QMouseEvent *
                     QAbstractHost *curr=m_widget_to_host.value(m_selection->current());
                     QAbstractHost *s=m_widget_to_host.value(wid);
                     QAbstractHost* temp;
-                    while(s->getParent()!=NULL)
+                    while(s->getParent()!=Q_NULLPTR)
                     {
                         temp=s->getParent();
                         if(temp==curr)
@@ -299,7 +299,7 @@ bool QDesignerFormHost::handleMouseReleaseEvent(QAbstractHost *host, QMouseEvent
         }
         else
         {
-            select_widget(NULL);
+            select_widget(Q_NULLPTR);
         }
 
     }
@@ -360,7 +360,7 @@ bool QDesignerFormHost::handle_mouse_db_clicked_event(QAbstractHost *host, QMous
 bool QDesignerFormHost::handle_drag_enter_event(QAbstractHost *host, QDragEnterEvent *e)
 {
     const QDesignerMimeData *mimeData=qobject_cast<const QDesignerMimeData*>(e->mimeData());
-    if(mimeData!=NULL)
+    if(mimeData!=Q_NULLPTR)
     {
         mimeData->acceptEvent(e);
     }
@@ -386,7 +386,7 @@ bool QDesignerFormHost::handle_drag_leave_event(QAbstractHost *host, QDragLeaveE
 bool QDesignerFormHost::handle_drop_event(QAbstractHost *host, QDropEvent *e)
 {
     const QDesignerMimeData *mimeData=qobject_cast<const QDesignerMimeData*>(e->mimeData());
-    if(mimeData==NULL)
+    if(mimeData==Q_NULLPTR)
     {
         return true;
     }
@@ -402,7 +402,7 @@ bool QDesignerFormHost::handle_drop_event(QAbstractHost *host, QDropEvent *e)
         if(item->type()==QDesignerDnDItemInterface::CopyDrop)
         {
             QAbstractHost *h=QHostFactory::create_host(item->name());
-            if(h!=NULL)
+            if(h!=Q_NULLPTR)
             {
                 h->setUuid(QUuid::createUuid().toString());
                 QRect re=h->getPropertyValue("geometry").toRect();
@@ -454,12 +454,12 @@ bool QDesignerFormHost::handle_drop_event(QAbstractHost *host, QDropEvent *e)
 
 void QDesignerFormHost::host_destory()
 {
-    m_rubber=NULL;
+    m_rubber=Q_NULLPTR;
 }
 
 void QDesignerFormHost::select_widget(QWidget *wid)
 {
-    if(wid==NULL)
+    if(wid==Q_NULLPTR)
     {
          m_selection->clear();
          m_widget_host->showHandle();
@@ -477,7 +477,7 @@ void QDesignerFormHost::select_widget(QWidget *wid)
 QAbstractHost* QDesignerFormHost::get_select_widget()
 {
     QWidget* wid=m_selection->current();
-    if(wid==NULL)
+    if(wid==Q_NULLPTR)
     {
         return m_root_host;
     }
@@ -494,7 +494,7 @@ QAbstractHost* QDesignerFormHost::get_root_host()
 
 void QDesignerFormHost::set_select_widget(QAbstractHost *host)
 {
-    select_widget(NULL);
+    select_widget(Q_NULLPTR);
 
     if(m_root_host!=host)
     {
@@ -504,7 +504,7 @@ void QDesignerFormHost::set_select_widget(QAbstractHost *host)
 
 void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &value)
 {
-    if(pro==NULL)
+    if(pro==Q_NULLPTR)
     {
         return;
     }
@@ -516,7 +516,7 @@ void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &
 
     QString name=pro->getProperty("name").toString();
     QAbstractProperty *ppro=pro;
-    while(ppro->getParent()!=NULL)
+    while(ppro->getParent()!=Q_NULLPTR)
     {
         ppro=ppro->getParent();
         name=ppro->getProperty("name").toString()+"."+name;
@@ -532,7 +532,7 @@ void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &
             list.removeAll(temp);
             QAbstractProperty *p1;
             p1=temp->getProperty(name);
-            if(p1!=NULL && p1->getProperty("type").toString()==pro->getProperty("type").toString())
+            if(p1!=Q_NULLPTR && p1->getProperty("type").toString()==pro->getProperty("type").toString())
             {
                 list.append(temp);
             }
@@ -861,7 +861,7 @@ void QDesignerFormHost::widget_size_changed(QWidget* wid,const QRect &old, const
     if(old!=now)
     {
         QAbstractHost *h=m_widget_to_host.value(wid);
-        if(h!=NULL)
+        if(h!=Q_NULLPTR)
         {
             QPropertyChangedUndoCommand *cmd=new QPropertyChangedUndoCommand(h->getUuid(),"geometry",old,now);
             m_undo_stack->push(cmd);
@@ -910,7 +910,7 @@ void QDesignerFormHost::insert_host_slot(QList<QAbstractHost *> hosts, QList<int
 
 void QDesignerFormHost::remove_host_slot(QList<QAbstractHost *> hosts)
 {
-    select_widget(NULL);
+    select_widget(Q_NULLPTR);
     foreach(QAbstractHost* h,hosts)
     {
         QList<QAbstractHost*> children=h->getChildren();

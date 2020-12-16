@@ -286,7 +286,7 @@ void WidgetSelection::setWidget(QWidget *w)
     if (m_widget != 0)
     {
         QWidget* wid=m_widget;
-        while(wid!=NULL)
+        while(wid!=Q_NULLPTR)
         {
             wid->removeEventFilter(this);
             wid=wid->parentWidget();
@@ -311,7 +311,7 @@ void WidgetSelection::setWidget(QWidget *w)
     }
 
     QWidget* wid=m_widget;
-    while(wid!=NULL)
+    while(wid!=Q_NULLPTR)
     {
         wid->installEventFilter(this);
         wid=wid->parentWidget();
@@ -426,7 +426,7 @@ bool WidgetSelection::eventFilter(QObject *object, QEvent *event)
             break;
         }
         o=o->parent();
-        if(o==NULL)
+        if(o==Q_NULLPTR)
         {
             return false;
         }
@@ -460,7 +460,7 @@ void WidgetSelection::mouse_button_release(const QRect &old, const QRect &now)
 }
 
 Selection::Selection(QWidget *formwindow):
-    m_current(NULL),
+    m_current(Q_NULLPTR),
     m_formwindow(formwindow)
 {
 }
@@ -527,7 +527,7 @@ QWidget* Selection::removeWidget(QWidget *w)
     if(m_current==s)
     {
         m_current->setCurrent(false);
-        m_current=NULL;
+        m_current=Q_NULLPTR;
     }
     s->setWidget(0);
     m_usedSelections.remove(w);
@@ -603,12 +603,12 @@ void Selection::setCurrent(QWidget *w)
     {
         return;
     }
-    if(m_current!=NULL)
+    if(m_current!=Q_NULLPTR)
     {
         m_current->setCurrent(false);
     }
     m_current=s;
-    if(m_current!=NULL)
+    if(m_current!=Q_NULLPTR)
     {
         m_current->setCurrent(true);
     }
@@ -616,5 +616,5 @@ void Selection::setCurrent(QWidget *w)
 
 QWidget* Selection::current()
 {
-    return m_current==NULL?NULL:m_current->widget();
+    return m_current==Q_NULLPTR?Q_NULLPTR:m_current->widget();
 }

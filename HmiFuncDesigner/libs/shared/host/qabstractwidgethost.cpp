@@ -41,7 +41,7 @@ void QAbstractWidgetHost::initProperty()
     QAbstractProperty* pro;
 
     pro=QPropertyFactory::create_property("Rect");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","geometry");
         pro->setAttribute("show_name",tr("Geometry"));
@@ -53,7 +53,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","enabled");
         pro->setAttribute("show_name",tr("Enabled"));
@@ -63,7 +63,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Font");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","font");
         pro->setAttribute("show_name",tr("Font"));
@@ -73,7 +73,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Cursor");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","cursor");
         pro->setAttribute("show_name",tr("Cursor"));
@@ -84,7 +84,7 @@ void QAbstractWidgetHost::initProperty()
 
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","focusPolicy");
         pro->setAttribute("show_name",tr("FocusPolicy"));
@@ -114,7 +114,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("String");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","toolTip");
         pro->setAttribute("show_name",tr("ToolTip"));
@@ -123,7 +123,7 @@ void QAbstractWidgetHost::initProperty()
         insertProperty(pro);
     }
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","mousePress");
         pro->setAttribute("show_name",tr("MousePress"));
@@ -134,7 +134,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","mouseMove");
         pro->setAttribute("show_name",tr("MouseMove"));
@@ -145,7 +145,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","mouseRelease");
         pro->setAttribute("show_name",tr("MouseRelease"));
@@ -156,7 +156,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","doubleClick");
         pro->setAttribute("show_name",tr("DoubleClick"));
@@ -167,7 +167,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("StyleSheet");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","background");
         pro->setAttribute("show_name",tr("Background"));
@@ -177,7 +177,7 @@ void QAbstractWidgetHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("StyleSheet");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","border");
         pro->setAttribute("show_name",tr("Border"));

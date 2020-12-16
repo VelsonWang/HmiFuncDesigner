@@ -39,7 +39,7 @@ QPageWidget::QPageWidget(const QString &type, QWidget *parent):
     connect(m_temp_widget,SIGNAL(cancel()),this,SIGNAL(cancel()));
     connect(m_temp_widget,SIGNAL(ok(QAbstractHost*)),this,SIGNAL(ok(QAbstractHost*)));
 
-    QList<QAbstractHost*> list=QSoftCore::getCore()->getProjectCore()->get_page_manager()->getPages_by_title(m_type);
+    QList<QAbstractHost*> list=QSoftCore::getCore()->getProjectCore()->getPageManager()->getPages_by_title(m_type);
 
     QStringList l;
     foreach(QAbstractHost* host,list)

@@ -1,6 +1,7 @@
 ﻿#include "UserAuthorityDialog.h"
 #include "ui_UserAuthorityDialog.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QStandardItem>
 #include <QModelIndex>
 #include <QMessageBox>
@@ -239,7 +240,7 @@ bool UserAuthorityDialog::check_data()
 
 void UserAuthorityDialog::load()
 {
-    UserAuthority &userAuthority = ProjectData::getInstance()->userAuthority_;
+    UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->userAuthority_;
     pUserModel_->m_tagUserItems.clear();
     for (int i = 0; i < userAuthority.getCount(); ++i) {
         TagUserItem item;
@@ -265,7 +266,7 @@ void UserAuthorityDialog::load()
 
 void UserAuthorityDialog::save()
 {
-    UserAuthority &userAuthority = ProjectData::getInstance()->userAuthority_;
+    UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->userAuthority_;
     userAuthority.listUserAuthority_.clear();
     TagUserItem item;
 

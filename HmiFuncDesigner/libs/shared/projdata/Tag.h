@@ -7,7 +7,7 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include "../xmlobject.h"
-#include "sharedlibglobal.h"
+#include "../sharedlibglobal.h"
 
 
 

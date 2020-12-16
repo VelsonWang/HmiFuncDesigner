@@ -40,13 +40,9 @@
 #include "host/qscrollbarhost.h"
 #include "host/qprogressbarhost.h"
 #include "host/qcomboboxhost.h"
-
 #include "qhostfactory.h"
 
-#include "driver/qcommdriver.h"
-#include "driver/qtcpdriver.h"
 
-#include "qdriverfactory.h"
 
 void qRegisterBaseProperty()
 {
@@ -92,8 +88,4 @@ void qRegisterBaseHost()
     qRegisterHost("displaywidgets.progressbar",QProgressBarHost);
 }
 
-void qRegisterBaseDriver()
-{
-    qRegisterDriver("base.comm",QCommDriverHost);
-    qRegisterDriver("base.tcp",QTCPDriverHost);
-}
+

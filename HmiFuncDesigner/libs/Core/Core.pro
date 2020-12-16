@@ -40,8 +40,6 @@ HEADERS += \
     qpropertylist/qbytearrayeditor.h \
     qnamevalidator.h \
     undocommand/qbaseundocommand.h \
-    undocommand/quserpropertyundocommand.h \
-    undocommand/quseraddundocommand.h \
     undocommand/qpropertychangedundocommand.h \
     qpropertylist/qenumpropertyeditor.h \
     qrenamedialog.h \
@@ -69,10 +67,7 @@ HEADERS += \
     qabstractupdate.h \
     qdevicesmanager.h \
     qbtnlineedit.h \
-    undocommand/qdatapropertychanged.h \
     qtexteditdialog.h \
-    undocommand/qdataaddundocommand.h \
-    undocommand/qdatagroupaddundocommand.h \
     qfilemanager.h \
     qfilelistview.h \
     undocommand/qfilegroupaddundocommand.h \
@@ -89,17 +84,11 @@ HEADERS += \
     qpropertylist/stylesheeteditor/qbaseeditorwidget.h \
     qpropertylist/stylesheeteditor/qresourceview.h \
     qpropertylist/stylesheeteditor/qresourceshowwidget.h \
-    undocommand/qresourceaddundocommand.h \
     qpropertylist/stylesheeteditor/qbordersheeteditor.h \
     qpropertylist/stylesheeteditor/qtextsheeteditor.h \
     qpropertylist/stylesheeteditor/qaddsheetitemdialog.h \
     qpropertylist/stylesheeteditor/qstatecheckwidget.h \
     qpropertylist/stylesheeteditor/qitemcheckbox.h \
-    undocommand/qdriverdataaddundocommand.h \
-    undocommand/qdriverdatachangedundocommand.h \
-    qdatalistview.h \
-    undocommand/qdriveraddundocommand.h \
-    qdriverlistview.h \
     undocommand/qpageaddundocommand.h \
     qprojectinformation.h
 
@@ -121,8 +110,6 @@ SOURCES += \
     qpropertylist/qbytearrayeditor.cpp \
     qnamevalidator.cpp \
     undocommand/qbaseundocommand.cpp \
-    undocommand/quserpropertyundocommand.cpp \
-    undocommand/quseraddundocommand.cpp \
     undocommand/qpropertychangedundocommand.cpp \
     qpropertylist/qenumpropertyeditor.cpp \
     qrenamedialog.cpp \
@@ -150,10 +137,7 @@ SOURCES += \
     qabstractupdate.cpp \
     qdevicesmanager.cpp \
     qbtnlineedit.cpp \
-    undocommand/qdatapropertychanged.cpp \
     qtexteditdialog.cpp \
-    undocommand/qdataaddundocommand.cpp \
-    undocommand/qdatagroupaddundocommand.cpp \
     qfilemanager.cpp \
     qfilelistview.cpp \
     undocommand/qfilegroupaddundocommand.cpp \
@@ -170,17 +154,11 @@ SOURCES += \
     qpropertylist/stylesheeteditor/qbaseeditorwidget.cpp \
     qpropertylist/stylesheeteditor/qresourceview.cpp \
     qpropertylist/stylesheeteditor/qresourceshowwidget.cpp \
-    undocommand/qresourceaddundocommand.cpp \
     qpropertylist/stylesheeteditor/qbordersheeteditor.cpp \
     qpropertylist/stylesheeteditor/qtextsheeteditor.cpp \
     qpropertylist/stylesheeteditor/qaddsheetitemdialog.cpp \
     qpropertylist/stylesheeteditor/qstatecheckwidget.cpp \
     qpropertylist/stylesheeteditor/qitemcheckbox.cpp \
-    undocommand/qdriverdataaddundocommand.cpp \
-    undocommand/qdriverdatachangedundocommand.cpp \
-    qdatalistview.cpp \
-    undocommand/qdriveraddundocommand.cpp \
-    qdriverlistview.cpp \
     undocommand/qpageaddundocommand.cpp \
     qprojectinformation.cpp
 

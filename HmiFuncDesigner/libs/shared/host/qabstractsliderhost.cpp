@@ -18,7 +18,7 @@ void QAbstractSliderHost::initProperty()
     QAbstractProperty* pro;
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
@@ -27,7 +27,7 @@ void QAbstractSliderHost::initProperty()
         insertProperty(pro,1);
     }
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","minimum");
         pro->setAttribute("show_name",tr("Minimum"));
@@ -37,7 +37,7 @@ void QAbstractSliderHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","maximum");
         pro->setAttribute("show_name",tr("Maximum"));
@@ -47,7 +47,7 @@ void QAbstractSliderHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","singleStep");
         pro->setAttribute("show_name",tr("SingleStep"));
@@ -57,7 +57,7 @@ void QAbstractSliderHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","orientation");
         pro->setAttribute("show_name",tr("Orientation"));
@@ -82,7 +82,7 @@ void QAbstractSliderHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","invertedAppearance");
         pro->setAttribute("show_name",tr("InvertedAppearance"));
@@ -92,7 +92,7 @@ void QAbstractSliderHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","valueChanged");
         pro->setAttribute("show_name",tr("ValueChanged"));

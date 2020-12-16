@@ -66,9 +66,7 @@ QNewPageDialog::~QNewPageDialog()
 void QNewPageDialog::ok(QAbstractHost *host)
 {
     QProjectCore *core=QSoftCore::getCore()->getProjectCore();
-    host->setPageManager(core->get_page_manager());
-    host->setDataManager(core->get_data_manager());
-    host->setResourceManager(core->get_resource_manager());
+    host->setPageManager(core->getPageManager());
     QList<QAbstractHost*> list;
     list.append(host);
     while(list.size()>0)
@@ -78,15 +76,15 @@ void QNewPageDialog::ok(QAbstractHost *host)
         list+=h->getChildren();
     }
     host->setDefault();
-    int index=core->get_page_manager()->getPages().size();
+    int index=core->getPageManager()->getPages().size();
     QUndoCommand *cmd=new QUndoCommand;
     new QPageAddUndoCommand(host,index,PAT_ADD,cmd);
-    QAbstractProperty* pro=core->get_project_host()->getProperty("start_page");
-    if(pro!=NULL)
+    QAbstractProperty* pro=core->getProjectHost()->getProperty("start_page");
+    if(pro!=Q_NULLPTR)
     {
         if(pro->get_value().toString()=="")
         {
-            new QPropertyChangedUndoCommand(core->get_project_host()->getUuid(),
+            new QPropertyChangedUndoCommand(core->getProjectHost()->getUuid(),
                                             "start_page",pro->get_value(),host->getUuid(),cmd);
         }
     }

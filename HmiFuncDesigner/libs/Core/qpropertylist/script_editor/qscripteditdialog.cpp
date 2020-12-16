@@ -149,7 +149,7 @@ void QScriptEditDialog::save()
 void QScriptEditDialog::selectFunction(const QMetaMethod &method)
 {
     QAbstractHost *host=m_widgetView->currentHost();
-    if(host!=NULL)
+    if(host!=Q_NULLPTR)
     {
         m_editView->insertMethod(method,host);
     }

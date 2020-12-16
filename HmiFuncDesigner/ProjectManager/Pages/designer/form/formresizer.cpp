@@ -8,7 +8,7 @@
 
 FormResizer::FormResizer(QWidget *parent) :
     QWidget(parent),
-    m_widget(NULL),
+    m_widget(Q_NULLPTR),
     m_frame(new QFrame(this)),
     m_handleVisible(true)
 {
@@ -90,7 +90,7 @@ void FormResizer::update()
 void FormResizer::setWidget(QWidget *wid)
 {
     m_widget=wid;
-    if(m_widget!=NULL)
+    if(m_widget!=Q_NULLPTR)
     {
         this->resize(m_widget->size()+QSize(20,20));
         m_widget->setParent(m_frame);
@@ -101,7 +101,7 @@ void FormResizer::setWidget(QWidget *wid)
 void FormResizer::resizeEvent(QResizeEvent *e)
 {
     updateGeometry();
-    if(m_widget!=NULL)
+    if(m_widget!=Q_NULLPTR)
     {
         m_widget->resize(m_frame->size());
     }

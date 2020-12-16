@@ -1,7 +1,8 @@
 ﻿#include "CommunicationDeviceChild.h"
 #include "NewComDeviceDialog.h"
 #include "NewNetDeviceDialog.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
@@ -99,7 +100,7 @@ void CommunicationDeviceChild::listViewCommunicationDeviceUpdate()
 
     ////////////////////////////////////////////////////////////////////////////
 
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         if(pObj->szDeviceType_ == "COM") {
@@ -130,7 +131,7 @@ void CommunicationDeviceChild::listViewCOMDeviceUpdate()
     pNewComDevice->setData(QString("NewComDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewComDevice);
 
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         if(pObj->szDeviceType_ == "COM") {
@@ -156,7 +157,7 @@ void CommunicationDeviceChild::listViewNetDeviceUpdate()
     pNewNetDevice->setData(QString("pNewNetDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewNetDevice);
 
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         if(pObj->szDeviceType_ == "NET") {
@@ -208,7 +209,7 @@ void CommunicationDeviceChild::onSlotNewDevice()
 {
     if(m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
+    QString strProjectPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
     QList<QStandardItem *> itemList;
 
     if(m_szItemName == QString("NewComDevice").toUpper()) { // 串口设备
@@ -241,9 +242,9 @@ void CommunicationDeviceChild::onSlotModifyDevice()
     QModelIndex idx = m_pListViewCommDevObj->selectionModel()->currentIndex();
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(idx);
     if(m_szProjectName == "") return;
-    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
+    QString strProjectPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
 
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(pItemObj->text());
     if(pObj != Q_NULLPTR) {
         if(pObj->szDeviceType_ == "COM") {
@@ -272,7 +273,7 @@ void CommunicationDeviceChild::onSlotDeleteDevice()
     QModelIndex idx = m_pListViewCommDevObj->selectionModel()->currentIndex();
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(idx);
 
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         if(pItemObj->text() == pObj->szName_) {
@@ -304,7 +305,7 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
             pNewNetDeviceDlg->save("");
         }
     } else {
-        DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+        DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
         DeviceInfoObject *pObj = deviceInfo.getObjectByName(pItemObj->text());
         if(pObj != Q_NULLPTR) {
             if(pObj->szDeviceType_ == "COM") {

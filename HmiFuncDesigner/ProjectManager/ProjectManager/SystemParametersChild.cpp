@@ -3,7 +3,8 @@
 #include "NetSettingDialog.h"
 #include "DatabaseSettingDialog.h"
 #include "UserAuthorityDialog.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QFileInfo>
 #include <QApplication>
 #include <QFileInfo>
@@ -64,7 +65,7 @@ void SystemParametersChild::onSlotListViewProjectDoubleClicked(const QModelIndex
 
     if(m_szProjectName == "") return;
 
-    QString strProjectPath = ProjectData::getInstance()->getProjectPath(m_szProjectName);
+    QString strProjectPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
     if(pItemObj->text() == tr("运行系统")) {
         NewProjectDialog *pNewProjectDlgObj = new NewProjectDialog(this);
         pNewProjectDlgObj->load();

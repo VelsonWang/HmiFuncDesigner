@@ -41,7 +41,7 @@ void QDoubleSpinBoxHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Float");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","maximum");
         pro->setAttribute("show_name",tr("Maximum"));
@@ -51,7 +51,7 @@ void QDoubleSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Float");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","minimum");
         pro->setAttribute("show_name",tr("Minimum"));
@@ -61,7 +61,7 @@ void QDoubleSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Float");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
@@ -71,7 +71,7 @@ void QDoubleSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Float");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","singleStep");
         pro->setAttribute("show_name",tr("SingleStep"));
@@ -81,7 +81,7 @@ void QDoubleSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","decimals");
         pro->setAttribute("show_name",tr("Decimals"));
@@ -91,7 +91,7 @@ void QDoubleSpinBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","valueChanged");
         pro->setAttribute("show_name",tr("ValueChanged"));

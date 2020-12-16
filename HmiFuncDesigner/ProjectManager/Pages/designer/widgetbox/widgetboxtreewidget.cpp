@@ -124,7 +124,7 @@ void WidgetBoxTreeWidget::add_widget(tagHostInfo *info)
     }
     QTreeWidgetItem *p=m_name_to_group.value(group);
     QTreeWidgetItem *item;
-    if(p==NULL)
+    if(p==Q_NULLPTR)
     {
         p=new QTreeWidgetItem(this);
         p->setText(0,group);
@@ -162,7 +162,7 @@ void WidgetBoxTreeWidget::mousePressEvent(QMouseEvent *event)
                 return;
             }
             tagHostInfo *info=m_item_to_info.value(item);
-            if(info!=NULL)
+            if(info!=Q_NULLPTR)
             {
                 handleMousePress(info);
             }
@@ -179,7 +179,7 @@ void WidgetBoxTreeWidget::handleMousePress(tagHostInfo *info)
 
     foreach(QDesignerDnDItemInterface *item,item_list)
     {
-        if(item->host()==NULL)
+        if(item->host()==Q_NULLPTR)
         {
             return;
         }

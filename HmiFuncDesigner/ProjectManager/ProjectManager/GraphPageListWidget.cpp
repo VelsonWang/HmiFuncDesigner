@@ -1,6 +1,6 @@
 #include "GraphPageListWidget.h"
 #include "Helper.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
 #include <QMenu>
 #include <QAction>
 #include <QInputDialog>

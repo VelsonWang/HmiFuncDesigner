@@ -1,7 +1,6 @@
 #include "qprojecthost.h"
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
-#include "../qlanguage.h"
 #include "../qpagemanager.h"
 
 
@@ -26,7 +25,7 @@ void QProjectHost::initProperty()
     pro->setAttribute(ATTR_EDITABLE,false);
 
     pro=QPropertyFactory::create_property("ByteArray");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","projectPath");
         pro->setAttribute("show_name",tr("Project Path"));
@@ -36,7 +35,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","start_user");
         pro->setAttribute("show_name",tr("User"));
@@ -46,7 +45,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","start_language");
         pro->setAttribute("show_name",tr("Language"));
@@ -56,7 +55,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","start_page");
         pro->setAttribute("show_name",tr("Page"));
@@ -66,7 +65,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Size");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","designer_size");
         pro->setAttribute("show_name",tr("Design Size"));
@@ -76,7 +75,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Size");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","running_size");
         pro->setAttribute("show_name",tr("Running Size"));
@@ -109,7 +108,7 @@ void QProjectHost::show_form_by_uuid(const QString &uuid)
 {
     QAbstractHost* host=m_page_manager->get_page(uuid);
 
-    if(host!=NULL)
+    if(host!=Q_NULLPTR)
     {
         QWidget* wid=(QWidget*)host->getObject();
         emit notifyShowWidget(wid);

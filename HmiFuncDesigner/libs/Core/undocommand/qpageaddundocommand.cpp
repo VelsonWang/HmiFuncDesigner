@@ -59,12 +59,12 @@ void QPageAddUndoCommand::undo()
 
 void QPageAddUndoCommand::add()
 {
-    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->get_page_manager();
+    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->getPageManager();
     manager->insert_page(m_page,m_index);
 }
 
 void QPageAddUndoCommand::remove()
 {
-    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->get_page_manager();
+    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->getPageManager();
     manager->remove_page(m_page);
 }

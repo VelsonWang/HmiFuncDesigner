@@ -42,7 +42,7 @@ void QTimeEditHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Time");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","maximumTime");
         pro->setAttribute("show_name",tr("MaximumTime"));
@@ -52,7 +52,7 @@ void QTimeEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Time");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","minimumTime");
         pro->setAttribute("show_name",tr("MinimumTime"));
@@ -62,7 +62,7 @@ void QTimeEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Time");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","time");
         pro->setAttribute("show_name",tr("Time"));
@@ -72,7 +72,7 @@ void QTimeEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","currentSection");
         pro->setAttribute("show_name",tr("CurrentSection"));
@@ -101,7 +101,7 @@ void QTimeEditHost::initProperty()
 
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","timeChanged");
         pro->setAttribute("show_name",tr("TimeChanged"));

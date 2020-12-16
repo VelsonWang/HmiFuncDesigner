@@ -25,7 +25,7 @@ QBaseEditorWidget* create_editor_widget(const QString &name)
         return new QTextSheetEditor;
     }
 
-    return NULL;
+    return Q_NULLPTR;
 }
 
 QBaseEditorWidget::QBaseEditorWidget(QWidget *parent) :

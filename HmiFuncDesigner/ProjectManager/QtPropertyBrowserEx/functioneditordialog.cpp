@@ -3,7 +3,8 @@
 #include "Helper.h"
 #include "xmlobject.h"
 #include "Element.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QListWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
@@ -497,7 +498,7 @@ void FunctionEditorDialog::createPropertyList()
             } else if(pArgItem->type == "TAGLIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 tagNames_.clear();
-                ProjectData::getInstance()->getAllTagName(tagNames_);
+                QSoftCore::getCore()->getProjectCore()->getAllTagName(tagNames_);
                 property->setAttribute(QLatin1String("enumNames"), tagNames_);
                 if(pArgItem->value == "")
                     pArgItem->value = tagNames_.at(0);
@@ -509,7 +510,7 @@ void FunctionEditorDialog::createPropertyList()
             } else if(pArgItem->type == "GRAPHPAGELIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 graphPageNames_.clear();
-                ProjectData::getInstance()->getAllGraphPageName(graphPageNames_);
+                QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(graphPageNames_);
                 property->setAttribute(QLatin1String("enumNames"), graphPageNames_);
                 if(pArgItem->value == "")
                     pArgItem->value = graphPageNames_.at(0);
@@ -521,7 +522,7 @@ void FunctionEditorDialog::createPropertyList()
             } else if(pArgItem->type == "ELEMENTIDLIST") {
                 property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 elementIds_.clear();
-                ProjectData::getInstance()->getAllElementIDName(elementIds_);
+                QSoftCore::getCore()->getProjectCore()->getAllElementIDName(elementIds_);
                 property->setAttribute(QLatin1String("enumNames"), elementIds_);
                 if(pArgItem->value == "")
                     pArgItem->value = elementIds_.at(0);

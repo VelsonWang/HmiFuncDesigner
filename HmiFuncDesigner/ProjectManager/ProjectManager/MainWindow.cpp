@@ -24,18 +24,14 @@
 #include "Helper.h"
 #include "NewProjectDialog.h"
 #include "NewVariableGroupDialog.h"
-#include "ProjectData.h"
 #include "ProjectDownloadDialog.h"
 #include "ProjectUploadDialog.h"
 #include "RealTimeDatabaseChild.h"
 #include "ScriptManageChild.h"
-#include "ProjectData.h"
 #include "TagManagerChild.h"
 #include "MainWindow.h"
 #include "Helper.h"
-#include "ProjectData.h"
-#include "ProjectInfoManager.h"
-#include "ProjectData.h"
+#include "projectinfomanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
 #include "variantmanager.h"
@@ -193,8 +189,6 @@ void MainWindow::initUI()
     loadRecentProjectList();
 
     //--------------------------------------------------------------------------
-
-    ProjectData::getInstance()->pImplGraphPageSaveLoadObj_ = this;
 
     slotUpdateActions();
     //connect(m_pGraphPageEditorObj, SIGNAL(currentChanged(int)), SLOT(slotChangeGraphPage(int)));
@@ -715,7 +709,7 @@ QMdiSubWindow *MainWindow::findMdiChild(const QString &szWndTitle)
 void MainWindow::CreateDefaultIOTagGroup()
 {
     if (this->m_pProjectTreeViewObj->getDevTagGroupCount() == 0) {
-//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
+//        TagIOGroup &tagIOGroup = QSoftCore::getCore()->getProjectCore()->tagIOGroup_;
 //        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
 //        pObj->m_id = 1;
 //        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
@@ -754,7 +748,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     QString strFile = Helper::AppDir() + "/lastpath.ini";
     if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程"))
-        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", ProjectData::getInstance()->szProjPath_);
+        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", QSoftCore::getCore()->getProjectCore()->m_szProjPath);
     this->m_pMdiAreaObj->closeAllSubWindows();
     writeSettings();
     m_pMdiAreaObj->closeAllSubWindows();
@@ -833,7 +827,7 @@ void MainWindow::copySystemTags()
         readFile.close();
         XMLObject xml;
         if(xml.load(szTags, Q_NULLPTR)) {
-            ProjectData::getInstance()->tagMgr_.openFromXml(&xml);
+            QSoftCore::getCore()->getProjectCore()->tagMgr_.openFromXml(&xml);
         }
     }
 }
@@ -853,15 +847,15 @@ void MainWindow::onNewPoject()
 
     NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
     if (pNewProjectDlg->exec() == QDialog::Accepted) {
-        UpdateProjectName(ProjectData::getInstance()->szProjFile_);
+        UpdateProjectName(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
         pNewProjectDlg->save();
-        updateRecentProjectList(ProjectData::getInstance()->szProjFile_);
+        updateRecentProjectList(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
         CreateDefaultIOTagGroup();
         UpdateDeviceVariableTableGroup();
         // 拷贝系统变量
         copySystemTags();
 
-        QSoftCore::getCore()->getProjectCore()->createNewProj(ProjectData::getInstance()->szProjFile_);
+        QSoftCore::getCore()->getProjectCore()->createNewProj(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     }
 }
 
@@ -912,14 +906,14 @@ void MainWindow::doOpenProject(QString proj)
 
     ////////////////////////////////////////////////////////////////////////////
 
-    ProjectData::getInstance()->szProjFile_ = proj;
+    QSoftCore::getCore()->getProjectCore()->m_szProjFile = proj;
     UpdateProjectName(proj);
     QString strFile = Helper::AppDir() + "/lastpath.ini";
-    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", ProjectData::getInstance()->szProjPath_);
+    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", QSoftCore::getCore()->getProjectCore()->m_szProjPath);
 
-    ProjectData::getInstance()->szProjPath_ = ProjectData::getInstance()->getProjectPath(ProjectData::getInstance()->szProjFile_);
-    ProjectData::getInstance()->szProjName_ = ProjectData::getInstance()->getProjectNameWithOutSuffix(ProjectData::getInstance()->szProjFile_);
-    ProjectData::getInstance()->openFromXml(ProjectData::getInstance()->szProjFile_);
+    QSoftCore::getCore()->getProjectCore()->m_szProjPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(proj);
+    QSoftCore::getCore()->getProjectCore()->m_szProjName = QSoftCore::getCore()->getProjectCore()->getProjectNameWithOutSuffix(proj);
+    QSoftCore::getCore()->getProjectCore()->openFromXml(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
 
     // 加载设备变量组信息
     UpdateDeviceVariableTableGroup();
@@ -959,7 +953,7 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
     */
 void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
-    if(ProjectData::getInstance()->szProjFile_ == "") return;
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") return;
 
     QStringList szListUserData = szItemText.split("|");
     if(szListUserData.size() != 2) return;
@@ -973,7 +967,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
+            pIFaceChildObj->m_szProjectName = QSoftCore::getCore()->getProjectCore()->m_szProjFile;
             pIFaceChildObj->m_szItemName = szListUserData.at(0);
         } else if(szListUserData.at(0) == QString("CommunicationDevice").toUpper() ||
                   szListUserData.at(0) == QString("ComDevice").toUpper() ||
@@ -983,7 +977,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
+            pIFaceChildObj->m_szProjectName = QSoftCore::getCore()->getProjectCore()->m_szProjFile;
             pIFaceChildObj->m_szItemName = szListUserData.at(0);
         } else if(szListUserData.at(0) == QString("TagMgr").toUpper()) { // 变量管理
             TagManagerChild *pObj = new TagManagerChild(this);
@@ -991,7 +985,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
+            pIFaceChildObj->m_szProjectName = QSoftCore::getCore()->getProjectCore()->m_szProjFile;
             pIFaceChildObj->m_szItemName = szListUserData.at(0);
         } else if(szListUserData.at(0) == QString("RealTimeDatabase").toUpper()) { // 实时数据库
             RealTimeDatabaseChild *pObj = new RealTimeDatabaseChild(this);
@@ -999,7 +993,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
+            pIFaceChildObj->m_szProjectName = QSoftCore::getCore()->getProjectCore()->m_szProjFile;
             pIFaceChildObj->m_szItemName = szListUserData.at(0);
         } else if(szListUserData.at(0) == QString("ScriptEditor").toUpper()) { // 脚本编辑器
             ScriptManageChild *pObj = new ScriptManageChild(this);
@@ -1007,7 +1001,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
             pObj->setWindowTitle(szListUserData.at(1));
             pObj->showMaximized();
             pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = ProjectData::getInstance()->szProjFile_;
+            pIFaceChildObj->m_szProjectName = QSoftCore::getCore()->getProjectCore()->m_szProjFile;
             pIFaceChildObj->m_szItemName = szListUserData.at(0);
         }
     }
@@ -1030,8 +1024,8 @@ void MainWindow::UpdateProjectName(const QString &szName)
         this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
         if(pActObj) pActObj->setEnabled(true);
     } else {
-        ProjectData::getInstance()->szProjFile_ = "";
-        ProjectData::getInstance()->szProjPath_ = "";
+        QSoftCore::getCore()->getProjectCore()->m_szProjFile = "";
+        QSoftCore::getCore()->getProjectCore()->m_szProjPath = "";
         if(pActObj) pActObj->setEnabled(false);
         this->m_pProjectTreeViewObj->updateUI();
     }
@@ -1052,8 +1046,7 @@ void MainWindow::UpdateDeviceVariableTableGroup()
     */
 void MainWindow::onSaveProject()
 {
-    //m_szProjFile
-    ProjectData::getInstance()->saveToXml(ProjectData::getInstance()->szProjFile_);
+    QSoftCore::getCore()->getProjectCore()->saveToXml(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     foreach (QMdiSubWindow* window, this->m_pMdiAreaObj->subWindowList()) {
         ChildInterface *pIFaceChildObj = qobject_cast<ChildInterface *>(window->widget());
         //if(pIFaceChildObj != Q_NULLPTR) pIFaceChildObj->save();
@@ -1070,17 +1063,16 @@ void MainWindow::onSetOpenProjPassword()
     if(dlg.exec() == QDialog::Accepted) {
         QString szPwd = dlg.getSetPassword();
         if(szPwd.isEmpty()) {
-            ProjectData::getInstance()->headerObj_.byOpenVerifyPassword = 0;
-            memset(ProjectData::getInstance()->headerObj_.szPassword, 0, 32);
+            QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = 0;
+            memset(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 0, 32);
         } else {
-            memset(ProjectData::getInstance()->headerObj_.szPassword, 0, 32);
+            memset(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 0, 32);
             QCryptographicHash crypt(QCryptographicHash::Md5);
             crypt.reset();
             crypt.addData(szPwd.toStdString().c_str(), szPwd.toStdString().length());
             QByteArray baPwd = crypt.result();
-            qDebug() << "szPassword MD5: " << baPwd.toHex();
-            ProjectData::getInstance()->headerObj_.byOpenVerifyPassword = baPwd.length();
-            memcpy_s(ProjectData::getInstance()->headerObj_.szPassword, 32, baPwd.data(), baPwd.length());
+            QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = baPwd.length();
+            memcpy_s(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 32, baPwd.data(), baPwd.length());
         }
     }
 }
@@ -1153,7 +1145,7 @@ void MainWindow::onSlotRunProject()
         QProcess *process = new QProcess();
         process->setWorkingDirectory(Helper::AppDir() + "/");
         QStringList argv;
-        argv << ProjectData::getInstance()->szProjPath_;
+        argv << QSoftCore::getCore()->getProjectCore()->m_szProjPath;
         process->startDetached(fileRuntimeApplication, argv);
     }
 }
@@ -1171,7 +1163,7 @@ void MainWindow::onSlotUpLoadProject()
         dir.mkpath(tmpDir);
     }
 
-    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, ProjectData::getInstance()->szProjFile_);
+    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     if (pDlg->exec() == QDialog::Accepted) {
         QString desDir = pDlg->getProjectPath();
         QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
@@ -1220,7 +1212,7 @@ void MainWindow::onSlotUpLoadProject()
     */
 void MainWindow::onSlotDownloadProject()
 {
-    if(ProjectData::getInstance()->szProjFile_ == Q_NULLPTR) return;
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile.isEmpty()) return;
 
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/tmp";
@@ -1231,7 +1223,7 @@ void MainWindow::onSlotDownloadProject()
 
     // 拷贝工程到tmp目录
     QString desDir = QCoreApplication::applicationDirPath() + "/tmp/RunProject";
-    Helper::CopyRecursively(ProjectData::getInstance()->szProjPath_, desDir);
+    Helper::CopyRecursively(QSoftCore::getCore()->getProjectCore()->m_szProjPath, desDir);
 
     // 打包工程到tmp目录
     QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
@@ -1272,7 +1264,7 @@ void MainWindow::onSlotDownloadProject()
 
     delete tarProc;
 
-    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, ProjectData::getInstance()->szProjFile_);
+    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
     if (pDlg->exec() == QDialog::Accepted) {
     }
@@ -1430,43 +1422,6 @@ void MainWindow::updateRecentProjectList(QString newProj)
 
 //------------------------------------------------------------------------------
 
-/**
- * @brief MainWindow::openFromXml
- * @details 加载画面
- * @param pXmlObj
- * @return true-成功，false-失败
- */
-bool MainWindow::openFromXml(XMLObject *pXmlObj) {
-//    this->m_pListWidgetGraphPagesObj->clear();
-
-//    QVector<XMLObject* > listPagesObj = pXmlObj->getCurrentChildren("form");
-//    foreach(XMLObject* pPageObj, listPagesObj) {
-//        QString szPageId = pPageObj->getProperty("id");
-//        this->m_pListWidgetGraphPagesObj->addItem(szPageId);
-//        GraphPage *pObj = addNewGraphPage(szPageId);
-//        pObj->openFromXml(pPageObj);
-//    }
-    QSoftCore::getCore()->getProjectCore()->openProj(pXmlObj);
-    return true;
-}
-
-
-/**
- * @brief MainWindow::saveToXml
- * @details 保存画面
- * @param pXmlObj
- * @return true-成功，false-失败
- */
-bool MainWindow::saveToXml(XMLObject *pXmlObj) {
-//    QList<GraphPage*>* pGraphPageListObj = GraphPageManager::getInstance()->getGraphPageList();
-//    for(int i=0; i<pGraphPageListObj->count(); i++) {
-//        GraphPage *pObj = pGraphPageListObj->at(i);
-//        pObj->saveToXml(pXmlObj);
-//    }
-
-    QSoftCore::getCore()->getProjectCore()->saveProj(pXmlObj);
-    return true;
-}
 
 /**
  * @brief MainWindow::getAllElementIDName
@@ -1699,14 +1654,14 @@ void MainWindow::onRenameGraphPage()
 //        }
 
 //        QStringList szGraphPageNameList;
-//        ProjectData::getInstance()->getAllGraphPageName(szGraphPageNameList);
+//        QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(szGraphPageNameList);
 //        for (int i = 0; i < szGraphPageNameList.count(); i++) {
 //            if (szOldGraphPageName == szGraphPageNameList.at(i) ) {
 //                szGraphPageNameList.replace(i, szNewGraphPageName);
-//                QString szOldName = ProjectData::getInstance()->szProjPath_ + "/" + szOldGraphPageName + ".drw";
-//                QString szNewName = ProjectData::getInstance()->szProjPath_ + "/" + szNewGraphPageName + ".drw";
+//                QString szOldName = QSoftCore::getCore()->getProjectCore()->szProjPath_ + "/" + szOldGraphPageName + ".drw";
+//                QString szNewName = QSoftCore::getCore()->getProjectCore()->szProjPath_ + "/" + szNewGraphPageName + ".drw";
 //                QFile::rename(szOldName, szNewName);
-//                //DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
+//                //DrawListUtils::saveDrawList(QSoftCore::getCore()->getProjectCore()->szProjPath_);
 //                this->m_pListWidgetGraphPagesObj->currentItem()->setText(szNewGraphPageName);
 //                GraphPage *pGraphPage = GraphPageManager::getInstance()->getGraphPageById(szOldGraphPageName);
 //                pGraphPage->setGraphPageId(szNewGraphPageName);
@@ -1732,7 +1687,7 @@ void MainWindow::onDeleteGraphPage()
         if ( szGraphPageName == DrawListUtils::drawList_.at(i) ) {
             DrawListUtils::drawList_.removeAt(i);
 
-            QString fileName = ProjectData::getInstance()->szProjPath_ + "/" + szGraphPageName + ".drw";
+            QString fileName = QSoftCore::getCore()->getProjectCore()->szProjPath_ + "/" + szGraphPageName + ".drw";
             QFile file(fileName);
             if (file.exists()) {
                 file.remove();
@@ -1747,7 +1702,7 @@ void MainWindow::onDeleteGraphPage()
                 pGraphPageObj = Q_NULLPTR;
             }
 
-            //DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
+            //DrawListUtils::saveDrawList(QSoftCore::getCore()->getProjectCore()->szProjPath_);
 
             this->m_pListWidgetGraphPagesObj->clear();
             //foreach(QString szPageId, DrawListUtils::drawList_) {
@@ -1794,10 +1749,10 @@ void MainWindow::onPasteGraphPage()
 
 //    this->m_pListWidgetGraphPagesObj->addItem(strDrawPageName);
 //    //DrawListUtils::drawList_.append(strDrawPageName);
-//    //DrawListUtils::saveDrawList(ProjectData::getInstance()->szProjPath_);
-//    QString szFileName = ProjectData::getInstance()->szProjPath_ + "/" + m_szCopyGraphPageFileName + ".drw";
+//    //DrawListUtils::saveDrawList(QSoftCore::getCore()->getProjectCore()->szProjPath_);
+//    QString szFileName = QSoftCore::getCore()->getProjectCore()->szProjPath_ + "/" + m_szCopyGraphPageFileName + ".drw";
 //    QFile file(szFileName);
-//    QString szPasteFileName = ProjectData::getInstance()->szProjPath_ + "/" + strDrawPageName + ".drw";
+//    QString szPasteFileName = QSoftCore::getCore()->getProjectCore()->szProjPath_ + "/" + strDrawPageName + ".drw";
 //    file.copy(szPasteFileName);
 
 //    if (szPasteFileName.toLower().endsWith(".drw")) {
@@ -1863,7 +1818,7 @@ void MainWindow::onSlotSetWindowSetTitle(const QString &szTitle)
 void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 {
     QToolBar *pToolBarObj = QSoftCore::getCore()->getToolBar("ToolBar.GraphPage");
-    if(ProjectData::getInstance()->szProjFile_ == "") {
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") {
         m_pMdiAreaObj->setVisible(true);
         if(m_pDesignerWidgetObj) m_pDesignerWidgetObj->setVisible(false);
         if(pToolBarObj) pToolBarObj->setVisible(false); // 画面编辑工具条

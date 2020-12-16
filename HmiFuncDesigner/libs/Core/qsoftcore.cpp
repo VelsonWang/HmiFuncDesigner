@@ -12,7 +12,7 @@
 #include <QApplication>
 #include <QDir>
 
-QSoftCore* QSoftCore::m_core=NULL;
+QSoftCore* QSoftCore::m_core=Q_NULLPTR;
 
 QSoftCore::QSoftCore(QObject *parent) :
     QObject(parent),
@@ -55,14 +55,14 @@ void QSoftCore::insertAction(const QString &key, QAction *action)
     foreach(const QString &str,l)
     {
         temp=group->m_children.value(str);
-        if(temp==NULL)
+        if(temp==Q_NULLPTR)
         {
             temp=new QActionArray;
             group->m_children.insert(str,temp);
         }
         group=temp;
     }
-    if(group->m_action!=NULL)
+    if(group->m_action!=Q_NULLPTR)
     {
         delete group->m_action;
     }
@@ -75,7 +75,7 @@ QAction* QSoftCore::getAction(const QString &key)
     l.removeAll("");
     if(l.size()==0)
     {
-        return NULL;
+        return Q_NULLPTR;
     }
 
     QActionArray *group=&m_actions;
@@ -84,9 +84,9 @@ QAction* QSoftCore::getAction(const QString &key)
     foreach(const QString &str,l)
     {
         temp=group->m_children.value(str);
-        if(temp==NULL)
+        if(temp==Q_NULLPTR)
         {
-            return NULL;
+            return Q_NULLPTR;
         }
         group=temp;
     }
@@ -95,7 +95,7 @@ QAction* QSoftCore::getAction(const QString &key)
 
 QSoftCore* QSoftCore::getCore()
 {
-    if(m_core==NULL)
+    if(m_core==Q_NULLPTR)
     {
         m_core=new QSoftCore;
     }
@@ -104,10 +104,10 @@ QSoftCore* QSoftCore::getCore()
 
 void QSoftCore::releaseCore()
 {
-    if(m_core!=NULL)
+    if(m_core!=Q_NULLPTR)
     {
         delete m_core;
-        m_core=NULL;
+        m_core=Q_NULLPTR;
     }
 }
 
@@ -115,13 +115,13 @@ void QSoftCore::initUserManagerAction()
 {
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/plus.png"),tr("Add User"),NULL);
+    ac=new QAction(QIcon(":/images/plus.png"),tr("Add User"),Q_NULLPTR);
     insertAction("UserManager.Add",ac);
-    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove User"),NULL);
+    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove User"),Q_NULLPTR);
     insertAction("UserManager.Del",ac);
-    ac=new QAction(QIcon(""),tr("Remove users"),NULL);
+    ac=new QAction(QIcon(""),tr("Remove users"),Q_NULLPTR);
     insertAction("UserManager.Remove",ac);
-    ac=new QAction(QIcon(""),tr("Give up"),NULL);
+    ac=new QAction(QIcon(""),tr("Give up"),Q_NULLPTR);
     insertAction("UserManager.Give-Up",ac);
 }
 
@@ -129,63 +129,63 @@ void QSoftCore::initLanguageManagerAction()
 {
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Language"),NULL);
+    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Language"),Q_NULLPTR);
     insertAction("LanguageManager.Add",ac);
-    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Language"),NULL);
+    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Language"),Q_NULLPTR);
     insertAction("LanguageManager.Del",ac);
-    ac=new QAction(QIcon(""),tr("Remove users"),NULL);
+    ac=new QAction(QIcon(""),tr("Remove users"),Q_NULLPTR);
     insertAction("LanguageManager.Remove",ac);
-    ac=new QAction(QIcon(""),tr("Give up"),NULL);
+    ac=new QAction(QIcon(""),tr("Give up"),Q_NULLPTR);
     insertAction("LanguageManager.Give-Up",ac);
 }
 
 void QSoftCore::initFormManagerAction()
 {
     QAction *ac;
-    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Form"),NULL);
+    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Form"),Q_NULLPTR);
     insertAction("FormManager.Add",ac);
-    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Form"),NULL);
+    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Form"),Q_NULLPTR);
     insertAction("FormManager.Del",ac);
-    ac=new QAction(QIcon(":/images/left.png"),tr("Left"),NULL);
+    ac=new QAction(QIcon(":/images/left.png"),tr("Left"),Q_NULLPTR);
     insertAction("FormManager.Same.Left",ac);
-    ac=new QAction(QIcon(":/images/v-center.png"),tr("V-Center"),NULL);
+    ac=new QAction(QIcon(":/images/v-center.png"),tr("V-Center"),Q_NULLPTR);
     insertAction("FormManager.Same.V-Center",ac);
-    ac=new QAction(QIcon(":/images/right.png"),tr("Right"),NULL);
+    ac=new QAction(QIcon(":/images/right.png"),tr("Right"),Q_NULLPTR);
     insertAction("FormManager.Same.Right",ac);
-    ac=new QAction(QIcon(":/images/top.png"),tr("Top"),NULL);
+    ac=new QAction(QIcon(":/images/top.png"),tr("Top"),Q_NULLPTR);
     insertAction("FormManager.Same.Top",ac);
-    ac=new QAction(QIcon(":/images/h-center.png"),tr("H-Center"),NULL);
+    ac=new QAction(QIcon(":/images/h-center.png"),tr("H-Center"),Q_NULLPTR);
     insertAction("FormManager.Same.H-Center",ac);
-    ac=new QAction(QIcon(":/images/bottom.png"),tr("Bottom"),NULL);
+    ac=new QAction(QIcon(":/images/bottom.png"),tr("Bottom"),Q_NULLPTR);
     insertAction("FormManager.Same.Bottom",ac);
-    ac=new QAction(QIcon(":/images/same-width.png"),tr("Same Width"),NULL);
+    ac=new QAction(QIcon(":/images/same-width.png"),tr("Same Width"),Q_NULLPTR);
     insertAction("FormManager.Same.Width",ac);
-    ac=new QAction(QIcon(":/images/same-height.png"),tr("Same Height"),NULL);
+    ac=new QAction(QIcon(":/images/same-height.png"),tr("Same Height"),Q_NULLPTR);
     insertAction("FormManager.Same.Height",ac);
-    ac=new QAction(QIcon(":/images/same-rect.png"),tr("Same Gemotry"),NULL);
+    ac=new QAction(QIcon(":/images/same-rect.png"),tr("Same Gemotry"),Q_NULLPTR);
     insertAction("FormManager.Same.Gemotry",ac);
-    ac=new QAction(QIcon(":/images/editcopy.png"),tr("Copy"),NULL);
+    ac=new QAction(QIcon(":/images/editcopy.png"),tr("Copy"),Q_NULLPTR);
     insertAction("FormManager.Copy",ac);
-    ac=new QAction(QIcon(":/images/editcut.png"),tr("Cut"),NULL);
+    ac=new QAction(QIcon(":/images/editcut.png"),tr("Cut"),Q_NULLPTR);
     insertAction("FormManager.Cut",ac);
-    ac=new QAction(QIcon(":/images/editpaste.png"),tr("Paste"),NULL);
+    ac=new QAction(QIcon(":/images/editpaste.png"),tr("Paste"),Q_NULLPTR);
     insertAction("FormManager.Paste",ac);
-    ac=new QAction(QIcon(),tr("Delete"),NULL);
+    ac=new QAction(QIcon(),tr("Delete"),Q_NULLPTR);
     insertAction("FormManager.Delete",ac);
-    ac=new QAction(QIcon(),tr("Select All"),NULL);
+    ac=new QAction(QIcon(),tr("Select All"),Q_NULLPTR);
     insertAction("FormManager.Select.All",ac);
 }
 
 void QSoftCore::initProjectAction()
 {
     QAction *ac;
-    ac=new QAction(QIcon(":/images/fileopen.png"),tr("Open Project"),NULL);
+    ac=new QAction(QIcon(":/images/fileopen.png"),tr("Open Project"),Q_NULLPTR);
     insertAction("Project.Open",ac);
-    ac=new QAction(QIcon(":/images/filesave.png"),tr("Save Project"),NULL);
+    ac=new QAction(QIcon(":/images/filesave.png"),tr("Save Project"),Q_NULLPTR);
     insertAction("Project.Save",ac);
-    ac=new QAction(QIcon(":/images/filenew.png"),tr("New Project"),NULL);
+    ac=new QAction(QIcon(":/images/filenew.png"),tr("New Project"),Q_NULLPTR);
     insertAction("Project.New",ac);
-    ac=new QAction(QIcon(":/images/close.png"),tr("Close Project"),NULL);
+    ac=new QAction(QIcon(":/images/close.png"),tr("Close Project"),Q_NULLPTR);
     insertAction("Project.Close",ac);
 }
 
@@ -193,9 +193,9 @@ void QSoftCore::initResourceAction()
 {
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Resource"),NULL);
+    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Resource"),Q_NULLPTR);
     insertAction("ResourceManager.Add",ac);
-    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Resource"),NULL);
+    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Resource"),Q_NULLPTR);
     insertAction("ResourceManager.Del",ac);
 }
 
@@ -203,38 +203,38 @@ void QSoftCore::initImageViewAction()
 {
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/fitinscreen.png"),tr("Fit image int the screen"),NULL);
+    ac=new QAction(QIcon(":/images/fitinscreen.png"),tr("Fit image int the screen"),Q_NULLPTR);
     insertAction("ImageView.Fit",ac);
-    ac=new QAction(QIcon(":/images/originalsize.png"),tr("Original size"),NULL);
+    ac=new QAction(QIcon(":/images/originalsize.png"),tr("Original size"),Q_NULLPTR);
     insertAction("ImageView.Original",ac);
-    ac=new QAction(QIcon(":/images/zoomin.png"),tr("Zoomin"),NULL);
+    ac=new QAction(QIcon(":/images/zoomin.png"),tr("Zoomin"),Q_NULLPTR);
     insertAction("ImageView.Zoomin",ac);
-    ac=new QAction(QIcon(":/images/zoomout.png"),tr("Zoomout"),NULL);
+    ac=new QAction(QIcon(":/images/zoomout.png"),tr("Zoomout"),Q_NULLPTR);
     insertAction("ImageView.Zoomout",ac);
 }
 
 void QSoftCore::initScriptEditAction()
 {
     QAction *ac;
-    ac=new QAction(QIcon(":/images/filesave_small.png"),tr("&Save"),NULL);
+    ac=new QAction(QIcon(":/images/filesave_small.png"),tr("&Save"),Q_NULLPTR);
     insertAction("ScriptEdit.Save",ac);
-    ac=new QAction(QIcon(":/images/undo.png"),tr("&Undo"),NULL);
+    ac=new QAction(QIcon(":/images/undo.png"),tr("&Undo"),Q_NULLPTR);
     insertAction("ScriptEdit.Undo",ac);
-    ac=new QAction(QIcon(":/images/redo.png"),tr("&Redo"),NULL);
+    ac=new QAction(QIcon(":/images/redo.png"),tr("&Redo"),Q_NULLPTR);
     insertAction("ScriptEdit.Redo",ac);
-    ac=new QAction(QIcon(":/images/editcut.png"),tr("Cu&t"),NULL);
+    ac=new QAction(QIcon(":/images/editcut.png"),tr("Cu&t"),Q_NULLPTR);
     insertAction("ScriptEdit.Cut",ac);
-    ac=new QAction(QIcon(":/images/editcopy.png"),tr("&Copy"),NULL);
+    ac=new QAction(QIcon(":/images/editcopy.png"),tr("&Copy"),Q_NULLPTR);
     insertAction("ScriptEdit.Copy",ac);
-    ac=new QAction(QIcon(":/images/editpaste.png"),tr("&Paste"),NULL);
+    ac=new QAction(QIcon(":/images/editpaste.png"),tr("&Paste"),Q_NULLPTR);
     insertAction("ScriptEdit.Paste",ac);
-    ac=new QAction(QIcon(":/images/zoomin.png"),tr("Zoomin"),NULL);
+    ac=new QAction(QIcon(":/images/zoomin.png"),tr("Zoomin"),Q_NULLPTR);
     insertAction("ScriptEdit.Zoomin",ac);
-    ac=new QAction(QIcon(":/images/zoomout.png"),tr("Zoomout"),NULL);
+    ac=new QAction(QIcon(":/images/zoomout.png"),tr("Zoomout"),Q_NULLPTR);
     insertAction("ScriptEdit.Zoomout",ac);
-    ac=new QAction(QIcon(":/images/font.png"),tr("Set Font"),NULL);
+    ac=new QAction(QIcon(":/images/font.png"),tr("Set Font"),Q_NULLPTR);
     insertAction("ScriptEdit.Font",ac);
-    ac=new QAction(QIcon(":/images/fitinscreen.png"),tr("Search"),NULL);
+    ac=new QAction(QIcon(":/images/fitinscreen.png"),tr("Search"),Q_NULLPTR);
     insertAction("ScriptEdit.Search",ac);
 }
 
@@ -242,9 +242,9 @@ void QSoftCore::initDataAction()
 {
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Group"),NULL);
+    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Group"),Q_NULLPTR);
     insertAction("Data.Group.Add",ac);
-    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Group"),NULL);
+    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Group"),Q_NULLPTR);
     insertAction("Data.Group.Del",ac);
 }
 
@@ -252,38 +252,38 @@ void QSoftCore::initDriverAction()
 {
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Driver"),NULL);
+    ac=new QAction(QIcon(":/images/plus.png"),tr("Add Driver"),Q_NULLPTR);
     insertAction("Driver.Add",ac);
-    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Driver"),NULL);
+    ac=new QAction(QIcon(":/images/minus.png"),tr("Remove Driver"),Q_NULLPTR);
     insertAction("Driver.Del",ac);
 }
 
 void QSoftCore::initRunningAction()
 {
     QAction *ac;
-    ac=new QAction(QIcon(":/images/run.png"),tr("Run"),NULL);
+    ac=new QAction(QIcon(":/images/run.png"),tr("Run"),Q_NULLPTR);
     insertAction("Debug.Run",ac);
-    ac=new QAction(QIcon(":/images/stop.png"),tr("Stop"),NULL);
+    ac=new QAction(QIcon(":/images/stop.png"),tr("Stop"),Q_NULLPTR);
     insertAction("Debug.Stop",ac);
 }
 
 void QSoftCore::initDeviceAction()
 {
     QAction* ac;
-    ac=new QAction(QIcon(":/images/device.png"),tr("Update"),NULL);
+    ac=new QAction(QIcon(":/images/device.png"),tr("Update"),Q_NULLPTR);
     insertAction("Device.Update",ac);
-    ac=new QAction(QIcon(":/images/sync.png"),tr("Sync Data"),NULL);
+    ac=new QAction(QIcon(":/images/sync.png"),tr("Sync Data"),Q_NULLPTR);
     insertAction("Device.Sync",ac);
 }
 
 void QSoftCore::initUndoAction()
 {
     QAction* ac;
-    ac=m_undo_group->createRedoAction(NULL);
+    ac=m_undo_group->createRedoAction(Q_NULLPTR);
     ac->setIcon(QIcon(":/images/redo.png"));
     ac->setShortcut(QKeySequence::Redo);
     insertAction("Undo.Redo",ac);
-    ac=m_undo_group->createUndoAction(NULL);
+    ac=m_undo_group->createUndoAction(Q_NULLPTR);
     ac->setIcon(QIcon(":/images/undo.png"));
     ac->setShortcut(QKeySequence::Undo);
     insertAction("Undo.Undo",ac);
@@ -319,7 +319,7 @@ void QSoftCore::startUpdatePlugin()
         foreach(const QString &n,list)
         {
             QAbstractUpdate *up=pl->create(n);
-            if(up!=NULL)
+            if(up!=Q_NULLPTR)
             {
                 m_devicesManager->addUpdate(up);
             }

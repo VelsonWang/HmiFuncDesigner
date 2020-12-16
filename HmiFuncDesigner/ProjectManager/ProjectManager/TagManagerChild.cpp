@@ -5,7 +5,7 @@
 #include "reader.h"
 #include "variantdata.h"
 #include "Helper.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
 #include "DevicePluginLoader.h"
 #include <QMenu>
 #include <QAction>
@@ -19,7 +19,8 @@
 #include <QModelIndex>
 #include <QVBoxLayout>
 #include <QTableWidgetItem>
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include "IDevicePlugin.h"
 #include "TableviewDelegate.h"
 #include "MainWindow.h"
@@ -32,8 +33,8 @@
 #include <QFile>
 #include <QPluginLoader>
 #include <QFileDialog>
-#include "Tag.h"
-#include "TagEditDialog.h"
+#include "tag.h"
+#include "tageditdialog.h"
 #include <QClipboard>
 #include <QInputDialog>
 #include <QScrollBar>
@@ -261,7 +262,7 @@ void QTableWidgetEx::clearTable() {
 void QTableWidgetEx::updateTable() {
     clearTable();
     QVector<QStringList> rowsDat;
-    foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
+    foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
         QStringList rowDat;
         setRowData(rowDat, pTagObj);
         rowsDat.append(rowDat);
@@ -337,8 +338,8 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index) {
 
     QStringList rowDat = m_pTagTableModel->m_tagRows.at(index.row());
     int iTagID = rowDat.at(0).toInt();
-    for(int i=0; i<ProjectData::getInstance()->tagMgr_.m_vecTags.count(); i++) {
-        Tag *pTagObj = ProjectData::getInstance()->tagMgr_.m_vecTags[i];
+    for(int i=0; i<QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.count(); i++) {
+        Tag *pTagObj = QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags[i];
         if(pTagObj->m_iID == iTagID) {
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
@@ -551,7 +552,7 @@ void QTableWidgetEx::onAddTag() {
 
     //--------------------------------------------------------------------------
 
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
         QStringList szListAddrType;
@@ -587,7 +588,7 @@ void QTableWidgetEx::onAddTag() {
     if(dlg.exec() == QDialog::Accepted) {
         Tag *pTagObj = new Tag();
         pTagObj->fromJsonObject(dlg.getTagObj());
-        pTagObj->m_iID = ProjectData::getInstance()->tagMgr_.allocID();
+        pTagObj->m_iID = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
 
         if(pTagObj->m_szDevType == "MEMORY") { // 内存变量
             if(pTagObj->m_szAddrType == tr("自动分配")) pTagObj->m_szAddrType = "AutoAlloc";
@@ -611,7 +612,7 @@ void QTableWidgetEx::onAddTag() {
                 }
             }
         }
-        ProjectData::getInstance()->tagMgr_.m_vecTags.append(pTagObj);
+        QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.append(pTagObj);
         updateTable();
     }
 }
@@ -636,7 +637,7 @@ void QTableWidgetEx::onCopyTag() {
     while (tagIDMapIterator.hasNext()) {
         tagIDMapIterator.next();
         int iTagID = tagIDMapIterator.key();
-        foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
+        foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
             if(pTagObj->m_iID == iTagID) {
                 emit copyOrCutTagToClipboard();
                 setActionEnable(TagAct_Paste, true);
@@ -660,8 +661,8 @@ void QTableWidgetEx::onPasteTag()
 
     Tag *pTagObj = new Tag;
     if(pTagObj->fromXmlNodeString(szTagObj)) {
-        pTagObj->m_iID = ProjectData::getInstance()->tagMgr_.allocID();
-        ProjectData::getInstance()->tagMgr_.m_vecTags.append(pTagObj);
+        pTagObj->m_iID = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
+        QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.append(pTagObj);
         updateTable();
     } else {
         delete pTagObj;
@@ -694,14 +695,14 @@ void QTableWidgetEx::onDeleteTag() {
         tagIDMapIterator.previous();
         iIDToDel = tagIDMapIterator.key();
         Tag *pFindTagObj = Q_NULLPTR;
-        foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
+        foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
             if(pTagObj->m_iID == iIDToDel) {
                 pFindTagObj = pTagObj;
                 break;
             }
         }
         if(pFindTagObj != Q_NULLPTR) {
-            ProjectData::getInstance()->tagMgr_.m_vecTags.removeOne(pFindTagObj);
+            QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.removeOne(pFindTagObj);
             bUpdate = true;
         }
     }
@@ -719,7 +720,7 @@ void QTableWidgetEx::onEditTag() {
     QStringList rowDat = m_pTagTableModel->m_tagRows.at(iRow);
     int iTagID = rowDat.at(0).toInt();
     if(rowDat.at(1).startsWith(QString("$"))) return; // 系统变量不可以编辑
-    foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
+    foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
         if(pTagObj->m_iID == iTagID) {
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
@@ -747,7 +748,7 @@ void QTableWidgetEx::onEditTag() {
 
             //--------------------------------------------------------------------------
 
-            DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+            DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
             for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
                 DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
                 QStringList szListAddrType;
@@ -839,7 +840,7 @@ void QTableWidgetEx::onExportToCsv()
     if (szSaveCsvPath == "") return;
 
     QtCSV::StringData varData;
-    foreach (Tag *pTagObj, ProjectData::getInstance()->tagMgr_.m_vecTags) {
+    foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
         QStringList varRow;
         varRow << QString::number(pTagObj->m_iID)
                << pTagObj->m_szName
@@ -902,7 +903,7 @@ void QTableWidgetEx::onImportFromCsv()
         QStringList row = data.at(i);
         if(row.at(0) == "ID") continue;
         Tag *pObj = new Tag();
-        pObj->m_iID = ProjectData::getInstance()->tagMgr_.allocID();
+        pObj->m_iID = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
         pObj->m_szName = row.at(1);
         pObj->m_szUnit = row.at(2);
         pObj->m_szAddrType = row.at(3);
@@ -914,7 +915,7 @@ void QTableWidgetEx::onImportFromCsv()
         pObj->m_szRemark = row.at(9);
         pObj->m_szOwnGroup = row.at(10);
         pObj->m_szDevType = row.at(11);
-        ProjectData::getInstance()->tagMgr_.m_vecTags.append(pObj);
+        QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.append(pObj);
     }
 
     this->updateTable();

@@ -17,9 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD
 INCLUDEPATH += $$PWD/property
 INCLUDEPATH += $$PWD/host
-INCLUDEPATH += $$PWD/resource
-INCLUDEPATH += $$PWD/driver
-
+INCLUDEPATH += $$PWD/projdata
 
 HEADERS += \
     sharedlibglobal.h \
@@ -51,16 +49,11 @@ HEADERS += \
     host/qabstractwidgethost.h \
     qprojectcore.h \
     host/qprojecthost.h \
-    resource/qresourceregister.h \
-    resource/qresourcefile.h \
-    resource/qrccmaker.h \
     host/qwidgethost.h \
     qbaseinit.h \
     host/qframehost.h \
     host/qformhost.h \
     qpagemanager.h \
-    qlanguage.h \
-    qusermanager.h \
     host/qlabelhost.h \
     host/qlcdnumberhost.h \
     host/qabstractbuttonhost.h \
@@ -81,8 +74,6 @@ HEADERS += \
     host/qprogressbarhost.h \
     host/qcomboboxhost.h \
     qabstractupdateplugin.h \
-    qdatamanager.h \
-    qdata.h \
     property/stylesheetitem/stylesheetstruct.h \
     property/stylesheetitem/qtextitem.h \
     property/stylesheetitem/qstylesheetitemfactory.h \
@@ -92,13 +83,7 @@ HEADERS += \
     property/stylesheetitem/qbackgrounditem.h \
     property/stylesheetitem/qabstractstylesheetitem.h \
     property/qstylesheetproperty.h \
-    resource/qresourcemanager.h \
-    qstylesheetinfo.h \
-    driver/qabstractdriver.h \
-    driver/qcommdriver.h \
-    driver/qtcpdriver.h \
-    qdriverfactory.h \
-    qdrivermanager.h
+    qstylesheetinfo.h
 
 SOURCES += \
     xmlobject.cpp \
@@ -128,16 +113,11 @@ SOURCES += \
     host/qabstractwidgethost.cpp \
     qprojectcore.cpp \
     host/qprojecthost.cpp \
-    resource/qresourceregister.cpp \
-    resource/qresourcefile.cpp \
-    resource/qrccmaker.cpp \
     host/qwidgethost.cpp \
     qbaseinit.cpp \
     host/qframehost.cpp \
     host/qformhost.cpp \
     qpagemanager.cpp \
-    qlanguage.cpp \
-    qusermanager.cpp \
     host/qlabelhost.cpp \
     host/qlcdnumberhost.cpp \
     host/qabstractbuttonhost.cpp \
@@ -158,8 +138,6 @@ SOURCES += \
     host/qprogressbarhost.cpp \
     host/qcomboboxhost.cpp \
     qabstractupdateplugin.cpp \
-    qdatamanager.cpp \
-    qdata.cpp \
     property/stylesheetitem/qtextitem.cpp \
     property/stylesheetitem/qstylesheetitemfactory.cpp \
     property/stylesheetitem/qgradientmaker.cpp \
@@ -168,13 +146,7 @@ SOURCES += \
     property/stylesheetitem/qbackgrounditem.cpp \
     property/stylesheetitem/qabstractstylesheetitem.cpp \
     property/qstylesheetproperty.cpp \
-    resource/qresourcemanager.cpp \
-    qstylesheetinfo.cpp \
-    driver/qabstractdriver.cpp \
-    driver/qcommdriver.cpp \
-    driver/qtcpdriver.cpp \
-    qdriverfactory.cpp \
-    qdrivermanager.cpp
+    qstylesheetinfo.cpp
 
 FORMS +=
 
@@ -189,31 +161,28 @@ RESOURCES += \
 INCLUDEPATH += $$PWD/projdata
 
 SOURCES += \
-    projdata/DataAES.cpp \
-    projdata/Tag.cpp \
+    projdata/dataaes.cpp \
+    projdata/tag.cpp \
     projdata/ulog.cpp \
-    projdata/ProjectData.cpp \
-    projdata/ProjectInfoManager.cpp \
-    projdata/NetSetting.cpp \
-    projdata/DatabaseSetting.cpp \
-    projdata/UserAuthority.cpp \
-    projdata/DeviceInfo.cpp \
-    projdata/PictureResourceManager.cpp \
-    projdata/Script.cpp \
-    projdata/Helper.cpp
+    projdata/projectinfomanager.cpp \
+    projdata/netsetting.cpp \
+    projdata/databasesetting.cpp \
+    projdata/userauthority.cpp \
+    projdata/deviceinfo.cpp \
+    projdata/pictureresourcemanager.cpp \
+    projdata/script.cpp \
+    projdata/helper.cpp
 
 
 HEADERS += \
-    projdata/DataAES.h \
-    projdata/IGraphPageSaveLoad.h \
-    projdata/Tag.h \
+    projdata/dataaes.h \
+    projdata/tag.h \
     projdata/ulog.h \
-    projdata/ProjectData.h \
-    projdata/ProjectInfoManager.h \
-    projdata/NetSetting.h \
-    projdata/DatabaseSetting.h \
-    projdata/UserAuthority.h \
-    projdata/DeviceInfo.h \
-    projdata/PictureResourceManager.h \
-    projdata/Script.h \
-    projdata/Helper.h
+    projdata/projectinfomanager.h \
+    projdata/netsetting.h \
+    projdata/databasesetting.h \
+    projdata/userauthority.h \
+    projdata/deviceinfo.h \
+    projdata/pictureresourcemanager.h \
+    projdata/script.h \
+    projdata/helper.h

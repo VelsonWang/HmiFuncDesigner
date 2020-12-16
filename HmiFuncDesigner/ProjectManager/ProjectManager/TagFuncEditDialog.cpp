@@ -8,7 +8,8 @@
 #include <QRect>
 #include "ConfigUtils.h"
 #include "Helper.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 
 static const int MaxTableColumns = 2;
 
@@ -177,7 +178,7 @@ void FuncModel::InsertRow(int i, PFuncObjectItem item)
 
 PFuncObjectItem FuncModel::GetRow(int i)
 {
-    PFuncObjectItem it = NULL;
+    PFuncObjectItem it = Q_NULLPTR;
     if (i < m_FuncList.size()) return m_FuncList.at(i);
     return it;
 }
@@ -586,7 +587,7 @@ void TagFuncEditDialog::GetElementProperty(PFuncObjectItem pFuncObj)
         if (m_pCurFuncObj->argList.at(i).type == "V") {
             argName = QString("var%1").arg(i + 1);
             argItem = m_pVariantManager->addProperty(QtVariantPropertyManager::enumTypeId(), argName);
-            ProjectData::getInstance()->getAllTagName(m_varsList, "ALL");
+            QSoftCore::getCore()->getProjectCore()->getAllTagName(m_varsList, "ALL");
             argItem->setAttribute(QLatin1String("enumNames"), m_varsList);
             if (m_varsList.indexOf(m_pCurFuncObj->argList.at(i).arg) != -1) {
                 argItem->setValue(m_varsList.indexOf(m_pCurFuncObj->argList.at(i).arg));

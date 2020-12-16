@@ -2,9 +2,9 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QPainter>
 
-Element::Element(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+Element::Element(QSoftCore* pSoftCoreObj, QtVariantPropertyManager *propertyMgr)
     : elementId(""),
-      m_pProjDataObj(pProjDataObj),
+      m_pSoftCoreObj(pSoftCoreObj),
       variantPropertyManager_(propertyMgr)
 {
 }

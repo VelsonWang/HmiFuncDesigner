@@ -41,7 +41,7 @@ void QLCDNumberHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","digitCount");
         pro->setAttribute("show_name",tr("DigitCount"));
@@ -51,7 +51,7 @@ void QLCDNumberHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","numDigits");
         pro->setAttribute("show_name",tr("NumDigits"));
@@ -61,7 +61,7 @@ void QLCDNumberHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","intValue");
         pro->setAttribute("show_name",tr("IntValue"));
@@ -71,7 +71,7 @@ void QLCDNumberHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Float");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
@@ -81,7 +81,7 @@ void QLCDNumberHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","mode");
         pro->setAttribute("show_name",tr("Mode"));
@@ -114,7 +114,7 @@ void QLCDNumberHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","segmentStyle");
         pro->setAttribute("show_name",tr("SegmentStyle"));

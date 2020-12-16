@@ -18,7 +18,7 @@ void QAbstractButtonHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("String");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","text");
         pro->setAttribute("show_name",tr("Text"));
@@ -28,7 +28,7 @@ void QAbstractButtonHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","checkable");
         pro->setAttribute("show_name",tr("Checkable"));
@@ -38,7 +38,7 @@ void QAbstractButtonHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","checked");
         pro->setAttribute("show_name",tr("Checked"));
@@ -48,7 +48,7 @@ void QAbstractButtonHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","clicked");
         pro->setAttribute("show_name",tr("Clicked"));

@@ -42,7 +42,7 @@ void QFrameHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","frameShape");
         pro->setAttribute("show_name",tr("FrameShape"));
@@ -86,7 +86,7 @@ void QFrameHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","frameShadow");
         pro->setAttribute("show_name",tr("FrameShadow"));

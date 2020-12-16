@@ -1,5 +1,4 @@
 #include "PictureResourceManager.h"
-#include "ProjectData.h"
 #include <QFileInfo>
 #include <QFile>
 #include <string>

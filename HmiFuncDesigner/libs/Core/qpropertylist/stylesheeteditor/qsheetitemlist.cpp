@@ -41,7 +41,7 @@ QSize QSheetItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
 
 QSheetItemList::QSheetItemList(QWidget *parent) :
     QTreeWidget(parent),
-    m_select_item(NULL)
+    m_select_item(Q_NULLPTR)
 {
     this->setFrameStyle(QFrame::NoFrame);
     this->header()->hide();
@@ -97,7 +97,7 @@ void QSheetItemList::add(QAbstractStylesheetItem *item)
 void QSheetItemList::changed_item(QAbstractStylesheetItem *item)
 {
     QTreeWidgetItem *temp=m_sheet_to_item.value(item);
-    if(temp!=NULL)
+    if(temp!=Q_NULLPTR)
     {
         QString title=item->attribute("title");
         if(title.startsWith("::"))
@@ -161,13 +161,13 @@ void QSheetItemList::double_clicked(QTreeWidgetItem *item)
 {
     if(m_select_item!=item)
     {
-        if(m_select_item!=NULL)
+        if(m_select_item!=Q_NULLPTR)
         {
             QItemListWidget *wid=(QItemListWidget*)itemWidget(m_select_item,0);
             wid->set_icon("");
         }
         m_select_item=item;
-        if(m_select_item!=NULL)
+        if(m_select_item!=Q_NULLPTR)
         {
             QItemListWidget *wid=(QItemListWidget*)itemWidget(m_select_item,0);
             wid->set_icon(":/images/check.png");
@@ -178,13 +178,13 @@ void QSheetItemList::double_clicked(QTreeWidgetItem *item)
 
 void QSheetItemList::set_select(QAbstractStylesheetItem *item)
 {
-    if(m_select_item!=NULL)
+    if(m_select_item!=Q_NULLPTR)
     {
         QItemListWidget *wid=(QItemListWidget*)itemWidget(m_select_item,0);
         wid->set_icon("");
     }
     m_select_item=m_sheet_to_item.value(item);
-    if(m_select_item!=NULL)
+    if(m_select_item!=Q_NULLPTR)
     {
         QItemListWidget *wid=(QItemListWidget*)itemWidget(m_select_item,0);
         wid->set_icon(":/images/check.png");

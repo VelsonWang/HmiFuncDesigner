@@ -60,7 +60,7 @@ QSize QTemplateDeletgate::sizeHint(const QStyleOptionViewItem &option, const QMo
 
 QWidget* QTemplateDeletgate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QTemplateNameWidget* wid=NULL;
+    QTemplateNameWidget* wid=Q_NULLPTR;
     return wid;
 }
 
@@ -71,7 +71,7 @@ QTemplateTreeWidget::QTemplateTreeWidget(const QString &type, QWidget *parent):
     m_default(new QTreeWidgetItem(this)),
     m_more(new QTreeWidgetItem(this)),
     m_type(type),
-    m_current_item(NULL)
+    m_current_item(Q_NULLPTR)
 {
     this->setItemDelegate(new QTemplateDeletgate(this));
     this->setAlternatingRowColors(true);
@@ -109,7 +109,7 @@ QTemplateTreeWidget::~QTemplateTreeWidget()
 void QTemplateTreeWidget::add_item(tagTemplateInfo *info)
 {
     QTreeWidgetItem *item=m_name_to_item.value(info->m_name);
-    if(item!=NULL)
+    if(item!=Q_NULLPTR)
     {
         return;
     }
@@ -160,7 +160,7 @@ void QTemplateTreeWidget::remove()
 {
     QTemplateNameWidget *wid=(QTemplateNameWidget*)sender();
     QMapIterator<QTreeWidgetItem*,tagTemplateInfo*> it(m_item_to_info);
-    QTreeWidgetItem *item=NULL;
+    QTreeWidgetItem *item=Q_NULLPTR;
     while(it.hasNext())
     {
         it.next();
@@ -170,7 +170,7 @@ void QTemplateTreeWidget::remove()
             break;
         }
     }
-    if(item==NULL)
+    if(item==Q_NULLPTR)
     {
         return;
     }
@@ -203,7 +203,7 @@ void QTemplateTreeWidget::up()
 {
     QTemplateNameWidget *wid=(QTemplateNameWidget*)sender();
     QMapIterator<QTreeWidgetItem*,tagTemplateInfo*> it(m_item_to_info);
-    QTreeWidgetItem *item=NULL;
+    QTreeWidgetItem *item=Q_NULLPTR;
     while(it.hasNext())
     {
         it.next();
@@ -213,7 +213,7 @@ void QTemplateTreeWidget::up()
             break;
         }
     }
-    if(item==NULL)
+    if(item==Q_NULLPTR)
     {
         return;
     }
@@ -341,18 +341,18 @@ void QTemplateTreeWidget::mousePressEvent(QMouseEvent *event)
 void QTemplateTreeWidget::double_clicked(QTreeWidgetItem *item)
 {
     tagTemplateInfo *info=m_item_to_info.value(item);
-    if(info==NULL)
+    if(info==Q_NULLPTR)
     {
         return;
     }
 
-    if(m_current_item!=NULL)
+    if(m_current_item!=Q_NULLPTR)
     {
         QTemplateNameWidget *wid=(QTemplateNameWidget*)itemWidget(m_current_item,0);
         wid->set_icon("");
     }
     m_current_item=item;
-    if(m_current_item!=NULL)
+    if(m_current_item!=Q_NULLPTR)
     {
         QTemplateNameWidget *wid=(QTemplateNameWidget*)itemWidget(m_current_item,0);
         wid->set_icon(":/images/check.png");

@@ -1,6 +1,7 @@
 ﻿#include "NetSettingDialog.h"
 #include "ui_NetSettingDialog.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QRegExp>
 #include <QRegExpValidator>
 #include <QMessageBox>
@@ -67,7 +68,7 @@ void NetSettingDialog::on_btnExit_clicked()
 
 void NetSettingDialog::load()
 {
-    NetSetting &netSetting = ProjectData::getInstance()->netSetting_;
+    NetSetting &netSetting = QSoftCore::getCore()->getProjectCore()->netSetting_;
     ui->checkHotStandbyMode->setChecked(netSetting.isHotStandbyMode());
     ui->checkClientMode->setChecked(netSetting.isClientMode());
     ui->rtbnServerStation->setChecked(netSetting.isServerStation());
@@ -80,7 +81,7 @@ void NetSettingDialog::load()
 
 void NetSettingDialog::save()
 {
-    NetSetting &netSetting = ProjectData::getInstance()->netSetting_;
+    NetSetting &netSetting = QSoftCore::getCore()->getProjectCore()->netSetting_;
     netSetting.setHotStandbyMode(ui->checkHotStandbyMode->isChecked());
     netSetting.setClientMode(ui->checkClientMode->isChecked());
     netSetting.setServerStation(ui->rtbnServerStation->isChecked());

@@ -56,7 +56,7 @@ void QAddHostUndoCommand::undo()
 
 void QAddHostUndoCommand::add()
 {
-    if(m_parent_host!=NULL)
+    if(m_parent_host!=Q_NULLPTR)
     {
         m_parent_host->insertChildren(m_indexs,m_hosts);
     }
@@ -64,7 +64,7 @@ void QAddHostUndoCommand::add()
 
 void QAddHostUndoCommand::remove()
 {
-    if(m_parent_host!=NULL)
+    if(m_parent_host!=Q_NULLPTR)
     {
         m_parent_host->removeChildren(m_hosts);
     }

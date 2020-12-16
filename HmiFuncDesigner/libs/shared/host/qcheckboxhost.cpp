@@ -59,7 +59,7 @@ void QCheckBoxHost::initProperty()
     setProperty("sub_control",list);
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","tristate");
         pro->setAttribute("show_name",tr("Tristate"));
@@ -69,7 +69,7 @@ void QCheckBoxHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","stateChanged");
         pro->setAttribute("show_name",tr("StateChanged"));

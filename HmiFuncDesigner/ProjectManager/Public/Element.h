@@ -11,14 +11,14 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "XMLNodeObject.h"
-#include "ProjectData.h"
+#include "xmlobject.h"
+#include "qsoftcore.h"
 
 class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    Element(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
+    Element(QSoftCore* pSoftCoreObj, QtVariantPropertyManager *propertyMgr);
     virtual ~Element();
 
     void init();
@@ -132,7 +132,7 @@ protected:
     int iGraphPageWidth_; // 画面宽度
     int iGraphPageHeight_; // 画面高度
 
-    ProjectData* m_pProjDataObj;
+    QSoftCore* m_pSoftCoreObj;
 
 signals:
     void elementMoved(QPointF);

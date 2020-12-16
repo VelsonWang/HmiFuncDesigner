@@ -76,9 +76,9 @@ QWidgetView::QWidgetView(QAbstractHost *host, QWidget *parent) :
 void QWidgetView::initWidgetList()
 {
     QProjectCore *core=QSoftCore::getCore()->getProjectCore();
-    QAbstractHost* global_host=core->get_project_host();
+    QAbstractHost* global_host=core->getProjectHost();
 
-    QList<QAbstractHost*>   list=core->get_page_manager()->getPages();
+    QList<QAbstractHost*>   list=core->getPageManager()->getPages();
 
     QTreeWidgetItem *item=new QTreeWidgetItem(this);
     item->setText(0,tr("global"));
@@ -87,12 +87,12 @@ void QWidgetView::initWidgetList()
     while(list.size()>0)
     {
         QAbstractHost* host=list.takeFirst();
-        QTreeWidgetItem* par=NULL;
-        if(host->getParent()!=NULL)
+        QTreeWidgetItem* par=Q_NULLPTR;
+        if(host->getParent()!=Q_NULLPTR)
         {
             par=m_items.value(host->getParent());
         }
-        if(par==NULL)
+        if(par==Q_NULLPTR)
         {
             item=new QTreeWidgetItem(this);
         }
@@ -127,7 +127,7 @@ void QWidgetView::clickedItem(QTreeWidgetItem *item,int)
 void QWidgetView::setSelect(QAbstractHost *host)
 {
     QTreeWidgetItem *item=m_items.value(host);
-    if(item!=NULL && !item->isSelected())
+    if(item!=Q_NULLPTR && !item->isSelected())
     {
         this->clearSelection();
         setCurrentItem(item);
@@ -181,13 +181,13 @@ QAbstractHost *QWidgetView::currentHost()
             return it.key();
         }
     }
-    return NULL;
+    return Q_NULLPTR;
 }
 
 QIcon QWidgetView::get_host_icon(QAbstractHost *host)
 {
     tagHostInfo *info=QHostFactory::get_host_info(host->getAttribute(HOST_TYPE));
-    if(info!=NULL)
+    if(info!=Q_NULLPTR)
     {
         return QIcon(info->getShowIcon());
     }

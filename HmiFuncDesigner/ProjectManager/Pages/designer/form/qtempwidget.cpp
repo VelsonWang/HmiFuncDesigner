@@ -15,7 +15,7 @@
 QTempWidget::QTempWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QTempWidget),
-    m_current(NULL),
+    m_current(Q_NULLPTR),
     m_name_edit(new QNameEdit("[_a-zA-Z][_a-zA-Z0-9]{,64}"))
 {
     ui->setupUi(this);
@@ -37,7 +37,7 @@ void QTempWidget::set_current(tagTemplateInfo *info)
     }
     QAbstractHost* h=m_info_to_host.value(info);
 
-    if(h==NULL)
+    if(h==Q_NULLPTR)
     {
         QFile f(info->m_file_name);
         if(!f.open(QFile::ReadOnly))
@@ -52,7 +52,7 @@ void QTempWidget::set_current(tagTemplateInfo *info)
             return;
         }
         h=QHostFactory::create_host(&xml);
-        if(h==NULL)
+        if(h==Q_NULLPTR)
         {
             return;
         }
@@ -90,7 +90,7 @@ void QTempWidget::set_current(tagTemplateInfo *info)
 
 bool QTempWidget::eventFilter(QObject *o, QEvent *e)
 {
-    if(o->isWidgetType() && e->type()==QEvent::Paint && o->parent()==NULL)
+    if(o->isWidgetType() && e->type()==QEvent::Paint && o->parent()==Q_NULLPTR)
     {
         QWidget* wid=(QWidget*)o;
         QPainter p(wid);
@@ -104,7 +104,7 @@ bool QTempWidget::eventFilter(QObject *o, QEvent *e)
 void QTempWidget::on_exists_button_clicked()
 {
     QString name=QFileDialog::getOpenFileName(this,tr("Select File"),QDir::currentPath(),tr("Page File(*.xml)"));
-    if(name!=NULL)
+    if(name!=Q_NULLPTR)
     {
         emit add_file(name);
     }
@@ -118,7 +118,7 @@ void QTempWidget::on_okbtn_clicked()
         return;
     }
     QAbstractHost* h=m_info_to_host.value(m_current);
-    if(h!=NULL)
+    if(h!=Q_NULLPTR)
     {
         h->setPropertyValue("objectName",str);
         m_info_to_host.remove(m_current);

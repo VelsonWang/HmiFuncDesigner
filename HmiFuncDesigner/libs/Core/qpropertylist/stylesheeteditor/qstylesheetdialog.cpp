@@ -102,7 +102,7 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
     foreach(tagStylesheetItem item,items)
     {
         maker=QStylesheetItemFactory::createItem(name);
-        if(maker!=NULL)
+        if(maker!=Q_NULLPTR)
         {
             QVariant v;
             v.setValue<tagStylesheetItem>(item);
@@ -134,7 +134,7 @@ void QStyleSheetDialog::add_item(QAbstractStylesheetItem *item)
     m_item_list->add(item);
 
     QBaseEditorWidget *wid=create_editor_widget(m_property->getProperty("name").toString());
-    if(wid!=NULL)
+    if(wid!=Q_NULLPTR)
     {
         connect(wid,SIGNAL(changed()),this,SLOT(item_changed()));
         wid->init(item);
@@ -150,7 +150,7 @@ void QStyleSheetDialog::add_item(QAbstractStylesheetItem *item)
 void QStyleSheetDialog::select_changed(QAbstractStylesheetItem *item)
 {
     QBaseEditorWidget* wid=m_item_to_editor.value(item);
-    if(wid==NULL)
+    if(wid==Q_NULLPTR)
     {
         m_stacked_widget->setCurrentIndex(-1);
         m_show_widget->set_item_sheet("");
@@ -187,10 +187,10 @@ void QStyleSheetDialog::item_changed()
 void QStyleSheetDialog::clear()
 {
     QBaseEditorWidget* wid=(QBaseEditorWidget*)m_stacked_widget->currentWidget();
-    if(wid!=NULL)
+    if(wid!=Q_NULLPTR)
     {
         QAbstractStylesheetItem *item=m_editor_to_item.value(wid);
-        if(item!=NULL)
+        if(item!=Q_NULLPTR)
         {
             QString str;
             tagStylesheetItem it=item->value().value<tagStylesheetItem>();
@@ -273,7 +273,7 @@ void QStyleSheetDialog::add()
         }
 
         QAbstractStylesheetItem* maker=QStylesheetItemFactory::createItem(m_property->getProperty("name").toString());
-        if(maker!=NULL)
+        if(maker!=Q_NULLPTR)
         {
             tagStylesheetItem it;
             it.m_attributes.insert("title",title);

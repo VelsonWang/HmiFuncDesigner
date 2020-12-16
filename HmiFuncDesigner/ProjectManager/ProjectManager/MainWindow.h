@@ -14,7 +14,6 @@
 #include "qttreepropertybrowser.h"
 #include "ProjectTreeView.h"
 #include "ChildInterface.h"
-#include "IGraphPageSaveLoad.h"
 #include "GraphPageListWidget.h"
 #include <QVariant>
 #include <QIcon>
@@ -37,7 +36,7 @@
 
 class QAbstractPage;
 
-class MainWindow : public QMainWindow, public IGraphPageSaveLoad
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -47,14 +46,10 @@ public:
     void UpdateDeviceVariableTableGroup();
 
 public:
-    // 加载画面
-    bool openFromXml(XMLObject *pXmlObj) Q_DECL_OVERRIDE;
-    // 保存画面
-    bool saveToXml(XMLObject *pXmlObj) Q_DECL_OVERRIDE;
     // 获取工程所有控件的ID名称
-    void getAllElementIDName(QStringList &szIDList) Q_DECL_OVERRIDE;
+    void getAllElementIDName(QStringList &szIDList);
     // 获取工程所有画面名称
-    void getAllGraphPageName(QStringList &szList) Q_DECL_OVERRIDE;
+    void getAllGraphPageName(QStringList &szList);
 
 public slots:
     QWidget* getActiveSubWindow();

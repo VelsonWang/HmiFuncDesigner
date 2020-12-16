@@ -14,10 +14,10 @@
 
 QRunningManager::QRunningManager(QObject *parent) :
     QObject(parent),
-    m_project(NULL),
+    m_project(Q_NULLPTR),
     m_main_window(new QMainWindow((QWidget*)parent)),
     m_dialog_base_widget(new QBaseDialogWidget(m_main_window)),
-    m_last_widget(NULL)
+    m_last_widget(Q_NULLPTR)
 {
     m_dialog_base_widget->setVisible(false);
     m_main_window->installEventFilter(this);
@@ -32,33 +32,34 @@ QRunningManager::~QRunningManager()
 
 bool QRunningManager::load(const QString &path)
 {
+
     release();
 
     m_project=new QProjectCore;
 
-    if(!m_project->open(path+"/config.sfb"))
-    {
-        return false;
-    }
-    m_project->init_script_engine();
-    connect(m_project->get_project_host(),SIGNAL(notifyShowWidget(QWidget*)),this,SLOT(onShowWidget(QWidget*)));
-    connect(m_project->get_project_host(),SIGNAL(notifyShowDialog(QAbstractHost*)),this,SLOT(onShowDialog(QAbstractHost*)));
+//    if(!m_project->open(path+"/config.sfb"))
+//    {
+//        return false;
+//    }
+    m_project->initScriptEngine();
+    connect(m_project->getProjectHost(),SIGNAL(notifyShowWidget(QWidget*)),this,SLOT(onShowWidget(QWidget*)));
+    connect(m_project->getProjectHost(),SIGNAL(notifyShowDialog(QAbstractHost*)),this,SLOT(onShowDialog(QAbstractHost*)));
     return true;
 }
 
 void QRunningManager::release()
 {
-    if(m_project!=NULL)
+    if(m_project!=Q_NULLPTR)
     {
         delete m_project;
-        m_project=NULL;
+        m_project=Q_NULLPTR;
     }
-    m_last_widget=NULL;
+    m_last_widget=Q_NULLPTR;
 }
 
 void QRunningManager::onShowWidget(QWidget *widget)
 {
-    if(widget==NULL)
+    if(widget==Q_NULLPTR)
     {
         return;
     }
@@ -67,7 +68,7 @@ void QRunningManager::onShowWidget(QWidget *widget)
         widget->setParent(m_main_window);
     }
 
-    if(m_last_widget!=NULL)
+    if(m_last_widget!=Q_NULLPTR)
     {
         m_last_widget->setVisible(false);
     }
@@ -89,7 +90,7 @@ void QRunningManager::onShowDialog(QAbstractHost *host)
 
     dlg.exec();
 
-    wid->setParent(NULL);
+    wid->setParent(Q_NULLPTR);
 }
 
 bool QRunningManager::eventFilter(QObject *o, QEvent *e)
@@ -104,10 +105,10 @@ bool QRunningManager::eventFilter(QObject *o, QEvent *e)
 
 void QRunningManager::start()
 {
-    QProjectHost* host=(QProjectHost*)m_project->get_project_host();
+    QProjectHost* host=(QProjectHost*)m_project->getProjectHost();
     QString start_page=host->getPropertyValue("start_page").toString();
 
-    QPageManager *manager=m_project->get_page_manager();
+    QPageManager *manager=m_project->getPageManager();
     QList<QAbstractHost*> list=manager->getPages();
     foreach(QAbstractHost* page,list)
     {

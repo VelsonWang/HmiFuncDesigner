@@ -58,7 +58,7 @@ QSize QFileDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIn
 QFileListView::QFileListView(bool can_remove, bool show_picture, bool double_clicked, QWidget *parent):
     QTreeWidget(parent),
     m_can_remove(can_remove),
-    m_current(NULL),
+    m_current(Q_NULLPTR),
     m_show_picture(show_picture),
     m_double_clicked(double_clicked)
 {
@@ -209,7 +209,7 @@ void QFileListView::remove_group(tagFileGroupInfo *g)
     foreach(tagFileInfo* info,g->m_files)
     {
         QTreeWidgetItem *item=m_file_to_item.value(info);
-        if(item!=NULL)
+        if(item!=Q_NULLPTR)
         {
             m_item_to_file.remove(item);
             m_file_to_item.remove(info);
@@ -217,23 +217,23 @@ void QFileListView::remove_group(tagFileGroupInfo *g)
     }
 
     QTreeWidgetItem *item=m_group_to_item.value(g);
-    if(item!=NULL)
+    if(item!=Q_NULLPTR)
     {
         m_group_to_item.remove(g);
         m_item_to_group.remove(item);
         delete item;
     }
     tagFileInfo *select=QSoftCore::getCore()->getFileManager()->get_file(m_select_uuid);
-    if(select==NULL || select->m_group_uuid==g->m_uuid)
+    if(select==Q_NULLPTR || select->m_group_uuid==g->m_uuid)
     {
-        select_first(g,NULL);
+        select_first(g,Q_NULLPTR);
     }
 }
 
 void QFileListView::insert_file(tagFileGroupInfo *g, tagFileInfo *f, int index)
 {
     QTreeWidgetItem *p=m_group_to_item.value(g);
-    if(p==NULL)
+    if(p==Q_NULLPTR)
     {
         return;
     }
@@ -253,7 +253,7 @@ void QFileListView::insert_file(tagFileGroupInfo *g, tagFileInfo *f, int index)
 void QFileListView::remove_file(tagFileGroupInfo *g, tagFileInfo *f)
 {
     QTreeWidgetItem *item=m_file_to_item.value(f);
-    if(item!=NULL)
+    if(item!=Q_NULLPTR)
     {
         m_item_to_file.remove(item);
         m_file_to_item.remove(f);
@@ -261,7 +261,7 @@ void QFileListView::remove_file(tagFileGroupInfo *g, tagFileInfo *f)
 
         if(f->m_uuid==m_select_uuid)
         {
-            m_current=NULL;
+            m_current=Q_NULLPTR;
             select_first(g,f);
         }
     }
@@ -273,7 +273,7 @@ void QFileListView::mousePressEvent(QMouseEvent *event)
     if(event->button()==Qt::LeftButton && event->pos().x()<20)
     {
         QTreeWidgetItem *item=itemAt(event->pos());
-        if(item!=NULL)
+        if(item!=Q_NULLPTR)
         {
             item->setExpanded(!item->isExpanded());
         }
@@ -315,7 +315,7 @@ void QFileListView::button_clicked()
 void QFileListView::double_clicked(QTreeWidgetItem *item)
 {
     tagFileInfo *file=m_item_to_file.value(item);
-    if(file!=NULL)
+    if(file!=Q_NULLPTR)
     {
         if(m_select_uuid!=file->m_uuid)
         {
@@ -327,7 +327,7 @@ void QFileListView::double_clicked(QTreeWidgetItem *item)
 void QFileListView::select_first(tagFileGroupInfo *g, tagFileInfo *f)
 {
     QList<tagFileGroupInfo*> list=QSoftCore::getCore()->getFileManager()->get_all_group();
-    if(f==NULL)
+    if(f==Q_NULLPTR)
     {
         list.removeAll(g);
     }
@@ -335,7 +335,7 @@ void QFileListView::select_first(tagFileGroupInfo *g, tagFileInfo *f)
     {
         if(group->m_files.size()>0)
         {
-            if(f==NULL)
+            if(f==Q_NULLPTR)
             {
                 select(group->m_files.first());
                 return;
@@ -358,12 +358,12 @@ void QFileListView::select_first(tagFileGroupInfo *g, tagFileInfo *f)
             }
         }
     }
-    select(NULL);
+    select(Q_NULLPTR);
 }
 
 void QFileListView::select(tagFileInfo *f)
 {
-    if(f!=NULL)
+    if(f!=Q_NULLPTR)
     {
         m_select_uuid=f->m_uuid;
     }
@@ -371,19 +371,19 @@ void QFileListView::select(tagFileInfo *f)
     {
         m_select_uuid="";
     }
-    if(m_current!=NULL)
+    if(m_current!=Q_NULLPTR)
     {
         QFileListItemWidget *wid=(QFileListItemWidget*)itemWidget(m_current,0);
-        if(wid!=NULL)
+        if(wid!=Q_NULLPTR)
         {
             wid->set_icon("");
         }
     }
     m_current=m_file_to_item.value(f);
-    if(m_current!=NULL)
+    if(m_current!=Q_NULLPTR)
     {
         QFileListItemWidget *wid=(QFileListItemWidget*)itemWidget(m_current,0);
-        if(wid!=NULL)
+        if(wid!=Q_NULLPTR)
         {
             wid->set_icon(":/images/check.png");
         }

@@ -4,7 +4,7 @@
 #include <QString>
 #include <QObject>
 #include "../xmlobject.h"
-#include "sharedlibglobal.h"
+#include "../sharedlibglobal.h"
 
 class SHAREDLIB_EXPORT UserAuthorityPrivate
 {

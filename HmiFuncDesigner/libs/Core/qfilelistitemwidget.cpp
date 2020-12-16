@@ -42,7 +42,7 @@ void QFileListItemWidget::enterEvent(QEvent *)
     if(m_view->can_remove())
     {
         tagFileGroupInfo *g=m_view->get_group(m_item);
-        if(g!=NULL)
+        if(g!=Q_NULLPTR)
         {
             foreach(tagFileInfo *info,g->m_files)
             {

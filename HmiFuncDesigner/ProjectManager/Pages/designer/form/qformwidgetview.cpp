@@ -8,7 +8,6 @@
 #include "../../../libs/shared/qhostfactory.h"
 #include "../../../libs/shared/qprojectcore.h"
 #include "../../../libs/shared/qpagemanager.h"
-#include "../../../libs/shared/qlanguage.h"
 #include <QVBoxLayout>
 #include <QStringList>
 #include <QPainter>
@@ -35,7 +34,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     QAction *ac;
 
     ac=core->getAction("FormManager.Add");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),this,SLOT(add_page()));
@@ -47,7 +46,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     list.append(ac);
 
     ac=core->getAction("FormManager.Same.Left");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_left()));
@@ -55,7 +54,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     }
 
     ac=core->getAction("FormManager.Same.V-Center");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_v_centre()));
@@ -63,7 +62,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     }
 
     ac=core->getAction("FormManager.Same.Right");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_right()));
@@ -71,7 +70,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     }
 
     ac=core->getAction("FormManager.Same.Top");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_top()));
@@ -79,7 +78,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     }
 
     ac=core->getAction("FormManager.Same.H-Center");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_h_centre()));
@@ -88,7 +87,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
 
 
     ac=core->getAction("FormManager.Same.Bottom");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_bottom()));
@@ -100,7 +99,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     list.append(ac);
 
     ac=core->getAction("FormManager.Same.Width");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_width()));
@@ -108,7 +107,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     }
 
     ac=core->getAction("FormManager.Same.Height");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_height()));
@@ -116,7 +115,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     }
 
     ac=core->getAction("FormManager.Same.Gemotry");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         list.append(ac);
         connect(ac,SIGNAL(triggered()),m_formWidget,SLOT(same_geometry()));
@@ -138,8 +137,8 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
 
     connect(m_formWidget,SIGNAL(select(QAbstractHost*)),this,SIGNAL(select(QAbstractHost*)));
     connect(this,SIGNAL(property_edit_signal(QAbstractProperty*,QVariant)),m_formWidget,SLOT(property_edit_slot(QAbstractProperty*,QVariant)));
-    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(opened_signals()),this,SLOT(project_opened()));
-    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(closed_signals()),this,SLOT(project_closed()));
+    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyOpened()),this,SLOT(project_opened()));
+    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyClosed()),this,SLOT(project_closed()));
 }
 
 QFormWidgetView::~QFormWidgetView()
@@ -148,7 +147,7 @@ QFormWidgetView::~QFormWidgetView()
 
 void QFormWidgetView::project_opened()
 {
-    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->get_page_manager();
+    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->getPageManager();
     QList<QAbstractHost*> pages=manager->getPages();
 
     foreach(QAbstractHost* h,pages)
@@ -166,68 +165,68 @@ void QFormWidgetView::project_opened()
     QAction *ac;
 
     ac=core->getAction("FormManager.Add");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Del");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.Left");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.V-Center");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.Right");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.Top");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.H-Center");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
 
     ac=core->getAction("FormManager.Same.Bottom");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.Width");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.Height");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
 
     ac=core->getAction("FormManager.Same.Gemotry");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(true);
     }
@@ -235,7 +234,7 @@ void QFormWidgetView::project_opened()
 
 void QFormWidgetView::project_closed()
 {
-    //emit select(NULL);
+    //emit select(Q_NULLPTR);
     m_language_uuid.clear();
     m_formWidget->clear();
     m_undo_stack->clear();
@@ -245,68 +244,68 @@ void QFormWidgetView::project_closed()
     QAction *ac;
 
     ac=core->getAction("FormManager.Add");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Del");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.Left");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.V-Center");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.Right");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.Top");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.H-Center");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
 
     ac=core->getAction("FormManager.Same.Bottom");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.Width");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.Height");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }
 
     ac=core->getAction("FormManager.Same.Gemotry");
-    if(ac!=NULL)
+    if(ac!=Q_NULLPTR)
     {
         ac->setEnabled(false);
     }

@@ -1,6 +1,7 @@
 #include "DatabaseSettingDialog.h"
 #include "ui_DatabaseSettingDialog.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QMessageBox>
 
 
@@ -99,7 +100,7 @@ bool DatabaseSettingDialog::check_data()
 
 void DatabaseSettingDialog::load()
 {
-    DatabaseSetting &dbSetting = ProjectData::getInstance()->dbSetting_;
+    DatabaseSetting &dbSetting = QSoftCore::getCore()->getProjectCore()->dbSetting_;
     ui->editAlarmSize->setText(QString::number(dbSetting.getAlarmSize()));
     ui->checkSpecialDB->setChecked(dbSetting.isSpecialDB());
     ui->checkAutoDelete->setChecked(dbSetting.isAutoDelete());
@@ -118,7 +119,7 @@ void DatabaseSettingDialog::load()
 
 void DatabaseSettingDialog::save()
 {
-    DatabaseSetting &dbSetting = ProjectData::getInstance()->dbSetting_;
+    DatabaseSetting &dbSetting = QSoftCore::getCore()->getProjectCore()->dbSetting_;
     dbSetting.setAlarmSize(ui->editAlarmSize->text().toInt());
     dbSetting.setSpecialDB(ui->checkSpecialDB->isChecked());
     dbSetting.setAutoDelete(ui->checkAutoDelete->isChecked());

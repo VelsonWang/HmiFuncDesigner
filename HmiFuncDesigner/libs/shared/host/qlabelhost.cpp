@@ -41,7 +41,7 @@ void QLabelHost::initProperty()
     QAbstractProperty* pro;
 
     pro=QPropertyFactory::create_property("String");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","text");
         pro->setAttribute("show_name",tr("Text"));
@@ -50,7 +50,7 @@ void QLabelHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","wordWrap");
         pro->setAttribute("show_name",tr("WordWrap"));
@@ -60,7 +60,7 @@ void QLabelHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Alignment");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));
@@ -70,7 +70,7 @@ void QLabelHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("StyleSheet");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","text_sheet");
         pro->setAttribute("show_name",tr("Text"));

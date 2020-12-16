@@ -4,7 +4,8 @@
 #include "SelectProtocolDialog.h"
 #include "IDevicePlugin.h"
 #include "ConfigUtils.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QDir>
 #include <QDialog>
 #include <QFileDialog>
@@ -74,7 +75,7 @@ void NewNetDeviceDialog::on_btnDeviceSelect_clicked()
         m_szPluginName = devName;
         // 查找相同的设备名称
         int findCnt = 0;
-        DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+        DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
 continueFind:
         for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
             DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
@@ -157,7 +158,7 @@ QString NewNetDeviceDialog::GetDeviceName() const {
 void NewNetDeviceDialog::load(const QString &szName)
 {
     if(szName == "") return;
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
     if(pObj == Q_NULLPTR) return;
     ui->editDeviceName->setText(pObj->szName_);
@@ -193,7 +194,7 @@ void NewNetDeviceDialog::load(const QString &szName)
 
 void NewNetDeviceDialog::save(const QString &szName)
 {
-    DeviceInfo &deviceInfo = ProjectData::getInstance()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
 
     if(pObj == Q_NULLPTR) {

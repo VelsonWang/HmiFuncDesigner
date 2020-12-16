@@ -11,7 +11,7 @@ QMemeryDataProperty::QMemeryDataProperty(QAbstractProperty *parent):
 
 void QMemeryDataProperty::toObject(XMLObject *xml)
 {
-    if(xml!=NULL)
+    if(xml!=Q_NULLPTR)
     {
         xml->clear();
 
@@ -43,7 +43,7 @@ void QMemeryDataProperty::toObject(XMLObject *xml)
 
 void QMemeryDataProperty::fromObject(XMLObject *xml)
 {
-    if(xml!=NULL)
+    if(xml!=Q_NULLPTR)
     {
         if(xml->getTagName()!=PROPERTY_TITLE)
         {

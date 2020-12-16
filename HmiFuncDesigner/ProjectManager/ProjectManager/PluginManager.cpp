@@ -45,7 +45,7 @@ void PluginManager::loadPlugin()
                 {
                     QMap<QString, IDrawApplicationPlugin*> plugins = plugins_.value(type);
                     IDrawApplicationPlugin *p = plugins.value(name);
-                    if(p != NULL)
+                    if(p != Q_NULLPTR)
                     {
                         delete p;
                     }

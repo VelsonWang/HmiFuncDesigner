@@ -5,7 +5,7 @@
 XMLObject::XMLObject(XMLObject *parent) :
     m_parent(parent)
 {
-    if(m_parent!=NULL)
+    if(m_parent!=Q_NULLPTR)
     {
         m_parent->m_children.append(this);
     }
@@ -14,7 +14,7 @@ XMLObject::XMLObject(XMLObject *parent) :
 XMLObject::~XMLObject()
 {
     clear();
-    if(m_parent!=NULL)
+    if(m_parent!=Q_NULLPTR)
     {
         m_parent->m_children.removeAll(this);
     }
@@ -79,7 +79,7 @@ void XMLObject::inser_child(int index, XMLObject *child)
         return;
     }
 
-    if(child->m_parent!=NULL)
+    if(child->m_parent!=Q_NULLPTR)
     {
         child->m_parent->m_children.removeAll(child);
 
@@ -131,7 +131,7 @@ bool XMLObject::load(const QString &buffer, QString *error)
             load(&r);
             if(r.hasError())
             {
-                if(error!=NULL)
+                if(error!=Q_NULLPTR)
                 {
                     *error=r.errorString();
                 }

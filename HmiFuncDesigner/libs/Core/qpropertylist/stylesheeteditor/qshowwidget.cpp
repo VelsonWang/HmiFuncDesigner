@@ -8,7 +8,7 @@
 QShowWidget::QShowWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QShowWidget),
-    m_host(NULL)
+    m_host(Q_NULLPTR)
 {
     ui->setupUi(this);
 
@@ -66,7 +66,7 @@ void QShowWidget::set_host(QAbstractHost *host)
 bool QShowWidget::eventFilter(QObject *o, QEvent *e)
 {
 
-    if(m_host!=NULL && o==m_host->getObject())
+    if(m_host!=Q_NULLPTR && o==m_host->getObject())
     {
         if(e->type()==QEvent::Paint)
         {

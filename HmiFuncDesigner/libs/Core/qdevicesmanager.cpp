@@ -16,7 +16,7 @@ QDevicesManager::~QDevicesManager()
 
 void QDevicesManager::addUpdate(QAbstractUpdate *update)
 {
-    if(update==NULL || m_updates.contains(update))
+    if(update==Q_NULLPTR || m_updates.contains(update))
     {
         return;
     }

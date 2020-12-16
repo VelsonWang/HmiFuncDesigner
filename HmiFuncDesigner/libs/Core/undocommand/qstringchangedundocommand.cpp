@@ -1,7 +1,6 @@
 #include "qstringchangedundocommand.h"
 #include "../qsoftcore.h"
 #include "../../shared/qprojectcore.h"
-#include "../../shared/qlanguage.h"
 #include "../../shared/property/qabstractproperty.h"
 #include "../../shared/host/qabstracthost.h"
 
@@ -35,11 +34,11 @@ int QStringChangedUndoCommand::id()const
 
 void QStringChangedUndoCommand::redo()
 {
-    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->get_host_by_uuid(m_host_uuid);
-    if(h!=NULL)
+    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    if(h!=Q_NULLPTR)
     {
         QAbstractProperty* pro=h->getProperty(m_property_name);
-        if(pro!=NULL)
+        if(pro!=Q_NULLPTR)
         {
             pro->setProperty("tr",m_new_tr);
             pro->setProperty("uuid",m_new_tr?m_uuid:QVariant());
@@ -79,11 +78,11 @@ void QStringChangedUndoCommand::redo()
 
 void QStringChangedUndoCommand::undo()
 {
-    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->get_host_by_uuid(m_host_uuid);
-    if(h!=NULL)
+    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    if(h!=Q_NULLPTR)
     {
         QAbstractProperty* pro=h->getProperty(m_property_name);
-        if(pro!=NULL)
+        if(pro!=Q_NULLPTR)
         {
             pro->setProperty("tr",m_old_tr);
             pro->setProperty("uuid",m_old_tr?m_uuid:QVariant());

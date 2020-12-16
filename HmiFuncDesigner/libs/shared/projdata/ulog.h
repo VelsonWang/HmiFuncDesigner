@@ -9,7 +9,7 @@
 #include <QMutexLocker>
 #include <QMutex>
 #include <stdlib.h>
-#include "sharedlibglobal.h"
+#include "../sharedlibglobal.h"
 
 enum ELogLevel{
     LOG_DEBUG,
@@ -30,7 +30,7 @@ public:
     static ULog* getInstance(QObject *parent = 0)
     {
         QMutexLocker locker(&mutex_);
-        if(log_ == NULL) {
+        if(log_ == Q_NULLPTR) {
             log_ = new ULog(parent);
             ::atexit(deleteInstance);
         }

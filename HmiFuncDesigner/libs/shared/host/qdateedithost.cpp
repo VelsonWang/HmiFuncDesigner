@@ -41,7 +41,7 @@ void QDateEditHost::initProperty()
     QAbstractProperty *pro;
 
     pro=QPropertyFactory::create_property("Date");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","maximumDate");
         pro->setAttribute("show_name",tr("MaximumDate"));
@@ -51,7 +51,7 @@ void QDateEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Date");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","minimumDate");
         pro->setAttribute("show_name",tr("MinimumDate"));
@@ -61,7 +61,7 @@ void QDateEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Date");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","date");
         pro->setAttribute("show_name",tr("Date"));
@@ -71,7 +71,7 @@ void QDateEditHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","currentSection");
         pro->setAttribute("show_name",tr("CurrentSection"));
@@ -100,7 +100,7 @@ void QDateEditHost::initProperty()
 
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","dateChanged");
         pro->setAttribute("show_name",tr("DateChanged"));

@@ -1,15 +1,10 @@
 #include "qstringeditdialog.h"
 #include "ui_qstringeditdialog.h"
-
-
 #include "../qsoftcore.h"
 #include "../undocommand/qstringchangedundocommand.h"
-
 #include "../../shared/property/qabstractproperty.h"
 #include "../../shared/qprojectcore.h"
-#include "../../shared/qlanguage.h"
 #include "../../shared/host/qabstracthost.h"
-
 #include <QLineEdit>
 #include <QPainter>
 #include <QStyleOptionViewItemV3>
@@ -140,7 +135,7 @@ void QStringEditDialog::on_okBtn_clicked()
         while(it.hasNext())
         {
             it.next();
-            new_translate.insert(it.value()->getUuid(),it.key()->text(1));
+
         }
     }
     else

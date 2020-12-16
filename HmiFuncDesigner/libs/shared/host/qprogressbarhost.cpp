@@ -41,7 +41,7 @@ void QProgressBarHost::initProperty()
     QAbstractProperty* pro;
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
@@ -51,7 +51,7 @@ void QProgressBarHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","maximum");
         pro->setAttribute("show_name",tr("Maximum"));
@@ -61,7 +61,7 @@ void QProgressBarHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Number");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","minimum");
         pro->setAttribute("show_name",tr("Minimum"));
@@ -71,7 +71,7 @@ void QProgressBarHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));
@@ -96,7 +96,7 @@ void QProgressBarHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","orientation");
         pro->setAttribute("show_name",tr("Orientation"));
@@ -120,7 +120,7 @@ void QProgressBarHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("ByteArray");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","format");
         pro->setAttribute("show_name",tr("Format"));
@@ -130,7 +130,7 @@ void QProgressBarHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setProperty("name","invertedAppearance");
         pro->setAttribute("show_name",tr("InvertedAppearance"));
@@ -141,7 +141,7 @@ void QProgressBarHost::initProperty()
 
 
     pro=QPropertyFactory::create_property("Bool");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setAttribute("name","textVisible");
         pro->setAttribute("show_name",tr("TextVisible"));
@@ -152,7 +152,7 @@ void QProgressBarHost::initProperty()
 
 
     pro=QPropertyFactory::create_property("Script");
-    if(pro!=NULL)
+    if(pro!=Q_NULLPTR)
     {
         pro->setAttribute("name","valueChanged");
         pro->setAttribute("show_name",tr("ValueChanged"));

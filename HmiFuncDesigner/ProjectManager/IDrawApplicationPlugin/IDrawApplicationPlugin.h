@@ -7,7 +7,7 @@
 #include "../Public/Element.h"
 #include "../Public/PublicDefine.h"
 #include "qtpropertymanager.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
 
 /*
 * 注意本类不要派生自QObject
@@ -32,7 +32,7 @@ public:
     // 获取元素ID String
     virtual QString getElementIDString() = 0;
     // 创建元素
-    virtual Element* createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr) = 0;
+    virtual Element* createElement(QSoftCore* pSoftCoreObj, QtVariantPropertyManager *propertyMgr) = 0;
 };
 
 

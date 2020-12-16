@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstdint>
 #include <string>
-#include "sharedlibglobal.h"
+#include "../sharedlibglobal.h"
 
 #define AES_DEFAULT_KEY "JasonWangEasyHMI"
 

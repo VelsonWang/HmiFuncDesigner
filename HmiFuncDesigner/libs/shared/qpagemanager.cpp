@@ -92,7 +92,7 @@ void QPageManager::load(XMLObject *pXmlObj)
         QList<XMLObject*> listForms = pXmlObj->getChildren();
         foreach(XMLObject* pObj, listForms) {
             QAbstractHost* host = QHostFactory::create_host(pObj);
-            if(host != NULL) {
+            if(host != Q_NULLPTR) {
                 m_page_list.append(host);
                 m_uuid_to_page.insert(host->getUuid(),host);
                 host->setProperty("old_file_name", "");
@@ -102,7 +102,7 @@ void QPageManager::load(XMLObject *pXmlObj)
                 while(list.size()>0) {
                     QAbstractHost *h=list.takeFirst();
                     QAbstractProperty* pro=h->getProperty("objectName");
-                    if(pro!=NULL) {
+                    if(pro!=Q_NULLPTR) {
                         connect(pro,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(host_name_changed_slot(QVariant,QVariant)));
                     }
                     list+=h->getChildren();
@@ -126,7 +126,7 @@ void QPageManager::load(XMLObject *pXmlObj)
         }
 
         QAbstractHost* host=QHostFactory::create_host(&xml);
-        if(host!=NULL) {
+        if(host!=Q_NULLPTR) {
             m_page_list.append(host);
             m_uuid_to_page.insert(host->getUuid(),host);
             host->setProperty("old_file_name", "");
@@ -136,7 +136,7 @@ void QPageManager::load(XMLObject *pXmlObj)
             while(list.size()>0) {
                 QAbstractHost *h=list.takeFirst();
                 QAbstractProperty* pro=h->getProperty("objectName");
-                if(pro!=NULL) {
+                if(pro!=Q_NULLPTR) {
                     connect(pro,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(host_name_changed_slot(QVariant,QVariant)));
                 }
                 list+=h->getChildren();
@@ -190,7 +190,7 @@ void QPageManager::load_page(const QString &fileName)
     }
 
     QAbstractHost* host=QHostFactory::create_host(&xml);
-    if(host!=NULL)
+    if(host!=Q_NULLPTR)
     {
         m_page_list.append(host);
         m_uuid_to_page.insert(host->getUuid(),host);
@@ -202,7 +202,7 @@ void QPageManager::load_page(const QString &fileName)
         {
             QAbstractHost *h=list.takeFirst();
             QAbstractProperty* pro=h->getProperty("objectName");
-            if(pro!=NULL)
+            if(pro!=Q_NULLPTR)
             {
                 connect(pro,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(host_name_changed_slot(QVariant,QVariant)));
             }
@@ -220,7 +220,7 @@ QAbstractHost* QPageManager::get_page(int index)
 {
     if(index<0 || index>=m_page_list.size())
     {
-        return NULL;
+        return Q_NULLPTR;
     }
     else
     {
@@ -247,7 +247,7 @@ void QPageManager::insert_page(QAbstractHost *host, int index)
     {
         QAbstractHost *h=list.takeFirst();
         QAbstractProperty* pro=h->getProperty("objectName");
-        if(pro!=NULL)
+        if(pro!=Q_NULLPTR)
         {
             connect(pro,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(host_name_changed_slot(QVariant,QVariant)));
         }
@@ -265,7 +265,7 @@ void QPageManager::remove_page(QAbstractHost *host)
     {
         QAbstractHost *h=list.takeFirst();
         QAbstractProperty* pro=h->getProperty("objectName");
-        if(pro!=NULL)
+        if(pro!=Q_NULLPTR)
         {
             disconnect(pro,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(host_name_changed_slot(QVariant,QVariant)));
         }

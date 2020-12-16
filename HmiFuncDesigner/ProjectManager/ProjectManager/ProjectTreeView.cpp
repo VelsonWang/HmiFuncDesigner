@@ -5,7 +5,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QDebug>
-#include "ProjectData.h"
+#include "qsoftcore.h"
 #include "NewVariableGroupDialog.h"
 
 ProjectTreeView::ProjectTreeView(QWidget *parent) : QTreeView(parent)

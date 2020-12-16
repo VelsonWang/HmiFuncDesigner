@@ -31,7 +31,7 @@ ScriptObject *Script::GetScriptObject(const QString &szName) {
     foreach (ScriptObject *pobj, m_listScriptObjects) {
         if (pobj->m_szName == szName) return pobj;
     }
-    return NULL;
+    return Q_NULLPTR;
 }
 
 

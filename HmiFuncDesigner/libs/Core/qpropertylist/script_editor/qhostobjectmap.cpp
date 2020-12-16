@@ -1,22 +1,16 @@
 #include "qhostobjectmap.h"
-
 #include "../../qsoftcore.h"
-
 #include "../../../shared/host/qabstracthost.h"
 #include "../../../shared/qprojectcore.h"
 #include "../../../shared/property/qabstractproperty.h"
-
 #include "../../../shared/qpagemanager.h"
-#include "../../../shared/qdatamanager.h"
-#include "../../../shared/qdata.h"
-
 #include <QVariant>
 #include <QMetaObject>
 #include <QMetaMethod>
 
 QHostObjectMap::QHostObjectMap(QAbstractProperty *property,QAbstractHost *host)
 {
-    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->get_project_host();
+    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->getProjectHost();
 
     bool keyboard=host->property("title").toString()=="keyboard";
     bool project=host->property("title").toString()=="Project";
@@ -24,28 +18,8 @@ QHostObjectMap::QHostObjectMap(QAbstractProperty *property,QAbstractHost *host)
     tagHostInfo *info=make_info(h);
     info->m_name="global";
 
-    QList<QData*> groups=QSoftCore::getCore()->getProjectCore()->get_data_manager()->get_all_datas();
-
-    foreach(QData *g,groups)
-    {
-        if(g->get_datas().size()>0)
-        {
-            tagHostInfo *temp=new tagHostInfo;
-            temp->m_name=g->get_name();
-            foreach(tagDataInfo* data,g->get_datas())
-            {
-                tagHostInfo *tt=new tagHostInfo;
-                tt->m_name=data->m_name;
-                tt->m_type="data";
-                temp->m_children.insert(tt->m_name,tt);
-            }
-            temp->m_type="data";
-            info->m_children.insert(temp->m_name,temp);
-        }
-    }
-
     m_infos.insert("global",info);
-    QList<QAbstractHost*>   list=QSoftCore::getCore()->getProjectCore()->get_page_manager()->getPages();
+    QList<QAbstractHost*>   list=QSoftCore::getCore()->getProjectCore()->getPageManager()->getPages();
 
     if(!keyboard || project)
     {

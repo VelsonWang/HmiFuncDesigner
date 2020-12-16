@@ -1,6 +1,7 @@
 #include "inserttagdlg.h"
 #include "ui_inserttagdlg.h"
-#include "ProjectData.h"
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 
 InsertTagDlg::InsertTagDlg(QWidget *parent)
     : QDialog(parent),
@@ -9,21 +10,21 @@ InsertTagDlg::InsertTagDlg(QWidget *parent)
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_varsList.clear();
-    ProjectData::getInstance()->getAllTagName(m_varsList, "IO");
+    QSoftCore::getCore()->getProjectCore()->getAllTagName(m_varsList, "IO");
     for(QString varName : m_varsList) {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/tag.png"), varName);
         ui->listWidgetTagIO->addItem(pItem);
     }
 
     m_varsList.clear();
-    ProjectData::getInstance()->getAllTagName(m_varsList, "TMP");
+    QSoftCore::getCore()->getProjectCore()->getAllTagName(m_varsList, "TMP");
     for(QString varName : m_varsList) {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/tag.png"), varName);
         ui->listWidgetTagTmp->addItem(pItem);
     }
 
     m_varsList.clear();
-    ProjectData::getInstance()->getAllTagName(m_varsList, "SYS");
+    QSoftCore::getCore()->getProjectCore()->getAllTagName(m_varsList, "SYS");
     for(QString varName : m_varsList) {
         QListWidgetItem *pItem = new QListWidgetItem(QIcon(":/images/tag.png"), varName);
         ui->listWidgetTagSys->addItem(pItem);

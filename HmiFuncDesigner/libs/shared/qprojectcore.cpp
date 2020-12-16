@@ -1,498 +1,431 @@
 #include "qprojectcore.h"
 #include "xmlobject.h"
 #include "qpagemanager.h"
-#include "qusermanager.h"
 #include "host/qprojecthost.h"
 #include "host/qformhost.h"
 #include "property/qabstractproperty.h"
 #include "qcommonstruct.h"
-#include "qlanguage.h"
-#include "qdatamanager.h"
-#include "qdata.h"
-#include "resource/qresourcemanager.h"
-#include "qdrivermanager.h"
-#include "driver/qabstractdriver.h"
+#include "Helper.h"
+#include "DataAES.h"
+#include <QFileInfo>
 #include <QFile>
 #include <QDir>
 #include <QUuid>
 #include <QScriptEngine>
 
-QProjectCore::QProjectCore(QObject *parent) :
-    QObject(parent),
-    m_project_host(NULL),
-    m_is_open(false),
-    m_page_manager(new QPageManager),
-    m_user_manager(new QUserManager),
-    m_data_manager(new QDataManager),
-    m_resource_manager(new QResourceManager),
-    m_driver_manager(new QDriverManager)
+
+QProjectCore::QProjectCore(QObject *parent)
+    : QObject(parent),
+      m_pProjectHostObj(Q_NULLPTR),
+      m_bOpen(false),
+      m_pPageManagerObj(new QPageManager)
 {
-    connect(m_user_manager,SIGNAL(refresh(tagUserInfo*)),this,SLOT(user_refresh(tagUserInfo*)));
-    connect(m_page_manager,SIGNAL(host_name_changed(QAbstractHost*)),this,SLOT(form_refresh(QAbstractHost*)));
+    m_szProjVersion = "V1.0.0";
+    m_szProjPath = "";
+    m_szProjName = "";
+
+    connect(m_pPageManagerObj, SIGNAL(host_name_changed(QAbstractHost*)),
+            this, SLOT(onFormRefresh(QAbstractHost*)));
 }
+
 
 QProjectCore::~QProjectCore()
 {
     close();
-    delete m_page_manager;
-    delete m_user_manager;
-    delete m_data_manager;
-    delete m_resource_manager;
-    delete m_driver_manager;
-}
-
-bool QProjectCore::open(const QString &fileName)
-{
-    close();
-    QFile f(fileName);
-
-    if(!f.open(QFile::ReadOnly))
-    {
-        return false;
-    }
-    QString buffer=f.readAll();
-    f.close();
-    XMLObject xml;
-    if(!xml.load(buffer,0))
-    {
-        return false;
-    }
-
-    if(xml.getTagName()!=PROJECT_HOST_TITLE)
-    {
-        return false;
-    }
-
-    int index=fileName.lastIndexOf("/");
-    m_project_path=fileName.left(index);
-    index=m_project_path.lastIndexOf("/");
-    m_project_name=m_project_path.mid(index+1);
-
-    m_project_host=new QProjectHost;
-    m_project_host->init();
-    m_project_host->fromObject(&xml);
-    m_project_host->setPropertyValue("objectName",m_project_name);
-    m_project_host->setPropertyValue("projectPath",m_project_path);
-
-    m_page_manager->load(m_project_path);
-    m_data_manager->load(m_project_path);
-    m_resource_manager->load(m_project_path);
-    m_driver_manager->load(m_project_path);
-    m_user_manager->load(m_project_path);
-
-    QAbstractProperty* pro=m_project_host->getProperty("start_user");
-    if(pro!=NULL)
-    {
-        QString str=pro->get_value().toString();
-        if(m_user_manager->get_user(str)==NULL)
-        {
-            if(m_user_manager->get_users().size()>0)
-            {
-                pro->set_value(m_user_manager->get_user(0)->m_uuid);
-            }
-            else
-            {
-                pro->set_value("");
-            }
-        }
-
-        QList<tagUserInfo*> list=m_user_manager->get_users();
-        tagComboItem item;
-        ComboItems items;
-        foreach(tagUserInfo* info,list)
-        {
-            item.m_text=info->m_name;
-            item.m_value=info->m_uuid;
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
-
-    }
-
-    pro=m_project_host->getProperty("start_page");
-    if(pro!=NULL)
-    {
-        QString str=pro->get_value().toString();
-        QList<QAbstractHost*> pages=m_page_manager->getPages_by_title("form");
-        if(m_page_manager->get_page(str)==NULL)
-        {
-            if(pages.size()>0)
-            {
-                pro->set_value(pages.at(0)->getUuid());
-            }
-            else
-            {
-                pro->set_value("");
-            }
-        }
-
-        tagComboItem item;
-        ComboItems items;
-        foreach(QAbstractHost* p,pages)
-        {
-            item.m_text=p->getPropertyValue("objectName").toString();
-            item.m_value=p->getUuid();
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
-
-    }
-
-    m_project_host->setPageManager(m_page_manager);
-
-    foreach(QAbstractHost* h,m_page_manager->getPages())
-    {
-        h->setPageManager(m_page_manager);
-    }
-
-    m_project_host->setDefault();
-    m_is_open=true;
-
-    emit opened_signals();
-    return true;
+    delete m_pPageManagerObj;
 }
 
 void QProjectCore::close()
 {
-    if(m_is_open)
-    {
-        closed_signals();
-        if(m_project_host!=NULL)
-        {
-            delete m_project_host;
-            m_project_host=NULL;
+    if(m_bOpen) {
+        notifyClosed();
+        if(m_pProjectHostObj != Q_NULLPTR) {
+            delete m_pProjectHostObj;
+            m_pProjectHostObj = Q_NULLPTR;
         }
-
-        m_project_path="";
-        m_page_manager->clear();
-        m_data_manager->clear();
-        m_resource_manager->clear();
-        m_driver_manager->clear();
-        m_user_manager->clear();
-        m_is_open=false;
+        m_szProjPath = "";
+        m_pPageManagerObj->clear();
+        m_bOpen = false;
     }
 }
 
-
-void QProjectCore::save()
+QPageManager* QProjectCore::getPageManager()
 {
-    if(!m_is_open)
-    {
-        return;
-    }
-
-    QDir dir;
-
-    dir.mkpath(m_project_path+"/pages/form");
-    dir.mkpath(m_project_path+"/pages/dialog");
-    dir.mkpath(m_project_path+"/pages/keyboard");
-    dir.mkpath(m_project_path+"/translates");
-
-    QFile::remove(m_project_path+"/config.sfb");
-
-    XMLObject xml;
-
-    m_project_host->toObject(&xml);
-
-    QString str=xml.write();
-    QFile f(m_project_path+"/config.sfb");
-    if(f.open(QFile::ReadWrite))
-    {
-        f.resize(0);
-        f.write(str.toLocal8Bit());
-        f.close();
-    }
-
-    m_page_manager->save(m_project_path);
-    m_data_manager->save(m_project_path);
-    m_resource_manager->save(m_project_path);
-    m_driver_manager->save(m_project_path);
-    m_user_manager->save(m_project_path);
+    return m_pPageManagerObj;
 }
 
-QPageManager* QProjectCore::get_page_manager()
+QAbstractHost* QProjectCore::getProjectHost()
 {
-    return m_page_manager;
-}
-
-QUserManager *QProjectCore::get_user_manager()
-{
-    return m_user_manager;
-}
-
-QDataManager* QProjectCore::get_data_manager()
-{
-    return m_data_manager;
-}
-
-QResourceManager* QProjectCore::get_resource_manager()
-{
-    return m_resource_manager;
-}
-
-QDriverManager* QProjectCore::get_driver_manager()
-{
-    return m_driver_manager;
-}
-
-QAbstractHost* QProjectCore::get_project_host()
-{
-    return m_project_host;
-}
-
-bool QProjectCore::create_new(const QString &path, const QString &name)
-{
-    close();
-
-    QString base_path=path+"/"+name;
-
-    QDir dir;
-
-    dir.mkpath(base_path+"/pages/form");
-    dir.mkpath(base_path+"/pages/dialog");
-    dir.mkpath(base_path+"/pages/keyboard");
-    dir.mkpath(base_path+"/translates");
-
-    QMap<QString,QString>   copys;
-
-    copys.insert(":/files/config.xml","/config.sfb");
-    copys.insert(":/files/default_form.xml","/pages/form/main.xml");
-    copys.insert(":/files/pages.xml","/pages.xml");
-    copys.insert(":/files/language_1.xml","/translates/中文.xml");
-    copys.insert(":/files/language_2.xml","/translates/English.xml");
-    copys.insert(":/files/users.xml","/users.xml");
-    copys.insert(":/files/data.xml","/data.xml");
-
-    QMapIterator<QString,QString> it(copys);
-    while(it.hasNext())
-    {
-        it.next();
-        copy_file(it.key(),base_path+it.value());
-    }
-
-    return open(base_path+"/config.sfb");
+    return m_pProjectHostObj;
 }
 
 bool QProjectCore::createNewProj(const QString &szfile)
 {
     close();
     int index = szfile.lastIndexOf("/");
-    m_project_path = szfile.left(index);
-    index = m_project_path.lastIndexOf("/");
-    m_project_name = m_project_path.mid(index+1);
-    m_page_manager->load(NULL);
-    m_is_open = true;
-    emit opened_signals();
+    m_szProjPath = szfile.left(index);
+    index = m_szProjPath.lastIndexOf("/");
+    m_szProjName = m_szProjPath.mid(index + 1);
+    m_pPageManagerObj->load(Q_NULLPTR);
+    m_bOpen = true;
+    emit notifyOpened();
     return true;
 }
 
 
-bool QProjectCore::openProj(XMLObject *pXmlObj)
+bool QProjectCore::isOpened()
 {
-    close();
-
-    m_page_manager->load(pXmlObj);
-    m_is_open=true;
-
-    emit opened_signals();
-    return true;
+    return m_bOpen;
 }
 
-void QProjectCore::saveProj(XMLObject *pXmlObj)
+void QProjectCore::onFormRefresh(QAbstractHost *form)
 {
-    if(!m_is_open)
-    {
+    if(form != Q_NULLPTR && (form->getHostType() != "form" || form->getParent() != Q_NULLPTR)) {
         return;
     }
-    m_page_manager->save(pXmlObj);
-}
-
-bool QProjectCore::is_opened()
-{
-    return m_is_open;
-}
-
-void QProjectCore::user_refresh(tagUserInfo *info)
-{
-    QAbstractProperty* pro=m_project_host->getProperty("start_user");
-    if(pro!=NULL)
-    {
-
-        QList<tagUserInfo*> list=m_user_manager->get_users();
+    QAbstractProperty* pro = m_pProjectHostObj->getProperty("start_page");
+    if(pro != Q_NULLPTR) {
+        QList<QAbstractHost*> list = m_pPageManagerObj->getPages_by_title("form");
         tagComboItem item;
         ComboItems items;
-        foreach(tagUserInfo* info,list)
-        {
-            item.m_text=info->m_name;
-            item.m_value=info->m_uuid;
+        foreach(QAbstractHost* host, list) {
+            item.m_text = host->getPropertyValue("objectName").toString();
+            item.m_value = host->getUuid();
             items.append(item);
         }
         QVariant v;
         v.setValue<ComboItems>(items);
         pro->setAttribute("items",v);
-        if(info!=NULL && pro->get_value().toString()==info->m_uuid)
-        {
-            pro->set_value("");
-            pro->set_value(info->m_uuid);
-        }
-    }
-}
-
-
-void QProjectCore::form_refresh(QAbstractHost *form)
-{
-    if(form !=NULL && (form->getHostType()!="form" || form->getParent()!=NULL))
-    {
-        return;
-    }
-    QAbstractProperty* pro=m_project_host->getProperty("start_page");
-    if(pro!=NULL)
-    {
-        QList<QAbstractHost*> list=m_page_manager->getPages_by_title("form");
-        tagComboItem item;
-        ComboItems items;
-        foreach(QAbstractHost* host,list)
-        {
-            item.m_text=host->getPropertyValue("objectName").toString();
-            item.m_value=host->getUuid();
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
-        if(form!=NULL && pro->get_value().toString()==form->getUuid())
-        {
+        if(form != Q_NULLPTR && pro->get_value().toString() == form->getUuid()) {
             pro->set_value("");
             pro->set_value(form->getUuid());
         }
     }
 }
 
-QAbstractHost* QProjectCore::get_host_by_uuid(const QString &uuid)
+QAbstractHost* QProjectCore::getHostByUuid(const QString &uuid)
 {
-    QList<QAbstractHost*> list=m_page_manager->getPages();
-    list.append(m_project_host);
+    QList<QAbstractHost*> list=m_pPageManagerObj->getPages();
+    list.append(m_pProjectHostObj);
 
-    while(list.size()>0)
-    {
+    while(list.size() > 0) {
         QAbstractHost* h=list.takeFirst();
-        if(h->getUuid()==uuid)
-        {
+        if(h->getUuid() == uuid) {
             return h;
         }
-        list+=h->getChildren();
-    }
-    QList<QAbstractDriver*> drivers=m_driver_manager->get_drivers();
-
-    foreach(QAbstractDriver* driver,drivers)
-    {
-        if(driver->getUuid()==uuid)
-        {
-            return driver;
-        }
+        list += h->getChildren();
     }
 
-    return NULL;
+    return Q_NULLPTR;
 }
 
-void QProjectCore::copy_file(const QString &old_file, const QString &new_file)
+
+void QProjectCore::initScriptEngine()
 {
-    QFile old(old_file);
-    QFile now(new_file);
-    if(old.open(QFile::ReadOnly))
-    {
-        if(now.open(QFile::WriteOnly))
-        {
-            now.write(old.readAll());
-            now.close();
-        }
-        old.close();
+    initScriptEngine(m_pProjectHostObj);
+    foreach(QAbstractHost* h,m_pPageManagerObj->getPages()) {
+        initScriptEngine(h);
     }
 }
 
-void QProjectCore::init_script_engine()
+void QProjectCore::initScriptEngine(QAbstractHost *host)
 {
-    init_script_engine(m_project_host);
-
-
-    foreach(QAbstractHost* h,m_page_manager->getPages())
-    {
-        init_script_engine(h);
-    }
-}
-
-void QProjectCore::init_script_engine(QAbstractHost *host)
-{
-    QScriptEngine *engine=host->getScriptEngine();
-
+    QScriptEngine *engine = host->getScriptEngine();
     QScriptValue global = engine->globalObject();
+    QScriptValue temp = getScriptObject(m_pProjectHostObj, engine);
 
-    QScriptValue temp=get_script_object(m_project_host,engine);
+    global.setProperty("global", temp);
 
-    QList<QData*> groups=m_data_manager->get_all_datas();
+    bool keyboard = host->property("title").toString() == "keyboard";
+    bool project = host->property("title").toString() == "Project";
 
-    foreach(QData *g,groups)
-    {
-        if(g->get_datas().size()>0)
-        {
-            QScriptValue s=engine->newQObject(g);
-            temp.setProperty(g->get_name(),s);
-        }
-    }
-
-    global.setProperty("global",temp);
-
-    bool keyboard=host->property("title").toString()=="keyboard";
-    bool project=host->property("title").toString()=="Project";
-
-    if(!keyboard || project)
-    {
-        foreach(QAbstractHost* h,m_page_manager->getPages())
-        {
-            if(project || h->property("title").toString()=="keyboard")
-            {
-                temp=get_script_object(host,engine);
-                global.setProperty(h->getPropertyValue("objectName").toString(),temp);
+    if(!keyboard || project) {
+        foreach(QAbstractHost* h, m_pPageManagerObj->getPages()) {
+            if(project || h->property("title").toString() == "keyboard") {
+                temp = getScriptObject(host,engine);
+                global.setProperty(h->getPropertyValue("objectName").toString(), temp);
             }
         }
     }
 
-    temp=get_script_object(host,engine);
+    temp = getScriptObject(host,engine);
     global.setProperty("self",temp);
-    if(!keyboard || project)
-    {
-        if(host->getParent()!=NULL)
-        {
-            temp=get_script_object(host->getParent(),engine);
-            global.setProperty("parent",temp);
+    if(!keyboard || project) {
+        if(host->getParent() != Q_NULLPTR) {
+            temp = getScriptObject(host->getParent(), engine);
+            global.setProperty("parent", temp);
         }
-    }
-    else
-    {
-        temp=get_script_object(host,engine);
-        global.setProperty(host->getPropertyValue("objectName").toString(),temp);
+    } else {
+        temp = getScriptObject(host, engine);
+        global.setProperty(host->getPropertyValue("objectName").toString(), temp);
     }
 
     engine->setGlobalObject(global);
 
-    foreach(QAbstractHost* h,host->getChildren())
-    {
-        init_script_engine(h);
+    foreach(QAbstractHost* h,host->getChildren()) {
+        initScriptEngine(h);
     }
 }
 
-QScriptValue QProjectCore::get_script_object(QAbstractHost *host,QScriptEngine *engine)
+QScriptValue QProjectCore::getScriptObject(QAbstractHost *host, QScriptEngine *engine)
 {
-    QScriptValue value=engine->newQObject(host);
+    QScriptValue value = engine->newQObject(host);
 
-    foreach(QAbstractHost* h,host->getChildren())
-    {
-        QScriptValue temp=get_script_object(h,engine);
-        value.setProperty(h->getPropertyValue("objectName").toString(),temp);
+    foreach(QAbstractHost* h, host->getChildren()) {
+        QScriptValue temp = getScriptObject(h, engine);
+        value.setProperty(h->getPropertyValue("objectName").toString(), temp);
     }
     return value;
 }
+
+
+bool QProjectCore::openFromXml(const QString &szProjFile)
+{
+    close();
+
+    QFileInfo fileInfoSrc(szProjFile);
+    if(fileInfoSrc.size() <= 512) return false;
+
+    // 读取文件头信息
+    QFile fileProj;
+    fileProj.setFileName(szProjFile);
+    if(!fileProj.open(QIODevice::ReadOnly)) return false;
+
+    quint8 buf[1024] = {0};
+    quint16 wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+
+    if(fileProj.read((char *)buf, wSize) != wSize) {
+        fileProj.close();
+        return false;
+    }
+
+    memcpy((void *)&headerObj_, (void *)buf, sizeof(TFileHeader));
+
+    // 读取工程数据
+    QByteArray baTmpProjData;
+    baTmpProjData.resize(headerObj_.dwProjSize);
+    if(fileProj.read((char *)baTmpProjData.data(), headerObj_.dwProjSize) != headerObj_.dwProjSize) {
+        fileProj.close();
+        return false;
+    }
+    fileProj.close();
+
+    QByteArray baProjData;
+    if(headerObj_.byEncrypt) {
+        if(DataAES::Decrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) return false;
+    } else {
+        baProjData = baTmpProjData;
+    }
+
+    QString szProjData = QString::fromUtf8(baProjData);
+
+    XMLObject xml;
+    if(!xml.load(szProjData, Q_NULLPTR)) return false;
+
+    QList<XMLObject*> projObjs = xml.getChildren();
+    foreach(XMLObject* pProjObj, projObjs) {
+        // 工程信息管理
+        projInfoMgr_.openFromXml(pProjObj);
+        // 网络配置
+        netSetting_.openFromXml(pProjObj);
+        // 数据库配置
+        dbSetting_.openFromXml(pProjObj);
+        // 用户权限
+        userAuthority_.openFromXml(pProjObj);
+        // 设备配置信息
+        deviceInfo_.openFromXml(pProjObj);
+
+        XMLObject *pTagsObj = pProjObj->getCurrentChild("tags");
+        if(pTagsObj != Q_NULLPTR) {
+            // 标签变量组
+            tagMgr_.openFromXml(pTagsObj);
+        }
+
+        // 脚本
+        script_.openFromXml(pProjObj);
+        // 图片资源管理
+        pictureResourceMgr_.openFromXml(pProjObj);
+
+        // 加载画面
+        XMLObject *pPagesObj = pProjObj->getCurrentChild("forms");
+        if(pPagesObj != Q_NULLPTR) {
+            m_pPageManagerObj->load(pPagesObj);
+        }
+    }
+
+    m_bOpen = true;
+    emit notifyOpened();
+
+    return true;
+}
+
+
+bool QProjectCore::saveToXml(const QString &szProjFile)
+{
+    if(!m_bOpen) {
+        return false;
+    }
+
+    XMLObject projObjs;
+    projObjs.setTagName("projects");
+
+    XMLObject *pProjObj = new XMLObject(&projObjs);
+    pProjObj->setTagName("project");
+    pProjObj->setProperty("application_version", m_szProjVersion);
+
+    // 工程信息管理
+    projInfoMgr_.saveToXml(pProjObj);
+    // 网络配置
+    netSetting_.saveToXml(pProjObj);
+    // 数据库配置
+    dbSetting_.saveToXml(pProjObj);
+    // 用户权限
+    userAuthority_.saveToXml(pProjObj);
+    // 设备配置信息
+    deviceInfo_.saveToXml(pProjObj);
+
+    XMLObject *pTagsObj = new XMLObject(pProjObj);
+    pTagsObj->setTagName("tags");
+    // 标签变量组
+    tagMgr_.saveToXml(pTagsObj);
+
+    // 脚本
+    script_.saveToXml(pProjObj);
+    // 图片资源管理
+    pictureResourceMgr_.saveToXml(pProjObj);
+
+    // 保存画面
+    XMLObject *pPagesObj = new XMLObject(pProjObj);
+    pPagesObj->setTagName("forms");
+    m_pPageManagerObj->save(pPagesObj);
+
+    QByteArray baProjData;
+    QByteArray baTmpProjData = projObjs.write().toUtf8();
+    if(headerObj_.byEncrypt) {
+        if(DataAES::Encrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) return false;
+    } else {
+        baProjData = baTmpProjData;
+    }
+
+    QFile fileProj;
+    fileProj.setFileName(szProjFile);
+    if(!fileProj.open(QIODevice::WriteOnly|QIODevice::Truncate))
+        return false;
+
+    // 写文件头
+    quint8 buf[1024] = {0};
+    headerObj_.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+    headerObj_.wVersion = 0x0001;
+    headerObj_.dwProjSize = baProjData.length();
+    memcpy((void *)buf, (void *)&headerObj_, sizeof(TFileHeader));
+    if(fileProj.write((const char *)buf, headerObj_.wSize) != headerObj_.wSize) {
+        fileProj.close();
+        return false;
+    }
+
+    if(fileProj.write(baProjData, baProjData.size()) != baProjData.size()) {
+        fileProj.close();
+        return false;
+    }
+
+    fileProj.close();
+
+    return true;
+}
+
+
+/**
+ * @brief QProjectCore::GetAllProjectVariableName
+ * @details 获取工程所有变量的名称
+ * @param varList 存储变量列表
+ * @param type IO, TMP, SYS, ALL
+ */
+void QProjectCore::getAllTagName(QStringList &varList, const QString &type)
+{
+    varList.clear();
+    QString szType = type.toUpper();
+
+    foreach(Tag *pTagObj, tagMgr_.m_vecTags) {
+        //-------------设备变量------------------//
+        if(szType == "ALL" || szType == "IO") {
+            if(pTagObj->m_szDevType != "MEMORY" && pTagObj->m_szDevType != "SYSTEM") {
+                varList << (QObject::tr("设备变量.") + pTagObj->m_szName + "[" + QString::number(pTagObj->m_iID) + "]");
+            }
+        }
+
+        //-------------中间变量------------------//
+        if(szType == "ALL" || szType == "TMP") {
+            if(pTagObj->m_szDevType != "MEMORY") {
+                varList << (QObject::tr("内存变量.") + pTagObj->m_szName + "[" + QString::number(pTagObj->m_iID) + "]");
+            }
+        }
+
+        //-------------系统变量------------------//
+        if(szType == "ALL" || szType == "SYS") {
+            if(pTagObj->m_szDevType != "SYSTEM") {
+                varList << (QObject::tr("系统变量.") + pTagObj->m_szName + "[" + QString::number(pTagObj->m_iID) + "]");
+            }
+        }
+    }
+}
+
+/**
+ * @brief QProjectCore::getProjectPath
+ * @details 获取工程路径
+ * @param projectName 工程名称全路径
+ * @return 工程路径
+ */
+QString QProjectCore::getProjectPath(const QString &projectName) {
+    QString path = QString();
+    int pos = projectName.lastIndexOf("/");
+    if (pos != -1) {
+        path = projectName.left(pos);
+    }
+    return path;
+}
+
+/**
+ * @brief QProjectCore::getProjectNameWithSuffix
+ * @details 获取包含后缀工程名称
+ * @param projectName 工程名称全路径
+ * @return 工程名称包含后缀
+ */
+QString QProjectCore::getProjectNameWithSuffix(const QString &projectName) {
+    QFileInfo projFileInfo(projectName);
+    return projFileInfo.fileName();
+}
+
+/**
+ * @brief QProjectCore::getProjectNameWithOutSuffix
+ * @details 获取不包含后缀工程名称
+ * @param projectName 工程名称全路径
+ * @return 工程名称不包含后缀
+ */
+QString QProjectCore::getProjectNameWithOutSuffix(const QString &projectName) {
+    QFileInfo projFileInfo(projectName);
+    return projFileInfo.baseName();
+}
+
+/**
+ * @brief QProjectCore::getAllElementIDName
+ * @details 获取工程所有控件的ID名称
+ * @param szIDList 所有控件的ID名称
+ */
+void QProjectCore::getAllElementIDName(QStringList &szIDList) {
+//    if(pImplGraphPageSaveLoadObj_) {
+//        pImplGraphPageSaveLoadObj_->getAllElementIDName(szIDList);
+//    }
+}
+
+/**
+ * @brief QProjectCore::getAllGraphPageName
+ * @details 获取工程所有画面名称
+ * @param szList 所有画面名称
+ */
+void QProjectCore::getAllGraphPageName(QStringList &szList) {
+//    if(pImplGraphPageSaveLoadObj_) {
+//        pImplGraphPageSaveLoadObj_->getAllGraphPageName(szList);
+//    }
+}
+
+

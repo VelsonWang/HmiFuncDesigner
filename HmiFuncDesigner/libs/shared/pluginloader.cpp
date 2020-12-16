@@ -43,7 +43,7 @@ void PluginLoader::load_plugin(const QString &xml_file_name)
             if(load.load())
             {
                 QAbstractPlugin *plugin=qobject_cast<QAbstractPlugin*>(load.instance());
-                if(plugin!=NULL)
+                if(plugin!=Q_NULLPTR)
                 {
                     QString type=plugin->get_plugin_type();
                     QString name=plugin->get_plugin_name();
@@ -51,7 +51,7 @@ void PluginLoader::load_plugin(const QString &xml_file_name)
                     {
                         QMap<QString,QAbstractPlugin*> plugins=m_plugins.value(type);
                         QAbstractPlugin *pl=plugins.value(name);
-                        if(pl!=NULL)
+                        if(pl!=Q_NULLPTR)
                         {
                             delete pl;
                         }

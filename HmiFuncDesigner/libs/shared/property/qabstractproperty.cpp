@@ -7,12 +7,12 @@
 QAbstractProperty::QAbstractProperty(QAbstractProperty *parent):
     m_parent(parent)
 {
-    if(m_parent!=NULL)
+    if(m_parent!=Q_NULLPTR)
     {
         parent->m_children.append(this);
         connect(this,SIGNAL(value_chaged(QVariant,QVariant)),m_parent,SLOT(child_value_changed(QVariant,QVariant)));
     }
-    setAttribute(ATTR_RESET_ABLEABLE,m_parent==NULL);
+    setAttribute(ATTR_RESET_ABLEABLE,m_parent==Q_NULLPTR);
     setAttribute(ATTR_VISIBLE,true);
     setAttribute(ATTR_EDITABLE,true);
     setAttribute(ATTR_CAN_SAME,false);
@@ -24,7 +24,7 @@ QAbstractProperty::~QAbstractProperty()
     {
         delete m_children.first();
     }
-    if(m_parent!=NULL)
+    if(m_parent!=Q_NULLPTR)
     {
         m_parent->m_children.removeAll(this);
     }
@@ -75,7 +75,7 @@ void QAbstractProperty::disconnect_children()
 
 void QAbstractProperty::toObject(XMLObject *xml)
 {
-    if(xml!=NULL)
+    if(xml!=Q_NULLPTR)
     {
         xml->clear();
         xml->setTagName(PROPERTY_TITLE);
@@ -101,7 +101,7 @@ void QAbstractProperty::toObject(XMLObject *xml)
 
 void QAbstractProperty::fromObject(XMLObject *xml)
 {
-    if(xml!=NULL)
+    if(xml!=Q_NULLPTR)
     {
         if(xml->getTagName()!=PROPERTY_TITLE)
         {
@@ -121,7 +121,7 @@ void QAbstractProperty::fromObject(XMLObject *xml)
         foreach(XMLObject* obj,children)
         {
             QAbstractProperty *pro=getChild(obj->getProperty("name"));
-            if(pro!=NULL)
+            if(pro!=Q_NULLPTR)
             {
                 pro->fromObject(obj);
             }
@@ -229,7 +229,7 @@ QAbstractProperty* QAbstractProperty::getChild(const QString &name)
             return pro;
         }
     }
-    return NULL;
+    return Q_NULLPTR;
 }
 
 QList<QAbstractProperty*> QAbstractProperty::getChildren()

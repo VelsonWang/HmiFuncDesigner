@@ -55,9 +55,9 @@ QString QDesignerDnDItem::name()const
 WidgetBoxDnDItem::WidgetBoxDnDItem(const QString &name,const QPoint &global_mouse_pos) :
     QDesignerDnDItem(CopyDrop)
 {
-    QAbstractHost *host=NULL;
+    QAbstractHost *host=Q_NULLPTR;
     host=QHostFactory::create_host(name);
-    if(host==NULL)
+    if(host==Q_NULLPTR)
     {
         return;
     }
@@ -70,7 +70,7 @@ WidgetBoxDnDItem::WidgetBoxDnDItem(const QString &name,const QPoint &global_mous
 
 WidgetBoxDnDItem::~WidgetBoxDnDItem()
 {
-    if(m_host!=NULL)
+    if(m_host!=Q_NULLPTR)
     {
         delete m_host;
     }
