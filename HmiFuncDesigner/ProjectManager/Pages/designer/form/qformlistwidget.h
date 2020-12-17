@@ -20,7 +20,7 @@ public:
     void    insert_form(QAbstractHost *host,int index=-1);
     void    remove_form(QAbstractHost* host);
     void    show_form(QAbstractHost* host);
-    void            set_undo_stack(QUndoStack* stack);
+    void setUndoStack(QUndoStack* stack);
 
     void    clear();
 

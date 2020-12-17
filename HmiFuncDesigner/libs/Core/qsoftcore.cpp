@@ -306,7 +306,7 @@ void QSoftCore::setActivityStack(QUndoStack *stack)
 
 void QSoftCore::startUpdatePlugin()
 {
-    QMap<QString,QAbstractPlugin*> plugins=PluginLoader::get_plugin_by_type(UPDATE_PLUGIN_TYPE);
+    QMap<QString,QAbstractPlugin*> plugins=PluginLoader::getPluginByType(UPDATE_PLUGIN_TYPE);
 
     QMapIterator<QString,QAbstractPlugin*> it(plugins);
 

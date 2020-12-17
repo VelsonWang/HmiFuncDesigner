@@ -59,7 +59,7 @@
 #include <QToolBar>
 #include <QInputDialog>
 #include <QCryptographicHash>
-#include <QSplitter>
+#include <QStackedWidget>
 #include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -67,12 +67,12 @@ MainWindow::MainWindow(QWidget *parent)
       m_szCurItem(""),
       m_szCurTreeViewItem("")
 {
-    QMapIterator<QString, QAbstractPlugin*> it(PluginLoader::get_plugin_by_type(PAGE_PLUGIN_NAME));
+    QMapIterator<QString, QAbstractPlugin*> it(PluginLoader::getPluginByType(PAGE_PLUGIN_NAME));
     while(it.hasNext()) {
         it.next();
         QAbstractPage* pPageObj = dynamic_cast<QAbstractPage*>(it.value());
-        //qDebug() << "page name: "<< pPageObj->get_page_name();
-        m_mapNameToPage.insert(pPageObj->get_page_name(), pPageObj);
+        //qDebug() << "page name: "<< pPageObj->getPageName();
+        m_mapNameToPage.insert(pPageObj->getPageName(), pPageObj);
     }
 
     initUI();
@@ -85,10 +85,7 @@ MainWindow::MainWindow(QWidget *parent)
  */
 void MainWindow::initUI()
 {
-    m_pCentralWidgetObj = new QWidget(this);
-    QVBoxLayout *centralWidgetLayout = new QVBoxLayout(m_pCentralWidgetObj);
-    centralWidgetLayout->setSpacing(0);
-    centralWidgetLayout->setContentsMargins(1, 1, 1, 1);
+    m_pCentralWidgetObj = new QStackedWidget(this);
 
     m_pMdiAreaObj = new MdiArea(m_pCentralWidgetObj);
     QSizePolicy sizePolicyMdiArea(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -107,9 +104,8 @@ void MainWindow::initUI()
     connect(m_pMdiAreaObj, SIGNAL(subWindowActivated(QMdiSubWindow*)), this, SLOT(onSlotUpdateMenus()));
     m_windowMapper = new QSignalMapper(this);
     connect(m_windowMapper, SIGNAL(mapped(QWidget*)), this, SLOT(onSlotSetActiveSubWindow(QWidget*)));
-    centralWidgetLayout->addWidget(m_pMdiAreaObj);
+    m_pCentralWidgetObj->addWidget(m_pMdiAreaObj);
 
-    m_pCentralWidgetObj->setLayout(centralWidgetLayout);
     this->setCentralWidget(m_pCentralWidgetObj);
 
     // 工程管理器停靠控件
@@ -139,32 +135,17 @@ void MainWindow::initUI()
     pWidgetsLayoutObj->setContentsMargins(0, 0, 0, 0);
     pWidgetCtrlObj->setLayout(pWidgetsLayoutObj);
 
-    QSplitter *pSplitterObj = new QSplitter(Qt::Vertical);
-
-    // 画面名称列表
-    m_pListWidgetGraphPagesObj = new GraphPageListWidget(pWidgetCtrlObj);
-    connect(m_pListWidgetGraphPagesObj, SIGNAL(itemClicked(QListWidgetItem *)),
-            this, SLOT(onSlotGraphPageNameClicked(QListWidgetItem *)));
-    connect(m_pListWidgetGraphPagesObj, SIGNAL(notifyCreateGraphPageUseName(const QString &)),
-            this, SLOT(onSlotCreateGraphPageUseName(const QString &)));
-    pSplitterObj->addWidget(m_pListWidgetGraphPagesObj);
-
     // 图形元素控件
     QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
     if(pPageObj) {
-        m_pDesignerWidgetObj = dynamic_cast<QWidget *>(pPageObj->get_widget());
+        m_pDesignerWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
         if(m_pDesignerWidgetObj) {
-            centralWidgetLayout->addWidget(m_pDesignerWidgetObj);
-            QVariant variant = m_pDesignerWidgetObj->property("WidgetBoxView");
+            m_pCentralWidgetObj->addWidget(m_pDesignerWidgetObj);
+            QVariant variant = m_pDesignerWidgetObj->property("DesignerWidget");
             QWidget *pWidgetObj = variant.value<QWidget *>();
-            pSplitterObj->addWidget(pWidgetObj);
+            pWidgetsLayoutObj->addWidget(pWidgetObj);
         }
     }
-
-    pSplitterObj->setStretchFactor(0, 0);
-    pSplitterObj->setStretchFactor(1, 1);
-    pWidgetsLayoutObj->addWidget(pSplitterObj);
-
     m_pTabProjectMgrObj->addTab(pWidgetCtrlObj, QString(tr("画面")));
     dockWidgetContentsLayout->addWidget(m_pTabProjectMgrObj);
     m_pTabProjectMgrObj->setCurrentIndex(0);
@@ -199,8 +180,6 @@ void MainWindow::initUI()
     this->resize(screenWidth*3/4, screenHeight*3/4);
 
     Helper::WidgetMoveCenter(this);
-    m_pListWidgetGraphPagesObj->setContextMenuPolicy(Qt::DefaultContextMenu);
-
     //    setWindowState(Qt::WindowMaximized);
     setWindowTitle(tr("HmiFuncDesigner组态软件"));
 
@@ -1091,10 +1070,6 @@ void MainWindow::onCloseProject()
         window->close();
     }
     UpdateProjectName(QString());
-
-    // 清空画面列表控件
-    clearGraphPageListWidget();
-
     // 关闭所有画面
     onSlotCloseAll();
     onSlotTabProjectMgrCurChanged(0);
@@ -1608,29 +1583,6 @@ void MainWindow::onSlotEditPaste()
 
 
 /**
- * @brief MainWindow::onSlotGraphPageNameClicked
- * @details 画面名称被单击
- * @param item
- */
-void MainWindow::onSlotGraphPageNameClicked(QListWidgetItem *pItemObj)
-{
-//    QString szText = pItemObj->text();
-//    if(this->m_pListWidgetGraphPagesObj->currentRow() != this->m_pGraphPageEditorObj->currentIndex());
-//        m_pGraphPageEditorObj->setCurrentIndex(this->m_pListWidgetGraphPagesObj->currentRow());
-}
-
-/**
- * @brief MainWindow::onSlotCreateGraphPageUseName
- * @details 创建指定名称的画面
- * @param szName 名称
- */
-void MainWindow::onSlotCreateGraphPageUseName(const QString &szName)
-{
-
-}
-
-
-/**
     * @brief MainWindow::onRenameGraphPage
     * @details 修改画面名称
     */
@@ -1681,7 +1633,7 @@ void MainWindow::onRenameGraphPage()
     */
 void MainWindow::onDeleteGraphPage()
 {
-    QString szGraphPageName = this->m_pListWidgetGraphPagesObj->currentItem()->text();
+
 #if 0
     for (int i = 0; i < DrawListUtils::drawList_.count(); i++) {
         if ( szGraphPageName == DrawListUtils::drawList_.at(i) ) {
@@ -1727,7 +1679,7 @@ void MainWindow::onDeleteGraphPage()
     */
 void MainWindow::onCopyGraphPage()
 {
-    m_szCopyGraphPageFileName = this->m_pListWidgetGraphPagesObj->currentItem()->text();
+
 }
 
 
@@ -1787,16 +1739,6 @@ void MainWindow::onPasteGraphPage()
 
 
 /**
-    * @brief MainWindow::clearGraphPageListWidget
-    * @details 清空画面列表控件
-    */
-void MainWindow::clearGraphPageListWidget()
-{
-    this->m_pListWidgetGraphPagesObj->clear();
-}
-
-
-/**
     * @brief MainWindow::onSlotSetWindowSetTitle
     * @details 设置窗口标题
     * @param szTitle 标题
@@ -1823,17 +1765,22 @@ void MainWindow::onSlotTabProjectMgrCurChanged(int index)
         if(m_pDesignerWidgetObj) m_pDesignerWidgetObj->setVisible(false);
         if(pToolBarObj) pToolBarObj->setVisible(false); // 画面编辑工具条
     } else {
-        m_pMdiAreaObj->setVisible(index == 0);
-        if(m_pDesignerWidgetObj) {
-            m_pDesignerWidgetObj->setVisible(index == 1);
-            if(index == 1) {
+        if(pToolBarObj) pToolBarObj->setVisible(index == 1);
+        switch (index) {
+        case 0: {
+            m_pCentralWidgetObj->setCurrentWidget(m_pMdiAreaObj);
+        }break;
+        case 1: {
+            if(m_pDesignerWidgetObj) {
+                m_pCentralWidgetObj->setCurrentWidget(m_pDesignerWidgetObj);
                 QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
                 if(pPageObj) {
-                    QSoftCore::getCore()->setActivityStack(pPageObj->get_undo_stack());
+                    QSoftCore::getCore()->setActivityStack(pPageObj->getUndoStack());
                 }
             }
+        }break;
+        default: break;
         }
-        if(pToolBarObj) pToolBarObj->setVisible(index == 1);
     }
 }
 

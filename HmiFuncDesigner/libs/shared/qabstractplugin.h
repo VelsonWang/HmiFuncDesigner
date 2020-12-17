@@ -9,9 +9,9 @@
 class SHAREDLIB_EXPORT QPluginInterface
 {
 public:
-    virtual void        init_plugin()=0;//初始化插件
-    virtual QString     get_plugin_name()=0;//插件名称
-    virtual QString     get_plugin_type()=0;
+    virtual void initPlugin() = 0; // 初始化插件
+    virtual QString getPluginName() = 0; // 插件名称
+    virtual QString getPluginType() = 0;
 };
 
 QT_BEGIN_NAMESPACE
@@ -26,9 +26,9 @@ class SHAREDLIB_EXPORT QAbstractPlugin: public QObject,public QPluginInterface
     //Q_INTERFACES(QPluginInterface)
     //Q_PLUGIN_METADATA(IID QPluginInterface_iid FILE "qabstractplugin.json")
 public:
-    virtual void        init_plugin();//初始化插件
-    virtual QString     get_plugin_name();//获取页面的名称
-    virtual QString     get_plugin_type();
+    virtual void initPlugin(); // 初始化插件
+    virtual QString getPluginName(); // 获取页面的名称
+    virtual QString getPluginType();
 };
 
 #endif // QABSTRACTPLUGIN_H

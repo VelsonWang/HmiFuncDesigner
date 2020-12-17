@@ -9,22 +9,21 @@ class QPropertyView;
 class QWidgetBoxView;
 class QFormWidgetView;
 class QObjectListWidget;
+class FormNameListWidget;
 
 class QDesignerWidget : public QAbstractPageWidget
 {
     Q_OBJECT
 public:
-    explicit QDesignerWidget(QWidget *parent = 0);
+    explicit QDesignerWidget(QWidget *parent = Q_NULLPTR);
+    void setUndoStack(QUndoStack *stack);
 
-    void    set_undo_stack(QUndoStack *stack);
-signals:
-
-public slots:
 protected:
-    QWidgetBoxView  *m_widgetBox;
-    QPropertyView   *m_propertyView;
+    QWidgetBoxView *m_widgetBox;
+    QPropertyView *m_propertyView;
     QFormWidgetView *m_formWidgetView;
-    QObjectListWidget   *m_objectListWidget;
+    QObjectListWidget *m_objectListWidget;
+    FormNameListWidget *m_formNameListWidget;
 };
 
 #endif // QDESIGNERWIDGET_H

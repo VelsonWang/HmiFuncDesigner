@@ -344,10 +344,10 @@ void QPropertyListView::property_changed()
 
 void QPropertyListView::property_edit(const QVariant &value)
 {
-    emit property_edit_signal((QAbstractProperty*)sender(),value);
+    emit notifyPropertyEdit((QAbstractProperty*)sender(),value);
 }
 
-void QPropertyListView::set_undo_stack(QUndoStack *stack)
+void QPropertyListView::setUndoStack(QUndoStack *stack)
 {
     m_undo_stack=stack;
 }

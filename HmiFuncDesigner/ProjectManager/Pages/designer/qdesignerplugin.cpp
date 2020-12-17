@@ -6,34 +6,34 @@
 #include <QIcon>
 #include <QVariant>
 
-void QDesignerPlugin::create_widget()
+void QDesignerPlugin::createWidget()
 {
-    m_widget=new QDesignerWidget;
-    m_widget->setProperty("panelwidget",true);
-    ((QDesignerWidget*)m_widget)->set_undo_stack(m_undo_stack);
+    m_widget = new QDesignerWidget;
+    m_widget->setProperty("panelwidget", true);
+    (dynamic_cast<QDesignerWidget*>(m_widget))->setUndoStack(m_undo_stack);
 }
 
-QString QDesignerPlugin::get_page_name()
+QString QDesignerPlugin::getPageName()
 {
     return tr("Designer");
 }
 
-QString QDesignerPlugin::get_plugin_name()
+QString QDesignerPlugin::getPluginName()
 {
     return DESIGNER_PLUGIN_NAME;
 }
 
-QIcon QDesignerPlugin::get_page_icon()
+QIcon QDesignerPlugin::getPageIcon()
 {
     return QIcon(":/images/design.png");
 }
 
-int QDesignerPlugin::get_index()
+int QDesignerPlugin::getIndex()
 {
     return 2;
 }
 
-bool QDesignerPlugin::get_enabled()
+bool QDesignerPlugin::getEnabled()
 {
     return false;
 }

@@ -1,16 +1,16 @@
 #include "qabstractplugin.h"
 
-void QAbstractPlugin::init_plugin()
+void QAbstractPlugin::initPlugin()
 {
 
 }
 
-QString QAbstractPlugin::get_plugin_name()
+QString QAbstractPlugin::getPluginName()
 {
     return "";
 }
 
-QString QAbstractPlugin::get_plugin_type()
+QString QAbstractPlugin::getPluginType()
 {
     return "";
 }

@@ -28,6 +28,7 @@ INCLUDEPATH += \
     $$TOP_SRC_DIR/HmiFuncDesigner/libs/shared
 
 HEADERS += \
+    form/formnamelistwidget.h \
     qdesignerwidget.h \
     qdesignerplugin.h \
     widgetbox/widgetboxtreewidget.h \
@@ -52,6 +53,7 @@ HEADERS += \
     form/qpagewidget.h
 
 SOURCES += \
+    form/formnamelistwidget.cpp \
     qdesignerwidget.cpp \
     qdesignerplugin.cpp \
     widgetbox/widgetboxtreewidget.cpp \

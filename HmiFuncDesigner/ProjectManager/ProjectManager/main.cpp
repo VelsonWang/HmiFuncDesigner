@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     qRegisterBasePropertyEditor();
     qRegisterBaseHost();
 
-    PluginLoader::load_plugin(app.applicationDirPath() + "/plugins.xml");
+    PluginLoader::loadPlugin(app.applicationDirPath() + "/plugins.xml");
     // 加载元素插件
     PluginManager::getInstance()->loadPlugin();
 

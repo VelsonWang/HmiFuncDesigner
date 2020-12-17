@@ -78,11 +78,11 @@ QObjectListView::QObjectListView(QWidget *parent) :
     setItemDelegate(new QObjectDelegate(this));
     setIconSize(QSize(20,20));
 
-    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyOpened()),this,SLOT(project_opened()));
-    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyClosed()),this,SLOT(project_closed()));
-    connect(this,SIGNAL(itemClicked(QTreeWidgetItem*,int)),this,SLOT(item_clicked(QTreeWidgetItem*)));
-    connect(this,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),
-            this,SLOT(select_changed(QTreeWidgetItem*,QTreeWidgetItem*)));
+    connect(QSoftCore::getCore()->getProjectCore(), SIGNAL(notifyOpened()), this, SLOT(onProjectOpened()));
+    connect(QSoftCore::getCore()->getProjectCore(), SIGNAL(notifyClosed()), this, SLOT(onProjectClosed()));
+    connect(this, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(item_clicked(QTreeWidgetItem*)));
+    connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
+            this, SLOT(select_changed(QTreeWidgetItem*, QTreeWidgetItem*)));
 
     connect(QSoftCore::getCore()->getProjectCore()->getPageManager(),
             SIGNAL(insert_page_signal(QAbstractHost*)),
@@ -210,12 +210,12 @@ void QObjectListView::clear()
     QTreeWidget::clear();
 }
 
-void QObjectListView::project_opened()
+void QObjectListView::onProjectOpened()
 {
     init();
 }
 
-void QObjectListView::project_closed()
+void QObjectListView::onProjectClosed()
 {
     clear();
 }
@@ -479,7 +479,7 @@ void QObjectListView::button_remove()
     }
 }
 
-void QObjectListView::set_undo_stack(QUndoStack *stack)
+void QObjectListView::setUndoStack(QUndoStack *stack)
 {
     m_undo_stack=stack;
 }

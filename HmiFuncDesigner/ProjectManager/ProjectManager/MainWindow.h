@@ -14,7 +14,6 @@
 #include "qttreepropertybrowser.h"
 #include "ProjectTreeView.h"
 #include "ChildInterface.h"
-#include "GraphPageListWidget.h"
 #include <QVariant>
 #include <QIcon>
 #include <QAction>
@@ -35,6 +34,7 @@
 #include <QSignalMapper>
 
 class QAbstractPage;
+class QStackedWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -82,8 +82,6 @@ private:
     void createUndoView();
     int exitResponse();
     void updateGraphPageViewInfo(const QString &);
-    // 清空画面列表控件
-    void clearGraphPageListWidget();
 
 public slots:
     void slotElementIdChanged();
@@ -119,10 +117,6 @@ private slots:
     void onSlotEditPaste();
     // 删除画面
     void onSlotEditDelete();
-    // 画面名称被单击
-    void onSlotGraphPageNameClicked(QListWidgetItem *pItemObj);
-    // 创建指定名称的画面
-    void onSlotCreateGraphPageUseName(const QString &szName);
     // 重命名画面
     void onRenameGraphPage();
     // 删除画面
@@ -185,10 +179,9 @@ private:
     QString m_szCopyGraphPageFileName;
     QWidget* m_childCurrent = Q_NULLPTR;
     QSignalMapper* m_windowMapper = Q_NULLPTR;
-    QWidget *m_pCentralWidgetObj = Q_NULLPTR;
+    QStackedWidget *m_pCentralWidgetObj = Q_NULLPTR;
     MdiArea *m_pMdiAreaObj = Q_NULLPTR;
     ProjectTreeView *m_pProjectTreeViewObj = Q_NULLPTR;
-    GraphPageListWidget *m_pListWidgetGraphPagesObj = Q_NULLPTR; // 画面名称列表
     QStatusBar *m_pStatusBarObj = Q_NULLPTR; // 状态栏
     QDockWidget *m_pDockProjectMgrObj = Q_NULLPTR; // 工程管理器停靠控件
     QTabWidget *m_pTabProjectMgrObj = Q_NULLPTR; // 工程管理器TabWidget控件

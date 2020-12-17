@@ -1,17 +1,18 @@
 #include "qabstractupdateplugin.h"
 
-void QAbstractUpdatePlugin::init_plugin()
+void QAbstractUpdatePlugin::initPlugin()
 {
 }
 
-QString QAbstractUpdatePlugin::get_plugin_type()
+QString QAbstractUpdatePlugin::getPluginType()
 {
     return UPDATE_PLUGIN_TYPE;
 }
 
 QAbstractUpdate* QAbstractUpdatePlugin::create(const QString &name)
 {
-    return NULL;
+    (void)name;
+    return Q_NULLPTR;
 }
 
 QStringList QAbstractUpdatePlugin::supports()

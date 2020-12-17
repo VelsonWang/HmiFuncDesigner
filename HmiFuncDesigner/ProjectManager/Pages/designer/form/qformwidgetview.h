@@ -18,7 +18,7 @@ class QFormWidgetView : public QWidget
 public:
     explicit QFormWidgetView(QWidget *parent = 0);
     ~QFormWidgetView();
-    void            set_undo_stack(QUndoStack* stack);
+    void setUndoStack(QUndoStack* stack);
 
 protected slots:
     void    project_opened();
@@ -30,7 +30,7 @@ public slots:
 
 signals:
     void    select(QAbstractHost* host);
-    void    property_edit_signal(QAbstractProperty* pro,const QVariant& value);
+    void    notifyPropertyEdit(QAbstractProperty* pro,const QVariant& value);
 
 protected:
 
