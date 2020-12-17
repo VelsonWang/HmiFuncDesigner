@@ -50,7 +50,6 @@ SOURCES += main.cpp\
     ElementTreeWidget.cpp \
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
-    GraphPageListWidget.cpp \
     ListViewEx.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
@@ -96,7 +95,6 @@ HEADERS  += MainWindow.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
     DevicePluginLoader.h \
-    GraphPageListWidget.h \
     ListViewEx.h \
     MdiArea.h \
     NewProjectDialog.h \

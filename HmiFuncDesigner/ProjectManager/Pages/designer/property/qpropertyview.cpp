@@ -31,7 +31,7 @@ QPropertyView::QPropertyView(QWidget *parent) :
     m_styledBar->setLayout(layout);
 
     this->resize(200,200);
-    connect(m_propertyView,SIGNAL(property_edit_signal(QAbstractProperty*,QVariant)),this,SIGNAL(property_edit_signal(QAbstractProperty*,QVariant)));
+    connect(m_propertyView,SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)),this,SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)));
 }
 
 void QPropertyView::selectWidget(QAbstractHost *host)
@@ -51,7 +51,7 @@ void QPropertyView::selectWidget(QAbstractHost *host)
     }
 }
 
-void QPropertyView::set_undo_stack(QUndoStack *stack)
+void QPropertyView::setUndoStack(QUndoStack *stack)
 {
-    m_propertyView->set_undo_stack(stack);
+    m_propertyView->setUndoStack(stack);
 }

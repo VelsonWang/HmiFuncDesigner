@@ -15,7 +15,7 @@ public:
 
     void    setVisible(bool visible);
 
-    virtual void    set_undo_stack(QUndoStack *stack);
+    virtual void    setUndoStack(QUndoStack *stack);
 signals:
     void    selected(bool select);
 

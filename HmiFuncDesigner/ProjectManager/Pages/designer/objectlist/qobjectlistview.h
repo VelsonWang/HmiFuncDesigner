@@ -10,28 +10,29 @@ class QObjectListView : public QTreeWidget
 {
     Q_OBJECT
 public:
-    explicit QObjectListView(QWidget *parent = 0);
-    
-    void    set_undo_stack(QUndoStack* stack);
+    explicit QObjectListView(QWidget *parent = Q_NULLPTR);
+    void setUndoStack(QUndoStack* stack);
+
 public slots:
-    void    set_select(QAbstractHost* host);
+    void set_select(QAbstractHost* host);
+
 protected:
-    void    init();
-    void    clear();
-    void    drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const;
+    void init();
+    void clear();
+    void drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const;
 
     QItemSelectionModel::SelectionFlags selectionCommand(const QModelIndex &index, const QEvent *event) const;
 
     QString get_host_icon(QAbstractHost* host);
     QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers);
+
 signals:
-    void    select(QAbstractHost* host);
+    void select(QAbstractHost* host);
+
 protected slots:
-    void    project_opened();
-    void    project_closed();
-
+    void onProjectOpened();
+    void onProjectClosed();
     void    item_clicked(QTreeWidgetItem *item);
-
     void    select_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous );
 
     void    insert_host_slot(const QList<QAbstractHost*> &list,const QList<int> &indexs);
@@ -45,17 +46,17 @@ protected slots:
     void    button_remove();
 
     void    host_name_changed(QAbstractHost* host);
+
 protected:
     friend class QObjectDelegate;
+
 protected:
-    QMap<QTreeWidgetItem*,QAbstractHost*>       m_item_to_host;
-    QMap<QAbstractHost*,QTreeWidgetItem*>       m_host_to_item;
-
-    QTreeWidgetItem*                            m_form_item;
-    QTreeWidgetItem*                            m_keyboard_item;
-    QTreeWidgetItem*                            m_dialog_item;
-
-    QUndoStack                                  *m_undo_stack;
+    QMap<QTreeWidgetItem*, QAbstractHost*> m_item_to_host;
+    QMap<QAbstractHost*, QTreeWidgetItem*> m_host_to_item;
+    QTreeWidgetItem *m_form_item;
+    QTreeWidgetItem *m_keyboard_item;
+    QTreeWidgetItem *m_dialog_item;
+    QUndoStack *m_undo_stack;
 };
 
 #endif // QOBJECTLISTVIEW_H

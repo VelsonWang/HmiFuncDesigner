@@ -12,11 +12,12 @@
 class CORELIB_EXPORT MiniSplitter : public QSplitter
 {
 public:
-    MiniSplitter(QWidget *parent = 0);
+    MiniSplitter(QWidget *parent = Q_NULLPTR);
     MiniSplitter(Qt::Orientation orientation);
 
 protected:
-    QSplitterHandle *createHandle();//创建分割线
+    QSplitterHandle *createHandle(); // 创建分割线
+
 protected:
 };
 

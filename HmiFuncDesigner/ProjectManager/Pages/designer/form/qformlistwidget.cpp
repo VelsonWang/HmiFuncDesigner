@@ -86,7 +86,7 @@ void QFormListWidget::insert_form(QAbstractHost *host, int index)
     QDesignerFormHost *form=new QDesignerFormHost(host,this);
     connect(form,SIGNAL(select(QAbstractHost*)),this,SIGNAL(select(QAbstractHost*)));
     form->set_select_widget(host);
-    form->set_undo_stack(m_undo_stack);
+    form->setUndoStack(m_undo_stack);
     m_forms.insert(index,form);
     m_host_to_form.insert(host,form);
 
@@ -164,7 +164,7 @@ void QFormListWidget::property_edit_slot(QAbstractProperty *pro, const QVariant 
     }
 }
 
-void QFormListWidget::set_undo_stack(QUndoStack *stack)
+void QFormListWidget::setUndoStack(QUndoStack *stack)
 {
     m_undo_stack=stack;
 }

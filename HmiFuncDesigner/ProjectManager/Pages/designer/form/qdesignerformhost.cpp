@@ -562,7 +562,7 @@ void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &
     }
 }
 
-void QDesignerFormHost::set_undo_stack(QUndoStack *stack)
+void QDesignerFormHost::setUndoStack(QUndoStack *stack)
 {
     m_undo_stack=stack;
 }

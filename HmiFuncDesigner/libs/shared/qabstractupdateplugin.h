@@ -13,10 +13,10 @@ class SHAREDLIB_EXPORT QAbstractUpdatePlugin : public QAbstractPlugin
 {
     Q_OBJECT
 public:
-    virtual void        init_plugin();//初始化插件
-    virtual QString     get_plugin_type();
+    virtual void initPlugin(); // 初始化插件
+    virtual QString getPluginType();
 
-    virtual QAbstractUpdate*    create(const QString &name);
+    virtual QAbstractUpdate* create(const QString &name);
     virtual QStringList supports();
 };
 

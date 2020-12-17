@@ -20,7 +20,7 @@ public slots:
     virtual void    show_dialog(const QString &name);
 
 protected:
-    void    createObject();
+    void createObject();
 };
 
 #endif // QPROJECTHOST_H

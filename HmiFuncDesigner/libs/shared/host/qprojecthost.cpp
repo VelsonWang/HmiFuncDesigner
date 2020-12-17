@@ -25,7 +25,7 @@ void QProjectHost::initProperty()
     pro->setAttribute(ATTR_EDITABLE,false);
 
     pro=QPropertyFactory::create_property("ByteArray");
-    if(pro!=Q_NULLPTR)
+    if(pro!=NULL)
     {
         pro->setProperty("name","projectPath");
         pro->setAttribute("show_name",tr("Project Path"));
@@ -35,7 +35,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=Q_NULLPTR)
+    if(pro!=NULL)
     {
         pro->setProperty("name","start_user");
         pro->setAttribute("show_name",tr("User"));
@@ -45,7 +45,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=Q_NULLPTR)
+    if(pro!=NULL)
     {
         pro->setProperty("name","start_language");
         pro->setAttribute("show_name",tr("Language"));
@@ -55,7 +55,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Enum");
-    if(pro!=Q_NULLPTR)
+    if(pro!=NULL)
     {
         pro->setProperty("name","start_page");
         pro->setAttribute("show_name",tr("Page"));
@@ -65,7 +65,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Size");
-    if(pro!=Q_NULLPTR)
+    if(pro!=NULL)
     {
         pro->setProperty("name","designer_size");
         pro->setAttribute("show_name",tr("Design Size"));
@@ -75,7 +75,7 @@ void QProjectHost::initProperty()
     }
 
     pro=QPropertyFactory::create_property("Size");
-    if(pro!=Q_NULLPTR)
+    if(pro!=NULL)
     {
         pro->setProperty("name","running_size");
         pro->setAttribute("show_name",tr("Running Size"));
@@ -84,6 +84,7 @@ void QProjectHost::initProperty()
         insertProperty(pro);
     }
 }
+
 
 void QProjectHost::show_form(const QString &name)
 {
@@ -108,7 +109,7 @@ void QProjectHost::show_form_by_uuid(const QString &uuid)
 {
     QAbstractHost* host=m_page_manager->get_page(uuid);
 
-    if(host!=Q_NULLPTR)
+    if(host!=NULL)
     {
         QWidget* wid=(QWidget*)host->getObject();
         emit notifyShowWidget(wid);

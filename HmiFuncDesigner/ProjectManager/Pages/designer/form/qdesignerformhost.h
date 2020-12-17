@@ -26,7 +26,7 @@ public:
 
     void            property_edited(QAbstractProperty* pro,const QVariant& value);
 
-    void            set_undo_stack(QUndoStack* stack);
+    void            setUndoStack(QUndoStack* stack);
 
     void            same_left();
     void            same_top();

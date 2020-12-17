@@ -39,7 +39,7 @@ public:
 
     void    clearAll();
 
-    void    set_undo_stack(QUndoStack* stack);
+    void    setUndoStack(QUndoStack* stack);
 public:
     QAbstractProperty               *itemToProperty(QTreeWidgetItem *item) const;
     QTreeWidgetItem                 *indexToItem(const QModelIndex &index)const;
@@ -54,7 +54,7 @@ protected slots:
     void    property_changed();
     void    property_edit(const QVariant& value);
 signals:
-    void    property_edit_signal(QAbstractProperty* pro,const QVariant& value);
+    void    notifyPropertyEdit(QAbstractProperty* pro,const QVariant& value);
     void    active();
 private:
     friend class QPropertyEditorDelegate;

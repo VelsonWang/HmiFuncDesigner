@@ -10,9 +10,9 @@
 QMap<QString,QMap<QString,QAbstractPlugin*> > PluginLoader::m_plugins;
 
 
-void PluginLoader::load_plugin(const QString &xml_file_name)
+void PluginLoader::loadPlugin(const QString &xml_file_name)
 {
-    release_plugin();
+    releasePlugin();
 
     XMLObject xml;
     QFile f(xml_file_name);
@@ -45,8 +45,8 @@ void PluginLoader::load_plugin(const QString &xml_file_name)
                 QAbstractPlugin *plugin=qobject_cast<QAbstractPlugin*>(load.instance());
                 if(plugin!=Q_NULLPTR)
                 {
-                    QString type=plugin->get_plugin_type();
-                    QString name=plugin->get_plugin_name();
+                    QString type = plugin->getPluginType();
+                    QString name = plugin->getPluginName();
                     if(type!="" && name!="")
                     {
                         QMap<QString,QAbstractPlugin*> plugins=m_plugins.value(type);
@@ -57,7 +57,7 @@ void PluginLoader::load_plugin(const QString &xml_file_name)
                         }
                         plugins.insert(name,plugin);
                         m_plugins.insert(type,plugins);
-                        plugin->init_plugin();
+                        plugin->initPlugin();
                     }
                     else
                     {
@@ -69,17 +69,17 @@ void PluginLoader::load_plugin(const QString &xml_file_name)
     }
 }
 
-QMap<QString,QAbstractPlugin*> PluginLoader::get_plugin_by_type(const QString &type)
+QMap<QString,QAbstractPlugin*> PluginLoader::getPluginByType(const QString &type)
 {
     return m_plugins.value(type);
 }
 
-QAbstractPlugin* PluginLoader::get_plugin(const QString &type, const QString &name)
+QAbstractPlugin* PluginLoader::getPlugin(const QString &type, const QString &name)
 {
     return m_plugins.value(type).value(name);
 }
 
-void PluginLoader::release_plugin()
+void PluginLoader::releasePlugin()
 {
     QMapIterator<QString,QMap<QString,QAbstractPlugin*> > it(m_plugins);
 

@@ -12,13 +12,15 @@ class QObjectListWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QObjectListWidget(QWidget *parent = 0);
-    void    set_undo_stack(QUndoStack *stack);
+    explicit QObjectListWidget(QWidget *parent = Q_NULLPTR);
+    void setUndoStack(QUndoStack *stack);
+
 public slots:
-    void    set_select(QAbstractHost* host);
+    void set_select(QAbstractHost* host);
+
 signals:
-    void    select(QAbstractHost* host);
-public slots:
+    void select(QAbstractHost* host);
+
 protected:
     StyledBar *m_styledBar;
     QObjectListView *m_object_list;

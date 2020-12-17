@@ -16,7 +16,7 @@
 
 QProjectCore::QProjectCore(QObject *parent)
     : QObject(parent),
-      m_pProjectHostObj(Q_NULLPTR),
+      m_pProjectHostObj(new QProjectHost),
       m_bOpen(false),
       m_pPageManagerObj(new QPageManager)
 {

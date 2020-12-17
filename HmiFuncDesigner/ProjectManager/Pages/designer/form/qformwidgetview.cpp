@@ -136,7 +136,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     m_styledBar->setLayout(h);
 
     connect(m_formWidget,SIGNAL(select(QAbstractHost*)),this,SIGNAL(select(QAbstractHost*)));
-    connect(this,SIGNAL(property_edit_signal(QAbstractProperty*,QVariant)),m_formWidget,SLOT(property_edit_slot(QAbstractProperty*,QVariant)));
+    connect(this,SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)),m_formWidget,SLOT(property_edit_slot(QAbstractProperty*,QVariant)));
     connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyOpened()),this,SLOT(project_opened()));
     connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyClosed()),this,SLOT(project_closed()));
 }
@@ -317,10 +317,10 @@ void QFormWidgetView::add_page()
     dlg.exec();
 }
 
-void QFormWidgetView::set_undo_stack(QUndoStack *stack)
+void QFormWidgetView::setUndoStack(QUndoStack *stack)
 {
     m_undo_stack=stack;
-    m_formWidget->set_undo_stack(stack);
+    m_formWidget->setUndoStack(stack);
 }
 
 void QFormWidgetView::set_select(QAbstractHost *host)

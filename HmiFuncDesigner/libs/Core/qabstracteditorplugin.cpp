@@ -1,10 +1,10 @@
 #include "qabstracteditorplugin.h"
 
-void QAbstractEditorPlugin::init_plugin()
+void QAbstractEditorPlugin::initPlugin()
 {
 }
 
-QString QAbstractEditorPlugin::get_plugin_type()
+QString QAbstractEditorPlugin::getPluginType()
 {
     return RESOURCE_EDIOTR_PLUGIN_TYPE;
 }
