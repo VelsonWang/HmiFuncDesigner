@@ -50,19 +50,13 @@ SOURCES += main.cpp\
     ElementTreeWidget.cpp \
     CommunicationDeviceChild.cpp \
     DevicePluginLoader.cpp \
-    ListViewEx.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
-    NewProjectDialog.cpp \
     ProjectTreeView.cpp \
-    NetSettingDialog.cpp \
-    DatabaseSettingDialog.cpp \
     RealTimeDatabaseChild.cpp \
     ScriptManageChild.cpp \
-    SystemParametersChild.cpp \
     TableviewDelegate.cpp \
     TagManagerChild.cpp \
-    UserAuthorityDialog.cpp \
     NewComDeviceDialog.cpp \
     NewVariableGroupDialog.cpp \
     DeviceListDialog.cpp \
@@ -95,19 +89,13 @@ HEADERS  += MainWindow.h \
     ChildInterface.h \
     CommunicationDeviceChild.h \
     DevicePluginLoader.h \
-    ListViewEx.h \
     MdiArea.h \
-    NewProjectDialog.h \
     ../Public/Public.h \
     ProjectTreeView.h \
-    NetSettingDialog.h \
-    DatabaseSettingDialog.h \
     RealTimeDatabaseChild.h \
     ScriptManageChild.h \
-    SystemParametersChild.h \
     TableviewDelegate.h \
     TagManagerChild.h \
-    UserAuthorityDialog.h \
     NewComDeviceDialog.h \
     NewVariableGroupDialog.h \
     DeviceListDialog.h \
@@ -140,10 +128,6 @@ HEADERS  += MainWindow.h \
 
 
 FORMS    += \
-    NewProjectDialog.ui \
-    NetSettingDialog.ui \
-    DatabaseSettingDialog.ui \
-    UserAuthorityDialog.ui \
     NewComDeviceDialog.ui \
     NewVariableGroupDialog.ui \
     DeviceListDialog.ui \

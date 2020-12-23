@@ -22,7 +22,6 @@
 #include "AboutDialog.h"
 #include "ConfigUtils.h"
 #include "Helper.h"
-#include "NewProjectDialog.h"
 #include "NewVariableGroupDialog.h"
 #include "ProjectDownloadDialog.h"
 #include "ProjectUploadDialog.h"
@@ -37,12 +36,12 @@
 #include "variantmanager.h"
 #include "variantfactory.h"
 #include "ChildInterface.h"
-#include "SystemParametersChild.h"
 #include "CommunicationDeviceChild.h"
 #include "TagManagerChild.h"
 #include "qsoftcore.h"
 #include "VerifyPasswordDialog.h"
 #include "../../libs/core/manhattanstyle.h"
+#include "../../libs/core/newprojectdialog.h"
 #include "../../libs/shared/pluginloader.h"
 #include "../../libs/core/qabstractpage.h"
 #include "../../libs/core/qsoftcore.h"
@@ -67,12 +66,20 @@ MainWindow::MainWindow(QWidget *parent)
       m_szCurItem(""),
       m_szCurTreeViewItem("")
 {
+    m_pCentralWidgetObj = new QStackedWidget(this);
+
     QMapIterator<QString, QAbstractPlugin*> it(PluginLoader::getPluginByType(PAGE_PLUGIN_NAME));
     while(it.hasNext()) {
         it.next();
         QAbstractPage* pPageObj = dynamic_cast<QAbstractPage*>(it.value());
-        //qDebug() << "page name: "<< pPageObj->getPageName();
-        m_mapNameToPage.insert(pPageObj->getPageName(), pPageObj);
+        if(pPageObj) {
+            QWidget *pWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
+            if(pWidgetObj) {
+                m_pCentralWidgetObj->addWidget(pWidgetObj);
+            }
+            //qDebug() << "page name: "<< pPageObj->getPageName();
+            m_mapNameToPage.insert(pPageObj->getPageName().toUpper(), pPageObj);
+        }
     }
 
     initUI();
@@ -85,8 +92,6 @@ MainWindow::MainWindow(QWidget *parent)
  */
 void MainWindow::initUI()
 {
-    m_pCentralWidgetObj = new QStackedWidget(this);
-
     m_pMdiAreaObj = new MdiArea(m_pCentralWidgetObj);
     QSizePolicy sizePolicyMdiArea(QSizePolicy::Preferred, QSizePolicy::Preferred);
     sizePolicyMdiArea.setHorizontalStretch(0);
@@ -136,11 +141,10 @@ void MainWindow::initUI()
     pWidgetCtrlObj->setLayout(pWidgetsLayoutObj);
 
     // 图形元素控件
-    QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
+    QAbstractPage* pPageObj = m_mapNameToPage.value(QString("Designer").toUpper());
     if(pPageObj) {
         m_pDesignerWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
         if(m_pDesignerWidgetObj) {
-            m_pCentralWidgetObj->addWidget(m_pDesignerWidgetObj);
             QVariant variant = m_pDesignerWidgetObj->property("DesignerWidget");
             QWidget *pWidgetObj = variant.value<QWidget *>();
             pWidgetsLayoutObj->addWidget(pWidgetObj);
@@ -937,18 +941,22 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
     QStringList szListUserData = szItemText.split("|");
     if(szListUserData.size() != 2) return;
 
+
+    QAbstractPage* pPageObj = m_mapNameToPage.value(szListUserData.at(0).toUpper());
+    if(pPageObj) {
+        QWidget *pWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
+        if(pWidgetObj) {
+            if(m_pCentralWidgetObj->indexOf(pWidgetObj) >= 0) {
+                m_pCentralWidgetObj->setCurrentWidget(pWidgetObj);
+                return;
+            }
+        }
+    }
+
     QMdiSubWindow *pWndObj = findMdiChild(szListUserData.at(1));
     if(pWndObj == Q_NULLPTR) {
         ChildInterface *pIFaceChildObj = Q_NULLPTR;
-        if(szListUserData.at(0) == QString("SystemParameters").toUpper()) { // 系统参数
-            SystemParametersChild *pObj = new SystemParametersChild(this);
-            pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szListUserData.at(1));
-            pObj->showMaximized();
-            pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = QSoftCore::getCore()->getProjectCore()->m_szProjFile;
-            pIFaceChildObj->m_szItemName = szListUserData.at(0);
-        } else if(szListUserData.at(0) == QString("CommunicationDevice").toUpper() ||
+        if(szListUserData.at(0) == QString("CommunicationDevice").toUpper() ||
                   szListUserData.at(0) == QString("ComDevice").toUpper() ||
                   szListUserData.at(0) == QString("NetDevice").toUpper()) { // 通讯设备, 串口设备, 网络设备
             CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);

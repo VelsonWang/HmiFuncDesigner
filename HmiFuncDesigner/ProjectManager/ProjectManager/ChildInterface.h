@@ -24,12 +24,5 @@ public:
 Q_DECLARE_INTERFACE(ChildInterface, "HmiFuncDesigner.ProjectManager.ChildInterface")
 
 
-////////////////////////////////////////////////////////////////////////////////
-
-#define DEL_OBJ(obj_ptr) do\
-    if(obj_ptr != Q_NULLPTR) {\
-    delete obj_ptr;\
-    obj_ptr = Q_NULLPTR;\
-} while(0)
 
 #endif // INTERFACECHILD_H

@@ -31,8 +31,14 @@ ScriptManageChild::ScriptManageChild(QWidget *parent) : QWidget(parent)
 
 ScriptManageChild::~ScriptManageChild()
 {
-    DEL_OBJ(m_pListWidgetObj);
-    DEL_OBJ(m_pVLayoutObj);
+    if(m_pListWidgetObj != Q_NULLPTR) {
+        delete m_pListWidgetObj;
+        m_pListWidgetObj = Q_NULLPTR;
+    }
+    if(m_pVLayoutObj != Q_NULLPTR) {
+        delete m_pVLayoutObj;
+        m_pVLayoutObj = Q_NULLPTR;
+    }
 }
 
 

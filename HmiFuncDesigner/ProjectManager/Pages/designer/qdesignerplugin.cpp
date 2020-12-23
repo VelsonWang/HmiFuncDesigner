@@ -15,7 +15,7 @@ void QDesignerPlugin::createWidget()
 
 QString QDesignerPlugin::getPageName()
 {
-    return tr("Designer");
+    return "Designer";
 }
 
 QString QDesignerPlugin::getPluginName()

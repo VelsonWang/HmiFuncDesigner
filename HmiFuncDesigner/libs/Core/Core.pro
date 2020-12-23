@@ -22,6 +22,7 @@ LIBS += -L$$clean_path($$DESTDIR) -lshared
 LIBS += -L$$clean_path($$DESTDIR) -lgradientEditor
 
 HEADERS += \
+    listviewex.h \
     tageditdialog.h \
     corelibglobal.h \
     qabstractpage.h \
@@ -90,9 +91,15 @@ HEADERS += \
     qpropertylist/stylesheeteditor/qstatecheckwidget.h \
     qpropertylist/stylesheeteditor/qitemcheckbox.h \
     undocommand/qpageaddundocommand.h \
-    qprojectinformation.h
+    qprojectinformation.h \
+    databasesettingdialog.h \
+    netsettingdialog.h \
+    newprojectdialog.h \
+    qipaddressedit.h  \
+    userauthoritydialog.h
 
 SOURCES += \
+    listviewex.cpp \
     tageditdialog.cpp \
     qabstractpage.cpp \
     qabstractpagewidget.cpp \
@@ -160,7 +167,12 @@ SOURCES += \
     qpropertylist/stylesheeteditor/qstatecheckwidget.cpp \
     qpropertylist/stylesheeteditor/qitemcheckbox.cpp \
     undocommand/qpageaddundocommand.cpp \
-    qprojectinformation.cpp
+    qprojectinformation.cpp \
+    databasesettingdialog.cpp \
+    netsettingdialog.cpp \
+    newprojectdialog.cpp \
+    qipaddressedit.cpp \
+    userauthoritydialog.cpp
 
 FORMS += \
     tageditdialog.ui \
@@ -177,4 +189,9 @@ FORMS += \
     qpropertylist/stylesheeteditor/qbordersheeteditor.ui \
     qpropertylist/stylesheeteditor/qtextsheeteditor.ui \
     qpropertylist/stylesheeteditor/qaddsheetitemdialog.ui \
-    qpropertylist/stylesheeteditor/qitemcheckbox.ui
+    qpropertylist/stylesheeteditor/qitemcheckbox.ui \
+    databasesettingdialog.ui \
+    netsettingdialog.ui \
+    newprojectdialog.ui \
+    qipaddressedit.ui \
+    userauthoritydialog.ui

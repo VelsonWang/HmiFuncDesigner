@@ -938,8 +938,14 @@ TagManagerChild::TagManagerChild(QWidget *parent) : QWidget(parent)
 
 TagManagerChild::~TagManagerChild()
 {
-    DEL_OBJ(m_pTagMgrTableViewObj);
-    DEL_OBJ(m_pTopVLayoutObj);
+    if(m_pTagMgrTableViewObj != Q_NULLPTR) {
+        delete m_pTagMgrTableViewObj;
+        m_pTagMgrTableViewObj = Q_NULLPTR;
+    }
+    if(m_pTopVLayoutObj != Q_NULLPTR) {
+        delete m_pTopVLayoutObj;
+        m_pTopVLayoutObj = Q_NULLPTR;
+    }
 }
 
 
@@ -1015,16 +1021,41 @@ void TagManagerChild::removeUserInterface(QMainWindow* pMainWin)
 
     if(m_pMainWinObj) {
         m_pMenuTagEditObj->clear();
-        DEL_OBJ(m_pActAddTagObj);
-        DEL_OBJ(m_pActCopyTagObj);
-        DEL_OBJ(m_pActPasteTagObj);
-        DEL_OBJ(m_pActModifyTagObj);
-        DEL_OBJ(m_pActDeleteTagObj);
-        DEL_OBJ(m_pActExportTagObj);
-        DEL_OBJ(m_pActImportTagObj);
+
+        if(m_pActAddTagObj != Q_NULLPTR) {
+            delete m_pActAddTagObj;
+            m_pActAddTagObj = Q_NULLPTR;
+        }
+        if(m_pActCopyTagObj != Q_NULLPTR) {
+            delete m_pActCopyTagObj;
+            m_pActCopyTagObj = Q_NULLPTR;
+        }
+        if(m_pActPasteTagObj != Q_NULLPTR) {
+            delete m_pActPasteTagObj;
+            m_pActPasteTagObj = Q_NULLPTR;
+        }
+        if(m_pActModifyTagObj != Q_NULLPTR) {
+            delete m_pActModifyTagObj;
+            m_pActModifyTagObj = Q_NULLPTR;
+        }
+        if(m_pActDeleteTagObj != Q_NULLPTR) {
+            delete m_pActDeleteTagObj;
+            m_pActDeleteTagObj = Q_NULLPTR;
+        }
+        if(m_pActExportTagObj != Q_NULLPTR) {
+            delete m_pActExportTagObj;
+            m_pActExportTagObj = Q_NULLPTR;
+        }
+        if(m_pActImportTagObj != Q_NULLPTR) {
+            delete m_pActImportTagObj;
+            m_pActImportTagObj = Q_NULLPTR;
+        }
 
         pMainWin->menuBar()->removeAction(m_pMenuTagEditObj->menuAction());
-        DEL_OBJ(m_pMenuTagEditObj);
+        if(m_pMenuTagEditObj != Q_NULLPTR) {
+            delete m_pMenuTagEditObj;
+            m_pMenuTagEditObj = Q_NULLPTR;
+        }
 
         pMainWin->removeToolBar(m_pToolBarTagEditObj);
 

@@ -18,8 +18,14 @@ RealTimeDatabaseChild::RealTimeDatabaseChild(QWidget *parent) : QWidget(parent)
 
 RealTimeDatabaseChild::~RealTimeDatabaseChild()
 {
-    DEL_OBJ(m_pListViewObj);
-    DEL_OBJ(m_pListViewModelObj);
+    if(m_pListViewObj != Q_NULLPTR) {
+        delete m_pListViewObj;
+        m_pListViewObj = Q_NULLPTR;
+    }
+    if(m_pListViewModelObj != Q_NULLPTR) {
+        delete m_pListViewModelObj;
+        m_pListViewModelObj = Q_NULLPTR;
+    }
 }
 
 void RealTimeDatabaseChild::ListViewInitUi()

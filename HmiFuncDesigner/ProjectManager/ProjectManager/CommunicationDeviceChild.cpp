@@ -41,8 +41,14 @@ CommunicationDeviceChild::CommunicationDeviceChild(QWidget *parent) : QWidget(pa
 
 CommunicationDeviceChild::~CommunicationDeviceChild()
 {
-    DEL_OBJ(m_pCommDevModelObj);
-    DEL_OBJ(m_pListViewCommDevObj);
+    if(m_pCommDevModelObj != Q_NULLPTR) {
+        delete m_pCommDevModelObj;
+        m_pCommDevModelObj = Q_NULLPTR;
+    }
+    if(m_pListViewCommDevObj != Q_NULLPTR) {
+        delete m_pListViewCommDevObj;
+        m_pListViewCommDevObj = Q_NULLPTR;
+    }
 }
 
 
