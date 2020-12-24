@@ -3,7 +3,6 @@
 #include "netsettingdialog.h"
 #include "databasesettingdialog.h"
 #include "userauthoritydialog.h"
-#include "qsoftcore.h"
 #include <QFileInfo>
 #include <QApplication>
 #include <QFileInfo>

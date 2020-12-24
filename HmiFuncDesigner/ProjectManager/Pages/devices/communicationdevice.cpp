@@ -1,6 +1,6 @@
-﻿#include "CommunicationDeviceChild.h"
-#include "NewComDeviceDialog.h"
-#include "NewNetDeviceDialog.h"
+﻿#include "communicationdevice.h"
+#include "newcomdevicedialog.h"
+#include "newnetdevicedialog.h"
 #include "qsoftcore.h"
 #include "qprojectcore.h"
 #include <QMenu>
@@ -9,9 +9,9 @@
 #include <QKeySequence>
 #include <QContextMenuEvent>
 #include <QFile>
+#include <QDebug>
 
-
-CommunicationDeviceChild::CommunicationDeviceChild(QWidget *parent) : QWidget(parent)
+CommunicationDevice::CommunicationDevice(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_DeleteOnClose);
 
@@ -25,7 +25,7 @@ CommunicationDeviceChild::CommunicationDeviceChild(QWidget *parent) : QWidget(pa
     m_pListViewCommDevObj->setResizeMode(QListView::Adjust);
     m_pListViewCommDevObj->setMovement(QListView::Static);
     connect(m_pListViewCommDevObj, &QAbstractItemView::doubleClicked, this,
-            &CommunicationDeviceChild::onSlotListViewProjectDoubleClicked);
+            &CommunicationDevice::onSlotListViewProjectDoubleClicked);
 
     QVBoxLayout *pVLayoutObj = new QVBoxLayout(this);
     pVLayoutObj->setSpacing(0);
@@ -39,7 +39,7 @@ CommunicationDeviceChild::CommunicationDeviceChild(QWidget *parent) : QWidget(pa
     setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
-CommunicationDeviceChild::~CommunicationDeviceChild()
+CommunicationDevice::~CommunicationDevice()
 {
     if(m_pCommDevModelObj != Q_NULLPTR) {
         delete m_pCommDevModelObj;
@@ -52,7 +52,7 @@ CommunicationDeviceChild::~CommunicationDeviceChild()
 }
 
 
-void CommunicationDeviceChild::listViewUISetting()
+void CommunicationDevice::listViewUISetting()
 {
     m_pListViewCommDevObj->setViewMode(QListView::IconMode);
     m_pListViewCommDevObj->setViewportMargin(0, 0, 0, 0);
@@ -64,7 +64,7 @@ void CommunicationDeviceChild::listViewUISetting()
     m_pListViewCommDevObj->setMovement(QListView::Static);
 }
 
-void CommunicationDeviceChild::listViewUpdate()
+void CommunicationDevice::listViewUpdate()
 {
     if(m_szItemName == QString("CommunicationDevice").toUpper()) { // 通讯设备
         listViewCommunicationDeviceUpdate();
@@ -76,10 +76,10 @@ void CommunicationDeviceChild::listViewUpdate()
 }
 
 /**
- * @brief CommunicationDeviceChild::listViewCommunicationDeviceUpdate
+ * @brief CommunicationDevice::listViewCommunicationDeviceUpdate
  * @details 所有通讯设备列表视图
  */
-void CommunicationDeviceChild::listViewCommunicationDeviceUpdate()
+void CommunicationDevice::listViewCommunicationDeviceUpdate()
 {
     m_pCommDevModelObj->clear();
     listViewUISetting();
@@ -94,12 +94,12 @@ void CommunicationDeviceChild::listViewCommunicationDeviceUpdate()
     pNewNetDevice->setData(QString("NewNetDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewNetDevice);
 
-    QStandardItem *pNewBusDevice = new QStandardItem(QIcon(":/images/pm_bus.png"), tr("新建总线设备"));
+    QStandardItem *pNewBusDevice = new QStandardItem(QIcon(":/images/pj_bus.png"), tr("新建总线设备"));
     pNewBusDevice->setEditable(false);
     pNewBusDevice->setData(QString("NewBusDevice").toUpper(), Qt::UserRole + 1);
     //m_pCommDevModelObj->appendRow(pNewBusDevice);
 
-    QStandardItem *pNewOPCDevice = new QStandardItem(QIcon(":/images/pm_opc.PNG"), tr("新建OPC设备"));
+    QStandardItem *pNewOPCDevice = new QStandardItem(QIcon(":/images/pj_opc.png"), tr("新建OPC设备"));
     pNewOPCDevice->setEditable(false);
     pNewOPCDevice->setData(QString("NewOPCDevice").toUpper(), Qt::UserRole + 1);
     //m_pCommDevModelObj->appendRow(pNewOPCDevice);
@@ -124,10 +124,10 @@ void CommunicationDeviceChild::listViewCommunicationDeviceUpdate()
 }
 
 /**
- * @brief CommunicationDeviceChild::listViewCOMDeviceUpdate
+ * @brief CommunicationDevice::listViewCOMDeviceUpdate
  * @details 串口通讯设备列表视图
  */
-void CommunicationDeviceChild::listViewCOMDeviceUpdate()
+void CommunicationDevice::listViewCOMDeviceUpdate()
 {
     m_pCommDevModelObj->clear();
     listViewUISetting();
@@ -150,10 +150,10 @@ void CommunicationDeviceChild::listViewCOMDeviceUpdate()
 }
 
 /**
- * @brief CommunicationDeviceChild::listViewNetDeviceUpdate
+ * @brief CommunicationDevice::listViewNetDeviceUpdate
  * @details 网络通讯设备列表视图
  */
-void CommunicationDeviceChild::listViewNetDeviceUpdate()
+void CommunicationDevice::listViewNetDeviceUpdate()
 {
     m_pCommDevModelObj->clear();
     listViewUISetting();
@@ -179,7 +179,7 @@ void CommunicationDeviceChild::listViewNetDeviceUpdate()
 /*
 * 右键菜单
 */
-void CommunicationDeviceChild::contextMenuEvent(QContextMenuEvent * event)
+void CommunicationDevice::contextMenuEvent(QContextMenuEvent * event)
 {
     QModelIndex index = m_pListViewCommDevObj->indexAt(event->pos());
     if(!index.isValid()) { // 单击空白部分
@@ -211,11 +211,10 @@ void CommunicationDeviceChild::contextMenuEvent(QContextMenuEvent * event)
 /*
 * 插槽：新建通讯设备
 */
-void CommunicationDeviceChild::onSlotNewDevice()
+void CommunicationDevice::onSlotNewDevice()
 {
-    if(m_szProjectName == "") return;
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjName == "") return;
 
-    QString strProjectPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
     QList<QStandardItem *> itemList;
 
     if(m_szItemName == QString("NewComDevice").toUpper()) { // 串口设备
@@ -243,12 +242,11 @@ void CommunicationDeviceChild::onSlotNewDevice()
 /*
 * 插槽：修改通讯设备参数
 */
-void CommunicationDeviceChild::onSlotModifyDevice()
+void CommunicationDevice::onSlotModifyDevice()
 {
     QModelIndex idx = m_pListViewCommDevObj->selectionModel()->currentIndex();
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(idx);
-    if(m_szProjectName == "") return;
-    QString strProjectPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjName == "") return;
 
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(pItemObj->text());
@@ -274,7 +272,7 @@ void CommunicationDeviceChild::onSlotModifyDevice()
 /*
 * 插槽：删除通讯设备
 */
-void CommunicationDeviceChild::onSlotDeleteDevice()
+void CommunicationDevice::onSlotDeleteDevice()
 {
     QModelIndex idx = m_pListViewCommDevObj->selectionModel()->currentIndex();
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(idx);
@@ -292,10 +290,10 @@ void CommunicationDeviceChild::onSlotDeleteDevice()
 }
 
 
-void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIndex &index)
+void CommunicationDevice::onSlotListViewProjectDoubleClicked(const QModelIndex &index)
 {
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(index);
-    if(m_szProjectName == "") return;
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjName == "") return;
     QString szItemText = pItemObj->data(Qt::UserRole + 1).toString();
 
     if(szItemText == QString("NewComDevice").toUpper()) { // 串口设备
@@ -332,24 +330,24 @@ void CommunicationDeviceChild::onSlotListViewProjectDoubleClicked(const QModelIn
     listViewUpdate();
 }
 
-void CommunicationDeviceChild::buildUserInterface(QMainWindow* pMainWin)
+void CommunicationDevice::showEvent(QShowEvent *event)
 {
-    Q_UNUSED(pMainWin)
-    // FIXME 工具条、菜单
+    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
+    Q_UNUSED(event)
+    QVariant variant = this->property("UserData");
+    QStringList szListUserData = variant.toStringList();
+    if(szListUserData.size() >= 3) {
+        m_szItemName = szListUserData.at(2);
+    }
     listViewUpdate();
 }
 
-void CommunicationDeviceChild::removeUserInterface(QMainWindow* pMainWin)
-{
-    Q_UNUSED(pMainWin)
-    // FIXME 工具条、菜单
-}
 
-QString CommunicationDeviceChild::wndTitle() const
+void CommunicationDevice::hideEvent(QHideEvent *event)
 {
-    return this->windowTitle();
+    Q_UNUSED(event)
+    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
 }
-
 
 
 

@@ -11,38 +11,7 @@
 #include <QSettings>
 #include "qsoftcore.h"
 #include "../shared/qprojectcore.h"
-
-
-/**
- * @brief getCfgList 获取配置项目
- * @param sFileName ini文件名称
- * @param sSecName 组名称
- * @param sKeyName 键名称
- * @param strings 读取配置的数组值
- * @return 读取的个数
- */
-static int getCfgList(QString sFileName, QString sSecName, QString sKeyName, QStringList &strings)
-{
-    QSettings settings(sFileName, QSettings::IniFormat);
-    settings.beginGroup(sSecName);
-
-    int iCount = settings.value(sKeyName + "-count").toInt();
-    QString strValue;
-    int iRet = 0;
-
-    for(int i=0; i<iCount; i++) {
-        strValue = settings.value(sKeyName + "-" + QString::number(i + 1)).toString();
-        strValue = strValue.trimmed();
-        if((strValue.length() != 0) && (strings.indexOf(strValue) < 0)) {
-            strings << strValue;
-            iRet ++;
-        }
-    }
-
-    settings.endGroup();
-
-    return iRet;
-}
+#include "../shared/confighelper.h"
 
 
 NewProjectDialog::NewProjectDialog(QWidget *parent)
@@ -80,7 +49,7 @@ NewProjectDialog::NewProjectDialog(QWidget *parent)
 
     QSettings settingsDev(iniDevFileName, QSettings::IniFormat);
     QStringList slistDev;
-    getCfgList(iniDevFileName, "DeviceSupportIndex", "dev", slistDev);
+    ConfigHelper::getCfgList(iniDevFileName, "DeviceSupportIndex", "dev", slistDev);
 
     settingsDev.beginGroup("DeviceID");
     for (int i = 0; i < slistDev.count(); i++) {

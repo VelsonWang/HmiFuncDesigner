@@ -3,6 +3,10 @@ QT += core gui xml widgets script
 TARGET = core
 TEMPLATE = lib
 
+CONFIG(debug, debug|release) { #debug
+    DEFINES += BUILD_DEBUG
+}
+
 BUILD_DIR = $$clean_path($$OUT_PWD)
 
 DESTDIR = $$BUILD_DIR/../../../lib
@@ -22,7 +26,12 @@ LIBS += -L$$clean_path($$DESTDIR) -lshared
 LIBS += -L$$clean_path($$DESTDIR) -lgradientEditor
 
 HEADERS += \
+    devicelistdialog.h \
+    devicepluginloader.h \
     listviewex.h \
+    newcomdevicedialog.h \
+    newnetdevicedialog.h \
+    selectprotocoldialog.h \
     tageditdialog.h \
     corelibglobal.h \
     qabstractpage.h \
@@ -99,7 +108,12 @@ HEADERS += \
     userauthoritydialog.h
 
 SOURCES += \
+    devicelistdialog.cpp \
+    devicepluginloader.cpp \
     listviewex.cpp \
+    newcomdevicedialog.cpp \
+    newnetdevicedialog.cpp \
+    selectprotocoldialog.cpp \
     tageditdialog.cpp \
     qabstractpage.cpp \
     qabstractpagewidget.cpp \
@@ -175,6 +189,10 @@ SOURCES += \
     userauthoritydialog.cpp
 
 FORMS += \
+    devicelistdialog.ui \
+    newcomdevicedialog.ui \
+    newnetdevicedialog.ui \
+    selectprotocoldialog.ui \
     tageditdialog.ui \
     qrenamedialog.ui \
     qpropertylist/qstringeditdialog.ui \

@@ -1,4 +1,5 @@
-﻿#include "DeviceListDialog.h"
+﻿#include "devicelistdialog.h"
+#include "ui_devicelistdialog.h"
 #include <QApplication>
 #include <QDebug>
 #include <QFile>
@@ -7,9 +8,8 @@
 #include <QSettings>
 #include <QStandardItem>
 #include <QStandardItemModel>
-#include "ConfigUtils.h"
-#include "Helper.h"
-#include "ui_DeviceListDialog.h"
+#include "../shared/confighelper.h"
+
 
 DeviceListDialog::DeviceListDialog(QString stype, QWidget *parent)
     : QDialog(parent),
@@ -34,7 +34,7 @@ void DeviceListDialog::TreeViewInit() {
     QStandardItem *pDeviceListItem = new QStandardItem(tr("设备列表"));
     pDeviceListItem->setEditable(false);
 
-    QString iniFileName = Helper::AppDir() + "/Config/communication_device.ini";
+    QString iniFileName = QApplication::applicationDirPath() + "/Config/communication_device.ini";
     // qDebug()<< "path " << iniFileName;
     QFile fileCfg(iniFileName);
     if (!fileCfg.exists())
@@ -43,7 +43,7 @@ void DeviceListDialog::TreeViewInit() {
     m_SupportDevList.clear();
     // device type
     QStringList sDevTypeList;
-    ConfigUtils::getCfgList(iniFileName, "DeviceSupportList", "list", sDevTypeList);
+    ConfigHelper::getCfgList(iniFileName, "DeviceSupportList", "list", sDevTypeList);
     for (int i = 0; i < sDevTypeList.count(); i++) {
         QString sDevTypeOne = sDevTypeList.at(i).trimmed();
         QString key = sDevTypeOne.left(sDevTypeOne.indexOf("-"));
@@ -56,7 +56,7 @@ void DeviceListDialog::TreeViewInit() {
 
         // device series
         QStringList devSeriesList;
-        ConfigUtils::getCfgList(iniFileName, key, "list", devSeriesList);
+        ConfigHelper::getCfgList(iniFileName, key, "list", devSeriesList);
         for (int i = 0; i < devSeriesList.count(); i++) {
             QString sDevSeriesOne = devSeriesList.at(i).trimmed();
             QStandardItem *itemDevSeriesOne = new QStandardItem(sDevSeriesOne);
@@ -64,7 +64,7 @@ void DeviceListDialog::TreeViewInit() {
 
             // device
             QStringList devList;
-            ConfigUtils::getCfgList(iniFileName, sDevSeriesOne, "list", devList);
+            ConfigHelper::getCfgList(iniFileName, sDevSeriesOne, "list", devList);
             for (int i = 0; i < devList.count(); i++) {
                 QString sDevOne = devList.at(i).trimmed();
 

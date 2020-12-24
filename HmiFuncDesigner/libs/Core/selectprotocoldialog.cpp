@@ -1,5 +1,5 @@
-#include "SelectProtocolDialog.h"
-#include "ui_SelectProtocolDialog.h"
+#include "selectprotocoldialog.h"
+#include "ui_selectprotocoldialog.h"
 
 SelectProtocolDialog::SelectProtocolDialog(QWidget *parent) :
     QDialog(parent),

@@ -1,6 +1,6 @@
-#include "DevicePluginLoader.h"
-#include "IDevicePlugin.h"
-#include "Helper.h"
+#include "devicepluginloader.h"
+#include "../../Devices/IDevicePlugin/IDevicePlugin.h"
+#include <QApplication>
 #include <QDir>
 #include <QMessageBox>
 #include <QFile>
@@ -28,7 +28,7 @@ IDevicePlugin * DevicePluginLoader::getPluginObject(const QString &szPluginName)
 #ifdef BUILD_DEBUG
     pluginName += "d";
 #endif
-    QDir pluginsDir(Helper::AppDir());
+    QDir pluginsDir(QApplication::applicationDirPath());
     pluginsDir.cdUp();
     pluginsDir.cd("deviceplugins");
     foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {

@@ -36,7 +36,6 @@
 #include "variantmanager.h"
 #include "variantfactory.h"
 #include "ChildInterface.h"
-#include "CommunicationDeviceChild.h"
 #include "TagManagerChild.h"
 #include "qsoftcore.h"
 #include "VerifyPasswordDialog.h"
@@ -939,13 +938,13 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
     if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") return;
 
     QStringList szListUserData = szItemText.split("|");
-    if(szListUserData.size() != 2) return;
-
+    if(szListUserData.size() < 2) return;
 
     QAbstractPage* pPageObj = m_mapNameToPage.value(szListUserData.at(0).toUpper());
     if(pPageObj) {
         QWidget *pWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
         if(pWidgetObj) {
+            pWidgetObj->setProperty("UserData", szListUserData);
             if(m_pCentralWidgetObj->indexOf(pWidgetObj) >= 0) {
                 m_pCentralWidgetObj->setCurrentWidget(pWidgetObj);
                 return;
@@ -956,17 +955,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
     QMdiSubWindow *pWndObj = findMdiChild(szListUserData.at(1));
     if(pWndObj == Q_NULLPTR) {
         ChildInterface *pIFaceChildObj = Q_NULLPTR;
-        if(szListUserData.at(0) == QString("CommunicationDevice").toUpper() ||
-                  szListUserData.at(0) == QString("ComDevice").toUpper() ||
-                  szListUserData.at(0) == QString("NetDevice").toUpper()) { // 通讯设备, 串口设备, 网络设备
-            CommunicationDeviceChild *pObj = new CommunicationDeviceChild(this);
-            pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
-            pObj->setWindowTitle(szListUserData.at(1));
-            pObj->showMaximized();
-            pIFaceChildObj = pObj;
-            pIFaceChildObj->m_szProjectName = QSoftCore::getCore()->getProjectCore()->m_szProjFile;
-            pIFaceChildObj->m_szItemName = szListUserData.at(0);
-        } else if(szListUserData.at(0) == QString("TagMgr").toUpper()) { // 变量管理
+        if(szListUserData.at(0) == QString("TagMgr").toUpper()) { // 变量管理
             TagManagerChild *pObj = new TagManagerChild(this);
             pWndObj = this->m_pMdiAreaObj->addSubWindow(pObj);
             pObj->setWindowTitle(szListUserData.at(1));

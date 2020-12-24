@@ -16,6 +16,7 @@ class QAbstractProperty;
 class QUndoStack;
 class QPropertyListView;
 class QPropertyBaseEditor;
+
 class QPropertyEditorDelegate: public QItemDelegate
 {
     Q_OBJECT
@@ -34,7 +35,7 @@ class CORELIB_EXPORT QPropertyListView: public QTreeWidget
 {
     Q_OBJECT
 public:
-    QPropertyListView(QWidget *parent=0);
+    QPropertyListView(QWidget *parent=Q_NULLPTR);
     void    setPropertys(const QList<QAbstractProperty*> &propertys);
 
     void    clearAll();

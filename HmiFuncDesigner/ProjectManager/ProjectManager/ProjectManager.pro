@@ -48,8 +48,6 @@ LIBS += -L$$LINK_LIBRARY_PATH -lrunning
 
 SOURCES += main.cpp\
     ElementTreeWidget.cpp \
-    CommunicationDeviceChild.cpp \
-    DevicePluginLoader.cpp \
     MainWindow.cpp \
     MdiArea.cpp \
     ProjectTreeView.cpp \
@@ -57,14 +55,10 @@ SOURCES += main.cpp\
     ScriptManageChild.cpp \
     TableviewDelegate.cpp \
     TagManagerChild.cpp \
-    NewComDeviceDialog.cpp \
     NewVariableGroupDialog.cpp \
-    DeviceListDialog.cpp \
-    SelectProtocolDialog.cpp \
     ProjectDownloadDialog.cpp \
     ProjectUploadDialog.cpp \
     AboutDialog.cpp \
-    NewNetDeviceDialog.cpp \
     ScriptConditionConfigForm.cpp \
     ScriptEditorDlg.cpp \
     TagFuncEditDialog.cpp \
@@ -87,8 +81,6 @@ SOURCES += main.cpp\
 HEADERS  += MainWindow.h \
     ElementTreeWidget.h \
     ChildInterface.h \
-    CommunicationDeviceChild.h \
-    DevicePluginLoader.h \
     MdiArea.h \
     ../Public/Public.h \
     ProjectTreeView.h \
@@ -96,14 +88,10 @@ HEADERS  += MainWindow.h \
     ScriptManageChild.h \
     TableviewDelegate.h \
     TagManagerChild.h \
-    NewComDeviceDialog.h \
     NewVariableGroupDialog.h \
-    DeviceListDialog.h \
-    SelectProtocolDialog.h \
     ProjectDownloadDialog.h \
     ProjectUploadDialog.h \
     AboutDialog.h \
-    NewNetDeviceDialog.h \
     ScriptConditionConfigForm.h \
     ScriptEditorDlg.h \
     TagFuncEditDialog.h \
@@ -128,14 +116,10 @@ HEADERS  += MainWindow.h \
 
 
 FORMS    += \
-    NewComDeviceDialog.ui \
     NewVariableGroupDialog.ui \
-    DeviceListDialog.ui \
-    SelectProtocolDialog.ui \
     ProjectDownloadDialog.ui \
     ProjectUploadDialog.ui \
     AboutDialog.ui \
-    NewNetDeviceDialog.ui \
     ScriptConditionConfigForm.ui \
     ScriptEditorDlg.ui \
     InsertFunctionDialog.ui \

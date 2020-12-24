@@ -1,0 +1,10 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/pj_com.png</file>
+        <file>images/pj_net.png</file>
+        <file>images/pj_bus.png</file>
+        <file>images/pj_opc.png</file>
+        <file>images/icon_modify.png</file>
+        <file>images/icon_delete.png</file>		
+    </qresource>
+</RCC>

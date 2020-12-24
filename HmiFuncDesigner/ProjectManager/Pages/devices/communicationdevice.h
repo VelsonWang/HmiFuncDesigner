@@ -1,24 +1,17 @@
-﻿#ifndef COMMUNICATIONDEVICECHILD_H
-#define COMMUNICATIONDEVICECHILD_H
+﻿#ifndef COMMUNICATIONDEVICE_H
+#define COMMUNICATIONDEVICE_H
 
-#include "ChildInterface.h"
-#include "ListViewEx.h"
+#include "listviewex.h"
 #include <QWidget>
 #include <QStandardItemModel>
 #include <QVBoxLayout>
 
-class CommunicationDeviceChild : public QWidget, public ChildInterface
+class CommunicationDevice : public QWidget
 {
     Q_OBJECT
-    Q_INTERFACES(ChildInterface)
 public:
-    explicit CommunicationDeviceChild(QWidget *parent = Q_NULLPTR);
-    ~CommunicationDeviceChild();
-
-public:
-    void buildUserInterface(QMainWindow* pMainWin);
-    void removeUserInterface(QMainWindow* pMainWin);
-    QString wndTitle() const;
+    explicit CommunicationDevice(QWidget *parent = Q_NULLPTR);
+    ~CommunicationDevice();
 
 private:
     void listViewUISetting();
@@ -29,6 +22,8 @@ private:
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
+    void hideEvent(QHideEvent *event);
+    void showEvent(QShowEvent *event);
 
 public slots:
     void onSlotListViewProjectDoubleClicked(const QModelIndex &index);
@@ -39,7 +34,7 @@ public slots:
 private:
     QStandardItemModel *m_pCommDevModelObj = Q_NULLPTR;
     ListViewEx *m_pListViewCommDevObj = Q_NULLPTR;
-
+    QString m_szItemName = "";
 };
 
 #endif

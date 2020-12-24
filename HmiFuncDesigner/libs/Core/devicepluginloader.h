@@ -1,13 +1,14 @@
 #ifndef DEVICEPLUGINLOADER_H
 #define DEVICEPLUGINLOADER_H
 
+#include "corelibglobal.h"
 #include <QString>
 #include <QObject>
 
 class IDevicePlugin;
 
 
-class DevicePluginLoader : public QObject
+class CORELIB_EXPORT DevicePluginLoader : public QObject
 {
     Q_OBJECT
 public:

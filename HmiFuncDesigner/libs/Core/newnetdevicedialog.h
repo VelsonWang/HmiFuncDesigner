@@ -1,11 +1,10 @@
 #ifndef NewNetDeviceDialog_H
 #define NewNetDeviceDialog_H
 
-#include "../Public/Public.h"
-#include "DeviceInfo.h"
-#include "qtpropertymanager.h"
-#include "qtvariantproperty.h"
-#include "qttreepropertybrowser.h"
+#include "corelibglobal.h"
+#include "../shared/projdata/deviceinfo.h"
+#include "../shared/property/qabstractproperty.h"
+#include "./qpropertylist/qpropertylistview.h"
 #include <QDialog>
 
 
@@ -13,13 +12,12 @@ namespace Ui {
 class NewNetDeviceDialog;
 }
 
-
-class NewNetDeviceDialog : public QDialog
+class CORELIB_EXPORT NewNetDeviceDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit NewNetDeviceDialog(QWidget *parent = 0);
+    explicit NewNetDeviceDialog(QWidget *parent = Q_NULLPTR);
     ~NewNetDeviceDialog();
 
     void load(const QString &szName);
@@ -34,7 +32,7 @@ private:
     bool check_data();
 
 public slots:
-    void onPropertyValueChanged(QtProperty *property, const QVariant &value);
+    void onPropertyEdit(QAbstractProperty *pro, const QVariant &value);
 
 private slots:
     void on_btnHelp_clicked();
@@ -45,10 +43,6 @@ private slots:
     void on_btnProtocolSelect_clicked();
 
 private:
-    void createPropertyList();
-    void updatePropertyModel();
-    void addProperty(QtVariantProperty *property, const QString &id, bool bAddToList = true);
-    void clearProperties();
     QString getValue2ByValue1(const QString &szVal1, QVector<QPair<QString, QString>>& properties);
     void setValue2ByValue1(const QString &szVal1, const QString &szVal2, QVector<QPair<QString, QString>>& properties);
 
@@ -60,14 +54,7 @@ public:
 private:
     Ui::NewNetDeviceDialog *ui;
     QString m_szPluginName;
-    QtVariantPropertyManager *m_pVariantPropertyManager;
-    QtTreePropertyBrowser *m_pPropertyEditor;
-    QtVariantEditorFactory *m_pVariantEditorFactory;
-    QMap<QtProperty *, QString> m_propertyToId;
-    QMap<QString, QtVariantProperty *> m_idToProperty;
-    QMap<QString, bool> m_idToExpanded;
-    QList<QtProperty*> m_listProp;
-
+    QPropertyListView *m_propertyView;
 };
 
 #endif // NewNetDeviceDialog_H

@@ -1,25 +1,23 @@
-﻿#include "NewNetDeviceDialog.h"
-#include "ui_NewNetDeviceDialog.h"
-#include "DeviceListDialog.h"
-#include "SelectProtocolDialog.h"
-#include "IDevicePlugin.h"
-#include "ConfigUtils.h"
+﻿#include "newnetdevicedialog.h"
+#include "ui_newnetdevicedialog.h"
+#include "devicelistdialog.h"
+#include "selectprotocoldialog.h"
+#include "../../Devices/IDevicePlugin/IDevicePlugin.h"
+#include "../shared/confighelper.h"
 #include "qsoftcore.h"
-#include "qprojectcore.h"
+#include "../shared/qprojectcore.h"
+#include "../shared/qpropertyfactory.h"
+#include "../shared/property/qabstractproperty.h"
+#include "./qpropertylist/qpropertylistview.h"
 #include <QDir>
 #include <QDialog>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QApplication>
 #include <QSettings>
-#include "Helper.h"
 #include <QFile>
 #include <QPluginLoader>
-#include "qtvariantproperty.h"
-#include "qttreepropertybrowser.h"
-#include "variantmanager.h"
-#include "variantfactory.h"
-#include "DevicePluginLoader.h"
+#include "devicepluginloader.h"
 #include <QDebug>
 
 
@@ -37,20 +35,11 @@ NewNetDeviceDialog::NewNetDeviceDialog(QWidget *parent) :
     ui->editIpAddress1->setText(QString("0"));
     ui->editPort1->setText(QString("0"));
 
-    VariantManager *pVariantManager  = new VariantManager(this);
-    m_pVariantPropertyManager = pVariantManager;
+    m_propertyView = new QPropertyListView(this);
+    connect(m_propertyView, SIGNAL(property_edit_signal(QAbstractProperty*, QVariant)),
+            this, SLOT(onPropertyEdit(QAbstractProperty*, QVariant)));
 
-    connect(m_pVariantPropertyManager, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-            this, SLOT(onPropertyValueChanged(QtProperty *, const QVariant &)));
-
-    m_pVariantEditorFactory = new VariantFactory(this);
-
-    m_pPropertyEditor = new QtTreePropertyBrowser(ui->tabPropertySetting);
-    m_pPropertyEditor->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_pPropertyEditor->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
-    m_pPropertyEditor->setFactoryForManager(m_pVariantPropertyManager, m_pVariantEditorFactory);
-    pVariantManager->setPropertyEditor(m_pPropertyEditor);
-    ui->vLayoutPropertyEditor->addWidget(m_pPropertyEditor);
+    ui->vLayoutPropertyEditor->addWidget(m_propertyView);
 }
 
 NewNetDeviceDialog::~NewNetDeviceDialog()
@@ -229,52 +218,6 @@ void NewNetDeviceDialog::save(const QString &szName)
     }
 }
 
-
-void NewNetDeviceDialog::addProperty(QtVariantProperty *property, const QString &id, bool bAddToList)
-{
-    if(bAddToList) m_listProp.append(property);
-    m_propertyToId[property] = id;
-    m_idToProperty[id] = property;
-}
-
-
-void NewNetDeviceDialog::clearProperties()
-{
-    QMap<QtProperty *, QString>::ConstIterator itProp = m_propertyToId.constBegin();
-    while (itProp != m_propertyToId.constEnd()) {
-        delete itProp.key();
-        itProp++;
-    }
-    m_propertyToId.clear();
-    m_idToProperty.clear();
-}
-
-void NewNetDeviceDialog::createPropertyList()
-{
-    m_listProp.clear();
-    clearProperties();
-
-    QtVariantProperty *property = Q_NULLPTR;
-    if(m_properties.count() != m_prop_type.count())
-        return;
-
-    for (int i = 0; i < m_properties.size(); ++i) {
-        QString szKey = m_properties[i].first;
-        QString szValue = m_properties[i].second;
-        QString szType = m_prop_type[i].second;
-        if(szType == QString("int")) {
-            property = m_pVariantPropertyManager->addProperty(QVariant::Int, szKey);
-            property->setAttribute(QLatin1String("minimum"), 0);
-            property->setAttribute(QLatin1String("maximum"), 99999);
-            addProperty(property, szKey);
-        }
-        else if(szType == QString("bool")) {
-            property = m_pVariantPropertyManager->addProperty(QVariant::Bool, szKey);
-            addProperty(property, szKey);
-        }
-    }
-}
-
 QString NewNetDeviceDialog::getValue2ByValue1(const QString &szVal1,
                                               QVector<QPair<QString, QString>>& properties)
 {
@@ -299,12 +242,64 @@ void NewNetDeviceDialog::setValue2ByValue1(const QString &szVal1,
 }
 
 
-void NewNetDeviceDialog::onPropertyValueChanged(QtProperty *property, const QVariant &value)
+///
+/// \brief NewNetDeviceDialog::updatePropertyEditor
+/// \details 更新PropertyEditor数据
+///
+void NewNetDeviceDialog::updatePropertyEditor()
 {
     if(m_properties.count() != m_prop_type.count())
         return;
 
-    QString id = m_propertyToId[property];
+    QList<QAbstractProperty *> listProperties;
+    QAbstractProperty* pProObj = Q_NULLPTR;
+
+    for (int i = 0; i < m_properties.size(); ++i) {
+        QString szKey = m_properties[i].first;
+        QString szValue = m_properties[i].second;
+        QString szType = m_prop_type[i].second;
+
+        if(szType == QString("int")) {
+            pProObj = QPropertyFactory::create_property("Number");
+            if(pProObj != Q_NULLPTR) {
+                pProObj->setProperty("name", szKey);
+                pProObj->setAttribute("show_name", szKey);
+                pProObj->setAttribute("group", "Attributes");
+                pProObj->setAttribute(ATTR_CAN_SAME, true);
+                QVariant val;
+                val.setValue(szValue);
+                pProObj->set_value(val);
+                listProperties.append(pProObj);
+            }
+        }
+        else if(szType == QString("bool")) {
+            pProObj = QPropertyFactory::create_property("Bool");
+            if(pProObj != Q_NULLPTR) {
+                pProObj->setProperty("name", szKey);
+                pProObj->setAttribute("show_name", szKey);
+                pProObj->setAttribute("group", "Attributes");
+                pProObj->setAttribute(ATTR_CAN_SAME, true);
+                QVariant val;
+                val.setValue(szValue);
+                pProObj->set_value(val);
+                listProperties.append(pProObj);
+            }
+        }
+    }
+
+    m_propertyView->setPropertys(listProperties);
+}
+
+
+
+
+
+void NewNetDeviceDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &value)
+{
+    if(m_properties.count() != m_prop_type.count())
+        return;
+
+    QString id = pro->property("name").toString();
     QString szType = getValue2ByValue1(id, m_prop_type);
     if(szType == QString("int")) {
         setValue2ByValue1(id, value.toString(), m_properties);
@@ -315,39 +310,6 @@ void NewNetDeviceDialog::onPropertyValueChanged(QtProperty *property, const QVar
         setValue2ByValue1(id, szVal, m_properties);
     }
 }
-
-void NewNetDeviceDialog::updatePropertyModel()
-{
-    QtVariantProperty *property = Q_NULLPTR;
-
-    for (int i = 0; i < m_properties.size(); ++i) {
-        QString szKey = m_properties[i].first;
-        QString szValue = m_properties[i].second;
-        property = m_idToProperty[szKey];
-        if(property != Q_NULLPTR) {
-            property->setValue(szValue);
-        }
-    }
-}
-
-///
-/// \brief NewNetDeviceDialog::updatePropertyEditor
-/// \details 更新PropertyEditor数据
-///
-void NewNetDeviceDialog::updatePropertyEditor()
-{
-    createPropertyList();
-    updatePropertyModel();
-
-    QListIterator<QtProperty*> iter(m_listProp);
-    while (iter.hasNext()) {
-        m_pPropertyEditor->addProperty(iter.next());
-    }
-}
-
-
-
-
 
 
 

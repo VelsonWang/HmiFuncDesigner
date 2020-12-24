@@ -143,20 +143,26 @@ void ProjectTreeView::updateUI()
     m_pCommunicationDeviceObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("通讯设备"));
     m_pCommunicationDeviceObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("CommunicationDevice").toUpper() << m_pCommunicationDeviceObj->text();
+    szListUserData << QString("CommunicationDevice").toUpper()
+                   << m_pCommunicationDeviceObj->text()
+                   << QString("CommunicationDevice").toUpper();
     m_pCommunicationDeviceObj->setData(szListUserData, Qt::UserRole + 1);
 
     m_pComDeviceObj = new QStandardItem(QIcon(":/images/pj_com.png"), tr("串口设备"));
     m_pComDeviceObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("ComDevice").toUpper() << m_pComDeviceObj->text();
+    szListUserData << QString("CommunicationDevice").toUpper()
+                   << m_pComDeviceObj->text()
+                   << QString("ComDevice").toUpper();
     m_pComDeviceObj->setData(szListUserData, Qt::UserRole + 1);
     m_pCommunicationDeviceObj->appendRow(m_pComDeviceObj);
 
     m_pNetDeviceObj = new QStandardItem(QIcon(":/images/pj_net.png"), tr("网络设备"));
     m_pNetDeviceObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("NetDevice").toUpper() << m_pNetDeviceObj->text();
+    szListUserData << QString("CommunicationDevice").toUpper()
+                   << m_pNetDeviceObj->text()
+                   << QString("NetDevice").toUpper();
     m_pNetDeviceObj->setData(szListUserData, Qt::UserRole + 1);
     m_pCommunicationDeviceObj->appendRow(m_pNetDeviceObj);
 

@@ -1,19 +1,18 @@
 #ifndef NEWCOMDEVICEDIALOG_H
 #define NEWCOMDEVICEDIALOG_H
 
-#include "../Public/Public.h"
-#include "DeviceInfo.h"
-#include "qtpropertymanager.h"
-#include "qtvariantproperty.h"
-#include "qttreepropertybrowser.h"
+#include "corelibglobal.h"
+#include "../shared/projdata/deviceinfo.h"
+#include "../shared/property/qabstractproperty.h"
+#include "./qpropertylist/qpropertylistview.h"
 #include <QDialog>
+#include <QVector>
 
 namespace Ui {
 class NewComDeviceDialog;
 }
 
-
-class NewComDeviceDialog : public QDialog
+class CORELIB_EXPORT NewComDeviceDialog : public QDialog
 {
     Q_OBJECT
 
@@ -33,7 +32,7 @@ private:
     bool check_data();
 
 public slots:
-    void onPropertyValueChanged(QtProperty *property, const QVariant &value);
+    void onPropertyEdit(QAbstractProperty *pro, const QVariant &value);
 
 private slots:
     void on_btnHelp_clicked();
@@ -44,10 +43,6 @@ private slots:
     void on_btnProtocolSelect_clicked();
 
 private:
-    void createPropertyList();
-    void updatePropertyModel();
-    void addProperty(QtVariantProperty *property, const QString &id, bool bAddToList = true);
-    void clearProperties();
     QString getValue2ByValue1(const QString &szVal1, QVector<QPair<QString, QString>>& properties);
     void setValue2ByValue1(const QString &szVal1, const QString &szVal2, QVector<QPair<QString, QString>>& properties);
 
@@ -59,14 +54,7 @@ public:
 private:
     Ui::NewComDeviceDialog *ui;
     QString m_szPluginName;
-    QtVariantPropertyManager *m_pVariantPropertyManager;
-    QtTreePropertyBrowser *m_pPropertyEditor;
-    QtVariantEditorFactory *m_pVariantEditorFactory;
-    QMap<QtProperty *, QString> m_propertyToId;
-    QMap<QString, QtVariantProperty *> m_idToProperty;
-    QMap<QString, bool> m_idToExpanded;
-    QList<QtProperty*> m_listProp;
-
+    QPropertyListView *m_propertyView;
 };
 
 #endif // NEWCOMDEVICEDIALOG_H

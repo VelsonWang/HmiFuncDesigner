@@ -20,6 +20,7 @@ INCLUDEPATH += $$PWD/host
 INCLUDEPATH += $$PWD/projdata
 
 HEADERS += \
+    confighelper.h \
     sharedlibglobal.h \
     xmlobject.h \
     qpropertyfactory.h \
@@ -86,6 +87,7 @@ HEADERS += \
     qstylesheetinfo.h
 
 SOURCES += \
+    confighelper.cpp \
     xmlobject.cpp \
     qpropertyfactory.cpp \
     property/qabstractproperty.cpp \

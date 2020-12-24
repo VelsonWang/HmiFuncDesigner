@@ -1,6 +1,7 @@
 #ifndef SELECTPROTOCOLDIALOG_H
 #define SELECTPROTOCOLDIALOG_H
 
+#include "corelibglobal.h"
 #include <QDialog>
 #include <QStringList>
 
@@ -8,7 +9,7 @@ namespace Ui {
 class SelectProtocolDialog;
 }
 
-class SelectProtocolDialog : public QDialog
+class CORELIB_EXPORT SelectProtocolDialog : public QDialog
 {
     Q_OBJECT
 

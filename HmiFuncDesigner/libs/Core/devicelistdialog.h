@@ -1,6 +1,7 @@
 #ifndef DEVICELISTDIALOG_H
 #define DEVICELISTDIALOG_H
 
+#include "corelibglobal.h"
 #include <QDialog>
 #include <QStandardItemModel>
 
@@ -9,7 +10,7 @@ namespace Ui {
 class DeviceListDialog;
 }
 
-class DeviceListDialog : public QDialog
+class CORELIB_EXPORT DeviceListDialog : public QDialog
 {
     Q_OBJECT
 
