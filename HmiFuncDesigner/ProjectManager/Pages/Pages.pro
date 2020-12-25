@@ -3,4 +3,7 @@ CONFIG += ordered
 SUBDIRS = \
     designer \
     systemparameters \
-    devices
+    devices \
+    tagmanager \
+    rtdb \
+    script

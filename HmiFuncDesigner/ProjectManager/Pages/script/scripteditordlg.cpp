@@ -1,15 +1,12 @@
-﻿#include "ScriptEditorDlg.h"
-#include "ConfigUtils.h"
-#include "Helper.h"
-#include "InsertFunctionDialog.h"
-#include "InsertTagDialog.h"
+﻿#include "scripteditordlg.h"
+#include "insertfunctiondialog.h"
+#include "inserttagdialog.h"
 #include "Qsci/qsciapis.h"
 #include "Qsci/qscilexercpp.h"
 #include "Qsci/qscilexerjavascript.h"
 #include "Qsci/qscilexerlua.h"
 #include "Qsci/qsciscintilla.h"
-#include "ui_ScriptEditorDlg.h"
-
+#include "ui_scripteditordlg.h"
 #include <QFile>
 #include <QMessageBox>
 #include <QScriptEngine>
@@ -18,7 +15,7 @@
 #include <QTextCodec>
 #include <QTextStream>
 #include <QVBoxLayout>
-
+#include <QApplication>
 #include <QDebug>
 
 ScriptEditorDlg::ScriptEditorDlg(QWidget *parent)
@@ -31,8 +28,7 @@ ScriptEditorDlg::ScriptEditorDlg(QWidget *parent)
     ///////////////////////////////>>////////////////
 
     scriptEdit = new QsciScintilla(ui->widgetEditor);
-    QsciLexerJavaScript *scriptLexer =
-            new QsciLexerJavaScript();      //创建一个词法分析器
+    QsciLexerJavaScript *scriptLexer = new QsciLexerJavaScript();      //创建一个词法分析器
     scriptEdit->setLexer(scriptLexer);  //设置词法分析器
 
     scriptEdit->setMarginType(0, QsciScintilla::NumberMargin);  //设置编号为0的页边显示行号。
@@ -44,8 +40,7 @@ ScriptEditorDlg::ScriptEditorDlg(QWidget *parent)
     apis->prepare();
 
     scriptEdit->setFont(QFont("Courier New"));  //设置字体
-    scriptEdit->SendScintilla(QsciScintilla::SCI_SETCODEPAGE,
-                              QsciScintilla::SC_CP_UTF8);  //设置编码为UTF-8
+    scriptEdit->SendScintilla(QsciScintilla::SCI_SETCODEPAGE, QsciScintilla::SC_CP_UTF8);  //设置编码为UTF-8
     connect(scriptEdit, SIGNAL(textChanged()), this, SLOT(documentWasModified()));
 
     QVBoxLayout *vLayout = new QVBoxLayout();
@@ -453,7 +448,7 @@ void ScriptEditorDlg::on_btnToolComment_clicked() {
 void ScriptEditorDlg::on_btnToolSyntaxcheck_clicked() {
     QScriptEngine engine;
 
-    QString scriptFileName(Helper::AppDir() + "/Config/ScriptFunc.js");
+    QString scriptFileName(QApplication::applicationDirPath() + "/Config/ScriptFunc.js");
     QFile scriptFile(scriptFileName);
     scriptFile.open(QIODevice::ReadOnly);
     QTextStream stream(&scriptFile);
@@ -466,7 +461,8 @@ void ScriptEditorDlg::on_btnToolSyntaxcheck_clicked() {
     QScriptSyntaxCheckResult syntaxCheckResult =
             engine.checkSyntax(scriptContents);
     if (syntaxCheckResult.state() != QScriptSyntaxCheckResult::Valid) {
-        QMessageBox::critical(0, "语法错误",
+        QMessageBox::critical(0,
+                              "语法错误",
                               QString::fromLatin1("%1 %2 %3")
                               .arg(syntaxCheckResult.errorLineNumber())
                               .arg(syntaxCheckResult.errorColumnNumber())
@@ -477,15 +473,15 @@ void ScriptEditorDlg::on_btnToolSyntaxcheck_clicked() {
     QScriptValue result = engine.evaluate(scriptContents);
     // qDebug() << "result = " << result.toNumber();
     if (result.isError()) {
-        QMessageBox::critical(0, "错误",
+        QMessageBox::critical(0,
+                              "错误",
                               QString::fromLatin1("%1: %2")
                               .arg(result.property("lineNumber").toInt32())
                               .arg(result.toString()));
         return;
     }
 
-    QMessageBox::information(
-                0, "提示", QString::fromLatin1("%0").arg(tr("不存在语法问题！")));
+    QMessageBox::information(0, "提示", QString::fromLatin1("%0").arg(tr("不存在语法问题！")));
 }
 
 /*

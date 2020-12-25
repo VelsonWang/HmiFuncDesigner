@@ -1,22 +1,21 @@
-﻿#include "RealTimeDatabaseChild.h"
-#include <QAction>
-#include <QDebug>
+﻿#include "rtdbwin.h"
 #include <QFile>
 #include <QIcon>
-#include <QKeySequence>
-#include <QMenu>
 #include <QModelIndex>
-#include "ConfigUtils.h"
-#include "Helper.h"
+#include <QVBoxLayout>
+#include <QApplication>
+#include "confighelper.h"
 #include "qsoftcore.h"
 #include "qprojectcore.h"
+#include "../../Public/userevent.h"
 
-RealTimeDatabaseChild::RealTimeDatabaseChild(QWidget *parent) : QWidget(parent)
+
+RTDBWin::RTDBWin(QWidget *parent) : QWidget(parent)
 {
 
 }
 
-RealTimeDatabaseChild::~RealTimeDatabaseChild()
+RTDBWin::~RTDBWin()
 {
     if(m_pListViewObj != Q_NULLPTR) {
         delete m_pListViewObj;
@@ -28,7 +27,7 @@ RealTimeDatabaseChild::~RealTimeDatabaseChild()
     }
 }
 
-void RealTimeDatabaseChild::ListViewInitUi()
+void RTDBWin::ListViewInitUi()
 {
     QVBoxLayout *pVLayoutObj = new QVBoxLayout(this);
     pVLayoutObj->setSpacing(1);
@@ -56,11 +55,11 @@ void RealTimeDatabaseChild::ListViewInitUi()
 
     pVLayoutObj->addWidget(m_pListViewObj);
     connect(m_pListViewObj, &QAbstractItemView::doubleClicked, this,
-            &RealTimeDatabaseChild::onSlotListViewProjectDoubleClicked);
+            &RTDBWin::onSlotListViewProjectDoubleClicked);
 }
 
 
-void RealTimeDatabaseChild::onSlotListViewProjectDoubleClicked(const QModelIndex &index)
+void RTDBWin::onSlotListViewProjectDoubleClicked(const QModelIndex &index)
 {
     Q_UNUSED(index)
 
@@ -72,49 +71,39 @@ void RealTimeDatabaseChild::onSlotListViewProjectDoubleClicked(const QModelIndex
     QString program = "";
 
 #ifdef Q_OS_WIN
-    program = Helper::AppDir() + "/RtdbView.exe";
+    program = QApplication::applicationDirPath() + "/RtdbView.exe";
 #endif
 
 #ifdef Q_OS_LINUX
-    program = Helper::AppDir() + "/RtdbView";
+    program = QApplication::applicationDirPath() + "/RtdbView";
 #endif
 
     QFile file(program);
     if (file.exists()) {
         QProcess *rtdbViewProc = new QProcess();
-        rtdbViewProc->setWorkingDirectory(Helper::AppDir());
+        rtdbViewProc->setWorkingDirectory(QApplication::applicationDirPath());
         QStringList arguments;
-        arguments << m_szProjPath;
+        arguments << QSoftCore::getCore()->getProjectCore()->m_szProjPath;
         rtdbViewProc->start(program, arguments);
         if (rtdbViewProc->waitForStarted()) {
         }
     }
 }
 
-void RealTimeDatabaseChild::buildUserInterface(QMainWindow* pMainWin)
-{
-    if(pMainWin == Q_NULLPTR) return;
 
-    if(m_pMainWinObj == Q_NULLPTR) {
-        m_szProjPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
-        ListViewInitUi();
+bool RTDBWin::eventFilter(QObject *obj, QEvent *ev)
+{
+    if(obj == this) {
+        if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+            ListViewInitUi();
+            return true;
+        } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+            return true;
+        }
     }
+
+    return QObject::eventFilter(obj, ev);
 }
-
-void RealTimeDatabaseChild::removeUserInterface(QMainWindow* pMainWin)
-{
-    if(pMainWin == Q_NULLPTR) return;
-
-    if(m_pMainWinObj) {
-
-    }
-}
-
-QString RealTimeDatabaseChild::wndTitle() const
-{
-    return this->windowTitle();
-}
-
 
 
 

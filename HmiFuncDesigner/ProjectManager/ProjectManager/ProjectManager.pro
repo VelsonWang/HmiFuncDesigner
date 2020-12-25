@@ -3,7 +3,6 @@ include(../../HmiFuncDesigner.pri)
 QT += core gui xml
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-QT += script
 QT += sql
 
 TARGET = ProjectManager
@@ -16,7 +15,6 @@ INCLUDEPATH += $$PWD/widget
 INCLUDEPATH += $$PWD/ProjData
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
-INCLUDEPATH += $$PWD/../../libs/qscintilla
 INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
 INCLUDEPATH += $$PWD/../../libs/core
 INCLUDEPATH += $$PWD/../../libs/shared
@@ -47,66 +45,37 @@ LIBS += -L$$LINK_LIBRARY_PATH -lgradientEditor
 LIBS += -L$$LINK_LIBRARY_PATH -lrunning
 
 SOURCES += main.cpp\
-    ElementTreeWidget.cpp \
+    ../Public/userevent.cpp \
     MainWindow.cpp \
-    MdiArea.cpp \
     ProjectTreeView.cpp \
-    RealTimeDatabaseChild.cpp \
-    ScriptManageChild.cpp \
     TableviewDelegate.cpp \
-    TagManagerChild.cpp \
-    NewVariableGroupDialog.cpp \
     ProjectDownloadDialog.cpp \
     ProjectUploadDialog.cpp \
     AboutDialog.cpp \
-    ScriptConditionConfigForm.cpp \
-    ScriptEditorDlg.cpp \
     TagFuncEditDialog.cpp \
-    SplitterForm.cpp \
-    InsertFunctionDialog.cpp \
-    InsertTagDialog.cpp \
-    ScriptRunConditionEditorDlg.cpp \
     VerifyPasswordDialog.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
-    GetWidthHeightDialog.cpp \
-    ElementLibraryWidget.cpp \
-    ElementLibraryListWidget.cpp \
     ../Public/PubTool.cpp \
     ../Public/Element.cpp \
     ../Public/ElementGroup.cpp \
     PluginManager.cpp
 
 HEADERS  += MainWindow.h \
-    ElementTreeWidget.h \
-    ChildInterface.h \
-    MdiArea.h \
+    ../Public/userevent.h \
     ../Public/Public.h \
     ProjectTreeView.h \
-    RealTimeDatabaseChild.h \
-    ScriptManageChild.h \
     TableviewDelegate.h \
-    TagManagerChild.h \
-    NewVariableGroupDialog.h \
     ProjectDownloadDialog.h \
     ProjectUploadDialog.h \
     AboutDialog.h \
-    ScriptConditionConfigForm.h \
-    ScriptEditorDlg.h \
     TagFuncEditDialog.h \
-    SplitterForm.h \
-    InsertFunctionDialog.h \
-    InsertTagDialog.h \
-    ScriptRunConditionEditorDlg.h \
     FileTansfer.h \
     VerifyPasswordDialog.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
-    GetWidthHeightDialog.h \
-    ElementLibraryWidget.h \
-    ElementLibraryListWidget.h \
     ../Public/PublicDefine.h \
     ../Public/PubTool.h \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
@@ -116,18 +85,10 @@ HEADERS  += MainWindow.h \
 
 
 FORMS    += \
-    NewVariableGroupDialog.ui \
     ProjectDownloadDialog.ui \
     ProjectUploadDialog.ui \
     AboutDialog.ui \
-    ScriptConditionConfigForm.ui \
-    ScriptEditorDlg.ui \
-    InsertFunctionDialog.ui \
-    InsertTagDialog.ui \
-    ScriptRunConditionEditorDlg.ui \
-    widget/QIPAddressEdit.ui \
-    ElementLibraryWidget.ui \
-    GetWidthHeightDialog.ui
+    widget/QIPAddressEdit.ui
 
 RESOURCES += \
     images.qrc \

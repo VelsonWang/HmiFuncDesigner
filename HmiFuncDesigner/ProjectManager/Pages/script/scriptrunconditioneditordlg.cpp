@@ -1,6 +1,6 @@
-#include "ScriptRunConditionEditorDlg.h"
-#include "ui_ScriptRunConditionEditorDlg.h"
-#include "InsertTagDialog.h"
+#include "scriptrunconditioneditordlg.h"
+#include "ui_scriptrunconditioneditordlg.h"
+#include "inserttagdialog.h"
 #include <QDebug>
 
 ScriptRunConditionEditorDlg::ScriptRunConditionEditorDlg(QWidget *parent)
@@ -99,8 +99,6 @@ void ScriptRunConditionEditorDlg::setConditionString(QString condition)
 
 dosplit:
     QStringList listOpt = condition.split(optStr);
-//    for (int i = 0; i < listOpt.size(); ++i)
-//        qDebug() << listOpt.at(i);
     if(listOpt.size() != 2)
         return;
     QString leftOpt = listOpt.at(0);

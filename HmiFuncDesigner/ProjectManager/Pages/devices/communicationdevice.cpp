@@ -3,6 +3,7 @@
 #include "newnetdevicedialog.h"
 #include "qsoftcore.h"
 #include "qprojectcore.h"
+#include "../../Public/userevent.h"
 #include <QMenu>
 #include <QAction>
 #include <QIcon>
@@ -330,24 +331,24 @@ void CommunicationDevice::onSlotListViewProjectDoubleClicked(const QModelIndex &
     listViewUpdate();
 }
 
-void CommunicationDevice::showEvent(QShowEvent *event)
+bool CommunicationDevice::eventFilter(QObject *obj, QEvent *ev)
 {
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
-    Q_UNUSED(event)
-    QVariant variant = this->property("UserData");
-    QStringList szListUserData = variant.toStringList();
-    if(szListUserData.size() >= 3) {
-        m_szItemName = szListUserData.at(2);
+    if(obj == this) {
+        if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+            qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
+            QVariant variant = this->property("UserData");
+            QStringList szListUserData = variant.toStringList();
+            if(szListUserData.size() >= 3) {
+                m_szItemName = szListUserData.at(2);
+            }
+            listViewUpdate();
+            return true;
+        } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+            qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
+            return true;
+        }
     }
-    listViewUpdate();
+
+    return QObject::eventFilter(obj, ev);
 }
-
-
-void CommunicationDevice::hideEvent(QHideEvent *event)
-{
-    Q_UNUSED(event)
-    qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
-}
-
-
 

@@ -22,22 +22,6 @@ public:
     QString getProjectName();
     // 设置工程名称
     void setProjectName(const QString &szName);
-    // 更新设备变量组
-    void updateDeviceTagGroup();
-
-protected:
-    void contextMenuEvent(QContextMenuEvent * event);
-
-public slots:
-    // 增加组
-    void onSlotTagIOGroupAdd();
-    // 重命名组
-    void onSlotTagIOGroupRename();
-    // 删除组
-    void onSlotTagIODeleteGroup();
-    // 复制组
-    void onSlotTagIOGroupCopy();
-
 
 private slots:
     // 叶节点被单击
@@ -46,8 +30,6 @@ private slots:
     void onSlotDoubleClicked(const QModelIndex &index);
 
 signals:
-    // 设置窗口标题
-    void sigNotifySetWindowSetTitle(const QString &szTitle);
     // 叶节点被单击
     void sigNotifyClicked(const QString &szItemText);
 

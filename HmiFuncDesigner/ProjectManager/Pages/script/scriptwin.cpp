@@ -1,16 +1,16 @@
-﻿#include "ScriptManageChild.h"
+﻿#include "scriptwin.h"
 #include <QApplication>
 #include <QCoreApplication>
 #include <QListWidgetItem>
 #include <QMenu>
 #include "qsoftcore.h"
 #include "qprojectcore.h"
-#include "ConfigUtils.h"
-#include "ScriptConditionConfigForm.h"
-#include "ScriptEditorDlg.h"
+#include "../../Public/userevent.h"
+#include "scriptconditionconfigform.h"
+#include "scripteditordlg.h"
 
 
-ScriptManageChild::ScriptManageChild(QWidget *parent) : QWidget(parent)
+ScriptWin::ScriptWin(QWidget *parent) : QWidget(parent)
 {
     m_pListWidgetObj = new QListWidget(this);
     m_pListWidgetObj->setViewMode(QListView::IconMode);
@@ -29,7 +29,7 @@ ScriptManageChild::ScriptManageChild(QWidget *parent) : QWidget(parent)
     setContextMenuPolicy(Qt::DefaultContextMenu);
 }
 
-ScriptManageChild::~ScriptManageChild()
+ScriptWin::~ScriptWin()
 {
     if(m_pListWidgetObj != Q_NULLPTR) {
         delete m_pListWidgetObj;
@@ -45,10 +45,8 @@ ScriptManageChild::~ScriptManageChild()
 /*
 * 插槽：列表视图控件单击
 */
-void ScriptManageChild::ListWidgetClicked(QListWidgetItem *item)
+void ScriptWin::ListWidgetClicked(QListWidgetItem *item)
 {
-    if (m_szProjectName == "") return;
-
     if (item->text() == "新建脚本") {
         NewScript();
     } else {
@@ -59,7 +57,7 @@ void ScriptManageChild::ListWidgetClicked(QListWidgetItem *item)
 /*
 * 右键菜单生成
 */
-void ScriptManageChild::contextMenuEvent(QContextMenuEvent *event)
+void ScriptWin::contextMenuEvent(QContextMenuEvent *event)
 {
     Q_UNUSED(event);
 
@@ -91,11 +89,8 @@ void ScriptManageChild::contextMenuEvent(QContextMenuEvent *event)
 /*
 * 插槽：新建
 */
-void ScriptManageChild::NewScript()
+void ScriptWin::NewScript()
 {
-    if (m_szProjectName == "") return;
-
-    QString strProjectPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(m_szProjectName);
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
 
     /////////////////////////////////////////////////////////////////////////////
@@ -119,10 +114,8 @@ void ScriptManageChild::NewScript()
 /*
 * 插槽：修改
 */
-void ScriptManageChild::ModifyScript()
+void ScriptWin::ModifyScript()
 {
-    if (m_szProjectName == "") return;
-
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
     ScriptConditionConfigForm *pDlg = new ScriptConditionConfigForm(this);
     pDlg->setWindowTitle(tr("脚本属性"));
@@ -156,7 +149,7 @@ void ScriptManageChild::ModifyScript()
 /*
 * 插槽：删除
 */
-void ScriptManageChild::DeleteScript()
+void ScriptWin::DeleteScript()
 {
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
     ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.GetScriptObject(pCurItem->text());
@@ -167,7 +160,7 @@ void ScriptManageChild::DeleteScript()
 }
 
 
-void ScriptManageChild::updateUI()
+void ScriptWin::updateUI()
 {
     m_pListWidgetObj->clear();
     QListWidgetItem *pNewItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), tr("新建脚本"));
@@ -179,21 +172,18 @@ void ScriptManageChild::updateUI()
     }
 }
 
-
-void ScriptManageChild::buildUserInterface(QMainWindow* pMainWin)
+bool ScriptWin::eventFilter(QObject *obj, QEvent *ev)
 {
-    Q_UNUSED(pMainWin)
-    updateUI();
-}
+    if(obj == this) {
+        if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+            updateUI();
+            return true;
+        } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+            return true;
+        }
+    }
 
-void ScriptManageChild::removeUserInterface(QMainWindow* pMainWin)
-{
-    Q_UNUSED(pMainWin)
-}
-
-QString ScriptManageChild::wndTitle() const
-{
-    return this->windowTitle();
+    return QObject::eventFilter(obj, ev);
 }
 
 

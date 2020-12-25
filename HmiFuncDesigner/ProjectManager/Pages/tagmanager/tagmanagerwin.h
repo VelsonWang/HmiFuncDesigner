@@ -1,9 +1,8 @@
 ﻿#ifndef TAGMANAGERWIN_H
 #define TAGMANAGERWIN_H
 
-#include "ChildInterface.h"
-#include "ListViewEx.h"
-#include "TagFuncEditDialog.h"
+#include "../../../libs/shared/projdata/tag.h"
+#include "listviewex.h"
 #include "../../Public/Public.h"
 #include <QString>
 #include <QWidget>
@@ -16,7 +15,8 @@
 #include <QStringList>
 #include <QAbstractTableModel>
 #include <QVector>
-#include "Tag.h"
+
+
 
 class TagTableModel : public QAbstractTableModel
 {
@@ -147,21 +147,17 @@ private:
 //------------------------------------------------------------------------------
 
 
-class TagManagerChild : public QWidget, public ChildInterface
+class TagManagerWin : public QWidget
 {
     Q_OBJECT
-    Q_INTERFACES(ChildInterface)
 public:
-    explicit TagManagerChild(QWidget *parent = Q_NULLPTR);
-    ~TagManagerChild();
+    explicit TagManagerWin(QWidget *parent = Q_NULLPTR);
+    ~TagManagerWin();
 
-public:
-    void buildUserInterface(QMainWindow* pMainWin);
-    void removeUserInterface(QMainWindow* pMainWin);
-    QString wndTitle() const;
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
-    QMainWindow* m_pMainWinObj = Q_NULLPTR;
     QVBoxLayout *m_pTopVLayoutObj;
     QTableWidgetEx *m_pTagMgrTableViewObj;
     QMenu *m_pMenuTagEditObj = Q_NULLPTR; // 变量编辑菜单

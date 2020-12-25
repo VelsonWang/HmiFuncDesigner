@@ -252,11 +252,9 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
 {
     this->setWindowTitle(tr("工程转换"));
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
-    m_pSplitterMain = new SplitterForm(Qt::Vertical, this);
-    SplitterForm *splitterUp = new SplitterForm(Qt::Horizontal, m_pSplitterMain);
-
-    SplitterForm *splitterLeft = new SplitterForm(Qt::Vertical, splitterUp);
-
+    m_pSplitterMain = new QSplitter(this);
+    QSplitter *splitterUp = new QSplitter(Qt::Horizontal, m_pSplitterMain);
+    QSplitter *splitterLeft = new QSplitter(Qt::Vertical, splitterUp);
     QVBoxLayout *leftLayout = new QVBoxLayout();
     leftLayout->setContentsMargins(1, 1, 1, 1);
     leftLayout->setObjectName(QStringLiteral("leftLayout"));
@@ -291,7 +289,7 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
 
     /////////////////////////////////////////////////////////////////
 
-    SplitterForm *splitterMiddle = new SplitterForm(Qt::Vertical, splitterUp);
+    QSplitter *splitterMiddle = new QSplitter(Qt::Vertical, splitterUp);
     QVBoxLayout *widgetMiddleLayout = new QVBoxLayout();
     widgetMiddleLayout->setContentsMargins(1, 1, 1, 1);
     widgetMiddleLayout->setObjectName(QStringLiteral("widgetMiddleLayout"));
@@ -324,7 +322,7 @@ TagFuncEditDialog::TagFuncEditDialog(QString projectPath, QWidget *parent)
 
     /////////////////////////////////////////////////////////////////
 
-    SplitterForm *splitterRight = new SplitterForm(Qt::Vertical, splitterUp);
+    QSplitter *splitterRight = new QSplitter(Qt::Vertical, splitterUp);
     QVBoxLayout *widgetRightLayout = new QVBoxLayout();
     widgetRightLayout->setContentsMargins(1, 1, 1, 1);
     widgetRightLayout->setObjectName(QStringLiteral("widgetRightLayout"));

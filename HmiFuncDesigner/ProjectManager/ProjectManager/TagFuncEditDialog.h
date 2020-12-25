@@ -4,8 +4,6 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "SplitterForm.h"
-
 #include <QAction>
 #include <QApplication>
 #include <QButtonGroup>
@@ -31,6 +29,7 @@
 #include <QEvent>
 #include <QMouseEvent>
 #include <QResizeEvent>
+#include <QSplitter>
 #include <QDebug>
 
 namespace Ui {
@@ -219,7 +218,7 @@ private:
     QList<TFuncObject *> m_supportFuncList;
     FuncTableView *m_funcTableView;
     QStringList m_groupFuncNameList;
-    SplitterForm *m_pSplitterMain;
+    QSplitter *m_pSplitterMain;
 
     QtVariantPropertyManager *m_pVariantManager;
     QtTreePropertyBrowser *m_pPropertyEditor;

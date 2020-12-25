@@ -1,6 +1,6 @@
 QT += core gui widgets
 
-TARGET = devices
+TARGET = rtdb
 TEMPLATE = lib
 
 CONFIG  += plugin
@@ -14,6 +14,13 @@ win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../../HmiFuncDesignerBin/bin/pages
 }
 
+LIB_SUFFIX=""
+CONFIG(debug, debug|release) { #debug
+    win32 {
+        LIB_SUFFIX=d
+    }
+}
+
 LIBS += -L$$clean_path($$LIB_DIR) -lshared
 LIBS += -L$$clean_path($$LIB_DIR) -lcore
 
@@ -23,13 +30,13 @@ INCLUDEPATH += \
 
 HEADERS += \
     ../../Public/userevent.h \
-    communicationdevice.h \
-    devicesplugin.h
+    rtdbplugin.h \
+    rtdbwin.h
 
 SOURCES += \
     ../../Public/userevent.cpp \
-    communicationdevice.cpp \
-    devicesplugin.cpp
+    rtdbplugin.cpp \
+    rtdbwin.cpp
 
 
 RESOURCES += \
@@ -39,4 +46,4 @@ FORMS +=
 
 
 DISTFILES += \
-    devicesplugin.json
+    rtdbplugin.json

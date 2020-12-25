@@ -1,13 +1,13 @@
-﻿#include "InsertFunctionDialog.h"
+﻿#include "insertfunctiondialog.h"
+#include "ui_insertfunctiondialog.h"
 #include <QFile>
 #include <QList>
 #include <QMessageBox>
 #include <QStringList>
 #include <QTreeWidgetItem>
-#include "ConfigUtils.h"
-#include "Helper.h"
+#include <QApplication>
 #include "xmlobject.h"
-#include "ui_InsertFunctionDialog.h"
+
 
 #include <QDebug>
 
@@ -27,7 +27,7 @@ void InsertFunctionDialog::treeWidgetInit() {
   ui->treeWidgetFunc->setHeaderHidden(true);
 
   // file encoding="UTF-8"
-  QString xmlFileName = Helper::AppDir() + "/Config/JScriptFun.xml";
+  QString xmlFileName = QApplication::applicationDirPath() + "/Config/JScriptFun.xml";
 
   QFile fileCfg(xmlFileName);
   if (!fileCfg.exists()) {

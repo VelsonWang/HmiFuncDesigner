@@ -1,12 +1,10 @@
 #include "ProjectTreeView.h"
-#include <QMenu>
 #include <QStandardItem>
 #include <QModelIndex>
 #include <QApplication>
 #include <QMessageBox>
 #include <QDebug>
 #include "qsoftcore.h"
-#include "NewVariableGroupDialog.h"
 
 ProjectTreeView::ProjectTreeView(QWidget *parent) : QTreeView(parent)
 {
@@ -23,64 +21,6 @@ ProjectTreeView::~ProjectTreeView()
         delete m_pItemModelObj;
         m_pItemModelObj = Q_NULLPTR;
     }
-}
-
-
-/**
- * @brief ProjectTreeView::contextMenuEvent
- * @details 右键菜单
- * @param event
- */
-void ProjectTreeView::contextMenuEvent(QContextMenuEvent * event)
-{ 
-    QModelIndex index = indexAt(event->pos());
-    if(!index.isValid()) { // 单击空白部分
-        return;
-    }
-
-    bool found = false;
-    QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
-    QString szCurItemText = pModelObj->itemFromIndex(index)->text();
-
-    if (szCurItemText == tr("设备变量"))
-        found = true;
-
-//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-//    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-//        if (szCurItemText == pObj->m_szShowName)
-//            found = true;
-//    }
-
-    if (!found) return;
-
-    QMenu *pMenu = new QMenu(this);
-
-    QAction *pAddGroupAct = new QAction(tr("增加组"), this);
-    pAddGroupAct->setStatusTip(tr("增加组"));
-    connect(pAddGroupAct, SIGNAL(triggered()), this, SLOT(onSlotTagIOGroupAdd()));
-    pMenu->addAction(pAddGroupAct);
-
-    QAction *pRenameGroupAct = new QAction(tr("重命名"), this);
-    pRenameGroupAct->setStatusTip(tr("重命名"));
-    connect(pRenameGroupAct, SIGNAL(triggered()), this, SLOT(onSlotTagIOGroupRename()));
-    pMenu->addAction(pRenameGroupAct);
-
-    QAction *pDeleteGroupAct = new QAction(tr("删除组"), this);
-    pDeleteGroupAct->setStatusTip(tr("删除组"));
-    connect(pDeleteGroupAct, SIGNAL(triggered()), this, SLOT(onSlotTagIODeleteGroup()));
-    pMenu->addAction(pDeleteGroupAct);
-
-    QAction *pCopyGroupAct = new QAction(tr("复制组"), this);
-    pCopyGroupAct->setStatusTip(tr("复制组"));
-    connect(pCopyGroupAct, SIGNAL(triggered()), this, SLOT(onSlotTagIOGroupCopy()));
-    pMenu->addAction(pCopyGroupAct);
-
-    if(!pMenu->isEmpty()) {
-        pMenu->move(cursor().pos());
-        pMenu->exec();
-        pMenu->clear();
-    }
-    delete pMenu;
 }
 
 ///
@@ -128,13 +68,17 @@ void ProjectTreeView::updateUI()
     m_pProjectItemObj = new QStandardItem(QIcon(":/images/pj_pro.png"), tr("未创建工程"));
     m_pProjectItemObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("Project").toUpper() << m_pProjectItemObj->text();
+    szListUserData << QString("Project").toUpper()
+                   << m_pProjectItemObj->text()
+                   << "";
     m_pProjectItemObj->setData(szListUserData, Qt::UserRole + 1);
 
     m_pSystemParametersObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("系统参数"));
     m_pSystemParametersObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("SystemParameters").toUpper() << m_pSystemParametersObj->text();
+    szListUserData << QString("SystemParameters").toUpper()
+                   << m_pSystemParametersObj->text()
+                   << "";
     m_pSystemParametersObj->setData(szListUserData, Qt::UserRole + 1);
     m_pProjectItemObj->appendRow(m_pSystemParametersObj);
 
@@ -171,7 +115,9 @@ void ProjectTreeView::updateUI()
     m_pTagMgrObj = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("变量管理"));
     m_pTagMgrObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("TagMgr").toUpper() << m_pTagMgrObj->text();
+    szListUserData << QString("TagMgr").toUpper()
+                   << m_pTagMgrObj->text()
+                   << "";
     m_pTagMgrObj->setData(szListUserData, Qt::UserRole + 1);
     m_pProjectItemObj->appendRow(m_pTagMgrObj);
 
@@ -184,7 +130,9 @@ void ProjectTreeView::updateUI()
     m_pRealTimeDatabaseObj = new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
     m_pRealTimeDatabaseObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("RealTimeDatabase").toUpper() << m_pRealTimeDatabaseObj->text();
+    szListUserData << QString("RTDBWin").toUpper()
+                   << m_pRealTimeDatabaseObj->text()
+                   << "";
     m_pRealTimeDatabaseObj->setData(szListUserData, Qt::UserRole + 1);
     m_pDataBaseManagerObj->appendRow(m_pRealTimeDatabaseObj);
 
@@ -199,13 +147,17 @@ void ProjectTreeView::updateUI()
     m_pLogicProgramObj = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
     m_pLogicProgramObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("LogicProgram").toUpper() << m_pLogicProgramObj->text();
+    szListUserData << QString("LogicProgram").toUpper()
+                   << m_pLogicProgramObj->text()
+                   << "";
     m_pLogicProgramObj->setData(szListUserData, Qt::UserRole + 1);
 
     m_pScriptEditorObj = new QStandardItem(QIcon(":/images/pj_script.png"), tr("脚本编辑器"));
     m_pScriptEditorObj->setEditable(false);
     szListUserData.clear();
-    szListUserData << QString("ScriptEditor").toUpper() << m_pScriptEditorObj->text();
+    szListUserData << QString("ScriptEditor").toUpper()
+                   << m_pScriptEditorObj->text()
+                   << "";
     m_pScriptEditorObj->setData(szListUserData, Qt::UserRole + 1);
     m_pLogicProgramObj->appendRow(m_pScriptEditorObj);
     m_pProjectItemObj->appendRow(m_pLogicProgramObj);
@@ -232,7 +184,7 @@ int ProjectTreeView::getDevTagGroupCount()
  */
 QString ProjectTreeView::getProjectName()
 {
-    return (m_pProjectItemObj != Q_NULLPTR) ? m_pProjectItemObj->text() : 0;
+    return (m_pProjectItemObj != Q_NULLPTR) ? m_pProjectItemObj->text() : "";
 }
 
 /**
@@ -248,130 +200,6 @@ void ProjectTreeView::setProjectName(const QString &szName)
 }
 
 
-/**
- * @brief ProjectTreeView::updateDeviceTagGroup
- * @details 更新设备变量组
- */
-void ProjectTreeView::updateDeviceTagGroup()
-{
-    if(m_pDevTagObj == Q_NULLPTR) return;
-
-//    while(!m_pDevVariableTabListObj.empty())
-//        m_pDevVariableTabListObj.takeFirst();
-//    m_pDevTagObj->removeRows(0, m_pDevTagObj->rowCount());
-
-//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-//    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-//        QStandardItem *pDevVarTab = new QStandardItem(QIcon(":/images/pj_zone.png"), pObj->m_szShowName);
-//        pDevVarTab->setEditable(false);
-//        m_pDevVariableTabListObj.append(pDevVarTab);
-//        m_pDevTagObj->appendRow(pDevVarTab);
-//    }
-//    QApplication::processEvents();
-}
-
-
-/**
- * @brief ProjectTreeView::onSlotTagIOGroupAdd
- * @details 增加组
- */
-void ProjectTreeView::onSlotTagIOGroupAdd()
-{
-    NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
-    pDlg->SetDialogName("新建数据组");
-    pDlg->SetLabelName("数据组名：");
-    if (pDlg->exec() == QDialog::Accepted) {
-//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-//        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-//        pObj->m_id = tagIOGroup.getGroupCount() + 1;
-//        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-//        pObj->m_szShowName = pDlg->GetGroupName();
-//        tagIOGroup.listTagIOGroupDBItem_.append(pObj);
-//        updateDeviceTagGroup();
-//        QString szTitleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
-//        emit sigNotifySetWindowSetTitle(szTitleNew);
-    }
-}
-
-
-/**
- * @brief ProjectTreeView::onSlotTagIOGroupRename
- * @details 重命名组
- */
-void ProjectTreeView::onSlotTagIOGroupRename()
-{
-    QModelIndex index = this->currentIndex();
-    QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
-    QStandardItem *pItemObj = pModelObj->itemFromIndex(index);
-    QString szText = pItemObj->text();
-
-    NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
-    pDlg->SetDialogName("新建数据组");
-    pDlg->SetLabelName("数据组名：");
-    pDlg->SetGroupName(szText);
-    if (pDlg->exec() == QDialog::Accepted) {
-//        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-//        TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(szText);
-//        QString szTitleNew = QString("%1%2%3")
-//                .arg("设备变量")
-//                .arg("-")
-//                .arg(pDlg->GetGroupName());
-//        emit sigNotifySetWindowSetTitle(szTitleNew);
-//        pObj->m_szShowName = pDlg->GetGroupName();
-        updateDeviceTagGroup();
-    }
-}
-
-
-/**
- * @brief ProjectTreeView::onSlotTagIODeleteGroup
- * @details 删除组
- */
-void ProjectTreeView::onSlotTagIODeleteGroup()
-{
-    QModelIndex ModelIndex = this->selectionModel()->currentIndex();
-    QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
-    QStandardItem *pItemObj = pModelObj->itemFromIndex(ModelIndex);
-
-//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-//    TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(pItemObj->text());
-//    tagIOGroup.listTagIOGroupDBItem_.removeOne(pObj);
-//    if(pObj != Q_NULLPTR) {
-//        delete pObj;
-//        pObj = Q_NULLPTR;
-//    }
-    updateDeviceTagGroup();
-}
-
-
-/**
- * @brief ProjectTreeView::onSlotTagIOGroupCopy
- * @details 复制组
- */
-void ProjectTreeView::onSlotTagIOGroupCopy()
-{
-    QModelIndex ModelIndex = this->selectionModel()->currentIndex();
-    QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
-    QStandardItem *pItemObj = pModelObj->itemFromIndex(ModelIndex);
-
-//    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-//    // check the same name first
-//    QString szName = QString("复制_%1").arg(pItemObj->text());
-//    int iCnt = tagIOGroup.getGroupCountByShowName(szName);
-//    if(iCnt > 0) {
-//        QMessageBox::information(this, "系统提示", "同名文件存在，请先修改名称！");
-//        return;
-//    }
-
-//    TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-//    pObj->m_id = tagIOGroup.getGroupCount() + 1;
-//    pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-//    pObj->m_szShowName = szName;
-//    tagIOGroup.listTagIOGroupDBItem_.append(pObj);
-    updateDeviceTagGroup();
-
-    // FIXME 拷贝组内变量
-}
 
 
 

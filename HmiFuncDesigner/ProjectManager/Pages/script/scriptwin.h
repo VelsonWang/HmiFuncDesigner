@@ -1,9 +1,7 @@
-﻿#ifndef ScriptManageChild_H
-#define ScriptManageChild_H
+﻿#ifndef ScriptWin_H
+#define ScriptWin_H
 
-#include "ChildInterface.h"
 #include "../../Public/Public.h"
-#include "Script.h"
 #include <QWidget>
 #include <QListWidget>
 #include <QList>
@@ -11,22 +9,17 @@
 #include <QStringList>
 #include <QJsonObject>
 
-class ScriptManageChild : public QWidget, public ChildInterface
+class ScriptWin : public QWidget
 {
     Q_OBJECT
-    Q_INTERFACES(ChildInterface)
 public:
-    explicit ScriptManageChild(QWidget *parent = Q_NULLPTR);
-    ~ScriptManageChild();
+    explicit ScriptWin(QWidget *parent = Q_NULLPTR);
+    ~ScriptWin();
     void init();
 
-
 public:
-    void buildUserInterface(QMainWindow* pMainWin);
-    void removeUserInterface(QMainWindow* pMainWin);
     QString userFriendlyCurrentFile();
     QString currentFile() const;
-    QString wndTitle() const;
 
 private:
     void updateUI();
@@ -39,6 +32,7 @@ public slots:
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
+    bool eventFilter(QObject *obj, QEvent *ev);
 
 private:
     QListWidget *m_pListWidgetObj;
@@ -46,4 +40,4 @@ private:
 };
 
 
-#endif // ScriptManageChild_H
+#endif // ScriptWin_H
