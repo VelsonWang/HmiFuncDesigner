@@ -10,7 +10,6 @@
 #include <QKeySequence>
 #include <QContextMenuEvent>
 #include <QFile>
-#include <QDebug>
 
 CommunicationDevice::CommunicationDevice(QWidget *parent) : QWidget(parent)
 {
@@ -331,24 +330,20 @@ void CommunicationDevice::onSlotListViewProjectDoubleClicked(const QModelIndex &
     listViewUpdate();
 }
 
-bool CommunicationDevice::eventFilter(QObject *obj, QEvent *ev)
-{
-    if(obj == this) {
-        if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
-            qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
-            QVariant variant = this->property("UserData");
-            QStringList szListUserData = variant.toStringList();
-            if(szListUserData.size() >= 3) {
-                m_szItemName = szListUserData.at(2);
-            }
-            listViewUpdate();
-            return true;
-        } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
-            qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
-            return true;
-        }
-    }
 
-    return QObject::eventFilter(obj, ev);
+bool CommunicationDevice::event(QEvent *ev)
+{
+    if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+        UserEvent *pEvObj = dynamic_cast<UserEvent *>(ev);
+        if(pEvObj) {
+            m_szItemName = pEvObj->data().toString();
+        }
+        listViewUpdate();
+        return true;
+    } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+        return true;
+    }
+    return QWidget::event(ev);
 }
+
 

@@ -22,7 +22,7 @@ private:
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
-    bool eventFilter(QObject *obj, QEvent *ev);
+    bool event(QEvent *ev);
 
 public slots:
     void onSlotListViewProjectDoubleClicked(const QModelIndex &index);

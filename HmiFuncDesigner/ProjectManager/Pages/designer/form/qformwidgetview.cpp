@@ -27,7 +27,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
 
     this->setLayout(l);
 
-    QSoftCore *core=QSoftCore::getCore();
+    QSoftCore *core = QSoftCore::getCore();
 
     QActionToolBar *toolbar=new QActionToolBar;
     QList<QAction*> list;

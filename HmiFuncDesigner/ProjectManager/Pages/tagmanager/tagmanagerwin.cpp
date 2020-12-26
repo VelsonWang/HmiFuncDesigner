@@ -945,133 +945,135 @@ TagManagerWin::~TagManagerWin()
 }
 
 
-bool TagManagerWin::eventFilter(QObject *obj, QEvent *ev)
+bool TagManagerWin::event(QEvent *ev)
 {
-    if(obj == this) {
-        if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
-            qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
+    if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+        UserEvent *pEvObj = dynamic_cast<UserEvent *>(ev);
+        if(pEvObj) {
+            if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+                qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
 #if 0
-            if(pMainWin == Q_NULLPTR) return;
+                if(pMainWin == Q_NULLPTR) return;
 
-            if(m_pMainWinObj == Q_NULLPTR) {
+                if(m_pMainWinObj == Q_NULLPTR) {
 
-                //-----------------------------<变量编辑菜单>----------------------------------
-                // 添加变量
-                m_pActAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
-                connect(m_pActAddTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onAddTag()));
+                    //-----------------------------<变量编辑菜单>----------------------------------
+                    // 添加变量
+                    m_pActAddTagObj = new QAction(QIcon(":/images/data_add.png"), tr("添加变量"));
+                    connect(m_pActAddTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onAddTag()));
 
-                // 拷贝变量
-                m_pActCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
-                connect(m_pActCopyTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onCopyTag()));
+                    // 拷贝变量
+                    m_pActCopyTagObj = new QAction(QIcon(":/images/data_rowcopy.png"), tr("拷贝变量"));
+                    connect(m_pActCopyTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onCopyTag()));
 
-                // 粘贴变量
-                m_pActPasteTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("粘贴变量"));
-                connect(m_pActPasteTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onPasteTag()));
+                    // 粘贴变量
+                    m_pActPasteTagObj = new QAction(QIcon(":/images/data_supadd.png"), tr("粘贴变量"));
+                    connect(m_pActPasteTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onPasteTag()));
 
-                // 修改变量
-                m_pActModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
-                connect(m_pActModifyTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onEditTag()));
+                    // 修改变量
+                    m_pActModifyTagObj = new QAction(QIcon(":/images/icon_modify.png"), tr("修改变量"));
+                    connect(m_pActModifyTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onEditTag()));
 
-                // 删除变量
-                m_pActDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
-                connect(m_pActDeleteTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onDeleteTag()));
+                    // 删除变量
+                    m_pActDeleteTagObj = new QAction(QIcon(":/images/icon_delete.png"), tr("删除变量"));
+                    connect(m_pActDeleteTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onDeleteTag()));
 
-                // 导出变量
-                m_pActExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
-                connect(m_pActExportTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onExportToCsv()));
+                    // 导出变量
+                    m_pActExportTagObj = new QAction(QIcon(":/images/data_export.png"), tr("导出变量"));
+                    connect(m_pActExportTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onExportToCsv()));
 
-                // 导入变量
-                m_pActImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
-                connect(m_pActImportTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onImportFromCsv()));
+                    // 导入变量
+                    m_pActImportTagObj = new QAction(QIcon(":/images/data_import.png"), tr("导入变量"));
+                    connect(m_pActImportTagObj, SIGNAL(triggered()), m_pTagMgrTableViewObj, SLOT(onImportFromCsv()));
 
-                //-----------------------------<变量编辑菜单>----------------------------------
-                m_pMenuTagEditObj = pMainWin->menuBar()->addMenu(tr("变量编辑"));
-                m_pMenuTagEditObj->addAction(m_pActAddTagObj); // 添加变量
-                m_pMenuTagEditObj->addAction(m_pActCopyTagObj); // 拷贝变量
-                m_pMenuTagEditObj->addAction(m_pActPasteTagObj); // 粘贴变量
-                m_pMenuTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
-                m_pMenuTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
-                m_pMenuTagEditObj->addAction(m_pActExportTagObj); // 导出变量
-                m_pMenuTagEditObj->addAction(m_pActImportTagObj); // 导入变量
+                    //-----------------------------<变量编辑菜单>----------------------------------
+                    m_pMenuTagEditObj = pMainWin->menuBar()->addMenu(tr("变量编辑"));
+                    m_pMenuTagEditObj->addAction(m_pActAddTagObj); // 添加变量
+                    m_pMenuTagEditObj->addAction(m_pActCopyTagObj); // 拷贝变量
+                    m_pMenuTagEditObj->addAction(m_pActPasteTagObj); // 粘贴变量
+                    m_pMenuTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
+                    m_pMenuTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
+                    m_pMenuTagEditObj->addAction(m_pActExportTagObj); // 导出变量
+                    m_pMenuTagEditObj->addAction(m_pActImportTagObj); // 导入变量
 
-                //-----------------------------<变量编辑>----------------------------------
-                m_pToolBarTagEditObj = new QToolBar(pMainWin);
-                m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-                m_pToolBarTagEditObj->addAction(m_pActAddTagObj);  // 添加变量
-                m_pToolBarTagEditObj->addAction(m_pActCopyTagObj); // 拷贝变量
-                m_pToolBarTagEditObj->addAction(m_pActPasteTagObj); // 粘贴变量
-                m_pToolBarTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
-                m_pToolBarTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
-                m_pToolBarTagEditObj->addAction(m_pActExportTagObj); // 导出变量
-                m_pToolBarTagEditObj->addAction(m_pActImportTagObj); // 导入变量
+                    //-----------------------------<变量编辑>----------------------------------
+                    m_pToolBarTagEditObj = new QToolBar(pMainWin);
+                    m_pToolBarTagEditObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+                    m_pToolBarTagEditObj->addAction(m_pActAddTagObj);  // 添加变量
+                    m_pToolBarTagEditObj->addAction(m_pActCopyTagObj); // 拷贝变量
+                    m_pToolBarTagEditObj->addAction(m_pActPasteTagObj); // 粘贴变量
+                    m_pToolBarTagEditObj->addAction(m_pActModifyTagObj); // 修改变量
+                    m_pToolBarTagEditObj->addAction(m_pActDeleteTagObj); // 删除变量
+                    m_pToolBarTagEditObj->addAction(m_pActExportTagObj); // 导出变量
+                    m_pToolBarTagEditObj->addAction(m_pActImportTagObj); // 导入变量
 
-                pMainWin->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
+                    pMainWin->addToolBar(Qt::TopToolBarArea, m_pToolBarTagEditObj);
 
-                m_pMainWinObj = pMainWin;
-            }
+                    m_pMainWinObj = pMainWin;
+                }
 
-            //////////////////////////////////////////////////////////////////////////
+                //////////////////////////////////////////////////////////////////////////
 
 
 #endif
-            m_pTagMgrTableViewObj->updateTable();
-            return true;
-        } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
-            qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
+                m_pTagMgrTableViewObj->updateTable();
+                return true;
+            } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+                qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ ;
 #if 0
-            if(pMainWin == Q_NULLPTR) return;
+                if(pMainWin == Q_NULLPTR) return;
 
-            if(m_pMainWinObj) {
-                m_pMenuTagEditObj->clear();
+                if(m_pMainWinObj) {
+                    m_pMenuTagEditObj->clear();
 
-                if(m_pActAddTagObj != Q_NULLPTR) {
-                    delete m_pActAddTagObj;
-                    m_pActAddTagObj = Q_NULLPTR;
-                }
-                if(m_pActCopyTagObj != Q_NULLPTR) {
-                    delete m_pActCopyTagObj;
-                    m_pActCopyTagObj = Q_NULLPTR;
-                }
-                if(m_pActPasteTagObj != Q_NULLPTR) {
-                    delete m_pActPasteTagObj;
-                    m_pActPasteTagObj = Q_NULLPTR;
-                }
-                if(m_pActModifyTagObj != Q_NULLPTR) {
-                    delete m_pActModifyTagObj;
-                    m_pActModifyTagObj = Q_NULLPTR;
-                }
-                if(m_pActDeleteTagObj != Q_NULLPTR) {
-                    delete m_pActDeleteTagObj;
-                    m_pActDeleteTagObj = Q_NULLPTR;
-                }
-                if(m_pActExportTagObj != Q_NULLPTR) {
-                    delete m_pActExportTagObj;
-                    m_pActExportTagObj = Q_NULLPTR;
-                }
-                if(m_pActImportTagObj != Q_NULLPTR) {
-                    delete m_pActImportTagObj;
-                    m_pActImportTagObj = Q_NULLPTR;
-                }
+                    if(m_pActAddTagObj != Q_NULLPTR) {
+                        delete m_pActAddTagObj;
+                        m_pActAddTagObj = Q_NULLPTR;
+                    }
+                    if(m_pActCopyTagObj != Q_NULLPTR) {
+                        delete m_pActCopyTagObj;
+                        m_pActCopyTagObj = Q_NULLPTR;
+                    }
+                    if(m_pActPasteTagObj != Q_NULLPTR) {
+                        delete m_pActPasteTagObj;
+                        m_pActPasteTagObj = Q_NULLPTR;
+                    }
+                    if(m_pActModifyTagObj != Q_NULLPTR) {
+                        delete m_pActModifyTagObj;
+                        m_pActModifyTagObj = Q_NULLPTR;
+                    }
+                    if(m_pActDeleteTagObj != Q_NULLPTR) {
+                        delete m_pActDeleteTagObj;
+                        m_pActDeleteTagObj = Q_NULLPTR;
+                    }
+                    if(m_pActExportTagObj != Q_NULLPTR) {
+                        delete m_pActExportTagObj;
+                        m_pActExportTagObj = Q_NULLPTR;
+                    }
+                    if(m_pActImportTagObj != Q_NULLPTR) {
+                        delete m_pActImportTagObj;
+                        m_pActImportTagObj = Q_NULLPTR;
+                    }
 
-                pMainWin->menuBar()->removeAction(m_pMenuTagEditObj->menuAction());
-                if(m_pMenuTagEditObj != Q_NULLPTR) {
-                    delete m_pMenuTagEditObj;
-                    m_pMenuTagEditObj = Q_NULLPTR;
+                    pMainWin->menuBar()->removeAction(m_pMenuTagEditObj->menuAction());
+                    if(m_pMenuTagEditObj != Q_NULLPTR) {
+                        delete m_pMenuTagEditObj;
+                        m_pMenuTagEditObj = Q_NULLPTR;
+                    }
+
+                    pMainWin->removeToolBar(m_pToolBarTagEditObj);
+
+                    m_pMainWinObj = Q_NULLPTR;
                 }
-
-                pMainWin->removeToolBar(m_pToolBarTagEditObj);
-
-                m_pMainWinObj = Q_NULLPTR;
-            }
 #endif
-            return true;
+                return true;
+            }
         }
+        return true;
+    } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+        return true;
     }
-
-    return QObject::eventFilter(obj, ev);
+    return QWidget::event(ev);
 }
-
-
-
 
 

@@ -155,7 +155,7 @@ public:
     ~TagManagerWin();
 
 protected:
-    bool eventFilter(QObject *obj, QEvent *ev);
+    bool event(QEvent *ev);
 
 private:
     QVBoxLayout *m_pTopVLayoutObj;

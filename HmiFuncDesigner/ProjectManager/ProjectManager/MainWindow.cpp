@@ -2,6 +2,7 @@
 #include <QApplication>
 #include <QCloseEvent>
 #include <QGuiApplication>
+#include <QCoreApplication>
 #include <QScreen>
 #include <QDialog>
 #include <QDir>
@@ -24,7 +25,6 @@
 #include "ProjectDownloadDialog.h"
 #include "ProjectUploadDialog.h"
 #include "MainWindow.h"
-#include "projectinfomanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
 #include "variantmanager.h"
@@ -118,8 +118,6 @@ MainWindow::MainWindow(QWidget *parent)
     dockWidgetContentsLayout->addWidget(m_pTabProjectMgrObj);
     m_pTabProjectMgrObj->setCurrentIndex(0);
     m_pDockProjectMgrObj->setWidget(dockWidgetContents);
-
-    m_pUndoGroupObj = new QUndoGroup(this);
 
     // 创建状态栏
     createStatusBar();
@@ -259,64 +257,6 @@ void MainWindow::createActions()
         QSoftCore::getCore()->insertAction("Widget.DisplayArea", pActObj);
     }
 
-    //-----------------------------<画面编辑器>----------------------------------
-
-    // 关闭画面
-    pActObj = new QAction(tr("关闭"), Q_NULLPTR);
-    if(pActObj) {
-        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotCloseGraphPage()));
-        QSoftCore::getCore()->insertAction("GraphPage.Close", pActObj);
-    }
-
-    // 关闭所有画面
-    pActObj = new QAction(tr("关闭所有"), Q_NULLPTR);
-    if(pActObj) {
-        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotCloseAll()));
-        QSoftCore::getCore()->insertAction("GraphPage.CloseAll", pActObj);
-    }
-
-    // 撤销
-    pActObj = m_pUndoGroupObj->createUndoAction(Q_NULLPTR);
-    if(pActObj) {
-        pActObj->setIcon(QIcon(":/DrawAppImages/undo.png"));
-        pActObj->setText(tr("撤销"));
-        pActObj->setShortcut(QKeySequence::Undo);
-        QSoftCore::getCore()->insertAction("GraphPage.Undo", pActObj);
-    }
-
-    // 重做
-    pActObj = m_pUndoGroupObj->createRedoAction(Q_NULLPTR);
-    if(pActObj) {
-        pActObj->setText(tr("重做"));
-        pActObj->setIcon(QIcon(":/DrawAppImages/redo.png"));
-        pActObj->setShortcut(QKeySequence::Redo);
-        QSoftCore::getCore()->insertAction("GraphPage.Redo", pActObj);
-    }
-
-    // 删除画面
-    pActObj = new QAction(QIcon(":/DrawAppImages/delete.png"), tr("删除"));
-    if(pActObj) {
-        pActObj->setShortcut(QKeySequence::Delete);
-        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotEditDelete()));
-        QSoftCore::getCore()->insertAction("GraphPage.Delete", pActObj);
-    }
-
-    // 拷贝画面
-    pActObj = new QAction(QIcon(":/DrawAppImages/editcopy.png"), tr("拷贝"));
-    if(pActObj) {
-        pActObj->setShortcut(QKeySequence::Copy);
-        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotEditCopy()));
-        QSoftCore::getCore()->insertAction("GraphPage.Copy", pActObj);
-    }
-
-    // 粘贴画面
-    pActObj = new QAction(QIcon(":/DrawAppImages/editpaste.png"), tr("粘贴"));
-    if(pActObj) {
-        pActObj->setShortcut(QKeySequence::Paste);
-        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotEditPaste()));
-        QSoftCore::getCore()->insertAction("GraphPage.Paste", pActObj);
-    }
-
     //-----------------------------<工具菜单>----------------------------------
     // 模拟仿真
     pActObj = new QAction(QIcon(":/images/offline.png"), tr("模拟仿真"));
@@ -391,12 +331,6 @@ void MainWindow::createMenus()
     m_pMenuViewObj->addAction(QSoftCore::getCore()->getAction("Widget.WorkSpace"));
     m_pMenuViewObj->addAction(QSoftCore::getCore()->getAction("Widget.DisplayArea"));
 
-    //-----------------------------<画面编辑器>----------------------------------
-    // 画面
-    QMenu *filemenu = this->menuBar()->addMenu(tr("画面"));
-    filemenu->addAction(QSoftCore::getCore()->getAction("GraphPage.Close")); // 画面.关闭
-    filemenu->addAction(QSoftCore::getCore()->getAction("GraphPage.CloseAll")); // 画面.关闭所有
-
     //-----------------------------<工具菜单>----------------------------------
     m_pMenuToolsObj = this->menuBar()->addMenu(tr("工具"));
     m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.Simulate")); // 模拟仿真
@@ -428,16 +362,6 @@ void MainWindow::createToolbars()
     pToolBarObj->addAction(QSoftCore::getCore()->getAction("Project.Save"));
     pToolBarObj->addAction(QSoftCore::getCore()->getAction("Project.Exit"));
 
-    //-----------------------------<画面编辑器>----------------------------------
-    pToolBarObj = new QToolBar(this);
-    QSoftCore::getCore()->insertToolBar("ToolBar.GraphPage", pToolBarObj);
-    pToolBarObj->addSeparator();
-    pToolBarObj->addAction(QSoftCore::getCore()->getAction("GraphPage.Undo")); // 撤销
-    pToolBarObj->addAction(QSoftCore::getCore()->getAction("GraphPage.Redo")); // 重做
-    pToolBarObj->addSeparator();
-    pToolBarObj->addAction(QSoftCore::getCore()->getAction("GraphPage.Copy")); // 拷贝画面
-    pToolBarObj->addAction(QSoftCore::getCore()->getAction("GraphPage.Paste")); // 粘贴画面
-    pToolBarObj->addAction(QSoftCore::getCore()->getAction("GraphPage.Delete")); // 删除画面
     pToolBarObj->addSeparator();
 
     //-----------------------------<工具>----------------------------------
@@ -454,7 +378,6 @@ void MainWindow::createToolbars()
     this->addToolBar(Qt::TopToolBarArea, QSoftCore::getCore()->getToolBar("ToolBar.Project"));
     this->addToolBar(Qt::TopToolBarArea, QSoftCore::getCore()->getToolBar("ToolBar.Tools"));
     //addToolBarBreak();
-    this->addToolBar(Qt::TopToolBarArea, QSoftCore::getCore()->getToolBar("ToolBar.GraphPage"));
 }
 
 
@@ -637,6 +560,7 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
     if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") return;
 
     QStringList szListUserData = szItemText.split("|");
+    //qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "szListUserData:" << szListUserData;
     if(szListUserData.size() < 3) return;
 
     QAbstractPage* pPageObj = m_mapNameToPage.value(szListUserData.at(0).toUpper());
@@ -644,16 +568,13 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
         QWidget *pCurWidgetObj = m_pCentralWidgetObj->currentWidget();
         if(pCurWidgetObj) {
             UserEvent evHide(UserEvent::EVT_USER_HIDE_UPDATE, szListUserData.at(2).toUpper());
-            QApplication::sendEvent(pCurWidgetObj, &evHide);
+            QCoreApplication::sendEvent(pCurWidgetObj, &evHide);
         }
         QWidget *pWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
         if(pWidgetObj) {
             UserEvent evShow(UserEvent::EVT_USER_SHOW_UPDATE, szListUserData.at(2).toUpper());
-            QApplication::sendEvent(pWidgetObj, &evShow);
-            if(m_pCentralWidgetObj->indexOf(pWidgetObj) >= 0) {
-                m_pCentralWidgetObj->setCurrentWidget(pWidgetObj);
-                return;
-            }
+            QCoreApplication::sendEvent(pWidgetObj, &evShow);
+            m_pCentralWidgetObj->setCurrentWidget(pWidgetObj);
         }
     }
 }

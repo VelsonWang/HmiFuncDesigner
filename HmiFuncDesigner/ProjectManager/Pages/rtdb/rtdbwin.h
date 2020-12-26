@@ -20,7 +20,7 @@ public:
     ~RTDBWin();
 
 public:
-    bool eventFilter(QObject *obj, QEvent *ev);
+    bool event(QEvent *ev);
 
 private:
     void ListViewInitUi();

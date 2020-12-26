@@ -90,20 +90,21 @@ void RTDBWin::onSlotListViewProjectDoubleClicked(const QModelIndex &index)
     }
 }
 
-
-bool RTDBWin::eventFilter(QObject *obj, QEvent *ev)
+bool RTDBWin::event(QEvent *ev)
 {
-    if(obj == this) {
-        if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+    if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+        UserEvent *pEvObj = dynamic_cast<UserEvent *>(ev);
+        if(pEvObj) {
             ListViewInitUi();
-            return true;
-        } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
-            return true;
         }
+        return true;
+    } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+        return true;
     }
-
-    return QObject::eventFilter(obj, ev);
+    return QWidget::event(ev);
 }
+
+
 
 
 

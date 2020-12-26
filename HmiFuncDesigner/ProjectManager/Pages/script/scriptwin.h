@@ -32,7 +32,7 @@ public slots:
 
 protected:
     void contextMenuEvent(QContextMenuEvent * event);
-    bool eventFilter(QObject *obj, QEvent *ev);
+    bool event(QEvent *ev);
 
 private:
     QListWidget *m_pListWidgetObj;

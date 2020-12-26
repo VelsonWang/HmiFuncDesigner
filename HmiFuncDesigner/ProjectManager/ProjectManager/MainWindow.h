@@ -118,7 +118,6 @@ private:
     QStatusBar *m_pStatusBarObj = Q_NULLPTR; // 状态栏
     QDockWidget *m_pDockProjectMgrObj = Q_NULLPTR; // 工程管理器停靠控件
     QTabWidget *m_pTabProjectMgrObj = Q_NULLPTR; // 工程管理器TabWidget控件
-    QUndoGroup *m_pUndoGroupObj = Q_NULLPTR;
     QMenu *m_pMenuProjectObj = Q_NULLPTR; // 工程菜单
     QMenu *m_pMenuViewObj = Q_NULLPTR; // 视图
     QMenu *m_pMenuToolsObj = Q_NULLPTR; // 工具菜单
