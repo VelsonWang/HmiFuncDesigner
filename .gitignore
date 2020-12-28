@@ -2,7 +2,7 @@ docs
 lib
 tmp
 build-*
-HmiFuncDesignerBin/bin/pages/
+HmiFuncDesignerBin/bin/pages/*.dll
 HmiFuncDesignerBin/bin/bearer/
 HmiFuncDesignerBin/bin/iconengines/
 HmiFuncDesignerBin/bin/imageformats/

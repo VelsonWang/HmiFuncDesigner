@@ -3,7 +3,7 @@
 
 #include "../../libs/core/qabstractpage.h"
 
-#define PLUGIN_NAME "Plugin.Page.RTDBWin"
+#define PLUGIN_NAME "Plugin.Page.rtdb"
 
 class RTDBPlugin : public QAbstractPage
 {

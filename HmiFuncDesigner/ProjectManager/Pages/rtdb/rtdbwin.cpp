@@ -12,7 +12,7 @@
 
 RTDBWin::RTDBWin(QWidget *parent) : QWidget(parent)
 {
-
+    ListViewInitUi();
 }
 
 RTDBWin::~RTDBWin()
@@ -95,7 +95,7 @@ bool RTDBWin::event(QEvent *ev)
     if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
         UserEvent *pEvObj = dynamic_cast<UserEvent *>(ev);
         if(pEvObj) {
-            ListViewInitUi();
+
         }
         return true;
     } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {

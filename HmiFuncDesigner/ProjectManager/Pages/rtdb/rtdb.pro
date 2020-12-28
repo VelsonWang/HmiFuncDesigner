@@ -14,12 +14,6 @@ win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../../HmiFuncDesignerBin/bin/pages
 }
 
-LIB_SUFFIX=""
-CONFIG(debug, debug|release) { #debug
-    win32 {
-        LIB_SUFFIX=d
-    }
-}
 
 LIBS += -L$$clean_path($$LIB_DIR) -lshared
 LIBS += -L$$clean_path($$LIB_DIR) -lcore
