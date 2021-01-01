@@ -6,7 +6,7 @@
 QMemeryDataProperty::QMemeryDataProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","Memery");
+    setObjectProperty("type", "Memery");
 }
 
 void QMemeryDataProperty::toObject(XMLObject *xml)

@@ -9,8 +9,8 @@
 QLabelHost::QLabelHost(QAbstractHost *parent):
     QFrameHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QLabelHost::getShowName()
@@ -43,7 +43,7 @@ void QLabelHost::initProperty()
     pro=QPropertyFactory::create_property("String");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","text");
+        pro->setObjectProperty("name","text");
         pro->setAttribute("show_name",tr("Text"));
         pro->setAttribute("group","Attributes");
         insertProperty(pro,1);
@@ -52,7 +52,7 @@ void QLabelHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","wordWrap");
+        pro->setObjectProperty("name","wordWrap");
         pro->setAttribute("show_name",tr("WordWrap"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -62,7 +62,7 @@ void QLabelHost::initProperty()
     pro=QPropertyFactory::create_property("Alignment");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","alignment");
+        pro->setObjectProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -72,20 +72,20 @@ void QLabelHost::initProperty()
     pro=QPropertyFactory::create_property("StyleSheet");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","text_sheet");
+        pro->setObjectProperty("name","text_sheet");
         pro->setAttribute("show_name",tr("Text"));
         pro->setAttribute("group","Style Sheet");
 
         insertProperty(pro);
     }
 
-    setPropertyValue("geometry",QRect(0,0,80,20));
-    setPropertyValue("text","label");
+    setPropertyValue("geometry", QRect(0,0,80,20));
+    setPropertyValue("text", "label");
 }
 
 void QLabelHost::setText(const QString &text)
 {
-    setPropertyValue("text",text);
+    setPropertyValue("text", text);
 }
 
 QString QLabelHost::text()
@@ -95,7 +95,7 @@ QString QLabelHost::text()
 
 void QLabelHost::setWordWrap(bool wordWrap)
 {
-    setPropertyValue("wordWrap",wordWrap);
+    setPropertyValue("wordWrap", wordWrap);
 }
 
 bool QLabelHost::wordWrap()
@@ -105,7 +105,7 @@ bool QLabelHost::wordWrap()
 
 void QLabelHost::setAlignment(int alignment)
 {
-    setPropertyValue("alignment",(Qt::AlignmentFlag)alignment);
+    setPropertyValue("alignment", (Qt::AlignmentFlag)alignment);
 }
 
 int QLabelHost::alignment()

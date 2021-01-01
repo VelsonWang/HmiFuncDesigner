@@ -9,8 +9,8 @@
 QDoubleSpinBoxHost::QDoubleSpinBoxHost(QAbstractHost *parent):
     QAbstractSpinBoxHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QDoubleSpinBoxHost::getShowName()
@@ -43,7 +43,7 @@ void QDoubleSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Float");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","maximum");
+        pro->setObjectProperty("name","maximum");
         pro->setAttribute("show_name",tr("Maximum"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -53,7 +53,7 @@ void QDoubleSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Float");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","minimum");
+        pro->setObjectProperty("name","minimum");
         pro->setAttribute("show_name",tr("Minimum"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -63,7 +63,7 @@ void QDoubleSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Float");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","value");
+        pro->setObjectProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -73,7 +73,7 @@ void QDoubleSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Float");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","singleStep");
+        pro->setObjectProperty("name","singleStep");
         pro->setAttribute("show_name",tr("SingleStep"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -83,7 +83,7 @@ void QDoubleSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","decimals");
+        pro->setObjectProperty("name","decimals");
         pro->setAttribute("show_name",tr("Decimals"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -93,14 +93,14 @@ void QDoubleSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","valueChanged");
+        pro->setObjectProperty("name","valueChanged");
         pro->setAttribute("show_name",tr("ValueChanged"));
         pro->setAttribute("group","Events");
         m_object->setProperty("valueChanged","");
         insertProperty(pro);
     }
 
-    setPropertyValue("geometry",QRect(0,0,100,20));
+    setPropertyValue("geometry", QRect(0,0,100,20));
 
     QDoubleSpinBox *s=(QDoubleSpinBox*)m_object;
     connect(s,SIGNAL(valueChanged(QString)),this,SLOT(valueChanged(QString)));

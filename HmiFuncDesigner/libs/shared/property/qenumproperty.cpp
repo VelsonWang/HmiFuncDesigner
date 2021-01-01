@@ -5,7 +5,7 @@
 QEnumProperty::QEnumProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","Enum");
+    setObjectProperty("type","Enum");
 }
 
 QIcon QEnumProperty::get_value_icon()

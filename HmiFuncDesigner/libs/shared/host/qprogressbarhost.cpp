@@ -9,8 +9,8 @@
 QProgressBarHost::QProgressBarHost(QAbstractHost *parent):
     QWidgetHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QProgressBarHost::getShowName()
@@ -43,7 +43,7 @@ void QProgressBarHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","value");
+        pro->setObjectProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -53,7 +53,7 @@ void QProgressBarHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","maximum");
+        pro->setObjectProperty("name","maximum");
         pro->setAttribute("show_name",tr("Maximum"));
         pro->setAttribute(ATTR_CAN_SAME,true);
         pro->setAttribute("group","Attributes");
@@ -63,7 +63,7 @@ void QProgressBarHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","minimum");
+        pro->setObjectProperty("name","minimum");
         pro->setAttribute("show_name",tr("Minimum"));
         pro->setAttribute(ATTR_CAN_SAME,true);
         pro->setAttribute("group","Attributes");
@@ -73,7 +73,7 @@ void QProgressBarHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","alignment");
+        pro->setObjectProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));
         pro->setAttribute(ATTR_CAN_SAME,true);
         pro->setAttribute("group","Attributes");
@@ -98,7 +98,7 @@ void QProgressBarHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","orientation");
+        pro->setObjectProperty("name","orientation");
         pro->setAttribute("show_name",tr("Orientation"));
         pro->setAttribute(ATTR_CAN_SAME,true);
         pro->setAttribute("group","Attributes");
@@ -122,7 +122,7 @@ void QProgressBarHost::initProperty()
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","format");
+        pro->setObjectProperty("name","format");
         pro->setAttribute("show_name",tr("Format"));
         pro->setAttribute(ATTR_CAN_SAME,true);
         pro->setAttribute("group","Attributes");
@@ -132,7 +132,7 @@ void QProgressBarHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","invertedAppearance");
+        pro->setObjectProperty("name","invertedAppearance");
         pro->setAttribute("show_name",tr("InvertedAppearance"));
         pro->setAttribute(ATTR_CAN_SAME,true);
         pro->setAttribute("group","Attributes");

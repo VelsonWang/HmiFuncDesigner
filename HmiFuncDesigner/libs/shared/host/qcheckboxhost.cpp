@@ -9,8 +9,8 @@
 QCheckBoxHost::QCheckBoxHost(QAbstractHost *parent):
     QAbstractButtonHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QCheckBoxHost::getShowName()
@@ -52,16 +52,16 @@ void QCheckBoxHost::initProperty()
 
     QVariant v;
     v.setValue<SheetItems>(items);
-    setProperty("sheet_state",v);
+    setProperty("sheet_state", v);
 
     QStringList list;
     list<<"::indicator";
-    setProperty("sub_control",list);
+    setProperty("sub_control", list);
 
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","tristate");
+        pro->setObjectProperty("name","tristate");
         pro->setAttribute("show_name",tr("Tristate"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -71,7 +71,7 @@ void QCheckBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","stateChanged");
+        pro->setObjectProperty("name","stateChanged");
         pro->setAttribute("show_name",tr("StateChanged"));
         pro->setAttribute("group","Events");
         insertProperty(pro);
@@ -80,14 +80,14 @@ void QCheckBoxHost::initProperty()
     QCheckBox *b=(QCheckBox*)m_object;
     connect(b,SIGNAL(stateChanged(int)),this,SLOT(stateChanged(int)));
 
-    setPropertyValue("geometry",QRect(0,0,100,20));
-    setPropertyValue("text","checkbox");
+    setPropertyValue("geometry", QRect(0,0,100,20));
+    setPropertyValue("text", "checkbox");
     removeProperty("checkable");
 }
 
 void QCheckBoxHost::setTristate(bool tristate)
 {
-    setPropertyValue("tristate",tristate);
+    setPropertyValue("tristate", tristate);
 }
 
 bool QCheckBoxHost::tristate()

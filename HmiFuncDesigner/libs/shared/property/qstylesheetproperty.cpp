@@ -9,7 +9,7 @@
 QStylesheetProperty::QStylesheetProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","StyleSheet");
+    setObjectProperty("type", "StyleSheet");
     setAttribute(ATTR_RESET_ABLEABLE,false);
 }
 
@@ -30,7 +30,7 @@ void QStylesheetProperty::fromObject(XMLObject *xml)
         return;
     }
 
-    QMapIterator<QString,QString>      it(xml->getPropertys());
+    QMapIterator<QString, QString> it(xml->getPropertys());
 
     while(it.hasNext())
     {
@@ -38,7 +38,7 @@ void QStylesheetProperty::fromObject(XMLObject *xml)
         m_propertys.insert(it.key(),it.value());
     }
 
-    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(getProperty("name").toString());
+    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(getObjectProperty("name").toString());
 
     if(maker==Q_NULLPTR)
     {
@@ -76,14 +76,14 @@ void QStylesheetProperty::toObject(XMLObject *xml)
 
     xml->setTagName(PROPERTY_TITLE);
 
-    QMapIterator<QString,QVariant>      it(m_propertys);
+    QMapIterator<QString, QVariant> it(m_propertys);
 
     while(it.hasNext())
     {
         it.next();
         xml->setProperty(it.key(),it.value().toString());
     }
-    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(getProperty("name").toString());
+    QAbstractStylesheetItem *maker=QStylesheetItemFactory::createItem(getObjectProperty("name").toString());
     if(maker!=Q_NULLPTR)
     {
         foreach(tagStylesheetItem item,items)

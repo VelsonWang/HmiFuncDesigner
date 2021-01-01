@@ -20,7 +20,7 @@ void QAbstractButtonHost::initProperty()
     pro=QPropertyFactory::create_property("String");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","text");
+        pro->setObjectProperty("name","text");
         pro->setAttribute("show_name",tr("Text"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -30,7 +30,7 @@ void QAbstractButtonHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","checkable");
+        pro->setObjectProperty("name","checkable");
         pro->setAttribute("show_name",tr("Checkable"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -40,7 +40,7 @@ void QAbstractButtonHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","checked");
+        pro->setObjectProperty("name","checked");
         pro->setAttribute("show_name",tr("Checked"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -50,7 +50,7 @@ void QAbstractButtonHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","clicked");
+        pro->setObjectProperty("name","clicked");
         pro->setAttribute("show_name",tr("Clicked"));
         pro->setAttribute("group","Events");
         insertProperty(pro);

@@ -9,8 +9,8 @@
 QDateTimeEditHost::QDateTimeEditHost(QAbstractHost *parent):
     QAbstractSpinBoxHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QDateTimeEditHost::getShowName()
@@ -43,7 +43,7 @@ void QDateTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("DateTime");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","maximumDateTime");
+        pro->setObjectProperty("name","maximumDateTime");
         pro->setAttribute("show_name",tr("MaximumDateTime"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -53,7 +53,7 @@ void QDateTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("DateTime");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","minimumDateTime");
+        pro->setObjectProperty("name","minimumDateTime");
         pro->setAttribute("show_name",tr("MinimumDateTime"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -63,7 +63,7 @@ void QDateTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("DateTime");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","dateTime");
+        pro->setObjectProperty("name","dateTime");
         pro->setAttribute("show_name",tr("DateTime"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -73,7 +73,7 @@ void QDateTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","currentSection");
+        pro->setObjectProperty("name","currentSection");
         pro->setAttribute("show_name",tr("CurrentSection"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -113,7 +113,7 @@ void QDateTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","dateTimeChanged");
+        pro->setObjectProperty("name","dateTimeChanged");
         pro->setAttribute("show_name",tr("DateTimeChanged"));
         pro->setAttribute("group","Events");
         insertProperty(pro);

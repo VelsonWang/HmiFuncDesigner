@@ -54,9 +54,11 @@ protected:
 protected slots:
     void    property_changed();
     void    property_edit(const QVariant& value);
+
 signals:
     void    notifyPropertyEdit(QAbstractProperty* pro,const QVariant& value);
     void    active();
+
 private:
     friend class QPropertyEditorDelegate;
 protected:

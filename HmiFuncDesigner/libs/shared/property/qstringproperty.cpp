@@ -3,8 +3,8 @@
 QStringProperty::QStringProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","String");
-    setProperty("tr","false");
+    setObjectProperty("type", "String");
+    setObjectProperty("tr", "false");
     setAttribute(ATTR_RESET_ABLEABLE,false);
 }
 

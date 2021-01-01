@@ -3,7 +3,7 @@
 QFloatProperty::QFloatProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","Float");
+    setObjectProperty("type","Float");
 }
 
 QString QFloatProperty::get_value_text()

@@ -44,8 +44,8 @@ public:
     void            setAttribute(const QString &key, const QVariant& value);
     QVariant        getAttribute(const QString &key);
 
-    void            setProperty(const QString &key, const QVariant& value);
-    QVariant        getProperty(const QString &key);
+    void            setObjectProperty(const QString &key, const QVariant& value);
+    QVariant        getObjectProperty(const QString &key);
 
 
     QAbstractProperty& operator =(const QAbstractProperty &pro);

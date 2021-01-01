@@ -9,8 +9,8 @@
 QFrameHost::QFrameHost(QAbstractHost *parent):
     QWidgetHost(parent)
 {
-    setProperty("need_frame",true);
-    setProperty("accept_drop",true);
+    setProperty("need_frame", true);
+    setProperty("accept_drop", true);
 }
 
 QString QFrameHost::getShowName()
@@ -44,7 +44,7 @@ void QFrameHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","frameShape");
+        pro->setObjectProperty("name","frameShape");
         pro->setAttribute("show_name",tr("FrameShape"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -88,7 +88,7 @@ void QFrameHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","frameShadow");
+        pro->setObjectProperty("name","frameShadow");
         pro->setAttribute("show_name",tr("FrameShadow"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -116,7 +116,7 @@ void QFrameHost::initProperty()
 
 void QFrameHost::setFrameShape(int frameShape)
 {
-    setPropertyValue("frameShape",frameShape);
+    setPropertyValue("frameShape", frameShape);
 }
 
 int QFrameHost::frameShape()
@@ -126,7 +126,7 @@ int QFrameHost::frameShape()
 
 void QFrameHost::setFrameShadow(int frameShadow)
 {
-    setPropertyValue("frameShadow",frameShadow);
+    setPropertyValue("frameShadow", frameShadow);
 }
 
 int QFrameHost::frameShadow()

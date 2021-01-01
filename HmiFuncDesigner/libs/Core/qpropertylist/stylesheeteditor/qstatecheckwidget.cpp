@@ -23,7 +23,7 @@ QStateCheckWidget::QStateCheckWidget(QAbstractProperty *property, const QString 
 
     foreach(tagSheetItem item,items.values())
     {
-        if(item.m_un_used.contains(property->getProperty("name").toString()))
+        if(item.m_un_used.contains(property->getObjectProperty("name").toString()))
         {
             continue;
         }

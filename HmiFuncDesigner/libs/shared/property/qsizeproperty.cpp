@@ -5,15 +5,15 @@
 QSizeProperty::QSizeProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","Size");
+    setObjectProperty("type", "Size");
 
     m_width=new QIntProperty(this);
     m_width->setAttribute("show_name",tr("Width"));
-    m_width->setProperty("name","Width");
+    m_width->setObjectProperty("name", "Width");
 
     m_height=new QIntProperty(this);
     m_height->setAttribute("show_name",tr("Height"));
-    m_height->setProperty("name","Height");
+    m_height->setObjectProperty("name", "Height");
 }
 
 void QSizeProperty::set_value(const QVariant &value)

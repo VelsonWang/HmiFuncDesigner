@@ -9,8 +9,8 @@
 QTimeEditHost::QTimeEditHost(QAbstractHost *parent):
     QAbstractSpinBoxHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QTimeEditHost::getShowName()
@@ -44,7 +44,7 @@ void QTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("Time");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","maximumTime");
+        pro->setObjectProperty("name","maximumTime");
         pro->setAttribute("show_name",tr("MaximumTime"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -54,7 +54,7 @@ void QTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("Time");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","minimumTime");
+        pro->setObjectProperty("name","minimumTime");
         pro->setAttribute("show_name",tr("MinimumTime"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -64,7 +64,7 @@ void QTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("Time");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","time");
+        pro->setObjectProperty("name","time");
         pro->setAttribute("show_name",tr("Time"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -74,7 +74,7 @@ void QTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","currentSection");
+        pro->setObjectProperty("name","currentSection");
         pro->setAttribute("show_name",tr("CurrentSection"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -103,7 +103,7 @@ void QTimeEditHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","timeChanged");
+        pro->setObjectProperty("name","timeChanged");
         pro->setAttribute("show_name",tr("TimeChanged"));
         pro->setAttribute("group","Events");
         insertProperty(pro);

@@ -20,7 +20,7 @@ void QAbstractSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","frame");
+        pro->setObjectProperty("name","frame");
         pro->setAttribute("show_name",tr("Frame"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -30,7 +30,7 @@ void QAbstractSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","wrapping");
+        pro->setObjectProperty("name","wrapping");
         pro->setAttribute("show_name",tr("Wrapping"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -40,7 +40,7 @@ void QAbstractSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","readOnly");
+        pro->setObjectProperty("name","readOnly");
         pro->setAttribute("show_name",tr("ReadOnly"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -50,7 +50,7 @@ void QAbstractSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","buttonSymbols");
+        pro->setObjectProperty("name","buttonSymbols");
         pro->setAttribute("show_name",tr("ButtonSymbols"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -74,7 +74,7 @@ void QAbstractSpinBoxHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","alignment");
+        pro->setObjectProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);

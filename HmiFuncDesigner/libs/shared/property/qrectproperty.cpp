@@ -5,23 +5,23 @@
 QRectProperty::QRectProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","Rect");
+    setObjectProperty("type", "Rect");
 
     m_x=new QIntProperty(this);
     m_x->setAttribute("show_name",tr("x"));
-    m_x->setProperty("name","x");
+    m_x->setObjectProperty("name", "x");
 
     m_y=new QIntProperty(this);
     m_y->setAttribute("show_name",tr("y"));
-    m_y->setProperty("name","y");
+    m_y->setObjectProperty("name", "y");
 
     m_width=new QIntProperty(this);
     m_width->setAttribute("show_name",tr("Width"));
-    m_width->setProperty("name","Width");
+    m_width->setObjectProperty("name", "Width");
 
     m_height=new QIntProperty(this);
     m_height->setAttribute("show_name",tr("Height"));
-    m_height->setProperty("name","Height");
+    m_height->setObjectProperty("name", "Height");
 }
 
 void QRectProperty::set_value(const QVariant &value)

@@ -9,8 +9,8 @@
 QLCDNumberHost::QLCDNumberHost(QAbstractHost *parent):
     QFrameHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QLCDNumberHost::getShowName()
@@ -43,7 +43,7 @@ void QLCDNumberHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","digitCount");
+        pro->setObjectProperty("name","digitCount");
         pro->setAttribute("show_name",tr("DigitCount"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -53,7 +53,7 @@ void QLCDNumberHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","numDigits");
+        pro->setObjectProperty("name","numDigits");
         pro->setAttribute("show_name",tr("NumDigits"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -63,7 +63,7 @@ void QLCDNumberHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","intValue");
+        pro->setObjectProperty("name","intValue");
         pro->setAttribute("show_name",tr("IntValue"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -73,7 +73,7 @@ void QLCDNumberHost::initProperty()
     pro=QPropertyFactory::create_property("Float");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","value");
+        pro->setObjectProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -83,7 +83,7 @@ void QLCDNumberHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","mode");
+        pro->setObjectProperty("name","mode");
         pro->setAttribute("show_name",tr("Mode"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -116,7 +116,7 @@ void QLCDNumberHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","segmentStyle");
+        pro->setObjectProperty("name","segmentStyle");
         pro->setAttribute("show_name",tr("SegmentStyle"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);

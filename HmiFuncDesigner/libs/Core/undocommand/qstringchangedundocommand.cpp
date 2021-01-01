@@ -40,8 +40,8 @@ void QStringChangedUndoCommand::redo()
         QAbstractProperty* pro=h->getProperty(m_property_name);
         if(pro!=Q_NULLPTR)
         {
-            pro->setProperty("tr",m_new_tr);
-            pro->setProperty("uuid",m_new_tr?m_uuid:QVariant());
+            pro->setObjectProperty("tr",m_new_tr);
+            pro->setObjectProperty("uuid",m_new_tr?m_uuid:QVariant());
         }
         if(m_old_tr)
         {
@@ -84,8 +84,8 @@ void QStringChangedUndoCommand::undo()
         QAbstractProperty* pro=h->getProperty(m_property_name);
         if(pro!=Q_NULLPTR)
         {
-            pro->setProperty("tr",m_old_tr);
-            pro->setProperty("uuid",m_old_tr?m_uuid:QVariant());
+            pro->setObjectProperty("tr",m_old_tr);
+            pro->setObjectProperty("uuid",m_old_tr?m_uuid:QVariant());
         }
         if(m_new_tr)
         {

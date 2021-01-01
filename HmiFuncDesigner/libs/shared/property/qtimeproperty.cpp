@@ -3,7 +3,7 @@
 QTimeProperty::QTimeProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
-    setProperty("type","Time");
+    setObjectProperty("type", "Time");
 }
 
 QString QTimeProperty::get_value_text()

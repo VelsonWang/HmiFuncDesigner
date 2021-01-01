@@ -1,9 +1,7 @@
 #include "qdesignerformhost.h"
-
 #include "widgethost.h"
 #include "qselectwidget.h"
 #include "../qdesignermimedata.h"
-
 #include "../../../libs/shared/host/qabstracthost.h"
 #include "../../../libs/shared/qhostfactory.h"
 #include "../../../libs/shared/property/qabstractproperty.h"
@@ -12,11 +10,11 @@
 #include "../../../libs/core/undocommand/qaddhostundocommand.h"
 #include "../../../libs/shared/qprojectcore.h"
 #include "../../../libs/core/qsoftcore.h"
-
 #include <QLayout>
 #include <QPainter>
 #include <QStringList>
 #include <QUuid>
+#include <QDebug>
 
 QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
     QObject(parent),
@@ -514,12 +512,12 @@ void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &
         h=m_widget_to_host.value(m_selection->current());
     }
 
-    QString name=pro->getProperty("name").toString();
+    QString name=pro->getObjectProperty("name").toString();
     QAbstractProperty *ppro=pro;
     while(ppro->getParent()!=Q_NULLPTR)
     {
         ppro=ppro->getParent();
-        name=ppro->getProperty("name").toString()+"."+name;
+        name=ppro->getObjectProperty("name").toString()+"."+name;
     }
 
     if(ppro->getAttribute(ATTR_CAN_SAME).toBool())
@@ -532,7 +530,7 @@ void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &
             list.removeAll(temp);
             QAbstractProperty *p1;
             p1=temp->getProperty(name);
-            if(p1!=Q_NULLPTR && p1->getProperty("type").toString()==pro->getProperty("type").toString())
+            if(p1!=Q_NULLPTR && p1->getObjectProperty("type").toString()==pro->getObjectProperty("type").toString())
             {
                 list.append(temp);
             }
@@ -865,6 +863,7 @@ void QDesignerFormHost::widget_size_changed(QWidget* wid,const QRect &old, const
         {
             QPropertyChangedUndoCommand *cmd=new QPropertyChangedUndoCommand(h->getUuid(),"geometry",old,now);
             m_undo_stack->push(cmd);
+            qDebug() << "+++++++++++++++" <<  old << now;
         }
 
     }

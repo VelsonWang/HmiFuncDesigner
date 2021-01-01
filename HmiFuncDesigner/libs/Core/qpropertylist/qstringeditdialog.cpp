@@ -98,7 +98,7 @@ QStringEditDialog::QStringEditDialog(QAbstractProperty *property,QUndoStack* sta
     ui->text->setText(m_property->get_value().toString());
 
     connect(ui->translateTree,SIGNAL(clicked(QModelIndex)),ui->translateTree,SLOT(edit(QModelIndex)));
-    ui->enabled->setChecked(m_property->getProperty("tr").toBool());
+    ui->enabled->setChecked(m_property->getObjectProperty("tr").toBool());
     on_enabled_clicked();
 }
 
@@ -119,12 +119,12 @@ void QStringEditDialog::on_enabled_clicked()
 void QStringEditDialog::on_okBtn_clicked()
 {
     bool new_tr=ui->enabled->isChecked();
-    bool old_tr=m_property->getProperty("tr").toBool();
+    bool old_tr=m_property->getObjectProperty("tr").toBool();
     QMap<QString,QString> old_translate;
     QMap<QString,QString> new_translate;
     QString old_text;
     QString new_text;
-    QString uuid=m_property->getProperty("uuid").toString();
+    QString uuid=m_property->getObjectProperty("uuid").toString();
     if(uuid=="")
     {
         uuid=QUuid::createUuid().toString();
@@ -158,7 +158,7 @@ void QStringEditDialog::on_okBtn_clicked()
 
 
     QStringChangedUndoCommand *cmd=new QStringChangedUndoCommand(m_property->get_host()->getUuid(),
-                                                                 m_property->getProperty("name").toString(),
+                                                                 m_property->getObjectProperty("name").toString(),
                                                                  uuid,
                                                                  old_tr,
                                                                  new_tr,

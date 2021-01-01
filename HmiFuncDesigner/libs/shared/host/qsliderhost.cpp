@@ -9,8 +9,8 @@
 QSliderHost::QSliderHost(QAbstractHost *parent):
     QAbstractSliderHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QSliderHost::getShowName()
@@ -43,7 +43,7 @@ void QSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","tickPosition");
+        pro->setObjectProperty("name","tickPosition");
         pro->setAttribute("show_name",tr("TickPosition"));
         pro->setAttribute("group","Attributes");
         ComboItems items;
@@ -78,5 +78,5 @@ void QSliderHost::initProperty()
         insertProperty(pro);
     }
 
-    setPropertyValue("geometry",QRect(0,0,100,20));
+    setPropertyValue("geometry", QRect(0,0,100,20));
 }

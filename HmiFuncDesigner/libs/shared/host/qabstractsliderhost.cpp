@@ -20,7 +20,7 @@ void QAbstractSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","value");
+        pro->setObjectProperty("name","value");
         pro->setAttribute("show_name",tr("Value"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -29,7 +29,7 @@ void QAbstractSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","minimum");
+        pro->setObjectProperty("name","minimum");
         pro->setAttribute("show_name",tr("Minimum"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -39,7 +39,7 @@ void QAbstractSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","maximum");
+        pro->setObjectProperty("name","maximum");
         pro->setAttribute("show_name",tr("Maximum"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -49,7 +49,7 @@ void QAbstractSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Number");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","singleStep");
+        pro->setObjectProperty("name","singleStep");
         pro->setAttribute("show_name",tr("SingleStep"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -59,7 +59,7 @@ void QAbstractSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","orientation");
+        pro->setObjectProperty("name","orientation");
         pro->setAttribute("show_name",tr("Orientation"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -84,7 +84,7 @@ void QAbstractSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","invertedAppearance");
+        pro->setObjectProperty("name","invertedAppearance");
         pro->setAttribute("show_name",tr("InvertedAppearance"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -94,7 +94,7 @@ void QAbstractSliderHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","valueChanged");
+        pro->setObjectProperty("name","valueChanged");
         pro->setAttribute("show_name",tr("ValueChanged"));
         pro->setAttribute("group","Events");
         m_object->setProperty("valueChanged","");

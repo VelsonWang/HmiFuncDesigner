@@ -11,8 +11,8 @@
 QLineEditHost::QLineEditHost(QAbstractHost *parent):
     QWidgetHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QLineEditHost::getShowName()
@@ -45,7 +45,7 @@ void QLineEditHost::initProperty()
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","text");
+        pro->setObjectProperty("name","text");
         pro->setAttribute("show_name",tr("Text"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -55,7 +55,7 @@ void QLineEditHost::initProperty()
     pro=QPropertyFactory::create_property("Align");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","alignment");
+        pro->setObjectProperty("name","alignment");
         pro->setAttribute("show_name",tr("Alignment"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -66,7 +66,7 @@ void QLineEditHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","readOnly");
+        pro->setObjectProperty("name","readOnly");
         pro->setAttribute("show_name",tr("ReadOnly"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -76,7 +76,7 @@ void QLineEditHost::initProperty()
     pro=QPropertyFactory::create_property("Bool");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","frame");
+        pro->setObjectProperty("name","frame");
         pro->setAttribute("show_name",tr("Frame"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -86,7 +86,7 @@ void QLineEditHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","textChanged");
+        pro->setObjectProperty("name","textChanged");
         pro->setAttribute("show_name",tr("TextChanged"));
         pro->setAttribute("group","Events");
         insertProperty(pro);
@@ -95,7 +95,7 @@ void QLineEditHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","editFinish");
+        pro->setObjectProperty("name","editFinish");
         pro->setAttribute("show_name",tr("EditFinish"));
         pro->setAttribute("group","Events");
         insertProperty(pro);

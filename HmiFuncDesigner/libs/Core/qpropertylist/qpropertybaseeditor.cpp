@@ -28,7 +28,7 @@ QPropertyBaseEditor::QPropertyBaseEditor(QAbstractProperty *pro,QUndoStack* stac
 
     this->setProperty("no-ManhattanStyle",true);
 
-    m_widget=QPropertyFactory::create_editor(pro->getProperty("type").toString(),pro,stack);
+    m_widget=QPropertyFactory::create_editor(pro->getObjectProperty("type").toString(),pro,stack);
     if(m_widget==NULL)
     {
         QLabel *lable=new QLabel;

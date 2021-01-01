@@ -23,10 +23,13 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     m_timer(new QTimer(this)),
     m_engine(new QScriptEngine)
 {
-    setProperty("title",OBJECT_TITLE);
-    setAttribute("uuid",QUuid::createUuid().toString());
+    setProperty("title", OBJECT_TITLE);
+    setAttribute("uuid", QUuid::createUuid().toString());
 
-    setProperty("function_list",QStringList()<<"destroyed(QObject*)"<<"destroyed()"<<"deleteLater()"
+    setProperty("function_list",
+                QStringList()
+                <<"destroyed(QObject*)"
+                <<"destroyed()"<<"deleteLater()"
                 <<"exec(QString,QMap<QString,QString>)"<<"translateChanged(QString)"
                 <<"languageChanged()");
 
@@ -201,8 +204,8 @@ void QAbstractHost::setPropertyValue(const QString &name, const QVariant &value)
         {
             p=p->getParent();
         }
-        m_object->setProperty(p->getProperty("name").toByteArray(),p->get_value());
-        if(pro->getAttribute("group")=="Style Sheet")
+        m_object->setProperty(p->getObjectProperty("name").toByteArray(), p->get_value());
+        if(pro->getAttribute("group") == "Style Sheet")
         {
             makeStyleSheet();
         }
@@ -222,7 +225,7 @@ void QAbstractHost::insertProperty(QAbstractProperty *property, int index)
     }
     property->set_host(this);
     m_propertys.insert(index,property);
-    m_nameToProperty.insert(property->getProperty("name").toString(),property);
+    m_nameToProperty.insert(property->getObjectProperty("name").toString(), property);
 }
 
 void QAbstractHost::removeProperty(const QString &name)
@@ -243,7 +246,7 @@ void QAbstractHost::setDefault()
         pro->setDefault();
         if(m_object!=Q_NULLPTR)
         {
-            m_object->setProperty(pro->getProperty("name").toByteArray(),pro->get_value());
+            m_object->setProperty(pro->getObjectProperty("name").toByteArray(), pro->get_value());
         }
         makeStyleSheet();
     }
@@ -315,7 +318,7 @@ void QAbstractHost::initProperty()
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","objectName");
+        pro->setObjectProperty("name","objectName");
         pro->setAttribute("show_name",tr("Name"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_NEEDSAVE,true);
@@ -332,7 +335,7 @@ void QAbstractHost::toObject(XMLObject *xml)
         xml->setTagName(property("title").toString());
 
 
-        QMapIterator<QString,QString>       it(m_attributes);
+        QMapIterator<QString, QString> it(m_attributes);
         while(it.hasNext())
         {
             it.next();
@@ -370,11 +373,11 @@ void QAbstractHost::fromObject(XMLObject *xml)
 
         clear();
 
-        QMapIterator<QString,QString>       it(m_attributes);
+        QMapIterator<QString, QString> it(m_attributes);
         while(it.hasNext())
         {
             it.next();
-            m_attributes.insert(it.key(),xml->getProperty(it.key()));
+            m_attributes.insert(it.key(), xml->getProperty(it.key()));
         }
 
         if(getUuid()=="")
@@ -459,7 +462,7 @@ void QAbstractHost::init()
         m_object->installEventFilter(this);
         foreach(QAbstractProperty* pro,m_propertys)
         {
-            pro->set_value(m_object->property(pro->getProperty("name").toByteArray()));
+            pro->set_value(m_object->property(pro->getObjectProperty("name").toByteArray()));
         }
     }
 
@@ -591,8 +594,8 @@ void QAbstractHost::onPropertyRefresh()
     }
     foreach(QAbstractProperty* pro,m_propertys)
     {
-        QVariant v=m_object->property(pro->getProperty("name").toByteArray());
-        if(v!=pro->get_value())
+        QVariant v = m_object->property(pro->getObjectProperty("name").toByteArray());
+        if(v != pro->get_value())
         {
             pro->set_value(v);
         }
@@ -612,24 +615,24 @@ void QAbstractHost::setUuid(const QString &uuid)
 
 void QAbstractHost::onCurTextChanged(const QString &uuid)
 {
-//    QLanguage* l=m_language_manager->get_current_language();
-//    foreach(QAbstractProperty* pro,m_propertys)
-//    {
-//        if(pro->getProperty("uuid").toString()==uuid)
-//        {
-//            tagTranslateInfo *info=Q_NULLPTR;
-//            if(l!=Q_NULLPTR)info=l->get_translate(uuid);
-//            if(info==Q_NULLPTR)
-//            {
-//                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),"");
-//            }
-//            else
-//            {
-//                pro->get_host()->setPropertyValue(pro->getProperty("name").toString(),info->m_translate);
-//            }
-//            return;
-//        }
-//    }
+    //    QLanguage* l=m_language_manager->get_current_language();
+    //    foreach(QAbstractProperty* pro,m_propertys)
+    //    {
+    //        if(pro->getProperty("uuid").toString()==uuid)
+    //        {
+    //            tagTranslateInfo *info=Q_NULLPTR;
+    //            if(l!=Q_NULLPTR)info=l->get_translate(uuid);
+    //            if(info==Q_NULLPTR)
+    //            {
+    //                pro->get_host()->setObjectPropertyValue(pro->getProperty("name").toString(),"");
+    //            }
+    //            else
+    //            {
+    //                pro->get_host()->setObjectPropertyValue(pro->getProperty("name").toString(),info->m_translate);
+    //            }
+    //            return;
+    //        }
+    //    }
 }
 
 QString QAbstractHost::functionInformation(const QString &name)
@@ -654,7 +657,7 @@ QString QAbstractHost::functionInformation(const QString &name)
         pro=m_nameToProperty.value(para,Q_NULLPTR);
         if(pro!=Q_NULLPTR)
         {
-            if(pro->getProperty("type")=="Enum")
+            if(pro->getObjectProperty("type")=="Enum")
             {
                 ComboItems items=pro->getAttribute("items").value<ComboItems>();
                 foreach(tagComboItem item,items)
@@ -662,7 +665,7 @@ QString QAbstractHost::functionInformation(const QString &name)
                     ret+=("    "+item.m_value.toString()+" = "+item.m_text+"\n");
                 }
             }
-            else if(pro->getProperty("type")=="Cursor")
+            else if(pro->getObjectProperty("type")=="Cursor")
             {
                 ComboItems items=pro->getAttribute("items").value<ComboItems>();
                 foreach(tagComboItem item,items)
@@ -742,7 +745,7 @@ void QAbstractHost::makeStyleSheet()
     {
         if(pro->inherits("QStylesheetProperty"))
         {
-            QAbstractStylesheetItem *item=QStylesheetItemFactory::createItem(pro->getProperty("name").toString());
+            QAbstractStylesheetItem *item=QStylesheetItemFactory::createItem(pro->getObjectProperty("name").toString());
             if(item!=Q_NULLPTR)
             {
                 tagStylesheetItems list=pro->get_value().value<tagStylesheetItems>();

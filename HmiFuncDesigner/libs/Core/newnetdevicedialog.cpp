@@ -36,7 +36,7 @@ NewNetDeviceDialog::NewNetDeviceDialog(QWidget *parent) :
     ui->editPort1->setText(QString("0"));
 
     m_propertyView = new QPropertyListView(this);
-    connect(m_propertyView, SIGNAL(property_edit_signal(QAbstractProperty*, QVariant)),
+    connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
             this, SLOT(onPropertyEdit(QAbstractProperty*, QVariant)));
 
     ui->vLayoutPropertyEditor->addWidget(m_propertyView);
@@ -262,7 +262,7 @@ void NewNetDeviceDialog::updatePropertyEditor()
         if(szType == QString("int")) {
             pProObj = QPropertyFactory::create_property("Number");
             if(pProObj != Q_NULLPTR) {
-                pProObj->setProperty("name", szKey);
+                pProObj->setObjectProperty("name", szKey);
                 pProObj->setAttribute("show_name", szKey);
                 pProObj->setAttribute("group", "Attributes");
                 pProObj->setAttribute(ATTR_CAN_SAME, true);
@@ -275,7 +275,7 @@ void NewNetDeviceDialog::updatePropertyEditor()
         else if(szType == QString("bool")) {
             pProObj = QPropertyFactory::create_property("Bool");
             if(pProObj != Q_NULLPTR) {
-                pProObj->setProperty("name", szKey);
+                pProObj->setObjectProperty("name", szKey);
                 pProObj->setAttribute("show_name", szKey);
                 pProObj->setAttribute("group", "Attributes");
                 pProObj->setAttribute(ATTR_CAN_SAME, true);
@@ -299,16 +299,18 @@ void NewNetDeviceDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &
     if(m_properties.count() != m_prop_type.count())
         return;
 
-    QString id = pro->property("name").toString();
+    QString id = pro->getObjectProperty("name").toString();
     QString szType = getValue2ByValue1(id, m_prop_type);
+
     if(szType == QString("int")) {
         setValue2ByValue1(id, value.toString(), m_properties);
-    }
-    else if(szType == QString("bool")) {
+    } else if(szType == QString("bool")) {
         bool val = value.toBool();
         QString szVal = val ? "true" : "false";
         setValue2ByValue1(id, szVal, m_properties);
     }
+
+    pro->set_value(value);
 }
 
 

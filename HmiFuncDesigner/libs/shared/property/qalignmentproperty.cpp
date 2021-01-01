@@ -11,7 +11,7 @@ QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent):
 
     m_horizonta=new QEnumProperty(this);
     m_horizonta->setAttribute("show_name",tr("Horizonta"));
-    m_horizonta->setProperty("name","Horizonta");
+    m_horizonta->setObjectProperty("name","Horizonta");
     ComboItems items;
     tagComboItem item;
     item.m_text=tr("AlignLeft");
@@ -31,7 +31,7 @@ QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent):
 
     m_vertical=new QEnumProperty(this);
     m_vertical->setAttribute("show_name",tr("Vertical"));
-    m_vertical->setProperty("name","Vertical");
+    m_vertical->setObjectProperty("name","Vertical");
 
     items.clear();
     item.m_text=tr("AlignTop");

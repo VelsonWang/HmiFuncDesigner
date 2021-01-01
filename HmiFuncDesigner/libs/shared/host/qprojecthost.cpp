@@ -7,7 +7,7 @@
 QProjectHost::QProjectHost(QAbstractHost *parent):
     QAbstractHost(parent)
 {
-    setProperty("title",PROJECT_HOST_TITLE);
+    setProperty("title", PROJECT_HOST_TITLE);
 }
 
 void QProjectHost::createObject()
@@ -27,7 +27,7 @@ void QProjectHost::initProperty()
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=NULL)
     {
-        pro->setProperty("name","projectPath");
+        pro->setObjectProperty("name","projectPath");
         pro->setAttribute("show_name",tr("Project Path"));
         pro->setAttribute(ATTR_EDITABLE,false);
         pro->setAttribute("group","Attributes");
@@ -37,7 +37,7 @@ void QProjectHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->setProperty("name","start_user");
+        pro->setObjectProperty("name","start_user");
         pro->setAttribute("show_name",tr("User"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_NEEDSAVE,true);
@@ -47,7 +47,7 @@ void QProjectHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->setProperty("name","start_language");
+        pro->setObjectProperty("name","start_language");
         pro->setAttribute("show_name",tr("Language"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_NEEDSAVE,true);
@@ -57,7 +57,7 @@ void QProjectHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=NULL)
     {
-        pro->setProperty("name","start_page");
+        pro->setObjectProperty("name","start_page");
         pro->setAttribute("show_name",tr("Page"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_NEEDSAVE,true);
@@ -67,7 +67,7 @@ void QProjectHost::initProperty()
     pro=QPropertyFactory::create_property("Size");
     if(pro!=NULL)
     {
-        pro->setProperty("name","designer_size");
+        pro->setObjectProperty("name","designer_size");
         pro->setAttribute("show_name",tr("Design Size"));
         pro->setAttribute("group","Attributes");
         m_object->setProperty("designer_size",QSize(800,600));
@@ -77,7 +77,7 @@ void QProjectHost::initProperty()
     pro=QPropertyFactory::create_property("Size");
     if(pro!=NULL)
     {
-        pro->setProperty("name","running_size");
+        pro->setObjectProperty("name","running_size");
         pro->setAttribute("show_name",tr("Running Size"));
         pro->setAttribute("group","Attributes");
         m_object->setProperty("running_size",QSize(800,600));

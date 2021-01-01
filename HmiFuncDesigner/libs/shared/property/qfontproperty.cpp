@@ -18,11 +18,11 @@ QFontProperty::QFontProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {
     static QFontDatabase fontDatabase;
-    setProperty("type","Font");
+    setObjectProperty("type", "Font");
 
     m_family=new QEnumProperty(this);
     m_family->setAttribute("show_name",tr("Family"));
-    m_family->setProperty("name","Family");
+    m_family->setObjectProperty("name","Family");
     QStringList list=fontDatabase.families();
     tagComboItem item;
     ComboItems  items;
@@ -39,24 +39,24 @@ QFontProperty::QFontProperty(QAbstractProperty *parent):
 
     m_pointSize=new QIntProperty(this);
     m_pointSize->setAttribute("show_name",tr("Size"));
-    m_pointSize->setProperty("name","Size");
+    m_pointSize->setObjectProperty("name","Size");
 
     m_bold=new QBoolProperty(this);
     m_bold->setAttribute("show_name",tr("Bold"));
-    m_bold->setProperty("name","Bold");
+    m_bold->setObjectProperty("name","Bold");
 
 
     m_italic=new QBoolProperty(this);
     m_italic->setAttribute("show_name",tr("Italic"));
-    m_italic->setProperty("name","Italic");
+    m_italic->setObjectProperty("name","Italic");
 
     m_underline=new QBoolProperty(this);
     m_underline->setAttribute("show_name",tr("Underline"));
-    m_underline->setProperty("name","Underline");
+    m_underline->setObjectProperty("name","Underline");
 
     m_strikeout=new QBoolProperty(this);
     m_strikeout->setAttribute("show_name",tr("Strikeout"));
-    m_strikeout->setProperty("name","Strikeout");
+    m_strikeout->setObjectProperty("name","Strikeout");
 }
 
 void QFontProperty::set_value(const QVariant &value)

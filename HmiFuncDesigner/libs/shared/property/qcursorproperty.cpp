@@ -10,7 +10,7 @@
 QCursorProperty::QCursorProperty(QAbstractProperty *parent):
     QEnumProperty(parent)
 {
-    setProperty("type","Cursor");
+    setObjectProperty("type","Cursor");
 
     ComboItems items;
     tagComboItem item;

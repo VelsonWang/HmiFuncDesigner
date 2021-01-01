@@ -140,7 +140,7 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property, QUndoStack *st
 void QScriptEditDialog::save()
 {
     QPropertyChangedUndoCommand *cmd=new QPropertyChangedUndoCommand(m_property->get_host()->getUuid(),
-                                                                     m_property->getProperty("name").toString(),
+                                                                     m_property->getObjectProperty("name").toString(),
                                                                      m_property->get_value(),
                                                                      m_editView->toPlainText());
     m_undo_stack->push(cmd);

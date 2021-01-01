@@ -9,8 +9,8 @@
 QDateEditHost::QDateEditHost(QAbstractHost *parent):
     QAbstractSpinBoxHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QDateEditHost::getShowName()
@@ -43,7 +43,7 @@ void QDateEditHost::initProperty()
     pro=QPropertyFactory::create_property("Date");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","maximumDate");
+        pro->setObjectProperty("name","maximumDate");
         pro->setAttribute("show_name",tr("MaximumDate"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -53,7 +53,7 @@ void QDateEditHost::initProperty()
     pro=QPropertyFactory::create_property("Date");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","minimumDate");
+        pro->setObjectProperty("name","minimumDate");
         pro->setAttribute("show_name",tr("MinimumDate"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -63,7 +63,7 @@ void QDateEditHost::initProperty()
     pro=QPropertyFactory::create_property("Date");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","date");
+        pro->setObjectProperty("name","date");
         pro->setAttribute("show_name",tr("Date"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -73,7 +73,7 @@ void QDateEditHost::initProperty()
     pro=QPropertyFactory::create_property("Enum");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","currentSection");
+        pro->setObjectProperty("name","currentSection");
         pro->setAttribute("show_name",tr("CurrentSection"));
         pro->setAttribute("group","Attributes");
         pro->setAttribute(ATTR_CAN_SAME,true);
@@ -102,7 +102,7 @@ void QDateEditHost::initProperty()
     pro=QPropertyFactory::create_property("Script");
     if(pro!=Q_NULLPTR)
     {
-        pro->setProperty("name","dateChanged");
+        pro->setObjectProperty("name","dateChanged");
         pro->setAttribute("show_name",tr("DateChanged"));
         pro->setAttribute("group","Events");
         insertProperty(pro);

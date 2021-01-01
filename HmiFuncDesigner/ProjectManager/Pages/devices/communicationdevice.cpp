@@ -160,7 +160,7 @@ void CommunicationDevice::listViewNetDeviceUpdate()
 
     QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), tr("新建网络设备"));
     pNewNetDevice->setEditable(false);
-    pNewNetDevice->setData(QString("pNewNetDevice").toUpper(), Qt::UserRole + 1);
+    pNewNetDevice->setData(QString("NewNetDevice").toUpper(), Qt::UserRole + 1);
     m_pCommDevModelObj->appendRow(pNewNetDevice);
 
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
