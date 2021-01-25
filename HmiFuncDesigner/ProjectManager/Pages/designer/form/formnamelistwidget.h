@@ -9,6 +9,7 @@ class FormNameListWidget : public QListWidget
     Q_OBJECT
 public:
     explicit FormNameListWidget(QWidget *parent = nullptr);
+    void updateUI();
 
 signals:
     // 创建指定名称的画面

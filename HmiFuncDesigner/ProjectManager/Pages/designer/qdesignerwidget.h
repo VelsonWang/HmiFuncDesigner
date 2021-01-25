@@ -19,6 +19,9 @@ public:
     void setUndoStack(QUndoStack *stack);
 
 protected:
+    bool event(QEvent *ev);
+
+protected:
     QWidgetBoxView *m_widgetBox;
     QPropertyView *m_propertyView;
     QFormWidgetView *m_formWidgetView;

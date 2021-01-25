@@ -977,7 +977,11 @@ void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 {
     QToolBar *pToolBarObj = QSoftCore::getCore()->getToolBar("ToolBar.GraphPage");
     if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") {
-        if(m_pDesignerWidgetObj) m_pDesignerWidgetObj->setVisible(false);
+        if(m_pDesignerWidgetObj) {
+            m_pDesignerWidgetObj->setVisible(false);
+            UserEvent evShow(UserEvent::EVT_USER_HIDE_UPDATE, QStringList());
+            QCoreApplication::sendEvent(m_pDesignerWidgetObj, &evShow);
+        }
         if(pToolBarObj) pToolBarObj->setVisible(false); // 画面编辑工具条
     } else {
         if(pToolBarObj) pToolBarObj->setVisible(index == 1);
@@ -987,6 +991,8 @@ void MainWindow::onSlotTabProjectMgrCurChanged(int index)
         }break;
         case 1: {
             if(m_pDesignerWidgetObj) {
+                UserEvent evShow(UserEvent::EVT_USER_SHOW_UPDATE, QStringList());
+                QCoreApplication::sendEvent(m_pDesignerWidgetObj, &evShow);
                 m_pCentralWidgetObj->setCurrentWidget(m_pDesignerWidgetObj);
                 QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
                 if(pPageObj) {

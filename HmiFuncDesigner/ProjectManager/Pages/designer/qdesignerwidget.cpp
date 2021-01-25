@@ -5,6 +5,7 @@
 #include "form/formnamelistwidget.h"
 #include "objectlist/qobjectlistwidget.h"
 #include "../../libs/core/minisplitter.h"
+#include "../../Public/userevent.h"
 #include <QVBoxLayout>
 
 QDesignerWidget::QDesignerWidget(QWidget *parent)
@@ -62,4 +63,19 @@ void QDesignerWidget::setUndoStack(QUndoStack *stack)
     m_formWidgetView->setUndoStack(m_undo_stack);
     m_propertyView->setUndoStack(m_undo_stack);
     m_objectListWidget->setUndoStack(m_undo_stack);
+}
+
+
+bool QDesignerWidget::event(QEvent *ev)
+{
+    if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
+        UserEvent *pEvObj = dynamic_cast<UserEvent *>(ev);
+        if(pEvObj) {
+            m_formNameListWidget->updateUI();
+        }
+        return true;
+    } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
+        return true;
+    }
+    return QWidget::event(ev);
 }

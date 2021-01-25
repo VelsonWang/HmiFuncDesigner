@@ -19,7 +19,7 @@ public:
     void load(const QString &project_path);
     void save(const QString& project_path);
 
-    void newPage(XMLObject *pXmlObj);
+    void newPage(const QString &szPageName);
     void load(XMLObject *pXmlObj);
     void save(XMLObject *pXmlObj);
 

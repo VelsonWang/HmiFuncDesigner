@@ -28,6 +28,7 @@ INCLUDEPATH += \
     $$TOP_SRC_DIR/HmiFuncDesigner/libs/shared
 
 HEADERS += \
+    ../../Public/userevent.h \
     form/formnamelistwidget.h \
     qdesignerwidget.h \
     qdesignerplugin.h \
@@ -53,6 +54,7 @@ HEADERS += \
     form/qpagewidget.h
 
 SOURCES += \
+    ../../Public/userevent.cpp \
     form/formnamelistwidget.cpp \
     qdesignerwidget.cpp \
     qdesignerplugin.cpp \

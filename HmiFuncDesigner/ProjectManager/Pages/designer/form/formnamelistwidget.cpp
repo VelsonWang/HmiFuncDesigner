@@ -4,6 +4,12 @@
 #include <QAction>
 #include <QInputDialog>
 
+#include "../../../libs/core/qsoftcore.h"
+#include "../../../libs/shared/qprojectcore.h"
+#include "../../../libs/shared/qpagemanager.h"
+#include "../../../libs/shared/property/qabstractproperty.h"
+#include "../../../libs/shared/host/qabstracthost.h"
+
 FormNameListWidget::FormNameListWidget(QWidget *parent)
     : QListWidget(parent) {
     setIconSize(QSize(32, 32));
@@ -84,9 +90,31 @@ reInput:
         if (listWidgetItem.size() > 0 || szName == "") {
             goto reInput;
         }
+
+        QPageManager *pPageMgrObj = QSoftCore::getCore()->getProjectCore()->getPageManager();
+        pPageMgrObj->newPage(szName);
+
         QListWidgetItem *pItemObj = new QListWidgetItem(QIcon(":/images/GraphPage.png"), szName);
         this->addItem(pItemObj);
         emit notifyCreateFormPageUseName(szName);
     }
 }
 
+void FormNameListWidget::updateUI()
+{
+    while (this->count() > 0) {
+        QListWidgetItem *pItemObj = this->takeItem(0);
+        if(pItemObj) delete pItemObj;
+    }
+    this->clear();
+
+    QPageManager *pPageMgrObj = QSoftCore::getCore()->getProjectCore()->getPageManager();
+
+    foreach(QAbstractHost* pHostObj, pPageMgrObj->getPages()) {
+        QAbstractProperty* pPropObj = pHostObj->getProperty("objectName");
+        if(pPropObj != Q_NULLPTR) {
+            QListWidgetItem *pItemObj = new QListWidgetItem(QIcon(":/images/GraphPage.png"), pPropObj->get_value().toString());
+            this->addItem(pItemObj);
+        }
+    }
+}

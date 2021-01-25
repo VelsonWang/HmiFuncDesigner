@@ -1,7 +1,5 @@
 #include "qpagemanager.h"
-
 #include "xmlobject.h"
-
 #include "host/qabstracthost.h"
 #include "host/qformhost.h"
 #include "qhostfactory.h"
@@ -82,6 +80,27 @@ void QPageManager::save(const QString &project_path)
     }
 }
 
+void QPageManager::newPage(const QString &szPageName)
+{
+    QAbstractHost* host = QHostFactory::create_host(FORM_TITLE);
+    if(host != Q_NULLPTR) {
+        m_page_list.insert(m_page_list.size(), host);
+        m_uuid_to_page.insert(host->getUuid(),host);
+        QList<QAbstractHost*> list;
+        list.append(host);
+        while(list.size() > 0) {
+            QAbstractHost *h = list.takeFirst();
+            QAbstractProperty* pro = h->getProperty("objectName");
+            if(pro != Q_NULLPTR) {
+                pro->set_value(QVariant(szPageName));
+                connect(pro,SIGNAL(value_chaged(QVariant,QVariant)),this,SLOT(host_name_changed_slot(QVariant,QVariant)));
+            }
+            list+=h->getChildren();
+        }
+        emit insert_page_signal(host);
+        emit host_name_changed(host);
+    }
+}
 
 void QPageManager::load(XMLObject *pXmlObj)
 {
@@ -111,15 +130,15 @@ void QPageManager::load(XMLObject *pXmlObj)
         }
     } else { // 新建
         QString buffer = "<form type=\"form\">\
-                                <Property name=\"objectName\" type=\"ByteArray\" value=\"main\"/>\
-                                <Property name=\"geometry\" type=\"Rect\">\
-                                    <Property name=\"x\" type=\"Number\" value=\"0\"/>\
-                                    <Property name=\"y\" type=\"Number\" value=\"0\"/>\
-                                    <Property name=\"Width\" type=\"Number\" value=\"800\"/>\
-                                    <Property name=\"Height\" type=\"Number\" value=\"600\"/>\
-                                </Property>\
-                            </form> ";
-        XMLObject xml;
+                <Property name=\"objectName\" type=\"ByteArray\" value=\"main\"/>\
+                <Property name=\"geometry\" type=\"Rect\">\
+                <Property name=\"x\" type=\"Number\" value=\"0\"/>\
+                <Property name=\"y\" type=\"Number\" value=\"0\"/>\
+                <Property name=\"Width\" type=\"Number\" value=\"800\"/>\
+                <Property name=\"Height\" type=\"Number\" value=\"600\"/>\
+                </Property>\
+                </form> ";
+                XMLObject xml;
         QString str;
         if(!xml.load(buffer, &str)) {
             return;
