@@ -29,11 +29,10 @@ public slots:
     void    set_select(QAbstractHost* host);
 
 signals:
-    void    select(QAbstractHost* host);
-    void    notifyPropertyEdit(QAbstractProperty* pro,const QVariant& value);
+    void select(QAbstractHost* host);
+    void notifyPropertyEdit(QAbstractProperty* pro,const QVariant& value);
 
 protected:
-
     QFormListWidget     *m_formWidget;
     StyledBar           *m_styledBar;
     QUndoStack          *m_undo_stack;

@@ -26,7 +26,7 @@ public:
 
     void    set_select(QAbstractHost* host);
 public slots:
-    void    property_edit_slot(QAbstractProperty* pro,const QVariant& value);
+    void property_edit_slot(QAbstractProperty* pro, const QVariant& value);
     void    same_left();
     void    same_top();
     void    same_right();

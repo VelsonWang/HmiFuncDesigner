@@ -14,6 +14,8 @@ FormNameListWidget::FormNameListWidget(QWidget *parent)
     : QListWidget(parent) {
     setIconSize(QSize(32, 32));
     setContextMenuPolicy(Qt::DefaultContextMenu);
+    connect(this, SIGNAL(itemClicked(QListWidgetItem *)),
+            this, SLOT(onItemClicked(QListWidgetItem *)));
 }
 
 
@@ -30,7 +32,7 @@ void FormNameListWidget::contextMenuEvent(QContextMenuEvent * event) {
 
     QAction *pRenameAct = new QAction(tr("重命名"), this);
     pRenameAct->setStatusTip(tr("重命名画面"));
-    //connect(pRenameAct, SIGNAL(triggered()), this, SLOT(onRenameFormPage()));
+    connect(pRenameAct, SIGNAL(triggered()), this, SLOT(onRenameFormPage()));
 
     QAction *pDeleteAct = new QAction(tr("删除"), this);
     pDeleteAct->setStatusTip(tr("删除画面"));
@@ -88,6 +90,7 @@ reInput:
         szName = dlg.textValue();
         QList<QListWidgetItem*> listWidgetItem = this->findItems(szName, Qt::MatchCaseSensitive);
         if (listWidgetItem.size() > 0 || szName == "") {
+            dlg.setLabelText(tr("画面名称为空或画面名称重复"));
             goto reInput;
         }
 
@@ -100,6 +103,48 @@ reInput:
     }
 }
 
+
+/**
+ * @brief FormNameListWidget::onRenameFormPage
+ * @details 重命名画面
+ */
+void FormNameListWidget::onRenameFormPage()
+{
+    QListWidgetItem *pCurItemObj = this->currentItem();
+    if(!pCurItemObj) return;
+
+    int iCurRow = this->currentRow();
+    QString szOldName = pCurItemObj->text();
+    QInputDialog dlg(this);
+    dlg.setWindowTitle(tr("画面名称"));
+    dlg.setLabelText(tr("请输入新画面名称"));
+    dlg.setOkButtonText(tr("确定"));
+    dlg.setCancelButtonText(tr("取消"));
+    dlg.setTextValue(szOldName);
+
+reInput:
+    if ( dlg.exec() == QDialog::Accepted ) {
+        QString szName = dlg.textValue();
+        QList<QListWidgetItem*> listWidgetItem = this->findItems(szName, Qt::MatchCaseSensitive);
+        if (listWidgetItem.size() > 0 || szName == "") {
+            dlg.setLabelText(tr("画面名称为空或画面名称重复"));
+            goto reInput;
+        }
+        QPageManager *pPageMgrObj = QSoftCore::getCore()->getProjectCore()->getPageManager();
+        foreach(QAbstractHost* pHostObj, pPageMgrObj->getPages()) {
+            QAbstractProperty* pPropObj = pHostObj->getProperty("objectName");
+            if(pPropObj != Q_NULLPTR) {
+                if(szOldName == pPropObj->get_value().toString()) {
+                    emit notifyPropertyChange(pPropObj, QVariant(szName));
+                }
+            }
+        }
+        updateUI();
+        this->setCurrentRow(iCurRow);
+    }
+}
+
+
 void FormNameListWidget::updateUI()
 {
     while (this->count() > 0) {
@@ -109,12 +154,27 @@ void FormNameListWidget::updateUI()
     this->clear();
 
     QPageManager *pPageMgrObj = QSoftCore::getCore()->getProjectCore()->getPageManager();
-
     foreach(QAbstractHost* pHostObj, pPageMgrObj->getPages()) {
         QAbstractProperty* pPropObj = pHostObj->getProperty("objectName");
         if(pPropObj != Q_NULLPTR) {
             QListWidgetItem *pItemObj = new QListWidgetItem(QIcon(":/images/GraphPage.png"), pPropObj->get_value().toString());
             this->addItem(pItemObj);
+        }
+    }
+}
+
+
+void FormNameListWidget::onItemClicked(QListWidgetItem *pItemObj)
+{
+    if(!pItemObj) return;
+    QString szPageName = pItemObj->text();
+    QPageManager *pPageMgrObj = QSoftCore::getCore()->getProjectCore()->getPageManager();
+    foreach(QAbstractHost* pHostObj, pPageMgrObj->getPages()) {
+        QAbstractProperty* pPropObj = pHostObj->getProperty("objectName");
+        if(pPropObj != Q_NULLPTR) {
+            if(szPageName == pPropObj->get_value().toString()) {
+                emit notifySelectPage(pHostObj);
+            }
         }
     }
 }

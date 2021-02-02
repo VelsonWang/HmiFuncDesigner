@@ -156,10 +156,10 @@ void QFormListWidget::clear()
     m_current_form=Q_NULLPTR;
 }
 
+
 void QFormListWidget::property_edit_slot(QAbstractProperty *pro, const QVariant &value)
 {
-    if(m_current_form!=Q_NULLPTR)
-    {
+    if(m_current_form != Q_NULLPTR) {
         m_current_form->property_edited(pro,value);
     }
 }

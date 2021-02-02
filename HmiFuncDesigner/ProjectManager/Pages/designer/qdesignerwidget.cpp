@@ -50,10 +50,18 @@ QDesignerWidget::QDesignerWidget(QWidget *parent)
     splitter->setStretchFactor(0,1);
     splitter->setStretchFactor(1,0);
 
-    connect(m_formWidgetView, SIGNAL(select(QAbstractHost*)), m_propertyView, SLOT(selectWidget(QAbstractHost*)));
-    connect(m_formWidgetView, SIGNAL(select(QAbstractHost*)), m_objectListWidget, SLOT(set_select(QAbstractHost*)));
-    connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)), m_formWidgetView,SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)));
-    connect(m_objectListWidget, SIGNAL(select(QAbstractHost*)), m_formWidgetView, SLOT(set_select(QAbstractHost*)));
+    connect(m_formWidgetView, SIGNAL(select(QAbstractHost*)),
+            m_propertyView, SLOT(selectWidget(QAbstractHost*)));
+    connect(m_formWidgetView, SIGNAL(select(QAbstractHost*)),
+            m_objectListWidget, SLOT(set_select(QAbstractHost*)));
+    connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
+            m_formWidgetView,SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
+    connect(m_objectListWidget, SIGNAL(select(QAbstractHost*)),
+            m_formWidgetView, SLOT(set_select(QAbstractHost*)));
+    connect(m_formNameListWidget, SIGNAL(notifySelectPage(QAbstractHost*)),
+            m_formWidgetView, SLOT(set_select(QAbstractHost*)));
+    connect(m_formNameListWidget, SIGNAL(notifyPropertyChange(QAbstractProperty*, const QVariant&)),
+            m_formWidgetView,SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
     this->setLayout(pVLayoutObj);
 }
 

@@ -18,7 +18,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     m_styledBar(new StyledBar)
 {
     this->setAutoFillBackground(false);
-    QVBoxLayout *l=new QVBoxLayout;
+    QVBoxLayout *l = new QVBoxLayout;
     l->setMargin(0);
     l->setSpacing(0);
 
@@ -33,13 +33,13 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     QList<QAction*> list;
     QAction *ac;
 
-    ac=core->getAction("FormManager.Add");
-    if(ac!=Q_NULLPTR)
-    {
-        list.append(ac);
-        connect(ac,SIGNAL(triggered()),this,SLOT(add_page()));
-        ac->setEnabled(false);
-    }
+//    ac=core->getAction("FormManager.Add");
+//    if(ac!=Q_NULLPTR)
+//    {
+//        list.append(ac);
+//        connect(ac,SIGNAL(triggered()),this,SLOT(add_page()));
+//        ac->setEnabled(false);
+//    }
 
     ac=new QAction(this);
     ac->setSeparator(true);
@@ -135,10 +135,14 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     h->addWidget(toolbar,1);
     m_styledBar->setLayout(h);
 
-    connect(m_formWidget,SIGNAL(select(QAbstractHost*)),this,SIGNAL(select(QAbstractHost*)));
-    connect(this,SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)),m_formWidget,SLOT(property_edit_slot(QAbstractProperty*,QVariant)));
-    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyOpened()),this,SLOT(project_opened()));
-    connect(QSoftCore::getCore()->getProjectCore(),SIGNAL(notifyClosed()),this,SLOT(project_closed()));
+    connect(m_formWidget, SIGNAL(select(QAbstractHost*)),
+            this, SIGNAL(select(QAbstractHost*)));
+    connect(this, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
+            m_formWidget, SLOT(property_edit_slot(QAbstractProperty*, QVariant)));
+    connect(QSoftCore::getCore()->getProjectCore(), SIGNAL(notifyOpened()),
+            this, SLOT(project_opened()));
+    connect(QSoftCore::getCore()->getProjectCore(), SIGNAL(notifyClosed()),
+            this, SLOT(project_closed()));
 }
 
 QFormWidgetView::~QFormWidgetView()
@@ -164,11 +168,11 @@ void QFormWidgetView::project_opened()
 
     QAction *ac;
 
-    ac=core->getAction("FormManager.Add");
-    if(ac!=Q_NULLPTR)
-    {
-        ac->setEnabled(true);
-    }
+//    ac=core->getAction("FormManager.Add");
+//    if(ac!=Q_NULLPTR)
+//    {
+//        ac->setEnabled(true);
+//    }
 
     ac=core->getAction("FormManager.Del");
     if(ac!=Q_NULLPTR)
@@ -243,11 +247,11 @@ void QFormWidgetView::project_closed()
 
     QAction *ac;
 
-    ac=core->getAction("FormManager.Add");
-    if(ac!=Q_NULLPTR)
-    {
-        ac->setEnabled(false);
-    }
+//    ac=core->getAction("FormManager.Add");
+//    if(ac!=Q_NULLPTR)
+//    {
+//        ac->setEnabled(false);
+//    }
 
     ac=core->getAction("FormManager.Del");
     if(ac!=Q_NULLPTR)
