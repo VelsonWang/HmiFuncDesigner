@@ -19,13 +19,13 @@ QObjectListWidget::QObjectListWidget(QWidget *parent)
 
     this->resize(100, 100);
 
-    QLabel *label = new QLabel;
-    label->setText(tr("Widget List"));
-    label->setStyleSheet("color:rgb(255,255,255);");
+    QLabel *pLabelObj = new QLabel;
+    pLabelObj->setText(tr("画面对象列表"));
+    pLabelObj->setFrameShape(QFrame::StyledPanel);
     l = new QVBoxLayout;
-    l->setMargin(5);
+    l->setMargin(0);
     l->setSpacing(0);
-    l->addWidget(label);
+    l->addWidget(pLabelObj);
     m_styledBar->setLayout(l);
 
     connect(m_object_list, SIGNAL(select(QAbstractHost*)), this, SIGNAL(select(QAbstractHost*)));

@@ -13,7 +13,7 @@ QWidgetBoxView::QWidgetBoxView(QWidget *parent) :
     m_styledBar(new StyledBar)
 {
     this->setMinimumSize(100,100);
-    QVBoxLayout *l=new QVBoxLayout;
+    QVBoxLayout *l = new QVBoxLayout;
     l->setMargin(0);
     l->setSpacing(0);
 
@@ -24,12 +24,12 @@ QWidgetBoxView::QWidgetBoxView(QWidget *parent) :
 
     this->resize(100,100);
 
-    QLabel *label=new QLabel;
-    label->setText(tr("Widget Box"));
-    label->setStyleSheet("color:rgb(255,255,255);");
-    l=new QVBoxLayout;
-    l->setMargin(5);
+    QLabel *pLabelObj = new QLabel;
+    pLabelObj->setText(tr("工具箱"));
+    pLabelObj->setFrameShape(QFrame::StyledPanel);
+    l = new QVBoxLayout;
+    l->setMargin(0);
     l->setSpacing(0);
-    l->addWidget(label);
+    l->addWidget(pLabelObj);
     m_styledBar->setLayout(l);
 }

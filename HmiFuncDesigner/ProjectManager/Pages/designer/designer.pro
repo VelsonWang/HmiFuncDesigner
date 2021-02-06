@@ -29,7 +29,6 @@ INCLUDEPATH += \
 
 HEADERS += \
     ../../Public/userevent.h \
-    form/formnamelistwidget.h \
     qdesignerwidget.h \
     qdesignerplugin.h \
     widgetbox/widgetboxtreewidget.h \
@@ -55,7 +54,6 @@ HEADERS += \
 
 SOURCES += \
     ../../Public/userevent.cpp \
-    form/formnamelistwidget.cpp \
     qdesignerwidget.cpp \
     qdesignerplugin.cpp \
     widgetbox/widgetboxtreewidget.cpp \

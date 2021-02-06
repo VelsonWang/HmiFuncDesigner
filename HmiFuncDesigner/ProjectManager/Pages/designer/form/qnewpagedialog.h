@@ -20,16 +20,18 @@ class QNewPageDialog : public QDialog
 public:
     explicit QNewPageDialog(QUndoStack* stack,QWidget *parent = 0);
     ~QNewPageDialog();
+
 private slots:
     void ok(QAbstractHost* host);
+
 private:
     Ui::QNewPageDialog *ui;
 
 protected:
-    QNewPageTable       *m_tab_bar;
-    QStackedWidget      *m_stacked_widget;
+    QNewPageTable *m_tab_bar;
+    QStackedWidget *m_stacked_widget;
     QList<QPageWidget*> m_widget_list;
-    QUndoStack          *m_undo_stack;
+    QUndoStack *m_undo_stack;
 };
 
 #endif // QNEWPAGEDIALOG_H

@@ -20,21 +20,27 @@ public:
     explicit QTempWidget(QWidget *parent = 0);
     ~QTempWidget();
 
-    void    set_name_list(const QStringList &list);
+    void set_name_list(const QStringList &list);
+
 protected:
     bool eventFilter(QObject *o, QEvent *e);
+
 signals:
-    void    add_file(const QString &path);
-    void    cancel();
-    void    ok(QAbstractHost* host);
+    void add_file(const QString &path);
+    void cancel();
+    void ok(QAbstractHost* host);
+
 public slots:
-    void    set_current(tagTemplateInfo* info);
+    void set_current(tagTemplateInfo* info);
+
 private:
     Ui::QTempWidget *ui;
+
 protected:
-    QMap<tagTemplateInfo*,QAbstractHost*>   m_info_to_host;
-    tagTemplateInfo                         *m_current;
-    QNameEdit                               *m_name_edit;
+    QMap<tagTemplateInfo*,QAbstractHost*> m_info_to_host;
+    tagTemplateInfo *m_current;
+    QNameEdit *m_name_edit;
+
 private slots:
     void on_exists_button_clicked();
     void on_okbtn_clicked();

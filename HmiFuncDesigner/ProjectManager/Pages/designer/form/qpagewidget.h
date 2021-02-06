@@ -11,19 +11,20 @@ class QPageWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QPageWidget(const QString &type,QWidget *parent = 0);
+    explicit QPageWidget(const QString &type, QWidget *parent = 0);
     
 protected:
 signals:
-    void    cancel();
-    void    ok(QAbstractHost* host);
+    void cancel();
+    void ok(QAbstractHost* host);
+
 public slots:
-    void    add_file(const  QString &file);
+    void add_file(const  QString &file);
+
 protected:
-    QTemplateTreeWidget     *m_tree_widget;
-    QTempWidget             *m_temp_widget;
-    QString                 m_type;
-    
+    QTemplateTreeWidget *m_tree_widget;
+    QTempWidget *m_temp_widget;
+    QString m_type;
 };
 
 #endif // QPAGEWIDGET_H

@@ -26,7 +26,6 @@ protected:
     QPropertyView *m_propertyView;
     QFormWidgetView *m_formWidgetView;
     QObjectListWidget *m_objectListWidget;
-    FormNameListWidget *m_formNameListWidget;
 };
 
 #endif // QDESIGNERWIDGET_H

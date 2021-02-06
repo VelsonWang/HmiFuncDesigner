@@ -20,12 +20,12 @@ public slots:
     void selectWidget(QAbstractHost* wid);
 
 signals:
-    void notifyPropertyEdit(QAbstractProperty* pro,const QVariant& value);
+    void notifyPropertyEdit(QAbstractProperty* pro, const QVariant& value);
 
 protected:
-    QPropertyListView           *m_propertyView;
-    StyledBar                   *m_styledBar;
-    QAbstractHost               *m_select;
+    QPropertyListView *m_propertyView;
+    StyledBar *m_styledBar;
+    QAbstractHost *m_select;
 };
 
 #endif // QPROPERTYVIEW_H

@@ -1,10 +1,7 @@
 #include "qpropertyview.h"
-
 #include "../../../libs/core/qpropertylist/qpropertylistview.h"
 #include "../../../libs/shared/host/qabstracthost.h"
 #include "../../../libs/core/styledbar.h"
-
-
 #include <QVBoxLayout>
 #include <QLabel>
 
@@ -23,30 +20,28 @@ QPropertyView::QPropertyView(QWidget *parent) :
 
     this->setLayout(l);
 
-    QLabel* label=new QLabel(tr("Object Property"));
-    label->setStyleSheet("color:rgb(255,255,255);");
+    QLabel *pLabelObj = new QLabel;
+    pLabelObj->setText(tr("对象属性"));
+    pLabelObj->setFrameShape(QFrame::StyledPanel);
     QVBoxLayout *layout=new QVBoxLayout;
-    layout->setMargin(5);
-    layout->addWidget(label);
+    layout->setMargin(0);
+    layout->addWidget(pLabelObj);
     m_styledBar->setLayout(layout);
 
     this->resize(200,200);
-    connect(m_propertyView,SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)),this,SIGNAL(notifyPropertyEdit(QAbstractProperty*,QVariant)));
+    connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
+            this, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
 }
 
 void QPropertyView::selectWidget(QAbstractHost *host)
 {
-    if(m_select==host)
-    {
+    if(m_select == host) {
         return;
     }
-    m_select=host;
-    if(host==Q_NULLPTR)
-    {
+    m_select = host;
+    if(host == Q_NULLPTR) {
         m_propertyView->setPropertys(QList<QAbstractProperty*>());
-    }
-    else
-    {
+    } else {
         m_propertyView->setPropertys(host->getPropertys());
     }
 }

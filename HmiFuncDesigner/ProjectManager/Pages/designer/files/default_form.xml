@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<form type="form">
+    <Property name="objectName" type="ByteArray" value="main"/>
+    <Property name="geometry" type="Rect">
+        <Property name="x" type="Number" value="0"/>
+        <Property name="y" type="Number" value="0"/>
+        <Property name="Width" type="Number" value="800"/>
+        <Property name="Height" type="Number" value="600"/>
+    </Property>
+</form>

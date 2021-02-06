@@ -18,7 +18,7 @@ public slots:
 
 protected:
     WidgetBoxTreeWidget *m_widgetBox;
-    StyledBar           *m_styledBar;
+    StyledBar *m_styledBar;
 };
 
 
