@@ -15,13 +15,15 @@ public:
     void setValue(const QVariant &value);
 
     QString makeStylesheet();
+	
 protected:
     void subValueChanged();
+	
 protected:
-    QGradientItem           *m_left_color;
-    QGradientItem           *m_top_color;
-    QGradientItem           *m_right_color;
-    QGradientItem           *m_bottom_color;
+    QGradientItem *m_left_color;
+    QGradientItem *m_top_color;
+    QGradientItem *m_right_color;
+    QGradientItem *m_bottom_color;
 
     QAbstractStylesheetItem *m_left_width;
     QAbstractStylesheetItem *m_right_width;
@@ -32,7 +34,6 @@ protected:
     QAbstractStylesheetItem *m_right_style;
     QAbstractStylesheetItem *m_bottom_style;
     QAbstractStylesheetItem *m_top_style;
-
 
     QAbstractStylesheetItem *m_color_same;
     QAbstractStylesheetItem *m_style_same;

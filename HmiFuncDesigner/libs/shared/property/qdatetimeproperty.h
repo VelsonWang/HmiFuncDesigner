@@ -5,17 +5,19 @@
 
 #include <QDateTime>
 
-class QDateTimeProperty: public QAbstractProperty
+class QDateTimeProperty : public QAbstractProperty
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QDateTimeProperty(QAbstractProperty* parent=0);
+    Q_INVOKABLE QDateTimeProperty(QAbstractProperty* parent = 0);
 
-    QString         get_value_text();
-    QIcon           get_value_icon();
+    QString get_value_text();
+    QIcon get_value_icon();
+	
 protected:
-    void    make_value();
-    void    write_value();
+    void make_value();
+    void write_value();
 };
 
 #endif // QDATETIMEPROPERTY_H
+

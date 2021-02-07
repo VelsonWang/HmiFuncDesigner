@@ -17,32 +17,36 @@ public:
     explicit QAbstractStylesheetItem(QAbstractStylesheetItem *parent = 0);
     ~QAbstractStylesheetItem();
 
-    virtual QVariant    value();
-    virtual void        setValue(const QVariant &value);
+    virtual QVariant value();
+    virtual void setValue(const QVariant &value);
 
-    QString             attribute(const QString &key,const QString &def="");
-    void                setAttribute(const QString &key,const QString &value);
+    QString attribute(const QString &key, const QString &def="");
+    void setAttribute(const QString &key, const QString &value);
 
-    virtual void        read(XMLObject *xml);
-    virtual void        write(XMLObject *xml);
+    virtual void read(XMLObject *xml);
+    virtual void write(XMLObject *xml);
 
-    virtual QString     makeStylesheet();
+    virtual QString makeStylesheet();
 
-    virtual bool        isUsed();
-    virtual void        setDefault(const QVariant &value);
+    virtual bool isUsed();
+    virtual void setDefault(const QVariant &value);
 
-    void        clear();
+    void clear();
+	
 protected:
     QAbstractStylesheetItem *getChild(const QString &name);
-    signals:
-    void    valueChanged();
+
+signals:
+    void valueChanged();
+	
 protected slots:
-    virtual void    subValueChanged();
+    virtual void subValueChanged();
+	
 protected:
-    QList<QAbstractStylesheetItem*>     m_children;
-    QAbstractStylesheetItem*            m_parent;
-    QMap<QString,QString>               m_attributes;
-    QVariant                            m_value;
+    QList<QAbstractStylesheetItem*> m_children;
+    QAbstractStylesheetItem* m_parent;
+    QMap<QString, QString> m_attributes;
+    QVariant m_value;
 };
 
 #endif // QABSTRACTSTYLESHEETITEM_H

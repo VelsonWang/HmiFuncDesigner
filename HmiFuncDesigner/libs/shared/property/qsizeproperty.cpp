@@ -7,25 +7,22 @@ QSizeProperty::QSizeProperty(QAbstractProperty *parent):
 {
     setObjectProperty("type", "Size");
 
-    m_width=new QIntProperty(this);
-    m_width->setAttribute("show_name",tr("Width"));
+    m_width = new QIntProperty(this);
+    m_width->setAttribute("show_name", tr("宽度")); // tr("Width")
     m_width->setObjectProperty("name", "Width");
 
-    m_height=new QIntProperty(this);
-    m_height->setAttribute("show_name",tr("Height"));
+    m_height = new QIntProperty(this);
+    m_height->setAttribute("show_name", tr("高度")); // tr("Height")
     m_height->setObjectProperty("name", "Height");
 }
 
 void QSizeProperty::set_value(const QVariant &value)
 {
-    QSize sz=value.toSize();
-
+    QSize sz = value.toSize();
     disconnect_children();
-
     m_width->set_value(sz.width());
     m_height->set_value(sz.height());
     QAbstractProperty::set_value(value);
-
     connect_children();
 }
 
@@ -59,3 +56,4 @@ void QSizeProperty::write_value()
 {
 
 }
+

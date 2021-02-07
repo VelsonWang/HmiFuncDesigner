@@ -1,9 +1,9 @@
 #include "qbytearrayproperty.h"
 
-QByteArrayProperty::QByteArrayProperty(QAbstractProperty *parent):
+QByteArrayProperty::QByteArrayProperty(QAbstractProperty *parent) : 
     QAbstractProperty(parent)
 {
-    setObjectProperty("type","ByteArray");
+    setObjectProperty("type", "ByteArray");
 }
 
 QString QByteArrayProperty::get_value_text()
@@ -15,3 +15,4 @@ QIcon QByteArrayProperty::get_value_icon()
 {
     return QIcon();
 }
+

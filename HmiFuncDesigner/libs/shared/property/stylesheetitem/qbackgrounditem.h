@@ -16,10 +16,12 @@ public:
     void setValue(const QVariant &value);
 
     QString makeStylesheet();
+	
 protected:
     void subValueChanged();
+	
 protected:
-    QGradientItem           *m_color;
+    QGradientItem *m_color;
     QAbstractStylesheetItem *m_image;
     QAbstractStylesheetItem *m_repeat;
     QAbstractStylesheetItem *m_position;

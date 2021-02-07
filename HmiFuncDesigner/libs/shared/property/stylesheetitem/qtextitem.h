@@ -11,12 +11,13 @@ public:
     QTextItem(QAbstractStylesheetItem *parent=NULL);
 
     void setValue(const QVariant &value);
-
     QString makeStylesheet();
+	
 protected:
     void subValueChanged();
+	
 protected:
-    QGradientItem           *m_color;
+    QGradientItem *m_color;
 };
 
 #endif // QTEXTITEM_H

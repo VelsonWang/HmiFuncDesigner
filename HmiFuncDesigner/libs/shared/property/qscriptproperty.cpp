@@ -1,6 +1,6 @@
 #include "qscriptproperty.h"
 
-QScriptProperty::QScriptProperty(QAbstractProperty *parent):
+QScriptProperty::QScriptProperty(QAbstractProperty *parent) :
     QAbstractProperty(parent)
 {
     setObjectProperty("type", "Script");
@@ -8,9 +8,9 @@ QScriptProperty::QScriptProperty(QAbstractProperty *parent):
 
 QString QScriptProperty::get_value_text()
 {
-    QString str=get_value().toString();
-    str.replace("\r\n"," ");
-    str.replace("\n"," ");
+    QString str = get_value().toString();
+    str.replace("\r\n", " ");
+    str.replace("\n", " ");
     return str;
 }
 
@@ -18,3 +18,4 @@ QIcon QScriptProperty::get_value_icon()
 {
     return QIcon();
 }
+

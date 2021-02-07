@@ -29,15 +29,17 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     setProperty("function_list",
                 QStringList()
                 <<"destroyed(QObject*)"
-                <<"destroyed()"<<"deleteLater()"
-                <<"exec(QString,QMap<QString,QString>)"<<"translateChanged(QString)"
+                <<"destroyed()"
+                <<"deleteLater()"
+                <<"exec(QString,QMap<QString,QString>)"
+                <<"translateChanged(QString)"
                 <<"languageChanged()");
 
     if(m_parent!=Q_NULLPTR)
     {
         m_parent->m_children.append(this);
     }
-    connect(m_timer,SIGNAL(timeout()),this,SLOT(onPropertyRefresh()));
+    connect(m_timer, SIGNAL(timeout()), this, SLOT(onPropertyRefresh()));
 }
 
 QAbstractHost::~QAbstractHost()
@@ -318,10 +320,10 @@ void QAbstractHost::initProperty()
     pro=QPropertyFactory::create_property("ByteArray");
     if(pro!=Q_NULLPTR)
     {
-        pro->setObjectProperty("name","objectName");
-        pro->setAttribute("show_name",tr("Name"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_NEEDSAVE,true);
+        pro->setObjectProperty("name", "objectName");
+        pro->setAttribute("show_name", tr("名称")); // tr("Name")
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE, true);
         insertProperty(pro);
     }
 }

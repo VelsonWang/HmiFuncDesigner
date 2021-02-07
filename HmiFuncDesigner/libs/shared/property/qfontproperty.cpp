@@ -1,11 +1,8 @@
 #include "qfontproperty.h"
-
 #include "qintproperty.h"
 #include "qboolproperty.h"
 #include "qenumproperty.h"
-
 #include "../qcommonstruct.h"
-
 #include <QFontDatabase>
 #include <QApplication>
 #include <QFont>
@@ -20,55 +17,50 @@ QFontProperty::QFontProperty(QAbstractProperty *parent):
     static QFontDatabase fontDatabase;
     setObjectProperty("type", "Font");
 
-    m_family=new QEnumProperty(this);
-    m_family->setAttribute("show_name",tr("Family"));
-    m_family->setObjectProperty("name","Family");
-    QStringList list=fontDatabase.families();
+    m_family = new QEnumProperty(this);
+    m_family->setAttribute("show_name", tr("字体")); // tr("Family")
+    m_family->setObjectProperty("name", "Family");
+    QStringList list = fontDatabase.families();
     tagComboItem item;
     ComboItems  items;
-    foreach(QString str,list)
-    {
-        item.m_text=str;
-        item.m_value=str;
+    foreach(QString str, list) {
+        item.m_text = str;
+        item.m_value = str;
         items.append(item);
     }
     QVariant v;
     v.setValue<ComboItems>(items);
-    m_family->setAttribute("items",v);
+    m_family->setAttribute("items", v);
+
+    m_pointSize = new QIntProperty(this);
+    m_pointSize->setAttribute("show_name", tr("大小")); // tr("Size")
+    m_pointSize->setObjectProperty("name", "Size");
+
+    m_bold = new QBoolProperty(this);
+    m_bold->setAttribute("show_name", tr("加粗")); // tr("Bold")
+    m_bold->setObjectProperty("name", "Bold");
 
 
-    m_pointSize=new QIntProperty(this);
-    m_pointSize->setAttribute("show_name",tr("Size"));
-    m_pointSize->setObjectProperty("name","Size");
+    m_italic = new QBoolProperty(this);
+    m_italic->setAttribute("show_name", tr("斜体")); // tr("Italic")
+    m_italic->setObjectProperty("name", "Italic");
 
-    m_bold=new QBoolProperty(this);
-    m_bold->setAttribute("show_name",tr("Bold"));
-    m_bold->setObjectProperty("name","Bold");
+    m_underline = new QBoolProperty(this);
+    m_underline->setAttribute("show_name", tr("下划线")); // tr("Underline")
+    m_underline->setObjectProperty("name", "Underline");
 
-
-    m_italic=new QBoolProperty(this);
-    m_italic->setAttribute("show_name",tr("Italic"));
-    m_italic->setObjectProperty("name","Italic");
-
-    m_underline=new QBoolProperty(this);
-    m_underline->setAttribute("show_name",tr("Underline"));
-    m_underline->setObjectProperty("name","Underline");
-
-    m_strikeout=new QBoolProperty(this);
-    m_strikeout->setAttribute("show_name",tr("Strikeout"));
-    m_strikeout->setObjectProperty("name","Strikeout");
+    m_strikeout = new QBoolProperty(this);
+    m_strikeout->setAttribute("show_name", tr("删除线")); // tr("Strikeout")
+    m_strikeout->setObjectProperty("name", "Strikeout");
 }
 
 void QFontProperty::set_value(const QVariant &value)
 {
-    if(!value.isValid())
-    {
+    if(!value.isValid()) {
         return;
     }
-
     disconnect_children();
-
-    QFont f=value.value<QFont>();
+    QFont f = value.value<QFont>();
     m_family->set_value(f.family());
     m_bold->set_value(f.bold());
     m_pointSize->set_value(f.pointSize());
@@ -76,20 +68,18 @@ void QFontProperty::set_value(const QVariant &value)
     m_underline->set_value(f.underline());
     m_strikeout->set_value(f.strikeOut());
     QAbstractProperty::set_value(value);
-
     connect_children();
 }
 
 QString QFontProperty::get_value_text()
 {
-
-    QFont f=get_value().value<QFont>();
+    QFont f = get_value().value<QFont>();
     return f.family();
 }
 
 QIcon QFontProperty::get_value_icon()
 {
-    QFont f=get_value().value<QFont>();
+    QFont f = get_value().value<QFont>();
     QImage img(16, 16, QImage::Format_ARGB32_Premultiplied);
     img.fill(0);
     QPainter p(&img);
@@ -105,11 +95,10 @@ QIcon QFontProperty::get_value_icon()
 
 void QFontProperty::child_value_changed(const QVariant &, const QVariant &)
 {
-    if(m_pointSize->get_value().toInt()<=0)
-    {
+    if(m_pointSize->get_value().toInt() <= 0) {
         return;
     }
-    QFont f=get_value().value<QFont>();
+    QFont f = get_value().value<QFont>();
     f.setBold(m_bold->get_value().toBool());
     f.setPointSize(m_pointSize->get_value().toInt());
     f.setItalic(m_italic->get_value().toBool());
@@ -123,7 +112,7 @@ void QFontProperty::child_value_changed(const QVariant &, const QVariant &)
 
 void QFontProperty::make_value()
 {
-    QFont f=get_value().value<QFont>();
+    QFont f = get_value().value<QFont>();
     f.setBold(m_bold->get_value().toBool());
     f.setPointSize(m_pointSize->get_value().toInt());
     f.setItalic(m_italic->get_value().toBool());
@@ -137,3 +126,4 @@ void QFontProperty::write_value()
 {
 
 }
+

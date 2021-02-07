@@ -7,25 +7,22 @@ QPointProperty::QPointProperty(QAbstractProperty *parent):
 {
     setObjectProperty("type", "Point");
 
-    m_x=new QIntProperty(this);
-    m_x->setAttribute("show_name",tr("x"));
+    m_x = new QIntProperty(this);
+    m_x->setAttribute("show_name", tr("水平原点")); // tr("x")
     m_x->setObjectProperty("name", "x");
 
-    m_y=new QIntProperty(this);
-    m_y->setAttribute("show_name",tr("y"));
+    m_y = new QIntProperty(this);
+    m_y->setAttribute("show_name", tr("垂直原点")); // tr("y")
     m_y->setObjectProperty("name", "y");
 }
 
 void QPointProperty::set_value(const QVariant &value)
 {
-    QPoint pt=value.toPoint();
-
+    QPoint pt = value.toPoint();
     disconnect_children();
-
     m_x->set_value(pt.x());
     m_y->set_value(pt.y());
     QAbstractProperty::set_value(value);
-
     connect_children();
 }
 
@@ -59,3 +56,5 @@ void QPointProperty::write_value()
 {
 
 }
+
+

@@ -6,19 +6,14 @@
 
 QAbstractStylesheetItem* QStylesheetItemFactory::createItem(const QString &name)
 {
-    QAbstractStylesheetItem* ret=NULL;
+    QAbstractStylesheetItem* ret = NULL;
 
-    if(name=="background")
-    {
-        ret=new QBackgroundItem;
-    }
-    else if(name=="border")
-    {
-        ret=new QBorderItem;
-    }
-    else if(name=="text_sheet")
-    {
-        ret=new QTextItem;
+    if(name == "background") {
+        ret = new QBackgroundItem;
+    } else if(name == "border") {
+        ret = new QBorderItem;
+    } else if(name == "text_sheet") {
+        ret = new QTextItem;
     }
 
     return ret;

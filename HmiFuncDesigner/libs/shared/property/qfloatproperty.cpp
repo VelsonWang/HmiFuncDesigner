@@ -1,9 +1,9 @@
 #include "qfloatproperty.h"
 
-QFloatProperty::QFloatProperty(QAbstractProperty *parent):
+QFloatProperty::QFloatProperty(QAbstractProperty *parent) : 
     QAbstractProperty(parent)
 {
-    setObjectProperty("type","Float");
+    setObjectProperty("type", "Float");
 }
 
 QString QFloatProperty::get_value_text()
@@ -15,3 +15,4 @@ QIcon QFloatProperty::get_value_icon()
 {
     return QIcon();
 }
+

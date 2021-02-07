@@ -21,7 +21,7 @@ public:
     }
 
 public:
-    QMap<QString,QVariant>      m_attributes;
+    QMap<QString, QVariant> m_attributes;
 };
 
 typedef QList<tagStylesheetItem>  tagStylesheetItems;

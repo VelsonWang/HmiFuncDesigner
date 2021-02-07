@@ -1,6 +1,6 @@
 #include "qintproperty.h"
 
-QIntProperty::QIntProperty(QAbstractProperty *parent):
+QIntProperty::QIntProperty(QAbstractProperty *parent) : 
     QAbstractProperty(parent)
 {
     setObjectProperty("type", "Number");
@@ -15,3 +15,5 @@ QIcon QIntProperty::get_value_icon()
 {
     return QIcon();
 }
+
+
