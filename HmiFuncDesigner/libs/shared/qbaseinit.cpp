@@ -1,5 +1,4 @@
 #include "qbaseinit.h"
-
 #include "property/qintproperty.h"
 #include "property/qstringproperty.h"
 #include "property/qsizeproperty.h"
@@ -10,6 +9,7 @@
 #include "property/qdatetimeproperty.h"
 #include "property/qdateproperty.h"
 #include "property/qenumproperty.h"
+#include "property/qtagproperty.h"
 #include "property/qcursorproperty.h"
 #include "property/qfloatproperty.h"
 #include "property/qfontproperty.h"
@@ -18,10 +18,7 @@
 #include "property/qboolproperty.h"
 #include "property/qalignmentproperty.h"
 #include "property/qstylesheetproperty.h"
-
 #include "qpropertyfactory.h"
-
-
 #include "host/qwidgethost.h"
 #include "host/qframehost.h"
 #include "host/qlabelhost.h"
@@ -46,46 +43,47 @@
 
 void qRegisterBaseProperty()
 {
-    qRegisterProperty("Number",QIntProperty);
-    qRegisterProperty("String",QStringProperty);
-    qRegisterProperty("Size",QSizeProperty);
-    qRegisterProperty("Rect",QRectProperty);
-    qRegisterProperty("Point",QPointProperty);
-    qRegisterProperty("Font",QFontProperty);
-    qRegisterProperty("Float",QFloatProperty);
-    qRegisterProperty("Memery",QMemeryDataProperty);
-    qRegisterProperty("Bool",QBoolProperty);
-    qRegisterProperty("ByteArray",QByteArrayProperty);
-    qRegisterProperty("Enum",QEnumProperty);
-    qRegisterProperty("Script",QScriptProperty);
-    qRegisterProperty("Cursor",QCursorProperty);
-    qRegisterProperty("Time",QTimeProperty);
-    qRegisterProperty("Date",QDateProperty);
-    qRegisterProperty("DateTime",QDateTimeProperty);
-    qRegisterProperty("Alignment",QAlignmentProperty);
-    qRegisterProperty("StyleSheet",QStylesheetProperty);
+    qRegisterProperty("Number", QIntProperty);
+    qRegisterProperty("String", QStringProperty);
+    qRegisterProperty("Size", QSizeProperty);
+    qRegisterProperty("Rect", QRectProperty);
+    qRegisterProperty("Point", QPointProperty);
+    qRegisterProperty("Font", QFontProperty);
+    qRegisterProperty("Float", QFloatProperty);
+    qRegisterProperty("Memery", QMemeryDataProperty);
+    qRegisterProperty("Bool", QBoolProperty);
+    qRegisterProperty("ByteArray", QByteArrayProperty);
+    qRegisterProperty("Enum", QEnumProperty);
+    qRegisterProperty("Script", QScriptProperty);
+    qRegisterProperty("Cursor", QCursorProperty);
+    qRegisterProperty("Time", QTimeProperty);
+    qRegisterProperty("Date", QDateProperty);
+    qRegisterProperty("DateTime", QDateTimeProperty);
+    qRegisterProperty("Alignment", QAlignmentProperty);
+    qRegisterProperty("StyleSheet", QStylesheetProperty);
+    qRegisterProperty("Tag", QTagProperty);
 }
 
 void qRegisterBaseHost()
 {
-    qRegisterHost("containners.widget",QWidgetHost);
-    qRegisterHost("containners.frame",QFrameHost);
-    qRegisterHost("display_widgets.label",QLabelHost);
-    qRegisterHost("display_widgets.lcdnumber",QLCDNumberHost);
-    qRegisterHost("buttons.pushbutton",QPushButtonHost);
-    qRegisterHost("buttons.checkbox",QCheckBoxHost);
-    qRegisterHost("buttons.radiobutton",QRadioButtonHost);
-    qRegisterHost("inputwidgets.lineedit",QLineEditHost);
-    qRegisterHost("inputwidgets.dial",QDialHost);
-    qRegisterHost("inputwidgets.slider",QSliderHost);
-    qRegisterHost("inputwidgets.spinbox",QSpinBoxHost);
-    qRegisterHost("inputwidgets.doublespinbox",QDoubleSpinBoxHost);
-    qRegisterHost("inputwidgets.datetimeedit",QDateTimeEditHost);
-    qRegisterHost("inputwidgets.dateedit",QDateEditHost);
-    qRegisterHost("inputwidgets.timeedit",QTimeEditHost);
-    qRegisterHost("inputwidgets.scrollbar",QScrollBarHost);
-    qRegisterHost("inputwidgets.combobox",QComboBoxHost);
-    qRegisterHost("displaywidgets.progressbar",QProgressBarHost);
+    qRegisterHost("containners.widget", QWidgetHost);
+    qRegisterHost("containners.frame", QFrameHost);
+    qRegisterHost("display_widgets.label", QLabelHost);
+    qRegisterHost("display_widgets.lcdnumber", QLCDNumberHost);
+    qRegisterHost("buttons.pushbutton", QPushButtonHost);
+    qRegisterHost("buttons.checkbox", QCheckBoxHost);
+    qRegisterHost("buttons.radiobutton", QRadioButtonHost);
+    qRegisterHost("inputwidgets.lineedit", QLineEditHost);
+    qRegisterHost("inputwidgets.dial", QDialHost);
+    qRegisterHost("inputwidgets.slider", QSliderHost);
+    qRegisterHost("inputwidgets.spinbox", QSpinBoxHost);
+    qRegisterHost("inputwidgets.doublespinbox", QDoubleSpinBoxHost);
+    qRegisterHost("inputwidgets.datetimeedit", QDateTimeEditHost);
+    qRegisterHost("inputwidgets.dateedit", QDateEditHost);
+    qRegisterHost("inputwidgets.timeedit", QTimeEditHost);
+    qRegisterHost("inputwidgets.scrollbar", QScrollBarHost);
+    qRegisterHost("inputwidgets.combobox", QComboBoxHost);
+    qRegisterHost("displaywidgets.progressbar", QProgressBarHost);
 }
 
 

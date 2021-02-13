@@ -13,22 +13,24 @@ enum enFileAddType
     FAT_EMPTY
 };
 
-class CORELIB_EXPORT QFileAddUndoCommand: public QBaseUndoCommand
+class CORELIB_EXPORT QFileAddUndoCommand : public QBaseUndoCommand
 {
 public:
-    QFileAddUndoCommand(const tagFileInfo &data,int index,enFileAddType type,QUndoCommand* parent=0);
+    QFileAddUndoCommand(const tagFileInfo &data, int index, enFileAddType type, QUndoCommand* parent=0);
 
-    void    redo();
-    void    undo();
+    void redo();
+    void undo();
 
-    int     id()const;
+    int id()const;
+
 protected:
-    void    add();
-    void    remove();
+    void add();
+    void remove();
+
 protected:
-    enFileAddType       m_type;
-    int                 m_index;
-    tagFileInfo         m_data;
+    enFileAddType m_type;
+    int m_index;
+    tagFileInfo m_data;
 };
 
 #endif // QFILEADDUNDOCOMMAND_H

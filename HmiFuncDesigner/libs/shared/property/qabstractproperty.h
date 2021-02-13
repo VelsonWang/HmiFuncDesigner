@@ -53,7 +53,7 @@ public:
     QAbstractProperty *getParent();
     QAbstractProperty *getChild(const QString &name);
 
-    void emit_edit_value(const QVariant& value);
+    void notifyEditValue(const QVariant& value);
 
     void set_host(QAbstractHost* host);
     QAbstractHost* get_host();

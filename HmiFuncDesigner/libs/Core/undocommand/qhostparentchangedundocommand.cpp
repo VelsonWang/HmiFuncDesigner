@@ -19,7 +19,7 @@ QHostParentChangedUndoCommand::QHostParentChangedUndoCommand(QAbstractHost *host
 {
 }
 
-int QHostParentChangedUndoCommand::id()const
+int QHostParentChangedUndoCommand::id() const
 {
     return HOST_PARENT_CHANGED_UNDO_COMMAND;
 }
@@ -27,12 +27,11 @@ int QHostParentChangedUndoCommand::id()const
 void QHostParentChangedUndoCommand::redo()
 {
     QBaseUndoCommand::redo();
-
-    m_host->setParent(m_new_parent,m_new_parent_index);
+    m_host->setParent(m_new_parent, m_new_parent_index);
 }
 
 void QHostParentChangedUndoCommand::undo()
 {
     QBaseUndoCommand::undo();
-    m_host->setParent(m_old_parent,m_old_parent_index);
+    m_host->setParent(m_old_parent, m_old_parent_index);
 }

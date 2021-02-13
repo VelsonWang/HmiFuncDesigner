@@ -7,13 +7,13 @@ class QStringEditor : public QButtonCommonEditor
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QStringEditor(QAbstractProperty* property,QUndoStack* stack,QWidget *parent = 0);
+    Q_INVOKABLE QStringEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
 
 protected:
-    void btn_clicked();
+    void onBtnClicked();
 
 protected:
-    QUndoStack*     m_undo_stack;
+    QUndoStack* m_undo_stack;
     
 };
 

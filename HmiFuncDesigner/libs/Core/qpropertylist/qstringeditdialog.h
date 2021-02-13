@@ -14,7 +14,7 @@ class QStringEditDialog;
 class QAbstractProperty;
 class QLanguage;
 
-class QLanguageDelegate: public QItemDelegate
+class QLanguageDelegate : public QItemDelegate
 {
     Q_OBJECT
 public :
@@ -40,9 +40,10 @@ private slots:
     void on_cancelBtn_clicked();
 
 protected:
-    QAbstractProperty    *m_property;
-    QMap<QTreeWidgetItem*,QLanguage*>     m_items;
-    QUndoStack          *m_undo_stack;
+    QAbstractProperty *m_property;
+    QMap<QTreeWidgetItem*, QLanguage*> m_items;
+    QUndoStack *m_undo_stack;
+
 private:
     Ui::QStringEditDialog *ui;
 };

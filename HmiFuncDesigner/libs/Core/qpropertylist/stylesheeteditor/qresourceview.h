@@ -16,22 +16,19 @@ public:
     explicit QResourceView(QWidget *parent = 0);
     ~QResourceView();
     
-    void    set_file(const QByteArray &data);
-
+    void set_file(const QByteArray &data);
     tagFileInfo* get_file();
+    int get_ret();
 
-    int         get_ret();
 protected slots:
-    void    select(tagFileInfo* file);
+    void select(tagFileInfo* file);
+    void ok();
 
-    void    ok();
 protected:
-    QFileListView       *m_file_view;
+    QFileListView *m_file_view;
     QResourceShowWidget *m_show_widget;
-
-    tagFileInfo         *m_file_info;
-
-    int                 m_ret;
+    tagFileInfo *m_file_info;
+    int m_ret;
 };
 
 #endif // QRESOURCEVIEW_H

@@ -8,9 +8,9 @@ QFindWidget::QFindWidget(QWidget *parent) :
     ui(new Ui::QFindWidget)
 {
     ui->setupUi(this);
-    m_findEdit=new QFancyLineEdit(this);
+    m_findEdit = new QFancyLineEdit(this);
     ui->gridLayout_2->addWidget(m_findEdit, 0, 1, 1, 1);
-    m_replaceEdit=new QFancyLineEdit(this);
+    m_replaceEdit = new QFancyLineEdit(this);
     ui->verticalLayout->addWidget(m_replaceEdit);
     this->setFixedHeight(45);
     setProperty("topBorder", true);

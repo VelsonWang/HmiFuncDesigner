@@ -15,11 +15,12 @@ public:
     explicit QResourceShowWidget(QWidget *parent = 0);
     ~QResourceShowWidget();
     
-    void    set_image(const QByteArray &data);
+    void set_image(const QByteArray &data);
 
 signals:
-    void    ok();
-    void    cancel();
+    void ok();
+    void cancel();
+
 private slots:
     void on_okbtn_clicked();
 

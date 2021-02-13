@@ -22,7 +22,7 @@ public:
     void show_form(QAbstractHost* host);
     void setUndoStack(QUndoStack* stack);
     void clear();
-    void  set_select(QAbstractHost* host);
+    void set_select(QAbstractHost* host);
 
 public slots:
     void property_edit_slot(QAbstractProperty* pro, const QVariant& value);
@@ -39,6 +39,9 @@ public slots:
 protected slots:
     void insert_page_slot(QAbstractHost *host);
     void remove_page_slot(QAbstractHost *host);
+
+private slots:
+    void onSelect(QAbstractHost* host);
 
 signals:
     void select(QAbstractHost* host);

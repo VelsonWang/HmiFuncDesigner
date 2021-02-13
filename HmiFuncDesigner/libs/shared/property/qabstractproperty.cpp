@@ -187,7 +187,7 @@ QVariant QAbstractProperty::get_value()
 
 void QAbstractProperty::reset()
 {
-    emit_edit_value(m_defaultValue);
+    notifyEditValue(m_defaultValue);
 }
 
 QAbstractProperty* QAbstractProperty::getChild(const QString &name)
@@ -205,7 +205,7 @@ QList<QAbstractProperty*> QAbstractProperty::getChildren()
     return m_children;
 }
 
-void QAbstractProperty::emit_edit_value(const QVariant &value)
+void QAbstractProperty::notifyEditValue(const QVariant &value)
 {
     emit edit_value(value);
 }
@@ -217,7 +217,7 @@ QAbstractProperty* QAbstractProperty::getParent()
 
 void QAbstractProperty::set_host(QAbstractHost *host)
 {
-    m_host=host;
+    m_host = host;
 }
 
 QAbstractHost *QAbstractProperty::get_host()

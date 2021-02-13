@@ -12,17 +12,21 @@ class QStateCheckWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QStateCheckWidget(QAbstractProperty *property,const QString &title,QWidget *parent = 0);
+    explicit QStateCheckWidget(QAbstractProperty *property, const QString &title, QWidget *parent = 0);
     QString getTagName();
+
 protected:
-    void    paintEvent(QPaintEvent *);
+    void paintEvent(QPaintEvent *);
+
 signals:
-    void    changed();
+    void changed();
+
 protected slots:
-    void    check_changed();
+    void check_changed();
+
 protected:
-    QList<QItemCheckBox*>       m_widgets;
-    QMap<QItemCheckBox*,QString>    m_widget_to_name;
+    QList<QItemCheckBox*> m_widgets;
+    QMap<QItemCheckBox*, QString> m_widget_to_name;
 };
 
 #endif // QSTATECHECKWIDGET_H

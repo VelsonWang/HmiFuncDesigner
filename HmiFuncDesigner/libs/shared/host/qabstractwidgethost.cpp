@@ -37,7 +37,6 @@ void QAbstractWidgetHost::initProperty()
     v.setValue<SheetItems>(items);
     setProperty("sheet_state", v);
 
-
     QAbstractProperty* pro;
 
     pro = QPropertyFactory::create_property("Rect");

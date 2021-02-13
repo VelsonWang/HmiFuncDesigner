@@ -9,7 +9,7 @@
 QPageAddUndoCommand::QPageAddUndoCommand(QAbstractHost *page,
                                          int index,
                                          enPageAddType type,
-                                         QUndoCommand *parent):
+                                         QUndoCommand *parent) :
     QBaseUndoCommand(parent),
     m_page(page),
     m_type(type),
@@ -20,13 +20,12 @@ QPageAddUndoCommand::QPageAddUndoCommand(QAbstractHost *page,
 
 QPageAddUndoCommand::~QPageAddUndoCommand()
 {
-    if(m_type==PAT_ADD)
-    {
+    if(m_type == PAT_ADD) {
         m_page->deleteLater();
     }
 }
 
-int QPageAddUndoCommand::id()const
+int QPageAddUndoCommand::id() const
 {
     return PAGE_ADD_UNDO_COMMAND_ID;
 }
@@ -34,12 +33,9 @@ int QPageAddUndoCommand::id()const
 void QPageAddUndoCommand::redo()
 {
     QBaseUndoCommand::redo();
-    if(m_type==PAT_ADD)
-    {
+    if(m_type == PAT_ADD) {
         add();
-    }
-    else if(m_type==PAT_REMOVE)
-    {
+    } else if(m_type == PAT_REMOVE) {
         remove();
     }
 }
@@ -47,24 +43,21 @@ void QPageAddUndoCommand::redo()
 void QPageAddUndoCommand::undo()
 {
     QBaseUndoCommand::undo();
-    if(m_type==PAT_ADD)
-    {
+    if(m_type == PAT_ADD) {
         remove();
-    }
-    else if(m_type==PAT_REMOVE)
-    {
+    } else if(m_type == PAT_REMOVE) {
         add();
     }
 }
 
 void QPageAddUndoCommand::add()
 {
-    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->getPageManager();
-    manager->insert_page(m_page,m_index);
+    QPageManager *manager = QSoftCore::getCore()->getProjectCore()->getPageManager();
+    manager->insert_page(m_page, m_index);
 }
 
 void QPageAddUndoCommand::remove()
 {
-    QPageManager *manager=QSoftCore::getCore()->getProjectCore()->getPageManager();
+    QPageManager *manager = QSoftCore::getCore()->getProjectCore()->getPageManager();
     manager->remove_page(m_page);
 }

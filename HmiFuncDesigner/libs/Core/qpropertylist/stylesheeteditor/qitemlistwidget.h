@@ -17,19 +17,23 @@ public:
     explicit QItemListWidget(QWidget *parent = 0);
     ~QItemListWidget();
     
-    void    set_text(const QString &text);
-    void    set_icon(const QString &icon);
+    void set_text(const QString &text);
+    void set_icon(const QString &icon);
+
 private:
     Ui::QItemListWidget *ui;
+
 protected:
     void enterEvent(QEvent *);
     void leaveEvent(QEvent *);
+
 signals:
-    void    remove();
-    void    changed();
+    void remove();
+    void changed();
+
 protected:
-    QToolBarButton  *m_changed_button;
-    QToolBarButton  *m_remove_button;
+    QToolBarButton *m_changed_button;
+    QToolBarButton *m_remove_button;
 };
 
 #endif // QITEMLISTWIDGET_H

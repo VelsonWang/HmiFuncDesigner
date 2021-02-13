@@ -1,6 +1,5 @@
 #include "qitemlistwidget.h"
 #include "ui_qitemlistwidget.h"
-
 #include "../../qtoolbarbutton.h"
 
 QItemListWidget::QItemListWidget(QWidget *parent) :
@@ -11,22 +10,20 @@ QItemListWidget::QItemListWidget(QWidget *parent) :
 
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/changed.png"),"",this);
+    ac = new QAction(QIcon(":/images/changed.png"),"",this);
     ac->setToolTip("Remove");
-    m_changed_button=new QToolBarButton(ac,this);
+    m_changed_button = new QToolBarButton(ac,this);
     ui->horizontalLayout->addWidget(m_changed_button);
-    connect(ac,SIGNAL(triggered()),this,SIGNAL(changed()));
+    connect(ac, SIGNAL(triggered()), this, SIGNAL(changed()));
 
-    ac=new QAction(QIcon(":/images/removesubmitfield.png"),"",this);
+    ac = new QAction(QIcon(":/images/removesubmitfield.png"),"",this);
     ac->setToolTip("Remove");
-    m_remove_button=new QToolBarButton(ac,this);
+    m_remove_button = new QToolBarButton(ac,this);
     ui->horizontalLayout->addWidget(m_remove_button);
-    connect(ac,SIGNAL(triggered()),this,SIGNAL(remove()));
-
+    connect(ac, SIGNAL(triggered()), this, SIGNAL(remove()));
 
     m_remove_button->setVisible(false);
     m_changed_button->setVisible(false);
-
 }
 
 QItemListWidget::~QItemListWidget()
@@ -36,8 +33,7 @@ QItemListWidget::~QItemListWidget()
 
 void QItemListWidget::set_text(const QString &text)
 {
-    if(text=="Normal")
-    {
+    if(text == "Normal") {
         m_remove_button->setVisible(false);
         m_changed_button->setVisible(false);
     }
@@ -47,8 +43,7 @@ void QItemListWidget::set_text(const QString &text)
 
 void QItemListWidget::enterEvent(QEvent *)
 {
-    if(ui->text->text()!="Normal")
-    {
+    if(ui->text->text() != "Normal") {
         m_remove_button->setVisible(true);
         m_changed_button->setVisible(true);
     }

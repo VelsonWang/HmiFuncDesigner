@@ -25,17 +25,16 @@ void QResourceShowWidget::on_cancelbtn_clicked()
 
 void QResourceShowWidget::set_image(const QByteArray &data)
 {
-    QImage image=QImage::fromData(data);
+    QImage image = QImage::fromData(data);
 
-    QSize sz=image.size();
+    QSize sz = image.size();
 
-    QSize dsz=ui->show_widget->size();
-    dsz.rheight()-=4;
-    dsz.rwidth()-=4;
+    QSize dsz = ui->show_widget->size();
+    dsz.rheight() -= 4;
+    dsz.rwidth() -= 4;
 
-    if(sz.width()>dsz.width() || sz.height()>dsz.height())
-    {
-        image=image.scaled(dsz,Qt::KeepAspectRatio,Qt::SmoothTransformation);
+    if(sz.width() > dsz.width() || sz.height() > dsz.height()) {
+        image = image.scaled(dsz, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     }
     QPixmap map;
     map.convertFromImage(image);

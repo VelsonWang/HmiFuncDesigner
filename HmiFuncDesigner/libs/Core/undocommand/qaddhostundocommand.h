@@ -16,29 +16,30 @@ enum enAddHostType
     AHT_REMOVE
 };
 
-class CORELIB_EXPORT QAddHostUndoCommand: public QBaseUndoCommand
+class CORELIB_EXPORT QAddHostUndoCommand : public QBaseUndoCommand
 {
 public:
     QAddHostUndoCommand(QAbstractHost *parent_host,
                         const QList<QAbstractHost*> &hosts,
-                        const QList<int>            &indexs,
+                        const QList<int> &indexs,
                         enAddHostType type,
-                        QUndoCommand* parent=0);
+                        QUndoCommand* parent = 0);
     ~QAddHostUndoCommand();
 
-    void    redo();
-    void    undo();
+    void redo();
+    void undo();
 
-    int     id()const;
+    int id()const;
 
 protected:
-    void    add();
-    void    remove();
+    void add();
+    void remove();
+
 protected:
-    QAbstractHost       *m_parent_host;
+    QAbstractHost *m_parent_host;
     QList<QAbstractHost*> m_hosts;
-    QList<int>              m_indexs;
-    enAddHostType       m_type;
+    QList<int> m_indexs;
+    enAddHostType m_type;
 };
 
 

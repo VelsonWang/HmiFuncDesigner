@@ -1,5 +1,4 @@
 #include "qscripteditview.h"
-
 #include "qscripthighlight.h"
 #include "qhostobjectmap.h"
 #include "qcompletertreewidget.h"
@@ -8,7 +7,6 @@
 #include "../../qactiontoolbar.h"
 #include "../../qsoftcore.h"
 #include "../../../shared/host/qabstracthost.h"
-
 #include <QAction>
 #include <QMimeData>
 #include <QApplication>
@@ -28,7 +26,7 @@
 
 static QString s_list="+-*/\{}[] ;|()";
 
-QLineWidget::QLineWidget(QTextDocument *document, QWidget *parent):
+QLineWidget::QLineWidget(QTextDocument *document, QWidget *parent) :
     QWidget(parent),
     m_document(document)
 {
@@ -42,15 +40,14 @@ QScriptEditView *QLineWidget::editor()const
 void QLineWidget::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
-    QRect re=this->rect().adjusted(0,0,1,0);
-    p.fillRect(re,QBrush(QColor(240,240,240)));
-
+    QRect re = this->rect().adjusted(0, 0, 1, 0);
+    p.fillRect(re, QBrush(QColor(240, 240, 240)));
     editor()->painteLineWidget(&p);
 }
 
 QSize QLineWidget::sizeHint()const
 {
-    return QSize(editor()->extraAreaWidth(),0);
+    return QSize(editor()->extraAreaWidth(), 0);
 }
 
 void QLineWidget::mousePressEvent(QMouseEvent *e)
@@ -59,14 +56,16 @@ void QLineWidget::mousePressEvent(QMouseEvent *e)
 }
 
 
-QScriptEditView::QScriptEditView(QAbstractProperty *property, QAbstractHost *host, QWidget *parent):
+QScriptEditView::QScriptEditView(QAbstractProperty *property,
+                                 QAbstractHost *host,
+                                 QWidget *parent) :
     QPlainTextEdit(parent),
     m_lineWidget(new QLineWidget(document(),this)),
     m_needShowCursor(false),
     m_toolTipTimer(new QTimer(this)),
     m_updateTooltip(false),
     m_property_host(host),
-    m_host_object_map(new QHostObjectMap(property,host)),
+    m_host_object_map(new QHostObjectMap(property, host)),
     m_completer(new QCompleterTreeWidget(this->viewport())),
     m_property(property)
 {

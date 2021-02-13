@@ -5,7 +5,6 @@
 #include "../../qfilemanager.h"
 #include "../../../shared/qprojectcore.h"
 #include "../../../shared/property/stylesheetitem/qabstractstylesheetitem.h"
-
 #include <QColorDialog>
 #include <QGradient>
 
@@ -19,7 +18,7 @@ QBackgrounSheetEditor::QBackgrounSheetEditor(QWidget *parent) :
     ui->repeat_combo->setCurrentIndex(2);
 
     ui->position_combo->addItems(QStringList()<<"left top"<<"left center"<<"left bottom"<<"center top"<<"center"<<"center bottom"
-                             <<"right top"<<"right center"<<"right bottom");
+                                 <<"right top"<<"right center"<<"right bottom");
     ui->position_combo->setCurrentIndex(0);
 
     connect(ui->repeat_combo,SIGNAL(currentIndexChanged(int)),this,SLOT(repeat_changed()));

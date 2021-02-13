@@ -20,24 +20,22 @@ public:
 
     void init(QAbstractStylesheetItem *item);
 
-    void    take_resource(QUndoCommand *cmd);
-    void    add_resource(QUndoCommand *cmd);
+    void take_resource(QUndoCommand *cmd);
+    void add_resource(QUndoCommand *cmd);
+
 private slots:
     void on_colorBtn_clicked();
-
     void on_gradientBtn_clicked();
-
     void on_imageBtn_clicked();
-
     void repeat_changed();
-
     void position_changed();
 
 private:
     Ui::QBackgrounSheetEditor *ui;
+
 protected:
-    QString     m_tempResource;
-    QString     m_start_resource;
+    QString m_tempResource;
+    QString m_start_resource;
 };
 
 #endif // QBACKGROUNSHEETEDITOR_H

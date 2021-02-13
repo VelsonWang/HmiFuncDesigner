@@ -14,7 +14,7 @@ enum enPageAddType
 
 class QAbstractHost;
 
-class CORELIB_EXPORT QPageAddUndoCommand: public QBaseUndoCommand
+class CORELIB_EXPORT QPageAddUndoCommand : public QBaseUndoCommand
 {
 public:
     QPageAddUndoCommand(QAbstractHost* page,
@@ -24,17 +24,19 @@ public:
 
     ~QPageAddUndoCommand();
 
-    void    redo();
-    void    undo();
+    void redo();
+    void undo();
 
-    int     id()const;
+    int id()const;
+
 protected:
-    void    add();
-    void    remove();
+    void add();
+    void remove();
+
 protected:
-    QAbstractHost*          m_page;
-    enPageAddType           m_type;
-    int                     m_index;
+    QAbstractHost* m_page;
+    enPageAddType m_type;
+    int m_index;
 };
 
 #endif // QPAGEADDUNDOCOMMAND_H

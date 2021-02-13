@@ -16,36 +16,34 @@ QBorderSheetEditor::QBorderSheetEditor(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QAction *ac;
+    QAction *pActObj;
 
-    ac=new QAction(tr("Gradient"),this);
-    connect(ac,SIGNAL(triggered()),this,SLOT(left_gradient()));
-    ui->left_color_button->addAction(ac);
-    connect(ui->left_color_button,SIGNAL(clicked()),this,SLOT(left_color()));
+    pActObj = new QAction(tr("梯度"), this); // tr("Gradient")
+    connect(pActObj, SIGNAL(triggered()), this, SLOT(left_gradient()));
+    ui->left_color_button->addAction(pActObj);
+    connect(ui->left_color_button, SIGNAL(clicked()), this, SLOT(left_color()));
 
-    ac=new QAction(tr("Gradient"),this);
-    connect(ac,SIGNAL(triggered()),this,SLOT(top_gradient()));
-    ui->top_color_button->addAction(ac);
-    connect(ui->top_color_button,SIGNAL(clicked()),this,SLOT(top_color()));
+    pActObj = new QAction(tr("梯度"), this);
+    connect(pActObj, SIGNAL(triggered()), this, SLOT(top_gradient()));
+    ui->top_color_button->addAction(pActObj);
+    connect(ui->top_color_button, SIGNAL(clicked()), this, SLOT(top_color()));
 
-    ac=new QAction(tr("Gradient"),this);
-    connect(ac,SIGNAL(triggered()),this,SLOT(right_gradient()));
-    ui->right_color_button->addAction(ac);
-    connect(ui->right_color_button,SIGNAL(clicked()),this,SLOT(right_color()));
+    pActObj = new QAction(tr("梯度"), this);
+    connect(pActObj, SIGNAL(triggered()), this, SLOT(right_gradient()));
+    ui->right_color_button->addAction(pActObj);
+    connect(ui->right_color_button, SIGNAL(clicked()), this, SLOT(right_color()));
 
-    ac=new QAction(tr("Gradient"),this);
-    connect(ac,SIGNAL(triggered()),this,SLOT(bottom_gradient()));
-    ui->bottom_color_button->addAction(ac);
-    connect(ui->bottom_color_button,SIGNAL(clicked()),this,SLOT(bottom_color()));
+    pActObj = new QAction(tr("梯度"),this);
+    connect(pActObj, SIGNAL(triggered()), this, SLOT(bottom_gradient()));
+    ui->bottom_color_button->addAction(pActObj);
+    connect(ui->bottom_color_button, SIGNAL(clicked()), this, SLOT(bottom_color()));
 
     QStringList list;
-    list<<"dashed"<<"dot-dash"<<"dot-dot-dash"<<"dotted"<<"double"
-       <<"solid"<<"none";
+    list <<"dashed" <<"dot-dash" <<"dot-dot-dash" <<"dotted" <<"double" <<"solid" <<"none";
     ui->left_style->addItems(list);
     ui->top_style->addItems(list);
     ui->right_style->addItems(list);
     ui->bottom_style->addItems(list);
-
 
     ui->left_style->setCurrentIndex(6);
     ui->top_style->setCurrentIndex(6);
@@ -59,19 +57,15 @@ QBorderSheetEditor::~QBorderSheetEditor()
 }
 void QBorderSheetEditor::init(QAbstractStylesheetItem *item)
 {
-    tagStylesheetItem temp=item->value().value<tagStylesheetItem>();
-
-    m_start_resource=temp.m_attributes.value("image").toString();
+    tagStylesheetItem temp = item->value().value<tagStylesheetItem>();
+    m_start_resource = temp.m_attributes.value("image").toString();
 }
 
 void QBorderSheetEditor::take_resource(QUndoCommand *cmd)
 {
-    if(m_start_resource!=m_tempResource)
-    {
-        if(cmd!=Q_NULLPTR)
-        {
-            if(m_start_resource!="")
-            {
+    if(m_start_resource != m_tempResource) {
+        if(cmd != Q_NULLPTR) {
+            if(m_start_resource != "") {
             }
         }
     }
@@ -79,18 +73,14 @@ void QBorderSheetEditor::take_resource(QUndoCommand *cmd)
 
 void QBorderSheetEditor::add_resource(QUndoCommand *cmd)
 {
-    if(m_start_resource!=m_tempResource)
-    {
-        if(cmd!=Q_NULLPTR)
-        {
-            if(m_tempResource!="")
-            {
+    if(m_start_resource != m_tempResource) {
+        if(cmd != Q_NULLPTR) {
+            if(m_tempResource != "") {
             }
         }
-        if(m_tempResource!="")
-        {
+        if(m_tempResource != "") {
         }
-        m_tempResource="";
+        m_tempResource = "";
     }
 }
 
@@ -119,8 +109,7 @@ void QBorderSheetEditor::set_item(QAbstractStylesheetItem *item)
     ui->bottom_color_button->setIcon(get_icon(g));
 
     ui->same_color->setChecked(m_item.m_attributes.value("color_same","true").toBool());
-    if(ui->same_color->isChecked())
-    {
+    if(ui->same_color->isChecked()) {
         same_color();
     }
 

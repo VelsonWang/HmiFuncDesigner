@@ -15,33 +15,32 @@ public:
     explicit QBorderSheetEditor(QWidget *parent = 0);
     ~QBorderSheetEditor();
 
+    void set_item(QAbstractStylesheetItem *item);
+    void init(QAbstractStylesheetItem *item);
 
-    void    set_item(QAbstractStylesheetItem *item);
-
-    void    init(QAbstractStylesheetItem *item);
-
-    void    take_resource(QUndoCommand *cmd);
-    void    add_resource(QUndoCommand *cmd);
+    void take_resource(QUndoCommand *cmd);
+    void add_resource(QUndoCommand *cmd);
 
 protected:
+    void same_color();
 
-    void        same_color();
 protected slots:
-    void    left_gradient();
-    void    top_gradient();
-    void    right_gradient();
-    void    bottom_gradient();
-    void    left_color();
-    void    top_color();
-    void    right_color();
-    void    bottom_color();
+    void left_gradient();
+    void top_gradient();
+    void right_gradient();
+    void bottom_gradient();
+    void left_color();
+    void top_color();
+    void right_color();
+    void bottom_color();
 
 private:
     Ui::QBorderSheetEditor *ui;
 
 protected:
-    QString     m_tempResource;
-    QString     m_start_resource;
+    QString m_tempResource;
+    QString m_start_resource;
+
 private slots:
     void on_same_color_clicked();
     void on_image_clicked();

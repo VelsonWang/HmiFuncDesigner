@@ -12,7 +12,8 @@ public:
     Q_INVOKABLE QStyleSheetEditor(QAbstractProperty* property,QUndoStack* stack,QWidget *parent = 0);
     
 protected:
-    void btn_clicked();
+    void onBtnClicked();
+
 protected:
     QUndoStack  *m_undo_stack;
 };

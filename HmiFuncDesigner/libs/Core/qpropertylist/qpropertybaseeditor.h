@@ -12,22 +12,25 @@ class QPropertyBaseEditor : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QPropertyBaseEditor(QAbstractProperty *pro,QUndoStack* stack,QWidget *parent = 0);
+    explicit QPropertyBaseEditor(QAbstractProperty *pro,
+                                 QUndoStack* stack,
+                                 QWidget *parent = 0);
 protected:
-    void    paintEvent(QPaintEvent *);
-    bool    eventFilter(QObject *, QEvent *);
-    signals:
+    void paintEvent(QPaintEvent *);
+    bool eventFilter(QObject *, QEvent *);
+
+signals:
 
 public slots:
-    void    reset();
+    void reset();
 
 protected slots:
     void onPropertyRefresh();
 
 protected:
-    QToolButton                     *m_resetButton;
-    QAbstractProperty               *m_property;
-    QWidget*                        m_widget;
+    QToolButton *m_resetButton;
+    QAbstractProperty *m_property;
+    QWidget* m_widget;
 };
 
 #endif // QRESETWIDGET_H

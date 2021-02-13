@@ -77,7 +77,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Clear All</string>
+          <string>清空所有</string>
          </property>
         </widget>
        </item>
@@ -96,7 +96,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Clear</string>
+          <string>清空</string>
          </property>
         </widget>
        </item>
@@ -115,7 +115,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Ok</string>
+          <string>确定</string>
          </property>
         </widget>
        </item>
@@ -134,7 +134,7 @@
           </size>
          </property>
          <property name="text">
-          <string>Cancel</string>
+          <string>取消</string>
          </property>
         </widget>
        </item>

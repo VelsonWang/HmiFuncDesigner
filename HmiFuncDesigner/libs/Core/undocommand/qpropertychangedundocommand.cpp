@@ -19,49 +19,43 @@ QPropertyChangedUndoCommand::QPropertyChangedUndoCommand(const QString &host_uui
 {
 }
 
-int QPropertyChangedUndoCommand::id()const
+int QPropertyChangedUndoCommand::id() const
 {
     return PROPERTY_UNDO_COMMAND;
 }
 
 bool QPropertyChangedUndoCommand::mergeWith(const QUndoCommand *other)
 {
-    QPropertyChangedUndoCommand* cmd=(QPropertyChangedUndoCommand*)other;
+    QPropertyChangedUndoCommand* cmd = (QPropertyChangedUndoCommand*)other;
 
-    if(childCount()!=cmd->childCount() || m_property_name!=cmd->m_property_name)
-    {
+    if(childCount() != cmd->childCount() || m_property_name != cmd->m_property_name) {
         return false;
     }
-    int c=childCount();
-    QPropertyChangedUndoCommand *p1,*p2;
-    for(int i=0;i<c;i++)
-    {
-        p1=(QPropertyChangedUndoCommand*)child(i);
-        p2=(QPropertyChangedUndoCommand*)cmd->child(i);
-        if(p1->m_host_uuid!=p2->m_host_uuid || p1->m_property_name!=p2->m_property_name)
-        {
+    int c = childCount();
+    QPropertyChangedUndoCommand *p1, *p2;
+    for(int i=0; i<c; i++) {
+        p1 = (QPropertyChangedUndoCommand*)child(i);
+        p2 = (QPropertyChangedUndoCommand*)cmd->child(i);
+        if(p1->m_host_uuid != p2->m_host_uuid || p1->m_property_name != p2->m_property_name) {
             return false;
         }
     }
 
-    for(int i=0;i<c;i++)
-    {
-        p1=(QPropertyChangedUndoCommand*)child(i);
-        p2=(QPropertyChangedUndoCommand*)cmd->child(i);
-        p1->m_new_value=p2->m_new_value;
+    for(int i=0; i<c; i++) {
+        p1 = (QPropertyChangedUndoCommand*)child(i);
+        p2 = (QPropertyChangedUndoCommand*)cmd->child(i);
+        p1->m_new_value = p2->m_new_value;
     }
-    m_new_value=cmd->m_new_value;
+    m_new_value = cmd->m_new_value;
     return true;
 }
 
 void QPropertyChangedUndoCommand::redo()
 {
     QBaseUndoCommand::redo();
-
-    QAbstractHost* h=QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h!=Q_NULLPTR)
-    {
-        h->setPropertyValue(m_property_name,m_new_value);
+    QAbstractHost* h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    if(h != Q_NULLPTR) {
+        h->setPropertyValue(m_property_name, m_new_value);
     }
 }
 
@@ -69,9 +63,8 @@ void QPropertyChangedUndoCommand::undo()
 {
     QBaseUndoCommand::undo();
 
-    QAbstractHost* h=QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h!=Q_NULLPTR)
-    {
-        h->setPropertyValue(m_property_name,m_old_value);
+    QAbstractHost* h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    if(h != Q_NULLPTR) {
+        h->setPropertyValue(m_property_name, m_old_value);
     }
 }

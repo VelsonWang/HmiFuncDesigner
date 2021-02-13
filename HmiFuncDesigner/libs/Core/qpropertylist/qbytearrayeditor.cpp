@@ -1,22 +1,21 @@
 #include "qbytearrayeditor.h"
-
 #include "../../shared/property/qabstractproperty.h"
 
-QByteArrayEditor::QByteArrayEditor(QAbstractProperty *pro,QUndoStack* , QWidget *parent):
+QByteArrayEditor::QByteArrayEditor(QAbstractProperty *pro, QUndoStack* , QWidget *parent):
     QLineEdit(parent),
     m_property(pro)
 {
     setText(pro->get_value().toString());
-    connect(this,SIGNAL(textChanged(QString)),this,SLOT(value_changed()));
-    connect(m_property,SIGNAL(refresh()),this,SLOT(property_changed()));
+    connect(this, SIGNAL(textChanged(QString)), this, SLOT(onValueChanged()));
+    connect(m_property, SIGNAL(refresh()), this, SLOT(onPropertyChanged()));
 }
 
-void QByteArrayEditor::value_changed()
+void QByteArrayEditor::onValueChanged()
 {
-    m_property->emit_edit_value(text());
+    m_property->notifyEditValue(text());
 }
 
-void QByteArrayEditor::property_changed()
+void QByteArrayEditor::onPropertyChanged()
 {
     setText(m_property->get_value().toString());
 }

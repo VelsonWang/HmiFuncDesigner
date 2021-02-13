@@ -11,8 +11,8 @@ QPropertyView::QPropertyView(QWidget *parent) :
     m_styledBar(new StyledBar(this)),
     m_select(Q_NULLPTR)
 {
-    this->setMinimumSize(200,200);
-    QVBoxLayout *l=new QVBoxLayout();
+    this->setMinimumSize(360, 200);
+    QVBoxLayout *l = new QVBoxLayout();
     l->setMargin(0);
     l->setSpacing(0);
     l->addWidget(m_styledBar);
@@ -28,7 +28,7 @@ QPropertyView::QPropertyView(QWidget *parent) :
     layout->addWidget(pLabelObj);
     m_styledBar->setLayout(layout);
 
-    this->resize(200,200);
+    this->resize(360, 200);
     connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
             this, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
 }

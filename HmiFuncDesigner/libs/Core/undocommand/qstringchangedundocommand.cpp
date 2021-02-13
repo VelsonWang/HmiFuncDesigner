@@ -27,50 +27,37 @@ QStringChangedUndoCommand::QStringChangedUndoCommand(const QString &host_uuid,
 {
 }
 
-int QStringChangedUndoCommand::id()const
+int QStringChangedUndoCommand::id() const
 {
     return STRING_CHANGED_UNDO_COMMAND;
 }
 
 void QStringChangedUndoCommand::redo()
 {
-    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h!=Q_NULLPTR)
-    {
-        QAbstractProperty* pro=h->getProperty(m_property_name);
-        if(pro!=Q_NULLPTR)
-        {
-            pro->setObjectProperty("tr",m_new_tr);
-            pro->setObjectProperty("uuid",m_new_tr?m_uuid:QVariant());
+    QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    if(h != Q_NULLPTR) {
+        QAbstractProperty* pro = h->getProperty(m_property_name);
+        if(pro != Q_NULLPTR) {
+            pro->setObjectProperty("tr", m_new_tr);
+            pro->setObjectProperty("uuid", m_new_tr?m_uuid:QVariant());
         }
-        if(m_old_tr)
-        {
-            if(!m_new_tr)
-            {
-                h->setPropertyValue(m_property_name,m_new_text);
-            }
-            else
-            {
+        if(m_old_tr) {
+            if(!m_new_tr) {
+                h->setPropertyValue(m_property_name, m_new_text);
+            } else {
                 QMapIterator<QString,QString> it(m_new_translates);
-                while(it.hasNext())
-                {
+                while(it.hasNext()) {
                     it.next();
                 }
             }
-        }
-        else
-        {
-            if(m_new_tr)
-            {
+        } else {
+            if(m_new_tr) {
                 QMapIterator<QString,QString> it(m_new_translates);
-                while(it.hasNext())
-                {
+                while(it.hasNext()) {
                     it.next();
                 }
-            }
-            else
-            {
-                h->setPropertyValue(m_property_name,m_new_text);
+            } else {
+                h->setPropertyValue(m_property_name, m_new_text);
             }
         }
     }
@@ -78,43 +65,30 @@ void QStringChangedUndoCommand::redo()
 
 void QStringChangedUndoCommand::undo()
 {
-    QAbstractHost *h=QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h!=Q_NULLPTR)
-    {
-        QAbstractProperty* pro=h->getProperty(m_property_name);
-        if(pro!=Q_NULLPTR)
-        {
-            pro->setObjectProperty("tr",m_old_tr);
-            pro->setObjectProperty("uuid",m_old_tr?m_uuid:QVariant());
+    QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    if(h != Q_NULLPTR) {
+        QAbstractProperty* pro = h->getProperty(m_property_name);
+        if(pro != Q_NULLPTR) {
+            pro->setObjectProperty("tr", m_old_tr);
+            pro->setObjectProperty("uuid", m_old_tr ? m_uuid : QVariant());
         }
-        if(m_new_tr)
-        {
-            if(!m_old_tr)
-            {
-                h->setPropertyValue(m_property_name,m_old_text);
-            }
-            else
-            {
-                QMapIterator<QString,QString> it(m_old_translates);
-                while(it.hasNext())
-                {
+        if(m_new_tr) {
+            if(!m_old_tr) {
+                h->setPropertyValue(m_property_name, m_old_text);
+            } else {
+                QMapIterator<QString, QString> it(m_old_translates);
+                while(it.hasNext()) {
                     it.next();
                 }
             }
-        }
-        else
-        {
-            if(m_old_tr)
-            {
-                QMapIterator<QString,QString> it(m_old_translates);
-                while(it.hasNext())
-                {
+        } else {
+            if(m_old_tr) {
+                QMapIterator<QString, QString> it(m_old_translates);
+                while(it.hasNext()) {
                     it.next();
                 }
-            }
-            else
-            {
-                h->setPropertyValue(m_property_name,m_old_text);
+            } else {
+                h->setPropertyValue(m_property_name, m_old_text);
             }
         }
     }

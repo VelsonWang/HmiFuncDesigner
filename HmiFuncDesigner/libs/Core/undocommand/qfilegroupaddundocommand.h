@@ -13,22 +13,27 @@ enum enFileGroupAddType
     FGAT_EMPTY
 };
 
-class CORELIB_EXPORT QFileGroupAddUndoCommand: public QBaseUndoCommand
+class CORELIB_EXPORT QFileGroupAddUndoCommand : public QBaseUndoCommand
 {
 public:
-    QFileGroupAddUndoCommand(const tagFileGroupInfo &data,int index,enFileGroupAddType type,QUndoCommand* parent=0);
+    QFileGroupAddUndoCommand(const tagFileGroupInfo &data,
+                             int index,
+                             enFileGroupAddType type,
+                             QUndoCommand* parent = 0);
 
-    void    redo();
-    void    undo();
+    void redo();
+    void undo();
 
-    int     id()const;
+    int  id()const;
+
 protected:
-    void    add();
-    void    remove();
+    void add();
+    void remove();
+
 protected:
-    enFileGroupAddType      m_type;
-    int                     m_index;
-    tagFileGroupInfo        m_data;
+    enFileGroupAddType m_type;
+    int m_index;
+    tagFileGroupInfo m_data;
 };
 
 #endif // QFILEGROUPADDUNDOCOMMAND_H

@@ -16,7 +16,8 @@ class QFindWidget : public StyledBar
 public:
     explicit QFindWidget(QWidget *parent = 0);
     ~QFindWidget();
-    void    setFindText(const QString &text);
+    void setFindText(const QString &text);
+
 public slots:
     void hideAndResetFocus();
     void showFindWidget();
@@ -29,7 +30,8 @@ public slots:
     void replace_signal();
     void replaceAndNext_signal();
     void replaceAll_signal();
-    signals:
+
+signals:
     void find(const QString &text);
     void findNext();
     void findPrev();
@@ -38,8 +40,8 @@ public slots:
     void replaceAll(const QString &text);
 private:
     Ui::QFindWidget *ui;
-    QFancyLineEdit   *m_findEdit;
-    QFancyLineEdit   *m_replaceEdit;
+    QFancyLineEdit *m_findEdit;
+    QFancyLineEdit *m_replaceEdit;
 };
 
 #endif // QFINDWIDGET_H

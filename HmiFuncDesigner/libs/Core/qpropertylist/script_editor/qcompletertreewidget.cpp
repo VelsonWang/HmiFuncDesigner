@@ -1,8 +1,6 @@
 #include "qcompletertreewidget.h"
-
 #include "qhostobjectmap.h"
 #include "../../../shared/host/qabstracthost.h"
-
 #include <QHeaderView>
 #include <QTreeWidgetItem>
 #include <QFontMetrics>
@@ -15,7 +13,7 @@
 
 #define FONT_SIZE 9
 
-class QCompleterDelegate: public QItemDelegate
+class QCompleterDelegate : public QItemDelegate
 {
 public :
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -24,12 +22,11 @@ public :
 
 void QCompleterDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV3 opt=option;
+    QStyleOptionViewItemV3 opt = option;
     QColor c;
-    c=QColor(255,230,151);
-    if(opt.features & QStyleOptionViewItemV2::Alternate)
-    {
-        c=c.lighter(130);
+    c = QColor(255,230,151);
+    if(opt.features & QStyleOptionViewItemV2::Alternate) {
+        c = c.lighter(130);
     }
 
     painter->fillRect(option.rect,c);
@@ -40,7 +37,7 @@ void QCompleterDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
 
 QSize QCompleterDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QSize sz=QItemDelegate::sizeHint(option,index);
+    QSize sz = QItemDelegate::sizeHint(option,index);
     sz.setHeight(20);
     return sz;
 }
@@ -73,35 +70,29 @@ void QCompleterTreeWidget::move_position(const QRect &re)
 
     int h = (this->sizeHintForRow(0) * qMin(10, this->model()->rowCount()));
     int w=this->sizeHintForColumn(0);
-    if(model()->rowCount()>10)
-    {
-        w+=20;
-    }
-    else
-    {
-        w+=4;
+    if(model()->rowCount() > 10) {
+        w += 20;
+    } else {
+        w += 4;
     }
 
 
     int x,y;
-    x=re.left();
-    y=re.bottom();
-    if(width<re.left()+w)
-    {
-        x=width-w;
+    x = re.left();
+    y = re.bottom();
+    if(width < re.left() + w) {
+        x = width - w;
     }
-    if(height<re.bottom()+h)
-    {
-        y=re.top()-h;
+    if(height < re.bottom() + h) {
+        y = re.top() - h;
     }
 
-    this->setGeometry(x,y,w,h+2);
+    this->setGeometry(x, y, w, h+2);
 }
 
 bool QCompleterTreeWidget::eventFilter(QObject *o, QEvent *e)
 {
-    if(!this->isVisible())
-    {
+    if(!this->isVisible()) {
         return false;
     }
 

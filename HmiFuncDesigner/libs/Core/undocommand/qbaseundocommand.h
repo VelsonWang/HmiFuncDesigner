@@ -9,7 +9,7 @@
 class CORELIB_EXPORT QBaseUndoCommand : public QUndoCommand
 {
 public:
-    QBaseUndoCommand(QUndoCommand* parent=0);
+    QBaseUndoCommand(QUndoCommand* parent = 0);
 };
 
 #endif // QBASEUNDOCOMMAND_H

@@ -1,6 +1,8 @@
 #include "qformlistwidget.h"
 #include "qdesignerformhost.h"
 #include "../../../libs/shared/host/qabstracthost.h"
+#include "../../../libs/shared/property/qabstractproperty.h"
+#include "../../../libs/shared/qcommonstruct.h"
 #include "../../../libs/core/qsoftcore.h"
 #include "../../../libs/shared/qprojectcore.h"
 #include "../../../libs/shared/qpagemanager.h"
@@ -75,6 +77,7 @@ void QFormListWidget::insert_form(QAbstractHost *host, int index)
     }
     QDesignerFormHost *form = new QDesignerFormHost(host, this);
     connect(form, SIGNAL(select(QAbstractHost*)), this, SIGNAL(select(QAbstractHost*)));
+    connect(form, SIGNAL(select(QAbstractHost*)), this, SLOT(onSelect(QAbstractHost*)));
     form->set_select_widget(host);
     form->setUndoStack(m_undo_stack);
     m_forms.insert(index, form);
@@ -218,6 +221,7 @@ void QFormListWidget::same_h_centre()
     }
 }
 
+
 void QFormListWidget::set_select(QAbstractHost *host)
 {
     QAbstractHost *par = host;
@@ -252,4 +256,31 @@ void QFormListWidget::insert_page_slot(QAbstractHost *host)
 void QFormListWidget::remove_page_slot(QAbstractHost *host)
 {
     remove_form(host);
+}
+
+void QFormListWidget::onSelect(QAbstractHost* host)
+{
+    if(host != Q_NULLPTR) {
+        // 更新变量编辑器
+        QList<QAbstractProperty*> listProps = host->getPropertys();
+        foreach(QAbstractProperty* pPropObj, listProps) {
+            if(pPropObj->getObjectProperty("type") == "Tag") {
+                QProjectCore* pPorjCore = QSoftCore::getCore()->getProjectCore();
+                QStringList szListTagName;
+                pPorjCore->getAllTagName(szListTagName, "ALL");
+
+                ComboItems items;
+                foreach(QString szTagName, szListTagName) {
+                    tagComboItem item;
+                    item.m_text = szTagName;
+                    item.m_value = szTagName;
+                    items.append(item);
+                }
+
+                QVariant v;
+                v.setValue<ComboItems>(items);
+                pPropObj->setAttribute("items", v);
+            }
+        }
+    }
 }

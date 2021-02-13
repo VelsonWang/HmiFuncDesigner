@@ -17,10 +17,12 @@ public:
     explicit QShowWidget(QWidget *parent = 0);
     ~QShowWidget();
     
-    void    set_item_sheet(const QString &sheet);
-    void    set_host(QAbstractHost* host);
+    void set_item_sheet(const QString &sheet);
+    void set_host(QAbstractHost* host);
+
 protected:
-    bool    eventFilter(QObject *, QEvent *);
+    bool eventFilter(QObject *, QEvent *);
+
 private slots:
     void on_okbtn_clicked();
 
@@ -31,14 +33,16 @@ private slots:
     void on_clearall_clicked();
 
 signals:
-    void    ok();
-    void    cancel();
-    void    clear();
-    void    clearall();
+    void ok();
+    void cancel();
+    void clear();
+    void clearall();
+
 private:
     Ui::QShowWidget *ui;
+
 protected:
-    QAbstractHost*        m_host;
+    QAbstractHost* m_host;
 };
 
 #endif // QSHOWWIDGET_H

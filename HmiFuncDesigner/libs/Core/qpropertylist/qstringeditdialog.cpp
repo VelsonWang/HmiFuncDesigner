@@ -16,39 +16,35 @@
 
 QWidget *QLanguageDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &/*option*/, const QModelIndex &index) const
 {
-    QWidget *ret=NULL;
-    if(index.column()==1)
-    {
-        ret=new QLineEdit(parent);
+    QWidget *ret = NULL;
+    if(index.column() == 1) {
+        ret = new QLineEdit(parent);
     }
-    if(ret!=NULL)
-    {
-        ret->setProperty("no-ManhattanStyle",true);
+    if(ret != NULL) {
+        ret->setProperty("no-ManhattanStyle", true);
     }
     return ret;
 }
 
 void QLanguageDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &/*index*/) const
 {
-    editor->setGeometry(option.rect.adjusted(0,0,0,0));
+    editor->setGeometry(option.rect.adjusted(0, 0, 0, 0));
 }
 
 QSize QLanguageDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QSize size=QItemDelegate::sizeHint(option,index);
+    QSize size = QItemDelegate::sizeHint(option,index);
     size.setHeight(21);
     return size;
 }
 
 void QLanguageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV3 opt=option;
+    QStyleOptionViewItemV3 opt = option;
+    QColor c = QColor(255, 255, 191);
 
-    QColor c=QColor(255,255,191);
-
-    if(opt.features & QStyleOptionViewItemV2::Alternate)
-    {
-        c=c.lighter(112);
+    if(opt.features & QStyleOptionViewItemV2::Alternate) {
+        c = c.lighter(112);
     }
     painter->fillRect(option.rect,c);
     opt.state &=~ QStyle::State_HasFocus;
@@ -57,7 +53,7 @@ void QLanguageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
     QColor color=static_cast<QRgb>(qApp->style()->styleHint(QStyle::SH_Table_GridLineColor,&opt));
     painter->setPen(color);
 
-    int right=option.direction==Qt::LeftToRight?option.rect.right():option.rect.left();
+    int right = option.direction==Qt::LeftToRight?option.rect.right():option.rect.left();
     painter->drawLine(right,option.rect.y(),right,option.rect.bottom());
 
     painter->drawLine(option.rect.left(),option.rect.bottom(),option.rect.right(),option.rect.bottom());

@@ -1,6 +1,5 @@
 #include "qwidgetviewtoolbar.h"
 #include "ui_qwidgetviewtoolbar.h"
-
 #include "../../qfancylineedit.h"
 
 QWidgetViewToolBar::QWidgetViewToolBar(QWidget *parent) :
@@ -8,11 +7,10 @@ QWidgetViewToolBar::QWidgetViewToolBar(QWidget *parent) :
     ui(new Ui::QWidgetViewToolBar)
 {
     ui->setupUi(this);
-    m_lineEdit=new QFancyLineEdit(this);
-    m_lineEdit->setButtonVisible(QFancyLineEdit::Right,true);
-    ui->horizontalLayout->insertWidget(1,m_lineEdit,1);
-
-    connect(m_lineEdit,SIGNAL(rightButtonClicked()),m_lineEdit,SLOT(clear()));
+    m_lineEdit = new QFancyLineEdit(this);
+    m_lineEdit->setButtonVisible(QFancyLineEdit::Right, true);
+    ui->horizontalLayout->insertWidget(1, m_lineEdit, 1);
+    connect(m_lineEdit, SIGNAL(rightButtonClicked()), m_lineEdit, SLOT(clear()));
 }
 
 QWidgetViewToolBar::~QWidgetViewToolBar()
@@ -22,18 +20,16 @@ QWidgetViewToolBar::~QWidgetViewToolBar()
 
 void QWidgetViewToolBar::on_prevBtn_clicked()
 {
-    QString str=m_lineEdit->text();
-    if(str!="")
-    {
+    QString str = m_lineEdit->text();
+    if(str != "") {
         emit findPrev(str);
     }
 }
 
 void QWidgetViewToolBar::on_nextBtn_clicked()
 {
-    QString str=m_lineEdit->text();
-    if(str!="")
-    {
+    QString str = m_lineEdit->text();
+    if(str != "") {
         emit findNext(str);
     }
 }

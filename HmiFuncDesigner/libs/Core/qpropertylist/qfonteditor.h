@@ -7,10 +7,10 @@ class QFontEditor : public QButtonCommonEditor
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QFontEditor(QAbstractProperty* property,QUndoStack* stack,QWidget *parent = 0);
+    Q_INVOKABLE QFontEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
     
 protected:
-    void btn_clicked();
+    void onBtnClicked();
 };
 
 #endif // QFONTEDITOR_H

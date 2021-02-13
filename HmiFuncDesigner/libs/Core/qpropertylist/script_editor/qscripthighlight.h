@@ -10,17 +10,21 @@ class QScriptHighLight : public QSyntaxHighlighter
 public:
     QScriptHighLight(QTextDocument *document =0 );
     ~QScriptHighLight();
+
 protected:
     void highlightBlock(const QString &text);
 
 private:
-    void highlightWord(int currentPos ,const QString &buffer);
+    void highlightWord(int currentPos, const QString &buffer);
     enum ScriptFormats
     {
-        ScriptTextFormat,ScriptNumberFormat,
+        ScriptTextFormat,
+        ScriptNumberFormat,
         ScriptStringFormat,
-        ScriptKeywordFormat,ScriptPreprocessorFormat,
-        ScriptLabelFormat,ScriptCommentFormat,
+        ScriptKeywordFormat,
+        ScriptPreprocessorFormat,
+        ScriptLabelFormat,
+        ScriptCommentFormat,
         NumScriptFormats
     };
     QTextCharFormat m_formats[NumScriptFormats];

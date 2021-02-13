@@ -1,42 +1,33 @@
 #include "qbaseeditorwidget.h"
-
 #include "qbackgrounsheeteditor.h"
 #include "qbordersheeteditor.h"
 #include "qtextsheeteditor.h"
-
 #include "../../../gradienteditor/qtgradientdialog.h"
 #include "../../../shared/property/stylesheetitem/qabstractstylesheetitem.h"
-
 #include <QColorDialog>
 #include <QPainter>
 
 QBaseEditorWidget* create_editor_widget(const QString &name)
 {
-    if(name=="background")
-    {
+    if(name == "background") {
         return new QBackgrounSheetEditor;
-    }
-    else if(name=="border")
-    {
+    } else if(name=="border") {
         return new QBorderSheetEditor;
-    }
-    else if(name=="text_sheet")
-    {
+    } else if(name=="text_sheet") {
         return new QTextSheetEditor;
     }
 
     return Q_NULLPTR;
 }
 
-QBaseEditorWidget::QBaseEditorWidget(QWidget *parent) :
-    QWidget(parent)
+QBaseEditorWidget::QBaseEditorWidget(QWidget *parent) : QWidget(parent)
 {
 }
 
 
 void QBaseEditorWidget::set_item(QAbstractStylesheetItem *item)
 {
-    m_item=item->value().value<tagStylesheetItem>();
+    m_item = item->value().value<tagStylesheetItem>();
 }
 
 tagStylesheetItem QBaseEditorWidget::get_value()
@@ -47,24 +38,18 @@ tagStylesheetItem QBaseEditorWidget::get_value()
 QGradient QBaseEditorWidget::get_color(const QColor &color)
 {
     QColor temp;
-    if(color.isValid())
-    {
-        temp=color;
+    if(color.isValid()) {
+        temp = color;
+    } else {
+        temp = QColor(255, 255, 255);
     }
-    else
-    {
-        temp=QColor(255,255,255);
-    }
-    QColor c=QColorDialog::getColor(temp,this);
-    if(c.isValid())
-    {
-        QGradient g=QLinearGradient(0,0,1,0);
-        g.setColorAt(0,c);
-        g.setColorAt(1,c);
+    QColor c = QColorDialog::getColor(temp, this);
+    if(c.isValid()) {
+        QGradient g = QLinearGradient(0, 0, 1, 0);
+        g.setColorAt(0, c);
+        g.setColorAt(1, c);
         return g;
-    }
-    else
-    {
+    } else {
         return QGradient();
     }
 }
@@ -73,9 +58,8 @@ QGradient QBaseEditorWidget::get_gradient(const QGradient &g)
 {
     QtGradientDialog dlg(this);
     dlg.setGradient(g);
-    int res=dlg.exec();
-    if (res == QDialog::Accepted)
-    {
+    int res = dlg.exec();
+    if (res == QDialog::Accepted) {
         return dlg.gradient();
     }
     return QGradient();
@@ -83,16 +67,15 @@ QGradient QBaseEditorWidget::get_gradient(const QGradient &g)
 
 QIcon QBaseEditorWidget::get_icon(const QGradient &gradient)
 {
-    QPixmap pixmap=QPixmap(16,16);
+    QPixmap pixmap = QPixmap(16,16);
 
     pixmap.fill(Qt::transparent);
-    if(gradient.type()!=QGradient::NoGradient)
-    {
+    if(gradient.type() != QGradient::NoGradient) {
         QPainter p(&pixmap);
-        p.fillRect(QRect(0,0,16,16),QBrush(gradient));
+        p.fillRect(QRect(0, 0, 16, 16), QBrush(gradient));
     }
 
-    QIcon icon=QIcon(pixmap);
+    QIcon icon = QIcon(pixmap);
     icon.addPixmap(pixmap,QIcon::Disabled);
     return icon;
 }
