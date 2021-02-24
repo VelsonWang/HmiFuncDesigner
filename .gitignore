@@ -90,3 +90,4 @@ moc_*
 tags
 prj
 *.ini
+qrc_*
