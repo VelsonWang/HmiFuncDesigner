@@ -31,6 +31,8 @@ HmiFuncDesignerBin/bin/project
 HmiFuncDesignerBin/bin/QSCADARunTime
 HmiFuncDesignerBin/bin/RtdbView
 HmiFuncDesignerBin/bin/SysTagManager
+HmiFuncDesignerBin/bin/ProjectManager
+HmiFuncDesignerBin/bin/NativeRtdbView
 
 HmiRunTimeBin/log/
 HmiRunTimeBin/Project/
@@ -47,6 +49,11 @@ HmiRunTimeBin/Vendors/
 HmiRunTimeBin/*.exe
 HmiRunTimeBin/*.dll
 HmiRunTimeBin/ViewElements/
+
+HmiRunTimeBin/AppLauncher
+HmiRunTimeBin/FileTransferTool
+HmiRunTimeBin/HmiRunTimeData
+HmiRunTimeBin/HmiRunTimeView
 
 third/
 
@@ -74,5 +81,12 @@ delobj.bat
 Makefile
 .qmake.stash
 .moc
+*.moc
+moc_*
 .rcc
 .uic
+*.so
+*.so.*
+tags
+prj
+*.ini
