@@ -68,3 +68,11 @@ delobj.bat
 *.opensdf
 *.orig
 *.autosave
+*~
+*.un~
+*.swp
+Makefile
+.qmake.stash
+.moc
+.rcc
+.uic
