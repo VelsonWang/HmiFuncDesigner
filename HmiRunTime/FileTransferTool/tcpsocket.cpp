@@ -183,7 +183,7 @@ void TcpSocket::unTarProject()
 #if defined(Q_OS_WIN32)
     QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
 #elif defined(Q_OS_LINUX)
-    QString program = "/bin/tar";
+    QString program = "tar";
 #endif
 
     QFile programFile(program);
@@ -203,7 +203,7 @@ void TcpSocket::unTarProject()
     tarProc->setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tar");
     QStringList arguments;
     QString strSrc = QCoreApplication::applicationDirPath()+"/Project/RunProject.tar";
-    QString strDes = QCoreApplication::applicationDirPath()+"/RunProject";
+    QString strDes = QCoreApplication::applicationDirPath();
     arguments << "-xvf" << strSrc << "-C"<< strDes;
 #endif
 
