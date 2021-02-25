@@ -318,8 +318,7 @@ void QAbstractHost::initProperty()
     QAbstractProperty* pro;
 
     pro=QPropertyFactory::create_property("ByteArray");
-    if(pro!=Q_NULLPTR)
-    {
+    if(pro != Q_NULLPTR) {
         pro->setObjectProperty("name", "objectName");
         pro->setAttribute("show_name", tr("名称")); // tr("Name")
         pro->setAttribute("group", "Attributes");

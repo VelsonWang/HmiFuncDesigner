@@ -1,9 +1,7 @@
 #include "qabstractwidgethost.h"
-
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../qcommonstruct.h"
-
 #include <QDynamicPropertyChangeEvent>
 
 QAbstractWidgetHost::QAbstractWidgetHost(QAbstractHost *parent):
@@ -15,9 +13,23 @@ void QAbstractWidgetHost::initProperty()
 {
     QAbstractHost::initProperty();
 
-    QWidget* wid=(QWidget*)m_object;
+    QWidget* wid = (QWidget*)m_object;
     wid->setMouseTracking(true);
 
+    QAbstractProperty* pro;
+
+    pro = QPropertyFactory::create_property("Rect");
+    if(pro != Q_NULLPTR) {
+        pro->setObjectProperty("name", "geometry");
+        pro->setAttribute("show_name", tr("坐标大小")); // tr("Geometry")
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE, true);
+        pro->setAttribute(ATTR_CAN_SAME, true);
+        m_object->setProperty("geometry", QRect(0, 0, 100, 70));
+        insertProperty(pro);
+    }
+
+#if 0
     SheetItems items=property("sheet_state").value<SheetItems>();
 
     tagSheetItem item;
@@ -170,6 +182,7 @@ void QAbstractWidgetHost::initProperty()
         pro->setAttribute("group", "Style Sheet");
         insertProperty(pro);
     }
+#endif
 }
 
 void QAbstractWidgetHost::setGeometry(int x, int y, int width, int height)
