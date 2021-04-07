@@ -18,6 +18,7 @@
 #include "property/qboolproperty.h"
 #include "property/qalignmentproperty.h"
 #include "property/qstylesheetproperty.h"
+#include "property/qfileproperty.h"
 #include "qpropertyfactory.h"
 #include "host/qwidgethost.h"
 #include "host/qframehost.h"
@@ -62,6 +63,7 @@ void qRegisterBaseProperty()
     qRegisterProperty("Alignment", QAlignmentProperty);
     qRegisterProperty("StyleSheet", QStylesheetProperty);
     qRegisterProperty("Tag", QTagProperty);
+    qRegisterProperty("File", QFileProperty);
 }
 
 void qRegisterBaseHost()

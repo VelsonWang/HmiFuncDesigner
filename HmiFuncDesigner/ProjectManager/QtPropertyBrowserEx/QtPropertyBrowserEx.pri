@@ -16,7 +16,6 @@ SOURCES += \
     $$PWD/tagcolorlisteditordialog.cpp \
     $$PWD/tagtextlistedit.cpp \	
     $$PWD/tagtextlisteditordialog.cpp \
-	$$PWD/fileedit.cpp \
 	$$PWD/coloreditor.cpp \
 	$$PWD/scriptedit.cpp \
 	$$PWD/scriptpropertyeditordlg.cpp \
@@ -32,7 +31,6 @@ HEADERS += \
     $$PWD/tagcolorlisteditordialog.h \
     $$PWD/tagtextlistedit.h \		
 	$$PWD/tagtextlisteditordialog.h \
-	$$PWD/fileedit.h \	
 	$$PWD/coloreditor.h \	
 	$$PWD/scriptedit.h \	
 	$$PWD/scriptpropertyeditordlg.h \
