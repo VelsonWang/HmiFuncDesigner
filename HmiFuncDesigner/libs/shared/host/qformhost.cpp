@@ -11,7 +11,7 @@ QFormHost::QFormHost(QAbstractHost *parent):
 
 void QFormHost::createObject()
 {
-    m_object=new QWidget();
+    m_object = new QWidget();
 }
 
 void QFormHost::initProperty()

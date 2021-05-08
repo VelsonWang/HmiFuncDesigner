@@ -31,6 +31,7 @@ HEADERS += \
     listviewex.h \
     newcomdevicedialog.h \
     newnetdevicedialog.h \
+    qpropertylist/qcoloreditor.h \
     qpropertylist/qfileeditor.h \
     selectprotocoldialog.h \
     tageditdialog.h \
@@ -114,6 +115,7 @@ SOURCES += \
     listviewex.cpp \
     newcomdevicedialog.cpp \
     newnetdevicedialog.cpp \
+    qpropertylist/qcoloreditor.cpp \
     qpropertylist/qfileeditor.cpp \
     selectprotocoldialog.cpp \
     tageditdialog.cpp \

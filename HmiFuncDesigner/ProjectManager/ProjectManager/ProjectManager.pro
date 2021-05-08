@@ -24,7 +24,7 @@ INCLUDEPATH += $$PWD/../../libs/running
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
-include($$PWD/../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
+#include($$PWD/../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -37,7 +37,7 @@ CONFIG(debug, debug|release) { #debug
 
 LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
+#LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lcore
 LIBS += -L$$LINK_LIBRARY_PATH -lshared
@@ -52,7 +52,7 @@ SOURCES += main.cpp\
     ProjectDownloadDialog.cpp \
     ProjectUploadDialog.cpp \
     AboutDialog.cpp \
-    TagFuncEditDialog.cpp \
+#    TagFuncEditDialog.cpp \
     VerifyPasswordDialog.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
@@ -70,7 +70,7 @@ HEADERS  += MainWindow.h \
     ProjectDownloadDialog.h \
     ProjectUploadDialog.h \
     AboutDialog.h \
-    TagFuncEditDialog.h \
+#    TagFuncEditDialog.h \
     FileTansfer.h \
     VerifyPasswordDialog.h \
     widget/QFramelessDockWidget.h \

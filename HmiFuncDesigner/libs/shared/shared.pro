@@ -21,6 +21,7 @@ INCLUDEPATH += $$PWD/projdata
 
 HEADERS += \
     confighelper.h \
+    property/qcolorproperty.h \
     property/qfileproperty.h \
     property/qtagproperty.h \
     sharedlibglobal.h \
@@ -90,6 +91,7 @@ HEADERS += \
 
 SOURCES += \
     confighelper.cpp \
+    property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
     property/qtagproperty.cpp \
     xmlobject.cpp \
