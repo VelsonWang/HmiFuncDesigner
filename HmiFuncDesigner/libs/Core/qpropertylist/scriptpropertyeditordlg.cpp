@@ -1,7 +1,6 @@
 ﻿#include "scriptpropertyeditordlg.h"
 #include "ui_scriptpropertyeditordlg.h"
-#include "ConfigUtils.h"
-#include "Helper.h"
+#include "../../shared/confighelper.h"
 #include "insertfunctiondlg.h"
 #include "inserttagdlg.h"
 #include "Qsci/qsciapis.h"
@@ -15,6 +14,7 @@
 #include <QSize>
 #include <QSplitter>
 #include <QVBoxLayout>
+#include <QApplication>
 
 ScriptPropertyEditorDlg::ScriptPropertyEditorDlg(QWidget *parent, QStringList events)
     : QDialog(parent),
@@ -451,7 +451,7 @@ void ScriptPropertyEditorDlg::on_btnToolComment_clicked() {
 void ScriptPropertyEditorDlg::on_btnToolSyntaxcheck_clicked() {
     QScriptEngine engine;
 
-    QString scriptFileName(Helper::AppDir() + "/Config/ScriptFunc.js");
+    QString scriptFileName(QApplication::applicationDirPath() + "/Config/ScriptFunc.js");
     QFile scriptFile(scriptFileName);
     scriptFile.open(QIODevice::ReadOnly);
     QTextStream stream(&scriptFile);

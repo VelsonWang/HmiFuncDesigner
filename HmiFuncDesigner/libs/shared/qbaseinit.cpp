@@ -20,6 +20,8 @@
 #include "property/qstylesheetproperty.h"
 #include "property/qfileproperty.h"
 #include "property/qcolorproperty.h"
+#include "property/qtagcolorlistproperty.h"
+#include "property/qtagtextlistproperty.h"
 #include "qpropertyfactory.h"
 #include "host/qwidgethost.h"
 #include "host/qframehost.h"
@@ -66,6 +68,8 @@ void qRegisterBaseProperty()
     qRegisterProperty("Tag", QTagProperty);
     qRegisterProperty("File", QFileProperty);
     qRegisterProperty("Color", QColorProperty);
+    qRegisterProperty("TagColorList", QTagColorListProperty);
+    qRegisterProperty("TagTextList", QTagTextListProperty);
 }
 
 void qRegisterBaseHost()

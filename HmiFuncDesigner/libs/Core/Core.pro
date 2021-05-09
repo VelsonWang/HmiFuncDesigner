@@ -18,12 +18,21 @@ DEFINES += CORE_LIBRARY
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
+LIB_SUFFIX=""
+CONFIG(debug, debug|release) { #debug
+    win32 {
+        LIB_SUFFIX=d
+    }
+}
+
 INCLUDEPATH += $$PWD
 INCLUDEPATH += $$PWD/qpropertylist
 INCLUDEPATH += $$PWD/undocommand
+INCLUDEPATH += $$PWD/../qscintilla
 
 LIBS += -L$$clean_path($$DESTDIR) -lshared
 LIBS += -L$$clean_path($$DESTDIR) -lgradientEditor
+LIBS += -L$$clean_path($$DESTDIR) -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
 
 HEADERS += \
     devicelistdialog.h \
@@ -31,8 +40,18 @@ HEADERS += \
     listviewex.h \
     newcomdevicedialog.h \
     newnetdevicedialog.h \
+    qpropertylist/coloreditor.h \
+#    qpropertylist/functioneditordialog.h \
+    qpropertylist/insertfunctiondlg.h \
+    qpropertylist/inserttagdlg.h \
     qpropertylist/qcoloreditor.h \
     qpropertylist/qfileeditor.h \
+    qpropertylist/qfunctioneditor.h \
+    qpropertylist/qtagcolorlisteditor.h \
+    qpropertylist/qtagtextlisteditor.h \
+    qpropertylist/scriptpropertyeditordlg.h \
+    qpropertylist/tagcolorlisteditordialog.h \
+    qpropertylist/tagtextlisteditordialog.h \
     selectprotocoldialog.h \
     tageditdialog.h \
     corelibglobal.h \
@@ -115,8 +134,18 @@ SOURCES += \
     listviewex.cpp \
     newcomdevicedialog.cpp \
     newnetdevicedialog.cpp \
+    qpropertylist/coloreditor.cpp \
+#    qpropertylist/functioneditordialog.cpp \
+    qpropertylist/insertfunctiondlg.cpp \
+    qpropertylist/inserttagdlg.cpp \
     qpropertylist/qcoloreditor.cpp \
     qpropertylist/qfileeditor.cpp \
+    qpropertylist/qfunctioneditor.cpp \
+    qpropertylist/qtagcolorlisteditor.cpp \
+    qpropertylist/qtagtextlisteditor.cpp \
+    qpropertylist/scriptpropertyeditordlg.cpp \
+    qpropertylist/tagcolorlisteditordialog.cpp \
+    qpropertylist/tagtextlisteditordialog.cpp \
     selectprotocoldialog.cpp \
     tageditdialog.cpp \
     qabstractpage.cpp \
@@ -196,6 +225,12 @@ FORMS += \
     devicelistdialog.ui \
     newcomdevicedialog.ui \
     newnetdevicedialog.ui \
+#    qpropertylist/functioneditordialog.ui \
+    qpropertylist/insertfunctiondlg.ui \
+    qpropertylist/inserttagdlg.ui \
+    qpropertylist/scriptpropertyeditordlg.ui \
+    qpropertylist/tagcolorlisteditordialog.ui \
+    qpropertylist/tagtextlisteditordialog.ui \
     selectprotocoldialog.ui \
     tageditdialog.ui \
     qrenamedialog.ui \
@@ -217,3 +252,7 @@ FORMS += \
     newprojectdialog.ui \
     qipaddressedit.ui \
     userauthoritydialog.ui
+
+
+RESOURCES += \
+    images.qrc

@@ -27,8 +27,6 @@
 #include "MainWindow.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
-#include "variantmanager.h"
-#include "variantfactory.h"
 #include "qsoftcore.h"
 #include "VerifyPasswordDialog.h"
 #include "../../libs/core/manhattanstyle.h"

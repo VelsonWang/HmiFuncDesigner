@@ -1,10 +1,10 @@
 #include "functioneditordialog.h"
 #include "ui_functioneditordialog.h"
-#include "Helper.h"
-#include "xmlobject.h"
+#include "../../shared/confighelper.h"
+#include "../../shared/xmlobject.h"
 #include "Element.h"
 #include "qsoftcore.h"
-#include "qprojectcore.h"
+#include "../../shared/qprojectcore.h"
 #include <QListWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>

@@ -1,9 +1,6 @@
 #ifndef FUNCTIONEDITORDIALOG_H
 #define FUNCTIONEDITORDIALOG_H
 
-#include "qtpropertymanager.h"
-#include "qtvariantproperty.h"
-#include "qttreepropertybrowser.h"
 #include <QDialog>
 #include <QList>
 #include <QMap>

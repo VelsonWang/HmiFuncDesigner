@@ -24,7 +24,6 @@ INCLUDEPATH += $$PWD/../../libs/running
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
-#include($$PWD/../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -37,7 +36,6 @@ CONFIG(debug, debug|release) { #debug
 
 LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
-#LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lcore
 LIBS += -L$$LINK_LIBRARY_PATH -lshared

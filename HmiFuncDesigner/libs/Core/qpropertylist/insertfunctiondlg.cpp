@@ -5,10 +5,9 @@
 #include <QMessageBox>
 #include <QStringList>
 #include <QTreeWidgetItem>
-#include "ConfigUtils.h"
-#include "Helper.h"
-#include "xmlobject.h"
-
+#include "../../shared/confighelper.h"
+#include "../../shared/xmlobject.h"
+#include <QApplication>
 
 #include <QDebug>
 
@@ -30,7 +29,7 @@ void InsertFunctionDlg::treeWidgetInit() {
     ui->treeWidgetFunc->setHeaderHidden(true);
 
     // file encoding="UTF-8"
-    QString xmlFileName = Helper::AppDir() + "/Config/JScriptFun.xml";
+    QString xmlFileName = QApplication::applicationDirPath() + "/Config/JScriptFun.xml";
 
     QFile fileCfg(xmlFileName);
     if (!fileCfg.exists()) {

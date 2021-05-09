@@ -1,7 +1,7 @@
 #include "inserttagdlg.h"
 #include "ui_inserttagdlg.h"
 #include "qsoftcore.h"
-#include "qprojectcore.h"
+#include "../../shared/qprojectcore.h"
 
 InsertTagDlg::InsertTagDlg(QWidget *parent)
     : QDialog(parent),

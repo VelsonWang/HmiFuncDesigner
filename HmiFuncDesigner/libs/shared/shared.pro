@@ -23,7 +23,9 @@ HEADERS += \
     confighelper.h \
     property/qcolorproperty.h \
     property/qfileproperty.h \
+    property/qtagcolorlistproperty.h \
     property/qtagproperty.h \
+    property/qtagtextlistproperty.h \
     sharedlibglobal.h \
     xmlobject.h \
     qpropertyfactory.h \
@@ -93,7 +95,9 @@ SOURCES += \
     confighelper.cpp \
     property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
+    property/qtagcolorlistproperty.cpp \
     property/qtagproperty.cpp \
+    property/qtagtextlistproperty.cpp \
     xmlobject.cpp \
     qpropertyfactory.cpp \
     property/qabstractproperty.cpp \
