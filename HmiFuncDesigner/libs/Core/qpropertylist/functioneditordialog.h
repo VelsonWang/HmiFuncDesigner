@@ -4,8 +4,10 @@
 #include <QDialog>
 #include <QList>
 #include <QMap>
-
 #include <QDebug>
+#include "../shared/projdata/deviceinfo.h"
+#include "../shared/property/qabstractproperty.h"
+#include "./qpropertylist/qpropertylistview.h"
 
 class QListWidget;
 class QListWidgetItem;
@@ -159,10 +161,10 @@ private:
     void initListWidget();
     void initTableWidget();
     TFuncObjectItem *getFuncObjectItem(const QString &name);
-    void clearProperty();
-    void updatePropertyModel();
-    void createPropertyList();
-    QList<QtProperty *> getPropertyList() const;
+    void updatePropertyEditor();
+
+public slots:
+    void onPropertyEdit(QAbstractProperty *pro, const QVariant &value);
 
 private slots:
     void on_btnAdd_clicked();
@@ -173,7 +175,6 @@ private slots:
     void on_btnCancel_clicked();    
     void listItemClicked(QListWidgetItem *item);
     void listItemDoubleClicked(QListWidgetItem *item);
-    void propertyChanged(QtProperty *property, const QVariant &value);
     void on_tableEventFunc_clicked(const QModelIndex &index);
 
 private:
@@ -192,15 +193,7 @@ private:
     QStringList graphPageNames_;
 
 private:
-    void addProperty(QtVariantProperty *property, const QString &id);
-    void updateExpandState();
-    QList <QtProperty *> propList_;
-    QtVariantPropertyManager *variantPropertyManager_;
-    QtTreePropertyBrowser *propertyEditor_;
-    QtVariantEditorFactory *variantEditorFactory_;
-    QMap<QtProperty *, QString> propertyToId_;
-    QMap<QString, QtVariantProperty *> idToProperty_;
-    QMap<QString, bool> idToExpanded_;
+    QPropertyListView *m_propertyView;
 };
 
 #endif // FUNCTIONEDITORDIALOG_H

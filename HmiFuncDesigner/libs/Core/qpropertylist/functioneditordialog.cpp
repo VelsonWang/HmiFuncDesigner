@@ -2,14 +2,16 @@
 #include "ui_functioneditordialog.h"
 #include "../../shared/confighelper.h"
 #include "../../shared/xmlobject.h"
-#include "Element.h"
 #include "qsoftcore.h"
 #include "../../shared/qprojectcore.h"
+#include "../shared/qpropertyfactory.h"
+#include "../shared/qcommonstruct.h"
 #include <QListWidget>
 #include <QTableWidgetItem>
 #include <QMessageBox>
 #include <QStringList>
 #include <QDebug>
+#include <QCoreApplication>
 
 
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events)
@@ -38,21 +40,11 @@ FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events)
     selectFuncObjItemList_.clear();
     funcObjItemList_.clear();
 
-    variantPropertyManager_ = new QtVariantPropertyManager(this);
-
-    connect(variantPropertyManager_, SIGNAL(valueChanged(QtProperty *, const QVariant &)),
-            this, SLOT(propertyChanged(QtProperty *, const QVariant &)));
-
-    variantEditorFactory_ = new QtVariantEditorFactory(this);
-
-    propertyEditor_ = new QtTreePropertyBrowser(this);
-    propertyEditor_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    propertyEditor_->setHeaderLabels(QStringList() << tr("属性") << tr("值"));
-    propertyEditor_->setColumnWidth(0, 160);
-    propertyEditor_->setColumnWidth(1, 200);
-    propertyEditor_->setFactoryForManager(variantPropertyManager_, variantEditorFactory_);
-    propertyEditor_->resize(370, propertyEditor_->size().height());
-    ui->propTableFuncLayout->addWidget(propertyEditor_);
+    m_propertyView = new QPropertyListView(this);
+    connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
+            this, SLOT(onPropertyEdit(QAbstractProperty*, QVariant)));
+    m_propertyView->resize(370, m_propertyView->size().height());
+    ui->propTableFuncLayout->addWidget(m_propertyView);
 
     initUI();
 }
@@ -93,7 +85,7 @@ void FunctionEditorDialog::initUI()
  */
 void FunctionEditorDialog::initListWidget()
 {
-    QString xmlFileName = Helper::AppDir() + "/Config/DrawAppJScriptFun.xml";
+    QString xmlFileName = QCoreApplication::applicationDirPath() + "/Config/DrawAppJScriptFun.xml";
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists()) {
@@ -354,7 +346,6 @@ void FunctionEditorDialog::listItemClicked(QListWidgetItem *item)
         ui->plainTextFuncDesc->setPlainText(pFuncObjectItem->szDesc_);
         szSelectedFuncName_ = pFuncObjectItem->szName_;
     }
-    clearProperty();
 }
 
 /**
@@ -391,8 +382,6 @@ void FunctionEditorDialog::listItemDoubleClicked(QListWidgetItem *item)
     pNewFuncObj->szDesc_ = pFuncObjectItem->szDesc_;
     pNewFuncObj->szFuncNameOrg_ = pFuncObjectItem->szFuncNameOrg_;
     selectFuncObjItemList_.append(pNewFuncObj);
-
-    clearProperty();
 }
 
 
@@ -423,23 +412,6 @@ void FunctionEditorDialog::setSupportEvents(QStringList events)
     supportEvents_ = events;
 }
 
-/**
- * @brief FunctionEditorDialog::clearProperty
- * @details 清空属性列表
- */
-void FunctionEditorDialog::clearProperty()
-{
-    QMap<QtProperty *, QString>::ConstIterator itProp = propertyToId_.constBegin();
-    while (itProp != propertyToId_.constEnd()) {
-        delete itProp.key();
-        itProp++;
-    }
-    propertyToId_.clear();
-    idToProperty_.clear();
-
-    propertyEditor_->clear();
-    propList_.clear();
-}
 
 void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
 {
@@ -453,83 +425,144 @@ void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
     if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
         ui->plainTextFuncDesc->setPlainText(pFuncObjItem->szDesc_);
         szSelectedFuncName_ = pFuncObjItem->szName_;
-        createPropertyList();
-        propertyEditor_->clear();
-        QListIterator <QtProperty*> iter(propList_);
-        while (iter.hasNext()) {
-            propertyEditor_->addProperty(iter.next());
-        }
+        updatePropertyEditor();
     }
 }
 
-void FunctionEditorDialog::createPropertyList()
+void FunctionEditorDialog::updatePropertyEditor()
 {
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
     if(pItem == Q_NULLPTR)
         return;
+
+    QList<QAbstractProperty *> listProperties;
+    QAbstractProperty* pProObj = Q_NULLPTR;
+
     QTableWidgetItem *pItemNeed = ui->tableEventFunc->item(pItem->row(), 0);
     QString szFuncNameOrg = pItemNeed->text();
     TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(pItem->row());
     if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
-        clearProperty();
-        updateExpandState();
+        pProObj = QPropertyFactory::create_property("Enum");
+        if(pProObj != Q_NULLPTR) {
+            pProObj->setObjectProperty("name","eventType");
+            pProObj->setAttribute("show_name", tr("事件类型"));
+            pProObj->setAttribute("group","Attributes");
+            pProObj->setAttribute("type", "eventType");
+            pProObj->setAttribute(ATTR_CAN_SAME,true);
 
-        QtVariantProperty *property = Q_NULLPTR;
+            ComboItems items;
+            foreach(QString szEv, supportEvents_) {
+                tagComboItem item;
+                item.m_text = szEv;
+                item.m_value = szEv;
+                items.append(item);
+            }
 
-        property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("事件类型"));
-        property->setAttribute(QLatin1String("enumNames"), supportEvents_);
-        property->setValue(pFuncObjItem->szEvent_);
-        addProperty(property, QLatin1String("eventType"));
+            QVariant v;
+            v.setValue<ComboItems>(items);
+            pProObj->setAttribute("items", v);
 
-        property = variantPropertyManager_->addProperty(QVariant::String, pFuncObjItem->szName_);
-        property->setAttribute(QLatin1String("readOnly"), true);
-        addProperty(property, QLatin1String("funcName"));
+            //pProObj->set_value(pFuncObjItem->szEvent_);
+            listProperties.append(pProObj);
+        }
+
+        pProObj = QPropertyFactory::create_property("String");
+        if(pProObj != Q_NULLPTR) {
+            pProObj->setObjectProperty("name","text");
+            pProObj->setAttribute("show_name", pFuncObjItem->szName_);
+            pProObj->setAttribute(ATTR_EDITABLE, false); // 只读
+            pProObj->setAttribute("group","Attributes");
+            pProObj->setAttribute("type", "funcName");
+            pProObj->setAttribute(ATTR_CAN_SAME,true);
+            listProperties.append(pProObj);
+        }
 
         foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
             if(pArgItem->type == "VALUE") {
-                property = variantPropertyManager_->addProperty(QVariant::String, pArgItem->name);
-                if(pArgItem->value == "")
-                    pArgItem->value = "0";
-                property->setValue(pArgItem->value);
-                addProperty(property, QLatin1String("value"));
-                if(pArgItem->value == "0") {
-                    propertyChanged(property, pArgItem->value);
+                pProObj = QPropertyFactory::create_property("String");
+                if(pProObj != Q_NULLPTR) {
+                    pProObj->setObjectProperty("name","text");
+                    pProObj->setAttribute("show_name", pArgItem->name);
+                    pProObj->setAttribute(ATTR_EDITABLE, false); // 只读
+                    pProObj->setAttribute("group","Attributes");
+                    pProObj->setAttribute("type", "value");
+                    pProObj->setAttribute(ATTR_CAN_SAME,true);
+                    if(pArgItem->value == "")
+                        pArgItem->value = "0";
+                    pProObj->set_value(pArgItem->value);
+                    listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "TAGLIST") {
-                property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
-                tagNames_.clear();
-                QSoftCore::getCore()->getProjectCore()->getAllTagName(tagNames_);
-                property->setAttribute(QLatin1String("enumNames"), tagNames_);
-                if(pArgItem->value == "")
-                    pArgItem->value = tagNames_.at(0);
-                property->setValue(tagNames_.indexOf(pArgItem->value));
-                addProperty(property, QLatin1String("tag"));
-                if(pArgItem->value == tagNames_.at(0)) {
-                    propertyChanged(property, pArgItem->value);
+                pProObj = QPropertyFactory::create_property("Tag");
+                if(pProObj != Q_NULLPTR) {
+                    tagNames_.clear();
+                    QSoftCore::getCore()->getProjectCore()->getAllTagName(tagNames_);
+                    pProObj->setObjectProperty("name", "tag");
+                    pProObj->setAttribute("show_name", pArgItem->name);
+                    pProObj->setAttribute("group", "HMI");
+                    pProObj->setAttribute("type", "tag");
+                    pProObj->setAttribute(ATTR_CAN_SAME, true);
+                    if(pArgItem->value == "")
+                        pArgItem->value = tagNames_.at(0);
+                    pProObj->set_value(tagNames_.indexOf(pArgItem->value));
+                    listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "GRAPHPAGELIST") {
-                property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 graphPageNames_.clear();
                 QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(graphPageNames_);
-                property->setAttribute(QLatin1String("enumNames"), graphPageNames_);
-                if(pArgItem->value == "")
-                    pArgItem->value = graphPageNames_.at(0);
-                property->setValue(graphPageNames_.indexOf(pArgItem->value));
-                addProperty(property, QLatin1String("graph"));
-                if(pArgItem->value == graphPageNames_.at(0)) {
-                    propertyChanged(property, pArgItem->value);
+
+                pProObj = QPropertyFactory::create_property("Enum");
+                if(pProObj != Q_NULLPTR) {
+                    pProObj->setObjectProperty("name","graph");
+                    pProObj->setAttribute("show_name", pArgItem->name);
+                    pProObj->setAttribute("group","Attributes");
+                    pProObj->setAttribute("type", "graph");
+                    pProObj->setAttribute(ATTR_CAN_SAME,true);
+
+                    ComboItems items;
+                    foreach(QString szName, graphPageNames_) {
+                        tagComboItem item;
+                        item.m_text = szName;
+                        item.m_value = szName;
+                        items.append(item);
+                    }
+
+                    QVariant v;
+                    v.setValue<ComboItems>(items);
+                    pProObj->setAttribute("items", v);
+
+                    if(pArgItem->value == "")
+                        pArgItem->value = graphPageNames_.at(0);
+                    pProObj->set_value(graphPageNames_.indexOf(pArgItem->value));
+                    listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "ELEMENTIDLIST") {
-                property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), pArgItem->name);
                 elementIds_.clear();
                 QSoftCore::getCore()->getProjectCore()->getAllElementIDName(elementIds_);
-                property->setAttribute(QLatin1String("enumNames"), elementIds_);
-                if(pArgItem->value == "")
-                    pArgItem->value = elementIds_.at(0);
-                property->setValue(elementIds_.indexOf(pArgItem->value));
-                addProperty(property, QLatin1String("element"));
-                if(pArgItem->value == elementIds_.at(0)) {
-                    propertyChanged(property, pArgItem->value);
+                pProObj = QPropertyFactory::create_property("Enum");
+                if(pProObj != Q_NULLPTR) {
+                    pProObj->setObjectProperty("name","element");
+                    pProObj->setAttribute("show_name", pArgItem->name);
+                    pProObj->setAttribute("group","Attributes");
+                    pProObj->setAttribute("type", "element");
+                    pProObj->setAttribute(ATTR_CAN_SAME,true);
+
+                    ComboItems items;
+                    foreach(QString szEle, elementIds_) {
+                        tagComboItem item;
+                        item.m_text = szEle;
+                        item.m_value = szEle;
+                        items.append(item);
+                    }
+
+                    QVariant v;
+                    v.setValue<ComboItems>(items);
+                    pProObj->setAttribute("items", v);
+
+                    if(pArgItem->value == "")
+                        pArgItem->value = elementIds_.at(0);
+                    pProObj->set_value(elementIds_.indexOf(pArgItem->value));
+                    listProperties.append(pProObj);
                 }
             }
         }
@@ -537,32 +570,23 @@ void FunctionEditorDialog::createPropertyList()
 }
 
 
-QList<QtProperty *> FunctionEditorDialog::getPropertyList() const
+void FunctionEditorDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &value)
 {
-    return propList_;
-}
-
-void FunctionEditorDialog::propertyChanged(QtProperty *property, const QVariant &value)
-{
-    if (!propertyToId_.contains(property))
-        return;
-
-    QString id = propertyToId_[property];
-
     TFuncObjectItem *pFuncObjItem;
     pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
 
-    QString szName = property->propertyName();
+    QString szName = pro->getObjectProperty("name").toString();
     foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
         if(pArgItem->name == szName) {
             QString szVal = "null";
-            if (id == QLatin1String("value")) {
+            QString szAttribute = pro->getAttribute("type").toString();
+            if (szAttribute == "value") {
                 szVal = value.toString();
-            } else if (id == QLatin1String("tag")) {
+            } else if (szAttribute == "tag") {
                 szVal = tagNames_.at(value.toInt());
-            } else if (id == QLatin1String("graph")) {
+            } else if (szAttribute == "graph") {
                 szVal = graphPageNames_.at(value.toInt());
-            }  else if (id == QLatin1String("element")) {
+            }  else if (szAttribute == "element") {
                 szVal = elementIds_.at(value.toInt());
             }  else  {
 
@@ -579,28 +603,6 @@ void FunctionEditorDialog::propertyChanged(QtProperty *property, const QVariant 
     QString szFunc = pFuncObjItem->getFuncString();
     ui->tableEventFunc->item(iSelectedCurRow_, 0)->setText(szFunc);
     ui->tableEventFunc->item(iSelectedCurRow_, 1)->setText(pFuncObjItem->szEvent_);
-}
 
-
-void FunctionEditorDialog::addProperty(QtVariantProperty *property, const QString &id)
-{
-    propList_.append(property);
-    propertyToId_[property] = id;
-    idToProperty_[id] = property;
-    QtBrowserItem *item = propertyEditor_->addProperty(property);
-    if (idToExpanded_.contains(id)) {
-        propertyEditor_->setExpanded(item, idToExpanded_[id]);
-    }
-}
-
-
-void FunctionEditorDialog::updateExpandState()
-{
-    QList<QtBrowserItem *> list = propertyEditor_->topLevelItems();
-    QListIterator<QtBrowserItem *> it(list);
-    while (it.hasNext()) {
-        QtBrowserItem *item = it.next();
-        QtProperty *prop = item->property();
-        idToExpanded_[propertyToId_[prop]] = propertyEditor_->isExpanded(item);
-    }
+    pro->set_value(value);
 }

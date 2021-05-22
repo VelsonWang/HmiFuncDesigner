@@ -42,6 +42,7 @@ HEADERS += \
     newnetdevicedialog.h \
     qpropertylist/coloreditor.h \
 #    qpropertylist/functioneditordialog.h \
+    qpropertylist/functioneditordialog.h \
     qpropertylist/insertfunctiondlg.h \
     qpropertylist/inserttagdlg.h \
     qpropertylist/qcoloreditor.h \
@@ -136,6 +137,7 @@ SOURCES += \
     newnetdevicedialog.cpp \
     qpropertylist/coloreditor.cpp \
 #    qpropertylist/functioneditordialog.cpp \
+    qpropertylist/functioneditordialog.cpp \
     qpropertylist/insertfunctiondlg.cpp \
     qpropertylist/inserttagdlg.cpp \
     qpropertylist/qcoloreditor.cpp \
@@ -226,6 +228,7 @@ FORMS += \
     newcomdevicedialog.ui \
     newnetdevicedialog.ui \
 #    qpropertylist/functioneditordialog.ui \
+    qpropertylist/functioneditordialog.ui \
     qpropertylist/insertfunctiondlg.ui \
     qpropertylist/inserttagdlg.ui \
     qpropertylist/scriptpropertyeditordlg.ui \
