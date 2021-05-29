@@ -18,6 +18,11 @@ protected:
 
 protected:
     void createObject();
+
+private:
+    void getSupportEvents(QStringList &szListValue);
+
+
 };
 
 #endif // QFORMHOST_H

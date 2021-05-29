@@ -1,5 +1,4 @@
 #include "qstringeditor.h"
-
 #include "qstringeditdialog.h"
 #include "../../shared/property/qabstractproperty.h"
 

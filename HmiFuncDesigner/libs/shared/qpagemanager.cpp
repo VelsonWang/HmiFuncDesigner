@@ -4,8 +4,8 @@
 #include "host/qformhost.h"
 #include "qhostfactory.h"
 #include "property/qabstractproperty.h"
-
 #include <QFile>
+#include <QDebug>
 
 QPageManager::QPageManager()
 {
@@ -299,7 +299,7 @@ void QPageManager::remove_page(QAbstractHost *host)
 QList<QAbstractHost*> QPageManager::getPages_by_title(const QString &title)
 {
     QList<QAbstractHost*> list;
-    foreach(QAbstractHost* host,m_page_list)
+    foreach(QAbstractHost* host, m_page_list)
     {
         if(host->property("title").toString()==title)
         {
@@ -314,4 +314,42 @@ void QPageManager::host_name_changed_slot(const QVariant &, const QVariant &)
     QAbstractProperty *pro=(QAbstractProperty*)sender();
 
     emit host_name_changed(pro->get_host());
+}
+
+
+/**
+ * @brief QPageManager::getAllElementIDName
+ * @details 获取工程所有控件的ID名称
+ * @param szIDList 所有控件的ID名称
+ */
+void QPageManager::getAllElementIDName(QStringList &szIDList)
+{
+//    if(pImplGraphPageSaveLoadObj_) {
+//        pImplGraphPageSaveLoadObj_->getAllElementIDName(szIDList);
+//    }
+}
+
+/**
+ * @brief QProjectCore::getAllPageName
+ * @details 获取工程所有画面名称
+ * @param szList 所有画面名称
+ */
+void QPageManager::getAllPageName(QStringList &szList)
+{
+    szList.clear();
+    foreach(QAbstractHost* pHostObj, m_page_list)
+    {
+        QString szTitle = pHostObj->property("title").toString();
+        //qDebug() << "title: " << szTitle;
+        if(szTitle == FORM_TITLE)
+        {
+            QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
+            if(pProObj)
+            {
+                QString szPageName = pProObj->get_value().toString();
+                //qDebug() << "page name: " << szPageName;
+                szList.append(szPageName);
+            }
+        }
+    }
 }

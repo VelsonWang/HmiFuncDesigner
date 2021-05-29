@@ -22,6 +22,7 @@
 #include "property/qcolorproperty.h"
 #include "property/qtagcolorlistproperty.h"
 #include "property/qtagtextlistproperty.h"
+#include "property/qfunctionproperty.h"
 #include "qpropertyfactory.h"
 #include "host/qwidgethost.h"
 #include "host/qframehost.h"
@@ -70,6 +71,7 @@ void qRegisterBaseProperty()
     qRegisterProperty("Color", QColorProperty);
     qRegisterProperty("TagColorList", QTagColorListProperty);
     qRegisterProperty("TagTextList", QTagTextListProperty);
+    qRegisterProperty("Function", QFunctionProperty);
 }
 
 void qRegisterBaseHost()

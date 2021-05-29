@@ -23,6 +23,7 @@ HEADERS += \
     confighelper.h \
     property/qcolorproperty.h \
     property/qfileproperty.h \
+    property/qfunctionproperty.h \
     property/qtagcolorlistproperty.h \
     property/qtagproperty.h \
     property/qtagtextlistproperty.h \
@@ -95,6 +96,7 @@ SOURCES += \
     confighelper.cpp \
     property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
+    property/qfunctionproperty.cpp \
     property/qtagcolorlistproperty.cpp \
     property/qtagproperty.cpp \
     property/qtagtextlistproperty.cpp \

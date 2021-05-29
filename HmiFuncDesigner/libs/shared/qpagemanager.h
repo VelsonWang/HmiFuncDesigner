@@ -25,12 +25,15 @@ public:
 
     void    clear();
 
-    QList<QAbstractHost*>   getPages();
-    QAbstractHost*          get_page(int index);
-    QAbstractHost*          get_page(const QString& uuid);
-    void                    insert_page(QAbstractHost* host,int index);
-    void                    remove_page(QAbstractHost* host);
-    QList<QAbstractHost*>   getPages_by_title(const QString& title);
+    QList<QAbstractHost*> getPages();
+    QAbstractHost* get_page(int index);
+    QAbstractHost* get_page(const QString& uuid);
+    void insert_page(QAbstractHost* host,int index);
+    void remove_page(QAbstractHost* host);
+    QList<QAbstractHost*> getPages_by_title(const QString& title);
+    void getAllElementIDName(QStringList &szIDList);
+    void getAllPageName(QStringList &szList);
+
 protected slots:
     void    host_name_changed_slot(const QVariant &old_value,const QVariant& new_value);
 signals:

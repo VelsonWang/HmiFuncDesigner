@@ -66,6 +66,11 @@ FunctionEditorDialog::~FunctionEditorDialog()
     }
     qDeleteAll(selectFuncObjItemList_);
     selectFuncObjItemList_.clear();
+
+    if(m_propertyView) {
+        delete m_propertyView;
+        m_propertyView = Q_NULLPTR;
+    }
 }
 
 /**
@@ -447,7 +452,6 @@ void FunctionEditorDialog::updatePropertyEditor()
             pProObj->setObjectProperty("name","eventType");
             pProObj->setAttribute("show_name", tr("事件类型"));
             pProObj->setAttribute("group","Attributes");
-            pProObj->setAttribute("type", "eventType");
             pProObj->setAttribute(ATTR_CAN_SAME,true);
 
             ComboItems items;
@@ -461,19 +465,19 @@ void FunctionEditorDialog::updatePropertyEditor()
             QVariant v;
             v.setValue<ComboItems>(items);
             pProObj->setAttribute("items", v);
-
-            //pProObj->set_value(pFuncObjItem->szEvent_);
+            pProObj->set_value(pFuncObjItem->szEvent_);
             listProperties.append(pProObj);
         }
 
         pProObj = QPropertyFactory::create_property("String");
         if(pProObj != Q_NULLPTR) {
             pProObj->setObjectProperty("name","text");
-            pProObj->setAttribute("show_name", pFuncObjItem->szName_);
+            pProObj->setAttribute("show_name", tr("函数名称"));
             pProObj->setAttribute(ATTR_EDITABLE, false); // 只读
             pProObj->setAttribute("group","Attributes");
             pProObj->setAttribute("type", "funcName");
             pProObj->setAttribute(ATTR_CAN_SAME,true);
+            pProObj->set_value(pFuncObjItem->szName_);
             listProperties.append(pProObj);
         }
 
@@ -483,9 +487,8 @@ void FunctionEditorDialog::updatePropertyEditor()
                 if(pProObj != Q_NULLPTR) {
                     pProObj->setObjectProperty("name","text");
                     pProObj->setAttribute("show_name", pArgItem->name);
-                    pProObj->setAttribute(ATTR_EDITABLE, false); // 只读
+                    pProObj->setAttribute(ATTR_EDITABLE, true); // 只读
                     pProObj->setAttribute("group","Attributes");
-                    pProObj->setAttribute("type", "value");
                     pProObj->setAttribute(ATTR_CAN_SAME,true);
                     if(pArgItem->value == "")
                         pArgItem->value = "0";
@@ -500,11 +503,10 @@ void FunctionEditorDialog::updatePropertyEditor()
                     pProObj->setObjectProperty("name", "tag");
                     pProObj->setAttribute("show_name", pArgItem->name);
                     pProObj->setAttribute("group", "HMI");
-                    pProObj->setAttribute("type", "tag");
                     pProObj->setAttribute(ATTR_CAN_SAME, true);
                     if(pArgItem->value == "")
                         pArgItem->value = tagNames_.at(0);
-                    pProObj->set_value(tagNames_.indexOf(pArgItem->value));
+                    pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "GRAPHPAGELIST") {
@@ -516,7 +518,6 @@ void FunctionEditorDialog::updatePropertyEditor()
                     pProObj->setObjectProperty("name","graph");
                     pProObj->setAttribute("show_name", pArgItem->name);
                     pProObj->setAttribute("group","Attributes");
-                    pProObj->setAttribute("type", "graph");
                     pProObj->setAttribute(ATTR_CAN_SAME,true);
 
                     ComboItems items;
@@ -533,7 +534,7 @@ void FunctionEditorDialog::updatePropertyEditor()
 
                     if(pArgItem->value == "")
                         pArgItem->value = graphPageNames_.at(0);
-                    pProObj->set_value(graphPageNames_.indexOf(pArgItem->value));
+                    pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "ELEMENTIDLIST") {
@@ -544,7 +545,6 @@ void FunctionEditorDialog::updatePropertyEditor()
                     pProObj->setObjectProperty("name","element");
                     pProObj->setAttribute("show_name", pArgItem->name);
                     pProObj->setAttribute("group","Attributes");
-                    pProObj->setAttribute("type", "element");
                     pProObj->setAttribute(ATTR_CAN_SAME,true);
 
                     ComboItems items;
@@ -561,12 +561,13 @@ void FunctionEditorDialog::updatePropertyEditor()
 
                     if(pArgItem->value == "")
                         pArgItem->value = elementIds_.at(0);
-                    pProObj->set_value(elementIds_.indexOf(pArgItem->value));
+                    pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             }
         }
     }
+    m_propertyView->setPropertys(listProperties);
 }
 
 
@@ -575,34 +576,20 @@ void FunctionEditorDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant
     TFuncObjectItem *pFuncObjItem;
     pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
 
-    QString szName = pro->getObjectProperty("name").toString();
+    QString szName = pro->getAttribute("show_name").toString();
     foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
         if(pArgItem->name == szName) {
-            QString szVal = "null";
-            QString szAttribute = pro->getAttribute("type").toString();
-            if (szAttribute == "value") {
-                szVal = value.toString();
-            } else if (szAttribute == "tag") {
-                szVal = tagNames_.at(value.toInt());
-            } else if (szAttribute == "graph") {
-                szVal = graphPageNames_.at(value.toInt());
-            }  else if (szAttribute == "element") {
-                szVal = elementIds_.at(value.toInt());
-            }  else  {
-
-            }
-            pArgItem->value = szVal;
+            pArgItem->value = value.toString();
             break;
         }
     }
 
     if(szName == tr("事件类型")) {
-        pFuncObjItem->szEvent_ = supportEvents_.at(value.toInt());
+        pFuncObjItem->szEvent_ = value.toString();
     }
 
     QString szFunc = pFuncObjItem->getFuncString();
     ui->tableEventFunc->item(iSelectedCurRow_, 0)->setText(szFunc);
     ui->tableEventFunc->item(iSelectedCurRow_, 1)->setText(pFuncObjItem->szEvent_);
-
     pro->set_value(value);
 }

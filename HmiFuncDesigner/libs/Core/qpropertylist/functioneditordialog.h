@@ -94,11 +94,11 @@ public:
         return ret;
     }
 
-    void setFuncString(const QString &data) {
-        if(data == "")
+    void setFuncString(const QString &szFuncInfo) {
+        if(szFuncInfo == "")
             return;
         argList_.clear();
-        QStringList szObjList = data.split(':');
+        QStringList szObjList = szFuncInfo.split(':');
         if(szObjList.size() == 2) {
             szEvent_ = szObjList.at(1);
             QString szFunc = szObjList.at(0);

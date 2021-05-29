@@ -411,10 +411,9 @@ QString QProjectCore::getProjectNameWithOutSuffix(const QString &projectName) {
  * @details 获取工程所有控件的ID名称
  * @param szIDList 所有控件的ID名称
  */
-void QProjectCore::getAllElementIDName(QStringList &szIDList) {
-//    if(pImplGraphPageSaveLoadObj_) {
-//        pImplGraphPageSaveLoadObj_->getAllElementIDName(szIDList);
-//    }
+void QProjectCore::getAllElementIDName(QStringList &szIDList)
+{
+    m_pPageManagerObj->getAllElementIDName(szIDList);
 }
 
 /**
@@ -422,10 +421,9 @@ void QProjectCore::getAllElementIDName(QStringList &szIDList) {
  * @details 获取工程所有画面名称
  * @param szList 所有画面名称
  */
-void QProjectCore::getAllGraphPageName(QStringList &szList) {
-//    if(pImplGraphPageSaveLoadObj_) {
-//        pImplGraphPageSaveLoadObj_->getAllGraphPageName(szList);
-//    }
+void QProjectCore::getAllGraphPageName(QStringList &szList)
+{
+    m_pPageManagerObj->getAllPageName(szList);
 }
 
 

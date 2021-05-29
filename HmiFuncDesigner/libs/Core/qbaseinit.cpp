@@ -12,6 +12,7 @@
 #include "qpropertylist/qfileeditor.h"
 #include "qpropertylist/qcoloreditor.h"
 #include "qpropertylist/stylesheeteditor/qstylesheeteditor.h"
+#include "qpropertylist/qfunctioneditor.h"
 #include <QSpinBox>
 #include <QDoubleSpinBox>
 
@@ -37,5 +38,6 @@ void qRegisterBasePropertyEditor()
     qRegisterPropertyEditor("Tag", QEnumPropertyEditor);
     qRegisterPropertyEditor("File", QFileEditor);
     qRegisterPropertyEditor("Color", QColorEditor);
+    qRegisterPropertyEditor("Function", QFunctionEditor);
 }
 

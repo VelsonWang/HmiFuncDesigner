@@ -131,7 +131,7 @@ void QAbstractHost::removeChildren(const QList<QAbstractHost *> &children)
     }
 }
 
-QList<QAbstractHost*>   QAbstractHost::getChildren()
+QList<QAbstractHost*> QAbstractHost::getChildren()
 {
     return m_children;
 }
@@ -335,7 +335,6 @@ void QAbstractHost::toObject(XMLObject *xml)
 
         xml->setTagName(property("title").toString());
 
-
         QMapIterator<QString, QString> it(m_attributes);
         while(it.hasNext())
         {
@@ -344,17 +343,17 @@ void QAbstractHost::toObject(XMLObject *xml)
         }
 
         XMLObject* obj;
-        foreach(QAbstractProperty* pro,m_propertys)
+        foreach(QAbstractProperty* pro, m_propertys)
         {
             if(pro->modified() || pro->getAttribute(ATTR_NEEDSAVE).toBool())
             {
                 obj=new XMLObject;
                 pro->toObject(obj);
-                xml->inser_child(-1,obj);
+                xml->inser_child(-1, obj);
             }
         }
 
-        foreach(QAbstractHost* h,m_children)
+        foreach(QAbstractHost* h, m_children)
         {
             obj=new XMLObject;
             h->toObject(obj);
