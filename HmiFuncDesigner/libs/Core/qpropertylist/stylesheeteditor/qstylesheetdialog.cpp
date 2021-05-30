@@ -75,12 +75,12 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
     QAbstractStylesheetItem *maker;
     if(items.size() == 0) {
         tagStylesheetItem it;
-        it.m_attributes.insert("title", "Normal");
+        it.m_attributes.insert("title", "Normal"); // "Normal"
         items.append(it);
     } else {
         if(items.first().m_attributes.value("title") != "Normal") {
             tagStylesheetItem it;
-            it.m_attributes.insert("title","Normal");
+            it.m_attributes.insert("title", "Normal");
             items.insert(0,it);
         }
     }

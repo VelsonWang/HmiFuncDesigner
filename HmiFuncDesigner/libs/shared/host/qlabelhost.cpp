@@ -1,9 +1,7 @@
 #include "qlabelhost.h"
-
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../qcommonstruct.h"
-
 #include <QLabel>
 
 QLabelHost::QLabelHost(QAbstractHost *parent):
@@ -30,56 +28,62 @@ QString QLabelHost::getShowIcon()
 
 void QLabelHost::createObject()
 {
-    m_object=new QLabel();
+    m_object = new QLabel();
     m_object->setObjectName("label");
 }
 
 void QLabelHost::initProperty()
 {
+    QAbstractProperty* pObj = QPropertyFactory::create_property("Tag");
+    if(pObj != Q_NULLPTR) {
+        pObj->setObjectProperty("name", "tag");
+        pObj->setAttribute("show_name", tr("选择变量"));
+        pObj->setAttribute("group", "HMI");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pObj);
+    }
+
     QFrameHost::initProperty();
 
-    QAbstractProperty* pro;
-
-    pro=QPropertyFactory::create_property("String");
-    if(pro!=Q_NULLPTR)
+    pObj = QPropertyFactory::create_property("String");
+    if(pObj != Q_NULLPTR)
     {
-        pro->setObjectProperty("name","text");
-        pro->setAttribute("show_name",tr("Text"));
-        pro->setAttribute("group","Attributes");
-        insertProperty(pro,1);
+        pObj->setObjectProperty("name", "text");
+        pObj->setAttribute("show_name", tr("文本")); // tr("Text")
+        pObj->setAttribute("group", "Attributes");
+        insertProperty(pObj, 2);
     }
 
-    pro=QPropertyFactory::create_property("Bool");
-    if(pro!=Q_NULLPTR)
+    pObj = QPropertyFactory::create_property("Bool");
+    if(pObj != Q_NULLPTR)
     {
-        pro->setObjectProperty("name","wordWrap");
-        pro->setAttribute("show_name",tr("WordWrap"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
-        insertProperty(pro);
+        pObj->setObjectProperty("name", "wordWrap");
+        pObj->setAttribute("show_name", tr("自动换行")); // tr("WordWrap")
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pObj);
     }
 
-    pro=QPropertyFactory::create_property("Alignment");
-    if(pro!=Q_NULLPTR)
+    pObj = QPropertyFactory::create_property("Alignment");
+    if(pObj != Q_NULLPTR)
     {
-        pro->setObjectProperty("name","alignment");
-        pro->setAttribute("show_name",tr("Alignment"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
-        insertProperty(pro);
+        pObj->setObjectProperty("name", "alignment");
+        pObj->setAttribute("show_name", tr("对齐")); // tr("Alignment")
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pObj);
     }
 
-    pro=QPropertyFactory::create_property("StyleSheet");
-    if(pro!=Q_NULLPTR)
+    pObj = QPropertyFactory::create_property("StyleSheet");
+    if(pObj != Q_NULLPTR)
     {
-        pro->setObjectProperty("name","text_sheet");
-        pro->setAttribute("show_name",tr("Text"));
-        pro->setAttribute("group","Style Sheet");
-
-        insertProperty(pro);
+        pObj->setObjectProperty("name", "text_sheet");
+        pObj->setAttribute("show_name", tr("文本")); // tr("Text")
+        pObj->setAttribute("group", "Style Sheet");
+        insertProperty(pObj);
     }
 
-    setPropertyValue("geometry", QRect(0,0,80,20));
+    setPropertyValue("geometry", QRect(0, 0, 80, 20));
     setPropertyValue("text", "label");
 }
 
