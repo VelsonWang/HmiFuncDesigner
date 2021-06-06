@@ -39,9 +39,6 @@ void QFormHost::initProperty()
         QStringList listEvents;
         getSupportEvents(listEvents);
         pObj->setAttribute("supportevents", listEvents.join("|"));
-
-        //setPropertyValue("function", xx);
-
         insertProperty(pObj);
     }
 

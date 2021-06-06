@@ -2,8 +2,6 @@
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../qcommonstruct.h"
-
-
 #include <QLineEdit>
 
 QLineEditHost::QLineEditHost(QAbstractHost *parent):

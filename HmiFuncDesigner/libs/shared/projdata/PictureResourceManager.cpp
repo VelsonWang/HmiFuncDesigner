@@ -16,7 +16,8 @@ PictureInfo::~PictureInfo()
 
 }
 
-bool PictureInfo::openFromXml(XMLObject *pXmlObj) {
+bool PictureInfo::openFromXml(XMLObject *pXmlObj)
+{
     m_iID = pXmlObj->getProperty("id").toInt();
     m_iRefCnt = pXmlObj->getProperty("ref_cnt").toInt();
     m_szName = pXmlObj->getProperty("name");
@@ -30,7 +31,8 @@ bool PictureInfo::openFromXml(XMLObject *pXmlObj) {
     return true;
 }
 
-bool PictureInfo::saveToXml(XMLObject *pXmlObj) {
+bool PictureInfo::saveToXml(XMLObject *pXmlObj)
+{
     XMLObject *pPicObj = new XMLObject(pXmlObj);
     pPicObj->setTagName("pic");
     pPicObj->setProperty("id", QString::number(m_iID));
@@ -138,14 +140,16 @@ QImage PictureResourceManager::getPicture(const QString &szName)
  * @details 分配一个
  * @return ID
  */
-int PictureResourceManager::allocID() {
+int PictureResourceManager::allocID()
+{
     ++m_iStartNewID;
     return m_iStartNewID;
 }
 
 
 
-QByteArray PictureResourceManager::imageToBase64(QImage &imageObj, QString szFormat) {
+QByteArray PictureResourceManager::imageToBase64(QImage &imageObj, QString szFormat)
+{
     QByteArray ba;
     QBuffer buf(&ba);
     imageObj.save((QIODevice *)&buf, szFormat.toStdString().c_str());
@@ -154,7 +158,8 @@ QByteArray PictureResourceManager::imageToBase64(QImage &imageObj, QString szFor
     return baBase64;
 }
 
-QImage PictureResourceManager::base64ToImage(QByteArray baseByteArray, QString szFormat) {
+QImage PictureResourceManager::base64ToImage(QByteArray baseByteArray, QString szFormat)
+{
     QByteArray baImage;
     baImage = QByteArray::fromBase64(baseByteArray);
     QBuffer buffer(&baImage);

@@ -9,7 +9,8 @@ QFileProperty::QFileProperty(QAbstractProperty *parent) :
 
 QString QFileProperty::get_value_text()
 {
-    return get_value().toString();
+    //return get_value().toString();
+    return tr("文件数据");
 }
 
 QIcon QFileProperty::get_value_icon()

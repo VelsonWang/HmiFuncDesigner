@@ -45,5 +45,6 @@
         <file>images/vslider.png</file>
         <file>images/vspacer.png</file>
         <file>images/widget.png</file>
+		<file>images/image.png</file>
     </qresource>
 </RCC>

@@ -48,6 +48,7 @@ HEADERS += \
     qpropertylist/qcoloreditor.h \
     qpropertylist/qfileeditor.h \
     qpropertylist/qfunctioneditor.h \
+    qpropertylist/qimageeditor.h \
     qpropertylist/qtagcolorlisteditor.h \
     qpropertylist/qtagtextlisteditor.h \
     qpropertylist/scriptpropertyeditordlg.h \
@@ -143,6 +144,7 @@ SOURCES += \
     qpropertylist/qcoloreditor.cpp \
     qpropertylist/qfileeditor.cpp \
     qpropertylist/qfunctioneditor.cpp \
+    qpropertylist/qimageeditor.cpp \
     qpropertylist/qtagcolorlisteditor.cpp \
     qpropertylist/qtagtextlisteditor.cpp \
     qpropertylist/scriptpropertyeditordlg.cpp \

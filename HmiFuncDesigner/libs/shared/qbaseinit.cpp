@@ -19,6 +19,7 @@
 #include "property/qalignmentproperty.h"
 #include "property/qstylesheetproperty.h"
 #include "property/qfileproperty.h"
+#include "property/qimageproperty.h"
 #include "property/qcolorproperty.h"
 #include "property/qtagcolorlistproperty.h"
 #include "property/qtagtextlistproperty.h"
@@ -27,6 +28,7 @@
 #include "host/qwidgethost.h"
 #include "host/qframehost.h"
 #include "host/qlabelhost.h"
+#include "host/qimagehost.h"
 #include "host/qlcdnumberhost.h"
 #include "host/qpushbuttonhost.h"
 #include "host/qradiobuttonhost.h"
@@ -68,6 +70,7 @@ void qRegisterBaseProperty()
     qRegisterProperty("StyleSheet", QStylesheetProperty);
     qRegisterProperty("Tag", QTagProperty);
     qRegisterProperty("File", QFileProperty);
+    qRegisterProperty("Image", QImageProperty);
     qRegisterProperty("Color", QColorProperty);
     qRegisterProperty("TagColorList", QTagColorListProperty);
     qRegisterProperty("TagTextList", QTagTextListProperty);
@@ -79,6 +82,7 @@ void qRegisterBaseHost()
     qRegisterHost("containners.widget", QWidgetHost);
     qRegisterHost("containners.frame", QFrameHost);
     qRegisterHost("display_widgets.label", QLabelHost);
+    qRegisterHost("display_widgets.image", QImageHost);
     qRegisterHost("display_widgets.lcdnumber", QLCDNumberHost);
     qRegisterHost("buttons.pushbutton", QPushButtonHost);
     qRegisterHost("buttons.checkbox", QCheckBoxHost);
