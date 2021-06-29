@@ -46,5 +46,6 @@
         <file>images/vspacer.png</file>
         <file>images/widget.png</file>
 		<file>images/image.png</file>
+		<file>images/indicationlamp.png</file>
     </qresource>
 </RCC>

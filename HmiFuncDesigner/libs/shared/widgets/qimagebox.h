@@ -30,6 +30,9 @@ public:
 private:
     void setPropertyInner();
 
+protected:
+    void resizeEvent(QResizeEvent *event);
+
 private:
     QString m_szImageFile;
     QImage m_imageObj;

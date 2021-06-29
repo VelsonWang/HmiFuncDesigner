@@ -12,6 +12,7 @@ QImageBox::QImageBox(QWidget *parent) : QLabel(parent)
     m_boardColorObj = Qt::black;
 
     this->setAlignment(Qt::AlignCenter);
+    setPropertyInner();
 }
 
 QString QImageBox::getImageFile()
@@ -25,10 +26,9 @@ void QImageBox::setImageFile(const QString szName)
     if(szListInfo.size() == 2) {
         QFileInfo info(szListInfo.at(0));
         m_imageObj = PictureResourceManager::base64ToImage(szListInfo.at(1).toLocal8Bit(), info.suffix());
-        setPixmap(QPixmap::fromImage(m_imageObj));
-        this->update();
+        setPropertyInner();
     }
-    m_szImageFile = szName;
+    m_szImageFile = szName; 
 }
 
 bool QImageBox::isNoScale()
@@ -66,8 +66,9 @@ void QImageBox::setBoardColor(QColor color)
 
 void QImageBox::setPropertyInner()
 {
-    if(m_bNoScale && this->width() != m_imageObj.width() &&  this->height() != m_imageObj.height()) {
-        m_imageObj = m_imageObj.scaled(this->width(), this->height());
+    setScaledContents(!m_bNoScale);
+    if(!m_bNoScale && (m_szImageFile != "")) {
+        setPixmap(QPixmap::fromImage(m_imageObj));
     }
 
     if(m_iBoardWidth > 0) {
@@ -78,5 +79,13 @@ void QImageBox::setPropertyInner()
                 .arg(QString::number(m_boardColorObj.green()))
                 .arg(QString::number(m_boardColorObj.blue()));
         this->setStyleSheet(szStyleSheet);
+    } else {
+        this->setStyleSheet("");
     }
+}
+
+void QImageBox::resizeEvent(QResizeEvent *event)
+{
+    setPropertyInner();
+    QLabel::resizeEvent(event);
 }

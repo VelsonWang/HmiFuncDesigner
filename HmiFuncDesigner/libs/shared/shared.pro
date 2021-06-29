@@ -22,6 +22,7 @@ INCLUDEPATH += $$PWD/projdata
 HEADERS += \
     confighelper.h \
     host/qimagehost.h \
+    host/qindicationlamphost.h \
     property/qcolorproperty.h \
     property/qfileproperty.h \
     property/qfunctionproperty.h \
@@ -31,6 +32,7 @@ HEADERS += \
     property/qtagtextlistproperty.h \
     sharedlibglobal.h \
     widgets/qimagebox.h \
+    widgets/qindicationlamp.h \
     xmlobject.h \
     qpropertyfactory.h \
     property/qabstractproperty.h \
@@ -98,6 +100,7 @@ HEADERS += \
 SOURCES += \
     confighelper.cpp \
     host/qimagehost.cpp \
+    host/qindicationlamphost.cpp \
     property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
     property/qfunctionproperty.cpp \
@@ -106,6 +109,7 @@ SOURCES += \
     property/qtagproperty.cpp \
     property/qtagtextlistproperty.cpp \
     widgets/qimagebox.cpp \
+    widgets/qindicationlamp.cpp \
     xmlobject.cpp \
     qpropertyfactory.cpp \
     property/qabstractproperty.cpp \

@@ -29,6 +29,7 @@
 #include "host/qframehost.h"
 #include "host/qlabelhost.h"
 #include "host/qimagehost.h"
+#include "host/qindicationlamphost.h"
 #include "host/qlcdnumberhost.h"
 #include "host/qpushbuttonhost.h"
 #include "host/qradiobuttonhost.h"
@@ -83,6 +84,7 @@ void qRegisterBaseHost()
     qRegisterHost("containners.frame", QFrameHost);
     qRegisterHost("display_widgets.label", QLabelHost);
     qRegisterHost("display_widgets.image", QImageHost);
+    qRegisterHost("display_widgets.indicationlamp", QIndicationLampHost);
     qRegisterHost("display_widgets.lcdnumber", QLCDNumberHost);
     qRegisterHost("buttons.pushbutton", QPushButtonHost);
     qRegisterHost("buttons.checkbox", QCheckBoxHost);
