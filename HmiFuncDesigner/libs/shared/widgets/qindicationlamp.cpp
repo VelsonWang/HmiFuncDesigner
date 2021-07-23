@@ -126,7 +126,7 @@ void QIndicationLamp::setPropertyInner()
         this->setStyleSheet("");
     }
 }
-#include <QDebug>
+
 void QIndicationLamp::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);

@@ -11,7 +11,7 @@ void QPropertyFactory::register_property(const QString &name, const QMetaObject 
     tagPropertyInfo *info=m_meta_map.value(name);
     if(info==Q_NULLPTR)
     {
-        info=new tagPropertyInfo;
+        info = new tagPropertyInfo;
         info->m_editor_meta_object=Q_NULLPTR;
     }
     info->m_property_meta_object=meta;

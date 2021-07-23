@@ -31,6 +31,7 @@ QPropertyView::QPropertyView(QWidget *parent) :
     this->resize(360, 200);
     connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
             this, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
+    m_propertyView->setColumnWidth(0, 140);
 }
 
 void QPropertyView::selectWidget(QAbstractHost *host)

@@ -23,6 +23,7 @@ HEADERS += \
     confighelper.h \
     host/qimagehost.h \
     host/qindicationlamphost.h \
+    host/qjarshapehost.h \
     property/qcolorproperty.h \
     property/qfileproperty.h \
     property/qfunctionproperty.h \
@@ -33,6 +34,7 @@ HEADERS += \
     sharedlibglobal.h \
     widgets/qimagebox.h \
     widgets/qindicationlamp.h \
+    widgets/qjarshape.h \
     xmlobject.h \
     qpropertyfactory.h \
     property/qabstractproperty.h \
@@ -101,6 +103,7 @@ SOURCES += \
     confighelper.cpp \
     host/qimagehost.cpp \
     host/qindicationlamphost.cpp \
+    host/qjarshapehost.cpp \
     property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
     property/qfunctionproperty.cpp \
@@ -110,6 +113,7 @@ SOURCES += \
     property/qtagtextlistproperty.cpp \
     widgets/qimagebox.cpp \
     widgets/qindicationlamp.cpp \
+    widgets/qjarshape.cpp \
     xmlobject.cpp \
     qpropertyfactory.cpp \
     property/qabstractproperty.cpp \

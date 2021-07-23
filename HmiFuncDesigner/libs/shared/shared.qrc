@@ -47,5 +47,6 @@
         <file>images/widget.png</file>
 		<file>images/image.png</file>
 		<file>images/indicationlamp.png</file>
+		<file>images/jarshape.png</file>
     </qresource>
 </RCC>
