@@ -8,8 +8,9 @@
 #include <QRect>
 #include <QPoint>
 #include <QColor>
+#include "sharedlibglobal.h"
 
-class PubTool
+class SHAREDLIB_EXPORT PubTool
 {
 public:
     PubTool();

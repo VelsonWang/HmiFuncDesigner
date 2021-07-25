@@ -48,5 +48,6 @@
 		<file>images/image.png</file>
 		<file>images/indicationlamp.png</file>
 		<file>images/jarshape.png</file>
+		<file>images/valuestick.png</file>
     </qresource>
 </RCC>

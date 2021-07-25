@@ -55,7 +55,7 @@ SOURCES += main.cpp\
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
-    ../Public/PubTool.cpp \
+#    ../Public/PubTool.cpp \
     ../Public/Element.cpp \
     ../Public/ElementGroup.cpp \
     PluginManager.cpp
@@ -75,7 +75,7 @@ HEADERS  += MainWindow.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
     ../Public/PublicDefine.h \
-    ../Public/PubTool.h \
+#    ../Public/PubTool.h \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../Public/Element.h \
     ../Public/ElementGroup.h \

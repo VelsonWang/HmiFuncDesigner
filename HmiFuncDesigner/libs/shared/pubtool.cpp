@@ -1,4 +1,4 @@
-#include "PubTool.h"
+#include "pubtool.h"
 
 PubTool::PubTool()
 {

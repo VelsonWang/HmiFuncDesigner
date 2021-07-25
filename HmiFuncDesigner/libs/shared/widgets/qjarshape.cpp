@@ -23,22 +23,7 @@ QJarShape::QJarShape(QWidget *parent) : QWidget(parent)
 
 void QJarShape::setPropertyInner()
 {
-//    setScaledContents(!m_bNoScale);
-//    if(!m_bNoScale && (m_szImageFile != "")) {
-//        setPixmap(QPixmap::fromImage(m_imageObj));
-//    }
 
-//    if(m_iBoardWidth > 0) {
-//        QString szStyleSheet = "";
-//        szStyleSheet += QString("border-width: %1px; border-style: solid;").arg(QString::number(m_iBoardWidth));
-//        szStyleSheet += QString("border-color: rgb(%1, %2, %3);")
-//                .arg(QString::number(m_boardColorObj.red()))
-//                .arg(QString::number(m_boardColorObj.green()))
-//                .arg(QString::number(m_boardColorObj.blue()));
-//        this->setStyleSheet(szStyleSheet);
-//    } else {
-//        this->setStyleSheet("");
-//    }
 }
 
 

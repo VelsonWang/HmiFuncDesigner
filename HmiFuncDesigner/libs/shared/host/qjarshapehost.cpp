@@ -134,6 +134,4 @@ void QJarShapeHost::initProperty()
     }
 
     setPropertyValue("geometry", QRect(0, 0, 80, 120));
-    //removeProperty("frameShape");
-    //removeProperty("frameShadow");
 }
