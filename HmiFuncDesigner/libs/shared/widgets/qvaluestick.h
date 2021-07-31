@@ -116,7 +116,7 @@ private:
     bool showRuler;
     // 显示刻度
     bool showScale;
-    // 初始可见性
+    // 初始可见
     bool showOnInitial;
 };
 

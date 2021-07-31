@@ -96,6 +96,9 @@ QStringEditDialog::QStringEditDialog(QAbstractProperty *property,QUndoStack* sta
     connect(ui->translateTree,SIGNAL(clicked(QModelIndex)),ui->translateTree,SLOT(edit(QModelIndex)));
     ui->enabled->setChecked(m_property->getObjectProperty("tr").toBool());
     on_enabled_clicked();
+
+    // 暂时先去除
+    ui->enabled->setVisible(false);
 }
 
 QStringEditDialog::~QStringEditDialog()
@@ -105,65 +108,58 @@ QStringEditDialog::~QStringEditDialog()
 
 void QStringEditDialog::on_enabled_clicked()
 {
-    bool tran=ui->enabled->isChecked();
+    bool tran = ui->enabled->isChecked();
     ui->translateTree->setVisible(tran);
     ui->text->setVisible(!tran);
-    resize(this->width(),tran?400:100);
-    setProperty("panelwidget",tran);
+    resize(this->width(), tran ? 400 : 100);
+    setProperty("panelwidget", tran);
 }
 
 void QStringEditDialog::on_okBtn_clicked()
 {
-    bool new_tr=ui->enabled->isChecked();
-    bool old_tr=m_property->getObjectProperty("tr").toBool();
-    QMap<QString,QString> old_translate;
-    QMap<QString,QString> new_translate;
+    bool new_tr = ui->enabled->isChecked();
+    bool old_tr = m_property->getObjectProperty("tr").toBool();
+    QMap<QString, QString> old_translate;
+    QMap<QString, QString> new_translate;
     QString old_text;
     QString new_text;
-    QString uuid=m_property->getObjectProperty("uuid").toString();
-    if(uuid=="")
-    {
+    QString uuid = m_property->getObjectProperty("uuid").toString();
+    if(uuid == "") {
         uuid=QUuid::createUuid().toString();
     }
-    if(new_tr)
-    {
-        QMapIterator<QTreeWidgetItem*,QLanguage*>  it(m_items);
-        while(it.hasNext())
-        {
+    if(new_tr) {
+        QMapIterator<QTreeWidgetItem*, QLanguage*> it(m_items);
+        while(it.hasNext()) {
             it.next();
-
         }
+    } else {
+        new_text = ui->text->text();
     }
-    else
-    {
-        new_text=ui->text->text();
-    }
-    if(old_tr)
-    {
+    if(old_tr) {
 //        QList<QLanguage*>   lan=QSoftCore::getCore()->getProjectCore()->getLanguageManager()->get_all_languages();
 //        foreach(QLanguage* l,lan)
 //        {
 //            tagTranslateInfo *info=l->get_translate(uuid);
 //            old_translate.insert(l->getUuid(),info==NULL?"":info->m_translate);
 //        }
-    }
-    else
-    {
-        old_text=m_property->get_value().toString();
+    } else {
+        old_text = m_property->get_value().toString();
     }
 
-
-    QStringChangedUndoCommand *cmd=new QStringChangedUndoCommand(m_property->get_host()->getUuid(),
-                                                                 m_property->getObjectProperty("name").toString(),
-                                                                 uuid,
-                                                                 old_tr,
-                                                                 new_tr,
-                                                                 old_text,
-                                                                 new_text,
-                                                                 old_translate,
-                                                                 new_translate);
+#if 0
+    QStringChangedUndoCommand *cmd = new QStringChangedUndoCommand(m_property->get_host()->getUuid(),
+                                                                   m_property->getObjectProperty("name").toString(),
+                                                                   uuid,
+                                                                   old_tr,
+                                                                   new_tr,
+                                                                   old_text,
+                                                                   new_text,
+                                                                   old_translate,
+                                                                   new_translate);
     m_undo_stack->push(cmd);
-
+#else
+    m_property->notifyEditValue(new_text);
+#endif
     close();
 }
 

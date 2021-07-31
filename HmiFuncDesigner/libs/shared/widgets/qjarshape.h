@@ -90,7 +90,7 @@ private:
     double maxValue;
     // 刻度个数
     int scaleNum;
-    // 初始可见性
+    // 初始可见
     bool showOnInitial;
 };
 

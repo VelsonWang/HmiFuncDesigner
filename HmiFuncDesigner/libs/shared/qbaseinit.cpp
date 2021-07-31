@@ -32,6 +32,7 @@
 #include "host/qindicationlamphost.h"
 #include "host/qjarshapehost.h"
 #include "host/qvaluestickhost.h"
+#include "host/qswitchbuttonhost.h"
 #include "host/qlcdnumberhost.h"
 #include "host/qpushbuttonhost.h"
 #include "host/qradiobuttonhost.h"
@@ -91,6 +92,7 @@ void qRegisterBaseHost()
     qRegisterHost("display_widgets.qvaluestick", QValueStickHost);
     qRegisterHost("display_widgets.lcdnumber", QLCDNumberHost);
     qRegisterHost("buttons.pushbutton", QPushButtonHost);
+    qRegisterHost("buttons.switchbutton", QSwitchButtonHost);
     qRegisterHost("buttons.checkbox", QCheckBoxHost);
     qRegisterHost("buttons.radiobutton", QRadioButtonHost);
     qRegisterHost("inputwidgets.lineedit", QLineEditHost);

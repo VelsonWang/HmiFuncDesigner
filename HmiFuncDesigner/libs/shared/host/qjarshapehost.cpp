@@ -128,7 +128,7 @@ void QJarShapeHost::initProperty()
     pObj=QPropertyFactory::create_property("Bool");
     if(pObj != Q_NULLPTR) {
         pObj->setObjectProperty("name", "showOnInitial");
-        pObj->setAttribute("show_name", tr("初始可见性"));
+        pObj->setAttribute("show_name", tr("初始可见"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }

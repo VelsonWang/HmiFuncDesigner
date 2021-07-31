@@ -487,7 +487,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                 if(pProObj != Q_NULLPTR) {
                     pProObj->setObjectProperty("name","text");
                     pProObj->setAttribute("show_name", pArgItem->name);
-                    pProObj->setAttribute(ATTR_EDITABLE, true); // 只读
+                    pProObj->setAttribute(ATTR_EDITABLE, true);
                     pProObj->setAttribute("group","Attributes");
                     pProObj->setAttribute(ATTR_CAN_SAME,true);
                     if(pArgItem->value == "")
@@ -502,9 +502,21 @@ void FunctionEditorDialog::updatePropertyEditor()
                     QSoftCore::getCore()->getProjectCore()->getAllTagName(tagNames_);
                     pProObj->setObjectProperty("name", "tag");
                     pProObj->setAttribute("show_name", pArgItem->name);
-                    pProObj->setAttribute("group", "HMI");
+                    pProObj->setAttribute("group", "Attributes");
                     pProObj->setAttribute(ATTR_CAN_SAME, true);
-                    if(pArgItem->value == "")
+
+                    ComboItems items;
+                    foreach(QString szTagName, tagNames_) {
+                        tagComboItem item;
+                        item.m_text = szTagName;
+                        item.m_value = szTagName;
+                        items.append(item);
+                    }
+                    QVariant v;
+                    v.setValue<ComboItems>(items);
+                    pProObj->setAttribute("items", v);
+
+                    if(pArgItem->value == "" && tagNames_.size() > 0)
                         pArgItem->value = tagNames_.at(0);
                     pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
@@ -532,7 +544,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     v.setValue<ComboItems>(items);
                     pProObj->setAttribute("items", v);
 
-                    if(pArgItem->value == "")
+                    if(pArgItem->value == "" && graphPageNames_.size() > 0)
                         pArgItem->value = graphPageNames_.at(0);
                     pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
@@ -559,7 +571,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     v.setValue<ComboItems>(items);
                     pProObj->setAttribute("items", v);
 
-                    if(pArgItem->value == "")
+                    if(pArgItem->value == "" && elementIds_.size() > 0)
                         pArgItem->value = elementIds_.at(0);
                     pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);

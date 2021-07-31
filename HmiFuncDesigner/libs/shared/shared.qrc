@@ -49,5 +49,6 @@
 		<file>images/indicationlamp.png</file>
 		<file>images/jarshape.png</file>
 		<file>images/valuestick.png</file>
+		<file>images/switchbutton.png</file>
     </qresource>
 </RCC>
