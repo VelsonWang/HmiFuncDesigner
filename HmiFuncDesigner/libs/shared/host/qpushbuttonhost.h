@@ -12,10 +12,13 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
+
 protected:
-    void    initProperty();
+    void initProperty();
+
 protected:
-    void    createObject();
+    void createObject();
+    void getSupportEvents(QStringList &listValue);
 };
 
 #endif // QPUSHBUTTONHOST_H

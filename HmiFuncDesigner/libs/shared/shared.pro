@@ -38,6 +38,7 @@ HEADERS += \
     widgets/qimagebox.h \
     widgets/qindicationlamp.h \
     widgets/qjarshape.h \
+    widgets/qpushbuttonex.h \
     widgets/qswitchbutton.h \
     widgets/qvaluestick.h \
     xmlobject.h \
@@ -122,6 +123,7 @@ SOURCES += \
     widgets/qimagebox.cpp \
     widgets/qindicationlamp.cpp \
     widgets/qjarshape.cpp \
+    widgets/qpushbuttonex.cpp \
     widgets/qswitchbutton.cpp \
     widgets/qvaluestick.cpp \
     xmlobject.cpp \
