@@ -30,6 +30,7 @@
 
 class QAbstractPage;
 class QStackedWidget;
+class QRunningManager;
 
 class MainWindow : public QMainWindow
 {
@@ -79,8 +80,14 @@ private slots:
 
     // 模拟仿真
     void onSlotSimulate();
+
     // 运行工程
     void onSlotRunProject();
+    void onSlotStart();
+    void onSlotStop();
+
+    // 停止运行工程
+    void onSlotStopRunProject();
     // 下载工程
     void onSlotDownloadProject();
     // 上载工程

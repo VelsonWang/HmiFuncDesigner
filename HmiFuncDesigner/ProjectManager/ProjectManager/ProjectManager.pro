@@ -20,7 +20,6 @@ INCLUDEPATH += $$PWD/../../libs/core
 INCLUDEPATH += $$PWD/../../libs/shared
 INCLUDEPATH += $$PWD/../../libs/shared/projdata
 INCLUDEPATH += $$PWD/../../libs/gradienteditor
-INCLUDEPATH += $$PWD/../../libs/running
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
@@ -40,7 +39,6 @@ LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lcore
 LIBS += -L$$LINK_LIBRARY_PATH -lshared
 LIBS += -L$$LINK_LIBRARY_PATH -lgradientEditor
-LIBS += -L$$LINK_LIBRARY_PATH -lrunning
 
 SOURCES += main.cpp\
     ../Public/userevent.cpp \

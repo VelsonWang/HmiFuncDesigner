@@ -82,7 +82,7 @@ osx {
 
     isEmpty(IDE_OUTPUT_PATH): IDE_OUTPUT_PATH = $$clean_path($$IDE_BUILD_TREE)
     #message("IDE_OUTPUT_PATH is: $$IDE_OUTPUT_PATH")
-    IDE_LIBRARY_PATH = $$clean_path($$IDE_BUILD_TREE/../lib)
+    IDE_LIBRARY_PATH = $$clean_path($$IDE_BUILD_TREE/../lib_rt)
     #message("IDE_LIBRARY_PATH is: $$IDE_LIBRARY_PATH")
     IDE_PLUGIN_PATH  = $$clean_path($$IDE_LIBRARY_PATH/plugins)
     #message("IDE_PLUGIN_PATH is: $$IDE_PLUGIN_PATH")
@@ -104,8 +104,17 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Port \
     $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Tag \
     $$IDE_SOURCE_TREE/HmiRunTimeData/Vendors/Public \
-    $$IDE_SOURCE_TREE/HmiRunTimeData/Vendors/IVendorPlugin
-	
+    $$IDE_SOURCE_TREE/HmiRunTimeData/Vendors/IVendorPlugin \
+    $$IDE_SOURCE_TREE/libs/Utils \
+    $$IDE_SOURCE_TREE/libs/edncrypt \
+    $$IDE_SOURCE_TREE/libs/qtsingleapplication \
+    $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
+    $$IDE_SOURCE_TREE/libs/core \
+    $$IDE_SOURCE_TREE/libs/shared \
+    $$IDE_SOURCE_TREE/libs/shared/projdata \
+    $$IDE_SOURCE_TREE/libs/gradienteditor \
+    $$IDE_SOURCE_TREE/libs/running
+
 
 QTC_PLUGIN_DIRS_FROM_ENVIRONMENT = $$(QTC_PLUGIN_DIRS)
 QTC_PLUGIN_DIRS += $$split(QTC_PLUGIN_DIRS_FROM_ENVIRONMENT, $$QMAKE_DIRLIST_SEP)

@@ -1,0 +1,31 @@
+    usage as follows:
+    add "qtsingleapplication.pri" in projetc.pro file
+
+    #include($$PWD/qtsingleapplication/qtsinglecoreapplication.pri)
+    include($$PWD/qtsingleapplication/qtsingleapplication.pri)
+
+    INCLUDEPATH += $$PWD/qtsingleapplication
+
+    // Original
+    int main(int argc, char **argv)
+    {
+        QApplication app(argc, argv);
+
+        MyMainWidget mmw;
+        mmw.show();
+        return app.exec();
+    }
+
+    // Single instance
+    int main(int argc, char **argv)
+    {
+        QtSingleApplication app(argc, argv);
+
+        if (app.isRunning())
+            return !app.sendMessage(someDataString);
+
+        MyMainWidget mmw;
+        app.setActivationWindow(&mmw);
+        mmw.show();
+        return app.exec();
+    }

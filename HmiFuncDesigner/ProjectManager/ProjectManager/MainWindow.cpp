@@ -36,7 +36,6 @@
 #include "../../libs/core/qsoftcore.h"
 #include "../../libs/shared/qprojectcore.h"
 #include "../../libs/shared/host/qabstracthost.h"
-#include "../../libs/running/qrunningmanager.h"
 #include "../Public/userevent.h"
 #include <QDesktopWidget>
 #include <QApplication>
@@ -140,12 +139,11 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle(tr("HmiFuncDesigner组态软件"));
     this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态软件"));
     connect(m_pTabProjectMgrObj, SIGNAL(currentChanged(int)), SLOT(onSlotTabProjectMgrCurChanged(int)));
-    onSlotTabProjectMgrCurChanged(0);
+    onSlotTabProjectMgrCurChanged(0);  
 }
 
-
-MainWindow::~MainWindow() {
-
+MainWindow::~MainWindow()
+{
 }
 
 
@@ -272,6 +270,14 @@ void MainWindow::createActions()
         QSoftCore::getCore()->insertAction("Tools.Run", pActObj);
     }
 
+    // 停止运行工程
+    pActObj = new QAction(QIcon(":/images/offline.png"), tr("停止"));
+    if(pActObj) {
+        pActObj->setEnabled(false);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotStopRunProject()));
+        QSoftCore::getCore()->insertAction("Tools.StopRun", pActObj);
+    }
+
     // 下载工程
     pActObj = new QAction(QIcon(":/images/download.png"), tr("下载"));
     if(pActObj) {
@@ -333,6 +339,7 @@ void MainWindow::createMenus()
     m_pMenuToolsObj = this->menuBar()->addMenu(tr("工具"));
     m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.Simulate")); // 模拟仿真
     m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.Run")); // 运行工程
+    m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.StopRun")); // 停止运行工程
     m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.Download")); // 下载工程
     m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.UpLoad")); // 上传工程
 
@@ -368,6 +375,7 @@ void MainWindow::createToolbars()
     pToolBarObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
     pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.Simulate")); // 模拟仿真
     pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.Run")); // 运行工程
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.StopRun")); // 停止运行工程
     pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.Download")); // 下载工程
     pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.UpLoad")); // 上传工程
 
@@ -677,23 +685,92 @@ void MainWindow::onSlotSimulate()
     */
 void MainWindow::onSlotRunProject()
 {
-    QString fileRuntimeApplication = "";
+    QString szFileRuntimeApp = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime");
 #ifdef Q_OS_WIN
-    fileRuntimeApplication = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime.exe");
+    szFileRuntimeApp += ".exe";
 #endif
-
-#ifdef Q_OS_LINUX
-    fileRuntimeApplication = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime");
-#endif
-
-    QFile file(fileRuntimeApplication);
+    QFile file(szFileRuntimeApp);
     if (file.exists()) {
         QProcess *process = new QProcess();
         process->setWorkingDirectory(Helper::AppDir() + "/");
         QStringList argv;
         argv << QSoftCore::getCore()->getProjectCore()->m_szProjPath;
-        process->startDetached(fileRuntimeApplication, argv);
+        process->startDetached(szFileRuntimeApp, argv);
     }
+}
+
+void MainWindow::onSlotStart()
+{
+    QAction *pActObj = QSoftCore::getCore()->getAction("Tools.Run");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Tools.StopRun");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.New");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Close");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Save");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Open");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+}
+
+void MainWindow::onSlotStop()
+{
+    QAction *pActObj = QSoftCore::getCore()->getAction("Tools.StopRun");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Tools.Run");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.New");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Close");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Save");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Open");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+}
+
+/**
+ * @brief MainWindow::onSlotStopRunProject
+ * @details 停止运行工程
+ */
+void MainWindow::onSlotStopRunProject()
+{
 }
 
 /**

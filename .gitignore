@@ -1,5 +1,6 @@
 docs
 lib
+lib_rt
 tmp
 build-*
 HmiFuncDesignerBin/bin/pages/*.dll
