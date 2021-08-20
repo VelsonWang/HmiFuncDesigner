@@ -2,7 +2,7 @@
 #include "../xmlobject.h"
 #include <QTimer>
 
-QAbstractProperty::QAbstractProperty(QAbstractProperty *parent) : 
+QAbstractProperty::QAbstractProperty(QAbstractProperty *parent) :
     m_parent(parent)
 {
     if(m_parent != Q_NULLPTR) {
@@ -131,7 +131,7 @@ QVariant QAbstractProperty::getAttribute(const QString &key)
     int index = key.indexOf(":");
     if(index > 0) {
         QString c = key.left(index);
-        QString k = key.mid(index+1);
+        QString k = key.mid(index + 1);
         foreach(QAbstractProperty* p, m_children) {
             if(p->getObjectProperty("name").toString() == c) {
                 return p->getAttribute(k);
@@ -152,7 +152,7 @@ void QAbstractProperty::setAttribute(const QString &key, const QVariant &value)
     int index = key.indexOf(":");
     if(index > 0) {
         QString c = key.left(index);
-        QString k = key.mid(index+1);
+        QString k = key.mid(index + 1);
         foreach(QAbstractProperty* p, m_children) {
             if(p->getObjectProperty("name").toString() == c) {
                 p->setAttribute(k, value);

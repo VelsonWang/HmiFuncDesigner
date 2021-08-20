@@ -64,29 +64,29 @@ void QPushButtonHost::initProperty()
 
     //QAbstractButtonHost::initProperty();
     QWidgetHost::initProperty();
-/*
-    pObj = QPropertyFactory::create_property("Script");
-    if(pObj != Q_NULLPTR) {
-        pObj->setObjectProperty("name", "clicked_down");
-        pObj->setAttribute("show_name", tr("按下"));
-        pObj->setAttribute("group", "Events");
-        insertProperty(pObj);
-    }
+    /*
+        pObj = QPropertyFactory::create_property("Script");
+        if(pObj != Q_NULLPTR) {
+            pObj->setObjectProperty("name", "clicked_down");
+            pObj->setAttribute("show_name", tr("按下"));
+            pObj->setAttribute("group", "Events");
+            insertProperty(pObj);
+        }
 
-    pObj = QPropertyFactory::create_property("Script");
-    if(pObj != Q_NULLPTR) {
-        pObj->setObjectProperty("name", "clicked_up");
-        pObj->setAttribute("show_name", tr("抬起"));
-        pObj->setAttribute("group", "Events");
-        insertProperty(pObj);
-    }
-*/
+        pObj = QPropertyFactory::create_property("Script");
+        if(pObj != Q_NULLPTR) {
+            pObj->setObjectProperty("name", "clicked_up");
+            pObj->setAttribute("show_name", tr("抬起"));
+            pObj->setAttribute("group", "Events");
+            insertProperty(pObj);
+        }
+    */
     pObj = QPropertyFactory::create_property("Enum");
     if(pObj != Q_NULLPTR) {
         pObj->setObjectProperty("name", "showContent");
         pObj->setAttribute("show_name", tr("显示内容"));
-        pObj->setAttribute("group","Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME,true);
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         QStringList contents;
         contents << tr("文本") << tr("图片");
@@ -115,8 +115,8 @@ void QPushButtonHost::initProperty()
     if(pObj != Q_NULLPTR) {
         pObj->setObjectProperty("name", "hAlign");
         pObj->setAttribute("show_name", tr("水平对齐"));
-        pObj->setAttribute("group","Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME,true);
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         QStringList alignList;
         alignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
@@ -137,8 +137,8 @@ void QPushButtonHost::initProperty()
     if(pObj != Q_NULLPTR) {
         pObj->setObjectProperty("name", "vAlign");
         pObj->setAttribute("show_name", tr("垂直对齐"));
-        pObj->setAttribute("group","Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME,true);
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         QStringList alignList;
         alignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
@@ -196,7 +196,7 @@ void QPushButtonHost::initProperty()
         insertProperty(pObj);
     }
 
-    pObj=QPropertyFactory::create_property("Number");
+    pObj = QPropertyFactory::create_property("Number");
     if(pObj != Q_NULLPTR) {
         pObj->setObjectProperty("name", "borderWidth");
         pObj->setAttribute("show_name", tr("边框宽度"));
@@ -229,7 +229,7 @@ void QPushButtonHost::initProperty()
     }
 
     setPropertyValue("geometry", QRect(0, 0, 100, 30));
-    setPropertyValue("text","button");
+    setPropertyValue("text", "button");
 }
 
 void QPushButtonHost::getSupportEvents(QStringList &listValue)
@@ -258,8 +258,9 @@ void QPushButtonHost::getSupportEvents(QStringList &listValue)
         if(szEventGroupName == "PushButton") {
 
             QList<XMLObject*> childrenGroup = eventGroup->getChildren();
-            if(childrenGroup.size() < 1)
+            if(childrenGroup.size() < 1) {
                 continue;
+            }
 
             foreach(XMLObject* event, childrenGroup) {
                 QString eventName = event->getProperty("name");
@@ -267,8 +268,9 @@ void QPushButtonHost::getSupportEvents(QStringList &listValue)
                 listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
 
                 QList<XMLObject*> funcDesc = event->getChildren();
-                if(funcDesc.size() < 1)
+                if(funcDesc.size() < 1) {
                     continue;
+                }
                 QString strDesc = event->getCurrentChild("desc")->getText();
             }
         }

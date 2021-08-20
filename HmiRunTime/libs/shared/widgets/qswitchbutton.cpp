@@ -47,10 +47,13 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
         painter->drawRect(rect);
     } else {
         if(showContentText) { // 文本+背景
-            for(int i=0; i<borderWidth; i++) {
+            for(int i = 0; i < borderWidth; i++) {
                 PubTool::DrawFrameRect(painter, rect, borderColor);
-                if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
-                else rect.adjust(1, 1, 0, 0);
+                if(i < borderWidth / 2) {
+                    rect.adjust(1, 1, -1, -1);
+                } else {
+                    rect.adjust(1, 1, 0, 0);
+                }
             }
 
             PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
@@ -92,8 +95,9 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
             }
 
             QRectF textRect = rect.normalized().adjusted(borderWidth, borderWidth, -borderWidth, -borderWidth);
-            painter->drawText(textRect, hFlags|vFlags, szElementText);
+            painter->drawText(textRect, hFlags | vFlags, szElementText);
         } else { // 图片
+            borderWidth = 0;
             QString szPictureFile = stateOnInitial ? setPictureFile : resetPictureFile;
             if(szPictureFile != QString()) {
                 QImage scaleImage;
@@ -107,9 +111,19 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
                     painter->drawImage(drawRect, scaleImage);
                 } else {
                     painter->drawImage(rect, scaleImage);
-                } 
+                }
             }
             painter->setPen(QPen(Qt::gray, 1, Qt::DashDotLine));
+            painter->drawRect(rect);
+        }
+
+        // 绘制选中状态
+        if (selected) {
+            int rectWidth = borderWidth + 4;
+            QRect rect = QRect(rectWidth, rectWidth, width() - 2 * rectWidth, height() - 2 * rectWidth);
+            QPen pen(Qt::lightGray, 1, Qt::DashLine);
+            painter->setBrush(Qt::NoBrush);
+            painter->setPen(pen);
             painter->drawRect(rect);
         }
     }
@@ -127,6 +141,31 @@ void QSwitchButton::resizeEvent(QResizeEvent *event)
 {
     setPropertyInner();
     QWidget::resizeEvent(event);
+}
+
+void QSwitchButton::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+}
+
+void QSwitchButton::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    if(!enableOnInitial) {
+        return;
+    }
+    selected = true;
+    this->update();
+}
+
+void QSwitchButton::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    if(!enableOnInitial) {
+        return;
+    }
+    selected = false;
+    this->update();
 }
 
 QColor QSwitchButton::getTextColor() const

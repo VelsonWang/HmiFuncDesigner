@@ -20,13 +20,16 @@ class QFileManager;
 class QActionArray
 {
 public:
-    QActionArray() : m_type(""), m_action(Q_NULLPTR){}
-    ~QActionArray() {
+    QActionArray() : m_type(""), m_action(Q_NULLPTR) {}
+    ~QActionArray()
+    {
         qDeleteAll(m_children.values());
-        if(m_action != Q_NULLPTR) delete m_action;
+        if(m_action != Q_NULLPTR) {
+            delete m_action;
+        }
     }
     QString m_type;
-    QMap<QString,QActionArray*> m_children;
+    QMap<QString, QActionArray*> m_children;
     QAction* m_action;
 };
 
@@ -42,10 +45,6 @@ public:
     void addUndoStack(QUndoStack* stack);
     void setActivityStack(QUndoStack* stack);
 
-    void startUpdatePlugin();
-
-    QDevicesManager* getDevicesManager();
-    QFileManager* getFileManager();
 protected:
     explicit QSoftCore(QObject *parent = 0);
 
@@ -63,7 +62,7 @@ protected:
     void initDriverAction();
 
 public:
-    void insertAction(const QString& key,QAction *action); // 添加全局action
+    void insertAction(const QString& key, QAction *action); // 添加全局action
     QAction* getAction(const QString &key); // 获取全局action
     QStringList getPages();
 
@@ -78,8 +77,6 @@ protected:
     static  QSoftCore* m_core; // 单实例
     QProjectCore* m_project_core;
     QUndoGroup* m_undo_group;
-    QDevicesManager* m_devicesManager;
-    QFileManager* m_file_manager;
 };
 
 #endif // QSOFTCORE_H

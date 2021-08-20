@@ -96,8 +96,11 @@ private:
     void drawSwitchButton(QPainter *painter);
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     // 关联的变量
@@ -148,6 +151,7 @@ private:
 
     QImage resetImageObj;
     QImage setImageObj;
+    bool selected;
 };
 
 #endif // QSWITCHBUTTON_H

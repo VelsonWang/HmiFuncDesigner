@@ -44,10 +44,13 @@ void QPushButtonEx::drawPushButton(QPainter *painter)
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(rect);
     } else {
-        for(int i=0; i<borderWidth; i++) {
+        for(int i = 0; i < borderWidth; i++) {
             PubTool::DrawFrameRect(painter, rect, borderColor);
-            if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
-            else rect.adjust(1, 1, 0, 0);
+            if(i < borderWidth / 2) {
+                rect.adjust(1, 1, -1, -1);
+            } else {
+                rect.adjust(1, 1, 0, 0);
+            }
         }
 
         PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
@@ -79,9 +82,10 @@ void QPushButtonEx::drawPushButton(QPainter *painter)
             }
 
             QRectF textRect = rect.normalized().adjusted(borderWidth, borderWidth, -borderWidth, -borderWidth);
-            painter->drawText(textRect, hFlags|vFlags, text);
+            painter->drawText(textRect, hFlags | vFlags, text);
 
         } else { // 图片按钮
+            borderWidth = 0;
             if(filePicture != QString()) {
                 if(rect.contains(imageObj.rect())) {
                     QRect drawRect = QRect((width() - imageObj.width()) / 2, (height() - imageObj.height()) / 2, imageObj.width(), imageObj.height());
@@ -90,6 +94,16 @@ void QPushButtonEx::drawPushButton(QPainter *painter)
                     painter->drawImage(rect, imageObj);
                 }
             }
+        }
+
+        // 绘制选中状态
+        if (selected) {
+            int rectWidth = borderWidth + 4;
+            QRect rect = QRect(rectWidth, rectWidth, width() - 2 * rectWidth, height() - 2 * rectWidth);
+            QPen pen(Qt::lightGray, 1, Qt::DashLine);
+            painter->setBrush(Qt::NoBrush);
+            painter->setPen(pen);
+            painter->drawRect(rect);
         }
     }
 }
@@ -105,6 +119,31 @@ void QPushButtonEx::resizeEvent(QResizeEvent *event)
 {
     setPropertyInner();
     QPushButton::resizeEvent(event);
+}
+
+void QPushButtonEx::mouseMoveEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+}
+
+void QPushButtonEx::mousePressEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    if(!enableOnInitial) {
+        return;
+    }
+    selected = true;
+    this->update();
+}
+
+void QPushButtonEx::mouseReleaseEvent(QMouseEvent *event)
+{
+    Q_UNUSED(event)
+    if(!enableOnInitial) {
+        return;
+    }
+    selected = false;
+    this->update();
 }
 
 QFont QPushButtonEx::getFont() const

@@ -74,11 +74,11 @@ bool QRunningManager::load(QString proj)
     if(headerObj.byOpenVerifyPassword != 0) {
         QByteArray baPwd;
         baPwd.append((const char *)headerObj.szPassword, headerObj.byOpenVerifyPassword);
-//        VerifyPasswordDialog dlg;
-//        dlg.setTargetPassword(baPwd.toHex());
-//        if(dlg.exec() == QDialog::Rejected) {
-//            return;
-//        }
+        //        VerifyPasswordDialog dlg;
+        //        dlg.setTargetPassword(baPwd.toHex());
+        //        if(dlg.exec() == QDialog::Rejected) {
+        //            return;
+        //        }
     }
 
     if(!m_pProjCoreObj->openFromXml(proj)) {
@@ -113,6 +113,8 @@ void QRunningManager::onShowWidget(QWidget *widget)
         int height = qMax(widget->height(), m_pMainWindowObj->height());
         m_pMainWindowObj->setFixedSize(QSize(width, height));
         widget->setParent(m_pMainWindowObj);
+        QDesktopWidget *pDeskObj = qApp->desktop();
+        m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
     }
     if(m_pLastWidgetObj != Q_NULLPTR) {
         m_pLastWidgetObj->setVisible(false);

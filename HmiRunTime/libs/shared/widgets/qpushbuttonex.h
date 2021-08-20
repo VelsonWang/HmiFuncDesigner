@@ -76,8 +76,11 @@ private:
     void drawPushButton(QPainter *painter);
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void mouseMoveEvent(QMouseEvent *event) override;
+    void mouseReleaseEvent(QMouseEvent *event) override;
 
 private:
     // 功能操作
@@ -115,7 +118,7 @@ private:
 
 private:
     QImage imageObj;
-
+    bool selected;
 };
 
 #endif // QPUSHBUTTONEX_H

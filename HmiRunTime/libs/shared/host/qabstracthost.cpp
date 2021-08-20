@@ -28,15 +28,14 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
 
     setProperty("function_list",
                 QStringList()
-                <<"destroyed(QObject*)"
-                <<"destroyed()"
-                <<"deleteLater()"
-                <<"exec(QString,QMap<QString,QString>)"
-                <<"translateChanged(QString)"
-                <<"languageChanged()");
+                << "destroyed(QObject*)"
+                << "destroyed()"
+                << "deleteLater()"
+                << "exec(QString,QMap<QString,QString>)"
+                << "translateChanged(QString)"
+                << "languageChanged()");
 
-    if(m_parent!=Q_NULLPTR)
-    {
+    if(m_parent != Q_NULLPTR) {
         m_parent->m_children.append(this);
     }
     connect(m_timer, SIGNAL(timeout()), this, SLOT(onPropertyRefresh()));
@@ -45,12 +44,10 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
 QAbstractHost::~QAbstractHost()
 {
     clear();
-    if(m_parent!=Q_NULLPTR)
-    {
+    if(m_parent != Q_NULLPTR) {
         m_parent->m_children.removeAll(this);
     }
-    if(m_object!=Q_NULLPTR)
-    {
+    if(m_object != Q_NULLPTR) {
         m_object->deleteLater();
     }
     delete m_timer;
@@ -62,69 +59,56 @@ void QAbstractHost::insertChildren(const QList<int> &indexs, const QList<QAbstra
     QList<int> ind;
     QList<QAbstractHost*> list;
 
-    for(int i=0;i<children.size();i++)
-    {
-        QAbstractHost *h=children.at(i);
-        if(h->m_parent!=Q_NULLPTR)
-        {
+    for(int i = 0; i < children.size(); i++) {
+        QAbstractHost *h = children.at(i);
+        if(h->m_parent != Q_NULLPTR) {
             continue;
         }
-        int index=indexs.at(i);
-        if(index<0 || index>m_children.size())
-        {
-            index=m_children.size();
+        int index = indexs.at(i);
+        if(index < 0 || index > m_children.size()) {
+            index = m_children.size();
         }
-        h->m_parent=this;
-        if(h->getObject()->isWidgetType())
-        {
-            QWidget* w=(QWidget*)h->getObject();
+        h->m_parent = this;
+        if(h->getObject()->isWidgetType()) {
+            QWidget* w = (QWidget*)h->getObject();
             w->setParent((QWidget*)m_object);
             w->setVisible(true);
-        }
-        else
-        {
+        } else {
             h->getObject()->setParent(m_object);
         }
-        m_children.insert(index,h);
+        m_children.insert(index, h);
         h->setPageManager(m_page_manager);
         h->setDataManager(m_data_manager);
         h->setResourceManager(m_resource_manager);
         ind.append(index);
         list.append(h);
     }
-    emit notifyInsertChildren(list,ind);
+    emit notifyInsertChildren(list, ind);
 }
 
 void QAbstractHost::removeChildren(const QList<QAbstractHost *> &children)
 {
     QList<QAbstractHost*> list;
 
-    foreach(QAbstractHost* h,children)
-    {
-        if(h->m_parent!=this)
-        {
+    foreach(QAbstractHost* h, children) {
+        if(h->m_parent != this) {
             continue;
         }
         list.append(h);
     }
 
-    if(list.size()==0)
-    {
+    if(list.size() == 0) {
         return;
     }
     emit notifyRemoveChildren(list);
 
-    foreach(QAbstractHost* h,list)
-    {
-        h->m_parent=Q_NULLPTR;
-        if(h->m_object->isWidgetType())
-        {
-            QWidget* w=(QWidget*)h->m_object;
+    foreach(QAbstractHost* h, list) {
+        h->m_parent = Q_NULLPTR;
+        if(h->m_object->isWidgetType()) {
+            QWidget* w = (QWidget*)h->m_object;
             w->setParent(Q_NULLPTR);
             w->setVisible(false);
-        }
-        else
-        {
+        } else {
             h->m_object->setParent(Q_NULLPTR);
         }
         m_children.removeAll(h);
@@ -138,12 +122,9 @@ QList<QAbstractHost*> QAbstractHost::getChildren()
 
 QAbstractHost* QAbstractHost::getChild(int index)
 {
-    if(index<0 || index>=m_children.size())
-    {
+    if(index < 0 || index >= m_children.size()) {
         return Q_NULLPTR;
-    }
-    else
-    {
+    } else {
         return m_children.at(index);
     }
 }
@@ -160,15 +141,12 @@ int QAbstractHost::getChildCount()
 
 QAbstractProperty* QAbstractHost::getProperty(const QString &name)
 {
-    QStringList list=name.split(".");
-    if(list.size()>=0)
-    {
-        QAbstractProperty* pro=m_nameToProperty.value(list.takeFirst());
-        while(list.size()>0)
-        {
-            pro=pro->getChild(list.takeFirst());
-            if(pro==Q_NULLPTR)
-            {
+    QStringList list = name.split(".");
+    if(list.size() >= 0) {
+        QAbstractProperty* pro = m_nameToProperty.value(list.takeFirst());
+        while(list.size() > 0) {
+            pro = pro->getChild(list.takeFirst());
+            if(pro == Q_NULLPTR) {
                 break;
             }
         }
@@ -184,31 +162,25 @@ QList<QAbstractProperty*> QAbstractHost::getPropertys()
 
 QVariant QAbstractHost::getPropertyValue(const QString &name)
 {
-    QAbstractProperty *pro=getProperty(name);
-    if(pro!=Q_NULLPTR)
-    {
+    QAbstractProperty *pro = getProperty(name);
+    if(pro != Q_NULLPTR) {
         return pro->get_value();
-    }
-    else
-    {
+    } else {
         return QVariant();
     }
 }
 
 void QAbstractHost::setPropertyValue(const QString &name, const QVariant &value)
 {
-    QAbstractProperty *pro=getProperty(name);
-    if(pro!=Q_NULLPTR)
-    {
+    QAbstractProperty *pro = getProperty(name);
+    if(pro != Q_NULLPTR) {
         pro->set_value(value);
-        QAbstractProperty *p=pro;
-        while(p->getParent()!=Q_NULLPTR)
-        {
-            p=p->getParent();
+        QAbstractProperty *p = pro;
+        while(p->getParent() != Q_NULLPTR) {
+            p = p->getParent();
         }
         m_object->setProperty(p->getObjectProperty("name").toByteArray(), p->get_value());
-        if(pro->getAttribute("group") == "Style Sheet")
-        {
+        if(pro->getAttribute("group") == "Style Sheet") {
             makeStyleSheet();
         }
     }
@@ -216,26 +188,23 @@ void QAbstractHost::setPropertyValue(const QString &name, const QVariant &value)
 
 void QAbstractHost::insertProperty(QAbstractProperty *property, int index)
 {
-    if(m_propertys.contains(property))
-    {
+    if(m_propertys.contains(property)) {
         return;
     }
 
-    if(index<0 || index>=m_propertys.size())
-    {
-        index=m_propertys.size();
+    if(index < 0 || index >= m_propertys.size()) {
+        index = m_propertys.size();
     }
     property->set_host(this);
-    m_propertys.insert(index,property);
+    m_propertys.insert(index, property);
     m_nameToProperty.insert(property->getObjectProperty("name").toString(), property);
 }
 
 void QAbstractHost::removeProperty(const QString &name)
 {
-    QAbstractProperty *pro=m_nameToProperty.value(name);
+    QAbstractProperty *pro = m_nameToProperty.value(name);
     m_nameToProperty.remove(name);
-    if(pro!=Q_NULLPTR)
-    {
+    if(pro != Q_NULLPTR) {
         m_propertys.removeAll(pro);
         delete pro;
     }
@@ -243,17 +212,14 @@ void QAbstractHost::removeProperty(const QString &name)
 
 void QAbstractHost::setDefault()
 {
-    foreach(QAbstractProperty* pro,m_propertys)
-    {
+    foreach(QAbstractProperty* pro, m_propertys) {
         pro->setDefault();
-        if(m_object!=Q_NULLPTR)
-        {
+        if(m_object != Q_NULLPTR) {
             m_object->setProperty(pro->getObjectProperty("name").toByteArray(), pro->get_value());
         }
         makeStyleSheet();
     }
-    foreach(QAbstractHost* h,m_children)
-    {
+    foreach(QAbstractHost* h, m_children) {
         h->setDefault();
         h->makeStyleSheet();
     }
@@ -263,26 +229,23 @@ void QAbstractHost::setDefault()
 
 void QAbstractHost::insertAction(const QString &name, QAction *ac, int index)
 {
-    if(m_actions.contains(ac))
-    {
+    if(m_actions.contains(ac)) {
         return;
     }
 
-    if(index<0 || index>=m_actions.size())
-    {
-        index=m_actions.size();
+    if(index < 0 || index >= m_actions.size()) {
+        index = m_actions.size();
     }
 
-    m_actions.insert(index,ac);
-    m_nameToAction.insert(name,ac);
+    m_actions.insert(index, ac);
+    m_nameToAction.insert(name, ac);
 }
 
 void QAbstractHost::removeAction(const QString &name)
 {
-    QAction* ac=m_nameToAction.value(name);
+    QAction* ac = m_nameToAction.value(name);
     m_nameToAction.remove(name);
-    if(ac!=Q_NULLPTR)
-    {
+    if(ac != Q_NULLPTR) {
         m_actions.removeAll(ac);
         delete ac;
     }
@@ -305,7 +268,7 @@ QObject* QAbstractHost::getObject()
 
 void QAbstractHost::setAttribute(const QString &key, const QString &value)
 {
-    m_attributes.insert(key,value);
+    m_attributes.insert(key, value);
 }
 
 QString QAbstractHost::getAttribute(const QString &key)
@@ -317,7 +280,7 @@ void QAbstractHost::initProperty()
 {
     QAbstractProperty* pro;
 
-    pro=QPropertyFactory::create_property("ByteArray");
+    pro = QPropertyFactory::create_property("ByteArray");
     if(pro != Q_NULLPTR) {
         pro->setObjectProperty("name", "objectName");
         pro->setAttribute("show_name", tr("名称")); // tr("Name")
@@ -329,92 +292,74 @@ void QAbstractHost::initProperty()
 
 void QAbstractHost::toObject(XMLObject *xml)
 {
-    if(xml!=Q_NULLPTR)
-    {
+    if(xml != Q_NULLPTR) {
         xml->clear();
 
         xml->setTagName(property("title").toString());
 
         QMapIterator<QString, QString> it(m_attributes);
-        while(it.hasNext())
-        {
+        while(it.hasNext()) {
             it.next();
-            xml->setProperty(it.key(),it.value());
+            xml->setProperty(it.key(), it.value());
         }
 
         XMLObject* obj;
-        foreach(QAbstractProperty* pro, m_propertys)
-        {
-            if(pro->modified() || pro->getAttribute(ATTR_NEEDSAVE).toBool())
-            {
-                obj=new XMLObject;
+        foreach(QAbstractProperty* pro, m_propertys) {
+            if(pro->modified() || pro->getAttribute(ATTR_NEEDSAVE).toBool()) {
+                obj = new XMLObject;
                 pro->toObject(obj);
                 xml->inser_child(-1, obj);
             }
         }
 
-        foreach(QAbstractHost* h, m_children)
-        {
-            obj=new XMLObject;
+        foreach(QAbstractHost* h, m_children) {
+            obj = new XMLObject;
             h->toObject(obj);
-            xml->inser_child(-1,obj);
+            xml->inser_child(-1, obj);
         }
     }
 }
 
 void QAbstractHost::fromObject(XMLObject *xml)
 {
-    if(xml!=Q_NULLPTR)
-    {
-        if(xml->getTagName()!=property("title").toString())
-        {
+    if(xml != Q_NULLPTR) {
+        if(xml->getTagName() != property("title").toString()) {
             return;
         }
 
         clear();
 
         QMapIterator<QString, QString> it(m_attributes);
-        while(it.hasNext())
-        {
+        while(it.hasNext()) {
             it.next();
             m_attributes.insert(it.key(), xml->getProperty(it.key()));
         }
 
-        if(getUuid()=="")
-        {
+        if(getUuid() == "") {
             setUuid(QUuid::createUuid().toString());
         }
 
-        QList<XMLObject*>   children=xml->getChildren();
-        foreach(XMLObject* obj,children)
-        {
-            if(obj->getTagName()==PROPERTY_TITLE)
-            {
-                QString name=obj->getProperty("name");
-                QAbstractProperty *pro=m_nameToProperty.value(name);
-                if(pro!=Q_NULLPTR)
-                {
+        QList<XMLObject*>   children = xml->getChildren();
+        foreach(XMLObject* obj, children) {
+            if(obj->getTagName() == PROPERTY_TITLE) {
+                QString name = obj->getProperty("name");
+                QAbstractProperty *pro = m_nameToProperty.value(name);
+                if(pro != Q_NULLPTR) {
                     pro->fromObject(obj);
-                    pro->setAttribute(ATTR_NEEDSAVE,true);
+                    pro->setAttribute(ATTR_NEEDSAVE, true);
                 }
-            }
-            else
-            {
-                QString name=obj->getProperty(HOST_TYPE);
+            } else {
+                QString name = obj->getProperty(HOST_TYPE);
 
-                QAbstractHost *h=QHostFactory::create_host(name);
-                if(h!=Q_NULLPTR)
-                {
+                QAbstractHost *h = QHostFactory::create_host(name);
+                if(h != Q_NULLPTR) {
                     h->fromObject(obj);
-                    h->m_parent=this;
-                    if(h->getObject()->isWidgetType())
-                    {
-                        QWidget* w=(QWidget*)h->getObject();
+                    h->m_parent = this;
+                    if(h->getObject()->isWidgetType()) {
+                        QWidget* w = (QWidget*)h->getObject();
                         w->setParent((QWidget*)m_object);
                         w->setVisible(true);
-                    }
-                    else
-                    {
+                    } else {
                         h->getObject()->setParent(m_object);
                     }
                     m_children.append(h);
@@ -427,8 +372,7 @@ void QAbstractHost::fromObject(XMLObject *xml)
 
 void QAbstractHost::clear()
 {
-    while(m_children.size()>0)
-    {
+    while(m_children.size() > 0) {
         delete m_children.first();
     }
 }
@@ -457,11 +401,9 @@ void QAbstractHost::init()
     createObject();
     initProperty();
 
-    if(m_object!=Q_NULLPTR)
-    {
+    if(m_object != Q_NULLPTR) {
         m_object->installEventFilter(this);
-        foreach(QAbstractProperty* pro,m_propertys)
-        {
+        foreach(QAbstractProperty* pro, m_propertys) {
             pro->set_value(m_object->property(pro->getObjectProperty("name").toByteArray()));
         }
     }
@@ -470,42 +412,26 @@ void QAbstractHost::init()
 
 bool QAbstractHost::eventFilter(QObject *o, QEvent *e)
 {
-    if(o==m_object)
-    {
-        if(e->type()==QEvent::Paint)
-        {
+    if(o == m_object) {
+        if(e->type() == QEvent::Paint) {
             return handlePaintEvent((QPaintEvent*)e);
-        }
-        else if(e->type()==QEvent::MouseButtonPress)
-        {
+        } else if(e->type() == QEvent::MouseButtonPress) {
             return handleMousePressEvent((QMouseEvent*)e);
-        }
-        else if(e->type()==QEvent::MouseButtonRelease)
-        {
+        } else if(e->type() == QEvent::MouseButtonRelease) {
             return handleMouseReleaseEvent((QMouseEvent*)e);
-        }
-        else if(e->type()==QEvent::MouseMove)
-        {
+        } else if(e->type() == QEvent::MouseMove) {
             return handleMouseMoveEvent((QMouseEvent*)e);
-        }
-        else if(e->type()==QEvent::MouseButtonDblClick)
-        {
+        } else if(e->type() == QEvent::MouseButtonDblClick) {
             return handleDoubleClickedEvent((QMouseEvent*)e);
-        }
-        else if(e->type()==QEvent::FocusIn)
-        {
+        } else if(e->type() == QEvent::FocusIn) {
             return handleFocusInEvent((QFocusEvent*)e);
-        }
-        else if(e->type()==QEvent::FocusOut)
-        {
+        } else if(e->type() == QEvent::FocusOut) {
             return handleFocusOutEvent((QFocusEvent*)e);
-        }
-        else if(e->type()==QEvent::ContextMenu)
-        {
+        } else if(e->type() == QEvent::ContextMenu) {
             return handleContextMenuEvent((QContextMenuEvent*)e);
         }
     }
-    return QObject::eventFilter(o,e);
+    return QObject::eventFilter(o, e);
 }
 
 bool QAbstractHost::handleContextMenuEvent(QContextMenuEvent *)
@@ -520,28 +446,26 @@ bool QAbstractHost::handlePaintEvent(QPaintEvent *)
 
 bool QAbstractHost::handleMousePressEvent(QMouseEvent *e)
 {
-    QString str=getPropertyValue("mousePress").toString();
-    if(str!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_x",QString::number(e->x()));
-        param.insert("_y",QString::number(e->y()));
-        param.insert("_button",QString::number(e->button()));
-        exec(str,param);
+    QString str = getPropertyValue("mousePress").toString();
+    if(str != "") {
+        QMap<QString, QString> param;
+        param.insert("_x", QString::number(e->x()));
+        param.insert("_y", QString::number(e->y()));
+        param.insert("_button", QString::number(e->button()));
+        exec(str, param);
     }
     return false;
 }
 
 bool QAbstractHost::handleMouseReleaseEvent(QMouseEvent *e)
 {
-    QString str=getPropertyValue("mouseRelease").toString();
-    if(str!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_x",QString::number(e->x()));
-        param.insert("_y",QString::number(e->y()));
-        param.insert("_button",QString::number(e->button()));
-        exec(str,param);
+    QString str = getPropertyValue("mouseRelease").toString();
+    if(str != "") {
+        QMap<QString, QString> param;
+        param.insert("_x", QString::number(e->x()));
+        param.insert("_y", QString::number(e->y()));
+        param.insert("_button", QString::number(e->button()));
+        exec(str, param);
         return true;
     }
     return false;
@@ -549,28 +473,26 @@ bool QAbstractHost::handleMouseReleaseEvent(QMouseEvent *e)
 
 bool QAbstractHost::handleMouseMoveEvent(QMouseEvent *e)
 {
-    QString str=getPropertyValue("mouseMove").toString();
-    if(str!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_x",QString::number(e->x()));
-        param.insert("_y",QString::number(e->y()));
-        param.insert("_button",QString::number(e->button()));
-        exec(str,param);
+    QString str = getPropertyValue("mouseMove").toString();
+    if(str != "") {
+        QMap<QString, QString> param;
+        param.insert("_x", QString::number(e->x()));
+        param.insert("_y", QString::number(e->y()));
+        param.insert("_button", QString::number(e->button()));
+        exec(str, param);
     }
     return false;
 }
 
 bool QAbstractHost::handleDoubleClickedEvent(QMouseEvent *e)
 {
-    QString str=getPropertyValue("doubleClick").toString();
-    if(str!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_x",QString::number(e->x()));
-        param.insert("_y",QString::number(e->y()));
-        param.insert("_button",QString::number(e->button()));
-        exec(str,param);
+    QString str = getPropertyValue("doubleClick").toString();
+    if(str != "") {
+        QMap<QString, QString> param;
+        param.insert("_x", QString::number(e->x()));
+        param.insert("_y", QString::number(e->y()));
+        param.insert("_button", QString::number(e->button()));
+        exec(str, param);
         return true;
     }
     return false;
@@ -588,15 +510,12 @@ bool QAbstractHost::handleFocusOutEvent(QFocusEvent *)
 
 void QAbstractHost::onPropertyRefresh()
 {
-    if(m_object==Q_NULLPTR)
-    {
+    if(m_object == Q_NULLPTR) {
         return;
     }
-    foreach(QAbstractProperty* pro,m_propertys)
-    {
+    foreach(QAbstractProperty* pro, m_propertys) {
         QVariant v = m_object->property(pro->getObjectProperty("name").toByteArray());
-        if(v != pro->get_value())
-        {
+        if(v != pro->get_value()) {
             pro->set_value(v);
         }
     }
@@ -609,7 +528,7 @@ QString QAbstractHost::getUuid()
 
 void QAbstractHost::setUuid(const QString &uuid)
 {
-    m_attributes.insert("uuid",uuid);
+    m_attributes.insert("uuid", uuid);
 }
 
 
@@ -637,76 +556,64 @@ void QAbstractHost::onCurTextChanged(const QString &uuid)
 
 QString QAbstractHost::functionInformation(const QString &name)
 {
-    int index=metaObject()->indexOfMethod(name.toLocal8Bit());
-    if(index==-1)
-    {
+    int index = metaObject()->indexOfMethod(name.toLocal8Bit());
+    if(index == -1) {
         return "";
     }
     QString ret;
-    QMetaMethod method=this->metaObject()->method(index);
+    QMetaMethod method = this->metaObject()->method(index);
 
-    QList<QByteArray> parameters=method.parameterNames();
+    QList<QByteArray> parameters = method.parameterNames();
     QString para;
 
     QAbstractProperty *pro;
 
-    for(int i=0;i<parameters.size();i++)
-    {
-        para=parameters.at(i);
-        ret+=(tr("Parameter ")+QString::number(i+1)+" : "+para+"\n");
-        pro=m_nameToProperty.value(para,Q_NULLPTR);
-        if(pro!=Q_NULLPTR)
-        {
-            if(pro->getObjectProperty("type")=="Enum")
-            {
-                ComboItems items=pro->getAttribute("items").value<ComboItems>();
-                foreach(tagComboItem item,items)
-                {
-                    ret+=("    "+item.m_value.toString()+" = "+item.m_text+"\n");
+    for(int i = 0; i < parameters.size(); i++) {
+        para = parameters.at(i);
+        ret += (tr("Parameter ") + QString::number(i + 1) + " : " + para + "\n");
+        pro = m_nameToProperty.value(para, Q_NULLPTR);
+        if(pro != Q_NULLPTR) {
+            if(pro->getObjectProperty("type") == "Enum") {
+                ComboItems items = pro->getAttribute("items").value<ComboItems>();
+                foreach(tagComboItem item, items) {
+                    ret += ("    " + item.m_value.toString() + " = " + item.m_text + "\n");
                 }
-            }
-            else if(pro->getObjectProperty("type")=="Cursor")
-            {
-                ComboItems items=pro->getAttribute("items").value<ComboItems>();
-                foreach(tagComboItem item,items)
-                {
-                    QCursor c=item.m_value.value<QCursor>();
-                    ret+=("    "+QString::number(c.shape())+"="+item.m_text+"\n");
+            } else if(pro->getObjectProperty("type") == "Cursor") {
+                ComboItems items = pro->getAttribute("items").value<ComboItems>();
+                foreach(tagComboItem item, items) {
+                    QCursor c = item.m_value.value<QCursor>();
+                    ret += ("    " + QString::number(c.shape()) + "=" + item.m_text + "\n");
                 }
             }
         }
 
     }
-    if(parameters.size()>0)
-    {
-        ret=ret.left(ret.size()-1);
+    if(parameters.size() > 0) {
+        ret = ret.left(ret.size() - 1);
     }
     return ret;
 }
 
 void QAbstractHost::setPageManager(QPageManager *page)
 {
-    m_page_manager=page;
-    foreach(QAbstractHost* h,m_children)
-    {
+    m_page_manager = page;
+    foreach(QAbstractHost* h, m_children) {
         h->setPageManager(page);
     }
 }
 
 void QAbstractHost::setDataManager(QDataManager *data)
 {
-    m_data_manager=data;
-    foreach(QAbstractHost* h,m_children)
-    {
+    m_data_manager = data;
+    foreach(QAbstractHost* h, m_children) {
         h->setDataManager(data);
     }
 }
 
 void QAbstractHost::setResourceManager(QResourceManager *resource)
 {
-    m_resource_manager=resource;
-    foreach(QAbstractHost* h,m_children)
-    {
+    m_resource_manager = resource;
+    foreach(QAbstractHost* h, m_children) {
         h->setResourceManager(resource);
     }
 }
@@ -718,20 +625,17 @@ QScriptEngine* QAbstractHost::getScriptEngine()
 
 void QAbstractHost::exec(const QString &code, const QMap<QString, QString> &param)
 {
-    QScriptValue global=m_engine->globalObject();
+    QScriptValue global = m_engine->globalObject();
     QMapIterator<QString, QString> it(param);
 
-
-    while(it.hasNext())
-    {
+    while(it.hasNext()) {
         it.next();
-        global.setProperty(it.key(),it.value());
+        global.setProperty(it.key(), it.value());
     }
 
     m_engine->setGlobalObject(global);
     m_engine->evaluate(code);
-    if(m_engine->hasUncaughtException())
-    {
+    if(m_engine->hasUncaughtException()) {
         qDebug(m_engine->uncaughtException().toString().toLocal8Bit());
     }
 }
@@ -741,82 +645,62 @@ void QAbstractHost::makeStyleSheet()
     QString str;
     QString temp;
     QString head;
-    foreach(QAbstractProperty* pro,m_propertys)
-    {
-        if(pro->inherits("QStylesheetProperty"))
-        {
-            QAbstractStylesheetItem *item=QStylesheetItemFactory::createItem(pro->getObjectProperty("name").toString());
-            if(item!=Q_NULLPTR)
-            {
-                tagStylesheetItems list=pro->get_value().value<tagStylesheetItems>();
-                foreach(tagStylesheetItem it,list)
-                {
+    foreach(QAbstractProperty* pro, m_propertys) {
+        if(pro->inherits("QStylesheetProperty")) {
+            QAbstractStylesheetItem *item = QStylesheetItemFactory::createItem(pro->getObjectProperty("name").toString());
+            if(item != Q_NULLPTR) {
+                tagStylesheetItems list = pro->get_value().value<tagStylesheetItems>();
+                foreach(tagStylesheetItem it, list) {
                     QVariant v;
                     v.setValue<tagStylesheetItem>(it);
                     item->setValue(v);
-                    temp=item->makeStylesheet();
-                    if(temp!="")
-                    {
-                        if(!it.m_attributes.value("no-head").toBool())
-                        {
-                            head="#"+m_object->property("objectName").toString();
+                    temp = item->makeStylesheet();
+                    if(temp != "") {
+                        if(!it.m_attributes.value("no-head").toBool()) {
+                            head = "#" + m_object->property("objectName").toString();
                         }
-                        if(it.m_attributes.value("title").toString()!="Normal")
-                        {
-                            head+=(it.m_attributes.value("title").toString());
+                        if(it.m_attributes.value("title").toString() != "Normal") {
+                            head += (it.m_attributes.value("title").toString());
                         }
-                        temp=head+temp;
+                        temp = head + temp;
                     }
-                    if(temp!="")
-                    {
-                        str+=temp;
+                    if(temp != "") {
+                        str += temp;
                     }
                 }
             }
         }
     }
-    m_object->setProperty("styleSheet",str);
+    m_object->setProperty("styleSheet", str);
 }
 
 void QAbstractHost::setParent(QAbstractHost *parent, int index)
 {
-    if(m_parent==parent)
-    {
+    if(m_parent == parent) {
         return;
     }
-    if(m_parent!=Q_NULLPTR)
-    {
+    if(m_parent != Q_NULLPTR) {
         m_parent->m_children.removeAll(this);
     }
 
-    m_parent=parent;
-    if(m_parent!=Q_NULLPTR)
-    {
-        if(index<0 || index>parent->m_children.size())
-        {
-            index=m_children.size();
+    m_parent = parent;
+    if(m_parent != Q_NULLPTR) {
+        if(index < 0 || index > parent->m_children.size()) {
+            index = m_children.size();
         }
-        m_parent->m_children.insert(index,this);
-        if(m_object->isWidgetType())
-        {
-            QWidget* wid=(QWidget*)m_object;
+        m_parent->m_children.insert(index, this);
+        if(m_object->isWidgetType()) {
+            QWidget* wid = (QWidget*)m_object;
             wid->setParent((QWidget*)parent->m_object);
             wid->setVisible(true);
-        }
-        else
-        {
+        } else {
             m_object->setParent(parent->m_object);
         }
-    }
-    else
-    {
-        if(m_object->isWidgetType())
-        {
-            QWidget* wid=(QWidget*)m_object;
+    } else {
+        if(m_object->isWidgetType()) {
+            QWidget* wid = (QWidget*)m_object;
             wid->setParent(Q_NULLPTR);
-        }
-        else
-        {
+        } else {
             m_object->setParent(Q_NULLPTR);
         }
     }
@@ -825,12 +709,9 @@ void QAbstractHost::setParent(QAbstractHost *parent, int index)
 
 QString QAbstractHost::getHostType()
 {
-    if(m_parent!=Q_NULLPTR)
-    {
+    if(m_parent != Q_NULLPTR) {
         return m_parent->getHostType();
-    }
-    else
-    {
+    } else {
         return property("title").toString();
     }
 }

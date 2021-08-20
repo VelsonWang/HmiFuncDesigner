@@ -19,7 +19,6 @@
 #include "qsoftcore.h"
 #include "qprojectcore.h"
 #include "qrunningmanager.h"
-#include "../../libs/core/qbaseinit.h"
 #include "../../libs/shared/qbaseinit.h"
 
 
@@ -74,10 +73,14 @@ int main(int argc, char *argv[])
     QString configPath = "";
 
     QString szRunProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
-    if(argc == 2) szRunProjPath = argv[1];
+    if(argc == 2) {
+        szRunProjPath = argv[1];
+    }
 
     QDir dir(szRunProjPath);
-    if (!dir.exists()) dir.mkpath(szRunProjPath);
+    if (!dir.exists()) {
+        dir.mkpath(szRunProjPath);
+    }
 
     // find project infomation file
     QString szProjName = getProjectName(szRunProjPath);
@@ -87,7 +90,6 @@ int main(int argc, char *argv[])
         return -1;
     } else {
         qRegisterBaseProperty();
-        qRegisterBasePropertyEditor();
         qRegisterBaseHost();
         QRunningManager runningMgr;
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";

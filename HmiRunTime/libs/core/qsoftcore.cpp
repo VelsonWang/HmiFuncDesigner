@@ -1,7 +1,4 @@
 #include "qsoftcore.h"
-#include "qabstractpagewidget.h"
-#include "qdevicesmanager.h"
-#include "qfilemanager.h"
 #include "../shared/qprojectcore.h"
 #include "../shared/qabstractupdateplugin.h"
 #include "../shared/pluginloader.h"
@@ -14,14 +11,8 @@ QSoftCore* QSoftCore::m_core = Q_NULLPTR;
 QSoftCore::QSoftCore(QObject *parent) :
     QObject(parent),
     m_project_core(new QProjectCore),
-    m_undo_group(new QUndoGroup(this)),
-    m_devicesManager(new QDevicesManager(this)),
-    m_file_manager(new QFileManager)
+    m_undo_group(new QUndoGroup(this))
 {
-    QDir dir;
-    dir.mkpath(QApplication::applicationDirPath() + "/resources");
-    m_file_manager->load();
-
     initUserManagerAction();
     initLanguageManagerAction();
     initFormManagerAction();
@@ -105,7 +96,7 @@ void QSoftCore::initUserManagerAction()
     ac = new QAction(QIcon(":/images/plus.png"), tr("Add User"), Q_NULLPTR);
     insertAction("UserManager.Add", ac);
     ac = new QAction(QIcon(":/images/minus.png"), tr("Remove User"), Q_NULLPTR);
-    insertAction("UserManager.Del",ac);
+    insertAction("UserManager.Del", ac);
     ac = new QAction(QIcon(""), tr("Remove users"), Q_NULLPTR);
     insertAction("UserManager.Remove", ac);
     ac = new QAction(QIcon(""), tr("Give up"), Q_NULLPTR);
@@ -117,7 +108,7 @@ void QSoftCore::initLanguageManagerAction()
     QAction *ac;
 
     ac = new QAction(QIcon(":/images/plus.png"), tr("Add Language"), Q_NULLPTR);
-    insertAction("LanguageManager.Add",ac);
+    insertAction("LanguageManager.Add", ac);
     ac = new QAction(QIcon(":/images/minus.png"), tr("Remove Language"), Q_NULLPTR);
     insertAction("LanguageManager.Del", ac);
     ac = new QAction(QIcon(""), tr("Remove users"), Q_NULLPTR);
@@ -130,16 +121,16 @@ void QSoftCore::initFormManagerAction()
 {
     QAction *ac;
     ac = new QAction(QIcon(":/images/plus.png"), tr("Add Form"), Q_NULLPTR);
-    insertAction("FormManager.Add",ac);
+    insertAction("FormManager.Add", ac);
     ac = new QAction(QIcon(":/images/minus.png"), tr("Remove Form"), Q_NULLPTR);
-    insertAction("FormManager.Del",ac);
-    ac = new QAction(QIcon(":/images/left.png"), tr("Left"),Q_NULLPTR);
+    insertAction("FormManager.Del", ac);
+    ac = new QAction(QIcon(":/images/left.png"), tr("Left"), Q_NULLPTR);
     insertAction("FormManager.Same.Left", ac);
     ac = new QAction(QIcon(":/images/v-center.png"), tr("V-Center"), Q_NULLPTR);
-    insertAction("FormManager.Same.V-Center",ac);
+    insertAction("FormManager.Same.V-Center", ac);
     ac = new QAction(QIcon(":/images/right.png"), tr("Right"), Q_NULLPTR);
     insertAction("FormManager.Same.Right", ac);
-    ac = new QAction(QIcon(":/images/top.png"),tr("Top"),Q_NULLPTR);
+    ac = new QAction(QIcon(":/images/top.png"), tr("Top"), Q_NULLPTR);
     insertAction("FormManager.Same.Top", ac);
     ac = new QAction(QIcon(":/images/h-center.png"), tr("H-Center"), Q_NULLPTR);
     insertAction("FormManager.Same.H-Center", ac);
@@ -147,19 +138,19 @@ void QSoftCore::initFormManagerAction()
     insertAction("FormManager.Same.Bottom", ac);
     ac = new QAction(QIcon(":/images/same-width.png"), tr("Same Width"), Q_NULLPTR);
     insertAction("FormManager.Same.Width", ac);
-    ac  =new QAction(QIcon(":/images/same-height.png"), tr("Same Height"), Q_NULLPTR);
+    ac  = new QAction(QIcon(":/images/same-height.png"), tr("Same Height"), Q_NULLPTR);
     insertAction("FormManager.Same.Height", ac);
     ac = new QAction(QIcon(":/images/same-rect.png"), tr("Same Gemotry"), Q_NULLPTR);
     insertAction("FormManager.Same.Gemotry", ac);
     ac = new QAction(QIcon(":/images/editcopy.png"), tr("Copy"), Q_NULLPTR);
-    insertAction("FormManager.Copy",ac);
+    insertAction("FormManager.Copy", ac);
     ac = new QAction(QIcon(":/images/editcut.png"), tr("Cut"), Q_NULLPTR);
-    insertAction("FormManager.Cut",ac);
+    insertAction("FormManager.Cut", ac);
     ac = new QAction(QIcon(":/images/editpaste.png"), tr("Paste"), Q_NULLPTR);
     insertAction("FormManager.Paste", ac);
-    ac = new QAction(QIcon(),tr("Delete"), Q_NULLPTR);
+    ac = new QAction(QIcon(), tr("Delete"), Q_NULLPTR);
     insertAction("FormManager.Delete", ac);
-    ac = new QAction(QIcon(),tr("Select All"), Q_NULLPTR);
+    ac = new QAction(QIcon(), tr("Select All"), Q_NULLPTR);
     insertAction("FormManager.Select.All", ac);
 }
 
@@ -204,17 +195,17 @@ void QSoftCore::initScriptEditAction()
 {
     QAction *ac;
     ac = new QAction(QIcon(":/images/filesave_small.png"), tr("&Save"), Q_NULLPTR);
-    insertAction("ScriptEdit.Save",ac);
+    insertAction("ScriptEdit.Save", ac);
     ac = new QAction(QIcon(":/images/undo.png"), tr("&Undo"), Q_NULLPTR);
-    insertAction("ScriptEdit.Undo",ac);
+    insertAction("ScriptEdit.Undo", ac);
     ac = new QAction(QIcon(":/images/redo.png"), tr("&Redo"), Q_NULLPTR);
-    insertAction("ScriptEdit.Redo",ac);
+    insertAction("ScriptEdit.Redo", ac);
     ac = new QAction(QIcon(":/images/editcut.png"), tr("Cu&t"), Q_NULLPTR);
-    insertAction("ScriptEdit.Cut",ac);
+    insertAction("ScriptEdit.Cut", ac);
     ac = new QAction(QIcon(":/images/editcopy.png"), tr("&Copy"), Q_NULLPTR);
-    insertAction("ScriptEdit.Copy",ac);
+    insertAction("ScriptEdit.Copy", ac);
     ac = new QAction(QIcon(":/images/editpaste.png"), tr("&Paste"), Q_NULLPTR);
-    insertAction("ScriptEdit.Paste",ac);
+    insertAction("ScriptEdit.Paste", ac);
     ac = new QAction(QIcon(":/images/zoomin.png"), tr("Zoomin"), Q_NULLPTR);
     insertAction("ScriptEdit.Zoomin", ac);
     ac = new QAction(QIcon(":/images/zoomout.png"), tr("Zoomout"), Q_NULLPTR);
@@ -291,42 +282,14 @@ void QSoftCore::setActivityStack(QUndoStack *stack)
     m_undo_group->setActiveStack(stack);
 }
 
-void QSoftCore::startUpdatePlugin()
-{
-    QMap<QString,QAbstractPlugin*> plugins = PluginLoader::getPluginByType(UPDATE_PLUGIN_TYPE);
-
-    QMapIterator<QString,QAbstractPlugin*> it(plugins);
-
-    while(it.hasNext()) {
-        it.next();
-        QAbstractUpdatePlugin *pl = (QAbstractUpdatePlugin*)it.value();
-        QStringList list = pl->supports();
-        foreach(const QString &n, list) {
-            QAbstractUpdate *up = pl->create(n);
-            if(up != Q_NULLPTR) {
-                m_devicesManager->addUpdate(up);
-            }
-        }
-    }
-}
-
-QDevicesManager *QSoftCore::getDevicesManager()
-{
-    return m_devicesManager;
-}
-
-QFileManager* QSoftCore::getFileManager()
-{
-    return m_file_manager;
-}
-
 /**
  * @brief Core::insertToolBar
  * @details 添加全局工具条
  * @param szKey 工具条对象对应的ID
  * @param pToolBarObj 工具条对象
  */
-void QSoftCore::insertToolBar(const QString& szKey, QToolBar *pToolBarObj) {
+void QSoftCore::insertToolBar(const QString& szKey, QToolBar *pToolBarObj)
+{
     m_mapToolBar.insert(szKey.toLower(), pToolBarObj);
 }
 
@@ -336,6 +299,7 @@ void QSoftCore::insertToolBar(const QString& szKey, QToolBar *pToolBarObj) {
  * @param szKey 工具条对象对应的ID
  * @return 工具条对象
  */
-QToolBar* QSoftCore::getToolBar(const QString &szKey) {
+QToolBar* QSoftCore::getToolBar(const QString &szKey)
+{
     return m_mapToolBar.value(szKey.toLower());
 }
