@@ -6,26 +6,13 @@
 #include "public.h"
 #include "Vendor.h"
 #include "../Event/Event.h"
-#include "../Tag/Tag.h"
+#include "../Tag/RunTimeTag.h"
 
 class Vendor;
 
-//------------------------------------------------------------------------------
-
-struct DBTagObjectPrivate
-{
-    TTagType type;
-    QObject *pTagObject;
-};
-typedef DBTagObjectPrivate TDBTagObjectPrivate;
-typedef DBTagObjectPrivate* PDBTagObjectPrivate;
-
-//------------------------------------------------------------------------------
-
 #pragma pack(push)
 #pragma pack(1)
-typedef union any
-{
+typedef union any {
 #define MAX_LEN    (64)
     quint8 t_bool;
     qint8 t_int8;
@@ -44,14 +31,18 @@ typedef union any
     quint8 t_bytes[MAX_LEN];
 
     bool operator==(const any &rhs) {
-        for (int i=0; i<MAX_LEN; i++)
-            if(t_bytes[i] != rhs.t_bytes[i]) return false;
+        for (int i = 0; i < MAX_LEN; i++)
+            if(t_bytes[i] != rhs.t_bytes[i]) {
+                return false;
+            }
         return true;
     }
 
     bool operator!=(const any &rhs) {
-        for (int i=0; i<MAX_LEN; i++)
-            if(t_bytes[i] != rhs.t_bytes[i]) return true;
+        for (int i = 0; i < MAX_LEN; i++)
+            if(t_bytes[i] != rhs.t_bytes[i]) {
+                return true;
+            }
         return false;
     }
 
@@ -62,8 +53,7 @@ typedef union any
 
 #pragma pack(push)
 #pragma pack(1)
-typedef struct tagDBTagObject
-{
+typedef struct tagDBTagObject {
     char szID[32]; // 变量ID
     quint8 iType; // 变量类型 字节 字 双字等
     quint8 iPermission; // 读写权限
@@ -82,7 +72,7 @@ class DBTagObject : public EventProducer
 public:
     explicit DBTagObject();
     DBTagObject(PDBTagObject pDBTagObj, QString id, TTagDataType t,
-                TPermissionType p, qint32 len, TTagType tt, QObject *pObj);
+                TPermissionType p, qint32 len, QObject *pObj);
     ~DBTagObject();
 
     void SetData(TAny v, bool bReadFromDevice = true);
@@ -98,7 +88,7 @@ public slots:
 
 public:
     PDBTagObject m_pDBTagObject = Q_NULLPTR;
-    TDBTagObjectPrivate m_private; // 存放标签属性对象
+    QObject* m_private; // 存放标签属性对象
     Vendor *m_pVendor;
 };
 
@@ -108,31 +98,11 @@ public:
     void performed(RuntimeEvent e)
     {
         DBTagObject *pObj = (DBTagObject *)e.getObj();
-        QObject *pTagObj = pObj->m_private.pTagObject;
-        if(pTagObj != nullptr)
-        {
-            switch(pObj->m_private.type)
-            {
-                case TYPE_IO:
-                {
-                    IoDataTag *pIoDataTag = (IoDataTag *)pTagObj;
-                    pIoDataTag->m_Function.ExecFunctions(e);
-                }
-                break;
-                case TYPE_TMP:
-                {
-                    TmpDataTag *pTmpTag = (TmpDataTag *)pTagObj;
-                    pTmpTag->m_Function.ExecFunctions(e);
-                }
-                break;
-                case TYPE_SYSTEM:
-                {
-                    SysDataTag *pSysTag = (SysDataTag *)pTagObj;
-                    pSysTag->m_Function.ExecFunctions(e);
-                }
-                break;
-            }
+        RunTimeTag *pTagObj = (RunTimeTag *)pObj->m_private;
+        if(pTagObj != nullptr) {
+            pTagObj->m_Function.ExecFunctions(e);
         }
     }
 };
+
 #endif // DBTAGOBJECT_H

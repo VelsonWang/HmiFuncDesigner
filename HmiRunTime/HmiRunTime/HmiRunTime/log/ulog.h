@@ -7,10 +7,9 @@
 #include <QDir>
 #include <QFile>
 #include <QTimer>
-#include <qDebug>
+#include <QDebug>
 
-enum ELogLevel
-{
+enum ELogLevel {
     LOG_DEBUG,
     LOG_INFO,
     LOG_WARN,
@@ -89,35 +88,35 @@ public:
     void Debug(T head, Args ... args)
     {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
-        WritelogToLocal(LOG_DEBUG,logmsg);
+        WritelogToLocal(LOG_DEBUG, logmsg);
     }
 
     template <typename T, typename ... Args>
     void Info(T head, Args ... args)
     {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
-        WritelogToLocal(LOG_INFO,logmsg);
+        WritelogToLocal(LOG_INFO, logmsg);
     }
 
     template <typename T, typename ... Args>
     void Warn(T head, Args ... args)
     {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
-        WritelogToLocal(LOG_WARN,logmsg);
+        WritelogToLocal(LOG_WARN, logmsg);
     }
 
     template <typename T, typename ... Args>
     void Error(T head, Args ... args )
     {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
-        WritelogToLocal(LOG_ERROR,logmsg);
+        WritelogToLocal(LOG_ERROR, logmsg);
     }
 
     template <typename T, typename ... Args>
     void Fatal(T head, Args ... args)
     {
         QString logmsg = QString("%1 ").arg(head) + TemplateParameter(args...);
-        WritelogToLocal(LOG_FATAL,logmsg);
+        WritelogToLocal(LOG_FATAL, logmsg);
     }
 
     template <typename T>
@@ -130,7 +129,8 @@ public:
 private:
     virtual void WritelogToLocal(ELogLevel logtype, const QString& logmsg);
 
-    virtual void Copy(const LogHelper &logContext){
+    virtual void Copy(const LogHelper &logContext)
+    {
         Q_UNUSED(logContext)
     }
 

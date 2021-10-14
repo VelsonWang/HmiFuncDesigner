@@ -44,20 +44,17 @@ void getYearMonthDateFromFileName(const QString &fileName, int &year, int &month
 void ULog::DelLogFile(int keepdays)
 {
     QDir file;
-    if(file.exists(m_szLogDir))
-    {
+    if(file.exists(m_szLogDir)) {
         file.setPath(m_szLogDir);
-        QFileInfoList flist = file.entryInfoList(QDir::Files|QDir::Readable|QDir::Writable|QDir::Hidden|QDir::NoDotAndDotDot,QDir::Name);
-        for(int i=0;i < flist.size();i++)
-        {
+        QFileInfoList flist = file.entryInfoList(QDir::Files | QDir::Readable | QDir::Writable | QDir::Hidden | QDir::NoDotAndDotDot, QDir::Name);
+        for(int i = 0; i < flist.size(); i++) {
             int year = 0;
             int month = 0;
             int day = 0;
             QString fileName = flist.at(i).fileName();
             getYearMonthDateFromFileName(fileName, year, month, day);
             QDate fileDate = QDate(year, month, day);
-            if(fileDate.addDays(keepdays) < QDate::currentDate())
-            {
+            if(fileDate.addDays(keepdays) < QDate::currentDate()) {
                 file.remove(fileName);
             }
         }
@@ -90,11 +87,21 @@ void SelfLogOutputHandler(QtMsgType type, const QMessageLogContext &context, con
 {
     Q_UNUSED(context)
     switch(type) {
-        case QtDebugMsg: LogDebug(text); break;
-        case QtWarningMsg: LogWarn(text); break;
-        case QtCriticalMsg: LogError(text); break;
-        case QtFatalMsg: LogFatal(text); break;
-        case QtInfoMsg: LogInfo(text); break;
+        case QtDebugMsg:
+            LogDebug(text);
+            break;
+        case QtWarningMsg:
+            LogWarn(text);
+            break;
+        case QtCriticalMsg:
+            LogError(text);
+            break;
+        case QtFatalMsg:
+            LogFatal(text);
+            break;
+        case QtInfoMsg:
+            LogInfo(text);
+            break;
     }
 }
 
@@ -107,8 +114,7 @@ ULog::ULog(QObject *parent) : QObject(parent)
     QString logPath = QCoreApplication::applicationDirPath() + "/log";
     ELogLevel level = LOG_DEBUG;
 
-    if(QFile::exists(logConfigFilePath))
-    {
+    if(QFile::exists(logConfigFilePath)) {
         //logPath = GetCfgString(logConfigFilePath, "Log", "Path", logPath);
         level = (ELogLevel)GetCfgString(logConfigFilePath, "Log", "Level", QString::number(LOG_DEBUG)).toInt();
     }
@@ -143,19 +149,15 @@ int ULog::OpenLogFile(QString logpath)
 
     QString filepath;
     QDir dir;
-    try
-    {
-        if(!dir.exists(logpath))
-        {
+    try {
+        if(!dir.exists(logpath)) {
             dir.mkpath(logpath);
         }
         QDateTime dt = QDateTime::currentDateTime();
         filepath = QString("%1/%2Log.txt").arg(logpath).arg(dt.toString("yyyyMMdd"));
         m_file.setFileName(filepath);
-        if(!m_file.isOpen())
-        {
-            if(m_file.open(QIODevice::ReadWrite))
-            {
+        if(!m_file.isOpen()) {
+            if(m_file.open(QIODevice::ReadWrite)) {
                 m_curTime = dt;
                 m_szLogDir = logpath;
                 isSuccess = true;
@@ -166,19 +168,14 @@ int ULog::OpenLogFile(QString logpath)
                 m_file.write(ba.data());
                 m_file.flush();
             }
-        }
-        else
-        {
+        } else {
             isSuccess = true;
         }
 
-        if (isSuccess)
-        {
+        if (isSuccess) {
             DelLogFile();
         }
-    }
-    catch(...)
-    {
+    } catch(...) {
     }
 
     return isSuccess;
@@ -193,30 +190,26 @@ int ULog::OpenLogFile(QString logpath)
  */
 int ULog::AddLog(ELogLevel level, QString aValue)
 {
-    QString datetime="";
-    QString logtype="";
-    QString loginfo="";
+    QString datetime = "";
+    QString logtype = "";
+    QString loginfo = "";
 
     QMutexLocker locker(&gMutex);
 
-    if(level < m_logLevel)
-    {
+    if(level < m_logLevel) {
         return 0;
     }
 
-    if (m_curTime.date() != QDateTime::currentDateTime().date())
-    {
+    if (m_curTime.date() != QDateTime::currentDateTime().date()) {
         m_file.close();
         OpenLogFile(m_szLogDir);
     }
 
-    if(!m_file.isOpen())
-    {
+    if(!m_file.isOpen()) {
         return 0;
     }
 
-    switch(level)
-    {
+    switch(level) {
         case LOG_DEBUG:
             logtype = "DEBUG";
             break;
@@ -229,19 +222,21 @@ int ULog::AddLog(ELogLevel level, QString aValue)
         case LOG_ERROR:
             logtype = "ERROR";
             break;
-		case LOG_FATAL:
-			logtype = "FATAL";
-			break;
+        case LOG_FATAL:
+            logtype = "FATAL";
+            break;
     }
 
     datetime = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss.zzz");
     loginfo = QString("[%1][%2]%3\r\n").arg(datetime).arg(logtype).arg(aValue);
     QByteArray msg = loginfo.toUtf8();
 
-	OutputDebugStringA(loginfo.toLocal8Bit().constData());
+    OutputDebugStringA(loginfo.toLocal8Bit().constData());
 
     m_szLogs.append(loginfo);
-    if(m_szLogs.size() >= m_iTriggerCount) WriteLogToFile();
+    if(m_szLogs.size() >= m_iTriggerCount) {
+        WriteLogToFile();
+    }
 
     return 1;
 }
@@ -272,15 +267,15 @@ QString ULog::GetSystemInfo()
     out << " Byte Order:               " << systemInfo.buildAbi()               << endl;
     out << " Pretty ProductName:       " << systemInfo.prettyProductName()      << endl;
 
-    // root 
+    // root
     QStorageInfo storage = QStorageInfo::root();
 
     out << storage.rootPath()                                             << endl;
     out << "isReadOnly:" << storage.isReadOnly()                          << endl;
     out << "name:" << storage.name()                                      << endl;
     out << "fileSystemType:" << storage.fileSystemType()                  << endl;
-    out << "size:" << storage.bytesTotal()/1000/1000 << "MB"              << endl;
-    out << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB" << endl;
+    out << "size:" << storage.bytesTotal() / 1000 / 1000 << "MB"              << endl;
+    out << "availableSize:" << storage.bytesAvailable() / 1000 / 1000 << "MB" << endl;
 
     // current volumn
     QStorageInfo storageCurrent(qApp->applicationDirPath());
@@ -290,8 +285,8 @@ QString ULog::GetSystemInfo()
     out << "isReadOnly:" << storageCurrent.isReadOnly()                          << endl;
     out << "name:" << storageCurrent.name()                                      << endl;
     out << "fileSystemType:" << storageCurrent.fileSystemType()                  << endl;
-    out << "size:" << storageCurrent.bytesTotal()/1000/1000 << "MB"              << endl;
-    out << "availableSize:" << storageCurrent.bytesAvailable()/1000/1000 << "MB" << endl;
+    out << "size:" << storageCurrent.bytesTotal() / 1000 / 1000 << "MB"              << endl;
+    out << "availableSize:" << storageCurrent.bytesAvailable() / 1000 / 1000 << "MB" << endl;
 
     return s;
 }
@@ -299,14 +294,12 @@ QString ULog::GetSystemInfo()
 void ULog::WriteLogToFile()
 {
     QStringList tmpLogs;
-    while(!m_szLogs.empty())
-    {
+    while(!m_szLogs.empty()) {
         tmpLogs.append(m_szLogs.takeFirst());
     }
 
     QString szTmpLogs = "";
-    foreach(QString szLog, tmpLogs)
-    {
+    foreach(QString szLog, tmpLogs) {
         szTmpLogs += szLog;
     }
 
@@ -317,7 +310,9 @@ void ULog::WriteLogToFile()
 
 void ULog::OnPeriodWriteLog()
 {
-    if(m_szLogs.size() > 0) WriteLogToFile();
+    if(m_szLogs.size() > 0) {
+        WriteLogToFile();
+    }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////
@@ -325,10 +320,10 @@ void ULog::OnPeriodWriteLog()
 bool LogHelper::m_bShowFileFuncLine = false;
 
 LogHelper::LogHelper(const char *fileName, int lineNumber, const char *functionName)
-       : m_iVersion(1)
-       , m_line(lineNumber)
-       , m_file(fileName)
-       , m_function(functionName)
+    : m_iVersion(1)
+    , m_line(lineNumber)
+    , m_file(fileName)
+    , m_function(functionName)
 {
 }
 
@@ -336,17 +331,14 @@ void LogHelper::WritelogToLocal(ELogLevel logtype, const QString &log)
 {
     QString threadText = QStringLiteral("0x%1").arg(quintptr(QThread::currentThreadId()));
     QString filter = QString("[file(%1)] [func(%2) line(%3) pid(%4)] ")
-            .arg(m_file)
-            .arg(m_function)
-            .arg(m_line)
-            .arg(threadText);
+                     .arg(m_file)
+                     .arg(m_function)
+                     .arg(m_line)
+                     .arg(threadText);
 
-    if(m_bShowFileFuncLine)
-    {
-        ULog::GetInstance()->AddLog(logtype, filter+log);
-    }
-    else
-    {
+    if(m_bShowFileFuncLine) {
+        ULog::GetInstance()->AddLog(logtype, filter + log);
+    } else {
         ULog::GetInstance()->AddLog(logtype, log);
     }
 }

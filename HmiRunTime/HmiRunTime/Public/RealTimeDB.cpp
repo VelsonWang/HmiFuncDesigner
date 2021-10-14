@@ -38,9 +38,11 @@ RealTimeDB::~RealTimeDB()
 PDBTagObject RealTimeDB::getDBTagObject(const QString &szID)
 {
     m_memStatus = false;
-    if(m_pDBTagObjectBaseAddr == Q_NULLPTR) return Q_NULLPTR;
+    if(m_pDBTagObjectBaseAddr == Q_NULLPTR) {
+        return Q_NULLPTR;
+    }
 
-    for(int i=0; i<MAX_DBTAGOBJECT; i++) {
+    for(int i = 0; i < MAX_DBTAGOBJECT; i++) {
         PDBTagObject pObj = (PDBTagObject)&m_pDBTagObjectBaseAddr[i];
         //qDebug() << __FILE__ << __FUNCTION__ << __LINE__ << szID << pObj->szID;
         if(strcasecmp(pObj->szID, szID.toStdString().c_str()) == 0) {
@@ -61,60 +63,77 @@ QString RealTimeDB::GetDataString(const QString &id)
     QString szRet = "";
 
     PDBTagObject pDBTagObj = getDBTagObject(id);
-    if(pDBTagObj == Q_NULLPTR) return QString("");
+    if(pDBTagObj == Q_NULLPTR) {
+        return QString("");
+    }
 
     TTagDataType type = static_cast<TTagDataType>(pDBTagObj->iType);
     TAny any = pDBTagObj->rData;
 
     switch(type) {
-    case TYPE_VARIANT: {
-        szRet = QString((char *)any.t_bytes);
-    }break;
-    case TYPE_BOOL: {
-        szRet = QString::number(any.t_bool);
-    }break;
-    case TYPE_INT8: {
-        szRet = QString::number(any.t_int8);
-    }break;
-    case TYPE_INT16: {
-        szRet = QString::number(any.t_int16);
-    }break;
-    case TYPE_INT32: {
-        szRet = QString::number(any.t_int32);
-    }break;
-    case TYPE_UINT8:{
-        szRet = QString::number(any.t_uint8);
-    }break;
-    case TYPE_UINT16:{
-        szRet = QString::number(any.t_uint16);
-    }break;
-    case TYPE_UINT32: {
-        szRet = QString::number(any.t_uint32);
-    }break;
-    case TYPE_INT64: {
-        szRet = QString::number(any.t_int64);
-    }break;
-    case TYPE_UINT64: {
-        szRet = QString::number(any.t_uint64);
-    }break;
-    case TYPE_FLOAT: {
-        szRet = QString::number(static_cast<double>(any.t_float32));
-    }break;
-    case TYPE_DOUBLE: {
-        szRet = QString::number(any.t_float64);
-    }break;
-    case TYPE_ASCII2CHAR: {
-        szRet = QString::number(any.t_uint16);
-    }break;
-    case TYPE_STRING: {
-        szRet = QString((char *)any.t_string);
-    }break;
-    case TYPE_BCD: {
-        szRet = QString::number(any.t_uint32);
-    }break;
-    default: {
+        case TYPE_VARIANT: {
+            szRet = QString((char *)any.t_bytes);
+        }
+        break;
+        case TYPE_BOOL: {
+            szRet = QString::number(any.t_bool);
+        }
+        break;
+        case TYPE_INT8: {
+            szRet = QString::number(any.t_int8);
+        }
+        break;
+        case TYPE_INT16: {
+            szRet = QString::number(any.t_int16);
+        }
+        break;
+        case TYPE_INT32: {
+            szRet = QString::number(any.t_int32);
+        }
+        break;
+        case TYPE_UINT8: {
+            szRet = QString::number(any.t_uint8);
+        }
+        break;
+        case TYPE_UINT16: {
+            szRet = QString::number(any.t_uint16);
+        }
+        break;
+        case TYPE_UINT32: {
+            szRet = QString::number(any.t_uint32);
+        }
+        break;
+        case TYPE_INT64: {
+            szRet = QString::number(any.t_int64);
+        }
+        break;
+        case TYPE_UINT64: {
+            szRet = QString::number(any.t_uint64);
+        }
+        break;
+        case TYPE_FLOAT: {
+            szRet = QString::number(static_cast<double>(any.t_float32));
+        }
+        break;
+        case TYPE_DOUBLE: {
+            szRet = QString::number(any.t_float64);
+        }
+        break;
+        case TYPE_ASCII2CHAR: {
+            szRet = QString::number(any.t_uint16);
+        }
+        break;
+        case TYPE_STRING: {
+            szRet = QString((char *)any.t_string);
+        }
+        break;
+        case TYPE_BCD: {
+            szRet = QString::number(any.t_uint32);
+        }
+        break;
+        default: {
 
-    }break;
+        } break;
     }
     return szRet;
 }
@@ -126,61 +145,78 @@ QString RealTimeDB::GetDataString(const QString &id)
 void RealTimeDB::SetDataString(const QString &id, const QString &dat)
 {
     PDBTagObject pDBTagObj = getDBTagObject(id);
-    if(pDBTagObj == Q_NULLPTR || dat == "") return;
+    if(pDBTagObj == Q_NULLPTR || dat == "") {
+        return;
+    }
 
     TAny any;
-    memset(any.t_bytes, 0, sizeof(any.t_bytes)/sizeof(quint8));
+    memset(any.t_bytes, 0, sizeof(any.t_bytes) / sizeof(quint8));
     TTagDataType type = static_cast<TTagDataType>(pDBTagObj->iType);
 
     switch(type) {
-    case TYPE_VARIANT: {
-        memcpy(any.t_bytes, dat.toStdString().c_str(), pDBTagObj->mLength);
-    }break;
-    case TYPE_BOOL: {
-        any.t_bool = static_cast<quint8>(dat.toUInt());
-    }break;
-    case TYPE_INT8: {
-        any.t_int8 = static_cast<qint8>(dat.toInt());
-    }break;
-    case TYPE_INT16: {
-        any.t_int16 = static_cast<qint16>(dat.toInt());
-    }break;
-    case TYPE_INT32: {
-        any.t_int32 = static_cast<qint32>(dat.toInt());
-    }break;
-    case TYPE_UINT8: {
-        any.t_uint8 = static_cast<quint8>(dat.toUInt());
-    }break;
-    case TYPE_UINT16: {
-        any.t_uint16 = static_cast<quint16>(dat.toUInt());
-    }break;
-    case TYPE_UINT32: {
-        any.t_uint32 = static_cast<quint32>(dat.toUInt());
-    }break;
-    case TYPE_INT64: {
-        any.t_int64 = dat.toLongLong();
-    }break;
-    case TYPE_UINT64: {
-        any.t_uint64 = dat.toULongLong();
-    }break;
-    case TYPE_FLOAT: {
-        any.t_float32 = dat.toFloat();
-    }break;
-    case TYPE_DOUBLE: {
-        any.t_float64 = dat.toDouble();
-    }break;
-    case TYPE_ASCII2CHAR: {
-        any.t_ascii2char = static_cast<quint16>(dat.toUInt());
-    }break;
-    case TYPE_STRING: {
-        strncpy(any.t_string, dat.toStdString().c_str(), dat.length());
-    }break;
-    case TYPE_BCD: {
-        any.t_bcd = static_cast<quint32>(dat.toUInt());
-    }break;
-    default: {
+        case TYPE_VARIANT: {
+            memcpy(any.t_bytes, dat.toStdString().c_str(), pDBTagObj->mLength);
+        }
+        break;
+        case TYPE_BOOL: {
+            any.t_bool = static_cast<quint8>(dat.toUInt());
+        }
+        break;
+        case TYPE_INT8: {
+            any.t_int8 = static_cast<qint8>(dat.toInt());
+        }
+        break;
+        case TYPE_INT16: {
+            any.t_int16 = static_cast<qint16>(dat.toInt());
+        }
+        break;
+        case TYPE_INT32: {
+            any.t_int32 = static_cast<qint32>(dat.toInt());
+        }
+        break;
+        case TYPE_UINT8: {
+            any.t_uint8 = static_cast<quint8>(dat.toUInt());
+        }
+        break;
+        case TYPE_UINT16: {
+            any.t_uint16 = static_cast<quint16>(dat.toUInt());
+        }
+        break;
+        case TYPE_UINT32: {
+            any.t_uint32 = static_cast<quint32>(dat.toUInt());
+        }
+        break;
+        case TYPE_INT64: {
+            any.t_int64 = dat.toLongLong();
+        }
+        break;
+        case TYPE_UINT64: {
+            any.t_uint64 = dat.toULongLong();
+        }
+        break;
+        case TYPE_FLOAT: {
+            any.t_float32 = dat.toFloat();
+        }
+        break;
+        case TYPE_DOUBLE: {
+            any.t_float64 = dat.toDouble();
+        }
+        break;
+        case TYPE_ASCII2CHAR: {
+            any.t_ascii2char = static_cast<quint16>(dat.toUInt());
+        }
+        break;
+        case TYPE_STRING: {
+            strncpy(any.t_string, dat.toStdString().c_str(), dat.length());
+        }
+        break;
+        case TYPE_BCD: {
+            any.t_bcd = static_cast<quint32>(dat.toUInt());
+        }
+        break;
+        default: {
 
-    }break;
+        } break;
     }
 
     pDBTagObj->rData = any;

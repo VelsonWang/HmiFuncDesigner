@@ -1,8 +1,8 @@
 #ifndef IDEVICEPLUGIN_H
 #define IDEVICEPLUGIN_H
 
-#include "../../HmiRunTimeData/Port/IPort.h"
-#include "../../HmiRunTimeData/Tag/IOTag.h"
+#include "../../HmiRunTime/Port/IPort.h"
+#include "../../HmiRunTime/Tag/IOTag.h"
 #include <QStringList>
 
 

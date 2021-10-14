@@ -16,8 +16,7 @@
 //////////////////////////////////////////
 /// \brief The eTagType enum
 ///
-enum eTagDataType
-{
+enum eTagDataType {
     TYPE_VARIANT = 0,
     TYPE_BOOL,
     TYPE_INT8,
@@ -40,8 +39,7 @@ typedef enum eTagDataType TTagDataType;
 //------------------------------------------------------------------------------
 #pragma pack(push)
 #pragma pack(1)
-typedef union any
-{
+typedef union any {
 #define MAX_LEN    (64)
     quint8 t_bool;
     qint8 t_int8;
@@ -60,14 +58,18 @@ typedef union any
     quint8 t_bytes[MAX_LEN];
 
     bool operator==(const any &rhs) {
-        for (int i=0; i<MAX_LEN; i++)
-            if(t_bytes[i] != rhs.t_bytes[i]) return false;
+        for (int i = 0; i < MAX_LEN; i++)
+            if(t_bytes[i] != rhs.t_bytes[i]) {
+                return false;
+            }
         return true;
     }
 
     bool operator!=(const any &rhs) {
-        for (int i=0; i<MAX_LEN; i++)
-            if(t_bytes[i] != rhs.t_bytes[i]) return true;
+        for (int i = 0; i < MAX_LEN; i++)
+            if(t_bytes[i] != rhs.t_bytes[i]) {
+                return true;
+            }
         return false;
     }
 
@@ -77,8 +79,7 @@ typedef union any
 
 #pragma pack(push)
 #pragma pack(1)
-typedef struct tagDBTagObject
-{
+typedef struct tagDBTagObject {
     char szID[32]; // 变量ID
     quint8 iType; // 变量类型 字节 字 双字等
     quint8 iPermission; // 读写权限
@@ -97,7 +98,8 @@ class RealTimeDB : public QObject
 {
     Q_OBJECT
 public:
-    static RealTimeDB *instance() {
+    static RealTimeDB *instance()
+    {
         static RealTimeDB rtdb;
         return &rtdb;
     }

@@ -5,13 +5,12 @@
 DBTagObject::DBTagObject()
 {
     m_pDBTagObject = Q_NULLPTR;
-    m_private.type =TYPE_TMP;
-    m_private.pTagObject = Q_NULLPTR;
+    m_private = Q_NULLPTR;
     m_pVendor = Q_NULLPTR;
 }
 
 DBTagObject::DBTagObject(PDBTagObject pDBTagObj, QString id, TTagDataType t,
-                         TPermissionType p, qint32 len, TTagType tt, QObject *pObj)
+                         TPermissionType p, qint32 len, QObject *pObj)
 {
     if(pDBTagObj != Q_NULLPTR) {
         m_pDBTagObject = pDBTagObj;
@@ -21,17 +20,14 @@ DBTagObject::DBTagObject(PDBTagObject pDBTagObj, QString id, TTagDataType t,
         m_pDBTagObject->mLength = len;
         m_pDBTagObject->byWriteToVendor = 0;
     }
-
-    m_private.type = tt;
-    m_private.pTagObject = pObj;
+    m_private = pObj;
     m_pVendor = nullptr;
 }
 
 
 DBTagObject::~DBTagObject()
 {
-    if(m_private.pTagObject != nullptr)
-        delete m_private.pTagObject;
+
 }
 
 void DBTagObject::SetData(TAny v, bool bReadFromDevice)
@@ -57,7 +53,7 @@ void DBTagObject::SetData(unsigned char* buffer)
     TTagDataType type = static_cast<TTagDataType>(m_pDBTagObject->iType);
 
     TAny any;
-    memset(any.t_bytes, 0, sizeof(any.t_bytes)/sizeof(quint8));
+    memset(any.t_bytes, 0, sizeof(any.t_bytes) / sizeof(quint8));
     memcpy(any.t_bytes, buffer, m_pDBTagObject->mLength);
     m_pDBTagObject->rData = any;
 
@@ -80,8 +76,9 @@ QByteArray DBTagObject::GetDataBytes()
 {
     QByteArray dat;
     dat.resize(m_pDBTagObject->mLength);
-    for(int i=0; i<m_pDBTagObject->mLength; i++)
+    for(int i = 0; i < m_pDBTagObject->mLength; i++) {
         dat.append(static_cast<char>(m_pDBTagObject->rData.t_bytes[i]));
+    }
     return dat;
 }
 
@@ -95,7 +92,7 @@ TAny DBTagObject::GetWriteData()
 QByteArray DBTagObject::GetWriteDataBytes()
 {
     QByteArray dat;
-    for(int i=0; i<m_pDBTagObject->mLength; i++) {
+    for(int i = 0; i < m_pDBTagObject->mLength; i++) {
         dat.append(static_cast<char>(m_pDBTagObject->wData.t_bytes[i]));
     }
     return dat;

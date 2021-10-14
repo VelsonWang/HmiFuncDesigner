@@ -31,8 +31,8 @@ public:
     static void ModifyScriptInfo(ScriptObject * oldobj, ScriptObject * newobj);
     static void DeleteScriptInfo(ScriptObject * obj);
     static ScriptObject *GetScriptObject(const QString &name);
-    static void load(const QString &filename=QString(), SaveFormat saveFormat=Json);
-    static void save(const QString &filename=QString(), SaveFormat saveFormat=Json);
+    static void load(const QString &filename = QString(), SaveFormat saveFormat = Json);
+    static void save(const QString &filename = QString(), SaveFormat saveFormat = Json);
 
 public:
     static QList<ScriptObject *> m_listScriptInfo;

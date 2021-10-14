@@ -1,6 +1,5 @@
 #ifndef TAG_H
 #define TAG_H
-
 #include <QString>
 #include <QVector>
 #include <QMetaType>
@@ -8,8 +7,6 @@
 #include <QJsonValue>
 #include "../xmlobject.h"
 #include "../sharedlibglobal.h"
-
-
 
 class SHAREDLIB_EXPORT Tag
 {

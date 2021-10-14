@@ -1,4 +1,4 @@
-﻿//#include "HmiRunTime.h"
+﻿#include "HmiRunTime.h"
 //#include "public.h"
 #include "VersionInfo.h"
 //#include "Global.h"
@@ -16,11 +16,17 @@
 #include <QTextStream>
 #include <iostream>
 #include <QMainWindow>
+#include <QMessageBox>
 #include "qsoftcore.h"
 #include "qprojectcore.h"
 #include "qrunningmanager.h"
 #include "../../libs/shared/qbaseinit.h"
+#include "RealTimeDB.h"
+#include "httpserver.h"
 
+#ifdef USE_SOAP_SERVICE
+    #include "gSOAPServer.h"
+#endif
 
 /**
  * @brief getProjectName
@@ -69,6 +75,12 @@ int main(int argc, char *argv[])
 
     qDebug() << "start hmiruntime.";
 
+    //////////////////////////////////////////////////////////////////////////////
+    ///  启动http服务
+    HttpServer httpServer;
+    httpServer.init(60000);
+
+
     QString strInput = "";
     QString configPath = "";
 
@@ -94,29 +106,79 @@ int main(int argc, char *argv[])
         QRunningManager runningMgr;
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
         if(runningMgr.load(szProjFile)) {
+            if(!RealTimeDB::instance()->m_bMemStatus) {
+                QMessageBox::information(Q_NULLPTR, QObject::tr("提示"), QObject::tr("打开共享内存失败！"));
+                return -1;
+            }
+
+            HmiRunTime runTime(runningMgr.projCore());
+            runTime.Load();
+            // 添加脚本函数至脚本引擎
+            HmiRunTime::scriptEngine_ = new QScriptEngine();
+            addFuncToScriptEngine(HmiRunTime::scriptEngine_);
+            runTime.Start();
+            g_pHmiRunTime = &runTime;
+
             runningMgr.start();
         }
+
         return app.exec();
     }
 
-    //    if(!RealTimeDB::instance()->m_memStatus) {
-    //        QMessageBox::information(Q_NULLPTR, QObject::tr("提示"), QObject::tr("打开共享内存失败！"));
-    //        return -1;
-    //    }
+#if 0
 
-    //    HmiRunTime runTime(projPath);
-    //    runTime.Load(DATA_SAVE_FORMAT);
-    //    // 添加脚本函数至脚本引擎
-    //    HmiRunTime::scriptEngine_ = new QScriptEngine();
-    //    addFuncToScriptEngine(HmiRunTime::scriptEngine_);
-    //    runTime.Start();
-    //    g_pHmiRunTime = &runTime;
+    //////////////////////////////////////////////////////////////////////////////
+    ///  启动http服务
+    HttpServer httpServer;
+    httpServer.init(60000);
 
-    //    QApplication::processEvents();
+    //////////////////////////////////////////////////////////////////////////////
 
+    QString szProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
+    if(argc == 2) {
+        szProjPath = argv[1];
+    }
 
+    QDir dir(szProjPath);
+    if (!dir.exists()) {
+        dir.mkpath(szProjPath);
+    }
 
+    HmiRunTime runTime(szProjPath);
+    runTime.Load(DATA_SAVE_FORMAT);
 
+    runTime.Start();
+    g_pHmiRunTime = &runTime;
 
+    QApplication::processEvents();
+
+    QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
+    QDir projSaveDir(projSavePath);
+    if(!projSaveDir.exists()) {
+        projSaveDir.mkpath(projSavePath);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// 启动SOAP服务
+#ifdef USE_SOAP_SERVICE
+    SOAPServer gSOAPServer("0.0.0.0", 60002);
+#endif
+
+    ///////////////////////////////////////////////////////////////////////////
+    /// 启动定时任务
+    TimerTask *pTimerTask = new TimerTask();
+
+    int ret = app.exec();
+
+#ifdef USE_SOAP_SERVICE
+    gSOAPServer.exitService();
+#endif
+
+    delete pTimerTask;
+
+    // 释放插件对象
+    VendorPluginManager::getInstance()->releasePlugin();
+
+#endif
     return -1;
 }

@@ -10,13 +10,12 @@
 #include "ShareMemory.h"
 
 
-
-
 class RealTimeDB : public QObject
 {
     Q_OBJECT
 public:
-    static RealTimeDB *instance() {
+    static RealTimeDB *instance()
+    {
         static RealTimeDB rtdb;
         return &rtdb;
     }

@@ -28,6 +28,9 @@ CONFIG += C++11
 
 QMAKE_CXXFLAGS += -std=c++11
 
+# 开启SOAP服务
+#DEFINES += USE_SOAP_SERVICE
+
 #去除UNICODE字符编码
 DEFINES -= UNICODE
 
@@ -50,7 +53,8 @@ LIBRARY_SRC_PATH = $$clean_path($$_PRO_FILE_PWD_/../../../HmiRunTime)
 message("LIBRARY_SRC_PATH: "$$LIBRARY_SRC_PATH)
 
 INCLUDEPATH += \
-    $$LIBRARY_SRC_PATH/easylogging \
+    $$LIBRARY_SRC_PATH/HmiRunTime/Public \
+    $$LIBRARY_SRC_PATH/HmiRunTime/Vendors/IVendorPlugin \
     $$LIBRARY_SRC_PATH/libs/edncrypt \
     $$LIBRARY_SRC_PATH/libs/core \
     $$LIBRARY_SRC_PATH/libs/Utils \
@@ -68,18 +72,21 @@ CONFIG(debug, debug|release) { #debug
 
 #LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt$${LIB_SUFFIX}
 #LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
-#LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 #LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
 
 LIBS += -L$$LINK_LIBRARY_PATH -lcore
 LIBS += -L$$LINK_LIBRARY_PATH -lshared
 LIBS += -L$$LINK_LIBRARY_PATH -lrunning
+LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 
 win32 {
     LIBS += -lpthread -lwsock32 -lws2_32
 } else {
 
 }
+
+include(../../HttpServer/HttpServer.pri)
+#include(../../SOAP/server/SOAPServer.pri)
 
 SOURCES += \
 #    ../Public/Element.cpp \
@@ -89,6 +96,24 @@ SOURCES += \
 #    GraphPageManager.cpp \
 #    MainWindow.cpp \
 #    ViewElementPluginManager.cpp \
+    Tag/Function.cpp \
+    Tag/IOTag.cpp \
+    Tag/RunTimeTag.cpp \
+    qextserial/qextserialport.cpp \
+    ../Public/RealTimeDB.cpp \
+    DB/DBTagObject.cpp \
+    DB/RealTimeDB.cpp \
+    Event/Event.cpp \
+    HmiRunTime.cpp \
+    Port/ComPort.cpp \
+    Port/NetPort.cpp \
+    PortThread.cpp \
+    Script/JavaScript.cpp \
+    Script/RunScript.cpp \
+    SerialPortReMapping.cpp \
+    TimerTask.cpp \
+    Vendor.cpp \
+    VendorPluginManager.cpp \
     log/ulog.cpp \
     main.cpp \
 #    MessageTransfer.cpp \
@@ -121,21 +146,42 @@ HEADERS  += \
 #    Script/RunScript.h \
 #    FileTansfer.h \
 #    SysRuntimeEvent.h \
+    ../Vendors/IVendorPlugin/IVendorPlugin.h \
+    Socket/xsocket.hpp \
+    Tag/Function.h \
+    Tag/IOTag.h \
+    Tag/RunTimeTag.h \
+    qextserial/qextserialport_global.h \
+    qextserial/qextserialport.h \
+    ../Public/RealTimeDB.h \
+    DB/DBTagObject.h \
+    DB/RealTimeDB.h \
+    Event/Event.h \
+    HmiRunTime.h \
+    Port/ComPort.h \
+    Port/IPort.h \
+    Port/NetPort.h \
+    PortThread.h \
+    Script/JavaScript.h \
+    Script/RunScript.h \
+    SerialPortReMapping.h \
     Singleton.h \
 #    Log/Log.h \
+    TimerTask.h \
+    Vendor.h \
+    VendorPluginManager.h \
     VersionInfo.h \
 #    Public/Global.h \
  \#    ViewElementPluginManager.h
     log/ulog.h
 
 win32 {
-     SOURCES +=
+     SOURCES += qextserial/qextserialport_win.cpp
 }
 
 unix {
-     SOURCES +=
+     SOURCES += qextserial/qextserialport_unix.cpp
 }
-
 
 DISTFILES += \
     setting.ini

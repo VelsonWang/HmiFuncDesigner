@@ -18,16 +18,15 @@
 #include <QDebug>
 
 #ifdef Q_OS_WIN
-#include <windows.h>
+    #include <windows.h>
 #endif
 
 #ifdef Q_OS_LINUX
-#include <stdlib.h>
+    #include <stdlib.h>
 #endif
 
 #ifdef Q_OS_MAC
 #endif
-
 
 
 QList<ScriptObject *> ScriptFileManage::m_listScriptInfo = QList<ScriptObject *>();
@@ -66,17 +65,18 @@ void ScriptObject::save(QJsonObject &json)
 void ScriptFileManage::AddScriptInfo(ScriptObject * obj)
 {
     int pos = m_listScriptInfo.indexOf(obj);
-    if(pos == -1)
+    if(pos == -1) {
         m_listScriptInfo.append(obj);
+    }
 }
 
 
-void ScriptFileManage::ModifyScriptInfo(ScriptObject * oldobj,
-                                        ScriptObject * newobj)
+void ScriptFileManage::ModifyScriptInfo(ScriptObject * oldobj, ScriptObject * newobj)
 {
     int pos = m_listScriptInfo.indexOf(oldobj);
-    if(pos == -1)
+    if(pos == -1) {
         return;
+    }
     m_listScriptInfo.replace(pos, newobj);
 }
 
@@ -88,10 +88,10 @@ void ScriptFileManage::DeleteScriptInfo(ScriptObject * obj)
 
 ScriptObject *ScriptFileManage::GetScriptObject(const QString &name)
 {
-    foreach (ScriptObject *pobj, m_listScriptInfo)
-    {
-        if(pobj->m_strName == name)
+    foreach (ScriptObject *pobj, m_listScriptInfo) {
+        if(pobj->m_strName == name) {
             return pobj;
+        }
     }
     return Q_NULLPTR;
 }
@@ -100,11 +100,13 @@ void ScriptFileManage::load(const QString &filename, SaveFormat saveFormat)
 {
     QFile loadFile(filename);
 
-    if(!loadFile.exists())
+    if(!loadFile.exists()) {
         return;
+    }
 
-    if (!loadFile.open(QIODevice::ReadOnly))
+    if (!loadFile.open(QIODevice::ReadOnly)) {
         return;
+    }
 
     m_listScriptInfo.clear();
     QByteArray loadData = loadFile.readAll();
@@ -112,8 +114,7 @@ void ScriptFileManage::load(const QString &filename, SaveFormat saveFormat)
     const QJsonObject json = loadDoc.object();
 
     QJsonArray scriptInfoArray = json["ScriptInfos"].toArray();
-    for (int i = 0; i < scriptInfoArray.size(); ++i)
-    {
+    for (int i = 0; i < scriptInfoArray.size(); ++i) {
         QJsonObject jsonObj = scriptInfoArray[i].toObject();
         ScriptObject *pObj = new ScriptObject();
         pObj->load(jsonObj);
@@ -128,8 +129,7 @@ void ScriptFileManage::save(const QString &filename, SaveFormat saveFormat)
 {
     QString strPath = filename.left(filename.lastIndexOf("/"));
     QDir dir(strPath);
-    if(!dir.exists())
-    {
+    if(!dir.exists()) {
         dir.mkpath(strPath);
     }
 
@@ -139,8 +139,7 @@ void ScriptFileManage::save(const QString &filename, SaveFormat saveFormat)
 
     saveFile.open(QFile::WriteOnly);
 
-    for(int i = 0; i < m_listScriptInfo.size(); i++)
-    {
+    for(int i = 0; i < m_listScriptInfo.size(); i++) {
         QJsonObject jsonObj;
         ScriptObject *pObj = m_listScriptInfo.at(i);
         pObj->save(jsonObj);
@@ -171,7 +170,8 @@ void ScriptFileManage::save(const QString &filename, SaveFormat saveFormat)
  */
 QScriptValue SwitchGraphPage(QScriptContext *context,
                              QScriptEngine *engine,
-                             void *pargs) {
+                             void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue page = context->argument(0);
@@ -191,7 +191,8 @@ QScriptValue SwitchGraphPage(QScriptContext *context,
  */
 QScriptValue ReturnGraphPage(QScriptContext *context,
                              QScriptEngine *engine,
-                             void *pargs) {
+                             void *pargs)
+{
     Q_UNUSED(context)
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
@@ -305,10 +306,11 @@ QScriptValue StateChange(QScriptContext *context,
     QString szTagTD = RealTimeDB::instance()->getIdByTagName(sVar.toString());
     if(szTagTD != "") {
         double oldValue = RealTimeDB::instance()->GetDataString(szTagTD).toDouble();
-        if(oldValue != 0.0)
+        if(oldValue != 0.0) {
             newValue = 0.0;
-        else
+        } else {
             newValue = 1.0;
+        }
         RealTimeDB::instance()->SetDataString(szTagTD, QString("%1").arg(newValue));
     }
     return newValue;
@@ -447,7 +449,8 @@ QScriptValue WaitForMillisec(QScriptContext *context,
  */
 QScriptValue HideControlElement(QScriptContext *context,
                                 QScriptEngine *engine,
-                                void *pargs) {
+                                void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
@@ -466,7 +469,8 @@ QScriptValue HideControlElement(QScriptContext *context,
  */
 QScriptValue ShowControlElement(QScriptContext *context,
                                 QScriptEngine *engine,
-                                void *pargs) {
+                                void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
@@ -485,7 +489,8 @@ QScriptValue ShowControlElement(QScriptContext *context,
  */
 QScriptValue EnableControlElement(QScriptContext *context,
                                   QScriptEngine *engine,
-                                  void *pargs) {
+                                  void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
@@ -504,7 +509,8 @@ QScriptValue EnableControlElement(QScriptContext *context,
  */
 QScriptValue DisableControlElement(QScriptContext *context,
                                    QScriptEngine *engine,
-                                   void *pargs) {
+                                   void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
@@ -523,7 +529,8 @@ QScriptValue DisableControlElement(QScriptContext *context,
  */
 QScriptValue MoveControlElement(QScriptContext *context,
                                 QScriptEngine *engine,
-                                void *pargs) {
+                                void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
@@ -546,7 +553,8 @@ QScriptValue MoveControlElement(QScriptContext *context,
  */
 QScriptValue BlinkControlElement(QScriptContext *context,
                                  QScriptEngine *engine,
-                                 void *pargs) {
+                                 void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);
@@ -565,7 +573,8 @@ QScriptValue BlinkControlElement(QScriptContext *context,
  */
 QScriptValue StopBlinkControlElement(QScriptContext *context,
                                      QScriptEngine *engine,
-                                     void *pargs) {
+                                     void *pargs)
+{
     Q_UNUSED(engine)
     Q_UNUSED(pargs)
     QScriptValue id = context->argument(0);

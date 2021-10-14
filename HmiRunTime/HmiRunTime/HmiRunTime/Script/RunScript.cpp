@@ -1,6 +1,5 @@
 ﻿#include "RunScript.h"
 #include "JavaScript.h"
-#include "Log.h"
 #include "../../Public/RealTimeDB.h"
 #include "../HmiRunTime.h"
 #include <QTextCodec>
@@ -31,9 +30,9 @@ void RunScriptTask::run()
     QScriptValue result = m_pScriptEngine->evaluate(m_strScript);
     if (result.isError()) {
         QString err = QString::fromLatin1("script syntax evaluate error: %1 %2")
-                .arg(result.property("lineNumber").toInt32())
-                .arg(result.toString());
-        LogError(err);
+                      .arg(result.property("lineNumber").toInt32())
+                      .arg(result.toString());
+        qCritical() << err;
         return;
     }
 }
@@ -52,8 +51,10 @@ RunOnConditionScriptTask::~RunOnConditionScriptTask()
 void RunOnConditionScriptTask::run()
 {
     while(RealTimeDB::instance()->m_memStatus) {
-        if(RealTimeDB::instance()->m_pDBTagObjectBaseAddr == Q_NULLPTR) return;
-        for(int i=0; i<MAX_DBTAGOBJECT; i++) {
+        if(RealTimeDB::instance()->m_pDBTagObjectBaseAddr == Q_NULLPTR) {
+            return;
+        }
+        for(int i = 0; i < MAX_DBTAGOBJECT; i++) {
             PDBTagObject pObj = (PDBTagObject)&RealTimeDB::instance()->m_pDBTagObjectBaseAddr[i];
             if(pObj->byUpdateFromVendor) {
                 // 发送更新事件到消息服务
@@ -94,10 +95,12 @@ RunScript::~RunScript()
 void RunScript::clear()
 {
     m_runOnStartList.clear();
-    while (!m_runOnPeriodList.isEmpty())
+    while (!m_runOnPeriodList.isEmpty()) {
         delete m_runOnPeriodList.takeFirst();
-    while (!m_runOnConditionList.isEmpty())
+    }
+    while (!m_runOnConditionList.isEmpty()) {
         delete m_runOnConditionList.takeFirst();
+    }
 }
 
 bool RunScript::loadScriptObjects()
@@ -107,15 +110,17 @@ bool RunScript::loadScriptObjects()
     QString fileDes = m_sProjectPath + "/Scripts/Script.info";
     ScriptFileManage::load(fileDes, DATA_SAVE_FORMAT);
 
-    for(int i=0; i<ScriptFileManage::m_listScriptInfo.count(); i++) {
+    for(int i = 0; i < ScriptFileManage::m_listScriptInfo.count(); i++) {
         ScriptObject *pObj = ScriptFileManage::m_listScriptInfo.at(i);
-        if(!pObj->m_bInUse)
+        if(!pObj->m_bInUse) {
             continue;
+        }
 
         QString scriptFileName = m_sProjectPath + "/Scripts/" + pObj->m_strName + ".js";
         QFile scriptFile(scriptFileName);
-        if (!scriptFile.open(QIODevice::ReadOnly))
+        if (!scriptFile.open(QIODevice::ReadOnly)) {
             return false;
+        }
         QTextStream in(&scriptFile);
         QTextCodec *codec = QTextCodec::codecForName("UTF-8");
         in.setCodec(codec);
@@ -128,10 +133,11 @@ bool RunScript::loadScriptObjects()
             TPeriodScriptObject *pScriptObject = new TPeriodScriptObject();
             pScriptObject->scriptText = scriptText;
             pScriptObject->curValue = 0;
-            if(pObj->m_strRunModeArgs == "")
+            if(pObj->m_strRunModeArgs == "") {
                 pScriptObject->preValue = 0;
-            else
+            } else {
                 pScriptObject->preValue = pObj->m_strRunModeArgs.toInt();
+            }
             m_runOnPeriodList.append(pScriptObject);
         } else if(pObj->m_strRunMode == QString("RunOnCondition")) {
             TConditionScriptObject *pScriptObject = new TConditionScriptObject();
@@ -152,8 +158,9 @@ bool RunScript::loadScriptObjects()
             }
 
             QStringList listOpt = condition.split(pScriptObject->opt);
-            if(listOpt.size() != 2)
+            if(listOpt.size() != 2) {
                 return false;
+            }
             QString leftOpt = listOpt.at(0);
             QString rightOpt = listOpt.at(1);
             if(rightOpt.indexOf("变量") != -1) {
@@ -162,8 +169,9 @@ bool RunScript::loadScriptObjects()
             } else {
                 pScriptObject->tagIdLeft = RealTimeDB::instance()->getIdByTagName(leftOpt);
                 pScriptObject->tagIdRight = "";
-                if(rightOpt != "")
+                if(rightOpt != "") {
                     pScriptObject->dRight = rightOpt.toDouble();
+                }
             }
             //qDebug() << pScriptObject->tagIdLeft << pScriptObject->opt << pScriptObject->tagIdRight << pScriptObject->dRight;
         } else {
@@ -171,7 +179,7 @@ bool RunScript::loadScriptObjects()
         }
         scriptFile.close();
     }
-	return true;
+    return true;
 }
 
 /**
@@ -181,11 +189,10 @@ bool RunScript::loadScriptObjects()
  */
 bool RunScript::runOnStartScripts()
 {
-    //qDebug() << "run OnStartScripts.";
     for (int i = 0; i < m_runOnStartList.size(); i++) {
         m_threadPool.start(new RunScriptTask(m_runOnStartList.at(i)));
     }
-	return true;
+    return true;
 }
 
 /**
@@ -202,7 +209,7 @@ bool RunScript::runOnPeriodScripts()
         connect(m_timerPeriod, SIGNAL(timeout()), this, SLOT(timeout()));
         m_timerPeriod->start(1);
     }
-	return true;
+    return true;
 }
 
 void RunScript::stopRunOnPeriodScripts()
@@ -257,5 +264,5 @@ bool RunScript::runOnConditionScripts(const QString &tagId)
             }
         }
     }
-	return true;
+    return true;
 }

@@ -2,7 +2,6 @@
 #define RUNSCRIPT_H
 
 #include "JavaScript.h"
-
 #include <QObject>
 #include <QString>
 #include <QList>
@@ -44,8 +43,7 @@ private:
 
 //------------------------------------------------------------------------------
 
-typedef struct tagPeriodScriptObject
-{
+typedef struct tagPeriodScriptObject {
     QString scriptText;
     int preValue;
     int curValue;
@@ -55,10 +53,9 @@ typedef struct tagPeriodScriptObject
         preValue = 0;
         curValue = 0;
     }
-}TPeriodScriptObject;
+} TPeriodScriptObject;
 
-typedef struct tagConditionScriptObject
-{
+typedef struct tagConditionScriptObject {
     QString scriptText;
     QString tagIdLeft;
     QString tagIdRight;
@@ -72,7 +69,7 @@ typedef struct tagConditionScriptObject
         tagIdRight = "";
         dRight = 0.0;
     }
-}TConditionScriptObject;
+} TConditionScriptObject;
 
 class RunScript : public QObject
 {

@@ -15,11 +15,16 @@ class RUNNINGLIB_EXPORT QRunningManager : public QObject
 public:
     explicit QRunningManager(QObject *parent = 0);
     ~QRunningManager();
-    
+
     bool load(QString proj);
     void release();
     void start();
     void stop();
+
+    QProjectCore *projCore()
+    {
+        return m_pProjCoreObj;
+    }
 
 protected:
     bool eventFilter(QObject *, QEvent *);

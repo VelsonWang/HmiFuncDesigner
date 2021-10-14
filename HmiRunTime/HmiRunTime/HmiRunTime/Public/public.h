@@ -5,11 +5,35 @@
 /// \brief The SaveFormat enum
 ///
 enum SaveFormat {
-        Json = 0,
-        Binary
+    Json = 0,
+    Binary
 };
 
 #define DATA_SAVE_FORMAT    (Json)
+
+//////////////////////////////////////////
+/// \brief The eTagType enum
+///
+enum eTagDataType
+{
+    TYPE_VARIANT = 0,
+    TYPE_BOOL,
+    TYPE_INT8,
+    TYPE_UINT8,
+    TYPE_INT16,
+    TYPE_UINT16,
+    TYPE_INT32,
+    TYPE_UINT32,
+    TYPE_INT64,
+    TYPE_UINT64,
+    TYPE_FLOAT,
+    TYPE_DOUBLE,
+    TYPE_ASCII2CHAR,
+    TYPE_STRING,
+    TYPE_BCD,
+    TYPE_BYTES
+};
+typedef enum eTagDataType TTagDataType;
 
 ///////////////////////////////////////////
 /// \brief The eTagType enum

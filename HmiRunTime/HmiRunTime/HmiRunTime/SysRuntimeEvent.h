@@ -3,7 +3,7 @@
 
 #include <QEvent>
 
-enum ESysRuntimeEvent{
+enum ESysRuntimeEvent {
     EV_StartRuntime = QEvent::User,
     EV_StopRuntime,
     EV_RestartRuntime,
