@@ -16,6 +16,7 @@ IOTag::~IOTag()
         delete[] pReadBuf;
         pReadBuf = Q_NULLPTR;
     }
+
     if(pWriteBuf != Q_NULLPTR)
     {
         delete[] pWriteBuf;
@@ -92,69 +93,94 @@ TTagDataType IOTag::GetDataType()
 qint32 IOTag::GetDataTypeLength()
 {
     int ret = 0;
-    switch (m_sDataType) {
+
+    switch(m_sDataType)
+    {
         case TYPE_VARIANT:
-        {
-            ret = 0;
-            break;
-        }
+            {
+                ret = 0;
+                break;
+            }
+
         case TYPE_BOOL:
-        {
-            ret = 1;
-            break;
-        }
+            {
+                ret = 1;
+                break;
+            }
+
         case TYPE_INT8:
         case TYPE_UINT8:
-        {
-            ret = 1;
-            break;
-        }
+            {
+                ret = 1;
+                break;
+            }
+
         case TYPE_INT16:
         case TYPE_UINT16:
-        {
-            ret = 2;
-            break;
-        }
+            {
+                ret = 2;
+                break;
+            }
+
         case TYPE_INT32:
         case TYPE_UINT32:
-        case TYPE_FLOAT:
-        {
-            ret = 4;
-            break;
-        }
+        case TYPE_FLOAT32:
+            {
+                ret = 4;
+                break;
+            }
+
         case TYPE_INT64:
         case TYPE_UINT64:
-        case TYPE_DOUBLE:
-        {
-            ret = 8;
-            break;
-        }
+        case TYPE_FLOAT64:
+            {
+                ret = 8;
+                break;
+            }
+
         case TYPE_ASCII2CHAR:
-        {
-            ret = 2;
-            break;
-        }
+            {
+                ret = 2;
+                break;
+            }
+
         case TYPE_STRING:
-        {
-            ret = mLength;
-            break;
-        }
-        case TYPE_BCD:
-        {
-            ret = mLength;
-            break;
-        }
+            {
+                ret = mLength;
+                break;
+            }
+
+        case TYPE_BCD8:
+            {
+                ret = 1;
+                break;
+            }
+
+        case TYPE_BCD16:
+            {
+                ret = 2;
+                break;
+            }
+
+        case TYPE_BCD32:
+            {
+                ret = 4;
+                break;
+            }
+
         case TYPE_BYTES:
-        {
-            ret = mLength;
-            break;
-        }
+            {
+                ret = mLength;
+                break;
+            }
+
         default:
-        {
-            ret = mLength;
-            break;
-        }
+            {
+                ret = mLength;
+                break;
+            }
     }
+
     return ret;
 }
 
@@ -251,10 +277,13 @@ void IOTag::SetDBTagObject(void * pObj)
 void IOTag::SetTagBufferLength(qint32 i)
 {
     mLength = i;
+
     if(pReadBuf != Q_NULLPTR)
         delete[] pReadBuf;
+
     if(pWriteBuf != Q_NULLPTR)
         delete[] pWriteBuf;
+
     pReadBuf = new unsigned char[mLength];
     pWriteBuf = new unsigned char[mLength];
 }
@@ -284,12 +313,10 @@ IOTag &IOTag::operator=(const IOTag &rtag)
     this->m_fScale = rtag.m_fScale;
     this->m_iInFrameAddress = rtag.m_iInFrameAddress;
     this->m_pDBTagObject = rtag.m_pDBTagObject;
-
     this->mId = rtag.mId;
     this->mLength = rtag.mLength;
     pReadBuf = new unsigned char[this->mLength];
     pWriteBuf = new unsigned char[this->mLength];
-
     return *this;
 }
 

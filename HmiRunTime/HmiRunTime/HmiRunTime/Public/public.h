@@ -16,22 +16,29 @@ enum SaveFormat {
 ///
 enum eTagDataType
 {
-    TYPE_VARIANT = 0,
-    TYPE_BOOL,
-    TYPE_INT8,
-    TYPE_UINT8,
-    TYPE_INT16,
-    TYPE_UINT16,
-    TYPE_INT32,
-    TYPE_UINT32,
-    TYPE_INT64,
-    TYPE_UINT64,
-    TYPE_FLOAT,
-    TYPE_DOUBLE,
-    TYPE_ASCII2CHAR,
-    TYPE_STRING,
-    TYPE_BCD,
-    TYPE_BYTES
+    TYPE_VARIANT = 0x00,
+    TYPE_BOOL = 0x01,
+    TYPE_INT8 = 0x02,
+    TYPE_UINT8 = 0x03,
+    TYPE_INT16 = 0x04,
+    TYPE_UINT16 = 0x05,
+    TYPE_INT32 = 0x06,
+    TYPE_UINT32 = 0x07,
+    TYPE_INT64 = 0x08,
+    TYPE_UINT64 = 0x09,
+
+    TYPE_FLOAT32 = 0x0A,
+    TYPE_FLOAT64 = 0x0B,
+
+    TYPE_BCD8 = 0x0C,
+    TYPE_BCD16 = 0x0D,
+    TYPE_BCD32 = 0x0E,
+
+    TYPE_ASCII2CHAR = 0x0F,
+    TYPE_STRING = 0x10,
+
+    TYPE_BYTES = 0x64,
+    TYPE_RESERVED = 255 // 预留
 };
 typedef enum eTagDataType TTagDataType;
 

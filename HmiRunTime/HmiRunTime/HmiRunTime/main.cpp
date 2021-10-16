@@ -25,7 +25,7 @@
 #include "httpserver.h"
 
 #ifdef USE_SOAP_SERVICE
-    #include "gSOAPServer.h"
+#include "gSOAPServer.h"
 #endif
 
 /**
@@ -38,11 +38,16 @@ QString getProjectName(const QString &szProjectPath)
 {
     QFileInfo srcFileInfo(szProjectPath);
     QString szProjName = "";
-    if (srcFileInfo.isDir()) {
+
+    if(srcFileInfo.isDir())
+    {
         QDir sourceDir(szProjectPath);
         QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-        foreach (const QString &fileName, fileNames) {
-            if(fileName.endsWith(".pdt")) {
+
+        foreach(const QString &fileName, fileNames)
+        {
+            if(fileName.endsWith(".pdt"))
+            {
                 QFileInfo info(fileName);
                 szProjName = info.baseName();
             }
@@ -61,7 +66,6 @@ void LogInit()
     // 日志是否记录文件名，函数名称，代码行信息
     // true-记录, false-不记录
     LogHelper::m_bShowFileFuncLine = false;
-
     // 初始化日志配置
     ULog::GetInstance();
 }
@@ -69,44 +73,48 @@ void LogInit()
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-
     // 日志记录初始化
     LogInit();
-
     qDebug() << "start hmiruntime.";
-
     //////////////////////////////////////////////////////////////////////////////
     ///  启动http服务
     HttpServer httpServer;
     httpServer.init(60000);
-
-
     QString strInput = "";
     QString configPath = "";
-
     QString szRunProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
-    if(argc == 2) {
+
+    if(argc == 2)
+    {
         szRunProjPath = argv[1];
     }
 
     QDir dir(szRunProjPath);
-    if (!dir.exists()) {
+
+    if(!dir.exists())
+    {
         dir.mkpath(szRunProjPath);
     }
 
     // find project infomation file
     QString szProjName = getProjectName(szRunProjPath);
 
-    if(szProjName == "") {
+    if(szProjName == "")
+    {
         qCritical() << "project config file not found!";
         return -1;
-    } else {
+    }
+    else
+    {
         qRegisterBaseProperty();
         qRegisterBaseHost();
         QRunningManager runningMgr;
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
-        if(runningMgr.load(szProjFile)) {
-            if(!RealTimeDB::instance()->m_bMemStatus) {
+
+        if(runningMgr.load(szProjFile))
+        {
+            if(!RealTimeDB::instance()->m_bMemStatus)
+            {
                 QMessageBox::information(Q_NULLPTR, QObject::tr("提示"), QObject::tr("打开共享内存失败！"));
                 return -1;
             }
@@ -118,43 +126,42 @@ int main(int argc, char *argv[])
             addFuncToScriptEngine(HmiRunTime::scriptEngine_);
             runTime.Start();
             g_pHmiRunTime = &runTime;
-
-            runningMgr.start();
+//            runningMgr.start();
         }
 
         return app.exec();
     }
 
 #if 0
-
     //////////////////////////////////////////////////////////////////////////////
     ///  启动http服务
     HttpServer httpServer;
     httpServer.init(60000);
-
     //////////////////////////////////////////////////////////////////////////////
-
     QString szProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
-    if(argc == 2) {
+
+    if(argc == 2)
+    {
         szProjPath = argv[1];
     }
 
     QDir dir(szProjPath);
-    if (!dir.exists()) {
+
+    if(!dir.exists())
+    {
         dir.mkpath(szProjPath);
     }
 
     HmiRunTime runTime(szProjPath);
     runTime.Load(DATA_SAVE_FORMAT);
-
     runTime.Start();
     g_pHmiRunTime = &runTime;
-
     QApplication::processEvents();
-
     QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
     QDir projSaveDir(projSavePath);
-    if(!projSaveDir.exists()) {
+
+    if(!projSaveDir.exists())
+    {
         projSaveDir.mkpath(projSavePath);
     }
 
@@ -163,22 +170,16 @@ int main(int argc, char *argv[])
 #ifdef USE_SOAP_SERVICE
     SOAPServer gSOAPServer("0.0.0.0", 60002);
 #endif
-
     ///////////////////////////////////////////////////////////////////////////
     /// 启动定时任务
     TimerTask *pTimerTask = new TimerTask();
-
     int ret = app.exec();
-
 #ifdef USE_SOAP_SERVICE
     gSOAPServer.exitService();
 #endif
-
     delete pTimerTask;
-
     // 释放插件对象
     VendorPluginManager::getInstance()->releasePlugin();
-
 #endif
     return -1;
 }

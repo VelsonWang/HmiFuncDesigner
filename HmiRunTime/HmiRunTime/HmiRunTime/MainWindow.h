@@ -7,8 +7,7 @@
 #include <QMutex>
 #include <QCloseEvent>
 #include <stdlib.h>
-#include "GraphPage.h"
-#include "GraphPageManager.h"
+
 
 class MainWindow : public QMainWindow
 {
@@ -65,21 +64,21 @@ public:
 private:
     void updateGraphPageViewInfo(const QString &);
     bool isGraphPageOpen(const QString &filename);
-    bool createDocument(GraphPage *graphPage, const QString &filename);
+    //bool createDocument(GraphPage *graphPage, const QString &filename);
     void moveCenter();
 
 protected:
     void closeEvent(QCloseEvent *event);
 
 public:
-    QStack<GraphPage *> showedGraphPageStack_;
+    //QStack<GraphPage *> showedGraphPageStack_;
     static QString projpath_;
     static QString graphPageName_;
 
 private:
     static MainWindow *instance_;
     static QMutex mutex_;
-    GraphPage *currentGraphPage_;
+    //GraphPage *currentGraphPage_;
 
 };
 

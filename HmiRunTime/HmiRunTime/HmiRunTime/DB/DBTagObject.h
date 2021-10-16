@@ -12,7 +12,8 @@ class Vendor;
 
 #pragma pack(push)
 #pragma pack(1)
-typedef union any {
+typedef union any
+{
 #define MAX_LEN    (64)
     quint8 t_bool;
     qint8 t_int8;
@@ -27,22 +28,30 @@ typedef union any {
     double t_float64;
     quint16 t_ascii2char;
     char t_string[MAX_LEN]; // TODO 字符串长度待定
-    quint32 t_bcd;
+    quint8 t_bcd8;
+    quint16 t_bcd16;
+    quint32 t_bcd32;
     quint8 t_bytes[MAX_LEN];
 
-    bool operator==(const any &rhs) {
-        for (int i = 0; i < MAX_LEN; i++)
-            if(t_bytes[i] != rhs.t_bytes[i]) {
+    bool operator==(const any &rhs)
+    {
+        for(int i = 0; i < MAX_LEN; i++)
+            if(t_bytes[i] != rhs.t_bytes[i])
+            {
                 return false;
             }
+
         return true;
     }
 
-    bool operator!=(const any &rhs) {
-        for (int i = 0; i < MAX_LEN; i++)
-            if(t_bytes[i] != rhs.t_bytes[i]) {
+    bool operator!=(const any &rhs)
+    {
+        for(int i = 0; i < MAX_LEN; i++)
+            if(t_bytes[i] != rhs.t_bytes[i])
+            {
                 return true;
             }
+
         return false;
     }
 
@@ -53,7 +62,8 @@ typedef union any {
 
 #pragma pack(push)
 #pragma pack(1)
-typedef struct tagDBTagObject {
+typedef struct tagDBTagObject
+{
     char szID[32]; // 变量ID
     quint8 iType; // 变量类型 字节 字 双字等
     quint8 iPermission; // 读写权限
@@ -99,7 +109,9 @@ public:
     {
         DBTagObject *pObj = (DBTagObject *)e.getObj();
         RunTimeTag *pTagObj = (RunTimeTag *)pObj->m_private;
-        if(pTagObj != nullptr) {
+
+        if(pTagObj != nullptr)
+        {
             pTagObj->m_Function.ExecFunctions(e);
         }
     }
