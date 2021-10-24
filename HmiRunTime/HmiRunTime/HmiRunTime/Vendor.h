@@ -9,13 +9,14 @@
 #include <QQueue>
 #include <QList>
 #include <QMap>
-#include "IVendorPlugin.h"
-#include "IOTag.h"
-#include "IPort.h"
-#include "public.h"
+#include "../Vendors/IVendorPlugin/IVendorPlugin.h"
+#include "RunTimeTag.h"
+#include "Port/IPort.h"
+#include "Public/public.h"
 
-class IOTag;
+
 class IVendorPlugin;
+class QProjectCore;
 
 class VendorPrivate
 {
@@ -45,9 +46,10 @@ public:
 class ComDevicePrivate : public VendorPrivate
 {
 public:
-    bool LoadData(const QString &devName);
+    bool LoadData(const QString &devName, QProjectCore *coreObj);
 
-    void fromString(const QString &param) {
+    void fromString(const QString &param)
+    {
         QStringList listParam = param.split('|');
         if(listParam.count() == 6) {
             m_sPortNumber = listParam.at(0);
@@ -73,9 +75,10 @@ public:
 class NetDevicePrivate : public VendorPrivate
 {
 public:
-    bool LoadData(const QString &devName);
+    bool LoadData(const QString &devName, QProjectCore *coreObj);
 
-    void fromString(const QString &param) {
+    void fromString(const QString &param)
+    {
         QStringList listParam = param.split('|');
         if(listParam.count() == 4) {
             m_sIpAddress = listParam.at(0);
@@ -97,7 +100,7 @@ public:
 class Vendor
 {
 public:
-    Vendor();
+    Vendor(QProjectCore *coreObj);
     ~Vendor();
 
     // 获取设备名称
@@ -107,17 +110,17 @@ public:
     // 设备初始化
     void initialize();
     // 添加设备变量至变量列表
-    void addIOTagToDeviceTagList(IOTag* pTag);
+    void addIOTagToDeviceTagList(RunTimeTag* pTag);
     // 添加设备变量至变量写队列
-    void addIOTagToDeviceTagWriteQueue(IOTag* pTag);
+    void addIOTagToDeviceTagWriteQueue(RunTimeTag* pTag);
     // 查找设备变量
-    IOTag* findIOTagByID(const QString &id);
+    RunTimeTag* findIOTagByID(int id);
     // 写变量
-    bool writeIOTag(IOTag* pTag);
+    bool writeIOTag(RunTimeTag* pTag);
     // 写变量列表
     bool writeIOTags();
     // 读变量
-    bool readIOTag(IOTag* pTag);
+    bool readIOTag(RunTimeTag* pTag);
     // 读变量列表
     bool readIOTags();
     // 是否运行
@@ -149,8 +152,8 @@ public:
 
 public:
     IPort *m_pPortObj;
-    QQueue<IOTag *> m_writeQueue;
-    QList<IOTag *> m_readList;
+    QQueue<RunTimeTag *> m_writeQueue;
+    QList<RunTimeTag *> m_readList;
     bool m_bIsRunning = false;
     QMutex m_mutexWrite;
     IVendorPlugin *m_pVendorPluginObj = Q_NULLPTR;
@@ -158,6 +161,9 @@ public:
     bool m_bOnlineStatus = false; // true-在线, false-离线
     bool m_bOffLine = false; // 通讯失败次数大于通信失败重试次数视为离线
     qint64 m_iStartOffLineTime = 0; // 离线起始时间
+
+private:
+    QProjectCore *projCore;
 };
 
 

@@ -1,5 +1,5 @@
 #include "ModbusRTU.h"
-#include "../../HmiRunTimeData/Vendor.h"
+#include "../../HmiRunTime/Vendor.h"
 
 ModbusRTU::ModbusRTU()
 {
@@ -75,7 +75,7 @@ bool ModbusRTU::unInitailizeDevice(void* pObj)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusRTU::beforeWriteIOTag(void* pObj, IOTag* pTag)
+bool ModbusRTU::beforeWriteIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -91,10 +91,12 @@ bool ModbusRTU::beforeWriteIOTag(void* pObj, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int ModbusRTU::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
+int ModbusRTU::writeIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag)
 {
     m_modbusRTUImplObj.setPort(pPort);
-    if(!m_modbusRTUImplObj.isCanWrite(pObj, pTag)) return 1;
+    if(!m_modbusRTUImplObj.isCanWrite(pObj, pTag)) {
+        return 1;
+    }
     return m_modbusRTUImplObj.writeData(pObj, pTag);
 }
 
@@ -106,7 +108,7 @@ int ModbusRTU::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusRTU::afterWriteIOTag(void* pObj, IOTag* pTag)
+bool ModbusRTU::afterWriteIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -122,7 +124,7 @@ bool ModbusRTU::afterWriteIOTag(void* pObj, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusRTU::beforeReadIOTag(void* pObj, IOTag* pTag)
+bool ModbusRTU::beforeReadIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -138,10 +140,12 @@ bool ModbusRTU::beforeReadIOTag(void* pObj, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int ModbusRTU::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
+int ModbusRTU::readIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag)
 {
     m_modbusRTUImplObj.setPort(pPort);
-    if(!m_modbusRTUImplObj.isCanRead(pObj, pTag)) return 1;
+    if(!m_modbusRTUImplObj.isCanRead(pObj, pTag)) {
+        return 1;
+    }
     return m_modbusRTUImplObj.readData(pObj, pTag);
 }
 
@@ -153,7 +157,7 @@ int ModbusRTU::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool ModbusRTU::afterReadIOTag(void* pObj, IOTag* pTag)
+bool ModbusRTU::afterReadIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -168,7 +172,7 @@ bool ModbusRTU::afterReadIOTag(void* pObj, IOTag* pTag)
 /// \param pTag 变量描述对象
 /// \return true-成功, false-失败
 ///
-bool ModbusRTU::convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag)
+bool ModbusRTU::convertIOTagBytesToNativeBytes(void* pObj, RunTimeTag* pTag)
 {
     return m_modbusRTUImplObj.convertIOTagBytesToNativeBytes(pObj, pTag);
 }

@@ -40,6 +40,9 @@ void RunTimeTag::copyObject(const RunTimeTag &obj)
     remark = obj.remark;
     ownGroup = obj.ownGroup;
     devType = obj.devType;
+    bufLength = obj.bufLength;
+    dataFromVendor = obj.dataFromVendor;
+    dataToVendor = obj.dataToVendor;
 }
 
 
@@ -56,5 +59,8 @@ void RunTimeTag::copyFromTag(RunTimeTag obj)
     remark = obj.remark;
     ownGroup = obj.ownGroup;
     devType = obj.devType;
+    bufLength = obj.bufLength;
+    dataFromVendor = obj.dataFromVendor;
+    dataToVendor = obj.dataToVendor;
 }
 

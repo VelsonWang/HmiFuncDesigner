@@ -1,13 +1,12 @@
 #ifndef FUNCTION_H
 #define FUNCTION_H
 
-#include "../Event/Event.h"
+#include "Event/Event.h"
 #include <QList>
 #include <QDebug>
 
 
-typedef struct
-{
+typedef struct {
     QString arg;
     QString type;
 } TArgItem;
@@ -26,8 +25,7 @@ public:
     {
         qDebug() << "\n[";
         qDebug() << name;
-        for(int i=0; i<argList.count();i++)
-        {
+        for(int i = 0; i < argList.count(); i++) {
             TArgItem it = argList.at(i);
             qDebug() << it.arg << " " << it.type;
         }

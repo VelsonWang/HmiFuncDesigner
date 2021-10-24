@@ -5,7 +5,8 @@
 
 TagEditDialog::TagEditDialog(QWidget *parent)
     : QDialog(parent),
-      ui(new Ui::TagEditDialog) {
+      ui(new Ui::TagEditDialog)
+{
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_mapDevToAddrType.clear();
@@ -31,10 +32,16 @@ TagEditDialog::TagEditDialog(QWidget *parent)
                    << tr("uint16")
                    << tr("int32")
                    << tr("uint32")
+                   << tr("int64")
+                   << tr("uint64")
                    << tr("float32")
-                   << tr("double")
+                   << tr("float64")
+                   << tr("bcd8")
                    << tr("bcd16")
-                   << tr("bcd32");
+                   << tr("bcd32")
+                   << tr("ascii2char")
+                   << tr("string");
+
     ui->cboDataType->addItems(szListDataType);
     ui->cboDataType->setCurrentText(tr("uint8"));
 }
@@ -49,7 +56,8 @@ TagEditDialog::~TagEditDialog()
 /// @details 设置变量信息
 /// \param jsonTag 变量
 ///
-void TagEditDialog::setTagObj(QJsonObject &jsonTag) {
+void TagEditDialog::setTagObj(QJsonObject &jsonTag)
+{
     m_jsonTagObj = jsonTag;
 }
 
@@ -59,7 +67,8 @@ void TagEditDialog::setTagObj(QJsonObject &jsonTag) {
 /// @details 返回变量信息
 /// \return 变量信息
 ///
-QJsonObject TagEditDialog::getTagObj() {
+QJsonObject TagEditDialog::getTagObj()
+{
     return m_jsonTagObj;
 }
 
@@ -70,8 +79,9 @@ QJsonObject TagEditDialog::getTagObj() {
 /// \param mapDataType 数据类型=数据类型,数据类型,数据类型
 ///
 void TagEditDialog::setAddrTypeAndDataType(QMap<QString, QStringList> mapDevToAddrType,
-                                           QMap<QString, QStringList> mapAddrTypeToSubAddrType,
-                                           QMap<QString, QStringList> mapAddrTypeToDataType) {
+        QMap<QString, QStringList> mapAddrTypeToSubAddrType,
+        QMap<QString, QStringList> mapAddrTypeToDataType)
+{
     m_mapDevToAddrType = mapDevToAddrType;
     m_mapAddrTypeToSubAddrType = mapAddrTypeToSubAddrType;
     m_mapAddrTypeToDataType = mapAddrTypeToDataType;
@@ -83,7 +93,8 @@ void TagEditDialog::setAddrTypeAndDataType(QMap<QString, QStringList> mapDevToAd
 /// \details 设置地址类型的限制范围
 /// \param mapLimit
 ///
-void TagEditDialog::setAddrTypeLimit(QMap<QString, QMap<QString, quint32>> mapLimit) {
+void TagEditDialog::setAddrTypeLimit(QMap<QString, QMap<QString, quint32>> mapLimit)
+{
     m_mapAddrTypeToLimit = mapLimit;
 }
 
@@ -92,7 +103,8 @@ void TagEditDialog::setAddrTypeLimit(QMap<QString, QMap<QString, quint32>> mapLi
 /// \brief TagEditDialog::on_btnOk_clicked
 /// \details 单击确定按钮
 ///
-void TagEditDialog::on_btnOk_clicked() {
+void TagEditDialog::on_btnOk_clicked()
+{
     bool bOk = false;
     float fAddrOffset = ui->editAddrOffset->text().toFloat(&bOk);
     if(!bOk) {
@@ -184,8 +196,10 @@ void TagEditDialog::on_btnCancel_clicked()
 /// \param szAddrType
 ///
 void TagEditDialog::on_cboAddrType_currentTextChanged(const QString &szAddrType)
-{  
-    if(szAddrType == "") return;
+{
+    if(szAddrType == "") {
+        return;
+    }
     QStringList szListSubAddrType;
     szListSubAddrType = m_mapAddrTypeToSubAddrType[szAddrType];
     ui->cboAddrType2->clear();
@@ -201,7 +215,9 @@ void TagEditDialog::on_cboAddrType_currentTextChanged(const QString &szAddrType)
 
 void TagEditDialog::on_cboAddrType2_currentTextChanged(const QString &szAddrType)
 {
-    if(szAddrType == "") return;
+    if(szAddrType == "") {
+        return;
+    }
     ui->cboDataType->clear();
     ui->cboDataType->addItems(m_mapAddrTypeToDataType[szAddrType]);
 }

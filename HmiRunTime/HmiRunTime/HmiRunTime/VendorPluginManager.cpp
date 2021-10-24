@@ -5,7 +5,7 @@
 #include <QPluginLoader>
 #include <QDir>
 #include <QFileInfo>
-
+#include <QDebug>
 
 VendorPluginManager::VendorPluginManager()
 {
@@ -25,12 +25,14 @@ void VendorPluginManager::loadAllPlugin()
 
     foreach (QString szFileName, pluginsDir.entryList(QDir::Files)) {
 #ifdef Q_OS_WIN
-        if(!szFileName.endsWith(".dll"))
+        if(!szFileName.endsWith(".dll")) {
             continue;
-#endif     
+        }
+#endif
 #ifdef Q_OS_LINUX
-        if(!szFileName.endsWith(".so"))
+        if(!szFileName.endsWith(".so")) {
             continue;
+        }
 #endif
         QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(szFileName));
         QObject *pluginObj = pluginLoader.instance();
@@ -46,32 +48,38 @@ void VendorPluginManager::loadAllPlugin()
 
 IVendorPlugin* VendorPluginManager::loadPlugin(const QString &name)
 {
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
     QDir pluginsDir(Helper::AppDir());
     pluginsDir.cd(QLatin1String("Vendors"));
     QString szPluginName = name;
 
     foreach (QString szFileName, pluginsDir.entryList(QDir::Files)) {
 #ifdef Q_OS_WIN
-        if(!szFileName.endsWith(".dll"))
+        if(!szFileName.endsWith(".dll")) {
             continue;
+        }
 #endif
 #ifdef Q_OS_LINUX
-        if(!szFileName.endsWith(".so"))
+        if(!szFileName.endsWith(".so")) {
             continue;
+        }
 #endif
 
 #ifdef BUILD_BY_DEBUG
-    #ifdef Q_OS_WIN
+#ifdef Q_OS_WIN
         szPluginName = name + "d";
-    #endif
+#endif
 #endif
         QFileInfo fileInfo(szFileName);
         if(fileInfo.baseName().toLower() == szPluginName.toLower()) {
+            qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(szFileName));
             QObject *pluginObj = pluginLoader.instance();
             if (pluginObj) {
+                qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
                 IVendorPlugin *plugin = qobject_cast<IVendorPlugin *>(pluginObj);
                 if (plugin) {
+                    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
                     return plugin;
                 }
             }
@@ -84,13 +92,17 @@ IVendorPlugin* VendorPluginManager::loadPlugin(const QString &name)
 IVendorPlugin* VendorPluginManager::getPlugin(const QString &name)
 {
     IVendorPlugin *pDevPlugin = Q_NULLPTR;
-    if(name == "") return Q_NULLPTR;
-    if(m_plugins.contains(name)) {
-        pDevPlugin = m_plugins.value(name);
+    if(name == "") {
+        return Q_NULLPTR;
     }
-    else {
+    if(m_plugins.contains(name)) {
+        qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+        pDevPlugin = m_plugins.value(name);
+    } else {
+        qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
         pDevPlugin = loadPlugin(name);
         if (pDevPlugin) {
+            qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
             m_plugins.insert(name, pDevPlugin);
         }
     }

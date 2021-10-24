@@ -2,7 +2,7 @@
 #define IDEVICEPLUGIN_H
 
 #include "../../HmiRunTime/Port/IPort.h"
-#include "../../HmiRunTime/Tag/IOTag.h"
+#include "../../HmiRunTime/RunTimeTag.h"
 #include <QStringList>
 
 
@@ -24,21 +24,21 @@ public:
     virtual bool unInitailizeDevice(void* pObj) = 0;
 
     // 写变量前处理
-    virtual bool beforeWriteIOTag(void* pObj, IOTag* pTag) = 0;
+    virtual bool beforeWriteIOTag(void* pObj, RunTimeTag* pTag) = 0;
     // 写变量
-    virtual int writeIOTag(void* pObj, IPort *pPort, IOTag* pTag) = 0;
+    virtual int writeIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag) = 0;
     // 写变量后处理
-    virtual bool afterWriteIOTag(void* pObj, IOTag* pTag) = 0;
+    virtual bool afterWriteIOTag(void* pObj, RunTimeTag* pTag) = 0;
 
     // 读变量前处理
-    virtual bool beforeReadIOTag(void* pObj, IOTag* pTag) = 0;
+    virtual bool beforeReadIOTag(void* pObj, RunTimeTag* pTag) = 0;
     // 读变量
-    virtual int readIOTag(void* pObj, IPort *pPort, IOTag* pTag) = 0;
+    virtual int readIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag) = 0;
     // 读变量后处理
-    virtual bool afterReadIOTag(void* pObj, IOTag* pTag) = 0;
+    virtual bool afterReadIOTag(void* pObj, RunTimeTag* pTag) = 0;
 
     // 变量字节序转换为当前主机字节序
-    virtual bool convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag) = 0;
+    virtual bool convertIOTagBytesToNativeBytes(void* pObj, RunTimeTag* pTag) = 0;
 };
 
 

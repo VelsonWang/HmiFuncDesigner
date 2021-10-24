@@ -2,6 +2,7 @@
 #define __DATAPACK_H__
 
 #include <QtGlobal>
+#include <QByteArray>
 
 //计算校验和
 extern quint32 AddCheckSum(quint8* pBuf, quint32 len);
@@ -13,6 +14,8 @@ extern void _RecoverSelfWordData(quint8 *pDst, quint32 Len);
 extern void RecoverData(quint8 *pSrc, quint8 *pDst, quint32 Len);
 //将数据排列顺序反过来覆盖自身地址
 extern void RecoverSelfData(quint8 * pData, quint32 Len);
+//将数据排列顺序反过来覆盖自身地址
+extern void RecoverSelfData(QByteArray &data, quint32 Len);
 //将16进制转换成Ascii码
 extern void MakeCodeToAsii(quint8 *pSrc, quint8 *pDst, quint32 len);
 //将Ascii码转换成16进制

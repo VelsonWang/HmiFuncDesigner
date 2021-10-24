@@ -33,8 +33,9 @@ bool PortThread::IsRunning()
 */
 void PortThread::Start()
 {
-    if(mbIsRunning)
+    if(mbIsRunning) {
         return;
+    }
     mbIsRunning = true;
     foreach (Vendor *pVendor, m_VendorList) {
         if(pVendor != Q_NULLPTR) {
@@ -69,12 +70,12 @@ void PortThread::Stop()
 
 void PortThread::run()
 {
-    qDebug()<< "PortThread run:" << m_name;
+    qDebug() << "PortThread run:" << m_name;
     while(mbIsRunning) {
-        RealTimeDB::instance()->addNeedWriteTagToDeviceWriteQueue();
         foreach (Vendor *pVendor, m_VendorList) {
-            if(!mbIsRunning)
+            if(!mbIsRunning) {
                 return;
+            }
             if(pVendor != Q_NULLPTR) {
                 pVendor->doLoop();
             }

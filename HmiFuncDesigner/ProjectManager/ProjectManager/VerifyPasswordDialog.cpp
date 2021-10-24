@@ -81,6 +81,7 @@ void VerifyPasswordDialog::onOkClicked()
 {
     QString szPasswd = m_pPwdEditObj->text().trimmed();
     QString szVerifyPasswd = "";
+    //qDebug() << "VerifyPasswordDialog::onOkClicked() m_szPwd: " << m_szPwd;
     if(m_bOpenProj) {
         QCryptographicHash crypt(QCryptographicHash::Md5);
         crypt.reset();

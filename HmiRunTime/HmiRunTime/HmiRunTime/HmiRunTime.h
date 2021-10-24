@@ -13,7 +13,7 @@
 #include "Vendor.h"
 #include "RealTimeDB.h"
 #include "PortThread.h"
-#include "RunScript.h"
+//#include "RunScript.h"
 #include "qprojectcore.h"
 
 class HmiRunTime : public QObject
@@ -51,7 +51,7 @@ public:
     static void execScriptText(const QString &szScriptText, const QString &szMatchEvent);
 
 private:
-    static RunScript *m_pRunScript;
+    //static RunScript *m_pRunScript;
     QProjectCore *projCore;
 
 private:

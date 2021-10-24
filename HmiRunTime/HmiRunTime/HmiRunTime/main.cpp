@@ -17,6 +17,7 @@
 #include <iostream>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QScriptEngine>
 #include "qsoftcore.h"
 #include "qprojectcore.h"
 #include "qrunningmanager.h"
@@ -25,7 +26,7 @@
 #include "httpserver.h"
 
 #ifdef USE_SOAP_SERVICE
-#include "gSOAPServer.h"
+    #include "gSOAPServer.h"
 #endif
 
 /**
@@ -39,15 +40,12 @@ QString getProjectName(const QString &szProjectPath)
     QFileInfo srcFileInfo(szProjectPath);
     QString szProjName = "";
 
-    if(srcFileInfo.isDir())
-    {
+    if(srcFileInfo.isDir()) {
         QDir sourceDir(szProjectPath);
         QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
 
-        foreach(const QString &fileName, fileNames)
-        {
-            if(fileName.endsWith(".pdt"))
-            {
+        foreach(const QString &fileName, fileNames) {
+            if(fileName.endsWith(".pdt")) {
                 QFileInfo info(fileName);
                 szProjName = info.baseName();
             }
@@ -84,49 +82,37 @@ int main(int argc, char *argv[])
     QString configPath = "";
     QString szRunProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
 
-    if(argc == 2)
-    {
+    if(argc == 2) {
         szRunProjPath = argv[1];
     }
 
     QDir dir(szRunProjPath);
 
-    if(!dir.exists())
-    {
+    if(!dir.exists()) {
         dir.mkpath(szRunProjPath);
     }
 
     // find project infomation file
     QString szProjName = getProjectName(szRunProjPath);
 
-    if(szProjName == "")
-    {
+    if(szProjName == "") {
         qCritical() << "project config file not found!";
         return -1;
-    }
-    else
-    {
+    } else {
         qRegisterBaseProperty();
         qRegisterBaseHost();
         QRunningManager runningMgr;
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
 
-        if(runningMgr.load(szProjFile))
-        {
-            if(!RealTimeDB::instance()->m_bMemStatus)
-            {
-                QMessageBox::information(Q_NULLPTR, QObject::tr("提示"), QObject::tr("打开共享内存失败！"));
-                return -1;
-            }
-
+        if(runningMgr.load(szProjFile)) {
             HmiRunTime runTime(runningMgr.projCore());
             runTime.Load();
             // 添加脚本函数至脚本引擎
             HmiRunTime::scriptEngine_ = new QScriptEngine();
-            addFuncToScriptEngine(HmiRunTime::scriptEngine_);
+            //addFuncToScriptEngine(HmiRunTime::scriptEngine_);
             runTime.Start();
             g_pHmiRunTime = &runTime;
-//            runningMgr.start();
+            //            runningMgr.start();
         }
 
         return app.exec();
@@ -140,15 +126,13 @@ int main(int argc, char *argv[])
     //////////////////////////////////////////////////////////////////////////////
     QString szProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
 
-    if(argc == 2)
-    {
+    if(argc == 2) {
         szProjPath = argv[1];
     }
 
     QDir dir(szProjPath);
 
-    if(!dir.exists())
-    {
+    if(!dir.exists()) {
         dir.mkpath(szProjPath);
     }
 
@@ -160,8 +144,7 @@ int main(int argc, char *argv[])
     QString projSavePath = QCoreApplication::applicationDirPath() + "/Project";
     QDir projSaveDir(projSavePath);
 
-    if(!projSaveDir.exists())
-    {
+    if(!projSaveDir.exists()) {
         projSaveDir.mkpath(projSavePath);
     }
 

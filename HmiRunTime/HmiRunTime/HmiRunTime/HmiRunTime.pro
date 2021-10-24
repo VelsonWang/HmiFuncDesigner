@@ -40,8 +40,6 @@ INCLUDEPATH += \
     Port \
     qextserial \
     Public \
-    DB \
-    Tag \
     Event \
     Script \
     Log \
@@ -96,20 +94,18 @@ SOURCES += \
 #    GraphPageManager.cpp \
 #    MainWindow.cpp \
 #    ViewElementPluginManager.cpp \
-    Tag/Function.cpp \
-    Tag/IOTag.cpp \
-    Tag/RunTimeTag.cpp \
+    Function.cpp \
+    Public/Global.cpp \
+    RunTimeTag.cpp \
     qextserial/qextserialport.cpp \
-    ../Public/RealTimeDB.cpp \
-    DB/DBTagObject.cpp \
-    DB/RealTimeDB.cpp \
+    RealTimeDB.cpp \
     Event/Event.cpp \
     HmiRunTime.cpp \
     Port/ComPort.cpp \
     Port/NetPort.cpp \
     PortThread.cpp \
-    Script/JavaScript.cpp \
-    Script/RunScript.cpp \
+#    Script/JavaScript.cpp \
+#    Script/RunScript.cpp \
     SerialPortReMapping.cpp \
     TimerTask.cpp \
     Vendor.cpp \
@@ -117,13 +113,9 @@ SOURCES += \
     log/ulog.cpp \
     main.cpp \
 #    MessageTransfer.cpp \
-#    ../Public/RealTimeDB.cpp \
 #    HmiRunTime.cpp \
 #    Event/Event.cpp \
-#    Script/JavaScript.cpp \
-#    Script/RunScript.cpp \
 #    SysRuntimeEvent.cpp \
-#    Log/Log.cpp \
 #    Public/Global.cpp
 
 
@@ -137,42 +129,36 @@ HEADERS  += \
 #    IVendor.h \
 #    MainWindow.h \
 #    MessageTransfer.h \
-#    ../Public/RealTimeDB.h \
 #    Public/public.h \
 #    HmiRunTime.h \
 #    Public/PublicFunction.h \
 #    Event/Event.h \
-#    Script/JavaScript.h \
-#    Script/RunScript.h \
 #    FileTansfer.h \
 #    SysRuntimeEvent.h \
     ../Vendors/IVendorPlugin/IVendorPlugin.h \
+    Public/Global.h \
+    Public/PublicFunction.h \
+    Public/public.h \
     Socket/xsocket.hpp \
-    Tag/Function.h \
-    Tag/IOTag.h \
-    Tag/RunTimeTag.h \
+    Function.h \
+    RunTimeTag.h \
     qextserial/qextserialport_global.h \
     qextserial/qextserialport.h \
-    ../Public/RealTimeDB.h \
-    DB/DBTagObject.h \
-    DB/RealTimeDB.h \
+    RealTimeDB.h \
     Event/Event.h \
     HmiRunTime.h \
     Port/ComPort.h \
     Port/IPort.h \
     Port/NetPort.h \
     PortThread.h \
-    Script/JavaScript.h \
-    Script/RunScript.h \
+#    Script/JavaScript.h \
+#    Script/RunScript.h \
     SerialPortReMapping.h \
     Singleton.h \
-#    Log/Log.h \
     TimerTask.h \
     Vendor.h \
     VendorPluginManager.h \
     VersionInfo.h \
-#    Public/Global.h \
- \#    ViewElementPluginManager.h
     log/ulog.h
 
 win32 {

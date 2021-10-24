@@ -1,6 +1,7 @@
 ﻿#include "TimerTask.h"
 #include <QTime>
 #include "RealTimeDB.h"
+#include "Public/PublicFunction.h"
 #include <QDebug>
 
 
@@ -15,9 +16,11 @@ TimerTask::TimerTask(QObject *parent) :
 TimerTask::~TimerTask()
 {
     if(timer) {
-         if(timer->isActive()) timer->stop();
-         delete timer;
-         timer = nullptr;
+        if(timer->isActive()) {
+            timer->stop();
+        }
+        delete timer;
+        timer = nullptr;
     }
 }
 
@@ -37,40 +40,29 @@ void TimerTask::timerUpdate()
     QDateTime datetime = QDateTime::currentDateTime();
     QDate date = datetime.date();
     QTime time = datetime.time();
-    QString szTagID = "";
+    quint64 id = 0;
+
     // 系统变量--年
-    szTagID = "sys.1";
-    TAny year;
-    year.t_uint16 = static_cast<quint16>(date.year());
-    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, year);
+    id = RealTimeDB::instance()->tagId("$year");
+    RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.year()));
 
     // 系统变量--月
-    szTagID = "sys.2";
-    TAny month;
-    month.t_uint16 = static_cast<quint16>(date.month());
-    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, month);
+    id = RealTimeDB::instance()->tagId("$month");
+    RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.month()));
 
     // 系统变量--日
-    szTagID = "sys.3";
-    TAny day;
-    day.t_uint16 = static_cast<quint16>(date.day());
-    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, day);
+    id = RealTimeDB::instance()->tagId("$day");
+    RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.day()));
 
     // 系统变量--时
-    szTagID = "sys.4";
-    TAny hour;
-    hour.t_uint16 = static_cast<quint16>(time.hour());
-    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, hour);
+    id = RealTimeDB::instance()->tagId("$hour");
+    RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.hour()));
 
     // 系统变量--分
-    szTagID = "sys.5";
-    TAny minute;
-    minute.t_uint16 = static_cast<quint16>(time.minute());
-    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, minute);
+    id = RealTimeDB::instance()->tagId("$minute");
+    RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.minute()));
 
     // 系统变量--秒
-    szTagID = "sys.6";
-    TAny second;
-    second.t_uint16 = static_cast<quint16>(time.second());
-    RealTimeDB::instance()->SetTypeAndData(szTagID, TYPE_UINT16, second);
+    id = RealTimeDB::instance()->tagId("$second");
+    RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.second()));
 }
