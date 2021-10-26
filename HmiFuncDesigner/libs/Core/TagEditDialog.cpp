@@ -10,6 +10,7 @@ TagEditDialog::TagEditDialog(QWidget *parent)
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     m_mapDevToAddrType.clear();
+    m_mapAddrTypeToAddrTypeAlias.clear();
     m_mapAddrTypeToSubAddrType.clear();
     m_mapAddrTypeToDataType.clear();
     ui->tabWidget->setCurrentIndex(0);
@@ -79,10 +80,12 @@ QJsonObject TagEditDialog::getTagObj()
 /// \param mapDataType 数据类型=数据类型,数据类型,数据类型
 ///
 void TagEditDialog::setAddrTypeAndDataType(QMap<QString, QStringList> mapDevToAddrType,
-        QMap<QString, QStringList> mapAddrTypeToSubAddrType,
-        QMap<QString, QStringList> mapAddrTypeToDataType)
+                                           QMap<QString, QString> mapAddrTypeToAddrTypeAlias,
+                                           QMap<QString, QStringList> mapAddrTypeToSubAddrType,
+                                           QMap<QString, QStringList> mapAddrTypeToDataType)
 {
     m_mapDevToAddrType = mapDevToAddrType;
+    m_mapAddrTypeToAddrTypeAlias = mapAddrTypeToAddrTypeAlias;
     m_mapAddrTypeToSubAddrType = mapAddrTypeToSubAddrType;
     m_mapAddrTypeToDataType = mapAddrTypeToDataType;
 }
@@ -244,10 +247,14 @@ void TagEditDialog::updateUI()
         ui->cboAddrType->clear();
         ui->cboAddrType->addItems(szListAddrTypes);
 
-        QString szAddrType = m_jsonTagObj["addr"].toString();
-        if(szAddrType != "") {
-            ui->cboAddrType->setCurrentText(szAddrType);
-            on_cboAddrType_currentTextChanged(szAddrType);
+        QString szAddrTypeAlias = m_jsonTagObj["addr"].toString();
+        if(szAddrTypeAlias != "") {
+            QString szAddrType = m_mapAddrTypeToAddrTypeAlias.key(szAddrTypeAlias);
+            if(szAddrType != "") {
+                szAddrTypeAlias = szAddrType;
+            }
+            ui->cboAddrType->setCurrentText(szAddrTypeAlias);
+            on_cboAddrType_currentTextChanged(szAddrTypeAlias);
         }
 
         ui->editAddrOffset->setText(m_jsonTagObj["offset"].toString());

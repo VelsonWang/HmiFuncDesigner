@@ -22,6 +22,7 @@ public:
     void updateUI();
     // 设置地址类型和数据类型
     void setAddrTypeAndDataType(QMap<QString, QStringList> mapDevToAddrType,
+                                QMap<QString, QString> mapAddrTypeToAddrTypeAlias,
                                 QMap<QString, QStringList> mapAddrTypeToSubAddrType,
                                 QMap<QString, QStringList> mapAddrTypeToDataType);
 
@@ -48,6 +49,7 @@ private:
     Ui::TagEditDialog *ui;
     QJsonObject m_jsonTagObj; // 变量
     QMap<QString, QStringList> m_mapDevToAddrType;
+    QMap<QString, QString> m_mapAddrTypeToAddrTypeAlias; // 寄存器类型名称和别名寄存器类型映射
     QMap<QString, QStringList> m_mapAddrTypeToSubAddrType;
     QMap<QString, QStringList> m_mapAddrTypeToDataType;
     QMap<QString, QMap<QString, quint32>> m_mapAddrTypeToLimit;

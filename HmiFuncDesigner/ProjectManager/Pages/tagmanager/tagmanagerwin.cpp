@@ -391,6 +391,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
             QMap<QString, QStringList> mapDevToAddrType;
+            QMap<QString, QString> mapAddrTypeToAddrTypeAlias;
             QMap<QString, QStringList> mapAddrTypeToSubAddrType;
             QMap<QString, QStringList> mapAddrTypeToDataType;
 
@@ -433,6 +434,8 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                             foreach(XMLObject* pXmlObj, pRegAreaObjs) {
                                 QString szAddrType = pXmlObj->getProperty("Name");
                                 szListAddrType << szAddrType;
+                                QString szAddrTypeAlias = pXmlObj->getProperty("Alias");
+                                mapAddrTypeToAddrTypeAlias.insert(szAddrType, szAddrTypeAlias);
 
                                 if(pXmlObj->getProperty("DataType").trimmed() != "") {
                                     mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
@@ -452,7 +455,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                 mapDevToAddrType.insert(pTagObj->m_szDevType, szListAddrType);
             }
 
-            dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
+            dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToAddrTypeAlias, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
             QJsonObject jsonTagObj = pTagObj->toJsonObject();
             dlg.setTagObj(jsonTagObj);
             dlg.updateUI();
@@ -592,6 +595,7 @@ void QTableWidgetEx::onAddTag()
     TagEditDialog dlg(this);
     dlg.setWindowTitle(tr("新建变量"));
     QMap<QString, QStringList> mapDevToAddrType;
+    QMap<QString, QString> mapAddrTypeToAddrTypeAlias;
     QMap<QString, QStringList> mapAddrTypeToSubAddrType;
     QMap<QString, QStringList> mapAddrTypeToDataType;
 
@@ -636,7 +640,8 @@ void QTableWidgetEx::onAddTag()
                     foreach(XMLObject* pXmlObj, pRegAreaObjs) {
                         QString szAddrType = pXmlObj->getProperty("Name");
                         szListAddrType << szAddrType;
-
+                        QString szAddrTypeAlias = pXmlObj->getProperty("Alias");
+                        mapAddrTypeToAddrTypeAlias.insert(szAddrType, szAddrTypeAlias);
                         if(pXmlObj->getProperty("DataType").trimmed() != "") {
                             mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
                         } else {
@@ -655,7 +660,7 @@ void QTableWidgetEx::onAddTag()
         mapDevToAddrType.insert(pObj->szName_, szListAddrType);
     }
 
-    dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
+    dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToAddrTypeAlias, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
     QJsonObject jsonTagObj;
     dlg.setTagObj(jsonTagObj);
     dlg.updateUI();
@@ -812,6 +817,7 @@ void QTableWidgetEx::onEditTag()
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
             QMap<QString, QStringList> mapDevToAddrType;
+            QMap<QString, QString> mapAddrTypeToAddrTypeAlias;
             QMap<QString, QStringList> mapAddrTypeToSubAddrType;
             QMap<QString, QStringList> mapAddrTypeToDataType;
 
@@ -856,7 +862,8 @@ void QTableWidgetEx::onEditTag()
                             foreach(XMLObject* pXmlObj, pRegAreaObjs) {
                                 QString szAddrType = pXmlObj->getProperty("Name");
                                 szListAddrType << szAddrType;
-
+                                QString szAddrTypeAlias = pXmlObj->getProperty("Alias");
+                                mapAddrTypeToAddrTypeAlias.insert(szAddrType, szAddrTypeAlias);
                                 if(pXmlObj->getProperty("DataType").trimmed() != "") {
                                     mapAddrTypeToDataType.insert(szAddrType, pXmlObj->getProperty("DataType").split("|"));
                                 } else {
@@ -875,7 +882,7 @@ void QTableWidgetEx::onEditTag()
                 mapDevToAddrType.insert(pObj->szName_, szListAddrType);
             }
 
-            dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
+            dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToAddrTypeAlias, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
             QJsonObject jsonTagObj = pTagObj->toJsonObject();
             dlg.setTagObj(jsonTagObj);
             dlg.updateUI();
