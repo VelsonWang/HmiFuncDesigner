@@ -12,16 +12,16 @@ class QCommonEditor : public QWidget
     Q_OBJECT
 public:
     Q_INVOKABLE QCommonEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
-    
+
 signals:
-    
+
 public slots:
     void onPropertyChanged();
 
 protected:
-    QLabel *m_icon;
-    QLabel *m_text;
-    QAbstractProperty *m_property;
+    QLabel *icon;
+    QLabel *text;
+    QAbstractProperty *property;
 };
 
 #endif // QCOMMONEDITOR_H

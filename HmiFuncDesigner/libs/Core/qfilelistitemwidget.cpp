@@ -6,8 +6,8 @@
 #include "qfilemanager.h"
 
 QFileListItemWidget::QFileListItemWidget(QFileListView *view,
-                                         QTreeWidgetItem *item,
-                                         QWidget *parent):
+        QTreeWidgetItem *item,
+        QWidget *parent):
     QWidget(parent),
     ui(new Ui::QFileListItemWidget),
     m_item(item),
@@ -17,11 +17,11 @@ QFileListItemWidget::QFileListItemWidget(QFileListView *view,
 
     QAction *ac;
 
-    ac=new QAction(QIcon(":/images/removesubmitfield.png"),"",this);
+    ac = new QAction(QIcon(":/images/removesubmitfield.png"), "", this);
     ac->setToolTip("Remove");
-    m_remove_button=new QToolBarButton(ac,this);
+    m_remove_button = new QToolBarButton(ac, this);
     ui->horizontalLayout->addWidget(m_remove_button);
-    connect(ac,SIGNAL(triggered()),this,SIGNAL(remove()));
+    connect(ac, SIGNAL(triggered()), this, SIGNAL(remove()));
 
     m_remove_button->setVisible(false);
 }
@@ -39,24 +39,18 @@ void QFileListItemWidget::set_text(const QString &text)
 
 void QFileListItemWidget::enterEvent(QEvent *)
 {
-    if(m_view->can_remove())
-    {
-        tagFileGroupInfo *g=m_view->get_group(m_item);
-        if(g!=Q_NULLPTR)
-        {
-            foreach(tagFileInfo *info,g->m_files)
-            {
-                if(info->m_type==FILE_SYSTEM)
-                {
+    if(m_view->can_remove()) {
+        tagFileGroupInfo *g = m_view->get_group(m_item);
+        if(g != NULL) {
+            foreach(tagFileInfo *info, g->m_files) {
+                if(info->m_type == FILE_SYSTEM) {
                     return;
                 }
             }
             m_remove_button->setVisible(true);
-        }
-        else
-        {
-            tagFileInfo *f=m_view->get_file(m_item);
-            m_remove_button->setVisible(f->m_type!=FILE_SYSTEM);
+        } else {
+            tagFileInfo *f = m_view->get_file(m_item);
+            m_remove_button->setVisible(f->m_type != FILE_SYSTEM);
         }
     }
 }

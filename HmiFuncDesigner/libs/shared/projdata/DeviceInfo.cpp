@@ -16,16 +16,21 @@ DeviceInfo::~DeviceInfo()
 
 
 
-bool DeviceInfo::openFromXml(XMLObject *pXmlObj) {
+bool DeviceInfo::openFromXml(XMLObject *pXmlObj)
+{
     qDeleteAll(listDeviceInfoObject_);
     listDeviceInfoObject_.clear();
     XMLObject *pDevicesObj = pXmlObj->getCurrentChild("devices");
-    if(pDevicesObj == Q_NULLPTR) return false;
+    if(pDevicesObj == NULL) {
+        return false;
+    }
     QVector<XMLObject* > listUsersObj = pDevicesObj->getCurrentChildren("device");
     foreach(XMLObject* pDevObj, listUsersObj) {
         DeviceInfoObject *pObj = new DeviceInfoObject();
         pObj->iID_ = pDevObj->getProperty("id").toInt();
-        if(iStartNewDeviceID_ < pObj->iID_) iStartNewDeviceID_ = pObj->iID_;
+        if(iStartNewDeviceID_ < pObj->iID_) {
+            iStartNewDeviceID_ = pObj->iID_;
+        }
         pObj->szDeviceType_ = pDevObj->getProperty("type");
         pObj->szName_ = pDevObj->getProperty("name");
         pObj->szDeviceName_ = pDevObj->getProperty("dev_name");
@@ -35,7 +40,7 @@ bool DeviceInfo::openFromXml(XMLObject *pXmlObj) {
         pObj->iStateVar_ = pDevObj->getProperty("state").toInt();
         pObj->iFrameTimePeriod_ = pDevObj->getProperty("frame_period").toInt();
         pObj->iCtrlVar_ = pDevObj->getProperty("ctrl").toInt();
-        pObj->bDynamicOptimization_= pDevObj->getProperty("dyn") == "1";
+        pObj->bDynamicOptimization_ = pDevObj->getProperty("dyn") == "1";
         pObj->iRemotePort_ = pDevObj->getProperty("remote").toInt();
         pObj->szPortParameters_ = pDevObj->getProperty("param");
         pObj->szProperties_ = pDevObj->getProperty("prop");
@@ -45,11 +50,12 @@ bool DeviceInfo::openFromXml(XMLObject *pXmlObj) {
 }
 
 
-bool DeviceInfo::saveToXml(XMLObject *pXmlObj) {
+bool DeviceInfo::saveToXml(XMLObject *pXmlObj)
+{
     XMLObject *pDevicesObj = new XMLObject(pXmlObj);
     pDevicesObj->setTagName("devices");
 
-    for(int i=0; i<listDeviceInfoObject_.count(); i++) {
+    for(int i = 0; i < listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
         XMLObject *pDevObj = new XMLObject(pDevicesObj);
         pDevObj->setTagName("device");
@@ -72,29 +78,36 @@ bool DeviceInfo::saveToXml(XMLObject *pXmlObj) {
     return true;
 }
 
-DeviceInfoObject *DeviceInfo::newObject() {
+DeviceInfoObject *DeviceInfo::newObject()
+{
     DeviceInfoObject *pObj = new DeviceInfoObject();
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->iID_ = allocNewDeviceID();
         listDeviceInfoObject_.append(pObj);
     }
     return pObj;
 }
 
-DeviceInfoObject *DeviceInfo::getObjectByID(int id) {
-    for(int i=0; i<listDeviceInfoObject_.count(); i++) {
+DeviceInfoObject *DeviceInfo::getObjectByID(int id)
+{
+    for(int i = 0; i < listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
-        if(pObj->iID_ == id) return pObj;
+        if(pObj->iID_ == id) {
+            return pObj;
+        }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
-DeviceInfoObject *DeviceInfo::getObjectByName(const QString &name) {
-    for(int i=0; i<listDeviceInfoObject_.count(); i++) {
+DeviceInfoObject *DeviceInfo::getObjectByName(const QString &name)
+{
+    for(int i = 0; i < listDeviceInfoObject_.count(); i++) {
         DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
-        if(pObj->szName_ == name) return pObj;
+        if(pObj->szName_ == name) {
+            return pObj;
+        }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 

@@ -39,9 +39,9 @@ void QProjectCore::close()
 {
     if(m_bOpen) {
         notifyClosed();
-        if(m_pProjectHostObj != Q_NULLPTR) {
+        if(m_pProjectHostObj != NULL) {
             delete m_pProjectHostObj;
-            m_pProjectHostObj = Q_NULLPTR;
+            m_pProjectHostObj = NULL;
         }
         m_szProjPath = "";
         m_pPageManagerObj->clear();
@@ -66,7 +66,7 @@ bool QProjectCore::createNewProj(const QString &szfile)
     m_szProjPath = szfile.left(index);
     index = m_szProjPath.lastIndexOf("/");
     m_szProjName = m_szProjPath.mid(index + 1);
-    m_pPageManagerObj->load(Q_NULLPTR);
+    m_pPageManagerObj->load(NULL);
     m_bOpen = true;
     emit notifyOpened();
     return true;
@@ -80,11 +80,11 @@ bool QProjectCore::isOpened()
 
 void QProjectCore::onFormRefresh(QAbstractHost *form)
 {
-    if(form != Q_NULLPTR && (form->getHostType() != "form" || form->getParent() != Q_NULLPTR)) {
+    if(form != NULL && (form->getHostType() != "form" || form->getParent() != NULL)) {
         return;
     }
     QAbstractProperty* pro = m_pProjectHostObj->getProperty("start_page");
-    if(pro != Q_NULLPTR) {
+    if(pro != NULL) {
         QList<QAbstractHost*> list = m_pPageManagerObj->getPages_by_title("form");
         tagComboItem item;
         ComboItems items;
@@ -95,8 +95,8 @@ void QProjectCore::onFormRefresh(QAbstractHost *form)
         }
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
-        if(form != Q_NULLPTR && pro->get_value().toString() == form->getUuid()) {
+        pro->setAttribute("items", v);
+        if(form != NULL && pro->get_value().toString() == form->getUuid()) {
             pro->set_value("");
             pro->set_value(form->getUuid());
         }
@@ -105,25 +105,25 @@ void QProjectCore::onFormRefresh(QAbstractHost *form)
 
 QAbstractHost* QProjectCore::getHostByUuid(const QString &uuid)
 {
-    QList<QAbstractHost*> list=m_pPageManagerObj->getPages();
+    QList<QAbstractHost*> list = m_pPageManagerObj->getPages();
     list.append(m_pProjectHostObj);
 
     while(list.size() > 0) {
-        QAbstractHost* h=list.takeFirst();
+        QAbstractHost* h = list.takeFirst();
         if(h->getUuid() == uuid) {
             return h;
         }
         list += h->getChildren();
     }
 
-    return Q_NULLPTR;
+    return NULL;
 }
 
 
 void QProjectCore::initScriptEngine()
 {
     initScriptEngine(m_pProjectHostObj);
-    foreach(QAbstractHost* h,m_pPageManagerObj->getPages()) {
+    foreach(QAbstractHost* h, m_pPageManagerObj->getPages()) {
         initScriptEngine(h);
     }
 }
@@ -142,16 +142,16 @@ void QProjectCore::initScriptEngine(QAbstractHost *host)
     if(!keyboard || project) {
         foreach(QAbstractHost* h, m_pPageManagerObj->getPages()) {
             if(project || h->property("title").toString() == "keyboard") {
-                temp = getScriptObject(host,engine);
+                temp = getScriptObject(host, engine);
                 global.setProperty(h->getPropertyValue("objectName").toString(), temp);
             }
         }
     }
 
-    temp = getScriptObject(host,engine);
-    global.setProperty("self",temp);
+    temp = getScriptObject(host, engine);
+    global.setProperty("self", temp);
     if(!keyboard || project) {
-        if(host->getParent() != Q_NULLPTR) {
+        if(host->getParent() != NULL) {
             temp = getScriptObject(host->getParent(), engine);
             global.setProperty("parent", temp);
         }
@@ -162,7 +162,7 @@ void QProjectCore::initScriptEngine(QAbstractHost *host)
 
     engine->setGlobalObject(global);
 
-    foreach(QAbstractHost* h,host->getChildren()) {
+    foreach(QAbstractHost* h, host->getChildren()) {
         initScriptEngine(h);
     }
 }
@@ -184,12 +184,16 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
     close();
 
     QFileInfo fileInfoSrc(szProjFile);
-    if(fileInfoSrc.size() <= 512) return false;
+    if(fileInfoSrc.size() <= 512) {
+        return false;
+    }
 
     // 读取文件头信息
     QFile fileProj;
     fileProj.setFileName(szProjFile);
-    if(!fileProj.open(QIODevice::ReadOnly)) return false;
+    if(!fileProj.open(QIODevice::ReadOnly)) {
+        return false;
+    }
 
     quint8 buf[1024] = {0};
     quint16 wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
@@ -212,7 +216,9 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
 
     QByteArray baProjData;
     if(headerObj_.byEncrypt) {
-        if(DataAES::Decrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) return false;
+        if(DataAES::Decrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) {
+            return false;
+        }
     } else {
         baProjData = baTmpProjData;
     }
@@ -220,7 +226,9 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
     QString szProjData = QString::fromUtf8(baProjData);
 
     XMLObject xml;
-    if(!xml.load(szProjData, Q_NULLPTR)) return false;
+    if(!xml.load(szProjData, NULL)) {
+        return false;
+    }
 
     QList<XMLObject*> projObjs = xml.getChildren();
     foreach(XMLObject* pProjObj, projObjs) {
@@ -236,7 +244,7 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
         deviceInfo_.openFromXml(pProjObj);
 
         XMLObject *pTagsObj = pProjObj->getCurrentChild("tags");
-        if(pTagsObj != Q_NULLPTR) {
+        if(pTagsObj != NULL) {
             // 标签变量组
             tagMgr_.openFromXml(pTagsObj);
         }
@@ -248,7 +256,7 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
 
         // 加载画面
         XMLObject *pPagesObj = pProjObj->getCurrentChild("forms");
-        if(pPagesObj != Q_NULLPTR) {
+        if(pPagesObj != NULL) {
             m_pPageManagerObj->load(pPagesObj);
         }
     }
@@ -302,15 +310,18 @@ bool QProjectCore::saveToXml(const QString &szProjFile)
     QByteArray baProjData;
     QByteArray baTmpProjData = projObjs.write().toUtf8();
     if(headerObj_.byEncrypt) {
-        if(DataAES::Encrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) return false;
+        if(DataAES::Encrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) {
+            return false;
+        }
     } else {
         baProjData = baTmpProjData;
     }
 
     QFile fileProj;
     fileProj.setFileName(szProjFile);
-    if(!fileProj.open(QIODevice::WriteOnly|QIODevice::Truncate))
+    if(!fileProj.open(QIODevice::WriteOnly | QIODevice::Truncate)) {
         return false;
+    }
 
     // 写文件头
     quint8 buf[1024] = {0};
@@ -375,7 +386,8 @@ void QProjectCore::getAllTagName(QStringList &varList, const QString &type)
  * @param projectName 工程名称全路径
  * @return 工程路径
  */
-QString QProjectCore::getProjectPath(const QString &projectName) {
+QString QProjectCore::getProjectPath(const QString &projectName)
+{
     QString path = QString();
     int pos = projectName.lastIndexOf("/");
     if (pos != -1) {
@@ -390,7 +402,8 @@ QString QProjectCore::getProjectPath(const QString &projectName) {
  * @param projectName 工程名称全路径
  * @return 工程名称包含后缀
  */
-QString QProjectCore::getProjectNameWithSuffix(const QString &projectName) {
+QString QProjectCore::getProjectNameWithSuffix(const QString &projectName)
+{
     QFileInfo projFileInfo(projectName);
     return projFileInfo.fileName();
 }
@@ -401,7 +414,8 @@ QString QProjectCore::getProjectNameWithSuffix(const QString &projectName) {
  * @param projectName 工程名称全路径
  * @return 工程名称不包含后缀
  */
-QString QProjectCore::getProjectNameWithOutSuffix(const QString &projectName) {
+QString QProjectCore::getProjectNameWithOutSuffix(const QString &projectName)
+{
     QFileInfo projFileInfo(projectName);
     return projFileInfo.baseName();
 }

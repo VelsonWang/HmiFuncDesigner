@@ -11,15 +11,15 @@ class QByteArrayEditor : public QLineEdit
     Q_OBJECT
 public:
     Q_INVOKABLE QByteArrayEditor(QAbstractProperty* pro, QUndoStack* stack, QWidget *parent = 0);
-    
+
 signals:
-    
+
 protected slots:
     void onValueChanged();
     void onPropertyChanged();
 
 protected:
-    QAbstractProperty *m_property;
+    QAbstractProperty *property;
 };
 
 #endif // QBYTEARRAYEDITOR_H

@@ -12,34 +12,47 @@ Script::~Script()
 }
 
 
-void Script::AddScriptObject(ScriptObject *obj) {
+void Script::AddScriptObject(ScriptObject *obj)
+{
     int pos = m_listScriptObjects.indexOf(obj);
-    if (pos == -1) m_listScriptObjects.append(obj);
+    if (pos == -1) {
+        m_listScriptObjects.append(obj);
+    }
 }
 
-void Script::ModifyScriptObject(ScriptObject *oldobj, ScriptObject *newobj) {
+void Script::ModifyScriptObject(ScriptObject *oldobj, ScriptObject *newobj)
+{
     int pos = m_listScriptObjects.indexOf(oldobj);
-    if (pos == -1) return;
+    if (pos == -1) {
+        return;
+    }
     m_listScriptObjects.replace(pos, newobj);
 }
 
-void Script::DeleteScriptObject(ScriptObject *obj) {
+void Script::DeleteScriptObject(ScriptObject *obj)
+{
     m_listScriptObjects.removeOne(obj);
 }
 
-ScriptObject *Script::GetScriptObject(const QString &szName) {
+ScriptObject *Script::GetScriptObject(const QString &szName)
+{
     foreach (ScriptObject *pobj, m_listScriptObjects) {
-        if (pobj->m_szName == szName) return pobj;
+        if (pobj->m_szName == szName) {
+            return pobj;
+        }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 
-bool Script::openFromXml(XMLObject *pXmlObj) {
+bool Script::openFromXml(XMLObject *pXmlObj)
+{
     qDeleteAll(m_listScriptObjects);
     m_listScriptObjects.clear();
     XMLObject *pScriptsObj = pXmlObj->getCurrentChild("scripts");
-    if(pScriptsObj == Q_NULLPTR) return false;
+    if(pScriptsObj == NULL) {
+        return false;
+    }
     QVector<XMLObject* > listScriptsObj = pScriptsObj->getCurrentChildren("script");
     foreach(XMLObject* pScriptObj, listScriptsObj) {
         ScriptObject *pObj = new ScriptObject();
@@ -55,7 +68,8 @@ bool Script::openFromXml(XMLObject *pXmlObj) {
 }
 
 
-bool Script::saveToXml(XMLObject *pXmlObj) {
+bool Script::saveToXml(XMLObject *pXmlObj)
+{
     XMLObject *pScriptsObj = new XMLObject(pXmlObj);
     pScriptsObj->setTagName("scripts");
     for (int i = 0; i < m_listScriptObjects.size(); i++) {

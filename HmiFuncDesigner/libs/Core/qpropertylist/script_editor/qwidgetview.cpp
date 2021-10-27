@@ -21,29 +21,29 @@ public :
 
 void QObjectDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV3 opt = option;
+    QStyleOptionViewItem opt = option;
     QColor c;
-    c = QColor(255,191,239);
-    if(opt.features & QStyleOptionViewItemV2::Alternate) {
+    c = QColor(255, 191, 239);
+    if(opt.features & QStyleOptionViewItem::Alternate) {
         c = c.lighter(112);
     }
 
     painter->fillRect(option.rect, c);
-    opt.state &=~ QStyle::State_HasFocus;
+    opt.state &= ~ QStyle::State_HasFocus;
     QItemDelegate::paint(painter, opt, index);
     opt.palette.setCurrentColorGroup(QPalette::Active);
-    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor,&opt));
+    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor, &opt));
     painter->setPen(color);
 
     if(index.column() == 0) {
-        int right = option.direction==Qt::LeftToRight?option.rect.right():option.rect.left();
+        int right = option.direction == Qt::LeftToRight ? option.rect.right() : option.rect.left();
         painter->drawLine(right, option.rect.y(), right, option.rect.bottom());
     }
 }
 
 QSize QObjectDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QSize sz = QItemDelegate::sizeHint(option,index);
+    QSize sz = QItemDelegate::sizeHint(option, index);
     sz.setHeight(20);
     return sz;
 }
@@ -62,8 +62,8 @@ QWidgetView::QWidgetView(QAbstractHost *host, QWidget *parent) :
             this, SLOT(clickedItem(QTreeWidgetItem*, int)));
 
     QPalette p = this->palette();
-    p.setColor(QPalette::Inactive, QPalette::Highlight, p.color(QPalette::Active,QPalette::Highlight));
-    p.setColor(QPalette::Inactive, QPalette::HighlightedText, p.color(QPalette::Active,QPalette::HighlightedText));
+    p.setColor(QPalette::Inactive, QPalette::Highlight, p.color(QPalette::Active, QPalette::Highlight));
+    p.setColor(QPalette::Inactive, QPalette::HighlightedText, p.color(QPalette::Active, QPalette::HighlightedText));
     this->setPalette(p);
 
     initWidgetList();
@@ -82,11 +82,11 @@ void QWidgetView::initWidgetList()
 
     while(list.size() > 0) {
         QAbstractHost* host = list.takeFirst();
-        QTreeWidgetItem* par = Q_NULLPTR;
-        if(host->getParent() != Q_NULLPTR) {
+        QTreeWidgetItem* par = NULL;
+        if(host->getParent() != NULL) {
             par = m_items.value(host->getParent());
         }
-        if(par == Q_NULLPTR) {
+        if(par == NULL) {
             item = new QTreeWidgetItem(this);
         } else {
             item = new QTreeWidgetItem(par);
@@ -116,7 +116,7 @@ void QWidgetView::clickedItem(QTreeWidgetItem *item, int)
 void QWidgetView::setSelect(QAbstractHost *host)
 {
     QTreeWidgetItem *item = m_items.value(host);
-    if(item != Q_NULLPTR && !item->isSelected()) {
+    if(item != NULL && !item->isSelected()) {
         this->clearSelection();
         setCurrentItem(item);
         emit select(host);
@@ -125,21 +125,21 @@ void QWidgetView::setSelect(QAbstractHost *host)
 
 void QWidgetView::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV3 opt = options;
+    QStyleOptionViewItem opt = options;
     QColor c;
     c = QColor(255, 191, 239);
     painter->fillRect(options.rect, c);
-    opt.palette.setColor(QPalette::AlternateBase,c.lighter(112));
-    opt.state &=~ QStyle::State_HasFocus;
+    opt.palette.setColor(QPalette::AlternateBase, c.lighter(112));
+    opt.state &= ~ QStyle::State_HasFocus;
     QTreeWidget::drawRow(painter, opt, index);
     opt.palette.setCurrentColorGroup(QPalette::Active);
 
-    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor,&opt));
+    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor, &opt));
     painter->setPen(color);
 
     if(index.column() == 0) {
-        int right = options.direction==Qt::LeftToRight?options.rect.right():options.rect.left();
-        painter->drawLine(right,options.rect.y(),right,options.rect.bottom());
+        int right = options.direction == Qt::LeftToRight ? options.rect.right() : options.rect.left();
+        painter->drawLine(right, options.rect.y(), right, options.rect.bottom());
     }
 }
 
@@ -164,13 +164,13 @@ QAbstractHost *QWidgetView::currentHost()
             return it.key();
         }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 QIcon QWidgetView::get_host_icon(QAbstractHost *host)
 {
     tagHostInfo *info = QHostFactory::get_host_info(host->getAttribute(HOST_TYPE));
-    if(info != Q_NULLPTR) {
+    if(info != NULL) {
         return QIcon(info->getShowIcon());
     } else {
         return QIcon(":/images/widget.png");

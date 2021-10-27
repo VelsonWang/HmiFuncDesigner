@@ -9,8 +9,6 @@
 #include <QImage>
 #include <QPainter>
 
-
-
 QFontProperty::QFontProperty(QAbstractProperty *parent):
     QAbstractProperty(parent)
 {

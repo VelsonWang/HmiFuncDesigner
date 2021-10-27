@@ -9,7 +9,7 @@ QPropertyView::QPropertyView(QWidget *parent) :
     QWidget(parent),
     m_propertyView(new QPropertyListView(this)),
     m_styledBar(new StyledBar(this)),
-    m_select(Q_NULLPTR)
+    m_select(NULL)
 {
     this->setMinimumSize(360, 200);
     QVBoxLayout *l = new QVBoxLayout();
@@ -23,7 +23,7 @@ QPropertyView::QPropertyView(QWidget *parent) :
     QLabel *pLabelObj = new QLabel;
     pLabelObj->setText(tr("对象属性"));
     pLabelObj->setFrameShape(QFrame::StyledPanel);
-    QVBoxLayout *layout=new QVBoxLayout;
+    QVBoxLayout *layout = new QVBoxLayout;
     layout->setMargin(0);
     layout->addWidget(pLabelObj);
     m_styledBar->setLayout(layout);
@@ -40,7 +40,7 @@ void QPropertyView::selectWidget(QAbstractHost *host)
         return;
     }
     m_select = host;
-    if(host == Q_NULLPTR) {
+    if(host == NULL) {
         m_propertyView->setPropertys(QList<QAbstractProperty*>());
     } else {
         m_propertyView->setPropertys(host->getPropertys());

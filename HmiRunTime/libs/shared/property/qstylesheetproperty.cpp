@@ -25,7 +25,7 @@ QIcon QStylesheetProperty::get_value_icon()
 
 void QStylesheetProperty::fromObject(XMLObject *xml)
 {
-    if(xml == Q_NULLPTR || xml->getTagName() != PROPERTY_TITLE) {
+    if(xml == NULL || xml->getTagName() != PROPERTY_TITLE) {
         return;
     }
 
@@ -36,7 +36,7 @@ void QStylesheetProperty::fromObject(XMLObject *xml)
     }
 
     QAbstractStylesheetItem *maker = QStylesheetItemFactory::createItem(getObjectProperty("name").toString());
-    if(maker == Q_NULLPTR) {
+    if(maker == NULL) {
         return;
     }
 
@@ -73,7 +73,7 @@ void QStylesheetProperty::toObject(XMLObject *xml)
         xml->setProperty(it.key(), it.value().toString());
     }
     QAbstractStylesheetItem *maker = QStylesheetItemFactory::createItem(getObjectProperty("name").toString());
-    if(maker != Q_NULLPTR) {
+    if(maker != NULL) {
         foreach(tagStylesheetItem item, items) {
             QVariant v;
             v.setValue<tagStylesheetItem>(item);

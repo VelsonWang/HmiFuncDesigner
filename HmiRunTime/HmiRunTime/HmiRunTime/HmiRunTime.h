@@ -20,7 +20,7 @@ class HmiRunTime : public QObject
 {
     Q_OBJECT
 public:
-    explicit HmiRunTime(QProjectCore *coreObj, QObject *parent = Q_NULLPTR);
+    explicit HmiRunTime(QProjectCore *coreObj, QObject *parent = NULL);
     ~HmiRunTime();
     bool Load();
     bool Unload();

@@ -37,21 +37,24 @@ public:
     };
 
 public:
-    explicit TagTableModel(QObject *parent=nullptr) : QAbstractTableModel(parent) {}
+    explicit TagTableModel(QObject *parent = nullptr) : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-    QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    int rowCount(const QModelIndex &parent=QModelIndex()) const;
-    int columnCount(const QModelIndex &parent=QModelIndex()) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-    bool setHeaderData(int, Qt::Orientation, const QVariant&, int=Qt::EditRole) { return false; }
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    bool setHeaderData(int, Qt::Orientation, const QVariant&, int = Qt::EditRole)
+    {
+        return false;
+    }
 
-    bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
-    bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
 public:
     void AppendRow(QStringList rowDat);
@@ -84,7 +87,7 @@ class QTableWidgetEx : public QTableView
 {
     Q_OBJECT
 public:
-    QTableWidgetEx(QWidget *parent = Q_NULLPTR);
+    QTableWidgetEx(QWidget *parent = NULL);
     ~QTableWidgetEx();
 
     // 清空变量表
@@ -134,7 +137,7 @@ protected:
     void mousePressEvent(QMouseEvent *event);
 
 public:
-    TagTableModel *m_pTagTableModel = Q_NULLPTR;
+    TagTableModel *m_pTagTableModel = NULL;
 
 private:
     bool m_bCopyOrCutDone = false; // true-执行过复制或剪切, false-未执行过复制或剪切
@@ -151,7 +154,7 @@ class TagManagerWin : public QWidget
 {
     Q_OBJECT
 public:
-    explicit TagManagerWin(QWidget *parent = Q_NULLPTR);
+    explicit TagManagerWin(QWidget *parent = NULL);
     ~TagManagerWin();
 
 protected:
@@ -160,15 +163,15 @@ protected:
 private:
     QVBoxLayout *m_pTopVLayoutObj;
     QTableWidgetEx *m_pTagMgrTableViewObj;
-    QMenu *m_pMenuTagEditObj = Q_NULLPTR; // 变量编辑菜单
-    QToolBar *m_pToolBarTagEditObj = Q_NULLPTR; // 变量编辑工具条
-    QAction *m_pActAddTagObj = Q_NULLPTR; // 添加变量
-    QAction *m_pActCopyTagObj = Q_NULLPTR; // 拷贝变量
-    QAction *m_pActPasteTagObj = Q_NULLPTR; // 粘贴变量
-    QAction *m_pActModifyTagObj = Q_NULLPTR; // 修改变量
-    QAction *m_pActDeleteTagObj = Q_NULLPTR; // 删除变量
-    QAction *m_pActExportTagObj = Q_NULLPTR; // 导出变量
-    QAction *m_pActImportTagObj = Q_NULLPTR; // 导入变量
+    QMenu *m_pMenuTagEditObj = NULL; // 变量编辑菜单
+    QToolBar *m_pToolBarTagEditObj = NULL; // 变量编辑工具条
+    QAction *m_pActAddTagObj = NULL; // 添加变量
+    QAction *m_pActCopyTagObj = NULL; // 拷贝变量
+    QAction *m_pActPasteTagObj = NULL; // 粘贴变量
+    QAction *m_pActModifyTagObj = NULL; // 修改变量
+    QAction *m_pActDeleteTagObj = NULL; // 删除变量
+    QAction *m_pActExportTagObj = NULL; // 导出变量
+    QAction *m_pActImportTagObj = NULL; // 导入变量
 };
 
 #endif // TAGMANAGERWIN_H

@@ -13,7 +13,7 @@ class ScriptWin : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ScriptWin(QWidget *parent = Q_NULLPTR);
+    explicit ScriptWin(QWidget *parent = NULL);
     ~ScriptWin();
     void init();
 

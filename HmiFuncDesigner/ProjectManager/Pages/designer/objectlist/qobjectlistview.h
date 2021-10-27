@@ -10,7 +10,7 @@ class QObjectListView : public QTreeWidget
 {
     Q_OBJECT
 public:
-    explicit QObjectListView(QWidget *parent = Q_NULLPTR);
+    explicit QObjectListView(QWidget *parent = NULL);
     void setUndoStack(QUndoStack* stack);
 
 public slots:
@@ -35,7 +35,7 @@ protected slots:
     void    item_clicked(QTreeWidgetItem *item);
     void    select_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous );
 
-    void    insert_host_slot(const QList<QAbstractHost*> &list,const QList<int> &indexs);
+    void    insert_host_slot(const QList<QAbstractHost*> &list, const QList<int> &indexs);
     void    remove_host_slot(const QList<QAbstractHost*> &list);
 
     void    insert_page_slot(QAbstractHost* page);

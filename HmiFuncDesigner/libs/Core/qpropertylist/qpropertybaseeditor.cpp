@@ -7,62 +7,63 @@
 #include <QApplication>
 #include <QLabel>
 
-QPropertyBaseEditor::QPropertyBaseEditor(QAbstractProperty *pro,
-                                         QUndoStack* stack,
-                                         QWidget *parent) :
-    QWidget(parent),
-    m_property(pro)
+QPropertyBaseEditor::QPropertyBaseEditor(QAbstractProperty *pro, QUndoStack* stack, QWidget *parent)
+    : QWidget(parent),
+      property(pro)
 {
     this->setFocusPolicy(Qt::StrongFocus);
-    m_resetButton = new QToolButton(this);
-    m_resetButton->setVisible(m_property->getAttribute(ATTR_RESET_ABLEABLE).toBool());
-    m_resetButton->setIcon(QIcon(":/images/reset.png"));
-    m_resetButton->setIconSize(QSize(8, 8));
-    m_resetButton->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding));
-    m_resetButton->setFocusPolicy(Qt::NoFocus);
-    m_resetButton->setFocusProxy(this);
-    m_resetButton->setEnabled(m_property->modified());
-
-    connect(m_resetButton, SIGNAL(clicked()), this, SLOT(reset()));
-    connect(m_property, SIGNAL(refresh()), this, SLOT(onPropertyRefresh()));
-
-    this->setProperty("no-ManhattanStyle",true);
-
-    m_widget = QPropertyFactory::create_editor(pro->getObjectProperty("type").toString(), pro, stack);
-    if(m_widget == NULL) {
-        QLabel *lable = new QLabel;
-        lable->setFocusPolicy(Qt::StrongFocus);
-        lable->setText(pro->get_value_text());
-        lable->setMargin(3);
-        m_widget = lable;
+    resetButton = new QToolButton(this);
+    resetButton->setVisible(property->getAttribute(ATTR_RESET_ABLEABLE).toBool());
+    resetButton->setIcon(QIcon(":/images/reset.png"));
+    resetButton->setIconSize(QSize(8, 8));
+    resetButton->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding));
+    resetButton->setFocusPolicy(Qt::NoFocus);
+    resetButton->setFocusProxy(this);
+    if(property) {
+        resetButton->setEnabled(property->modified());
     }
-    this->setFocusProxy(m_widget);
-    m_widget->installEventFilter(this);
+    connect(resetButton, SIGNAL(clicked()), this, SLOT(reset()));
+    connect(property, SIGNAL(refresh()), this, SLOT(onPropertyRefresh()));
 
-    QHBoxLayout *l = new QHBoxLayout;
-    l->setMargin(0);
-    l->setSpacing(0);
-    l->addWidget(m_widget);
-    l->addWidget(m_resetButton);
+    this->setProperty("no-ManhattanStyle", true);
 
-    this->setLayout(l);
+    widget = QPropertyFactory::createEditor(pro->getObjectProperty("type").toString(), pro, stack);
+    if(widget == NULL) {
+        QLabel *lablel = new QLabel;
+        lablel->setFocusPolicy(Qt::StrongFocus);
+        lablel->setText(pro->get_value_text());
+        lablel->setMargin(3);
+        widget = lablel;
+    }
+    this->setFocusProxy(widget);
+    widget->installEventFilter(this);
+
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    layout->setSpacing(0);
+    layout->addWidget(widget);
+    layout->addWidget(resetButton);
+
+    this->setLayout(layout);
 }
 
 void QPropertyBaseEditor::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
-    p.fillRect(this->rect(),Qt::white);
+    p.fillRect(this->rect(), Qt::white);
 }
 
 void QPropertyBaseEditor::reset()
 {
-    m_resetButton->setEnabled(false);
-    m_property->reset();
+    resetButton->setEnabled(false);
+    if(property) {
+        property->reset();
+    }
 }
 
 bool QPropertyBaseEditor::eventFilter(QObject *o, QEvent *e)
 {
-    if(o == m_widget && e->type() == QEvent::FocusOut) {
+    if(o == widget && e->type() == QEvent::FocusOut) {
         qApp->sendEvent(this, e);
     }
     return QWidget::eventFilter(o, e);
@@ -70,5 +71,7 @@ bool QPropertyBaseEditor::eventFilter(QObject *o, QEvent *e)
 
 void QPropertyBaseEditor::onPropertyRefresh()
 {
-    m_resetButton->setEnabled(m_property->modified());
+    if(property) {
+        resetButton->setEnabled(property->modified());
+    }
 }

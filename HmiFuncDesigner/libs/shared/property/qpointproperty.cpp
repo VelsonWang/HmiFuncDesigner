@@ -1,5 +1,4 @@
 #include "qpointproperty.h"
-
 #include "qintproperty.h"
 
 QPointProperty::QPointProperty(QAbstractProperty *parent):

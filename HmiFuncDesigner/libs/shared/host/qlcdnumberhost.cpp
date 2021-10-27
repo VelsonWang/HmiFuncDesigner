@@ -30,7 +30,7 @@ QString QLCDNumberHost::getShowIcon()
 
 void QLCDNumberHost::createObject()
 {
-    m_object=new QLCDNumber();
+    m_object = new QLCDNumber();
     m_object->setObjectName("lcdnumber");
 }
 
@@ -40,114 +40,108 @@ void QLCDNumberHost::initProperty()
 
     QAbstractProperty *pro;
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","digitCount");
-        pro->setAttribute("show_name",tr("DigitCount"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "digitCount");
+        pro->setAttribute("show_name", tr("DigitCount"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","numDigits");
-        pro->setAttribute("show_name",tr("NumDigits"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "numDigits");
+        pro->setAttribute("show_name", tr("NumDigits"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","intValue");
-        pro->setAttribute("show_name",tr("IntValue"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
-        insertProperty(pro,1);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "intValue");
+        pro->setAttribute("show_name", tr("IntValue"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pro, 1);
     }
 
-    pro=QPropertyFactory::create_property("Float");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","value");
-        pro->setAttribute("show_name",tr("Value"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
-        insertProperty(pro,2);
+    pro = QPropertyFactory::create_property("Float");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "value");
+        pro->setAttribute("show_name", tr("Value"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pro, 2);
     }
 
-    pro=QPropertyFactory::create_property("Enum");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","mode");
-        pro->setAttribute("show_name",tr("Mode"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Enum");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "mode");
+        pro->setAttribute("show_name", tr("Mode"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         tagComboItem item;
 
-        item.m_text=tr("Hex");
-        item.m_value=QLCDNumber::Hex;
+        item.m_text = tr("Hex");
+        item.m_value = QLCDNumber::Hex;
         items.append(item);
 
-        item.m_text=tr("Dec");
-        item.m_value=QLCDNumber::Dec;
+        item.m_text = tr("Dec");
+        item.m_value = QLCDNumber::Dec;
         items.append(item);
 
-        item.m_text=tr("Oct");
-        item.m_value=QLCDNumber::Oct;
+        item.m_text = tr("Oct");
+        item.m_value = QLCDNumber::Oct;
         items.append(item);
 
-        item.m_text=tr("Bin");
-        item.m_value=QLCDNumber::Bin;
+        item.m_text = tr("Bin");
+        item.m_value = QLCDNumber::Bin;
         items.append(item);
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
+        pro->setAttribute("items", v);
 
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Enum");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","segmentStyle");
-        pro->setAttribute("show_name",tr("SegmentStyle"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Enum");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "segmentStyle");
+        pro->setAttribute("show_name", tr("SegmentStyle"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         tagComboItem item;
 
-        item.m_text=tr("Outline");
-        item.m_value=QLCDNumber::Outline;
+        item.m_text = tr("Outline");
+        item.m_value = QLCDNumber::Outline;
         items.append(item);
 
-        item.m_text=tr("Filled");
-        item.m_value=QLCDNumber::Filled;
+        item.m_text = tr("Filled");
+        item.m_value = QLCDNumber::Filled;
         items.append(item);
 
-        item.m_text=tr("Flat");
-        item.m_value=QLCDNumber::Flat;
+        item.m_text = tr("Flat");
+        item.m_value = QLCDNumber::Flat;
         items.append(item);
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
+        pro->setAttribute("items", v);
 
         insertProperty(pro);
     }
 
-    setPropertyValue("geometry",QRect(0,0,100,30));
+    setPropertyValue("geometry", QRect(0, 0, 100, 30));
 }
 
 void QLCDNumberHost::setIntValue(int intValue)
 {
-    setPropertyValue("intValue",intValue);
+    setPropertyValue("intValue", intValue);
 }
 
 int QLCDNumberHost::intValue()
@@ -157,7 +151,7 @@ int QLCDNumberHost::intValue()
 
 void QLCDNumberHost::setValue(float value)
 {
-    setPropertyValue("value",value);
+    setPropertyValue("value", value);
 }
 
 float QLCDNumberHost::value()
@@ -167,7 +161,7 @@ float QLCDNumberHost::value()
 
 void QLCDNumberHost::setMode(int mode)
 {
-    setPropertyValue("mode",mode);
+    setPropertyValue("mode", mode);
 }
 
 int QLCDNumberHost::mode()
@@ -177,7 +171,7 @@ int QLCDNumberHost::mode()
 
 void QLCDNumberHost::setSegmentStyle(int segmentStyle)
 {
-    setPropertyValue("segmentStyle",segmentStyle);
+    setPropertyValue("segmentStyle", segmentStyle);
 }
 
 int QLCDNumberHost::segmentStyle()
@@ -187,7 +181,7 @@ int QLCDNumberHost::segmentStyle()
 
 void QLCDNumberHost::setDigitCount(int digitCount)
 {
-    setPropertyValue("digitCount",digitCount);
+    setPropertyValue("digitCount", digitCount);
 }
 
 int QLCDNumberHost::digitCount()
@@ -197,7 +191,7 @@ int QLCDNumberHost::digitCount()
 
 void QLCDNumberHost::setNumDigits(int numDigits)
 {
-    setPropertyValue("numDigits",numDigits);
+    setPropertyValue("numDigits", numDigits);
 }
 
 int QLCDNumberHost::numDigits()

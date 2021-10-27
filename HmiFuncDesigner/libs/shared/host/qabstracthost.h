@@ -24,7 +24,7 @@ class SHAREDLIB_EXPORT QAbstractHost : public QObject
 {
     Q_OBJECT
 public:
-    explicit QAbstractHost(QAbstractHost *parent = Q_NULLPTR);
+    explicit QAbstractHost(QAbstractHost *parent = NULL);
     ~QAbstractHost();
 
     void insertChildren(const QList<int> &indexs, const QList<QAbstractHost*> &children);
@@ -78,10 +78,10 @@ public:
     QString getHostType();
 
 protected:
-    void insertProperty(QAbstractProperty* property, int index=-1);
+    void insertProperty(QAbstractProperty* property, int index = -1);
     void removeProperty(const QString &name);
 
-    void insertAction(const QString& name, QAction* ac, int index=-1);
+    void insertAction(const QString& name, QAction* ac, int index = -1);
     void removeAction(const QString& name);
 
     virtual void initProperty();
@@ -112,7 +112,7 @@ signals:
     void notifyParentChanged();
 
 public slots:
-    
+
 protected:
     QList<QAbstractHost*> m_children;
     QAbstractHost* m_parent;

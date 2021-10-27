@@ -43,12 +43,12 @@ IDevicePlugin * DevicePluginLoader::getPluginObject(const QString &szPluginName)
             QObject *plugin = pluginLoader.instance();
             if (plugin) {
                 IDevicePlugin *pDevPluginObj = qobject_cast<IDevicePlugin *>(plugin);
-                if (pDevPluginObj == Q_NULLPTR) {
-                    QMessageBox::critical(Q_NULLPTR, QObject::tr("系统错误"), QObject::tr("插件加载失败！\n") + fileName);
+                if (pDevPluginObj == NULL) {
+                    QMessageBox::critical(NULL, QObject::tr("系统错误"), QObject::tr("插件加载失败！\n") + fileName);
                 }
                 return pDevPluginObj;
             }
         }
     }
-    return Q_NULLPTR;
+    return NULL;
 }

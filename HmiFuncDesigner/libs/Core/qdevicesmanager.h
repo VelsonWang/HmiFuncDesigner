@@ -27,7 +27,7 @@ protected slots:
     void    removeDevice(QObject* obj);
 protected:
     QList<QObject*>     m_devices;
-    QMap<QString,QObject*>  m_nameToDevice;
+    QMap<QString, QObject*>  m_nameToDevice;
     QList<QAbstractUpdate*> m_updates;
 };
 

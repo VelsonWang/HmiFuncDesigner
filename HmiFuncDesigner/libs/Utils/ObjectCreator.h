@@ -19,29 +19,31 @@ public:
 
     static void* getobj(const QString& classname)
     {
-        CreateObjFunc creatobjfunc = Q_NULLPTR;
+        CreateObjFunc creatobjfunc = NULL;
         QMap<QString, CreateObjFunc>::iterator it;
 
         it = getmap().find(classname);
-        if(it != getmap().end())
+        if(it != getmap().end()) {
             creatobjfunc = it.value();
+        }
 
-        if(creatobjfunc != Q_NULLPTR)
+        if(creatobjfunc != NULL) {
             return (*creatobjfunc)();
+        }
 
-        return Q_NULLPTR;
+        return NULL;
     }
 
 private:
     inline static QMapdata& getmap()
     {
-      static QMapdata instance;
-      return instance;
+        static QMapdata instance;
+        return instance;
     }
 
 private:
-    ObjectCreator(){}
-    ~ObjectCreator(){}
+    ObjectCreator() {}
+    ~ObjectCreator() {}
     ObjectCreator(const ObjectCreator &) = delete;
     ObjectCreator &operator=(const ObjectCreator &) = delete;
 };

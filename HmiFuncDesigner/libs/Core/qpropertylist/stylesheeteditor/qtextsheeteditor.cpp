@@ -1,6 +1,5 @@
 #include "qtextsheeteditor.h"
 #include "ui_qtextsheeteditor.h"
-
 #include <QColorDialog>
 
 QTextSheetEditor::QTextSheetEditor(QWidget *parent) :

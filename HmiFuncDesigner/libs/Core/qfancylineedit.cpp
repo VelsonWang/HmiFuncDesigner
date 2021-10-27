@@ -17,16 +17,18 @@ static void execMenuAtWidget(QMenu *menu, QWidget *widget)
     QSize sh = menu->sizeHint();
     QRect rect = widget->rect();
     if (widget->isRightToLeft()) {
-        if (widget->mapToGlobal(QPoint(0, rect.bottom())).y() + sh.height() <= screen.height())
+        if (widget->mapToGlobal(QPoint(0, rect.bottom())).y() + sh.height() <= screen.height()) {
             p = widget->mapToGlobal(rect.bottomRight());
-        else
+        } else {
             p = widget->mapToGlobal(rect.topRight() - QPoint(0, sh.height()));
+        }
         p.rx() -= sh.width();
     } else {
-        if (widget->mapToGlobal(QPoint(0, rect.bottom())).y() + sh.height() <= screen.height())
+        if (widget->mapToGlobal(QPoint(0, rect.bottom())).y() + sh.height() <= screen.height()) {
             p = widget->mapToGlobal(rect.bottomLeft());
-        else
+        } else {
             p = widget->mapToGlobal(rect.topLeft() - QPoint(0, sh.height()));
+        }
     }
     p.rx() = qMax(screen.left(), qMin(p.x(), screen.right() - sh.width()));
     p.ry() += 1;
@@ -43,7 +45,6 @@ class QFancyLineEditPrivate : public QObject
 {
 public:
     explicit QFancyLineEditPrivate(QFancyLineEdit *parent);
-
     virtual bool eventFilter(QObject *obj, QEvent *event);
 
     QFancyLineEdit  *m_lineEdit;
@@ -79,17 +80,18 @@ bool QFancyLineEditPrivate::eventFilter(QObject *obj, QEvent *event)
             break;
         }
     }
-    if (buttonIndex == -1)
+    if (buttonIndex == -1) {
         return QObject::eventFilter(obj, event);
+    }
     switch (event->type()) {
-    case QEvent::FocusIn:
-        if (m_menuTabFocusTrigger[buttonIndex] && m_menu[buttonIndex]) {
-            m_lineEdit->setFocus();
-            execMenuAtWidget(m_menu[buttonIndex], m_iconbutton[buttonIndex]);
-            return true;
-        }
-    default:
-        break;
+        case QEvent::FocusIn:
+            if (m_menuTabFocusTrigger[buttonIndex] && m_menu[buttonIndex]) {
+                m_lineEdit->setFocus();
+                execMenuAtWidget(m_menu[buttonIndex], m_iconbutton[buttonIndex]);
+                return true;
+            }
+        default:
+            break;
     }
     return QObject::eventFilter(obj, event);
 }
@@ -115,8 +117,7 @@ void QFancyLineEdit::checkButtons(const QString &text)
 {
     if (m_oldText.isEmpty() || text.isEmpty()) {
         for (int i = 0; i < 2; ++i) {
-            if (d->m_iconbutton[i]->hasAutoHide())
-            {
+            if (d->m_iconbutton[i]->hasAutoHide()) {
                 d->m_iconbutton[i]->animateShow(!text.isEmpty());
             }
         }
@@ -146,18 +147,21 @@ void QFancyLineEdit::iconClicked()
     IconButton *button = qobject_cast<IconButton *>(sender());
     int index = -1;
     for (int i = 0; i < 2; ++i)
-        if (d->m_iconbutton[i] == button)
+        if (d->m_iconbutton[i] == button) {
             index = i;
-    if (index == -1)
+        }
+    if (index == -1) {
         return;
+    }
     if (d->m_menu[index]) {
         execMenuAtWidget(d->m_menu[index], button);
     } else {
         emit buttonClicked((Side)index);
-        if (index == Left)
+        if (index == Left) {
             emit leftButtonClicked();
-        else if (index == Right)
+        } else if (index == Right) {
             emit rightButtonClicked();
+        }
     }
 }
 
@@ -186,8 +190,9 @@ void QFancyLineEdit::updateButtonPositions()
     QRect contentRect = rect();
     for (int i = 0; i < 2; ++i) {
         Side iconpos = (Side)i;
-        if (layoutDirection() == Qt::RightToLeft)
+        if (layoutDirection() == Qt::RightToLeft) {
             iconpos = (iconpos == Left ? Right : Left);
+        }
 
         if (iconpos == QFancyLineEdit::Right) {
             const int iconoffset = textMargins().right() + 4;
@@ -224,9 +229,9 @@ QPixmap QFancyLineEdit::buttonPixmap(Side side) const
 
 void QFancyLineEdit::setButtonMenu(Side side, QMenu *buttonMenu)
 {
-     d->m_menu[side] = buttonMenu;
-     d->m_iconbutton[side]->setIconOpacity(1.0);
- }
+    d->m_menu[side] = buttonMenu;
+    d->m_iconbutton[side]->setIconOpacity(1.0);
+}
 
 QMenu *QFancyLineEdit::buttonMenu(Side side) const
 {
@@ -240,8 +245,9 @@ bool QFancyLineEdit::hasMenuTabFocusTrigger(Side side) const
 
 void QFancyLineEdit::setMenuTabFocusTrigger(Side side, bool v)
 {
-    if (d->m_menuTabFocusTrigger[side] == v)
+    if (d->m_menuTabFocusTrigger[side] == v) {
         return;
+    }
 
     d->m_menuTabFocusTrigger[side] = v;
     d->m_iconbutton[side]->setFocusPolicy(v ? Qt::TabFocus : Qt::NoFocus);
@@ -255,10 +261,11 @@ bool QFancyLineEdit::hasAutoHideButton(Side side) const
 void QFancyLineEdit::setAutoHideButton(Side side, bool h)
 {
     d->m_iconbutton[side]->setAutoHide(h);
-    if (h)
+    if (h) {
         d->m_iconbutton[side]->setIconOpacity(text().isEmpty() ?  0.0 : 1.0);
-    else
+    } else {
         d->m_iconbutton[side]->setIconOpacity(1.0);
+    }
 }
 
 void QFancyLineEdit::setButtonToolTip(Side side, const QString &tip)
@@ -285,8 +292,9 @@ void IconButton::paintEvent(QPaintEvent *)
     QRect pixmapRect = QRect(0, 0, m_pixmap.width(), m_pixmap.height());
     pixmapRect.moveCenter(rect().center());
 
-    if (m_autoHide)
+    if (m_autoHide) {
         painter.setOpacity(m_iconOpacity);
+    }
 
     painter.drawPixmap(pixmapRect, m_pixmap);
 }

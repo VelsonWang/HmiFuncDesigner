@@ -8,67 +8,67 @@
 QBorderItem::QBorderItem(QAbstractStylesheetItem *parent):
     QAbstractStylesheetItem(parent)
 {
-    m_left_color=new QGradientItem(this);
+    m_left_color = new QGradientItem(this);
     m_left_color->setProperty("title", "left_color");
     m_left_color->setDefault(0x00000000);
 
-    m_top_color=new QGradientItem(this);
+    m_top_color = new QGradientItem(this);
     m_top_color->setProperty("title", "top_color");
     m_top_color->setDefault(0x00000000);
 
-    m_right_color=new QGradientItem(this);
+    m_right_color = new QGradientItem(this);
     m_right_color->setProperty("title", "right_color");
     m_right_color->setDefault(0x00000000);
 
-    m_bottom_color=new QGradientItem(this);
+    m_bottom_color = new QGradientItem(this);
     m_bottom_color->setProperty("title", "bottom_color");
     m_bottom_color->setDefault(0x00000000);
 
 
-    m_left_width=new QAbstractStylesheetItem(this);
+    m_left_width = new QAbstractStylesheetItem(this);
     m_left_width->setProperty("title", "left_width");
     m_left_width->setDefault(0);
 
-    m_right_width=new QAbstractStylesheetItem(this);
+    m_right_width = new QAbstractStylesheetItem(this);
     m_right_width->setProperty("title", "right_width");
     m_right_width->setDefault(0);
 
-    m_bottom_width=new QAbstractStylesheetItem(this);
+    m_bottom_width = new QAbstractStylesheetItem(this);
     m_bottom_width->setProperty("title", "bottom_width");
     m_bottom_width->setDefault(0);
 
-    m_top_width=new QAbstractStylesheetItem(this);
+    m_top_width = new QAbstractStylesheetItem(this);
     m_top_width->setProperty("title", "top_width");
     m_top_width->setDefault(0);
 
-    m_left_style=new QAbstractStylesheetItem(this);
+    m_left_style = new QAbstractStylesheetItem(this);
     m_left_style->setProperty("title", "left_style");
     m_left_style->setDefault("none");
 
-    m_right_style=new QAbstractStylesheetItem(this);
+    m_right_style = new QAbstractStylesheetItem(this);
     m_right_style->setProperty("title", "right_style");
     m_right_style->setDefault("none");
 
-    m_bottom_style=new QAbstractStylesheetItem(this);
+    m_bottom_style = new QAbstractStylesheetItem(this);
     m_bottom_style->setProperty("title", "bottom_style");
     m_bottom_style->setDefault("none");
 
-    m_top_style=new QAbstractStylesheetItem(this);
+    m_top_style = new QAbstractStylesheetItem(this);
     m_top_style->setProperty("title", "top_style");
     m_top_style->setDefault("none");
 
-    m_image=new QAbstractStylesheetItem(this);
+    m_image = new QAbstractStylesheetItem(this);
     m_image->setProperty("title", "image");
 
-    m_color_same=new QAbstractStylesheetItem(this);
+    m_color_same = new QAbstractStylesheetItem(this);
     m_color_same->setProperty("title", "color_same");
     m_color_same->setDefault("true");
 
-    m_style_same=new QAbstractStylesheetItem(this);
+    m_style_same = new QAbstractStylesheetItem(this);
     m_style_same->setProperty("title", "style_same");
     m_style_same->setDefault("true");
 
-    m_width_same=new QAbstractStylesheetItem(this);
+    m_width_same = new QAbstractStylesheetItem(this);
     m_width_same->setProperty("title", "width_same");
     m_width_same->setDefault("true");
 }
@@ -131,52 +131,52 @@ void QBorderItem::subValueChanged()
     }
 
     if(m_left_width->isUsed()) {
-        item.m_attributes.insert("left_width",m_left_width->value());
+        item.m_attributes.insert("left_width", m_left_width->value());
     }
 
     if(m_top_width->isUsed()) {
-        item.m_attributes.insert("top_width",m_top_width->value());
+        item.m_attributes.insert("top_width", m_top_width->value());
     }
 
     if(m_bottom_width->isUsed()) {
-        item.m_attributes.insert("bottom_width",m_bottom_width->value());
+        item.m_attributes.insert("bottom_width", m_bottom_width->value());
     }
 
     if(m_right_width->isUsed()) {
-        item.m_attributes.insert("right_width",m_right_width->value());
+        item.m_attributes.insert("right_width", m_right_width->value());
     }
 
 
     if(m_left_style->isUsed()) {
-        item.m_attributes.insert("left_style",m_left_style->value());
+        item.m_attributes.insert("left_style", m_left_style->value());
     }
 
     if(m_top_style->isUsed()) {
-        item.m_attributes.insert("top_style",m_top_style->value());
+        item.m_attributes.insert("top_style", m_top_style->value());
     }
 
     if(m_bottom_style->isUsed()) {
-        item.m_attributes.insert("bottom_style",m_bottom_style->value());
+        item.m_attributes.insert("bottom_style", m_bottom_style->value());
     }
 
     if(m_right_style->isUsed()) {
-        item.m_attributes.insert("right_style",m_right_style->value());
+        item.m_attributes.insert("right_style", m_right_style->value());
     }
 
     if(m_image->isUsed()) {
-        item.m_attributes.insert("image",m_image->value());
+        item.m_attributes.insert("image", m_image->value());
     }
 
     if(m_color_same->isUsed()) {
-        item.m_attributes.insert("color_same",m_color_same->value());
+        item.m_attributes.insert("color_same", m_color_same->value());
     }
 
     if(m_style_same->isUsed()) {
-        item.m_attributes.insert("style_same",m_style_same->value());
+        item.m_attributes.insert("style_same", m_style_same->value());
     }
 
     if(m_width_same->isUsed()) {
-        item.m_attributes.insert("width_same",m_width_same->value());
+        item.m_attributes.insert("width_same", m_width_same->value());
     }
 
     m_value.setValue<tagStylesheetItem>(item);
@@ -227,7 +227,7 @@ QString QBorderItem::makeStylesheet()
     }
 
     if(m_image->isUsed()) {
-        int left,top,right,bottom;
+        int left, top, right, bottom;
         left = m_left_width->value().toInt();
         top = m_top_width->value().toInt();
         bottom = m_bottom_width->value().toInt();

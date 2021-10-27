@@ -6,7 +6,8 @@
 #include <QStringList>
 #include <QSplitter>
 
-namespace Ui {
+namespace Ui
+{
 class ScriptPropertyEditorDlg;
 }
 
@@ -17,7 +18,7 @@ class ScriptPropertyEditorDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit ScriptPropertyEditorDlg(QWidget *parent = Q_NULLPTR, QStringList events = QStringList());
+    explicit ScriptPropertyEditorDlg(QWidget *parent = NULL, QStringList events = QStringList());
     ~ScriptPropertyEditorDlg();
 
     QString getScript();

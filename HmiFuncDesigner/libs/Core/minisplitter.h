@@ -2,7 +2,6 @@
 #define MINISPLITTER_H
 
 #include "corelibglobal.h"
-
 #include <QSplitter>
 
 /*
@@ -12,7 +11,7 @@
 class CORELIB_EXPORT MiniSplitter : public QSplitter
 {
 public:
-    MiniSplitter(QWidget *parent = Q_NULLPTR);
+    MiniSplitter(QWidget *parent = NULL);
     MiniSplitter(Qt::Orientation orientation);
 
 protected:

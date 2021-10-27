@@ -15,7 +15,7 @@ class QDesignerWidget : public QAbstractPageWidget
 {
     Q_OBJECT
 public:
-    explicit QDesignerWidget(QWidget *parent = Q_NULLPTR);
+    explicit QDesignerWidget(QWidget *parent = NULL);
     void setUndoStack(QUndoStack *stack);
 
 protected:

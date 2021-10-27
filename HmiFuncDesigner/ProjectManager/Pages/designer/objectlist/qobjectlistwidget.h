@@ -12,7 +12,7 @@ class QObjectListWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QObjectListWidget(QWidget *parent = Q_NULLPTR);
+    explicit QObjectListWidget(QWidget *parent = NULL);
     void setUndoStack(QUndoStack *stack);
 
 public slots:

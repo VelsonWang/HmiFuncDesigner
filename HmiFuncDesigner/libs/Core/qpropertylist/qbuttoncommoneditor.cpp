@@ -15,8 +15,8 @@ QButtonCommonEditor::QButtonCommonEditor(QAbstractProperty *property, QUndoStack
     btn->setFocusProxy(this);
     layout()->addWidget(btn);
     connect(btn, SIGNAL(clicked()), this, SLOT(onBtnClicked()));
-    m_icon->installEventFilter(this);
-    m_text->installEventFilter(this);
+    icon->installEventFilter(this);
+    text->installEventFilter(this);
 }
 
 void QButtonCommonEditor::onBtnClicked()
@@ -33,7 +33,7 @@ void QButtonCommonEditor::mouseDoubleClickEvent(QMouseEvent *e)
 
 bool QButtonCommonEditor::eventFilter(QObject *o, QEvent *e)
 {
-    if(e->type() == QEvent::MouseButtonDblClick && (o == m_icon || o == m_text)) {
+    if(e->type() == QEvent::MouseButtonDblClick && (o == icon || o == text)) {
         if(((QMouseEvent*)e)->button() == Qt::LeftButton) {
             onBtnClicked();
             return true;

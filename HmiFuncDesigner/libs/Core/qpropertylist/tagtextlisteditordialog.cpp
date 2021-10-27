@@ -10,9 +10,9 @@
 #include <QDebug>
 
 
-TagTextListEditorDialog::TagTextListEditorDialog(QWidget *parent)
-    : QDialog(parent),
-      ui(new Ui::TagTextListEditorDialog)
+TagTextListEditorDialog::TagTextListEditorDialog(QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::TagTextListEditorDialog)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
@@ -106,9 +106,9 @@ void TagTextListEditorDialog::on_btnCancel_clicked()
 
 QStringList TagTextListEditorDialog::getValueTextList()
 {
-    valueTextList_.clear();
+    valueTextList.clear();
     int iRowCount = ui->tableTagText->rowCount();
-    for(int i=0; i<iRowCount; i++) {
+    for(int i = 0; i < iRowCount; i++) {
         QStringList listValueColor;
         QLineEdit *valueEditor = qobject_cast<QLineEdit* >(ui->tableTagText->cellWidget(i, 0));
         QLineEdit *textEditor = qobject_cast<QLineEdit* >(ui->tableTagText->cellWidget(i, 1));
@@ -123,20 +123,21 @@ QStringList TagTextListEditorDialog::getValueTextList()
         listValueColor.append(szBackgroundColor);
         listValueColor.append(szTextColor);
         QString szValueColor = listValueColor.join(":");
-        valueTextList_.append(szValueColor);
+        valueTextList.append(szValueColor);
     }
-    return valueTextList_;
+    return valueTextList;
 }
 
 void TagTextListEditorDialog::setValueTextList(const QStringList &list)
 {
-    valueTextList_.clear();
-    valueTextList_ = list;
+    valueTextList.clear();
+    valueTextList = list;
 
-    while(ui->tableTagText->rowCount())
+    while(ui->tableTagText->rowCount()) {
         ui->tableTagText->removeRow(0);
+    }
 
-    for(int i=0; i<list.size(); i++) {
+    for(int i = 0; i < list.size(); i++) {
         QString szValueColor = list.at(i);
         QStringList listValueColor = szValueColor.split(":");
         if(listValueColor.size() == 4) {

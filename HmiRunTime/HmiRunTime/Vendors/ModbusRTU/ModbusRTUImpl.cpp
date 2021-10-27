@@ -82,7 +82,7 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
     tempBuffer_[mesPi++] = getFuncode(pObj, pTag, RW_flag);
 
     tmpDataPos = pTag->addrOffset;
-    if(pVendorObj != Q_NULLPTR && !this->isStartAddrBit(pVendorObj)) {
+    if(pVendorObj != NULL && !this->isStartAddrBit(pVendorObj)) {
         if(tmpDataPos > 0) {
             tmpDataPos -= 1;
         }

@@ -7,7 +7,6 @@ QTextEditDialog::QTextEditDialog(const QString &text, QWidget *parent) :
     m_ret(0)
 {
     ui->setupUi(this);
-
     ui->text_edit->setPlainText(text);
     ui->text_edit->moveCursor(QTextCursor::End);
 }
@@ -29,7 +28,7 @@ QString QTextEditDialog::getText()
 
 void QTextEditDialog::on_okbtn_clicked()
 {
-    m_ret=1;
+    m_ret = 1;
     close();
 }
 

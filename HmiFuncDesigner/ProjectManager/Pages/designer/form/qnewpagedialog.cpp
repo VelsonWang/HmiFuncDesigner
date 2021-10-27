@@ -37,7 +37,7 @@ QNewPageDialog::QNewPageDialog(QUndoStack *stack, QWidget *parent):
     wid = new QPageWidget("dialog");
     connect(wid, SIGNAL(cancel()), this, SLOT(close()));
     connect(wid, SIGNAL(ok(QAbstractHost*)), this, SLOT(ok(QAbstractHost*)));
-    m_stacked_widget->insertWidget(-1,wid);
+    m_stacked_widget->insertWidget(-1, wid);
     wid = new QPageWidget("keyboard");
     connect(wid, SIGNAL(cancel()), this, SLOT(close()));
     connect(wid, SIGNAL(ok(QAbstractHost*)), this, SLOT(ok(QAbstractHost*)));
@@ -69,11 +69,11 @@ void QNewPageDialog::ok(QAbstractHost *host)
         list += h->getChildren();
     }
     host->setDefault();
-    int index=core->getPageManager()->getPages().size();
+    int index = core->getPageManager()->getPages().size();
     QUndoCommand *cmd = new QUndoCommand;
     new QPageAddUndoCommand(host, index, PAT_ADD, cmd);
     QAbstractProperty* pro = core->getProjectHost()->getProperty("start_page");
-    if(pro != Q_NULLPTR) {
+    if(pro != NULL) {
         if(pro->get_value().toString() == "") {
             new QPropertyChangedUndoCommand(core->getProjectHost()->getUuid(),
                                             "start_page", pro->get_value(), host->getUuid(), cmd);

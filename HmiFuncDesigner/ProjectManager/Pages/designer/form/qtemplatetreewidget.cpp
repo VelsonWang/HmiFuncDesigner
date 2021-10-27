@@ -15,7 +15,7 @@
 class QTemplateDeletgate: public QItemDelegate
 {
 public:
-    QTemplateDeletgate(QTemplateTreeWidget* view):m_view(view){}
+    QTemplateDeletgate(QTemplateTreeWidget* view): m_view(view) {}
 
     QWidget* createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
@@ -28,33 +28,33 @@ protected:
 
 void QTemplateDeletgate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV3 opt = option;
+    QStyleOptionViewItem opt = option;
     QColor c;
     QTreeWidgetItem *item = m_view->itemFromIndex(index);
     if(item == m_view->m_default || item == m_view->m_more) {
-        c  =QColor(128,128,128);
+        c  = QColor(128, 128, 128);
     } else {
-        c = QColor(255,220,150);
-        if(opt.features & QStyleOptionViewItemV2::Alternate) {
-            c=c.lighter(132);
+        c = QColor(255, 220, 150);
+        if(opt.features & QStyleOptionViewItem::Alternate) {
+            c = c.lighter(132);
         }
     }
 
     painter->fillRect(option.rect, c);
-    opt.state &=~ QStyle::State_HasFocus;
+    opt.state &= ~ QStyle::State_HasFocus;
     QItemDelegate::paint(painter, opt, index);
 }
 
 QSize QTemplateDeletgate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QSize sz = QItemDelegate::sizeHint(option,index);
+    QSize sz = QItemDelegate::sizeHint(option, index);
     sz.setHeight(20);
     return sz;
 }
 
 QWidget* QTemplateDeletgate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QTemplateNameWidget* wid = Q_NULLPTR;
+    QTemplateNameWidget* wid = NULL;
     return wid;
 }
 
@@ -65,7 +65,7 @@ QTemplateTreeWidget::QTemplateTreeWidget(const QString &type, QWidget *parent):
     m_default(new QTreeWidgetItem(this)),
     m_more(new QTreeWidgetItem(this)),
     m_type(type),
-    m_current_item(Q_NULLPTR)
+    m_current_item(NULL)
 {
     this->setItemDelegate(new QTemplateDeletgate(this));
     this->setAlternatingRowColors(true);
@@ -74,7 +74,7 @@ QTemplateTreeWidget::QTemplateTreeWidget(const QString &type, QWidget *parent):
     this->setFrameStyle(QFrame::NoFrame);
     this->setMinimumSize(150, 150);
 
-    QIcon icon=StyleHelper::drawIndicatorIcon(this->palette(),this->style());
+    QIcon icon = StyleHelper::drawIndicatorIcon(this->palette(), this->style());
 
     m_default->setFlags(Qt::ItemIsEnabled);
     m_default->setText(0, tr("Locale"));
@@ -86,9 +86,9 @@ QTemplateTreeWidget::QTemplateTreeWidget(const QString &type, QWidget *parent):
     m_more->setIcon(0, icon);
     this->setItemExpanded(m_more, true);
 
-    QPalette p=this->palette();
-    p.setColor(QPalette::Inactive,QPalette::Highlight,p.color(QPalette::Active,QPalette::Highlight));
-    p.setColor(QPalette::Inactive,QPalette::HighlightedText,p.color(QPalette::Active,QPalette::HighlightedText));
+    QPalette p = this->palette();
+    p.setColor(QPalette::Inactive, QPalette::Highlight, p.color(QPalette::Active, QPalette::Highlight));
+    p.setColor(QPalette::Inactive, QPalette::HighlightedText, p.color(QPalette::Active, QPalette::HighlightedText));
     this->setPalette(p);
 
     connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)),
@@ -104,19 +104,19 @@ QTemplateTreeWidget::~QTemplateTreeWidget()
 void QTemplateTreeWidget::add_item(tagTemplateInfo *info)
 {
     QTreeWidgetItem *item = m_name_to_item.value(info->m_name);
-    if(item != Q_NULLPTR) {
+    if(item != NULL) {
         return;
     }
 
-    item = new QTreeWidgetItem(info->m_type<2?m_default:m_more);
+    item = new QTreeWidgetItem(info->m_type < 2 ? m_default : m_more);
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEditable | Qt::ItemIsEnabled);
-    m_item_to_info.insert(item,info);
-    m_name_to_item.insert(info->m_name,item);
-    m_info_to_item.insert(info,item);
+    m_item_to_info.insert(item, info);
+    m_name_to_item.insert(info->m_name, item);
+    m_info_to_item.insert(info, item);
     m_infos.append(info);
     QTemplateNameWidget *wid = new QTemplateNameWidget;
     wid->set_temp_info(info);
-    connect(wid, SIGNAL(remove()), this,SLOT(remove()));
+    connect(wid, SIGNAL(remove()), this, SLOT(remove()));
     connect(wid, SIGNAL(up()), this, SLOT(up()));
     this->setItemWidget(item, 0, wid);
 
@@ -130,28 +130,28 @@ void QTemplateTreeWidget::set_select(tagTemplateInfo *info)
 
 void QTemplateTreeWidget::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV3 opt = options;
+    QStyleOptionViewItem opt = options;
     QTreeWidgetItem* item = itemFromIndex(index);
     QColor c;
     if(item == m_default || item == m_more) {
-        c=QColor(128, 128, 128);
-        painter->fillRect(options.rect,c);
-        opt.palette.setColor(QPalette::AlternateBase,c.lighter(112));
+        c = QColor(128, 128, 128);
+        painter->fillRect(options.rect, c);
+        opt.palette.setColor(QPalette::AlternateBase, c.lighter(112));
     } else {
-        c=QColor(255, 220, 150);
-        painter->fillRect(options.rect,c);
-        opt.palette.setColor(QPalette::AlternateBase,c.lighter(132));
+        c = QColor(255, 220, 150);
+        painter->fillRect(options.rect, c);
+        opt.palette.setColor(QPalette::AlternateBase, c.lighter(132));
     }
 
-    opt.state &=~ QStyle::State_HasFocus;
-    QTreeWidget::drawRow(painter,opt,index);
+    opt.state &= ~ QStyle::State_HasFocus;
+    QTreeWidget::drawRow(painter, opt, index);
 }
 
 void QTemplateTreeWidget::remove()
 {
     QTemplateNameWidget *wid = (QTemplateNameWidget*)sender();
-    QMapIterator<QTreeWidgetItem*,tagTemplateInfo*> it(m_item_to_info);
-    QTreeWidgetItem *item = Q_NULLPTR;
+    QMapIterator<QTreeWidgetItem*, tagTemplateInfo*> it(m_item_to_info);
+    QTreeWidgetItem *item = NULL;
     while(it.hasNext()) {
         it.next();
         if(itemWidget(it.key(), 0) == wid) {
@@ -159,7 +159,7 @@ void QTemplateTreeWidget::remove()
             break;
         }
     }
-    if(item == Q_NULLPTR) {
+    if(item == NULL) {
         return;
     }
     tagTemplateInfo *info = m_item_to_info.value(item);
@@ -167,13 +167,13 @@ void QTemplateTreeWidget::remove()
         if(QMessageBox::warning(this,
                                 tr("Remove"),
                                 tr("Do you want to delete this template?"),
-                                QMessageBox::Yes | QMessageBox::No)!=QMessageBox::Yes) {
+                                QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes) {
             return;
         }
     }
     double_clicked(m_default->child(0));
     if(info->m_type == 1) {
-        QFile f(qApp->applicationDirPath()+"/template/"+m_type+"/"+info->m_file_name+".xml");
+        QFile f(qApp->applicationDirPath() + "/template/" + m_type + "/" + info->m_file_name + ".xml");
         f.remove();
     }
     m_item_to_info.remove(item);
@@ -188,21 +188,21 @@ void QTemplateTreeWidget::remove()
 void QTemplateTreeWidget::up()
 {
     QTemplateNameWidget *wid = (QTemplateNameWidget*)sender();
-    QMapIterator<QTreeWidgetItem*,tagTemplateInfo*> it(m_item_to_info);
-    QTreeWidgetItem *item = Q_NULLPTR;
+    QMapIterator<QTreeWidgetItem*, tagTemplateInfo*> it(m_item_to_info);
+    QTreeWidgetItem *item = NULL;
     while(it.hasNext()) {
         it.next();
-        if(itemWidget(it.key(),0) == wid) {
+        if(itemWidget(it.key(), 0) == wid) {
             item = it.key();
             break;
         }
     }
-    if(item == Q_NULLPTR) {
+    if(item == NULL) {
         return;
     }
     tagTemplateInfo *info = m_item_to_info.value(item);
-    if(info->m_type>1) {
-        QString path = qApp->applicationDirPath()+"/template/"+m_type+"/"+info->m_name+".xml";
+    if(info->m_type > 1) {
+        QString path = qApp->applicationDirPath() + "/template/" + m_type + "/" + info->m_name + ".xml";
         QFile f1(info->m_file_name);
         QFile f2(path);
         f1.open(QFile::ReadOnly);
@@ -211,17 +211,17 @@ void QTemplateTreeWidget::up()
         f2.write(f1.readAll());
         f2.close();
         f1.close();
-        info->m_file_name = info->m_name+".xml";
-        info->m_type=1;
+        info->m_file_name = info->m_name + ".xml";
+        info->m_type = 1;
         m_item_to_info.remove(item);
         m_info_to_item.remove(info);
         m_name_to_item.remove(info->m_name);
         delete item;
-        item=new QTreeWidgetItem(m_default);
-        m_item_to_info.insert(item,info);
-        m_info_to_item.insert(info,item);
-        m_name_to_item.insert(info->m_name,item);
-        QTemplateNameWidget* wid=new QTemplateNameWidget;
+        item = new QTreeWidgetItem(m_default);
+        m_item_to_info.insert(item, info);
+        m_info_to_item.insert(info, item);
+        m_name_to_item.insert(info->m_name, item);
+        QTemplateNameWidget* wid = new QTemplateNameWidget;
         wid->set_temp_info(info);
         connect(wid, SIGNAL(remove()), this, SLOT(remove()));
         connect(wid, SIGNAL(up()), this, SLOT(up()));
@@ -243,7 +243,7 @@ void QTemplateTreeWidget::init()
     QTemplateNameWidget *wid = (QTemplateNameWidget*)itemWidget(m_current_item, 0);
     wid->set_icon(":/images/check.png");
     emit select(t);
-    QFile f(qApp->applicationDirPath()+"/template/"+m_type+"/templates.xml");
+    QFile f(qApp->applicationDirPath() + "/template/" + m_type + "/templates.xml");
     if(!f.open(QFile::ReadOnly)) {
         return;
     }
@@ -267,7 +267,7 @@ void QTemplateTreeWidget::init()
             int type = c->getProperty("level").toInt();
             QString path;
             if(type < 2) {
-                path = qApp->applicationDirPath()+"/template/"+m_type+"/"+c->getProperty("path");
+                path = qApp->applicationDirPath() + "/template/" + m_type + "/" + c->getProperty("path");
             } else {
                 path = c->getProperty("path");
             }
@@ -307,17 +307,17 @@ void QTemplateTreeWidget::mousePressEvent(QMouseEvent *event)
 void QTemplateTreeWidget::double_clicked(QTreeWidgetItem *item)
 {
     tagTemplateInfo *info = m_item_to_info.value(item);
-    if(info == Q_NULLPTR) {
+    if(info == NULL) {
         return;
     }
 
-    if(m_current_item != Q_NULLPTR) {
-        QTemplateNameWidget *wid = (QTemplateNameWidget*)itemWidget(m_current_item,0);
+    if(m_current_item != NULL) {
+        QTemplateNameWidget *wid = (QTemplateNameWidget*)itemWidget(m_current_item, 0);
         wid->set_icon("");
     }
     m_current_item = item;
-    if(m_current_item != Q_NULLPTR) {
-        QTemplateNameWidget *wid = (QTemplateNameWidget*)itemWidget(m_current_item,0);
+    if(m_current_item != NULL) {
+        QTemplateNameWidget *wid = (QTemplateNameWidget*)itemWidget(m_current_item, 0);
         wid->set_icon(":/images/check.png");
     }
     emit select(info);
@@ -328,7 +328,7 @@ void QTemplateTreeWidget::save()
     XMLObject xml;
     xml.setTagName("Templates");
 
-    foreach(tagTemplateInfo* info,m_infos) {
+    foreach(tagTemplateInfo* info, m_infos) {
         if(info->m_file_name.startsWith(":")) {
             continue;
         }
@@ -339,7 +339,7 @@ void QTemplateTreeWidget::save()
         o->setProperty("level", QString::number(info->m_type));
     }
 
-    QFile f(qApp->applicationDirPath()+"/template/"+m_type+"/templates.xml");
+    QFile f(qApp->applicationDirPath() + "/template/" + m_type + "/templates.xml");
     if(!f.open(QFile::WriteOnly)) {
         return;
     }

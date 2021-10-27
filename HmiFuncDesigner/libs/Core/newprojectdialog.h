@@ -5,7 +5,8 @@
 #include <QDialog>
 #include <QMap>
 
-namespace Ui {
+namespace Ui
+{
 class NewProjectDialog;
 }
 
@@ -14,7 +15,7 @@ class CORELIB_EXPORT NewProjectDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewProjectDialog(QWidget *parent = Q_NULLPTR);
+    explicit NewProjectDialog(QWidget *parent = NULL);
     ~NewProjectDialog();
 
     bool load();

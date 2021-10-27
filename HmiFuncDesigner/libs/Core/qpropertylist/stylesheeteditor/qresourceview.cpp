@@ -9,7 +9,7 @@ QResourceView::QResourceView(QWidget *parent) :
     QDialog(parent),
     m_file_view(new QFileListView(false, true, false)),
     m_show_widget(new QResourceShowWidget),
-    m_file_info(Q_NULLPTR),
+    m_file_info(NULL),
     m_ret(0)
 {
     MiniSplitter *s = new MiniSplitter;
@@ -43,7 +43,7 @@ void QResourceView::select(tagFileInfo *file)
 
 void QResourceView::set_file(const QByteArray &data)
 {
-    m_file_info = Q_NULLPTR;
+    m_file_info = NULL;
     m_show_widget->set_image(data);
 }
 

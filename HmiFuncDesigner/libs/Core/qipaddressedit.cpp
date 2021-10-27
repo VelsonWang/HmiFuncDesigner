@@ -50,11 +50,9 @@ void QIPAddressEdit::setIPString(const QString &ip)
     int nPos = 0;
     QValidator::State state = regexp_validator.validate(szValidate, nPos);
     // IP合法
-    if (state == QValidator::Acceptable)
-    {
+    if (state == QValidator::Acceptable) {
         QStringList ippartlist = ip.split(".");
-        if (ippartlist.size() == 4)
-        {
+        if (ippartlist.size() == 4) {
             ippart1 = ippartlist.at(0);
             ippart2 = ippartlist.at(1);
             ippart3 = ippartlist.at(2);
@@ -71,12 +69,11 @@ void QIPAddressEdit::setIPString(const QString &ip)
 QString QIPAddressEdit::getIPString() const
 {
     // 检查数据
-
     QString szIP = QString("%1.%2.%3.%4")
-            .arg(ui->lineEditIP1->text())
-            .arg(ui->lineEditIP2->text())
-            .arg(ui->lineEditIP3->text())
-            .arg(ui->lineEditIP4->text());
+                   .arg(ui->lineEditIP1->text())
+                   .arg(ui->lineEditIP2->text())
+                   .arg(ui->lineEditIP3->text())
+                   .arg(ui->lineEditIP4->text());
     return szIP;
 }
 

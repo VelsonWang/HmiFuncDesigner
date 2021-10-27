@@ -10,6 +10,6 @@ QStyleSheetEditor::QStyleSheetEditor(QAbstractProperty *property, QUndoStack* st
 
 void QStyleSheetEditor::onBtnClicked()
 {
-    QStyleSheetDialog dlg(m_property,m_undo_stack,this);
+    QStyleSheetDialog dlg(property, m_undo_stack, this);
     dlg.exec();
 }

@@ -53,13 +53,13 @@ SystemParameters::SystemParameters(QWidget *parent) : QWidget(parent)
 
 SystemParameters::~SystemParameters()
 {
-    if(m_pListViewProjectModelObj != Q_NULLPTR) {
+    if(m_pListViewProjectModelObj != NULL) {
         delete m_pListViewProjectModelObj;
-        m_pListViewProjectModelObj = Q_NULLPTR;
+        m_pListViewProjectModelObj = NULL;
     }
-    if(m_pListViewProjectObj != Q_NULLPTR) {
+    if(m_pListViewProjectObj != NULL) {
         delete m_pListViewProjectObj;
-        m_pListViewProjectObj = Q_NULLPTR;
+        m_pListViewProjectObj = NULL;
     }
 }
 

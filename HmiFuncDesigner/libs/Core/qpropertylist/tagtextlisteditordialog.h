@@ -6,7 +6,8 @@
 #include <QLabel>
 #include <QToolButton>
 
-namespace Ui {
+namespace Ui
+{
 class TagTextListEditorDialog;
 }
 
@@ -15,7 +16,7 @@ class TagTextListEditorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TagTextListEditorDialog(QWidget *parent = Q_NULLPTR);
+    explicit TagTextListEditorDialog(QWidget *parent = NULL);
     ~TagTextListEditorDialog();
     QStringList getValueTextList();
     void setValueTextList(const QStringList &list);
@@ -32,7 +33,7 @@ private:
 
 private:
     Ui::TagTextListEditorDialog *ui;
-    QStringList valueTextList_;
+    QStringList valueTextList;
 };
 
 #endif // TAGTEXTLISTEDITORDIALOG_H

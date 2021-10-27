@@ -10,9 +10,8 @@ QRenameDialog::QRenameDialog(QWidget *parent) :
     m_ret(0)
 {
     ui->setupUi(this);
-
-    ui->verticalLayout->insertWidget(1,m_nameEdit);
-    setProperty("no-ManhattanStyle",true);
+    ui->verticalLayout->insertWidget(1, m_nameEdit);
+    setProperty("no-ManhattanStyle", true);
 }
 
 QRenameDialog::~QRenameDialog()
@@ -38,17 +37,16 @@ void QRenameDialog::set_old_name(const QString &name)
 
 void QRenameDialog::on_okbtn_clicked()
 {
-    if(m_nameEdit->value()=="")
-    {
+    if(m_nameEdit->value() == "") {
         return;
     }
-    m_ret=1;
+    m_ret = 1;
     close();
 }
 
 void QRenameDialog::on_cancelbtn_clicked()
 {
-    m_ret=2;
+    m_ret = 2;
     close();
 }
 

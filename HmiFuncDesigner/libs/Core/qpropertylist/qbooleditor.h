@@ -8,13 +8,11 @@ class QBoolEditor : public QCommonEditor
     Q_OBJECT
 public:
     Q_INVOKABLE QBoolEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
-    
+
 protected:
     bool eventFilter(QObject *, QEvent *);
     void mousePressEvent(QMouseEvent *);
 
-    void set_value(const QVariant &value);
-    
 };
 
 #endif // QBOOLEDITOR_H

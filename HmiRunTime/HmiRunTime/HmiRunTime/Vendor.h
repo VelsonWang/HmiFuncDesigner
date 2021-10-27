@@ -156,8 +156,8 @@ public:
     QList<RunTimeTag *> m_readList;
     bool m_bIsRunning = false;
     QMutex m_mutexWrite;
-    IVendorPlugin *m_pVendorPluginObj = Q_NULLPTR;
-    VendorPrivate *m_pVendorPrivateObj = Q_NULLPTR;
+    IVendorPlugin *m_pVendorPluginObj = NULL;
+    VendorPrivate *m_pVendorPrivateObj = NULL;
     bool m_bOnlineStatus = false; // true-在线, false-离线
     bool m_bOffLine = false; // 通讯失败次数大于通信失败重试次数视为离线
     qint64 m_iStartOffLineTime = 0; // 离线起始时间

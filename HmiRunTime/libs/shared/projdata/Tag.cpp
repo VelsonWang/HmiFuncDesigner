@@ -58,7 +58,7 @@ void Tag::copyFromTag(Tag obj)
 bool Tag::openFromXml(XMLObject *pXmlObj)
 {
     XMLObject *pTagObj = pXmlObj;
-    if(pXmlObj == Q_NULLPTR) {
+    if(pXmlObj == NULL) {
         return false;
     }
     m_iID = pTagObj->getProperty("id").toInt();
@@ -111,7 +111,7 @@ QString Tag::toXmlNodeString()
 bool Tag::fromXmlNodeString(const QString &szNode)
 {
     XMLObject tagXml;
-    if(!tagXml.load(szNode, Q_NULLPTR)) {
+    if(!tagXml.load(szNode, NULL)) {
         return false;
     }
     return openFromXml(&tagXml);
@@ -214,7 +214,7 @@ Tag *TagManager::getTag(int id)
             return pObj;
         }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 

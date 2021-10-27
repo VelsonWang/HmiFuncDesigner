@@ -3,20 +3,23 @@
 #include <QDebug>
 
 XMLNodeObject::XMLNodeObject(XMLNodeObject *parent) :
-    m_parent(parent) {
-    if(m_parent != Q_NULLPTR) {
+    m_parent(parent)
+{
+    if(m_parent != NULL) {
         m_parent->m_children.append(this);
     }
 }
 
-XMLNodeObject::~XMLNodeObject() {
+XMLNodeObject::~XMLNodeObject()
+{
     clear();
-    if(m_parent != Q_NULLPTR) {
+    if(m_parent != NULL) {
         m_parent->m_children.removeAll(this);
     }
 }
 
-void XMLNodeObject::clear() {
+void XMLNodeObject::clear()
+{
     while(m_children.size() > 0) {
         delete m_children.takeFirst();
     }
@@ -28,7 +31,8 @@ void XMLNodeObject::clear() {
 //
 // 获取本节点的所有子对象
 //
-QList<XMLNodeObject* > XMLNodeObject::getChildren() {
+QList<XMLNodeObject* > XMLNodeObject::getChildren()
+{
     return m_children;
 }
 
@@ -37,7 +41,8 @@ QList<XMLNodeObject* > XMLNodeObject::getChildren() {
 // <person age="29" name="jason" sex="male">hi, my name is jason.</person>
 // age 属性值为29
 //
-QString XMLNodeObject::getProperty(const QString &name) {
+QString XMLNodeObject::getProperty(const QString &name)
+{
     return m_property.value(name);
 }
 
@@ -46,7 +51,8 @@ QString XMLNodeObject::getProperty(const QString &name) {
 // setProperty("sex", "female")
 // <person sex="female">hi, my name is jason.</person>
 //
-void XMLNodeObject::setProperty(const QString &name, const QString &value) {
+void XMLNodeObject::setProperty(const QString &name, const QString &value)
+{
     m_property.insert(name, value);
 }
 
@@ -55,7 +61,8 @@ void XMLNodeObject::setProperty(const QString &name, const QString &value) {
 // <person age="29" name="jason" sex="male">hi, my name is jason.</person>
 // 标签名称为person
 //
-QString XMLNodeObject::getTagName() {
+QString XMLNodeObject::getTagName()
+{
     return m_tagName;
 }
 
@@ -65,7 +72,8 @@ QString XMLNodeObject::getTagName() {
 // <page name="jason">hi, my name is jason.</page>
 // 标签名称为page
 //
-void XMLNodeObject::setTagName(const QString &tagName) {
+void XMLNodeObject::setTagName(const QString &tagName)
+{
     m_tagName = tagName;
 }
 
@@ -74,7 +82,8 @@ void XMLNodeObject::setTagName(const QString &tagName) {
 // <person age="29" name="jason" sex="male">hi, my name is jason.</person>
 // 标签文本为 hi, my name is jason.
 //
-QString XMLNodeObject::getText() {
+QString XMLNodeObject::getText()
+{
     return m_text;
 }
 
@@ -83,34 +92,40 @@ QString XMLNodeObject::getText() {
 // setText("hello, jack!")
 // <person name="jason">hello, jack!</person>
 //
-void XMLNodeObject::setText(const QString &text) {
+void XMLNodeObject::setText(const QString &text)
+{
     m_text = text;
 }
 
-void XMLNodeObject::insertChild(int index, XMLNodeObject *child) {
-    if(child->m_parent == this)
+void XMLNodeObject::insertChild(int index, XMLNodeObject *child)
+{
+    if(child->m_parent == this) {
         return;
+    }
 
-    if(child->m_parent != Q_NULLPTR)
+    if(child->m_parent != NULL) {
         child->m_parent->m_children.removeAll(child);
+    }
 
     child->m_parent = this;
 
-    if(index<0 || index>=m_children.size())
+    if(index < 0 || index >= m_children.size()) {
         index = m_children.size();
+    }
 
     m_children.insert(index, child);
 }
 
 
-bool XMLNodeObject::load(const QString &buffer, QString *error) {
+bool XMLNodeObject::load(const QString &buffer, QString *error)
+{
     QXmlStreamReader r(buffer);
     while(!r.atEnd()) {
         if(r.readNext() == QXmlStreamReader::StartElement) {
             load(&r);
             if(r.hasError()) {
-                if(error!=Q_NULLPTR) {
-                    *error=r.errorString();
+                if(error != NULL) {
+                    *error = r.errorString();
                 }
                 return false;
             } else {
@@ -121,35 +136,39 @@ bool XMLNodeObject::load(const QString &buffer, QString *error) {
     return false;
 }
 
-void XMLNodeObject::load(QXmlStreamReader *r) {
+void XMLNodeObject::load(QXmlStreamReader *r)
+{
     clear();
     setTagName(r->name().toString());
 
-    foreach(QXmlStreamAttribute attr, r->attributes())
+    foreach(QXmlStreamAttribute attr, r->attributes()) {
         setProperty(attr.name().toString(), attr.value().toString());
+    }
 
     bool b = true;
     while(b && !r->hasError()) {
         switch(r->readNext()) {
-        case QXmlStreamReader::StartElement: {
-            XMLNodeObject *xml = new XMLNodeObject(this);
-            xml->load(r);
-            break;
-        }            
-        case QXmlStreamReader::EndElement:
-            b = false;
-            break;
-        case QXmlStreamReader::Characters:
-            if(!r->isWhitespace())
-                setText(r->text().toString());
-            break;
-        default:
-            break;
+            case QXmlStreamReader::StartElement: {
+                XMLNodeObject *xml = new XMLNodeObject(this);
+                xml->load(r);
+                break;
+            }
+            case QXmlStreamReader::EndElement:
+                b = false;
+                break;
+            case QXmlStreamReader::Characters:
+                if(!r->isWhitespace()) {
+                    setText(r->text().toString());
+                }
+                break;
+            default:
+                break;
         }
     }
 }
 
-QString XMLNodeObject::write() {
+QString XMLNodeObject::write()
+{
     QString ret;
     QXmlStreamWriter w(&ret);
 
@@ -161,22 +180,26 @@ QString XMLNodeObject::write() {
     return ret;
 }
 
-void XMLNodeObject::write(QXmlStreamWriter *w) {
-    if(m_tagName == "")
+void XMLNodeObject::write(QXmlStreamWriter *w)
+{
+    if(m_tagName == "") {
         return;
+    }
     w->writeStartElement(m_tagName);
 
-    QMapIterator<QString,QString> it(m_property);
+    QMapIterator<QString, QString> it(m_property);
     while(it.hasNext()) {
         it.next();
         w->writeAttribute(it.key(), it.value());
     }
 
-    if(m_text != "")
+    if(m_text != "") {
         w->writeCharacters(m_text);
+    }
 
-    foreach(XMLNodeObject* xml, m_children)
+    foreach(XMLNodeObject* xml, m_children) {
         xml->write(w);
+    }
 
     w->writeEndElement();
 }
@@ -184,7 +207,8 @@ void XMLNodeObject::write(QXmlStreamWriter *w) {
 //
 // 获取当前节点的所有属性值
 //
-QMap<QString,QString> XMLNodeObject::getPropertys() {
+QMap<QString, QString> XMLNodeObject::getPropertys()
+{
     return m_property;
 }
 
@@ -192,23 +216,27 @@ QMap<QString,QString> XMLNodeObject::getPropertys() {
 //
 // 获取当前节点的名称为name的子节点
 //
-XMLNodeObject* XMLNodeObject::getCurrentChild(const QString& name) {
+XMLNodeObject* XMLNodeObject::getCurrentChild(const QString& name)
+{
     foreach(XMLNodeObject* xml, m_children) {
-        if(xml->getTagName() == name)
+        if(xml->getTagName() == name) {
             return xml;
+        }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 
 //
 // 获取当前节点的所有名称为name的子节点
 //
-QList<XMLNodeObject* > XMLNodeObject::getCurrentChildren(const QString& name) {
+QList<XMLNodeObject* > XMLNodeObject::getCurrentChildren(const QString& name)
+{
     QList<XMLNodeObject*> children;
     foreach(XMLNodeObject* xml, m_children) {
-        if(xml->getTagName() == name)
+        if(xml->getTagName() == name) {
             children.append(xml);
+        }
     }
     return children;
 }
@@ -231,9 +259,11 @@ QList<XMLNodeObject* > XMLNodeObject::getCurrentChildren(const QString& name) {
 // QList<XMLNodeObject* > children 找到的子节点
 //
 void XMLNodeObject::getChildrenByParentTagName(QStringList &tagNames,
-                                QList<XMLNodeObject* > &children) {
-    if(tagNames.size() < 1)
+        QList<XMLNodeObject* > &children)
+{
+    if(tagNames.size() < 1) {
         return;
+    }
     QString tagName = tagNames.first();
     if(tagName == getTagName()) {
         if(tagNames.size() == 1) {
@@ -251,7 +281,8 @@ void XMLNodeObject::getChildrenByParentTagName(QStringList &tagNames,
 }
 
 
-void XMLNodeObject::showXMLObject() {
+void XMLNodeObject::showXMLObject()
+{
     qDebug() << "====================================================";
     qDebug() << "TagName: " << getTagName();
     qDebug() << "Text: " << getText();
@@ -277,27 +308,30 @@ void load(const QString &project_path)
 {
     QString buffer = FileHelper::readString(project_path + "/pages.xml");
     XMLNodeObject xml;
-    if(!xml.load(buffer, 0))
+    if(!xml.load(buffer, 0)) {
         return;
+    }
 
     QList<XMLNodeObject*> children = xml.getChildren();
-    foreach(XMLNodeObject* obj, children)
+    foreach(XMLNodeObject* obj, children) {
         obj->showXMLNodeObject();
+    }
 
     qDebug() << "\n\n\n=========get child name is person=========\n";
     children.clear();
     children = xml.getCurrentChildren("person");
-    foreach(XMLNodeObject* obj, children)
+    foreach(XMLNodeObject* obj, children) {
         obj->showXMLNodeObject();
+    }
 
     qDebug() << "\n\n\n=========getChildrenByParentTagName=========\n";
     QStringList parents;
-    parents<< "persons";
-    parents<< "person";
-    parents<< "baby";
+    parents << "persons";
+    parents << "person";
+    parents << "baby";
     children.clear();
     xml.getChildrenByParentTagName(parents, children);
-    foreach(XMLNodeObject* obj, children){
+    foreach(XMLNodeObject* obj, children) {
         obj->showXMLNodeObject();
         obj->setProperty("cb", "123");
     }

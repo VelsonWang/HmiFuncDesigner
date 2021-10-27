@@ -35,7 +35,7 @@ void QLabelHost::createObject()
 void QLabelHost::initProperty()
 {
     QAbstractProperty* pObj = QPropertyFactory::create_property("Tag");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "tag");
         pObj->setAttribute("show_name", tr("选择变量"));
         pObj->setAttribute("group", "HMI");
@@ -46,8 +46,7 @@ void QLabelHost::initProperty()
     QFrameHost::initProperty();
 
     pObj = QPropertyFactory::create_property("String");
-    if(pObj != Q_NULLPTR)
-    {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "text");
         pObj->setAttribute("show_name", tr("文本")); // tr("Text")
         pObj->setAttribute("group", "Attributes");
@@ -55,8 +54,7 @@ void QLabelHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR)
-    {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "wordWrap");
         pObj->setAttribute("show_name", tr("自动换行")); // tr("WordWrap")
         pObj->setAttribute("group", "Attributes");
@@ -65,8 +63,7 @@ void QLabelHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Alignment");
-    if(pObj != Q_NULLPTR)
-    {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "alignment");
         pObj->setAttribute("show_name", tr("对齐")); // tr("Alignment")
         pObj->setAttribute("group", "Attributes");
@@ -75,8 +72,7 @@ void QLabelHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("StyleSheet");
-    if(pObj != Q_NULLPTR)
-    {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "text_sheet");
         pObj->setAttribute("show_name", tr("文本")); // tr("Text")
         pObj->setAttribute("group", "Style Sheet");

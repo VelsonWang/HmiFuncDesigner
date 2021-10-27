@@ -4,7 +4,8 @@
 #include "corelibglobal.h"
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class DatabaseSettingDialog;
 }
 
@@ -13,7 +14,7 @@ class CORELIB_EXPORT DatabaseSettingDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit DatabaseSettingDialog(QWidget *parent = Q_NULLPTR);
+    explicit DatabaseSettingDialog(QWidget *parent = NULL);
     ~DatabaseSettingDialog();
 
 public:

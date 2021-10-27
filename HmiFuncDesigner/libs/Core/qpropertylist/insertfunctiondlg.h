@@ -5,7 +5,8 @@
 #include <QTreeWidgetItem>
 #include <QMap>
 
-namespace Ui {
+namespace Ui
+{
 class InsertFunctionDlg;
 }
 
@@ -14,7 +15,7 @@ class InsertFunctionDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit InsertFunctionDlg(QWidget *parent = Q_NULLPTR);
+    explicit InsertFunctionDlg(QWidget *parent = NULL);
     ~InsertFunctionDlg();
     QString getSelectedFuncName(void) const;
 

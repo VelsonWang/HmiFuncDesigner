@@ -2,18 +2,20 @@
 #include "../../shared/property/qabstractproperty.h"
 #include <QMouseEvent>
 
-QBoolEditor::QBoolEditor(QAbstractProperty *property, QUndoStack *stack, QWidget *parent):
+QBoolEditor::QBoolEditor(QAbstractProperty *property, QUndoStack *stack, QWidget *parent) :
     QCommonEditor(property, stack, parent)
 {
-    m_icon->installEventFilter(this);
-    m_text->installEventFilter(this);
+    icon->installEventFilter(this);
+    text->installEventFilter(this);
 }
 
 bool QBoolEditor::eventFilter(QObject *o, QEvent *e)
 {
-    if(e->type() == QEvent::MouseButtonPress && (m_icon == o || m_text == o)) {
+    if(e->type() == QEvent::MouseButtonPress && (icon == o || text == o)) {
         if(((QMouseEvent*)e)->button() == Qt::LeftButton) {
-            set_value(!m_property->get_value().toBool());
+            if(property) {
+                property->notifyEditValue(!property->get_value().toBool());
+            }
             return true;
         }
     }
@@ -22,10 +24,8 @@ bool QBoolEditor::eventFilter(QObject *o, QEvent *e)
 
 void QBoolEditor::mousePressEvent(QMouseEvent *)
 {
-    set_value(!m_property->get_value().toBool());
+    if(property) {
+        property->notifyEditValue(!property->get_value().toBool());
+    }
 }
 
-void QBoolEditor::set_value(const QVariant &value)
-{
-    m_property->notifyEditValue(value);
-}

@@ -7,10 +7,10 @@
 #include "../../shared/qprojectcore.h"
 
 QPropertyChangedUndoCommand::QPropertyChangedUndoCommand(const QString &host_uuid,
-                                                         const QString &property_name,
-                                                         const QVariant &old_value,
-                                                         const QVariant &new_value,
-                                                         QUndoCommand *parent):
+        const QString &property_name,
+        const QVariant &old_value,
+        const QVariant &new_value,
+        QUndoCommand *parent):
     QBaseUndoCommand(parent),
     m_host_uuid(host_uuid),
     m_property_name(property_name),
@@ -33,7 +33,7 @@ bool QPropertyChangedUndoCommand::mergeWith(const QUndoCommand *other)
     }
     int c = childCount();
     QPropertyChangedUndoCommand *p1, *p2;
-    for(int i=0; i<c; i++) {
+    for(int i = 0; i < c; i++) {
         p1 = (QPropertyChangedUndoCommand*)child(i);
         p2 = (QPropertyChangedUndoCommand*)cmd->child(i);
         if(p1->m_host_uuid != p2->m_host_uuid || p1->m_property_name != p2->m_property_name) {
@@ -41,7 +41,7 @@ bool QPropertyChangedUndoCommand::mergeWith(const QUndoCommand *other)
         }
     }
 
-    for(int i=0; i<c; i++) {
+    for(int i = 0; i < c; i++) {
         p1 = (QPropertyChangedUndoCommand*)child(i);
         p2 = (QPropertyChangedUndoCommand*)cmd->child(i);
         p1->m_new_value = p2->m_new_value;
@@ -54,7 +54,7 @@ void QPropertyChangedUndoCommand::redo()
 {
     QBaseUndoCommand::redo();
     QAbstractHost* h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h != Q_NULLPTR) {
+    if(h != NULL) {
         h->setPropertyValue(m_property_name, m_new_value);
     }
 }
@@ -64,7 +64,7 @@ void QPropertyChangedUndoCommand::undo()
     QBaseUndoCommand::undo();
 
     QAbstractHost* h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h != Q_NULLPTR) {
+    if(h != NULL) {
         h->setPropertyValue(m_property_name, m_old_value);
     }
 }

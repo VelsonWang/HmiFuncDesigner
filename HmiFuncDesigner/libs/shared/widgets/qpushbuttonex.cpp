@@ -44,10 +44,13 @@ void QPushButtonEx::drawPushButton(QPainter *painter)
         painter->setBrush(Qt::NoBrush);
         painter->drawRect(rect);
     } else {
-        for(int i=0; i<borderWidth; i++) {
+        for(int i = 0; i < borderWidth; i++) {
             PubTool::DrawFrameRect(painter, rect, borderColor);
-            if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
-            else rect.adjust(1, 1, 0, 0);
+            if(i < borderWidth / 2) {
+                rect.adjust(1, 1, -1, -1);
+            } else {
+                rect.adjust(1, 1, 0, 0);
+            }
         }
 
         PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
@@ -79,7 +82,7 @@ void QPushButtonEx::drawPushButton(QPainter *painter)
             }
 
             QRectF textRect = rect.normalized().adjusted(borderWidth, borderWidth, -borderWidth, -borderWidth);
-            painter->drawText(textRect, hFlags|vFlags, text);
+            painter->drawText(textRect, hFlags | vFlags, text);
 
         } else { // 图片按钮
             if(filePicture != QString()) {

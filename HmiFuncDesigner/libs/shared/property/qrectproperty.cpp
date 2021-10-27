@@ -1,5 +1,4 @@
 #include "qrectproperty.h"
-
 #include "qintproperty.h"
 
 QRectProperty::QRectProperty(QAbstractProperty *parent):
@@ -55,10 +54,10 @@ QString QRectProperty::get_value_text()
 {
     if(m_x->getAttribute(ATTR_VISIBLE).toBool()) {
         return QString("[(%1,%2),%3 x %4]")
-            .arg(m_x->get_value().toInt())
-            .arg(m_y->get_value().toInt())
-            .arg(m_width->get_value().toInt())
-            .arg(m_height->get_value().toInt());
+               .arg(m_x->get_value().toInt())
+               .arg(m_y->get_value().toInt())
+               .arg(m_width->get_value().toInt())
+               .arg(m_height->get_value().toInt());
     } else {
         return QString("%1 x %2").arg(m_width->get_value().toInt()).arg(m_height->get_value().toInt());
     }

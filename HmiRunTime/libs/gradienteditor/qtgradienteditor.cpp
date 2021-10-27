@@ -140,22 +140,23 @@ QGradient QtGradientEditorPrivate::gradient() const
     switch (m_ui.gradientWidget->gradientType()) {
         case QGradient::LinearGradient:
             gradient = new QLinearGradient(m_ui.gradientWidget->startLinear(),
-                        m_ui.gradientWidget->endLinear());
+                                           m_ui.gradientWidget->endLinear());
             break;
         case QGradient::RadialGradient:
             gradient = new QRadialGradient(m_ui.gradientWidget->centralRadial(),
-                        m_ui.gradientWidget->radiusRadial(),
-                        m_ui.gradientWidget->focalRadial());
+                                           m_ui.gradientWidget->radiusRadial(),
+                                           m_ui.gradientWidget->focalRadial());
             break;
         case QGradient::ConicalGradient:
             gradient = new QConicalGradient(m_ui.gradientWidget->centralConical(),
-                        m_ui.gradientWidget->angleConical());
+                                            m_ui.gradientWidget->angleConical());
             break;
         default:
             break;
     }
-    if (!gradient)
+    if (!gradient) {
         return QGradient();
+    }
     gradient->setStops(m_ui.gradientWidget->gradientStops());
     gradient->setSpread(m_ui.gradientWidget->gradientSpread());
     gradient->setCoordinateMode(QGradient::StretchToDeviceMode);
@@ -167,18 +168,21 @@ QGradient QtGradientEditorPrivate::gradient() const
 void QtGradientEditorPrivate::updateGradient(bool emitSignal)
 {
     QGradient grad = gradient();
-    if (m_gradient == grad)
+    if (m_gradient == grad) {
         return;
+    }
 
     m_gradient = grad;
-    if (emitSignal)
+    if (emitSignal) {
         emit q_ptr->gradientChanged(m_gradient);
+    }
 }
 
 void QtGradientEditorPrivate::setCombos(bool combos)
 {
-    if (m_combos == combos)
+    if (m_combos == combos) {
         return;
+    }
 
     m_combos = combos;
     m_ui.linearButton->setVisible(!m_combos);
@@ -213,8 +217,9 @@ void QtGradientEditorPrivate::setLayout(bool details)
     hboxLayout->addWidget(m_ui.detailsButton);
     m_gridLayout->addLayout(hboxLayout, 0, 0, 1, 2);
     int span = 1;
-    if (details)
+    if (details) {
         span = 7;
+    }
     m_gridLayout->addWidget(m_ui.frame, 1, 0, span, 2);
     int row = 2;
     if (details) {
@@ -230,8 +235,9 @@ void QtGradientEditorPrivate::setLayout(bool details)
     hboxLayout1->addWidget(m_ui.rgbRadioButton);
     hboxLayout1->addItem(new QSpacerItem(16, 23, QSizePolicy::Expanding, QSizePolicy::Minimum));
     int addRow = 0;
-    if (details)
+    if (details) {
         addRow = 9;
+    }
     m_gridLayout->addLayout(hboxLayout1, 3 + addRow, 0, 1, 2);
     m_gridLayout->addWidget(m_ui.hLabel, 4 + addRow, 0, 1, 1);
     m_gridLayout->addWidget(m_ui.frame_2, 4 + addRow, 1, 1, 1);
@@ -304,8 +310,9 @@ void QtGradientEditorPrivate::layoutDetails(bool details)
 
 int QtGradientEditorPrivate::extensionWidthHint() const
 {
-    if (m_details)
+    if (m_details) {
         return q_ptr->size().width() - m_ui.gradientStopsWidget->size().width();
+    }
 
     const int space = m_ui.spinBox1->geometry().left() - m_ui.label1->geometry().right();
 
@@ -319,22 +326,25 @@ void QtGradientEditorPrivate::slotDetailsChanged(bool details)
 
 bool QtGradientEditorPrivate::row4Visible() const
 {
-    if (m_type == QGradient::ConicalGradient)
+    if (m_type == QGradient::ConicalGradient) {
         return false;
+    }
     return true;
 }
 
 bool QtGradientEditorPrivate::row5Visible() const
 {
-    if (m_type == QGradient::RadialGradient)
+    if (m_type == QGradient::RadialGradient) {
         return true;
+    }
     return false;
 }
 
 void QtGradientEditorPrivate::showDetails(bool details)
 {
-    if (m_details == details)
+    if (m_details == details) {
         return;
+    }
 
     bool blocked = m_ui.detailsButton->signalsBlocked();
     m_ui.detailsButton->blockSignals(true);
@@ -403,8 +413,9 @@ void QtGradientEditorPrivate::reset()
 
 void QtGradientEditorPrivate::setType(QGradient::Type type)
 {
-    if (m_type == type)
+    if (m_type == type) {
         return;
+    }
 
     m_type = type;
     m_ui.spinBox1->disconnect(SIGNAL(valueChanged(double)));
@@ -427,42 +438,42 @@ void QtGradientEditorPrivate::setType(QGradient::Type type)
     if (type == QGradient::LinearGradient) {
         startLinearXSpinBox = m_ui.spinBox1;
         setSpinBox(startLinearXSpinBox, SLOT(slotStartLinearXChanged(double)));
-        m_ui.label1->setText(QApplication::translate("QtGradientEditor", "Start X", Q_NULLPTR));
+        m_ui.label1->setText(QApplication::translate("QtGradientEditor", "Start X", NULL));
 
         startLinearYSpinBox = m_ui.spinBox2;
         setSpinBox(startLinearYSpinBox, SLOT(slotStartLinearYChanged(double)));
-        m_ui.label2->setText(QApplication::translate("QtGradientEditor", "Start Y", Q_NULLPTR));
+        m_ui.label2->setText(QApplication::translate("QtGradientEditor", "Start Y", NULL));
 
         endLinearXSpinBox = m_ui.spinBox3;
         setSpinBox(endLinearXSpinBox, SLOT(slotEndLinearXChanged(double)));
-        m_ui.label3->setText(QApplication::translate("QtGradientEditor", "Final X", Q_NULLPTR));
+        m_ui.label3->setText(QApplication::translate("QtGradientEditor", "Final X", NULL));
 
         endLinearYSpinBox = m_ui.spinBox4;
         setSpinBox(endLinearYSpinBox, SLOT(slotEndLinearYChanged(double)));
-        m_ui.label4->setText(QApplication::translate("QtGradientEditor", "Final Y", Q_NULLPTR));
+        m_ui.label4->setText(QApplication::translate("QtGradientEditor", "Final Y", NULL));
 
         setStartLinear(m_ui.gradientWidget->startLinear());
         setEndLinear(m_ui.gradientWidget->endLinear());
     } else if (type == QGradient::RadialGradient) {
         centralRadialXSpinBox = m_ui.spinBox1;
         setSpinBox(centralRadialXSpinBox, SLOT(slotCentralRadialXChanged(double)));
-        m_ui.label1->setText(QApplication::translate("QtGradientEditor", "Central X", Q_NULLPTR));
+        m_ui.label1->setText(QApplication::translate("QtGradientEditor", "Central X", NULL));
 
         centralRadialYSpinBox = m_ui.spinBox2;
         setSpinBox(centralRadialYSpinBox, SLOT(slotCentralRadialYChanged(double)));
-        m_ui.label2->setText(QApplication::translate("QtGradientEditor", "Central Y", Q_NULLPTR));
+        m_ui.label2->setText(QApplication::translate("QtGradientEditor", "Central Y", NULL));
 
         focalRadialXSpinBox = m_ui.spinBox3;
         setSpinBox(focalRadialXSpinBox, SLOT(slotFocalRadialXChanged(double)));
-        m_ui.label3->setText(QApplication::translate("QtGradientEditor", "Focal X", Q_NULLPTR));
+        m_ui.label3->setText(QApplication::translate("QtGradientEditor", "Focal X", NULL));
 
         focalRadialYSpinBox = m_ui.spinBox4;
         setSpinBox(focalRadialYSpinBox, SLOT(slotFocalRadialYChanged(double)));
-        m_ui.label4->setText(QApplication::translate("QtGradientEditor", "Focal Y", Q_NULLPTR));
+        m_ui.label4->setText(QApplication::translate("QtGradientEditor", "Focal Y", NULL));
 
         radiusRadialSpinBox = m_ui.spinBox5;
         setSpinBox(radiusRadialSpinBox, SLOT(slotRadiusRadialChanged(double)), 2.0);
-        m_ui.label5->setText(QApplication::translate("QtGradientEditor", "Radius", Q_NULLPTR));
+        m_ui.label5->setText(QApplication::translate("QtGradientEditor", "Radius", NULL));
 
         setCentralRadial(m_ui.gradientWidget->centralRadial());
         setFocalRadial(m_ui.gradientWidget->focalRadial());
@@ -470,15 +481,15 @@ void QtGradientEditorPrivate::setType(QGradient::Type type)
     } else if (type == QGradient::ConicalGradient) {
         centralConicalXSpinBox = m_ui.spinBox1;
         setSpinBox(centralConicalXSpinBox, SLOT(slotCentralConicalXChanged(double)));
-        m_ui.label1->setText(QApplication::translate("QtGradientEditor", "Central X", Q_NULLPTR));
+        m_ui.label1->setText(QApplication::translate("QtGradientEditor", "Central X", NULL));
 
         centralConicalYSpinBox = m_ui.spinBox2;
         setSpinBox(centralConicalYSpinBox, SLOT(slotCentralConicalYChanged(double)));
-        m_ui.label2->setText(QApplication::translate("QtGradientEditor", "Central Y", Q_NULLPTR));
+        m_ui.label2->setText(QApplication::translate("QtGradientEditor", "Central Y", NULL));
 
         angleConicalSpinBox = m_ui.spinBox3;
         setSpinBox(angleConicalSpinBox, SLOT(slotAngleConicalChanged(double)), 360.0, 1.0, 1);
-        m_ui.label3->setText(QApplication::translate("QtGradientEditor", "Angle", Q_NULLPTR));
+        m_ui.label3->setText(QApplication::translate("QtGradientEditor", "Angle", NULL));
 
         setCentralConical(m_ui.gradientWidget->centralConical());
         setAngleConical(m_ui.gradientWidget->angleConical());
@@ -509,12 +520,13 @@ void QtGradientEditorPrivate::slotGradientStopsChanged(const QGradientStops &sto
 void QtGradientEditorPrivate::slotTypeChanged(int idx)
 {
     QGradient::Type type = QGradient::NoGradient;
-    if (idx == 0)
+    if (idx == 0) {
         type = QGradient::LinearGradient;
-    else if (idx == 1)
+    } else if (idx == 1) {
         type = QGradient::RadialGradient;
-    else if (idx == 2)
+    } else if (idx == 2) {
         type = QGradient::ConicalGradient;
+    }
     setType(type);
     m_ui.typeComboBox->setCurrentIndex(idx);
     m_typeGroup->button(idx)->setChecked(true);
@@ -671,54 +683,66 @@ void QtGradientEditorPrivate::angleConicalChanged(qreal angle)
 
 void QtGradientEditorPrivate::setStartLinear(const QPointF &point)
 {
-    if (startLinearXSpinBox)
+    if (startLinearXSpinBox) {
         startLinearXSpinBox->setValue(point.x());
-    if (startLinearYSpinBox)
+    }
+    if (startLinearYSpinBox) {
         startLinearYSpinBox->setValue(point.y());
+    }
 }
 
 void QtGradientEditorPrivate::setEndLinear(const QPointF &point)
 {
-    if (endLinearXSpinBox)
+    if (endLinearXSpinBox) {
         endLinearXSpinBox->setValue(point.x());
-    if (endLinearYSpinBox)
+    }
+    if (endLinearYSpinBox) {
         endLinearYSpinBox->setValue(point.y());
+    }
 }
 
 void QtGradientEditorPrivate::setCentralRadial(const QPointF &point)
 {
-    if (centralRadialXSpinBox)
+    if (centralRadialXSpinBox) {
         centralRadialXSpinBox->setValue(point.x());
-    if (centralRadialYSpinBox)
+    }
+    if (centralRadialYSpinBox) {
         centralRadialYSpinBox->setValue(point.y());
+    }
 }
 
 void QtGradientEditorPrivate::setFocalRadial(const QPointF &point)
 {
-    if (focalRadialXSpinBox)
+    if (focalRadialXSpinBox) {
         focalRadialXSpinBox->setValue(point.x());
-    if (focalRadialYSpinBox)
+    }
+    if (focalRadialYSpinBox) {
         focalRadialYSpinBox->setValue(point.y());
+    }
 }
 
 void QtGradientEditorPrivate::setRadiusRadial(qreal radius)
 {
-    if (radiusRadialSpinBox)
+    if (radiusRadialSpinBox) {
         radiusRadialSpinBox->setValue(radius);
+    }
 }
 
 void QtGradientEditorPrivate::setCentralConical(const QPointF &point)
 {
-    if (centralConicalXSpinBox)
+    if (centralConicalXSpinBox) {
         centralConicalXSpinBox->setValue(point.x());
-    if (centralConicalYSpinBox)
+    }
+    if (centralConicalYSpinBox) {
         centralConicalYSpinBox->setValue(point.y());
+    }
 }
 
 void QtGradientEditorPrivate::setAngleConical(qreal angle)
 {
-    if (angleConicalSpinBox)
+    if (angleConicalSpinBox) {
         angleConicalSpinBox->setValue(angle);
+    }
 }
 
 QtGradientEditor::QtGradientEditor(QWidget *parent)
@@ -760,7 +784,7 @@ QtGradientEditor::QtGradientEditor(QWidget *parent)
 
     connect(d_ptr->m_ui.detailsButton, SIGNAL(clicked(bool)), this, SLOT(slotDetailsChanged(bool)));
     connect(d_ptr->m_gradientStopsController, SIGNAL(gradientStopsChanged(QGradientStops)),
-                this, SLOT(slotGradientStopsChanged(QGradientStops)));
+            this, SLOT(slotGradientStopsChanged(QGradientStops)));
 
     QIcon iconLinear(QLatin1String(":/images/typelinear.png"));
     QIcon iconRadial(QLatin1String(":/images/typeradial.png"));
@@ -780,9 +804,9 @@ QtGradientEditor::QtGradientEditor(QWidget *parent)
     d_ptr->m_typeGroup->addButton(d_ptr->m_ui.conicalButton, 2);
 
     connect(d_ptr->m_typeGroup, SIGNAL(buttonClicked(int)),
-                this, SLOT(slotTypeChanged(int)));
+            this, SLOT(slotTypeChanged(int)));
     connect(d_ptr->m_ui.typeComboBox, SIGNAL(activated(int)),
-                this, SLOT(slotTypeChanged(int)));
+            this, SLOT(slotTypeChanged(int)));
 
     QIcon iconPad(QLatin1String(":/images/spreadpad.png"));
     QIcon iconRepeat(QLatin1String(":/images/spreadrepeat.png"));
@@ -801,24 +825,24 @@ QtGradientEditor::QtGradientEditor(QWidget *parent)
     d_ptr->m_spreadGroup->addButton(d_ptr->m_ui.repeatButton, 1);
     d_ptr->m_spreadGroup->addButton(d_ptr->m_ui.reflectButton, 2);
     connect(d_ptr->m_spreadGroup, SIGNAL(buttonClicked(int)),
-                this, SLOT(slotSpreadChanged(int)));
+            this, SLOT(slotSpreadChanged(int)));
     connect(d_ptr->m_ui.spreadComboBox, SIGNAL(activated(int)),
-                this, SLOT(slotSpreadChanged(int)));
+            this, SLOT(slotSpreadChanged(int)));
 
     connect(d_ptr->m_ui.gradientWidget, SIGNAL(startLinearChanged(QPointF)),
-                this, SLOT(startLinearChanged(QPointF)));
+            this, SLOT(startLinearChanged(QPointF)));
     connect(d_ptr->m_ui.gradientWidget, SIGNAL(endLinearChanged(QPointF)),
-                this, SLOT(endLinearChanged(QPointF)));
+            this, SLOT(endLinearChanged(QPointF)));
     connect(d_ptr->m_ui.gradientWidget, SIGNAL(centralRadialChanged(QPointF)),
-                this, SLOT(centralRadialChanged(QPointF)));
+            this, SLOT(centralRadialChanged(QPointF)));
     connect(d_ptr->m_ui.gradientWidget, SIGNAL(focalRadialChanged(QPointF)),
-                this, SLOT(focalRadialChanged(QPointF)));
+            this, SLOT(focalRadialChanged(QPointF)));
     connect(d_ptr->m_ui.gradientWidget, SIGNAL(radiusRadialChanged(qreal)),
-                this, SLOT(radiusRadialChanged(qreal)));
+            this, SLOT(radiusRadialChanged(qreal)));
     connect(d_ptr->m_ui.gradientWidget, SIGNAL(centralConicalChanged(QPointF)),
-                this, SLOT(centralConicalChanged(QPointF)));
+            this, SLOT(centralConicalChanged(QPointF)));
     connect(d_ptr->m_ui.gradientWidget, SIGNAL(angleConicalChanged(qreal)),
-                this, SLOT(angleConicalChanged(qreal)));
+            this, SLOT(angleConicalChanged(qreal)));
 
     QGradientStops stops = gradient().stops();
     d_ptr->m_gradientStopsController->setGradientStops(stops);
@@ -827,22 +851,31 @@ QtGradientEditor::QtGradientEditor(QWidget *parent)
 
 QtGradientEditor::~QtGradientEditor()
 {
-    if (d_ptr->m_hiddenWidget)
+    if (d_ptr->m_hiddenWidget) {
         delete d_ptr->m_hiddenWidget;
+    }
 }
 
 void QtGradientEditor::setGradient(const QGradient &grad)
 {
-    if (grad == gradient())
+    if (grad == gradient()) {
         return;
+    }
 
     QGradient::Type type = grad.type();
     int idx = 0;
     switch (type) {
-        case QGradient::LinearGradient:  idx = 0; break;
-        case QGradient::RadialGradient:  idx = 1; break;
-        case QGradient::ConicalGradient: idx = 2; break;
-        default: return;
+        case QGradient::LinearGradient:
+            idx = 0;
+            break;
+        case QGradient::RadialGradient:
+            idx = 1;
+            break;
+        case QGradient::ConicalGradient:
+            idx = 2;
+            break;
+        default:
+            return;
     }
     d_ptr->setType(type);
     d_ptr->m_ui.typeComboBox->setCurrentIndex(idx);
@@ -851,10 +884,18 @@ void QtGradientEditor::setGradient(const QGradient &grad)
 
     QGradient::Spread spread = grad.spread();
     switch (spread) {
-        case QGradient::PadSpread:     idx = 0; break;
-        case QGradient::RepeatSpread:  idx = 1; break;
-        case QGradient::ReflectSpread: idx = 2; break;
-        default: idx = 0; break;
+        case QGradient::PadSpread:
+            idx = 0;
+            break;
+        case QGradient::RepeatSpread:
+            idx = 1;
+            break;
+        case QGradient::ReflectSpread:
+            idx = 2;
+            break;
+        default:
+            idx = 0;
+            break;
     }
     d_ptr->m_ui.spreadComboBox->setCurrentIndex(idx);
     d_ptr->m_ui.gradientWidget->setGradientSpread(spread);
@@ -899,8 +940,9 @@ bool QtGradientEditor::isBackgroundCheckered() const
 
 void QtGradientEditor::setBackgroundCheckered(bool checkered)
 {
-    if (d_ptr->m_backgroundCheckered == checkered)
+    if (d_ptr->m_backgroundCheckered == checkered) {
         return;
+    }
 
     d_ptr->m_backgroundCheckered = checkered;
     d_ptr->m_ui.hueColorLine->setBackgroundCheckered(checkered);
@@ -929,8 +971,9 @@ bool QtGradientEditor::isDetailsButtonVisible() const
 
 void QtGradientEditor::setDetailsButtonVisible(bool visible)
 {
-    if (d_ptr->m_detailsButtonVisible == visible)
+    if (d_ptr->m_detailsButtonVisible == visible) {
         return;
+    }
 
     d_ptr->m_detailsButtonVisible = visible;
     d_ptr->m_ui.detailsButton->setVisible(visible);

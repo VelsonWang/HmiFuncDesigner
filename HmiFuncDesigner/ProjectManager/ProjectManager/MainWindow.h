@@ -37,7 +37,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = Q_NULLPTR);
+    explicit MainWindow(QWidget *parent = NULL);
     ~MainWindow() Q_DECL_OVERRIDE;
 
 public slots:
@@ -116,19 +116,19 @@ private:
 private:
     QString m_szCurItem;
     QString m_szCurTreeViewItem;
-    QWidget *m_pDesignerWidgetObj = Q_NULLPTR;
+    QWidget *m_pDesignerWidgetObj = NULL;
     bool m_bGraphPageGridVisible;
     int m_iCurrentGraphPageIndex;
     QString m_szCopyGraphPageFileName;
-    QStackedWidget *m_pCentralWidgetObj = Q_NULLPTR;
-    ProjectTreeView *m_pProjectTreeViewObj = Q_NULLPTR;
-    QStatusBar *m_pStatusBarObj = Q_NULLPTR; // 状态栏
-    QDockWidget *m_pDockProjectMgrObj = Q_NULLPTR; // 工程管理器停靠控件
-    QTabWidget *m_pTabProjectMgrObj = Q_NULLPTR; // 工程管理器TabWidget控件
-    QMenu *m_pMenuProjectObj = Q_NULLPTR; // 工程菜单
-    QMenu *m_pMenuViewObj = Q_NULLPTR; // 视图
-    QMenu *m_pMenuToolsObj = Q_NULLPTR; // 工具菜单
-    QMenu *m_pMenuHelpObj = Q_NULLPTR; // 帮助菜单
+    QStackedWidget *m_pCentralWidgetObj = NULL;
+    ProjectTreeView *m_pProjectTreeViewObj = NULL;
+    QStatusBar *m_pStatusBarObj = NULL; // 状态栏
+    QDockWidget *m_pDockProjectMgrObj = NULL; // 工程管理器停靠控件
+    QTabWidget *m_pTabProjectMgrObj = NULL; // 工程管理器TabWidget控件
+    QMenu *m_pMenuProjectObj = NULL; // 工程菜单
+    QMenu *m_pMenuViewObj = NULL; // 视图
+    QMenu *m_pMenuToolsObj = NULL; // 工具菜单
+    QMenu *m_pMenuHelpObj = NULL; // 帮助菜单
     QMap<QString, QAbstractPage*> m_mapNameToPage;
 };
 

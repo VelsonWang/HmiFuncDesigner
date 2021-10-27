@@ -95,7 +95,7 @@ QString QBackgroundItem::makeStylesheet()
 
     str += "}";
     if(str == "{\n}") {
-        str="";
+        str = "";
     }
     return str;
 }

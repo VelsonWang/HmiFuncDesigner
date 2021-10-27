@@ -15,7 +15,7 @@ protected:
     void onBtnClicked();
 
 protected:
-    QUndoStack *m_undo_stack;
+    QUndoStack *undoStack;
 };
 
 #endif // QSCRIPTEDITOR_H

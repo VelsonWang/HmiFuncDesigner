@@ -6,7 +6,8 @@
 #include <QStandardItemModel>
 
 
-namespace Ui {
+namespace Ui
+{
 class DeviceListDialog;
 }
 
@@ -15,7 +16,7 @@ class CORELIB_EXPORT DeviceListDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit DeviceListDialog(QString stype = "COM", QWidget *parent = Q_NULLPTR);
+    explicit DeviceListDialog(QString stype = "COM", QWidget *parent = NULL);
     ~DeviceListDialog();
     // 取得设备名称
     QString GetDeviceName() const;

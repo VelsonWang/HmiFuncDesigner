@@ -17,98 +17,91 @@ void QAbstractSliderHost::initProperty()
 
     QAbstractProperty* pro;
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","value");
-        pro->setAttribute("show_name",tr("Value"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
-        insertProperty(pro,1);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "value");
+        pro->setAttribute("show_name", tr("Value"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pro, 1);
     }
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","minimum");
-        pro->setAttribute("show_name",tr("Minimum"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "minimum");
+        pro->setAttribute("show_name", tr("Minimum"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","maximum");
-        pro->setAttribute("show_name",tr("Maximum"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "maximum");
+        pro->setAttribute("show_name", tr("Maximum"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","singleStep");
-        pro->setAttribute("show_name",tr("SingleStep"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "singleStep");
+        pro->setAttribute("show_name", tr("SingleStep"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Enum");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","orientation");
-        pro->setAttribute("show_name",tr("Orientation"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Enum");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "orientation");
+        pro->setAttribute("show_name", tr("Orientation"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         tagComboItem item;
 
-        item.m_text=tr("Horizontal");
-        item.m_value=Qt::Horizontal;
+        item.m_text = tr("Horizontal");
+        item.m_value = Qt::Horizontal;
         items.append(item);
 
-        item.m_text=tr("Vertical");
-        item.m_value=Qt::Vertical;
+        item.m_text = tr("Vertical");
+        item.m_value = Qt::Vertical;
         items.append(item);
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
-        m_object->setProperty("orientation",Qt::Horizontal);
+        pro->setAttribute("items", v);
+        m_object->setProperty("orientation", Qt::Horizontal);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Bool");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","invertedAppearance");
-        pro->setAttribute("show_name",tr("InvertedAppearance"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Bool");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "invertedAppearance");
+        pro->setAttribute("show_name", tr("InvertedAppearance"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Script");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","valueChanged");
-        pro->setAttribute("show_name",tr("ValueChanged"));
-        pro->setAttribute("group","Events");
-        m_object->setProperty("valueChanged","");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Script");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "valueChanged");
+        pro->setAttribute("show_name", tr("ValueChanged"));
+        pro->setAttribute("group", "Events");
+        m_object->setProperty("valueChanged", "");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    QAbstractSlider *slider=(QAbstractSlider*)m_object;
-    connect(slider,SIGNAL(valueChanged(int)),this,SLOT(valueChanged(int)));
+    QAbstractSlider *slider = (QAbstractSlider*)m_object;
+    connect(slider, SIGNAL(valueChanged(int)), this, SLOT(valueChanged(int)));
 }
 
 void QAbstractSliderHost::setValue(int value)
 {
-    setPropertyValue("value",value);
+    setPropertyValue("value", value);
 }
 
 int QAbstractSliderHost::value()
@@ -118,7 +111,7 @@ int QAbstractSliderHost::value()
 
 void QAbstractSliderHost::setSingleStep(int singleStep)
 {
-    setPropertyValue("singleStep",singleStep);
+    setPropertyValue("singleStep", singleStep);
 }
 
 int QAbstractSliderHost::singleStep()
@@ -128,7 +121,7 @@ int QAbstractSliderHost::singleStep()
 
 void QAbstractSliderHost::setOrientation(int orientation)
 {
-    setPropertyValue("orientation",orientation);
+    setPropertyValue("orientation", orientation);
 }
 
 int QAbstractSliderHost::orientation()
@@ -138,7 +131,7 @@ int QAbstractSliderHost::orientation()
 
 void QAbstractSliderHost::setInvertedAppearance(bool invertedAppearance)
 {
-    setPropertyValue("invertedAppearance",invertedAppearance);
+    setPropertyValue("invertedAppearance", invertedAppearance);
 }
 
 bool QAbstractSliderHost::invertedAppearance()
@@ -148,11 +141,10 @@ bool QAbstractSliderHost::invertedAppearance()
 
 void QAbstractSliderHost::valueChanged(int value)
 {
-    QString code=getPropertyValue("valueChanged").toString();
-    if(code!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_value",QString::number(value));
-        exec(code,param);
+    QString code = getPropertyValue("valueChanged").toString();
+    if(code != "") {
+        QMap<QString, QString> param;
+        param.insert("_value", QString::number(value));
+        exec(code, param);
     }
 }

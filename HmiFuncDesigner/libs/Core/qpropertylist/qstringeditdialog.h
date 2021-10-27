@@ -7,7 +7,8 @@
 #include <QMap>
 #include <QUndoStack>
 
-namespace Ui {
+namespace Ui
+{
 class QStringEditDialog;
 }
 
@@ -29,20 +30,18 @@ class QStringEditDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit QStringEditDialog(QAbstractProperty *property,QUndoStack* stack,QWidget* parent=0);
+    explicit QStringEditDialog(QAbstractProperty *property, QUndoStack* stack, QWidget* parent = 0);
     ~QStringEditDialog();
 
 private slots:
     void on_enabled_clicked();
-
     void on_okBtn_clicked();
-
     void on_cancelBtn_clicked();
 
 protected:
-    QAbstractProperty *m_property;
-    QMap<QTreeWidgetItem*, QLanguage*> m_items;
-    QUndoStack *m_undo_stack;
+    QAbstractProperty *property;
+    QMap<QTreeWidgetItem*, QLanguage*> items;
+    QUndoStack *undoStack;
 
 private:
     Ui::QStringEditDialog *ui;

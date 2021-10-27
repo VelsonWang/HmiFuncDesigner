@@ -11,7 +11,7 @@ QMemeryDataProperty::QMemeryDataProperty(QAbstractProperty *parent) :
 
 void QMemeryDataProperty::toObject(XMLObject *xml)
 {
-    if(xml != Q_NULLPTR) {
+    if(xml != NULL) {
         xml->clear();
         xml->setTagName(PROPERTY_TITLE);
         QMapIterator<QString, QVariant> it(m_propertys);
@@ -36,7 +36,7 @@ void QMemeryDataProperty::toObject(XMLObject *xml)
 
 void QMemeryDataProperty::fromObject(XMLObject *xml)
 {
-    if(xml != Q_NULLPTR) {
+    if(xml != NULL) {
         if(xml->getTagName() != PROPERTY_TITLE) {
             return;
         }

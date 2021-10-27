@@ -16,11 +16,10 @@ QDevicesManager::~QDevicesManager()
 
 void QDevicesManager::addUpdate(QAbstractUpdate *update)
 {
-    if(update==Q_NULLPTR || m_updates.contains(update))
-    {
+    if(update == NULL || m_updates.contains(update)) {
         return;
     }
-    connect(update,SIGNAL(newDevice(QObject*)),this,SLOT(newDevice(QObject*)));
+    connect(update, SIGNAL(newDevice(QObject*)), this, SLOT(newDevice(QObject*)));
     m_updates.append(update);
 }
 
@@ -35,8 +34,8 @@ void QDevicesManager::clear()
 void QDevicesManager::newDevice(QObject *obj)
 {
     m_devices.append(obj);
-    m_nameToDevice.insert(obj->property("name").toString(),obj);
-    connect(obj,SIGNAL(destroyed(QObject*)),this,SLOT(removeDevice(QObject*)));
+    m_nameToDevice.insert(obj->property("name").toString(), obj);
+    connect(obj, SIGNAL(destroyed(QObject*)), this, SLOT(removeDevice(QObject*)));
 }
 
 void QDevicesManager::removeDevice(QObject *obj)

@@ -9,8 +9,7 @@
 /**
  *  which event is?
  */
-enum EventType
-{
+enum EventType {
     NONE = 0,
     BEFORE_READ,
     VALUE_CHANGE,
@@ -48,7 +47,7 @@ class ListenerRegister : public QObject
     Q_OBJECT
 
 public:
-    ListenerRegister(QObject* parent = Q_NULLPTR);
+    ListenerRegister(QObject* parent = NULL);
     ~ListenerRegister();
 
 public:
@@ -66,7 +65,7 @@ class EventProducer : public QObject
     Q_OBJECT
 
 public:
-    EventProducer(QObject* parent = Q_NULLPTR);
+    EventProducer(QObject* parent = NULL);
     ~EventProducer();
 
 public:

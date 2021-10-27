@@ -2,7 +2,6 @@
 #define STYLEHELPER_H
 
 #include "corelibglobal.h"
-
 #include <QColor>
 #include <QPalette>
 #include <QStyle>
@@ -15,14 +14,14 @@
 class CORELIB_EXPORT StyleHelper
 {
 public:
-    static QIcon drawIndicatorIcon(const QPalette &palette,QStyle *style);
+    static QIcon drawIndicatorIcon(const QPalette &palette, QStyle *style);
     static int navigationWidgetHeight();//获取默认控件高度
     static qreal sidebarFontSize();//字体大小
     static QPalette sidebarFontPalette(const QPalette &original);//配置画板
 
     static QColor baseColor(bool lightColored = false);//获取基色
     static QColor panelTextColor(bool lightColored = false);//获取文字颜色
-        static QColor highlightColor(bool lightColored = false);//获取高亮颜色
+    static QColor highlightColor(bool lightColored = false);//获取高亮颜色
     static QColor shadowColor(bool lightColored = false);//获取阴影颜色
     static QColor borderColor(bool lightColored = false);//获取窗体颜色
     static QColor buttonTextColor();//获取按钮文字颜色
@@ -49,7 +48,7 @@ public:
                                    const QPoint &offset = QPoint(1, -2));
     //绘制居中的图片
     static void drawCornerImage(const QImage &img, QPainter *painter, QRect rect,
-                         int left = 0, int top = 0, int right = 0, int bottom = 0);
+                                int left = 0, int top = 0, int right = 0, int bottom = 0);
     //给图片染色
     static void tintImage(QImage &img, const QColor &tintColor);
     //绘制背景渐变色

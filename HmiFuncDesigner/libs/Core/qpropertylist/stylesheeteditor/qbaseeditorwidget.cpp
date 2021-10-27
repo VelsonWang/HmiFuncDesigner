@@ -11,13 +11,13 @@ QBaseEditorWidget* create_editor_widget(const QString &name)
 {
     if(name == "background") {
         return new QBackgrounSheetEditor;
-    } else if(name=="border") {
+    } else if(name == "border") {
         return new QBorderSheetEditor;
-    } else if(name=="text_sheet") {
+    } else if(name == "text_sheet") {
         return new QTextSheetEditor;
     }
 
-    return Q_NULLPTR;
+    return NULL;
 }
 
 QBaseEditorWidget::QBaseEditorWidget(QWidget *parent) : QWidget(parent)
@@ -67,7 +67,7 @@ QGradient QBaseEditorWidget::get_gradient(const QGradient &g)
 
 QIcon QBaseEditorWidget::get_icon(const QGradient &gradient)
 {
-    QPixmap pixmap = QPixmap(16,16);
+    QPixmap pixmap = QPixmap(16, 16);
 
     pixmap.fill(Qt::transparent);
     if(gradient.type() != QGradient::NoGradient) {
@@ -76,6 +76,6 @@ QIcon QBaseEditorWidget::get_icon(const QGradient &gradient)
     }
 
     QIcon icon = QIcon(pixmap);
-    icon.addPixmap(pixmap,QIcon::Disabled);
+    icon.addPixmap(pixmap, QIcon::Disabled);
     return icon;
 }

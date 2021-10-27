@@ -10,7 +10,7 @@ class VerifyPasswordDialog : public QDialog
     Q_OBJECT
 
 public:
-    VerifyPasswordDialog(bool bOpen = true, QWidget *parent = Q_NULLPTR);
+    VerifyPasswordDialog(bool bOpen = true, QWidget *parent = NULL);
     ~VerifyPasswordDialog();
     // 设置匹配的工程密码
     void setTargetPassword(const QString &szPwd);
@@ -21,12 +21,12 @@ private slots:
     void onOkClicked();
 
 private:
-    QLineEdit *m_pPwdEditObj = Q_NULLPTR;
-    QLineEdit *m_pVerifyPwdEditObj = Q_NULLPTR;
+    QLineEdit *m_pPwdEditObj = NULL;
+    QLineEdit *m_pVerifyPwdEditObj = NULL;
     bool m_bOpenProj = true;
     QString m_szPwd = "";
-    QPushButton *m_pBtnOkObj = Q_NULLPTR;
-    QPushButton *m_pBtnCancelObj = Q_NULLPTR;
+    QPushButton *m_pBtnOkObj = NULL;
+    QPushButton *m_pBtnCancelObj = NULL;
 };
 
 #endif // VERIFYPASSWORDDIALOG_H

@@ -3,7 +3,6 @@
 
 #include "qbuttoncommoneditor.h"
 
-
 class QColorEditor : public QButtonCommonEditor
 {
     Q_OBJECT

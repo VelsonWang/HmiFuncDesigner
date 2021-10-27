@@ -17,9 +17,9 @@ ProjectTreeView::ProjectTreeView(QWidget *parent) : QTreeView(parent)
 
 ProjectTreeView::~ProjectTreeView()
 {
-    if(m_pItemModelObj != Q_NULLPTR) {
+    if(m_pItemModelObj != NULL) {
         delete m_pItemModelObj;
-        m_pItemModelObj = Q_NULLPTR;
+        m_pItemModelObj = NULL;
     }
 }
 
@@ -31,9 +31,9 @@ ProjectTreeView::~ProjectTreeView()
 void ProjectTreeView::onSlotClicked(const QModelIndex &index)
 {
     QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
-    if(pModelObj != Q_NULLPTR) {
+    if(pModelObj != NULL) {
         QStandardItem *pItemObj = pModelObj->itemFromIndex(index);
-        if(pItemObj != Q_NULLPTR) {
+        if(pItemObj != NULL) {
             QVariant userDat = pItemObj->data(Qt::UserRole + 1);
             emit sigNotifyClicked(userDat.toStringList().join("|"));
         }
@@ -62,7 +62,9 @@ void ProjectTreeView::updateUI()
     QStringList szListUserData;
 
     QStandardItemModel *pModelObj = dynamic_cast<QStandardItemModel *>(this->model());
-    if(pModelObj == Q_NULLPTR) return;
+    if(pModelObj == NULL) {
+        return;
+    }
     pModelObj->clear();
 
     m_pProjectItemObj = new QStandardItem(QIcon(":/images/pj_pro.png"), tr("未创建工程"));
@@ -173,7 +175,7 @@ void ProjectTreeView::updateUI()
  */
 int ProjectTreeView::getDevTagGroupCount()
 {
-    return (m_pDevTagObj != Q_NULLPTR) ? m_pDevTagObj->rowCount() : 0;
+    return (m_pDevTagObj != NULL) ? m_pDevTagObj->rowCount() : 0;
 }
 
 
@@ -184,7 +186,7 @@ int ProjectTreeView::getDevTagGroupCount()
  */
 QString ProjectTreeView::getProjectName()
 {
-    return (m_pProjectItemObj != Q_NULLPTR) ? m_pProjectItemObj->text() : "";
+    return (m_pProjectItemObj != NULL) ? m_pProjectItemObj->text() : "";
 }
 
 /**
@@ -194,7 +196,7 @@ QString ProjectTreeView::getProjectName()
  */
 void ProjectTreeView::setProjectName(const QString &szName)
 {
-    if(m_pProjectItemObj != Q_NULLPTR) {
+    if(m_pProjectItemObj != NULL) {
         m_pProjectItemObj->setText(szName);
     }
 }

@@ -45,8 +45,9 @@ void QValueStick::drawScalarStick(QPainter *painter,
                                   QString scaleDirect,
                                   QString scalePosition)
 {
-    if(!scaleVisible)
+    if(!scaleVisible) {
         return;
+    }
 
     QFontMetrics fm(font);
     int iTextHeight = fm.height();
@@ -88,8 +89,9 @@ void QValueStick::drawScalarStick(QPainter *painter,
             rightRect = aRect;
         } else if ( scaleDirect == QString("BottomToTop") ) {
             iFlags = Qt::AlignLeft | Qt::AlignVCenter;
-            if(scalePosition == QString("LeftTop"))
+            if(scalePosition == QString("LeftTop")) {
                 iFlags = Qt::AlignRight | Qt::AlignVCenter;
+            }
             aRect.setBottom(aRect.top() + iTextHeight - 1);
             painter->drawText(aRect, iFlags, szMaxValue);
             upRect = aRect;
@@ -99,8 +101,9 @@ void QValueStick::drawScalarStick(QPainter *painter,
             downRect = aRect;
         } else if ( scaleDirect ==  QString("TopToBottom") ) {
             iFlags = Qt::AlignLeft | Qt::AlignVCenter;
-            if(scalePosition == QString("LeftTop"))
+            if(scalePosition == QString("LeftTop")) {
                 iFlags = Qt::AlignRight | Qt::AlignVCenter;
+            }
             aRect.setBottom(aRect.top() + iTextHeight - 1);
             painter->drawText(aRect, iFlags, szMinValue);
             upRect = aRect;
@@ -179,7 +182,7 @@ void QValueStick::drawScalarStick(QPainter *painter,
                     }
                 }
 
-                QRect aRectTemp= aRect;
+                QRect aRectTemp = aRect;
                 aRectTemp.setRight(aRectTemp.right() + 2);
                 painter->drawText(aRectTemp, iFlags, szMaxValue);
                 bRealDrawValueText = true;
@@ -213,8 +216,9 @@ void QValueStick::drawScalarStick(QPainter *painter,
             } else {
                 aRect.setTop(upRect.bottom() + 1);
                 aRect.setBottom(downRect.top() - 1);
-                if(aRect.bottom() >= aRect.top())
+                if(aRect.bottom() >= aRect.top()) {
                     PubTool::FillColorRect(painter, aRect, fillColor);
+                }
             }
         }
     }
@@ -293,8 +297,7 @@ void QValueStick::drawValueStick(QPainter *painter)
         } else if(showScale) {
             // 只标尺可见
             textRect.setTop(textRect.bottom());
-            if ( iContHeight >= (BIT_SCALE_LENTH + MIN_BAR_LENTH) )
-            {
+            if ( iContHeight >= (BIT_SCALE_LENTH + MIN_BAR_LENTH) ) {
                 if(szScalePos == QString("LeftTop")) {
                     scalRect.setBottom(scalRect.top() + BIT_SCALE_LENTH - 1);
                     barRect.setTop(scalRect.bottom() + 1);

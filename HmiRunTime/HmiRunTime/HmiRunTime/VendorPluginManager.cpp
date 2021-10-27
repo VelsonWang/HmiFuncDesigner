@@ -85,15 +85,15 @@ IVendorPlugin* VendorPluginManager::loadPlugin(const QString &name)
             }
         }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 
 IVendorPlugin* VendorPluginManager::getPlugin(const QString &name)
 {
-    IVendorPlugin *pDevPlugin = Q_NULLPTR;
+    IVendorPlugin *pDevPlugin = NULL;
     if(name == "") {
-        return Q_NULLPTR;
+        return NULL;
     }
     if(m_plugins.contains(name)) {
         qDebug() << __FILE__ << __LINE__ << __FUNCTION__;

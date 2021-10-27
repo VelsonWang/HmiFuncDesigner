@@ -57,12 +57,16 @@ bool PictureResourceManager::openFromXml(XMLObject *pXmlObj)
     qDeleteAll(m_listPictures);
     m_listPictures.clear();
     XMLObject *pPicsObj = pXmlObj->getCurrentChild("pics");
-    if(pPicsObj == Q_NULLPTR) return false;
+    if(pPicsObj == NULL) {
+        return false;
+    }
     QVector<XMLObject* > listPicsObj = pPicsObj->getCurrentChildren("pic");
     foreach(XMLObject* pPicObj, listPicsObj) {
         PictureInfo *pObj = new PictureInfo();
         pObj->openFromXml(pPicObj);
-        if(m_iStartNewID < pObj->m_iID) m_iStartNewID = pObj->m_iID;
+        if(m_iStartNewID < pObj->m_iID) {
+            m_iStartNewID = pObj->m_iID;
+        }
         m_listPictures.append(pObj);
     }
     return true;
@@ -72,7 +76,7 @@ bool PictureResourceManager::saveToXml(XMLObject *pXmlObj)
 {
     XMLObject *pPicsObj = new XMLObject(pXmlObj);
     pPicsObj->setTagName("pics");
-    for(int i=0; i<m_listPictures.count(); i++) {
+    for(int i = 0; i < m_listPictures.count(); i++) {
         PictureInfo *pObj = m_listPictures.at(i);
         pObj->saveToXml(pPicsObj);
     }
@@ -82,7 +86,9 @@ bool PictureResourceManager::saveToXml(XMLObject *pXmlObj)
 bool PictureResourceManager::add(const QString &szName)
 {
     QFileInfo info(szName);
-    if(!info.exists()) return false;
+    if(!info.exists()) {
+        return false;
+    }
 
     QString szPicName = info.fileName();
 

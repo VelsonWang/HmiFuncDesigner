@@ -37,7 +37,7 @@ void QLineEditHost::initProperty()
     QAbstractProperty *pPropObj;
 
     pPropObj = QPropertyFactory::create_property("Tag");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "tag");
         pPropObj->setAttribute("show_name", tr("选择变量"));
         pPropObj->setAttribute("group", "HMI");
@@ -48,7 +48,7 @@ void QLineEditHost::initProperty()
     QWidgetHost::initProperty();
 
     pPropObj = QPropertyFactory::create_property("ByteArray");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "text");
         pPropObj->setAttribute("show_name", tr("文本")); // tr("Text")
         pPropObj->setAttribute("group", "Attributes");
@@ -57,7 +57,7 @@ void QLineEditHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Align");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "alignment");
         pPropObj->setAttribute("show_name", tr("对齐")); // tr("Alignment")
         pPropObj->setAttribute("group", "Attributes");
@@ -66,7 +66,7 @@ void QLineEditHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Bool");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "readOnly");
         pPropObj->setAttribute("show_name", tr("只读")); // tr("ReadOnly")
         pPropObj->setAttribute("group", "Attributes");
@@ -75,16 +75,16 @@ void QLineEditHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Bool");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "frame");
         pPropObj->setAttribute("show_name", tr("边框")); // tr("Frame")
         pPropObj->setAttribute("group", "Attributes");
-        pPropObj->setAttribute(ATTR_CAN_SAME,true);
+        pPropObj->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pPropObj);
     }
 
     pPropObj = QPropertyFactory::create_property("Script");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "textChanged");
         pPropObj->setAttribute("show_name", tr("文本变化")); // tr("TextChanged")
         pPropObj->setAttribute("group", "Events");
@@ -92,7 +92,7 @@ void QLineEditHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Script");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "editFinish");
         pPropObj->setAttribute("show_name", tr("编辑完成")); // tr("EditFinish")
         pPropObj->setAttribute("group", "Events");

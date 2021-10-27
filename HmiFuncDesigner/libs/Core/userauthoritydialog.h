@@ -8,19 +8,18 @@
 
 //////////////////////////////////////////////////////////
 
-struct CORELIB_EXPORT TagUserItem
-{
-    explicit TagUserItem(const QString &sIndex=QString(),
-            const QString &sName=QString(),
-            const QString &sPassWord=QString(),
-            const QString &sAuthority=QString(),
-            const QString &sComments=QString(),
-            const QString &sName2=QString(),
-            const QString &sName3=QString(),
-            const QString &sName4=QString(),
-            const QString &sName5=QString())
-        : m_sIndex(sIndex),m_sName(sName), m_sPassWord(sPassWord), m_sAuthority(sAuthority),
-          m_sComments(sComments),m_sName2(sName2),m_sName3(sName3),m_sName4(sName4),m_sName5(sName5)
+struct CORELIB_EXPORT TagUserItem {
+    explicit TagUserItem(const QString &sIndex = QString(),
+                         const QString &sName = QString(),
+                         const QString &sPassWord = QString(),
+                         const QString &sAuthority = QString(),
+                         const QString &sComments = QString(),
+                         const QString &sName2 = QString(),
+                         const QString &sName3 = QString(),
+                         const QString &sName4 = QString(),
+                         const QString &sName5 = QString())
+        : m_sIndex(sIndex), m_sName(sName), m_sPassWord(sPassWord), m_sAuthority(sAuthority),
+          m_sComments(sComments), m_sName2(sName2), m_sName3(sName3), m_sName4(sName4), m_sName5(sName5)
     {
 
     }
@@ -50,22 +49,25 @@ class CORELIB_EXPORT TagUserTableModel : public QAbstractTableModel
     Q_OBJECT
 
 public:
-    explicit TagUserTableModel(QObject *parent = Q_NULLPTR)
+    explicit TagUserTableModel(QObject *parent = NULL)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;
 
-    QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
-    QVariant headerData(int section, Qt::Orientation orientation, int role=Qt::DisplayRole) const;
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
-    int rowCount(const QModelIndex &parent=QModelIndex()) const;
-    int columnCount(const QModelIndex &parent=QModelIndex()) const;
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    bool setData(const QModelIndex &index, const QVariant &value, int role=Qt::EditRole);
-    bool setHeaderData(int, Qt::Orientation, const QVariant&, int=Qt::EditRole) { return false; }
+    bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole);
+    bool setHeaderData(int, Qt::Orientation, const QVariant&, int = Qt::EditRole)
+    {
+        return false;
+    }
 
-    bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
-    bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
+    bool insertRows(int row, int count, const QModelIndex &parent = QModelIndex());
+    bool removeRows(int row, int count, const QModelIndex &parent = QModelIndex());
 
 public:
     QList<TagUserItem> m_tagUserItems;
@@ -75,7 +77,8 @@ public:
 //////////////////////////////////////////////////////////
 
 
-namespace Ui {
+namespace Ui
+{
 class UserAuthorityDialog;
 }
 
@@ -84,7 +87,7 @@ class CORELIB_EXPORT UserAuthorityDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit UserAuthorityDialog(QWidget *parent = Q_NULLPTR);
+    explicit UserAuthorityDialog(QWidget *parent = NULL);
     ~UserAuthorityDialog();
 
 

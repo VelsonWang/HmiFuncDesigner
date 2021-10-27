@@ -1,13 +1,11 @@
 #include "qcursorproperty.h"
-
 #include "../qcommonstruct.h"
-
 #include <QCursor>
 #include <QComboBox>
 #include <QIcon>
 #include <QCursor>
 
-QCursorProperty::QCursorProperty(QAbstractProperty *parent) : 
+QCursorProperty::QCursorProperty(QAbstractProperty *parent) :
     QEnumProperty(parent)
 {
     setObjectProperty("type", "Cursor");
@@ -111,7 +109,7 @@ QCursorProperty::QCursorProperty(QAbstractProperty *parent) :
 
     QVariant v;
     v.setValue<ComboItems>(items);
-    setAttribute("items",v);
+    setAttribute("items", v);
 }
 
 void QCursorProperty::make_value()

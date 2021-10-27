@@ -7,7 +7,7 @@ QAbstractStylesheetItem::QAbstractStylesheetItem(QAbstractStylesheetItem *parent
     m_parent(parent),
     m_value("")
 {
-    if(m_parent != Q_NULLPTR) {
+    if(m_parent != NULL) {
         m_parent->m_children.append(this);
         connect(this, SIGNAL(valueChanged()), m_parent, SLOT(subValueChanged()));
     }
@@ -19,7 +19,7 @@ QAbstractStylesheetItem::~QAbstractStylesheetItem()
         delete m_children.first();
     }
 
-    if(m_parent != Q_NULLPTR) {
+    if(m_parent != NULL) {
         m_parent->m_children.removeAll(this);
     }
 }
@@ -64,7 +64,7 @@ void QAbstractStylesheetItem::read(XMLObject *xml)
 
     foreach(XMLObject* c, list) {
         item = getChild(c->getProperty("title"));
-        if(item != Q_NULLPTR) {
+        if(item != NULL) {
             item->read(c);
         }
     }
@@ -108,7 +108,7 @@ QAbstractStylesheetItem* QAbstractStylesheetItem::getChild(const QString &name)
             return item;
         }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 void QAbstractStylesheetItem::subValueChanged()

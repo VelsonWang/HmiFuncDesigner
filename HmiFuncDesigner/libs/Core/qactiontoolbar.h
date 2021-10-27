@@ -14,7 +14,7 @@ class CORELIB_EXPORT QActionToolBar : public QWidget
 {
     Q_OBJECT
 public:
-    explicit QActionToolBar(Qt::Alignment align=Qt::AlignLeft,QWidget *parent = 0);
+    explicit QActionToolBar(Qt::Alignment align = Qt::AlignLeft, QWidget *parent = 0);
 
     void    addButtonActions(const QList<QAction*>    &actions);//添加按钮
     void    setLabelWidget(QWidget* widget);//添加扩展控件

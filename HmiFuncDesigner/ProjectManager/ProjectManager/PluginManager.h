@@ -8,9 +8,10 @@
 class PluginManager
 {
 public:
-    static PluginManager *getInstance() {
+    static PluginManager *getInstance()
+    {
         QMutexLocker locker(&mutex_);
-        if(instance_ == Q_NULLPTR) {
+        if(instance_ == NULL) {
             instance_ = new PluginManager();
         }
         return instance_;
@@ -21,7 +22,7 @@ private:
 
 public:
     void loadPlugin();
-    IDrawApplicationPlugin* getPlugin(const QString &type,const QString &name);
+    IDrawApplicationPlugin* getPlugin(const QString &type, const QString &name);
     QMap<QString, IDrawApplicationPlugin*> getPluginByType(const QString &type);
     void releasePlugin();
 

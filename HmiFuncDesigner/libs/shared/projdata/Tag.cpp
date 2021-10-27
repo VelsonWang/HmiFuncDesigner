@@ -58,7 +58,9 @@ void Tag::copyFromTag(Tag obj)
 bool Tag::openFromXml(XMLObject *pXmlObj)
 {
     XMLObject *pTagObj = pXmlObj;
-    if(pXmlObj == Q_NULLPTR) return false;
+    if(pXmlObj == NULL) {
+        return false;
+    }
     m_iID = pTagObj->getProperty("id").toInt();
     m_szName = pTagObj->getProperty("name");
     m_szUnit = pTagObj->getProperty("unit");
@@ -75,12 +77,14 @@ bool Tag::openFromXml(XMLObject *pXmlObj)
 }
 
 
-bool Tag::saveToXml(XMLObject *pXmlObj) {
+bool Tag::saveToXml(XMLObject *pXmlObj)
+{
     XMLObject *pTagObj = new XMLObject(pXmlObj);
     return saveToXmlInner(pTagObj);
 }
 
-bool Tag::saveToXmlInner(XMLObject *pXmlObj) {
+bool Tag::saveToXmlInner(XMLObject *pXmlObj)
+{
     pXmlObj->setTagName("tag");
     pXmlObj->setProperty("id", QString::number(m_iID));
     pXmlObj->setProperty("name", m_szName);
@@ -97,19 +101,24 @@ bool Tag::saveToXmlInner(XMLObject *pXmlObj) {
     return true;
 }
 
-QString Tag::toXmlNodeString() {
+QString Tag::toXmlNodeString()
+{
     XMLObject tagXml;
     saveToXmlInner(&tagXml);
     return tagXml.write();
 }
 
-bool Tag::fromXmlNodeString(const QString &szNode) {
+bool Tag::fromXmlNodeString(const QString &szNode)
+{
     XMLObject tagXml;
-    if(!tagXml.load(szNode, Q_NULLPTR)) return false;
+    if(!tagXml.load(szNode, NULL)) {
+        return false;
+    }
     return openFromXml(&tagXml);
 }
 
-QJsonObject Tag::toJsonObject() {
+QJsonObject Tag::toJsonObject()
+{
     QJsonObject jsonTagObj;
     jsonTagObj.insert("id", QJsonValue(m_iID));
     jsonTagObj.insert("name", QJsonValue(m_szName));
@@ -126,7 +135,8 @@ QJsonObject Tag::toJsonObject() {
     return jsonTagObj;
 }
 
-void Tag::fromJsonObject(QJsonObject jsonObj) {
+void Tag::fromJsonObject(QJsonObject jsonObj)
+{
     if(!jsonObj.isEmpty()) {
         m_iID = jsonObj["id"].toInt();
         m_szName = jsonObj["name"].toString();
@@ -166,15 +176,18 @@ bool TagManager::openFromXml(XMLObject *pXmlObj)
     foreach(XMLObject* pTagObj, listTagsObj) {
         Tag *pObj = new Tag();
         pObj->openFromXml(pTagObj);
-        if(m_iStartNewID < pObj->m_iID) m_iStartNewID = pObj->m_iID;
+        if(m_iStartNewID < pObj->m_iID) {
+            m_iStartNewID = pObj->m_iID;
+        }
         m_vecTags.append(pObj);
     }
     return true;
 }
 
 
-bool TagManager::saveToXml(XMLObject *pXmlObj) {
-    for(int i=0; i<m_vecTags.count(); i++) {
+bool TagManager::saveToXml(XMLObject *pXmlObj)
+{
+    for(int i = 0; i < m_vecTags.count(); i++) {
         Tag *pObj = m_vecTags.at(i);
         pObj->saveToXml(pXmlObj);
     }
@@ -187,17 +200,21 @@ bool TagManager::saveToXml(XMLObject *pXmlObj) {
  * @details 分配一个
  * @return ID
  */
-int TagManager::allocID() {
+int TagManager::allocID()
+{
     ++m_iStartNewID;
     return m_iStartNewID;
 }
 
-Tag *TagManager::getTag(int id) {
-    for(int i=0; i<m_vecTags.count(); i++) {
+Tag *TagManager::getTag(int id)
+{
+    for(int i = 0; i < m_vecTags.count(); i++) {
         Tag *pObj = m_vecTags.at(i);
-        if(pObj->m_iID == id) return pObj;
+        if(pObj->m_iID == id) {
+            return pObj;
+        }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 

@@ -134,12 +134,12 @@ MainWindow::MainWindow(QWidget *parent)
     QRect rect = QGuiApplication::primaryScreen()->geometry();
     int screenWidth = rect.width();
     int screenHeight = rect.height();
-    this->resize(screenWidth*3/4, screenHeight*3/4);
+    this->resize(screenWidth * 3 / 4, screenHeight * 3 / 4);
     Helper::WidgetMoveCenter(this);
     setWindowTitle(tr("HmiFuncDesigner组态软件"));
     this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态软件"));
     connect(m_pTabProjectMgrObj, SIGNAL(currentChanged(int)), SLOT(onSlotTabProjectMgrCurChanged(int)));
-    onSlotTabProjectMgrCurChanged(0);  
+    onSlotTabProjectMgrCurChanged(0);
 }
 
 MainWindow::~MainWindow()
@@ -164,10 +164,10 @@ void MainWindow::createStatusBar()
  */
 void MainWindow::createActions()
 {
-    QAction *pActObj = Q_NULLPTR;
+    QAction *pActObj = NULL;
 
     // 新建工程
-    pActObj = new QAction(QIcon(":/images/newproject.png"), tr("新建"), Q_NULLPTR);
+    pActObj = new QAction(QIcon(":/images/newproject.png"), tr("新建"), NULL);
     if(pActObj) {
         pActObj->setShortcut(QString("Ctrl+N"));
         connect(pActObj, &QAction::triggered, this, &MainWindow::onNewPoject);
@@ -175,7 +175,7 @@ void MainWindow::createActions()
     }
 
     //  打开工程
-    pActObj = new QAction(QIcon(":/images/openproject.png"), tr("打开"), Q_NULLPTR);
+    pActObj = new QAction(QIcon(":/images/openproject.png"), tr("打开"), NULL);
     if(pActObj) {
         pActObj->setShortcut(QString("Ctrl+O"));
         connect(pActObj, &QAction::triggered, this, &MainWindow::onOpenProject);
@@ -183,14 +183,14 @@ void MainWindow::createActions()
     }
 
     // 关闭工程
-    pActObj = new QAction(QIcon(":/images/projectexit.png"), tr("关闭"), Q_NULLPTR);
+    pActObj = new QAction(QIcon(":/images/projectexit.png"), tr("关闭"), NULL);
     if(pActObj) {
         connect(pActObj, &QAction::triggered, this, &MainWindow::onCloseProject);
         QSoftCore::getCore()->insertAction("Project.Close", pActObj);
     }
 
     // 保存工程
-    pActObj = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), Q_NULLPTR);
+    pActObj = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), NULL);
     if(pActObj) {
         pActObj->setShortcut(QString("Ctrl+S"));
         connect(pActObj, &QAction::triggered, this, &MainWindow::onSaveProject);
@@ -198,7 +198,7 @@ void MainWindow::createActions()
     }
 
     // 设置打开工程的密码
-    pActObj = new QAction(tr("设置打开工程的密码"), Q_NULLPTR);
+    pActObj = new QAction(tr("设置打开工程的密码"), NULL);
     if(pActObj) {
         connect(pActObj, &QAction::triggered, this, &MainWindow::onSetOpenProjPassword);
         QSoftCore::getCore()->insertAction("Project.OpenPassword", pActObj);
@@ -206,7 +206,7 @@ void MainWindow::createActions()
     }
 
     // 最近打开的工程
-    pActObj = new QAction(tr("最近打开的工程"), Q_NULLPTR);
+    pActObj = new QAction(tr("最近打开的工程"), NULL);
     if(pActObj) {
         QSoftCore::getCore()->insertAction("Project.LastOpen", pActObj);
         QJsonObject datJson;
@@ -216,7 +216,7 @@ void MainWindow::createActions()
     }
 
     // 退出
-    pActObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), Q_NULLPTR);
+    pActObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), NULL);
     if(pActObj) {
         pActObj->setShortcut(QString("Ctrl+Q"));
         connect(pActObj, &QAction::triggered, this, &MainWindow::onExit);
@@ -226,28 +226,28 @@ void MainWindow::createActions()
     //-----------------------------<视图>---------------------------------------
 
     // 视图工具栏
-    pActObj = new QAction(tr("视图"), Q_NULLPTR);
+    pActObj = new QAction(tr("视图"), NULL);
     if(pActObj) {
         pActObj->setCheckable(true);
         QSoftCore::getCore()->insertAction("Widget.Toolbar", pActObj);
     }
 
     // 状态栏
-    pActObj = new QAction(tr("状态栏"), Q_NULLPTR);
+    pActObj = new QAction(tr("状态栏"), NULL);
     if(pActObj) {
         pActObj->setCheckable(true);
         QSoftCore::getCore()->insertAction("Widget.StatusBar", pActObj);
     }
 
     // 工作区
-    pActObj = new QAction(tr("工作区"), Q_NULLPTR);
+    pActObj = new QAction(tr("工作区"), NULL);
     if(pActObj) {
         pActObj->setCheckable(true);
         QSoftCore::getCore()->insertAction("Widget.WorkSpace", pActObj);
     }
 
     // 显示区
-    pActObj = new QAction(tr("显示区"), Q_NULLPTR);
+    pActObj = new QAction(tr("显示区"), NULL);
     if(pActObj) {
         pActObj->setCheckable(true);
         QSoftCore::getCore()->insertAction("Widget.DisplayArea", pActObj);
@@ -394,8 +394,9 @@ void MainWindow::createToolbars()
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     QString strFile = Helper::AppDir() + "/lastpath.ini";
-    if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程"))
+    if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程")) {
         ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", QSoftCore::getCore()->getProjectCore()->m_szProjPath);
+    }
 
     writeSettings();
     event->accept();
@@ -441,7 +442,7 @@ void MainWindow::copySystemTags()
         szTags = in.readAll();
         readFile.close();
         XMLObject xml;
-        if(xml.load(szTags, Q_NULLPTR)) {
+        if(xml.load(szTags, NULL)) {
             QSoftCore::getCore()->getProjectCore()->tagMgr_.openFromXml(&xml);
         }
     }
@@ -530,7 +531,9 @@ void MainWindow::doOpenProject(QString proj)
     updateRecentProjectList(proj);
 
     QAction *pActObj = QSoftCore::getCore()->getAction("Project.OpenPassword");
-    if(pActObj) pActObj->setEnabled(true);
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
 }
 
 /**
@@ -542,10 +545,10 @@ void MainWindow::onOpenProject()
     QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
     QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
     QString fileName = QFileDialog::getOpenFileName(this,
-                                                    tr("选择工程文件"),
-                                                    path,
-                                                    tr("project file (*.pdt)"));
-    if(fileName != Q_NULLPTR) {
+                       tr("选择工程文件"),
+                       path,
+                       tr("project file (*.pdt)"));
+    if(fileName != NULL) {
         doOpenProject(fileName);
     }
 }
@@ -563,11 +566,15 @@ void MainWindow::on_actionWorkSpace_triggered(bool checked)
     */
 void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
 {
-    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") return;
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") {
+        return;
+    }
 
     QStringList szListUserData = szItemText.split("|");
     //qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "szListUserData:" << szListUserData;
-    if(szListUserData.size() < 3) return;
+    if(szListUserData.size() < 3) {
+        return;
+    }
 
     QAbstractPage* pPageObj = m_mapNameToPage.value(szListUserData.at(0).toUpper());
     if(pPageObj) {
@@ -593,16 +600,20 @@ void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
  */
 void MainWindow::UpdateProjectName(const QString &szName)
 {
-    QAction *pActObj = Q_NULLPTR;
+    QAction *pActObj = NULL;
     pActObj = QSoftCore::getCore()->getAction("Tools.Run");
     if(!szName.isEmpty()) {
         QString szNameTmp = szName.mid(szName.lastIndexOf("/") + 1, szName.indexOf(".") - szName.lastIndexOf("/") - 1);
         this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
-        if(pActObj) pActObj->setEnabled(true);
+        if(pActObj) {
+            pActObj->setEnabled(true);
+        }
     } else {
         QSoftCore::getCore()->getProjectCore()->m_szProjFile = "";
         QSoftCore::getCore()->getProjectCore()->m_szProjPath = "";
-        if(pActObj) pActObj->setEnabled(false);
+        if(pActObj) {
+            pActObj->setEnabled(false);
+        }
         this->m_pProjectTreeViewObj->updateUI();
     }
 }
@@ -647,15 +658,18 @@ void MainWindow::onSetOpenProjPassword()
     */
 void MainWindow::onCloseProject()
 {
-    if(this->m_pProjectTreeViewObj->getProjectName() == tr("未创建工程"))
+    if(this->m_pProjectTreeViewObj->getProjectName() == tr("未创建工程")) {
         return;
+    }
 
     UpdateProjectName(QString());
     onSlotTabProjectMgrCurChanged(0);
     m_pTabProjectMgrObj->setCurrentIndex(0);
 
     QAction *pActObj = QSoftCore::getCore()->getAction("Project.OpenPassword");
-    if(pActObj) pActObj->setEnabled(false);
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
 }
 
 
@@ -807,13 +821,13 @@ void MainWindow::onSlotUpLoadProject()
         if (tarProc->waitForStarted()) {
             if (tarProc->waitForFinished()) {
                 QString strSrc = QCoreApplication::applicationDirPath() +
-                        "/UploadProjects/tmp/RunProject";
+                                 "/UploadProjects/tmp/RunProject";
 
                 Helper::CopyDir(strSrc, desDir, true);
                 Helper::DeleteDir(tmpDir);
 
                 QString tarProj = QCoreApplication::applicationDirPath() +
-                        "/UploadProjects/RunProject.tar";
+                                  "/UploadProjects/RunProject.tar";
                 QFile tarProjFile(tarProj);
                 if (tarProjFile.exists()) {
                     tarProjFile.remove();
@@ -835,7 +849,9 @@ void MainWindow::onSlotUpLoadProject()
     */
 void MainWindow::onSlotDownloadProject()
 {
-    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile.isEmpty()) return;
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile.isEmpty()) {
+        return;
+    }
 
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/tmp";
@@ -929,10 +945,10 @@ void MainWindow::loadRecentProjectList()
         QStringList slist;
         ConfigUtils::getCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
-        for (int i=0; i<slist.count(); i++) {
+        for (int i = 0; i < slist.count(); i++) {
             QAction *pAct = new QAction(slist.at(i));
             pAct->setStatusTip(tr(""));
-            connect(pAct, &QAction::triggered, this, [=]{
+            connect(pAct, &QAction::triggered, this, [ = ] {
                 this->doOpenProject(pAct->text());
             });
             this->m_pMenuProjectObj->insertAction(QSoftCore::getCore()->getAction("Project.LastOpen"), pAct);
@@ -943,17 +959,20 @@ void MainWindow::loadRecentProjectList()
 
     QList<QAction *> listActRemove;
     QList<QAction *> listAct = this->m_pMenuProjectObj->actions();
-    for (int i = 0; i<listAct.size(); ++i) {
+    for (int i = 0; i < listAct.size(); ++i) {
         QAction *pActObj = listAct.at(i);
-        if(pActObj->isSeparator()) listActRemove.append(pActObj);
+        if(pActObj->isSeparator()) {
+            listActRemove.append(pActObj);
+        }
         QVariant datUser = pActObj->data();
         if(datUser.isValid()) {
             QJsonObject datJson = datUser.toJsonObject();
-            if(datJson["which"].toString() == "LastOpen")
+            if(datJson["which"].toString() == "LastOpen") {
                 listActRemove.append(pActObj);
+            }
         }
     }
-    for (int j = 0; j<listActRemove.size(); ++j) {
+    for (int j = 0; j < listActRemove.size(); ++j) {
         this->m_pMenuProjectObj->removeAction(listActRemove.at(j));
     }
 }
@@ -980,7 +999,9 @@ void MainWindow::updateRecentProjectList(QString newProj)
             }
         }
 
-        if (slist.count() >= 5) slist.removeLast();
+        if (slist.count() >= 5) {
+            slist.removeLast();
+        }
 
         slist.push_front(newProj);
         ConfigUtils::writeCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
@@ -1001,17 +1022,18 @@ void MainWindow::updateRecentProjectList(QString newProj)
             if(bStart && bEnd == false) {
                 listActRemove.append(pAct);
             }
-            if(pAct->text() == tr("最近文件列表"))
+            if(pAct->text() == tr("最近文件列表")) {
                 listActRemove.append(pAct);
+            }
         }
-        for (int j = 0; j<listActRemove.size(); ++j) {
+        for (int j = 0; j < listActRemove.size(); ++j) {
             this->m_pMenuProjectObj->removeAction(listActRemove.at(j));
         }
 
         /////////////////////////////////////////////////////
 
         bStart = bEnd = false;
-        QAction *pActPos = Q_NULLPTR;
+        QAction *pActPos = NULL;
         listAct.clear();
         listAct = this->m_pMenuProjectObj->actions();
         for (int i = 0; i < listAct.size(); ++i) {
@@ -1028,10 +1050,10 @@ void MainWindow::updateRecentProjectList(QString newProj)
             }
         }
 
-        for (int i=0; i<slist.count(); i++) {
+        for (int i = 0; i < slist.count(); i++) {
             QAction *pAct = new QAction(slist.at(i), this);
             pAct->setStatusTip(tr(""));
-            connect(pAct, &QAction::triggered, this, [=]{
+            connect(pAct, &QAction::triggered, this, [ = ] {
                 this->doOpenProject(pAct->text());
             });
             this->m_pMenuProjectObj->insertAction(pActPos, pAct);
@@ -1057,25 +1079,31 @@ void MainWindow::onSlotTabProjectMgrCurChanged(int index)
             UserEvent evShow(UserEvent::EVT_USER_HIDE_UPDATE, QStringList());
             QCoreApplication::sendEvent(m_pDesignerWidgetObj, &evShow);
         }
-        if(pToolBarObj) pToolBarObj->setVisible(false); // 画面编辑工具条
+        if(pToolBarObj) {
+            pToolBarObj->setVisible(false);    // 画面编辑工具条
+        }
     } else {
-        if(pToolBarObj) pToolBarObj->setVisible(index == 1);
+        if(pToolBarObj) {
+            pToolBarObj->setVisible(index == 1);
+        }
         switch (index) {
-        case 0: {
+            case 0: {
 
-        }break;
-        case 1: {
-            if(m_pDesignerWidgetObj) {
-                UserEvent evShow(UserEvent::EVT_USER_SHOW_UPDATE, QStringList());
-                QCoreApplication::sendEvent(m_pDesignerWidgetObj, &evShow);
-                m_pCentralWidgetObj->setCurrentWidget(m_pDesignerWidgetObj);
-                QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
-                if(pPageObj) {
-                    QSoftCore::getCore()->setActivityStack(pPageObj->getUndoStack());
+            } break;
+            case 1: {
+                if(m_pDesignerWidgetObj) {
+                    UserEvent evShow(UserEvent::EVT_USER_SHOW_UPDATE, QStringList());
+                    QCoreApplication::sendEvent(m_pDesignerWidgetObj, &evShow);
+                    m_pCentralWidgetObj->setCurrentWidget(m_pDesignerWidgetObj);
+                    QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
+                    if(pPageObj) {
+                        QSoftCore::getCore()->setActivityStack(pPageObj->getUndoStack());
+                    }
                 }
             }
-        }break;
-        default: break;
+            break;
+            default:
+                break;
         }
     }
 }

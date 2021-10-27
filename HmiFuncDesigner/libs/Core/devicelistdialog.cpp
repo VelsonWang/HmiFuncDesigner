@@ -23,11 +23,13 @@ DeviceListDialog::DeviceListDialog(QString stype, QWidget *parent)
     TreeViewInit();
 }
 
-DeviceListDialog::~DeviceListDialog() {
+DeviceListDialog::~DeviceListDialog()
+{
     delete ui;
 }
 
-void DeviceListDialog::TreeViewInit() {
+void DeviceListDialog::TreeViewInit()
+{
     ui->treeView->setHeaderHidden(true);
     pTreeViewItemModel = new QStandardItemModel();
 
@@ -37,8 +39,9 @@ void DeviceListDialog::TreeViewInit() {
     QString iniFileName = QApplication::applicationDirPath() + "/Config/communication_device.ini";
     // qDebug()<< "path " << iniFileName;
     QFile fileCfg(iniFileName);
-    if (!fileCfg.exists())
+    if (!fileCfg.exists()) {
         QMessageBox::critical(this, tr("提示"), tr("设备列表选型配置文件不存在！"));
+    }
 
     m_SupportDevList.clear();
     // device type
@@ -48,7 +51,7 @@ void DeviceListDialog::TreeViewInit() {
         QString sDevTypeOne = sDevTypeList.at(i).trimmed();
         QString key = sDevTypeOne.left(sDevTypeOne.indexOf("-"));
         QString nameTmp =
-                sDevTypeOne.right(sDevTypeOne.length() - sDevTypeOne.indexOf("-") - 1);
+            sDevTypeOne.right(sDevTypeOne.length() - sDevTypeOne.indexOf("-") - 1);
         QString name = QString::fromLocal8Bit(nameTmp.toLatin1());
         // qDebug()<< key << "  " << name;
         QStandardItem *itemDevTypeOne = new QStandardItem(name);
@@ -70,11 +73,13 @@ void DeviceListDialog::TreeViewInit() {
 
                 QString keyDev = sDevOne.left(sDevOne.indexOf("-"));
                 QString nameTmpDev =
-                        sDevOne.right(sDevOne.length() - sDevOne.indexOf("-") - 1);
+                    sDevOne.right(sDevOne.length() - sDevOne.indexOf("-") - 1);
                 QString nameDev = QString::fromLocal8Bit(nameTmpDev.toLatin1());
                 // qDebug()<< keyDev << "  " << nameDev;
 
-                if (m_strPortType != nameDev) continue;
+                if (m_strPortType != nameDev) {
+                    continue;
+                }
 
                 QStandardItem *itemDev = new QStandardItem(keyDev);
                 itemDev->setEditable(false);
@@ -97,14 +102,16 @@ void DeviceListDialog::TreeViewInit() {
 }
 
 // 取得设备名称
-QString DeviceListDialog::GetDeviceName() const {
+QString DeviceListDialog::GetDeviceName() const
+{
     return m_DeviceName;
 }
 
-void DeviceListDialog::on_btnOK_clicked() {
+void DeviceListDialog::on_btnOK_clicked()
+{
     QModelIndex modIndex = ui->treeView->currentIndex();
     QStandardItem *item = pTreeViewItemModel->itemFromIndex(modIndex);
-    if (item == Q_NULLPTR) {
+    if (item == NULL) {
         QMessageBox::critical(this, tr("提示"), tr("未选设备！"));
         return;
     }
@@ -115,13 +122,15 @@ void DeviceListDialog::on_btnOK_clicked() {
             found = true;
         }
     }
-    if (!found)
+    if (!found) {
         QMessageBox::critical(this, tr("提示"), tr("设备错误！"));
-    else
+    } else {
         accept();
+    }
 }
 
-void DeviceListDialog::on_btnCancel_clicked() {
+void DeviceListDialog::on_btnCancel_clicked()
+{
     m_DeviceName = "";
     reject();
 }

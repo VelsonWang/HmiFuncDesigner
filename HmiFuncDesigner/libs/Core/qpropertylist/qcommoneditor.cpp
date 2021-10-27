@@ -4,40 +4,40 @@
 
 QCommonEditor::QCommonEditor(QAbstractProperty *property, QUndoStack *, QWidget *parent):
     QWidget(parent),
-    m_icon(new QLabel(this)),
-    m_text(new QLabel(this)),
-    m_property(property)
+    icon(new QLabel(this)),
+    text(new QLabel(this)),
+    property(property)
 {
     this->setFocusPolicy(Qt::StrongFocus);
-    m_text->setContentsMargins(0, 1, 0, 0);
-    m_text->setText(m_property->get_value_text());
-    QIcon icon = m_property->get_value_icon();
-    if(icon.isNull()) {
-        m_icon->setVisible(false);
+    text->setContentsMargins(0, 1, 0, 0);
+    text->setText(property->get_value_text());
+    if(property->get_value_icon().isNull()) {
+        icon->setVisible(false);
     } else {
-        QPixmap pix = icon.pixmap(QSize(16, 16));
-        m_icon->setFixedSize(16, 16);
-        m_icon->setPixmap(pix);
+        QPixmap pix = property->get_value_icon().pixmap(QSize(16, 16));
+        icon->setFixedSize(16, 16);
+        icon->setPixmap(pix);
     }
 
-    QHBoxLayout *l = new QHBoxLayout;
-    this->setLayout(l);
-    l->setContentsMargins(3, 2, 3, 2);
-    l->setSpacing(3);
-    l->addWidget(m_icon);
-    l->addWidget(m_text);
-    connect(m_property, SIGNAL(refresh()), this, SLOT(onPropertyChanged()));
+    QHBoxLayout *layout = new QHBoxLayout;
+    this->setLayout(layout);
+    layout->setContentsMargins(3, 2, 3, 2);
+    layout->setSpacing(3);
+    layout->addWidget(icon);
+    layout->addWidget(text);
+    connect(property, SIGNAL(refresh()), this, SLOT(onPropertyChanged()));
 }
 
 void QCommonEditor::onPropertyChanged()
 {
-    m_text->setText(m_property->get_value_text());
-    QIcon icon = m_property->get_value_icon();
-    if(icon.isNull()) {
-        m_icon->setVisible(false);
-    } else {
-        QPixmap pix = icon.pixmap(QSize(16, 16));
-        m_icon->setFixedSize(16, 16);
-        m_icon->setPixmap(pix);
+    if(property) {
+        text->setText(property->get_value_text());
+        if(property->get_value_icon().isNull()) {
+            icon->setVisible(false);
+        } else {
+            QPixmap pix = property->get_value_icon().pixmap(QSize(16, 16));
+            icon->setFixedSize(16, 16);
+            icon->setPixmap(pix);
+        }
     }
 }

@@ -12,15 +12,15 @@ class CORELIB_EXPORT QAbstractUpdate : public QObject
 {
     Q_OBJECT
 public:
-    QAbstractUpdate(QObject* parent=0);
+    QAbstractUpdate(QObject* parent = 0);
     ~QAbstractUpdate();
     QList<QObject*> devices();
     QObject*    device(const QString &name);
 
-    virtual void    addFiles(const QStringList &files,const QString& basePath)=0;
-    virtual void    clearFiles()=0;
-    virtual void    update(const QString &name)=0;
-    virtual QString name()=0;
+    virtual void    addFiles(const QStringList &files, const QString& basePath) = 0;
+    virtual void    clearFiles() = 0;
+    virtual void    update(const QString &name) = 0;
+    virtual QString name() = 0;
     void    clear();
 protected:
     void    addDevice(QObject* device);
@@ -33,7 +33,7 @@ signals:
 public slots:
 protected:
     QList<QObject*>     m_devices;
-    QMap<QString,QObject*>      m_nameToDevice;
+    QMap<QString, QObject*>      m_nameToDevice;
     QList<QObject*>     m_sendDevices;
 };
 

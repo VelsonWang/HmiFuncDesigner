@@ -26,7 +26,7 @@ public:
     static void register_property(const QString &name,const QMetaObject* property);
     static void register_editor(const QString &name,const QMetaObject* editor);
     static QAbstractProperty* create_property(const QString& name);
-    static QWidget*           create_editor(const QString& name,QAbstractProperty* property,QUndoStack* stack=NULL);
+    static QWidget*           createEditor(const QString& name,QAbstractProperty* property,QUndoStack* stack=NULL);
 protected:
     static QMap<QString,tagPropertyInfo*>        m_meta_map;
 };

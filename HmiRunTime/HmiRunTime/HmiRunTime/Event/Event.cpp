@@ -46,15 +46,17 @@ ListenerRegister::~ListenerRegister()
 
 void ListenerRegister::addListener(Listener *pObj)
 {
-    if (pObj == Q_NULLPTR)
+    if (pObj == NULL) {
         return;
+    }
     m_listeners.append(pObj);
 }
 
 void ListenerRegister::removeListener(Listener *pObj)
 {
-    if (pObj == Q_NULLPTR)
+    if (pObj == NULL) {
         return;
+    }
     m_listeners.removeOne(pObj);
 }
 
@@ -62,13 +64,11 @@ void ListenerRegister::fireAEvent(RuntimeEvent e)
 {
     QVector<Listener*> tmpListeners;
     lock.lockForWrite();
-    foreach (Listener *pListener, m_listeners)
-    {
+    foreach (Listener *pListener, m_listeners) {
         tmpListeners.append(pListener);
     }
     lock.unlock();
-    foreach (Listener *pListener, tmpListeners)
-    {
+    foreach (Listener *pListener, tmpListeners) {
         pListener->performed(e);
     }
 }

@@ -11,15 +11,15 @@ QFunctionEditor::QFunctionEditor(QAbstractProperty *property, QUndoStack* stack,
 
 void QFunctionEditor::onBtnClicked()
 {
-    QStringList szListFunc = m_property->get_value().toStringList();
-    QString szSupportEvents = m_property->getAttribute("supportevents").toString();
+    QStringList szListFunc = property->get_value().toStringList();
+    QString szSupportEvents = property->getAttribute("supportevents").toString();
     QStringList szListSupportEvents = szSupportEvents.split("|");
     FunctionEditorDialog dlg(this, szListSupportEvents);
     dlg.setFunctions(szListFunc);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList szListFuncNew = dlg.getFunctions();
         QVariant v(szListFuncNew);
-        m_property->notifyEditValue(v);
+        property->notifyEditValue(v);
     }
 }
 

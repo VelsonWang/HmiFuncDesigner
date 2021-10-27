@@ -240,9 +240,9 @@ QTableWidgetEx::QTableWidgetEx(QWidget *parent) : QTableView(parent)
 
 QTableWidgetEx::~QTableWidgetEx()
 {
-    if(m_pTagTableModel != Q_NULLPTR) {
+    if(m_pTagTableModel != NULL) {
         delete m_pTagTableModel;
-        m_pTagTableModel = Q_NULLPTR;
+        m_pTagTableModel = NULL;
     }
 }
 
@@ -336,7 +336,7 @@ void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj)
         if (pDevPluginObj) {
             QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
             XMLObject xmlObj;
-            if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+            if(xmlObj.load(szDeviceDescInfo, NULL)) {
                 XMLObject*pRegAreasObj = xmlObj.getCurrentChild("RegAreas");
                 if(pRegAreasObj) {
                     QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
@@ -427,7 +427,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                 if (pDevPluginObj) {
                     QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                     XMLObject xmlObj;
-                    if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+                    if(xmlObj.load(szDeviceDescInfo, NULL)) {
                         XMLObject*pRegAreasObj = xmlObj.getCurrentChild("RegAreas");
                         if(pRegAreasObj) {
                             QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
@@ -472,7 +472,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                     if (pDevPluginObj) {
                         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                         XMLObject xmlObj;
-                        if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+                        if(xmlObj.load(szDeviceDescInfo, NULL)) {
                             XMLObject*pRegAreasObj = xmlObj.getCurrentChild("RegAreas");
                             if(pRegAreasObj) {
                                 QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
@@ -633,7 +633,7 @@ void QTableWidgetEx::onAddTag()
         if (pDevPluginObj) {
             QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
             XMLObject xmlObj;
-            if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+            if(xmlObj.load(szDeviceDescInfo, NULL)) {
                 XMLObject*pRegAreasObj = xmlObj.getCurrentChild("RegAreas");
                 if(pRegAreasObj) {
                     QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
@@ -678,7 +678,7 @@ void QTableWidgetEx::onAddTag()
             if (pDevPluginObj) {
                 QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                 XMLObject xmlObj;
-                if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+                if(xmlObj.load(szDeviceDescInfo, NULL)) {
                     XMLObject*pRegAreasObj = xmlObj.getCurrentChild("RegAreas");
                     if(pRegAreasObj) {
                         QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
@@ -750,7 +750,7 @@ void QTableWidgetEx::onPasteTag()
         updateTable();
     } else {
         delete pTagObj;
-        pTagObj = Q_NULLPTR;
+        pTagObj = NULL;
     }
 }
 
@@ -781,14 +781,14 @@ void QTableWidgetEx::onDeleteTag()
     while (tagIDMapIterator.hasPrevious()) {
         tagIDMapIterator.previous();
         iIDToDel = tagIDMapIterator.key();
-        Tag *pFindTagObj = Q_NULLPTR;
+        Tag *pFindTagObj = NULL;
         foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
             if(pTagObj->m_iID == iIDToDel) {
                 pFindTagObj = pTagObj;
                 break;
             }
         }
-        if(pFindTagObj != Q_NULLPTR) {
+        if(pFindTagObj != NULL) {
             QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.removeOne(pFindTagObj);
             bUpdate = true;
         }
@@ -855,7 +855,7 @@ void QTableWidgetEx::onEditTag()
                 if (pDevPluginObj) {
                     QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                     XMLObject xmlObj;
-                    if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+                    if(xmlObj.load(szDeviceDescInfo, NULL)) {
                         XMLObject*pRegAreasObj = xmlObj.getCurrentChild("RegAreas");
                         if(pRegAreasObj) {
                             QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
@@ -897,7 +897,7 @@ void QTableWidgetEx::onEditTag()
                     if (pDevPluginObj) {
                         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                         XMLObject xmlObj;
-                        if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+                        if(xmlObj.load(szDeviceDescInfo, NULL)) {
                             XMLObject*pRegAreasObj = xmlObj.getCurrentChild("RegAreas");
                             if(pRegAreasObj) {
                                 QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
@@ -929,7 +929,7 @@ void QTableWidgetEx::onEditTag()
 void QTableWidgetEx::setActionEnable(TagTableActonType id, bool enable)
 {
     QAction* pActObj = m_mapIdToAction[id];
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(enable);
     }
 }
@@ -1052,13 +1052,13 @@ TagManagerWin::TagManagerWin(QWidget *parent) : QWidget(parent)
 
 TagManagerWin::~TagManagerWin()
 {
-    if(m_pTagMgrTableViewObj != Q_NULLPTR) {
+    if(m_pTagMgrTableViewObj != NULL) {
         delete m_pTagMgrTableViewObj;
-        m_pTagMgrTableViewObj = Q_NULLPTR;
+        m_pTagMgrTableViewObj = NULL;
     }
-    if(m_pTopVLayoutObj != Q_NULLPTR) {
+    if(m_pTopVLayoutObj != NULL) {
         delete m_pTopVLayoutObj;
-        m_pTopVLayoutObj = Q_NULLPTR;
+        m_pTopVLayoutObj = NULL;
     }
 }
 
@@ -1071,11 +1071,11 @@ bool TagManagerWin::event(QEvent *ev)
             if(ev->type() == UserEvent::EVT_USER_SHOW_UPDATE) {
                 qDebug() << __FILE__ << __LINE__ << __FUNCTION__ ;
 #if 0
-                if(pMainWin == Q_NULLPTR) {
+                if(pMainWin == NULL) {
                     return;
                 }
 
-                if(m_pMainWinObj == Q_NULLPTR) {
+                if(m_pMainWinObj == NULL) {
 
                     //-----------------------------<变量编辑菜单>----------------------------------
                     // 添加变量
@@ -1141,51 +1141,51 @@ bool TagManagerWin::event(QEvent *ev)
             } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
                 qDebug() << __FILE__ << __LINE__ << __FUNCTION__ ;
 #if 0
-                if(pMainWin == Q_NULLPTR) {
+                if(pMainWin == NULL) {
                     return;
                 }
 
                 if(m_pMainWinObj) {
                     m_pMenuTagEditObj->clear();
 
-                    if(m_pActAddTagObj != Q_NULLPTR) {
+                    if(m_pActAddTagObj != NULL) {
                         delete m_pActAddTagObj;
-                        m_pActAddTagObj = Q_NULLPTR;
+                        m_pActAddTagObj = NULL;
                     }
-                    if(m_pActCopyTagObj != Q_NULLPTR) {
+                    if(m_pActCopyTagObj != NULL) {
                         delete m_pActCopyTagObj;
-                        m_pActCopyTagObj = Q_NULLPTR;
+                        m_pActCopyTagObj = NULL;
                     }
-                    if(m_pActPasteTagObj != Q_NULLPTR) {
+                    if(m_pActPasteTagObj != NULL) {
                         delete m_pActPasteTagObj;
-                        m_pActPasteTagObj = Q_NULLPTR;
+                        m_pActPasteTagObj = NULL;
                     }
-                    if(m_pActModifyTagObj != Q_NULLPTR) {
+                    if(m_pActModifyTagObj != NULL) {
                         delete m_pActModifyTagObj;
-                        m_pActModifyTagObj = Q_NULLPTR;
+                        m_pActModifyTagObj = NULL;
                     }
-                    if(m_pActDeleteTagObj != Q_NULLPTR) {
+                    if(m_pActDeleteTagObj != NULL) {
                         delete m_pActDeleteTagObj;
-                        m_pActDeleteTagObj = Q_NULLPTR;
+                        m_pActDeleteTagObj = NULL;
                     }
-                    if(m_pActExportTagObj != Q_NULLPTR) {
+                    if(m_pActExportTagObj != NULL) {
                         delete m_pActExportTagObj;
-                        m_pActExportTagObj = Q_NULLPTR;
+                        m_pActExportTagObj = NULL;
                     }
-                    if(m_pActImportTagObj != Q_NULLPTR) {
+                    if(m_pActImportTagObj != NULL) {
                         delete m_pActImportTagObj;
-                        m_pActImportTagObj = Q_NULLPTR;
+                        m_pActImportTagObj = NULL;
                     }
 
                     pMainWin->menuBar()->removeAction(m_pMenuTagEditObj->menuAction());
-                    if(m_pMenuTagEditObj != Q_NULLPTR) {
+                    if(m_pMenuTagEditObj != NULL) {
                         delete m_pMenuTagEditObj;
-                        m_pMenuTagEditObj = Q_NULLPTR;
+                        m_pMenuTagEditObj = NULL;
                     }
 
                     pMainWin->removeToolBar(m_pToolBarTagEditObj);
 
-                    m_pMainWinObj = Q_NULLPTR;
+                    m_pMainWinObj = NULL;
                 }
 #endif
                 return true;

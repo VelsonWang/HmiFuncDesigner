@@ -15,7 +15,7 @@ class CORELIB_EXPORT QToolBarButton: public QToolButton
     Q_OBJECT
     Q_PROPERTY(float fader READ fader WRITE setFader)//鼠标移动上的时候阴影透明度
 public:
-    QToolBarButton(QAction *action,QWidget *parent = 0);
+    QToolBarButton(QAction *action, QWidget *parent = 0);
 
     void    paintEvent(QPaintEvent *event);//绘制
     bool    event(QEvent *e);//事件处理

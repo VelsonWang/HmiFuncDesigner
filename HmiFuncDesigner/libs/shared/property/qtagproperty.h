@@ -7,7 +7,7 @@ class QTagProperty : public QAbstractProperty
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QTagProperty(QAbstractProperty* parent = Q_NULLPTR);
+    Q_INVOKABLE QTagProperty(QAbstractProperty* parent = NULL);
     QIcon get_value_icon();
     QString get_value_text();
 };

@@ -8,7 +8,8 @@
 
 
 
-namespace Ui {
+namespace Ui
+{
 class InsertTagDlg;
 }
 
@@ -17,7 +18,7 @@ class InsertTagDlg : public QDialog
     Q_OBJECT
 
 public:
-    explicit InsertTagDlg(QWidget *parent = Q_NULLPTR);
+    explicit InsertTagDlg(QWidget *parent = NULL);
     ~InsertTagDlg();
     QString getSelectedTagName(void) const;
 

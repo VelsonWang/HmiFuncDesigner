@@ -38,7 +38,7 @@ void PortThread::Start()
     }
     mbIsRunning = true;
     foreach (Vendor *pVendor, m_VendorList) {
-        if(pVendor != Q_NULLPTR) {
+        if(pVendor != NULL) {
             if(!pVendor->isRunning()) {
                 pVendor->open();
                 pVendor->initialize();
@@ -57,7 +57,7 @@ void PortThread::Stop()
 {
     mbIsRunning = false;
     foreach (Vendor *pVendor, m_VendorList) {
-        if(pVendor != Q_NULLPTR) {
+        if(pVendor != NULL) {
             if(pVendor->isRunning()) {
                 pVendor->stop();
                 pVendor->close();
@@ -76,7 +76,7 @@ void PortThread::run()
             if(!mbIsRunning) {
                 return;
             }
-            if(pVendor != Q_NULLPTR) {
+            if(pVendor != NULL) {
                 pVendor->doLoop();
             }
         }

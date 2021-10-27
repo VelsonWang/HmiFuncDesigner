@@ -108,7 +108,7 @@ bool NetDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 
 Vendor::Vendor(QProjectCore *coreObj)
 {
-    m_pPortObj = Q_NULLPTR;
+    m_pPortObj = NULL;
     m_readList.clear();
     m_writeQueue.clear();
     m_bIsRunning = false;
@@ -128,13 +128,13 @@ Vendor::~Vendor()
         m_writeQueue.clear();
     }
 
-    if(m_pPortObj != Q_NULLPTR) {
+    if(m_pPortObj != NULL) {
         delete m_pPortObj;
-        m_pPortObj = Q_NULLPTR;
+        m_pPortObj = NULL;
     }
-    if(m_pVendorPrivateObj != Q_NULLPTR) {
+    if(m_pVendorPrivateObj != NULL) {
         delete m_pVendorPrivateObj;
-        m_pVendorPrivateObj = Q_NULLPTR;
+        m_pVendorPrivateObj = NULL;
     }
 }
 
@@ -157,7 +157,7 @@ void Vendor::clearWriteBuffer()
  */
 QString Vendor::getDeviceName()
 {
-    if(m_pVendorPrivateObj != Q_NULLPTR) {
+    if(m_pVendorPrivateObj != NULL) {
         return m_pVendorPrivateObj->m_sDeviceName;
         //ComDevicePrivate *pComDevicePrivateObj = dynamic_cast<ComDevicePrivate *>(this->m_pVendorPrivateObj);
     }
@@ -182,9 +182,9 @@ bool Vendor::open()
  */
 void Vendor::initialize()
 {
-    if(m_pVendorPluginObj != Q_NULLPTR) {
+    if(m_pVendorPluginObj != NULL) {
         m_pVendorPluginObj->initailizeDevice(this);
-        m_pVendorPluginObj->connectDevice(Q_NULLPTR);
+        m_pVendorPluginObj->connectDevice(NULL);
     }
 }
 
@@ -228,7 +228,7 @@ RunTimeTag* Vendor::findIOTagByID(int id)
             return pTag;
         }
     }
-    return Q_NULLPTR;
+    return NULL;
 }
 
 
@@ -355,7 +355,7 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
                 pTag->setReadBlockReadTagSuccess(true);
             } else { // 单一变量读取操作
                 RunTimeTag* pBlockReadTag = pTag->getBlockReadTag();
-                if(pBlockReadTag != Q_NULLPTR) {
+                if(pBlockReadTag != NULL) {
                     // 块读取变量读取成功, 变量直接拷贝数据, 否则直接读取单一变量
                     if(pBlockReadTag->isReadBlockReadTagSuccess()) {
                         int iBlockRegAddr = pBlockReadTag->GetRegisterAddress() + pBlockReadTag->GetOffset();
@@ -415,7 +415,7 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
                         }
                     }
                 }
-                if(pDBTagObject != Q_NULLPTR) {
+                if(pDBTagObject != NULL) {
                     pDBTagObject->SetData(pTag->pReadBuf);
                 }
             }
@@ -495,16 +495,16 @@ bool Vendor::readIOTags()
         }
 #if 0
         if(pTag->getBlockReadTagId() == "block" || m_readList.size() == 1) { // 块读取变量或者只有一个变量
-            if(m_pVendorPrivateObj != Q_NULLPTR) {
+            if(m_pVendorPrivateObj != NULL) {
                 if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
                     QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
                 }
             }
         } else {
             IOTag* pBlockReadTag = pTag->getBlockReadTag();
-            if(pBlockReadTag != Q_NULLPTR) {
+            if(pBlockReadTag != NULL) {
                 if(!pBlockReadTag->isReadBlockReadTagSuccess()) {
-                    if(m_pVendorPrivateObj != Q_NULLPTR) {
+                    if(m_pVendorPrivateObj != NULL) {
                         if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
                             QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
                         }
@@ -591,9 +591,9 @@ bool Vendor::isOnLine()
  */
 bool Vendor::close()
 {
-    if(m_pVendorPluginObj != Q_NULLPTR) {
-        m_pVendorPluginObj->disconnectDevice(Q_NULLPTR);
-        m_pVendorPluginObj->unInitailizeDevice(Q_NULLPTR);
+    if(m_pVendorPluginObj != NULL) {
+        m_pVendorPluginObj->disconnectDevice(NULL);
+        m_pVendorPluginObj->unInitailizeDevice(NULL);
     }
     return true;
 }
@@ -606,7 +606,7 @@ bool Vendor::close()
  */
 QString Vendor::getPortName()
 {
-    if(m_pVendorPrivateObj != Q_NULLPTR) {
+    if(m_pVendorPrivateObj != NULL) {
         if(m_pVendorPrivateObj->m_sDeviceType == "COM") {
             ComDevicePrivate *pComDevicePrivateObj = (ComDevicePrivate *)m_pVendorPrivateObj;
             return pComDevicePrivateObj->m_sPortNumber;

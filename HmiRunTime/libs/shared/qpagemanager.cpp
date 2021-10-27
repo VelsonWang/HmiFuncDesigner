@@ -76,7 +76,7 @@ void QPageManager::save(const QString &project_path)
 void QPageManager::newPage(const QString &szPageName)
 {
     QAbstractHost* host = QHostFactory::create_host(FORM_TITLE);
-    if(host != Q_NULLPTR) {
+    if(host != NULL) {
         m_page_list.insert(m_page_list.size(), host);
         m_uuid_to_page.insert(host->getUuid(), host);
         QList<QAbstractHost*> list;
@@ -84,7 +84,7 @@ void QPageManager::newPage(const QString &szPageName)
         while(list.size() > 0) {
             QAbstractHost *h = list.takeFirst();
             QAbstractProperty* pro = h->getProperty("objectName");
-            if(pro != Q_NULLPTR) {
+            if(pro != NULL) {
                 pro->set_value(QVariant(szPageName));
                 connect(pro, SIGNAL(value_chaged(QVariant, QVariant)), this, SLOT(host_name_changed_slot(QVariant, QVariant)));
             }
@@ -106,7 +106,7 @@ void QPageManager::load(XMLObject *pXmlObj)
         QList<XMLObject*> listForms = pXmlObj->getChildren();
         foreach(XMLObject* pObj, listForms) {
             QAbstractHost* host = QHostFactory::create_host(pObj);
-            if(host != Q_NULLPTR) {
+            if(host != NULL) {
                 m_page_list.append(host);
                 m_uuid_to_page.insert(host->getUuid(), host);
                 host->setProperty("old_file_name", "");
@@ -116,7 +116,7 @@ void QPageManager::load(XMLObject *pXmlObj)
                 while(list.size() > 0) {
                     QAbstractHost *h = list.takeFirst();
                     QAbstractProperty* pro = h->getProperty("objectName");
-                    if(pro != Q_NULLPTR) {
+                    if(pro != NULL) {
                         connect(pro, SIGNAL(value_chaged(QVariant, QVariant)),
                                 this, SLOT(host_name_changed_slot(QVariant, QVariant)));
                     }
@@ -141,7 +141,7 @@ void QPageManager::load(XMLObject *pXmlObj)
         }
 
         QAbstractHost* host = QHostFactory::create_host(&xml);
-        if(host != Q_NULLPTR) {
+        if(host != NULL) {
             m_page_list.append(host);
             m_uuid_to_page.insert(host->getUuid(), host);
             host->setProperty("old_file_name", "");
@@ -151,7 +151,7 @@ void QPageManager::load(XMLObject *pXmlObj)
             while(list.size() > 0) {
                 QAbstractHost *h = list.takeFirst();
                 QAbstractProperty* pro = h->getProperty("objectName");
-                if(pro != Q_NULLPTR) {
+                if(pro != NULL) {
                     connect(pro, SIGNAL(value_chaged(QVariant, QVariant)),
                             this, SLOT(host_name_changed_slot(QVariant, QVariant)));
                 }
@@ -203,7 +203,7 @@ void QPageManager::load_page(const QString &fileName)
     }
 
     QAbstractHost* host = QHostFactory::create_host(&xml);
-    if(host != Q_NULLPTR) {
+    if(host != NULL) {
         m_page_list.append(host);
         m_uuid_to_page.insert(host->getUuid(), host);
         host->setProperty("old_file_name", fileName);
@@ -213,7 +213,7 @@ void QPageManager::load_page(const QString &fileName)
         while(list.size() > 0) {
             QAbstractHost *h = list.takeFirst();
             QAbstractProperty* pro = h->getProperty("objectName");
-            if(pro != Q_NULLPTR) {
+            if(pro != NULL) {
                 connect(pro, SIGNAL(value_chaged(QVariant, QVariant)), this, SLOT(host_name_changed_slot(QVariant, QVariant)));
             }
             list += h->getChildren();
@@ -229,7 +229,7 @@ QList<QAbstractHost*> QPageManager::getPages()
 QAbstractHost* QPageManager::get_page(int index)
 {
     if(index < 0 || index >= m_page_list.size()) {
-        return Q_NULLPTR;
+        return NULL;
     } else {
         return m_page_list.at(index);
     }
@@ -252,7 +252,7 @@ void QPageManager::insert_page(QAbstractHost *host, int index)
     while(list.size() > 0) {
         QAbstractHost *h = list.takeFirst();
         QAbstractProperty* pro = h->getProperty("objectName");
-        if(pro != Q_NULLPTR) {
+        if(pro != NULL) {
             connect(pro, SIGNAL(value_chaged(QVariant, QVariant)), this, SLOT(host_name_changed_slot(QVariant, QVariant)));
         }
         list += h->getChildren();
@@ -268,7 +268,7 @@ void QPageManager::remove_page(QAbstractHost *host)
     while(list.size() > 0) {
         QAbstractHost *h = list.takeFirst();
         QAbstractProperty* pro = h->getProperty("objectName");
-        if(pro != Q_NULLPTR) {
+        if(pro != NULL) {
             disconnect(pro, SIGNAL(value_chaged(QVariant, QVariant)), this, SLOT(host_name_changed_slot(QVariant, QVariant)));
         }
         list += h->getChildren();

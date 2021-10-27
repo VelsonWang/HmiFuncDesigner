@@ -12,7 +12,8 @@ class CORELIB_EXPORT DevicePluginLoader : public QObject
 {
     Q_OBJECT
 public:
-    static DevicePluginLoader *getInstance() {
+    static DevicePluginLoader *getInstance()
+    {
         static DevicePluginLoader instance;
         return &instance;
     }
@@ -20,7 +21,7 @@ public:
     IDevicePlugin *getPluginObject(const QString &szPluginName);
 
 private:
-    DevicePluginLoader(QObject* parent = Q_NULLPTR);
+    DevicePluginLoader(QObject* parent = NULL);
     ~DevicePluginLoader();
 
 };

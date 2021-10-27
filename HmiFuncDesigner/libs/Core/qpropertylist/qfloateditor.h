@@ -19,7 +19,7 @@ protected slots:
     void onPropertyChanged();
 
 protected:
-    QAbstractProperty *m_property;
+    QAbstractProperty *property;
 };
 
 #endif // QFLOATEDITOR_H

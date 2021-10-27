@@ -18,7 +18,7 @@ QRunningManager::QRunningManager(QObject *parent) :
     m_pProjCoreObj(new QProjectCore),
     m_pMainWindowObj(new QMainWindow((QWidget*)parent)),
     m_pDlgBaseWidgetObj(new QBaseDialogWidget(m_pMainWindowObj)),
-    m_pLastWidgetObj(Q_NULLPTR)
+    m_pLastWidgetObj(NULL)
 {
     m_pDlgBaseWidgetObj->setVisible(false);
     m_pMainWindowObj->installEventFilter(this);
@@ -30,7 +30,7 @@ QRunningManager::~QRunningManager()
     if(m_pMainWindowObj) {
         m_pMainWindowObj->removeEventFilter(this);
         delete m_pMainWindowObj;
-        m_pMainWindowObj = Q_NULLPTR;
+        m_pMainWindowObj = NULL;
     }
 }
 
@@ -39,7 +39,7 @@ bool QRunningManager::load(QString proj)
 {
     QFile fileProj(proj);
     if(!fileProj.exists()) {
-        QMessageBox::information(Q_NULLPTR, tr("系统提示"), tr("工程：") + proj + tr("不存在！"));
+        QMessageBox::information(NULL, tr("系统提示"), tr("工程：") + proj + tr("不存在！"));
         qDebug() << "project file not exists!";
         return false;
     }
@@ -48,13 +48,13 @@ bool QRunningManager::load(QString proj)
 
     QFileInfo fileInfoSrc(proj);
     if(fileInfoSrc.size() <= 512) {
-        QMessageBox::information(Q_NULLPTR, tr("系统提示"), tr("读取工程数据出错，文件头数据有误！"));
+        QMessageBox::information(NULL, tr("系统提示"), tr("读取工程数据出错，文件头数据有误！"));
         return false;
     }
 
     // 读取文件头信息
     if(!fileProj.open(QIODevice::ReadOnly)) {
-        QMessageBox::information(Q_NULLPTR, tr("系统提示"), tr("打开工程：") + proj + tr("失败！"));
+        QMessageBox::information(NULL, tr("系统提示"), tr("打开工程：") + proj + tr("失败！"));
         return false;
     }
 
@@ -63,7 +63,7 @@ bool QRunningManager::load(QString proj)
 
     if(fileProj.read((char *)buf, wSize) != wSize) {
         fileProj.close();
-        QMessageBox::information(Q_NULLPTR, tr("系统提示"), tr("读取文件头数据出错！"));
+        QMessageBox::information(NULL, tr("系统提示"), tr("读取文件头数据出错！"));
         return false;
     }
     fileProj.close();
@@ -98,14 +98,14 @@ void QRunningManager::release()
 {
     if(m_pProjCoreObj) {
         delete m_pProjCoreObj;
-        m_pProjCoreObj = Q_NULLPTR;
+        m_pProjCoreObj = NULL;
     }
-    m_pLastWidgetObj = Q_NULLPTR;
+    m_pLastWidgetObj = NULL;
 }
 
 void QRunningManager::onShowWidget(QWidget *widget)
 {
-    if(widget == Q_NULLPTR) {
+    if(widget == NULL) {
         return;
     }
     if(widget->parent() != m_pMainWindowObj) {
@@ -116,7 +116,7 @@ void QRunningManager::onShowWidget(QWidget *widget)
         QDesktopWidget *pDeskObj = qApp->desktop();
         m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
     }
-    if(m_pLastWidgetObj != Q_NULLPTR) {
+    if(m_pLastWidgetObj != NULL) {
         m_pLastWidgetObj->setVisible(false);
     }
     m_pLastWidgetObj = widget;
@@ -132,7 +132,7 @@ void QRunningManager::onShowDialog(QAbstractHost *host)
     QBaseDialog dlg(m_pMainWindowObj);
     dlg.set_widget(pWidgetObj);
     dlg.exec();
-    pWidgetObj->setParent(Q_NULLPTR);
+    pWidgetObj->setParent(NULL);
 }
 
 bool QRunningManager::eventFilter(QObject *o, QEvent *e)

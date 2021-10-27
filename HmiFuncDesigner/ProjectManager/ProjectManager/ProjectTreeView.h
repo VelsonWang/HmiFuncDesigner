@@ -11,7 +11,7 @@ class ProjectTreeView : public QTreeView
 {
     Q_OBJECT
 public:
-    ProjectTreeView(QWidget *parent = Q_NULLPTR);
+    ProjectTreeView(QWidget *parent = NULL);
     ~ProjectTreeView();
 
     // 更新树形控件
@@ -34,23 +34,23 @@ signals:
     void sigNotifyClicked(const QString &szItemText);
 
 private:
-    QStandardItemModel *m_pItemModelObj = Q_NULLPTR;
-    QStandardItem *m_pProjectItemObj = Q_NULLPTR;
-    QStandardItem *m_pSystemParametersObj = Q_NULLPTR;
-    QStandardItem *m_pCommunicationDeviceObj = Q_NULLPTR;
-    QStandardItem *m_pComDeviceObj = Q_NULLPTR;
-    QStandardItem *m_pNetDeviceObj = Q_NULLPTR;
-    QStandardItem *m_pTagMgrObj = Q_NULLPTR;
-    QStandardItem *m_pDevTagObj = Q_NULLPTR;
+    QStandardItemModel *m_pItemModelObj = NULL;
+    QStandardItem *m_pProjectItemObj = NULL;
+    QStandardItem *m_pSystemParametersObj = NULL;
+    QStandardItem *m_pCommunicationDeviceObj = NULL;
+    QStandardItem *m_pComDeviceObj = NULL;
+    QStandardItem *m_pNetDeviceObj = NULL;
+    QStandardItem *m_pTagMgrObj = NULL;
+    QStandardItem *m_pDevTagObj = NULL;
     QList<QStandardItem *> m_pDevVariableTabListObj;
-    QStandardItem *m_pTmpVariableObj = Q_NULLPTR;
-    QStandardItem *m_pSysVariableObj = Q_NULLPTR;
-    QStandardItem *m_pDataBaseManagerObj = Q_NULLPTR;
-    QStandardItem *m_pRealTimeDatabaseObj = Q_NULLPTR;
-    QStandardItem *m_pHistoryDatabaseObj = Q_NULLPTR;
-    QStandardItem *m_pLogicProgramObj = Q_NULLPTR;
-    QStandardItem *m_pScriptEditorObj = Q_NULLPTR;
-    QStandardItem *m_pSystemToolObj = Q_NULLPTR;
+    QStandardItem *m_pTmpVariableObj = NULL;
+    QStandardItem *m_pSysVariableObj = NULL;
+    QStandardItem *m_pDataBaseManagerObj = NULL;
+    QStandardItem *m_pRealTimeDatabaseObj = NULL;
+    QStandardItem *m_pHistoryDatabaseObj = NULL;
+    QStandardItem *m_pLogicProgramObj = NULL;
+    QStandardItem *m_pScriptEditorObj = NULL;
+    QStandardItem *m_pSystemToolObj = NULL;
 
 
 

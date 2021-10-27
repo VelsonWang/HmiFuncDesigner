@@ -12,7 +12,7 @@ QHostFactory::QHostFactory()
 void QHostFactory::register_host(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *host)
 {
     tagHostInfo *info = m_meta_map.value(name);
-    if(info == Q_NULLPTR) {
+    if(info == NULL) {
         info = new tagHostInfo;
     }
     info->m_host_object = host;
@@ -25,19 +25,19 @@ void QHostFactory::register_host(const QString name, GET_SHOW_ICON icon, GET_SHO
 
 QAbstractHost* QHostFactory::create_host(const QString &name)
 {
-    QAbstractHost* host = Q_NULLPTR;
+    QAbstractHost* host = NULL;
     if(name == FORM_TITLE) {
         host = new QFormHost;
         host->init();
         host->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
         tagHostInfo *info = m_meta_map.value(name);
-        if(info == Q_NULLPTR) {
-            return Q_NULLPTR;
+        if(info == NULL) {
+            return NULL;
         }
         const QMetaObject* obj = info->m_host_object;
 
-        if(obj != Q_NULLPTR) {
+        if(obj != NULL) {
             host = (QAbstractHost*)obj->newInstance();
             host->init();
             host->setAttribute(HOST_TYPE, name);
@@ -54,11 +54,11 @@ QMap<QString, tagHostInfo*> QHostFactory::get_host_info()
 
 QAbstractHost* QHostFactory::create_host(XMLObject *xml)
 {
-    if(xml == Q_NULLPTR) {
-        return Q_NULLPTR;
+    if(xml == NULL) {
+        return NULL;
     }
 
-    QAbstractHost* ret = Q_NULLPTR;
+    QAbstractHost* ret = NULL;
 
     if(xml->getTagName() == FORM_TITLE) {
         ret = new QFormHost;
@@ -67,7 +67,7 @@ QAbstractHost* QHostFactory::create_host(XMLObject *xml)
         ret->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
         ret = create_host(xml->getProperty(HOST_TYPE));
-        if(ret != Q_NULLPTR) {
+        if(ret != NULL) {
             ret->fromObject(xml);
         }
     }

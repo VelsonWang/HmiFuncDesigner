@@ -16,9 +16,9 @@
 
 
 
-HmiRunTime *g_pHmiRunTime = Q_NULLPTR;
-//RunScript *HmiRunTime::m_pRunScript = Q_NULLPTR;
-QScriptEngine *HmiRunTime::scriptEngine_ = Q_NULLPTR;
+HmiRunTime *g_pHmiRunTime = NULL;
+//RunScript *HmiRunTime::m_pRunScript = NULL;
+QScriptEngine *HmiRunTime::scriptEngine_ = NULL;
 
 HmiRunTime::HmiRunTime(QProjectCore *coreObj, QObject *parent)
     : QObject(parent),
@@ -29,14 +29,14 @@ HmiRunTime::HmiRunTime(QProjectCore *coreObj, QObject *parent)
 
 HmiRunTime::~HmiRunTime()
 {
-    //    if(m_pRunScript != Q_NULLPTR) {
+    //    if(m_pRunScript != NULL) {
     //        delete m_pRunScript;
-    //        m_pRunScript = Q_NULLPTR;
+    //        m_pRunScript = NULL;
     //    }
 
-    if(scriptEngine_ != Q_NULLPTR) {
+    if(scriptEngine_ != NULL) {
         delete scriptEngine_;
-        scriptEngine_ = Q_NULLPTR;
+        scriptEngine_ = NULL;
     }
 }
 
@@ -70,7 +70,7 @@ bool HmiRunTime::Load()
         Vendor *pVendorObj = new Vendor(projCore);
         IVendorPlugin *pVendorPluginObj = VendorPluginManager::getInstance()->getPlugin(sProtocol);
 
-        if(pVendorPluginObj != Q_NULLPTR) {
+        if(pVendorPluginObj != NULL) {
             pVendorObj->m_pVendorPluginObj = pVendorPluginObj;
         }
 
@@ -124,7 +124,7 @@ bool HmiRunTime::Load()
 
     // load tags and create rtdb
     foreach(Tag *pTagObj, projCore->tagMgr_.m_vecTags) {
-        RunTimeTag *pRtTagObj = new RunTimeTag(Q_NULLPTR);
+        RunTimeTag *pRtTagObj = new RunTimeTag(NULL);
         pRtTagObj->id = pTagObj->m_iID;
         pRtTagObj->name = pTagObj->m_szName;
         pRtTagObj->unit = pTagObj->m_szUnit;
@@ -194,13 +194,13 @@ bool HmiRunTime::Load()
         RealTimeDB::instance()->rtdb.insert(pRtTagObj->id, pRtTagObj);
 
         Vendor *pVendor = FindVendor(pRtTagObj->devType);
-        if(pVendor != Q_NULLPTR) {
+        if(pVendor != NULL) {
             pVendor->addIOTagToDeviceTagList(pRtTagObj);
         }
     }
 
     //-----------------加载JavaScript------------------//
-    //    if(m_pRunScript == Q_NULLPTR) {
+    //    if(m_pRunScript == NULL) {
     //        m_pRunScript = new RunScript("");
     //    }
     //    m_pRunScript->loadScriptObjects();
@@ -238,14 +238,14 @@ void HmiRunTime::Start()
     }
 
     // 运行启动运行脚本
-    //    if(m_pRunScript == Q_NULLPTR) {
+    //    if(m_pRunScript == NULL) {
     //        m_pRunScript = new RunScript("");
     //    }
 
     //    m_pRunScript->runOnStartScripts();
 
     //    // 运行定时运行脚本
-    //    if(m_pRunScript == Q_NULLPTR) {
+    //    if(m_pRunScript == NULL) {
     //        m_pRunScript = new RunScript("");
     //    }
 
@@ -271,7 +271,7 @@ Vendor *HmiRunTime::FindVendor(const QString name)
         }
     }
 
-    return Q_NULLPTR;
+    return NULL;
 }
 
 
@@ -351,7 +351,7 @@ void HmiRunTime::doMessage(QString msg)
         QString tagId = msg.replace(QString("VALUE_CHANGE "), QString(""));
 
         //        // 运行条件运行脚本
-        //        if(m_pRunScript == Q_NULLPTR) {
+        //        if(m_pRunScript == NULL) {
         //            m_pRunScript = new RunScript("");
         //        }
 
@@ -369,7 +369,7 @@ void HmiRunTime::doMessage(QString msg)
 void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
                                     const QString &szMatchEvent)
 {
-    if(scriptEngine_ != Q_NULLPTR && szFuncList.size() > 0 && szMatchEvent != "") {
+    if(scriptEngine_ != NULL && szFuncList.size() > 0 && szMatchEvent != "") {
         foreach(QString szFuncEv, szFuncList) {
             QStringList listFuncEv = szFuncEv.split(':');
 
@@ -405,7 +405,7 @@ void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
 void HmiRunTime::execScriptText(const QString &szScriptText,
                                 const QString &szMatchEvent)
 {
-    if(scriptEngine_ != Q_NULLPTR && szScriptText != "" && szMatchEvent != "") {
+    if(scriptEngine_ != NULL && szScriptText != "" && szMatchEvent != "") {
         QStringList listFuncEv = szScriptText.split("][");
 
         if(listFuncEv.size() == 2) {

@@ -12,7 +12,7 @@
 QTempWidget::QTempWidget(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::QTempWidget),
-    m_current(Q_NULLPTR),
+    m_current(NULL),
     m_name_edit(new QNameEdit("[_a-zA-Z][_a-zA-Z0-9]{,64}"))
 {
     ui->setupUi(this);
@@ -31,7 +31,7 @@ void QTempWidget::set_current(tagTemplateInfo *info)
         return;
     }
     QAbstractHost* h = m_info_to_host.value(info);
-    if(h == Q_NULLPTR) {
+    if(h == NULL) {
         QFile f(info->m_file_name);
         if(!f.open(QFile::ReadOnly)) {
             return;
@@ -43,7 +43,7 @@ void QTempWidget::set_current(tagTemplateInfo *info)
             return;
         }
         h = QHostFactory::create_host(&xml);
-        if(h == Q_NULLPTR) {
+        if(h == NULL) {
             return;
         }
         h->setDefault();
@@ -73,23 +73,23 @@ void QTempWidget::set_current(tagTemplateInfo *info)
 
 bool QTempWidget::eventFilter(QObject *o, QEvent *e)
 {
-    if(o->isWidgetType() && e->type() == QEvent::Paint && o->parent() == Q_NULLPTR) {
+    if(o->isWidgetType() && e->type() == QEvent::Paint && o->parent() == NULL) {
         QWidget* wid = (QWidget*)o;
         QPainter p(wid);
         p.setBrush(QColor(220, 220, 220));
         p.setPen(QColor(128, 128, 128));
-        p.drawRect(0, 0, wid->width()-1, wid->height()-1);
+        p.drawRect(0, 0, wid->width() - 1, wid->height() - 1);
     }
-    return QWidget::eventFilter(o,e);
+    return QWidget::eventFilter(o, e);
 }
 
 void QTempWidget::on_exists_button_clicked()
 {
     QString name = QFileDialog::getOpenFileName(this,
-                                                tr("Select File"),
-                                                QDir::currentPath(),
-                                                tr("Page File(*.xml)"));
-    if(name != Q_NULLPTR) {
+                   tr("Select File"),
+                   QDir::currentPath(),
+                   tr("Page File(*.xml)"));
+    if(name != NULL) {
         emit add_file(name);
     }
 }
@@ -102,7 +102,7 @@ void QTempWidget::on_okbtn_clicked()
         return;
     }
     QAbstractHost* h = m_info_to_host.value(m_current);
-    if(h != Q_NULLPTR) {
+    if(h != NULL) {
         h->setPropertyValue("objectName", str);
         m_info_to_host.remove(m_current);
         emit ok(h);

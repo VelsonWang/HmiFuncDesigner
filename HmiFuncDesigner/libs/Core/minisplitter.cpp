@@ -1,8 +1,5 @@
-
 #include "minisplitter.h"
-
 #include "stylehelper.h"
-
 #include <QPaintEvent>
 #include <QPainter>
 #include <QSplitterHandle>
@@ -11,7 +8,7 @@ class MiniSplitterHandle : public QSplitterHandle//自定义分割线
 {
 public:
     MiniSplitterHandle(Qt::Orientation orientation, QSplitter *parent)
-            : QSplitterHandle(orientation, parent)
+        : QSplitterHandle(orientation, parent)
     {
         setMask(QRegion(contentsRect()));
         setAttribute(Qt::WA_MouseNoMask, true);
@@ -23,10 +20,11 @@ protected:
 
 void MiniSplitterHandle::resizeEvent(QResizeEvent *event)
 {
-    if (orientation() == Qt::Horizontal)
+    if (orientation() == Qt::Horizontal) {
         setContentsMargins(2, 0, 2, 0);
-    else
+    } else {
         setContentsMargins(0, 2, 0, 2);
+    }
     setMask(QRegion(contentsRect()));
     QSplitterHandle::resizeEvent(event);
 }
@@ -34,7 +32,7 @@ void MiniSplitterHandle::resizeEvent(QResizeEvent *event)
 void MiniSplitterHandle::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
-    painter.fillRect(event->rect(),StyleHelper::borderColor());//绘制分割线颜色
+    painter.fillRect(event->rect(), StyleHelper::borderColor()); //绘制分割线颜色
 }
 
 QSplitterHandle *MiniSplitter::createHandle()

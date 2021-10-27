@@ -21,11 +21,11 @@ QDesignerDnDItem::QDesignerDnDItem(DropType type) :
 {
 }
 
-void QDesignerDnDItem::init( QAbstractHost *host,const QPoint &global_mouse_pos)
+void QDesignerDnDItem::init( QAbstractHost *host, const QPoint &global_mouse_pos)
 {
     Q_ASSERT(host != 0);
     m_host = host;
-    m_hot_spot = global_mouse_pos - ((QWidget*)m_host->getObject())->mapToGlobal(QPoint(0,0));
+    m_hot_spot = global_mouse_pos - ((QWidget*)m_host->getObject())->mapToGlobal(QPoint(0, 0));
 }
 
 QDesignerDnDItem::~QDesignerDnDItem()
@@ -52,26 +52,24 @@ QString QDesignerDnDItem::name()const
     return m_name;
 }
 
-WidgetBoxDnDItem::WidgetBoxDnDItem(const QString &name,const QPoint &global_mouse_pos) :
+WidgetBoxDnDItem::WidgetBoxDnDItem(const QString &name, const QPoint &global_mouse_pos) :
     QDesignerDnDItem(CopyDrop)
 {
-    QAbstractHost *host=Q_NULLPTR;
-    host=QHostFactory::create_host(name);
-    if(host==Q_NULLPTR)
-    {
+    QAbstractHost *host = NULL;
+    host = QHostFactory::create_host(name);
+    if(host == NULL) {
         return;
     }
-    m_name=name;
-    QWidget* wid=(QWidget*)host->getObject();
+    m_name = name;
+    QWidget* wid = (QWidget*)host->getObject();
     wid->move(global_mouse_pos - QPoint(5, 5));
     wid->setWindowOpacity(0.5);
-    init(host,global_mouse_pos);
+    init(host, global_mouse_pos);
 }
 
 WidgetBoxDnDItem::~WidgetBoxDnDItem()
 {
-    if(m_host!=Q_NULLPTR)
-    {
+    if(m_host != NULL) {
         delete m_host;
     }
 }
@@ -79,7 +77,7 @@ WidgetBoxDnDItem::~WidgetBoxDnDItem()
 FormDnItem::FormDnItem(QAbstractHost *host, const QPoint &global_mouse_pos):
     QDesignerDnDItem(MoveDrop)
 {
-    init(host,global_mouse_pos);
+    init(host, global_mouse_pos);
 }
 
 
@@ -89,51 +87,52 @@ QDesignerMimeData::QDesignerMimeData(const QDesignerDnDItems &items, QDrag *drag
     enum { Alpha = 200 };
     QPoint decorationTopLeft;
     switch (m_items.size()) {
-    case 0:
-        break;
-    case 1: {
-        QWidget *deco = (QWidget*)m_items.first()->host()->getObject();
-        decorationTopLeft = deco->pos();
-        const QPixmap widgetPixmap = QPixmap::grabWidget(deco);
-        QImage image(widgetPixmap.size(), QImage::Format_ARGB32);
-        image.fill(QColor(Qt::transparent).rgba());
-        QPainter painter(&image);
-        painter.drawPixmap(QPoint(0, 0), widgetPixmap);
-        painter.end();
-        setImageTransparency(image, Alpha);
-        drag->setPixmap(QPixmap::fromImage(image));
-    }
-        break;
-    default: {
-        const QDesignerDnDItems::const_iterator cend = m_items.constEnd();
-        QDesignerDnDItems::const_iterator it =m_items.constBegin();
-        QRect unitedGeometry = ((QWidget*)(*it)->host()->getObject())->geometry();
-        for (++it; it != cend; ++it )
-            unitedGeometry  = unitedGeometry .united(((QWidget*)(*it)->host()->getObject())->geometry());
-
-        // paint with offset. At the same time, create a mask bitmap, containing widget rectangles.
-        QImage image(unitedGeometry.size(), QImage::Format_ARGB32);
-        image.fill(QColor(Qt::transparent).rgba());
-        QBitmap mask(unitedGeometry.size());
-        mask.clear();
-        // paint with offset, determine action
-        QPainter painter(&image);
-        QPainter maskPainter(&mask);
-        decorationTopLeft = unitedGeometry.topLeft();
-        for (it = m_items.constBegin() ; it != cend; ++it ) {
-            QWidget *w = (QWidget*)(*it)->host()->getObject();
-            const QPixmap wp = QPixmap::grabWidget(w);
-            const QPoint pos = w->pos() - decorationTopLeft;
-            painter.drawPixmap(pos, wp);
-            maskPainter.fillRect(QRect(pos, wp.size()), Qt::color1);
+        case 0:
+            break;
+        case 1: {
+            QWidget *deco = (QWidget*)m_items.first()->host()->getObject();
+            decorationTopLeft = deco->pos();
+            const QPixmap widgetPixmap = QPixmap::grabWidget(deco);
+            QImage image(widgetPixmap.size(), QImage::Format_ARGB32);
+            image.fill(QColor(Qt::transparent).rgba());
+            QPainter painter(&image);
+            painter.drawPixmap(QPoint(0, 0), widgetPixmap);
+            painter.end();
+            setImageTransparency(image, Alpha);
+            drag->setPixmap(QPixmap::fromImage(image));
         }
-        painter.end();
-        maskPainter.end();
-        setImageTransparency(image, Alpha);
-        QPixmap pixmap = QPixmap::fromImage(image);
-        pixmap.setMask(mask);
-        drag->setPixmap(pixmap);
-    }
+        break;
+        default: {
+            const QDesignerDnDItems::const_iterator cend = m_items.constEnd();
+            QDesignerDnDItems::const_iterator it = m_items.constBegin();
+            QRect unitedGeometry = ((QWidget*)(*it)->host()->getObject())->geometry();
+            for (++it; it != cend; ++it ) {
+                unitedGeometry  = unitedGeometry .united(((QWidget*)(*it)->host()->getObject())->geometry());
+            }
+
+            // paint with offset. At the same time, create a mask bitmap, containing widget rectangles.
+            QImage image(unitedGeometry.size(), QImage::Format_ARGB32);
+            image.fill(QColor(Qt::transparent).rgba());
+            QBitmap mask(unitedGeometry.size());
+            mask.clear();
+            // paint with offset, determine action
+            QPainter painter(&image);
+            QPainter maskPainter(&mask);
+            decorationTopLeft = unitedGeometry.topLeft();
+            for (it = m_items.constBegin() ; it != cend; ++it ) {
+                QWidget *w = (QWidget*)(*it)->host()->getObject();
+                const QPixmap wp = QPixmap::grabWidget(w);
+                const QPoint pos = w->pos() - decorationTopLeft;
+                painter.drawPixmap(pos, wp);
+                maskPainter.fillRect(QRect(pos, wp.size()), Qt::color1);
+            }
+            painter.end();
+            maskPainter.end();
+            setImageTransparency(image, Alpha);
+            QPixmap pixmap = QPixmap::fromImage(image);
+            pixmap.setMask(mask);
+            drag->setPixmap(pixmap);
+        }
         break;
     }
     // determine hot spot and reconstruct the exact starting position as form window
@@ -148,19 +147,21 @@ QDesignerMimeData::QDesignerMimeData(const QDesignerDnDItems &items, QDrag *drag
 QDesignerMimeData::~QDesignerMimeData()
 {
     const QDesignerDnDItems::const_iterator cend = m_items.constEnd();
-    for (QDesignerDnDItems::const_iterator it = m_items.constBegin(); it != cend; ++it )
+    for (QDesignerDnDItems::const_iterator it = m_items.constBegin(); it != cend; ++it ) {
         delete *it;
+    }
 }
 
 Qt::DropAction QDesignerMimeData::proposedDropAction() const
 {
-   return m_items.first()->type() == QDesignerDnDItemInterface::CopyDrop ? Qt::CopyAction : Qt::MoveAction;
+    return m_items.first()->type() == QDesignerDnDItemInterface::CopyDrop ? Qt::CopyAction : Qt::MoveAction;
 }
 
 Qt::DropAction QDesignerMimeData::execDrag(const QDesignerDnDItems &items, QWidget * dragSource)
 {
-    if (items.empty())
+    if (items.empty()) {
         return Qt::IgnoreAction;
+    }
 
     QDrag *drag = new QDrag(dragSource);
     QDesignerMimeData *mimeData = new QDesignerMimeData(items, drag);
@@ -169,14 +170,16 @@ Qt::DropAction QDesignerMimeData::execDrag(const QDesignerDnDItems &items, QWidg
     const QDesignerDnDItems::const_iterator cend = items.constEnd();
     for (QDesignerDnDItems::const_iterator it = items.constBegin(); it != cend; ++it )
         if (QWidget *w = (QWidget*)(*it)->host()->getObject())
-            if ((*it)->type() ==  QDesignerDnDItemInterface::MoveDrop)
+            if ((*it)->type() ==  QDesignerDnDItemInterface::MoveDrop) {
                 reshowWidgets.push_back(w);
+            }
 
-    const Qt::DropAction executedAction = drag->exec(Qt::CopyAction|Qt::MoveAction, mimeData->proposedDropAction());
+    const Qt::DropAction executedAction = drag->exec(Qt::CopyAction | Qt::MoveAction, mimeData->proposedDropAction());
 
     if (executedAction == Qt::IgnoreAction && !reshowWidgets.empty())
-        foreach (QWidget *w, reshowWidgets)
+        foreach (QWidget *w, reshowWidgets) {
             w->show();
+        }
 
     return executedAction;
 }
@@ -213,7 +216,7 @@ void QDesignerMimeData::moveDecoration(const QPoint &globalPos) const
 {
     const QPoint relativeDistance = globalPos - m_globalStartPos;
     const QDesignerDnDItems::const_iterator cend = m_items.constEnd();
-    for (QDesignerDnDItems::const_iterator it =m_items.constBegin(); it != cend; ++it ) {
+    for (QDesignerDnDItems::const_iterator it = m_items.constBegin(); it != cend; ++it ) {
         QWidget *w = (QWidget*)(*it)->host()->getObject();
         w->move(w->pos() + relativeDistance);
     }

@@ -20,12 +20,11 @@ QList<QObject*> QAbstractUpdate::devices()
 
 void QAbstractUpdate::addDevice(QObject *device)
 {
-    if(device==Q_NULLPTR || m_devices.contains(device))
-    {
+    if(device == NULL || m_devices.contains(device)) {
         return;
     }
     m_devices.append(device);
-    m_nameToDevice.insert(device->property("name").toString(),device);
+    m_nameToDevice.insert(device->property("name").toString(), device);
     emit newDevice(device);
 }
 

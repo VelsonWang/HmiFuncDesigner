@@ -8,7 +8,8 @@
 #include <QDialog>
 
 
-namespace Ui {
+namespace Ui
+{
 class NewNetDeviceDialog;
 }
 
@@ -17,7 +18,7 @@ class CORELIB_EXPORT NewNetDeviceDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit NewNetDeviceDialog(QWidget *parent = Q_NULLPTR);
+    explicit NewNetDeviceDialog(QWidget *parent = NULL);
     ~NewNetDeviceDialog();
 
     void load(const QString &szName);

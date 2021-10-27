@@ -23,7 +23,7 @@ void QFormHost::initProperty()
     QAbstractWidgetHost::initProperty();
 
     QAbstractProperty* pObj = QPropertyFactory::create_property("StyleSheet");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "background");
         pObj->setAttribute("show_name", tr("背景颜色")); // tr("Background")
         pObj->setAttribute("group", "Style Sheet");
@@ -31,7 +31,7 @@ void QFormHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Function");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "function");
         pObj->setAttribute("show_name", tr("功能操作"));
         pObj->setAttribute("group", "HMI");
@@ -43,14 +43,14 @@ void QFormHost::initProperty()
     }
 
     pObj = this->getProperty("geometry");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setAttribute("show_name", tr("坐标大小")); // tr("Size")
         pObj->setAttribute(QString("x:") + ATTR_VISIBLE, false);
         pObj->setAttribute(QString("y:") + ATTR_VISIBLE, false);
     }
 
     pObj = this->getProperty("objectName");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setAttribute("editabled", false);
     }
 
@@ -85,16 +85,18 @@ void QFormHost::getSupportEvents(QStringList &szListValue)
         if(szEventGroupName == "GraphPage") {
 
             QList<XMLObject*> childrenGroup = eventGroup->getChildren();
-            if(childrenGroup.size() < 1)
+            if(childrenGroup.size() < 1) {
                 continue;
+            }
 
             foreach(XMLObject* event, childrenGroup) {
                 QString eventName = event->getProperty("name");
                 QString eventShowName = event->getProperty("ShowName");
                 szListValue << QString("%1-%2").arg(eventName).arg(eventShowName);
                 QList<XMLObject*> funcDesc = event->getChildren();
-                if(funcDesc.size() < 1)
+                if(funcDesc.size() < 1) {
                     continue;
+                }
                 QString strDesc = event->getCurrentChild("desc")->getText();
             }
         }

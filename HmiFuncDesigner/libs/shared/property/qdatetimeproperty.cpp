@@ -1,6 +1,6 @@
 #include "qdatetimeproperty.h"
 
-QDateTimeProperty::QDateTimeProperty(QAbstractProperty *parent) : 
+QDateTimeProperty::QDateTimeProperty(QAbstractProperty *parent) :
     QAbstractProperty(parent)
 {
     setObjectProperty("type", "DateTime");
@@ -9,9 +9,9 @@ QDateTimeProperty::QDateTimeProperty(QAbstractProperty *parent) :
 QString QDateTimeProperty::get_value_text()
 {
     QDateTime ti = get_value().toDateTime();
-    return QString("%1-%2-%3 %4:%5:%6").arg(ti.date().year(),2).arg(ti.date().month(),2)
-            .arg(ti.date().day(),2).arg(ti.time().hour(),2).arg(ti.time().minute(),2)
-            .arg(ti.time().second(),2);
+    return QString("%1-%2-%3 %4:%5:%6").arg(ti.date().year(), 2).arg(ti.date().month(), 2)
+           .arg(ti.date().day(), 2).arg(ti.time().hour(), 2).arg(ti.time().minute(), 2)
+           .arg(ti.time().second(), 2);
 }
 
 

@@ -18,7 +18,7 @@ void QAbstractButtonHost::initProperty()
     QAbstractProperty *pro;
 
     pro = QPropertyFactory::create_property("String");
-    if(pro != Q_NULLPTR) {
+    if(pro != NULL) {
         pro->setObjectProperty("name", "text");
         pro->setAttribute("show_name", tr("Text"));
         pro->setAttribute("group", "Attributes");
@@ -27,28 +27,28 @@ void QAbstractButtonHost::initProperty()
     }
 
     pro = QPropertyFactory::create_property("Bool");
-    if(pro != Q_NULLPTR) {
-        pro->setObjectProperty("name","checkable");
-        pro->setAttribute("show_name",tr("Checkable"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "checkable");
+        pro->setAttribute("show_name", tr("Checkable"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
     pro = QPropertyFactory::create_property("Bool");
-    if(pro != Q_NULLPTR) {
-        pro->setObjectProperty("name","checked");
-        pro->setAttribute("show_name",tr("Checked"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "checked");
+        pro->setAttribute("show_name", tr("Checked"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
     pro = QPropertyFactory::create_property("Script");
-    if(pro != Q_NULLPTR) {
-        pro->setObjectProperty("name","clicked");
-        pro->setAttribute("show_name",tr("Clicked"));
-        pro->setAttribute("group","Events");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "clicked");
+        pro->setAttribute("show_name", tr("Clicked"));
+        pro->setAttribute("group", "Events");
         insertProperty(pro);
     }
 
@@ -60,7 +60,7 @@ void QAbstractButtonHost::initProperty()
 
 void QAbstractButtonHost::setText(const QString &text)
 {
-    setPropertyValue("text",text);
+    setPropertyValue("text", text);
 }
 
 QString QAbstractButtonHost::text()
@@ -70,7 +70,7 @@ QString QAbstractButtonHost::text()
 
 void QAbstractButtonHost::setCheckable(bool checkable)
 {
-    setPropertyValue("checkable",checkable);
+    setPropertyValue("checkable", checkable);
 }
 
 bool QAbstractButtonHost::checkable()
@@ -80,7 +80,7 @@ bool QAbstractButtonHost::checkable()
 
 void QAbstractButtonHost::setChecked(bool checked)
 {
-    setPropertyValue("checked",checked);
+    setPropertyValue("checked", checked);
 }
 
 bool QAbstractButtonHost::checked()
@@ -92,7 +92,7 @@ void QAbstractButtonHost::clicked_slot()
 {
     QString code = getPropertyValue("clicked").toString();
     if(code != "") {
-        QMap<QString,QString> param;
-        exec(code,param);
+        QMap<QString, QString> param;
+        exec(code, param);
     }
 }

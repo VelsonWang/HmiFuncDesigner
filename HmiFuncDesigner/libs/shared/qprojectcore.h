@@ -16,8 +16,7 @@
 
 #pragma pack(push)
 #pragma pack(1)
-typedef struct FileHeader
-{
+typedef struct FileHeader {
     quint16 wSize; // 文件头部大小(2 Byte)
     quint16 wVersion; // 文件头版本(2 Byte)
     quint32 dwProjSize; // 工程数据大小(4 Byte)
@@ -44,7 +43,7 @@ class SHAREDLIB_EXPORT QProjectCore : public QObject
 {
     Q_OBJECT
 public:
-    explicit QProjectCore(QObject *parent = Q_NULLPTR);
+    explicit QProjectCore(QObject *parent = NULL);
     ~QProjectCore();
 
     void close();

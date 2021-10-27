@@ -51,7 +51,6 @@
 #include "qhostfactory.h"
 
 
-
 void qRegisterBaseProperty()
 {
     qRegisterProperty("Number", QIntProperty);

@@ -39,7 +39,7 @@ void QSwitchButtonHost::createObject()
 void QSwitchButtonHost::initProperty()
 {
     QAbstractProperty* pObj = QPropertyFactory::create_property("Tag");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "tag");
         pObj->setAttribute("show_name", tr("选择变量"));
         pObj->setAttribute("group", "HMI");
@@ -48,7 +48,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Function");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "funcs");
         pObj->setAttribute("show_name", tr("功能操作"));
         pObj->setAttribute("group", "HMI");
@@ -61,7 +61,7 @@ void QSwitchButtonHost::initProperty()
     QWidgetHost::initProperty();
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "stateOnInitial");
         pObj->setAttribute("show_name", tr("初始状态"));
         pObj->setAttribute("group", "Attributes");
@@ -69,11 +69,11 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "showContent");
         pObj->setAttribute("show_name", tr("显示内容"));
-        pObj->setAttribute("group","Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME,true);
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         QStringList contents;
         contents << tr("文本") << tr("图片");
@@ -91,7 +91,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Image");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "resetPictureFile");
         pObj->setAttribute("show_name", tr("选择关时图片"));
         pObj->setAttribute("filters", "Images (*.png *.xpm *.jpg)");
@@ -100,7 +100,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Image");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "setPictureFile");
         pObj->setAttribute("show_name", tr("选择开时图片"));
         pObj->setAttribute("filters", "Images (*.png *.xpm *.jpg)");
@@ -109,7 +109,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "showNoScale");
         pObj->setAttribute("show_name", tr("原尺寸显示"));
         pObj->setAttribute("group", "Attributes");
@@ -117,7 +117,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("String");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "resetText");
         pObj->setAttribute("show_name", tr("关时文本")); // tr("Text")
         pObj->setAttribute("group", "Attributes");
@@ -126,7 +126,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("String");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "setText");
         pObj->setAttribute("show_name", tr("开时文本")); // tr("Text")
         pObj->setAttribute("group", "Attributes");
@@ -135,7 +135,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Font");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "font");
         pObj->setAttribute("show_name", tr("字体"));
         pObj->setAttribute("group", "Attributes");
@@ -143,7 +143,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "textColor");
         pObj->setAttribute("show_name", tr("文本颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -151,11 +151,11 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "szHAlign");
         pObj->setAttribute("show_name", tr("水平对齐"));
-        pObj->setAttribute("group","Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME,true);
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         QStringList alignList;
         alignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
@@ -173,11 +173,11 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "szVAlign");
         pObj->setAttribute("show_name", tr("垂直对齐"));
-        pObj->setAttribute("group","Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME,true);
+        pObj->setAttribute("group", "Attributes");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         QStringList alignList;
         alignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
@@ -195,7 +195,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "resetBackgroundColor");
         pObj->setAttribute("show_name", tr("关时背景颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -203,15 +203,15 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "setBackgroundColor");
         pObj->setAttribute("show_name", tr("开时背景颜色"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }
 
-    pObj=QPropertyFactory::create_property("Number");
-    if(pObj != Q_NULLPTR) {
+    pObj = QPropertyFactory::create_property("Number");
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "borderWidth");
         pObj->setAttribute("show_name", tr("边框宽度"));
         pObj->setAttribute("group", "Attributes");
@@ -219,7 +219,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "borderColor");
         pObj->setAttribute("show_name", tr("边框颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -228,7 +228,7 @@ void QSwitchButtonHost::initProperty()
 
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "transparent");
         pObj->setAttribute("show_name", tr("透明"));
         pObj->setAttribute("group", "Attributes");
@@ -236,7 +236,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "enableOnInitial");
         pObj->setAttribute("show_name", tr("初始有效"));
         pObj->setAttribute("group", "Attributes");
@@ -244,7 +244,7 @@ void QSwitchButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "showOnInitial");
         pObj->setAttribute("show_name", tr("初始可见"));
         pObj->setAttribute("group", "Attributes");
@@ -280,8 +280,9 @@ void QSwitchButtonHost::getSupportEvents(QStringList &listValue)
         if(szEventGroupName == "SwitchButton") {
 
             QList<XMLObject*> childrenGroup = eventGroup->getChildren();
-            if(childrenGroup.size() < 1)
+            if(childrenGroup.size() < 1) {
                 continue;
+            }
 
             foreach(XMLObject* event, childrenGroup) {
                 QString eventName = event->getProperty("name");
@@ -289,8 +290,9 @@ void QSwitchButtonHost::getSupportEvents(QStringList &listValue)
                 listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
 
                 QList<XMLObject*> funcDesc = event->getChildren();
-                if(funcDesc.size() < 1)
+                if(funcDesc.size() < 1) {
                     continue;
+                }
                 QString strDesc = event->getCurrentChild("desc")->getText();
             }
         }

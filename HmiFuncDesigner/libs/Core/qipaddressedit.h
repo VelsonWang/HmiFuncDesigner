@@ -4,7 +4,8 @@
 #include "corelibglobal.h"
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class QIPAddressEdit;
 }
 
@@ -13,7 +14,7 @@ class CORELIB_EXPORT QIPAddressEdit : public QWidget
     Q_OBJECT
 
 public:
-    explicit QIPAddressEdit(QWidget *parent = Q_NULLPTR);
+    explicit QIPAddressEdit(QWidget *parent = NULL);
     ~QIPAddressEdit();
 
     void setIPString(const QString &ip);

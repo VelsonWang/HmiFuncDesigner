@@ -31,13 +31,13 @@ ScriptWin::ScriptWin(QWidget *parent) : QWidget(parent)
 
 ScriptWin::~ScriptWin()
 {
-    if(m_pListWidgetObj != Q_NULLPTR) {
+    if(m_pListWidgetObj != NULL) {
         delete m_pListWidgetObj;
-        m_pListWidgetObj = Q_NULLPTR;
+        m_pListWidgetObj = NULL;
     }
-    if(m_pVLayoutObj != Q_NULLPTR) {
+    if(m_pVLayoutObj != NULL) {
         delete m_pVLayoutObj;
-        m_pVLayoutObj = Q_NULLPTR;
+        m_pVLayoutObj = NULL;
     }
 }
 

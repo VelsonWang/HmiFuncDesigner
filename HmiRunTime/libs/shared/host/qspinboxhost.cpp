@@ -31,7 +31,7 @@ QString QSpinBoxHost::getShowIcon()
 
 void QSpinBoxHost::createObject()
 {
-    m_object=new QSpinBox();
+    m_object = new QSpinBox();
     m_object->setObjectName("spinbox");
 }
 
@@ -41,61 +41,56 @@ void QSpinBoxHost::initProperty()
 
     QAbstractProperty *pro;
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","maximum");
-        pro->setAttribute("show_name",tr("Maximum"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
-        insertProperty(pro,1);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "maximum");
+        pro->setAttribute("show_name", tr("Maximum"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pro, 1);
     }
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","minimum");
-        pro->setAttribute("show_name",tr("Minimum"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "minimum");
+        pro->setAttribute("show_name", tr("Minimum"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","value");
-        pro->setAttribute("show_name",tr("Value"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "value");
+        pro->setAttribute("show_name", tr("Value"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
-    pro=QPropertyFactory::create_property("Number");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","singleStep");
-        pro->setAttribute("show_name",tr("SingleStep"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
+    pro = QPropertyFactory::create_property("Number");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "singleStep");
+        pro->setAttribute("show_name", tr("SingleStep"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
         insertProperty(pro);
     }
 
 
-    pro=QPropertyFactory::create_property("Script");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","valueChanged");
-        pro->setAttribute("show_name",tr("ValueChanged"));
-        pro->setAttribute("group","Events");
-        m_object->setProperty("valueChanged","");
+    pro = QPropertyFactory::create_property("Script");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "valueChanged");
+        pro->setAttribute("show_name", tr("ValueChanged"));
+        pro->setAttribute("group", "Events");
+        m_object->setProperty("valueChanged", "");
         insertProperty(pro);
     }
 
-    setPropertyValue("geometry", QRect(0,0,100,20));
+    setPropertyValue("geometry", QRect(0, 0, 100, 20));
 
-    QSpinBox *e=(QSpinBox*)m_object;
-    connect(e,SIGNAL(valueChanged(QString)),this,SLOT(valueChanged(QString)));
+    QSpinBox *e = (QSpinBox*)m_object;
+    connect(e, SIGNAL(valueChanged(QString)), this, SLOT(valueChanged(QString)));
 }
 
 void QSpinBoxHost::setValue(int value)
@@ -120,11 +115,10 @@ int QSpinBoxHost::singleStep()
 
 void QSpinBoxHost::valueChanged(const QString &value)
 {
-    QString code=getPropertyValue("valueChanged").toString();
-    if(code!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_value",value);
-        exec(code,param);
+    QString code = getPropertyValue("valueChanged").toString();
+    if(code != "") {
+        QMap<QString, QString> param;
+        param.insert("_value", value);
+        exec(code, param);
     }
 }

@@ -8,7 +8,7 @@ class QFunctionProperty : public QAbstractProperty
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QFunctionProperty(QAbstractProperty* parent = Q_NULLPTR);
+    Q_INVOKABLE QFunctionProperty(QAbstractProperty* parent = NULL);
     QIcon get_value_icon();
     QString get_value_text();
 };

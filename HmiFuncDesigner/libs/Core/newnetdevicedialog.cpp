@@ -58,15 +58,14 @@ void NewNetDeviceDialog::on_btnHelp_clicked()
 void NewNetDeviceDialog::on_btnDeviceSelect_clicked()
 {
     DeviceListDialog *pDlg = new DeviceListDialog("NET", this);
-    if(pDlg->exec() == QDialog::Accepted)
-    {
+    if(pDlg->exec() == QDialog::Accepted) {
         QString devName = pDlg->GetDeviceName();
         m_szPluginName = devName;
         // 查找相同的设备名称
         int findCnt = 0;
         DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
 continueFind:
-        for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+        for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
             DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
             if(pObj->szName_ == devName) {
                 findCnt++;
@@ -95,7 +94,7 @@ void NewNetDeviceDialog::on_btnProtocolSelect_clicked()
         SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
         XMLObject xmlObj;
-        if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+        if(xmlObj.load(szDeviceDescInfo, NULL)) {
             pDlg->SetProtocolList(xmlObj.getProperty("SupportProtocol").split("|"));
             if(pDlg->exec() == QDialog::Accepted) {
                 ui->editProtocol->setText(pDlg->GetProtocolName());
@@ -119,7 +118,8 @@ void NewNetDeviceDialog::on_btnOk_clicked()
     }
 }
 
-void NewNetDeviceDialog::on_btnExit_clicked() {
+void NewNetDeviceDialog::on_btnExit_clicked()
+{
     QDialog::reject();
 }
 
@@ -129,8 +129,7 @@ bool NewNetDeviceDialog::check_data()
 {
     bool ret = true;
 #if 0
-    if(ui->editProjectName->text().isEmpty())
-    {
+    if(ui->editProjectName->text().isEmpty()) {
         QMessageBox::information(this, tr("系统提示"), tr(""));
         ret = false;
     }
@@ -139,17 +138,22 @@ bool NewNetDeviceDialog::check_data()
 }
 
 
-QString NewNetDeviceDialog::GetDeviceName() const {
+QString NewNetDeviceDialog::GetDeviceName() const
+{
     return ui->editDeviceName->text();
 }
 
 
 void NewNetDeviceDialog::load(const QString &szName)
 {
-    if(szName == "") return;
+    if(szName == "") {
+        return;
+    }
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
-    if(pObj == Q_NULLPTR) return;
+    if(pObj == NULL) {
+        return;
+    }
     ui->editDeviceName->setText(pObj->szName_);
     m_szPluginName = pObj->szDeviceName_;
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
@@ -186,9 +190,11 @@ void NewNetDeviceDialog::save(const QString &szName)
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
 
-    if(pObj == Q_NULLPTR) {
+    if(pObj == NULL) {
         pObj = deviceInfo.newObject();
-        if(pObj == Q_NULLPTR) return;
+        if(pObj == NULL) {
+            return;
+        }
     }
 
     pObj->szDeviceType_ = "NET";
@@ -219,7 +225,7 @@ void NewNetDeviceDialog::save(const QString &szName)
 }
 
 QString NewNetDeviceDialog::getValue2ByValue1(const QString &szVal1,
-                                              QVector<QPair<QString, QString>>& properties)
+        QVector<QPair<QString, QString>>& properties)
 {
     for (int i = 0; i < properties.size(); ++i) {
         if (properties[i].first == szVal1) {
@@ -231,8 +237,8 @@ QString NewNetDeviceDialog::getValue2ByValue1(const QString &szVal1,
 
 
 void NewNetDeviceDialog::setValue2ByValue1(const QString &szVal1,
-                                           const QString &szVal2,
-                                           QVector<QPair<QString, QString>>& properties)
+        const QString &szVal2,
+        QVector<QPair<QString, QString>>& properties)
 {
     for (int i = 0; i < properties.size(); ++i) {
         if (properties[i].first == szVal1) {
@@ -248,11 +254,12 @@ void NewNetDeviceDialog::setValue2ByValue1(const QString &szVal1,
 ///
 void NewNetDeviceDialog::updatePropertyEditor()
 {
-    if(m_properties.count() != m_prop_type.count())
+    if(m_properties.count() != m_prop_type.count()) {
         return;
+    }
 
     QList<QAbstractProperty *> listProperties;
-    QAbstractProperty* pProObj = Q_NULLPTR;
+    QAbstractProperty* pProObj = NULL;
 
     for (int i = 0; i < m_properties.size(); ++i) {
         QString szKey = m_properties[i].first;
@@ -261,7 +268,7 @@ void NewNetDeviceDialog::updatePropertyEditor()
 
         if(szType == QString("int")) {
             pProObj = QPropertyFactory::create_property("Number");
-            if(pProObj != Q_NULLPTR) {
+            if(pProObj != NULL) {
                 pProObj->setObjectProperty("name", szKey);
                 pProObj->setAttribute("show_name", szKey);
                 pProObj->setAttribute("group", "Attributes");
@@ -271,10 +278,9 @@ void NewNetDeviceDialog::updatePropertyEditor()
                 pProObj->set_value(val);
                 listProperties.append(pProObj);
             }
-        }
-        else if(szType == QString("bool")) {
+        } else if(szType == QString("bool")) {
             pProObj = QPropertyFactory::create_property("Bool");
-            if(pProObj != Q_NULLPTR) {
+            if(pProObj != NULL) {
                 pProObj->setObjectProperty("name", szKey);
                 pProObj->setAttribute("show_name", szKey);
                 pProObj->setAttribute("group", "Attributes");
@@ -296,8 +302,9 @@ void NewNetDeviceDialog::updatePropertyEditor()
 
 void NewNetDeviceDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &value)
 {
-    if(m_properties.count() != m_prop_type.count())
+    if(m_properties.count() != m_prop_type.count()) {
         return;
+    }
 
     QString id = pro->getObjectProperty("name").toString();
     QString szType = getValue2ByValue1(id, m_prop_type);

@@ -234,7 +234,7 @@ void Modbus::insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead)
                         pIOTag->SetInFrameAddress(-1);
                         pIOTag->setBlockReadTagId("block");
                         pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(Q_NULLPTR);
+                        pIOTag->setBlockReadTag(NULL);
                         listRead.push_front(pIOTag);
                     } else {
                         if (iChangeTagAddr < tMin) {
@@ -318,7 +318,7 @@ void Modbus::insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead)
                         pIOTag->SetInFrameAddress(-1);
                         pIOTag->setBlockReadTagId("block");
                         pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(Q_NULLPTR);
+                        pIOTag->setBlockReadTag(NULL);
                         listRead.push_front(pIOTag);
                     } else {
                         if (iChangeTagAddr < tMin) {
@@ -405,7 +405,7 @@ void Modbus::insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead)
                         pIOTag->SetInFrameAddress(-1);
                         pIOTag->setBlockReadTagId("block");
                         pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(Q_NULLPTR);
+                        pIOTag->setBlockReadTag(NULL);
                         listRead.push_front(pIOTag);
                     } else {
                         if (iChangeTagAddr < tMin) {
@@ -490,7 +490,7 @@ void Modbus::insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead)
                         pIOTag->SetInFrameAddress(-1);
                         pIOTag->setBlockReadTagId("block");
                         pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(Q_NULLPTR);
+                        pIOTag->setBlockReadTag(NULL);
                         listRead.push_front(pIOTag);
                     } else {
                         if (iChangeTagAddr < tMin) {

@@ -41,26 +41,27 @@ SysTag::SysTag(QWidget *parent) : QWidget(parent)
         readFile.close();
 
         XMLObject xml;
-        if(xml.load(szTags, Q_NULLPTR)) {
+        if(xml.load(szTags, NULL)) {
             m_pSysTagTableViewObj->m_tagMgr.openFromXml(&xml);
             m_pSysTagTableViewObj->updateTable();
         }
     }
 
-    if(m_pSysTagTableViewObj->model()->rowCount() > 0)
+    if(m_pSysTagTableViewObj->model()->rowCount() > 0) {
         m_pSysTagTableViewObj->selectRow(0);
+    }
 }
 
 SysTag::~SysTag()
 {
-    if(m_pSysTagTableViewObj != Q_NULLPTR) {
+    if(m_pSysTagTableViewObj != NULL) {
         delete m_pSysTagTableViewObj;
-        m_pSysTagTableViewObj = Q_NULLPTR;
+        m_pSysTagTableViewObj = NULL;
     }
 
-    if(m_pVLayoutObj != Q_NULLPTR) {
+    if(m_pVLayoutObj != NULL) {
         delete m_pVLayoutObj;
-        m_pVLayoutObj = Q_NULLPTR;
+        m_pVLayoutObj = NULL;
     }
 }
 
@@ -74,7 +75,9 @@ void SysTag::closeEvent(QCloseEvent *event)
     m_pSysTagTableViewObj->m_tagMgr.saveToXml(&tagObjs);
 
     QFile writeFile(szTagFile);
-    if (!writeFile.open(QIODevice::WriteOnly)) return;
+    if (!writeFile.open(QIODevice::WriteOnly)) {
+        return;
+    }
     QTextStream out(&writeFile);
     out.setCodec("utf-8");
     out << tagObjs.write();

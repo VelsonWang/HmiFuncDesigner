@@ -1,7 +1,7 @@
 #include "qenumpropertyeditor.h"
 #include "../../shared/property/qabstractproperty.h"
 
-QEnumPropertyEditor::QEnumPropertyEditor(QAbstractProperty *property, QUndoStack* , QWidget *parent):
+QEnumPropertyEditor::QEnumPropertyEditor(QAbstractProperty *property, QUndoStack*, QWidget *parent):
     QComboBox(parent),
     m_property(property)
 {

@@ -30,7 +30,7 @@ QString QSliderHost::getShowIcon()
 
 void QSliderHost::createObject()
 {
-    m_object=new QSlider();
+    m_object = new QSlider();
     m_object->setObjectName("slider");
 }
 
@@ -40,43 +40,42 @@ void QSliderHost::initProperty()
 
     QAbstractProperty *pro;
 
-    pro=QPropertyFactory::create_property("Enum");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","tickPosition");
-        pro->setAttribute("show_name",tr("TickPosition"));
-        pro->setAttribute("group","Attributes");
+    pro = QPropertyFactory::create_property("Enum");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "tickPosition");
+        pro->setAttribute("show_name", tr("TickPosition"));
+        pro->setAttribute("group", "Attributes");
         ComboItems items;
         tagComboItem item;
-        item.m_text="NoTicks";
-        item.m_value=QSlider::NoTicks;
+        item.m_text = "NoTicks";
+        item.m_value = QSlider::NoTicks;
         items.append(item);
 
-        item.m_text="TicksAbove";
-        item.m_value=QSlider::TicksAbove;
+        item.m_text = "TicksAbove";
+        item.m_value = QSlider::TicksAbove;
         items.append(item);
 
-        item.m_text="TicksBelow";
-        item.m_value=QSlider::TicksBelow;
+        item.m_text = "TicksBelow";
+        item.m_value = QSlider::TicksBelow;
         items.append(item);
 
-        item.m_text="TicksLeft";
-        item.m_value=QSlider::TicksLeft;
+        item.m_text = "TicksLeft";
+        item.m_value = QSlider::TicksLeft;
         items.append(item);
 
-        item.m_text="TicksRight";
-        item.m_value=QSlider::TicksRight;
+        item.m_text = "TicksRight";
+        item.m_value = QSlider::TicksRight;
         items.append(item);
 
-        item.m_text="TicksBothSides";
-        item.m_value=QSlider::TicksBothSides;
+        item.m_text = "TicksBothSides";
+        item.m_value = QSlider::TicksBothSides;
         items.append(item);
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->setAttribute("items",v);
+        pro->setAttribute("items", v);
         insertProperty(pro);
     }
 
-    setPropertyValue("geometry", QRect(0,0,100,20));
+    setPropertyValue("geometry", QRect(0, 0, 100, 20));
 }

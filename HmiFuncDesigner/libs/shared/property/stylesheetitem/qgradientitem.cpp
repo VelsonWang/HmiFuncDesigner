@@ -55,7 +55,7 @@ void QGradientItem::subValueChanged()
     QColor color;
     foreach(QAbstractStylesheetItem* item, m_children) {
         int c = item->value().toInt();
-        color = QColor((c>>16)&0xff, (c>>8)&0xff, c&0xff, (c>>24)&0xff);
+        color = QColor((c >> 16) & 0xff, (c >> 8) & 0xff, c & 0xff, (c >> 24) & 0xff);
         g.setColorAt(item->attribute("stop", "0").toDouble(), color);
     }
     if(g != m_value.value<QGradient>()) {
@@ -70,7 +70,7 @@ void QGradientItem::setValue(const QVariant &value)
         m_value = value;
         QGradient g = value.value<QGradient>();
         QGradient::Type t = g.type();
-        while(m_children.size() >0 ) {
+        while(m_children.size() > 0 ) {
             delete m_children.first();
         }
         if(t == QGradient::LinearGradient) {
@@ -100,14 +100,14 @@ void QGradientItem::setValue(const QVariant &value)
 
         QVector<QPair<qreal, QColor> >stops = g.stops();
 
-        for(int i=0; i<stops.size(); i++) {
-            QPair<qreal,QColor> stop = stops.at(i);
+        for(int i = 0; i < stops.size(); i++) {
+            QPair<qreal, QColor> stop = stops.at(i);
             QAbstractStylesheetItem *item = new QAbstractStylesheetItem(this);
-            item->setProperty("title", QString("color_%1").arg(i+1));
+            item->setProperty("title", QString("color_%1").arg(i + 1));
             disconnect(item, SIGNAL(valueChanged()), this, SLOT(subValueChanged()));
             item->setDefault(attribute("default"));
-            uint c=((stop.second.alpha()&0xff)<<24) + ((stop.second.red()&0xff)<<16)
-                    + ((stop.second.green()&0xff)<<8) + (stop.second.blue()&0xff);
+            uint c = ((stop.second.alpha() & 0xff) << 24) + ((stop.second.red() & 0xff) << 16)
+                     + ((stop.second.green() & 0xff) << 8) + (stop.second.blue() & 0xff);
             item->setValue(c);
             item->setAttribute("stop", QString::number(stop.first));
             connect(item, SIGNAL(valueChanged()), this, SLOT(subValueChanged()));

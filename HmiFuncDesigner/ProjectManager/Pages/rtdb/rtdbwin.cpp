@@ -17,13 +17,13 @@ RTDBWin::RTDBWin(QWidget *parent) : QWidget(parent)
 
 RTDBWin::~RTDBWin()
 {
-    if(m_pListViewObj != Q_NULLPTR) {
+    if(m_pListViewObj != NULL) {
         delete m_pListViewObj;
-        m_pListViewObj = Q_NULLPTR;
+        m_pListViewObj = NULL;
     }
-    if(m_pListViewModelObj != Q_NULLPTR) {
+    if(m_pListViewModelObj != NULL) {
         delete m_pListViewModelObj;
-        m_pListViewModelObj = Q_NULLPTR;
+        m_pListViewModelObj = NULL;
     }
 }
 
@@ -66,7 +66,9 @@ void RTDBWin::onSlotListViewProjectDoubleClicked(const QModelIndex &index)
     QModelIndex idx = m_pListViewObj->selectionModel()->currentIndex();
     QStandardItem *item = m_pListViewModelObj->itemFromIndex(idx);
 
-    if (item == Q_NULLPTR) return;
+    if (item == NULL) {
+        return;
+    }
 
     QString program = "";
 

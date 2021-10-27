@@ -1,10 +1,12 @@
 #include "UserAuthority.h"
 
-UserAuthority::UserAuthority() {
+UserAuthority::UserAuthority()
+{
     listUserAuthority_.clear();
 }
 
-UserAuthority::~UserAuthority() {
+UserAuthority::~UserAuthority()
+{
     qDeleteAll(listUserAuthority_);
     listUserAuthority_.clear();
 }
@@ -15,7 +17,9 @@ bool UserAuthority::openFromXml(XMLObject *pXmlObj)
     qDeleteAll(listUserAuthority_);
     listUserAuthority_.clear();
     XMLObject *pUsersObj = pXmlObj->getCurrentChild("users");
-    if(pUsersObj == Q_NULLPTR) return false;
+    if(pUsersObj == NULL) {
+        return false;
+    }
     QVector<XMLObject* > listUsersObj = pUsersObj->getCurrentChildren("user");
     foreach(XMLObject* pUserObj, listUsersObj) {
         UserAuthorityPrivate *pObj = new UserAuthorityPrivate();
@@ -30,7 +34,7 @@ bool UserAuthority::openFromXml(XMLObject *pXmlObj)
         pObj->szName4_ = pUserObj->getProperty("name4");
         pObj->szName5_ = pUserObj->getProperty("name5");
         pObj->bLogin_ = pUserObj->getProperty("login") == "1";
-        pObj->bLogout_= pUserObj->getProperty("logout") == "1";
+        pObj->bLogout_ = pUserObj->getProperty("logout") == "1";
         listUserAuthority_.append(pObj);
     }
     return true;
@@ -42,7 +46,7 @@ bool UserAuthority::saveToXml(XMLObject *pXmlObj)
     XMLObject *pUsersObj = new XMLObject(pXmlObj);
     pUsersObj->setTagName("users");
 
-    for(int i=0; i<listUserAuthority_.count(); i++) {
+    for(int i = 0; i < listUserAuthority_.count(); i++) {
         UserAuthorityPrivate *pObj = listUserAuthority_.at(i);
         XMLObject *pUserObj = new XMLObject(pUsersObj);
         pUserObj->setTagName("user");
@@ -64,135 +68,182 @@ bool UserAuthority::saveToXml(XMLObject *pXmlObj)
 }
 
 
-int UserAuthority::getUserAuthorityID(int index) {
-    if(index < listUserAuthority_.count())
+int UserAuthority::getUserAuthorityID(int index)
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->iID_;
+    }
     return -1;
 }
 
-int UserAuthority::getCount() {
+int UserAuthority::getCount()
+{
     return listUserAuthority_.count();
 }
 
 
-QString UserAuthority::getIndex(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getIndex(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szIndex_;
+    }
     return QString();
 }
 
-void UserAuthority::setIndex(int index, const QString &szIndex) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setIndex(int index, const QString &szIndex)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szIndex_ = szIndex;
+    }
 }
 
-QString UserAuthority::getName(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getName(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szName_;
+    }
     return QString();
 }
 
-void UserAuthority::setName(int index, const QString &name) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setName(int index, const QString &name)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szName_ = name;
+    }
 }
 
-QString UserAuthority::getPassword(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getPassword(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szPassword_;
+    }
     return QString();
 }
 
-void UserAuthority::setPassword(int index, const QString &password) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setPassword(int index, const QString &password)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szPassword_ = password;
+    }
 }
 
-QString UserAuthority::getAuthority(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getAuthority(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szAuthority_;
+    }
     return QString();
 }
 
-void UserAuthority::setAuthority(int index, const QString &authority) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setAuthority(int index, const QString &authority)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szAuthority_ = authority;
+    }
 }
 
-QString UserAuthority::getComments(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getComments(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szComments_;
+    }
     return QString();
 }
 
-void UserAuthority::setComments(int index, const QString &comments) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setComments(int index, const QString &comments)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szComments_ = comments;
+    }
 }
 
-QString UserAuthority::getName2(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getName2(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szName2_;
+    }
     return QString();
 }
 
-void UserAuthority::setName2(int index, const QString &name) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setName2(int index, const QString &name)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szName2_ = name;
+    }
 }
 
-QString UserAuthority::getName3(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getName3(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szName3_;
+    }
     return QString();
 }
 
-void UserAuthority::setName3(int index, const QString &name) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setName3(int index, const QString &name)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szName3_ = name;
+    }
 }
 
-QString UserAuthority::getName4(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getName4(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szName4_;
+    }
     return QString();
 }
 
-void UserAuthority::setName4(int index, const QString &name) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setName4(int index, const QString &name)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szName4_ = name;
+    }
 }
 
-QString UserAuthority::getName5(int index) const {
-    if(index < listUserAuthority_.count())
+QString UserAuthority::getName5(int index) const
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->szName5_;
+    }
     return QString();
 }
 
-void UserAuthority::setName5(int index, const QString &name) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setName5(int index, const QString &name)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->szName5_ = name;
+    }
 }
 
-bool UserAuthority::isLogin(int index) {
-    if(index < listUserAuthority_.count())
+bool UserAuthority::isLogin(int index)
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->bLogin_;
+    }
     return false;
 }
 
-void UserAuthority::setLogin(int index, bool login) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setLogin(int index, bool login)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->bLogin_ = login;
+    }
 }
 
-bool UserAuthority::isLogout(int index) {
-    if(index < listUserAuthority_.count())
+bool UserAuthority::isLogout(int index)
+{
+    if(index < listUserAuthority_.count()) {
         return listUserAuthority_.at(index)->bLogout_;
+    }
     return false;
 }
 
-void UserAuthority::setLogout(int index, bool logout) {
-    if(index < listUserAuthority_.count())
+void UserAuthority::setLogout(int index, bool logout)
+{
+    if(index < listUserAuthority_.count()) {
         listUserAuthority_.at(index)->bLogout_ = logout;
+    }
 }
 

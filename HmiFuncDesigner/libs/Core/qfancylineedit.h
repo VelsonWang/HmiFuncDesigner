@@ -1,7 +1,6 @@
 #ifndef QFANCYLINEEDIT_H
 #define QFANCYLINEEDIT_H
 
-
 #include <QLineEdit>
 #include <QAbstractButton>
 
@@ -16,14 +15,34 @@ class IconButton: public QAbstractButton
 public:
     explicit IconButton(QWidget *parent = 0);
     void paintEvent(QPaintEvent *event);
-    void setPixmap(const QPixmap &pixmap) { m_pixmap = pixmap; update(); }
-    QPixmap pixmap() const { return m_pixmap; }
-    float iconOpacity() { return m_iconOpacity; }
-    void setIconOpacity(float value) { m_iconOpacity = value; update(); }
+    void setPixmap(const QPixmap &pixmap)
+    {
+        m_pixmap = pixmap;
+        update();
+    }
+    QPixmap pixmap() const
+    {
+        return m_pixmap;
+    }
+    float iconOpacity()
+    {
+        return m_iconOpacity;
+    }
+    void setIconOpacity(float value)
+    {
+        m_iconOpacity = value;
+        update();
+    }
     void animateShow(bool visible);
 
-    void setAutoHide(bool hide) { m_autoHide = hide; }
-    bool hasAutoHide() const { return m_autoHide; }
+    void setAutoHide(bool hide)
+    {
+        m_autoHide = hide;
+    }
+    bool hasAutoHide() const
+    {
+        return m_autoHide;
+    }
 private:
     float m_iconOpacity;
     bool m_autoHide;
@@ -72,7 +91,7 @@ protected:
     void resizeEvent(QResizeEvent *e);
     bool event(QEvent *e);
 
-    private:
+private:
     void setCompleter(QCompleter *);
 
     void updateMargins();

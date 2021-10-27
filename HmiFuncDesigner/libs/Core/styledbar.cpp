@@ -1,7 +1,5 @@
 #include "styledbar.h"
-
 #include "stylehelper.h"
-
 #include <QPainter>
 #include <QStyleOption>
 

@@ -11,15 +11,15 @@ class SystemParameters : public QWidget
 {
     Q_OBJECT
 public:
-    explicit SystemParameters(QWidget *parent = Q_NULLPTR);
+    explicit SystemParameters(QWidget *parent = NULL);
     ~SystemParameters();
 
 private slots:
     void onSlotListViewProjectDoubleClicked(const QModelIndex &index);
 
 private:
-    QStandardItemModel *m_pListViewProjectModelObj = Q_NULLPTR;
-    ListViewEx *m_pListViewProjectObj = Q_NULLPTR;
+    QStandardItemModel *m_pListViewProjectModelObj = NULL;
+    ListViewEx *m_pListViewProjectObj = NULL;
 };
 
 #endif

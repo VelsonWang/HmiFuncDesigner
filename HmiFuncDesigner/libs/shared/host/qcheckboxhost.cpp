@@ -31,7 +31,7 @@ QString QCheckBoxHost::getShowIcon()
 
 void QCheckBoxHost::createObject()
 {
-    m_object=new QCheckBox();
+    m_object = new QCheckBox();
     m_object->setObjectName("checkbox");
 }
 
@@ -41,46 +41,44 @@ void QCheckBoxHost::initProperty()
 
     QAbstractProperty *pro;
 
-    SheetItems items=property("sheet_state").value<SheetItems>();
+    SheetItems items = property("sheet_state").value<SheetItems>();
 
     tagSheetItem item;
 
-    item.m_item_id=SSID_On;
-    items.insert(item.m_item_id,item);
-    item.m_item_id=SSID_Off;
-    items.insert(item.m_item_id,item);
+    item.m_item_id = SSID_On;
+    items.insert(item.m_item_id, item);
+    item.m_item_id = SSID_Off;
+    items.insert(item.m_item_id, item);
 
     QVariant v;
     v.setValue<SheetItems>(items);
     setProperty("sheet_state", v);
 
     QStringList list;
-    list<<"::indicator";
+    list << "::indicator";
     setProperty("sub_control", list);
 
-    pro=QPropertyFactory::create_property("Bool");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","tristate");
-        pro->setAttribute("show_name",tr("Tristate"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_CAN_SAME,true);
-        insertProperty(pro,1);
+    pro = QPropertyFactory::create_property("Bool");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "tristate");
+        pro->setAttribute("show_name", tr("Tristate"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pro, 1);
     }
 
-    pro=QPropertyFactory::create_property("Script");
-    if(pro!=Q_NULLPTR)
-    {
-        pro->setObjectProperty("name","stateChanged");
-        pro->setAttribute("show_name",tr("StateChanged"));
-        pro->setAttribute("group","Events");
+    pro = QPropertyFactory::create_property("Script");
+    if(pro != NULL) {
+        pro->setObjectProperty("name", "stateChanged");
+        pro->setAttribute("show_name", tr("StateChanged"));
+        pro->setAttribute("group", "Events");
         insertProperty(pro);
     }
 
-    QCheckBox *b=(QCheckBox*)m_object;
-    connect(b,SIGNAL(stateChanged(int)),this,SLOT(stateChanged(int)));
+    QCheckBox *b = (QCheckBox*)m_object;
+    connect(b, SIGNAL(stateChanged(int)), this, SLOT(stateChanged(int)));
 
-    setPropertyValue("geometry", QRect(0,0,100,20));
+    setPropertyValue("geometry", QRect(0, 0, 100, 20));
     setPropertyValue("text", "checkbox");
     removeProperty("checkable");
 }
@@ -97,11 +95,10 @@ bool QCheckBoxHost::tristate()
 
 void QCheckBoxHost::stateChanged(int state)
 {
-    QString code=getPropertyValue("stateChanged").toString();
-    if(code!="")
-    {
-        QMap<QString,QString> param;
-        param.insert("_state",QString::number(state));
-        exec(code,param);
+    QString code = getPropertyValue("stateChanged").toString();
+    if(code != "") {
+        QMap<QString, QString> param;
+        param.insert("_state", QString::number(state));
+        exec(code, param);
     }
 }

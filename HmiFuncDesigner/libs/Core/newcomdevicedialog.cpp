@@ -26,8 +26,7 @@ NewComDeviceDialog::NewComDeviceDialog(QWidget *parent) :
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     ui->editProtocol->setReadOnly(true);
-    for(int idx=1; idx<33;idx++)
-    {
+    for(int idx = 1; idx < 33; idx++) {
         ui->cboPortNumber->addItem(QString("COM%1").arg(idx));
     }
 
@@ -91,7 +90,7 @@ void NewComDeviceDialog::on_btnDeviceSelect_clicked()
         int findCnt = 0;
         DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
 continueFind:
-        for(int i=0; i<deviceInfo.listDeviceInfoObject_.count(); i++) {
+        for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
             DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
             if(pObj->szName_ == devName) {
                 findCnt++;
@@ -120,7 +119,7 @@ void NewComDeviceDialog::on_btnProtocolSelect_clicked()
         SelectProtocolDialog *pDlg = new SelectProtocolDialog(this);
         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
         XMLObject xmlObj;
-        if(xmlObj.load(szDeviceDescInfo, Q_NULLPTR)) {
+        if(xmlObj.load(szDeviceDescInfo, NULL)) {
             pDlg->SetProtocolList(xmlObj.getProperty("SupportProtocol").split("|"));
             if(pDlg->exec() == QDialog::Accepted) {
                 ui->editProtocol->setText(pDlg->GetProtocolName());
@@ -136,7 +135,8 @@ void NewComDeviceDialog::on_btnCheck_clicked()
     }
 }
 
-void NewComDeviceDialog::on_btnOk_clicked() {
+void NewComDeviceDialog::on_btnOk_clicked()
+{
     if(check_data()) {
         QDialog::accept();
     }
@@ -153,8 +153,7 @@ bool NewComDeviceDialog::check_data()
 {
     bool ret = true;
 #if 0
-    if(ui->editProjectName->text().isEmpty())
-    {
+    if(ui->editProjectName->text().isEmpty()) {
         QMessageBox::information(this, tr("系统提示"), tr(""));
         ret = false;
     }
@@ -169,10 +168,14 @@ QString NewComDeviceDialog::GetDeviceName() const
 
 void NewComDeviceDialog::load(const QString &szName)
 {
-    if(szName == "") return;
+    if(szName == "") {
+        return;
+    }
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
-    if(pObj == Q_NULLPTR) return;
+    if(pObj == NULL) {
+        return;
+    }
     ui->editDeviceName->setText(pObj->szName_);
     m_szPluginName = pObj->szDeviceName_;
     ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
@@ -211,9 +214,11 @@ void NewComDeviceDialog::save(const QString &szName)
 {
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
-    if(pObj == Q_NULLPTR) {
+    if(pObj == NULL) {
         pObj = deviceInfo.newObject();
-        if(pObj == Q_NULLPTR) return;
+        if(pObj == NULL) {
+            return;
+        }
     }
     pObj->szDeviceType_ = "COM";
     pObj->szName_ = ui->editDeviceName->text();
@@ -246,7 +251,7 @@ void NewComDeviceDialog::save(const QString &szName)
 
 
 QString NewComDeviceDialog::getValue2ByValue1(const QString &szVal1,
-                                              QVector<QPair<QString, QString>>& properties)
+        QVector<QPair<QString, QString>>& properties)
 {
     for (int i = 0; i < properties.size(); ++i) {
         if (properties[i].first == szVal1) {
@@ -258,8 +263,8 @@ QString NewComDeviceDialog::getValue2ByValue1(const QString &szVal1,
 
 
 void NewComDeviceDialog::setValue2ByValue1(const QString &szVal1,
-                                           const QString &szVal2,
-                                           QVector<QPair<QString, QString>>& properties)
+        const QString &szVal2,
+        QVector<QPair<QString, QString>>& properties)
 {
     for (int i = 0; i < properties.size(); ++i) {
         if (properties[i].first == szVal1) {
@@ -275,11 +280,12 @@ void NewComDeviceDialog::setValue2ByValue1(const QString &szVal1,
 ///
 void NewComDeviceDialog::updatePropertyEditor()
 {
-    if(m_properties.count() != m_prop_type.count())
+    if(m_properties.count() != m_prop_type.count()) {
         return;
+    }
 
     QList<QAbstractProperty *> listProperties;
-    QAbstractProperty* pProObj = Q_NULLPTR;
+    QAbstractProperty* pProObj = NULL;
 
     for (int i = 0; i < m_properties.size(); ++i) {
         QString szKey = m_properties[i].first;
@@ -288,7 +294,7 @@ void NewComDeviceDialog::updatePropertyEditor()
 
         if(szType == QString("int")) {
             pProObj = QPropertyFactory::create_property("Number");
-            if(pProObj != Q_NULLPTR) {
+            if(pProObj != NULL) {
                 pProObj->setObjectProperty("name", szKey);
                 pProObj->setAttribute("show_name", szKey);
                 pProObj->setAttribute("group", "Attributes");
@@ -298,10 +304,9 @@ void NewComDeviceDialog::updatePropertyEditor()
                 pProObj->set_value(val);
                 listProperties.append(pProObj);
             }
-        }
-        else if(szType == QString("bool")) {
+        } else if(szType == QString("bool")) {
             pProObj = QPropertyFactory::create_property("Bool");
-            if(pProObj != Q_NULLPTR) {
+            if(pProObj != NULL) {
                 pProObj->setObjectProperty("name", szKey);
                 pProObj->setAttribute("show_name", szKey);
                 pProObj->setAttribute("group", "Attributes");
@@ -320,14 +325,15 @@ void NewComDeviceDialog::updatePropertyEditor()
 
 void NewComDeviceDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &value)
 {
-    if(m_properties.count() != m_prop_type.count())
+    if(m_properties.count() != m_prop_type.count()) {
         return;
+    }
 
     QString id = pro->getObjectProperty("name").toString();
     QString szType = getValue2ByValue1(id, m_prop_type);
 
     if(szType == QString("int")) {
-        setValue2ByValue1(id, value.toString(), m_properties);  
+        setValue2ByValue1(id, value.toString(), m_properties);
     } else if(szType == QString("bool")) {
         bool val = value.toBool();
         QString szVal = val ? "true" : "false";

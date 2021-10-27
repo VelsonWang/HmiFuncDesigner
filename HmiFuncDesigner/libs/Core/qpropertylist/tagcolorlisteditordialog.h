@@ -6,7 +6,8 @@
 #include <QLabel>
 #include <QToolButton>
 
-namespace Ui {
+namespace Ui
+{
 class TagColorListEditorDialog;
 }
 
@@ -15,7 +16,7 @@ class TagColorListEditorDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit TagColorListEditorDialog(QWidget *parent = Q_NULLPTR);
+    explicit TagColorListEditorDialog(QWidget *parent = NULL);
     ~TagColorListEditorDialog();
     QStringList getValueColorList();
     void setValueColorList(const QStringList &list);

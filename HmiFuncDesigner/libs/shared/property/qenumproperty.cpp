@@ -1,8 +1,7 @@
 #include "qenumproperty.h"
-
 #include "../qcommonstruct.h"
 
-QEnumProperty::QEnumProperty(QAbstractProperty *parent) : 
+QEnumProperty::QEnumProperty(QAbstractProperty *parent) :
     QAbstractProperty(parent)
 {
     setObjectProperty("type", "Enum");
@@ -11,7 +10,7 @@ QEnumProperty::QEnumProperty(QAbstractProperty *parent) :
 QIcon QEnumProperty::get_value_icon()
 {
     ComboItems items = this->getAttribute("items").value<ComboItems>();
-    foreach(tagComboItem item,items) {
+    foreach(tagComboItem item, items) {
         if(item.m_value == get_value()) {
             return QIcon(item.m_icon);
         }

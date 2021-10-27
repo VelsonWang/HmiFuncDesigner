@@ -119,21 +119,21 @@ void QtGradientStopsControllerPrivate::updateZoom(double zoom)
 
 void QtGradientStopsControllerPrivate::slotHsvClicked()
 {
-    QString h = QApplication::translate("qdesigner_internal::QtGradientStopsController", "H", Q_NULLPTR);
-    QString s = QApplication::translate("qdesigner_internal::QtGradientStopsController", "S", Q_NULLPTR);
-    QString v = QApplication::translate("qdesigner_internal::QtGradientStopsController", "V", Q_NULLPTR);
+    QString h = QApplication::translate("qdesigner_internal::QtGradientStopsController", "H", NULL);
+    QString s = QApplication::translate("qdesigner_internal::QtGradientStopsController", "S", NULL);
+    QString v = QApplication::translate("qdesigner_internal::QtGradientStopsController", "V", NULL);
 
     m_ui->hLabel->setText(h);
     m_ui->sLabel->setText(s);
     m_ui->vLabel->setText(v);
 
-    h = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Hue", Q_NULLPTR);
-    s = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Sat", Q_NULLPTR);
-    v = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Val", Q_NULLPTR);
+    h = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Hue", NULL);
+    s = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Sat", NULL);
+    v = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Val", NULL);
 
-    const QString hue = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Hue", Q_NULLPTR);
-    const QString saturation = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Saturation", Q_NULLPTR);
-    const QString value = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Value", Q_NULLPTR);
+    const QString hue = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Hue", NULL);
+    const QString saturation = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Saturation", NULL);
+    const QString value = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Value", NULL);
 
     m_ui->hLabel->setToolTip(hue);
     m_ui->hueLabel->setText(h);
@@ -155,17 +155,17 @@ void QtGradientStopsControllerPrivate::slotHsvClicked()
 
 void QtGradientStopsControllerPrivate::slotRgbClicked()
 {
-    QString r = QApplication::translate("qdesigner_internal::QtGradientStopsController", "R", Q_NULLPTR);
-    QString g = QApplication::translate("qdesigner_internal::QtGradientStopsController", "G", Q_NULLPTR);
-    QString b = QApplication::translate("qdesigner_internal::QtGradientStopsController", "B", Q_NULLPTR);
+    QString r = QApplication::translate("qdesigner_internal::QtGradientStopsController", "R", NULL);
+    QString g = QApplication::translate("qdesigner_internal::QtGradientStopsController", "G", NULL);
+    QString b = QApplication::translate("qdesigner_internal::QtGradientStopsController", "B", NULL);
 
     m_ui->hLabel->setText(r);
     m_ui->sLabel->setText(g);
     m_ui->vLabel->setText(b);
 
-    QString red = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Red", Q_NULLPTR);
-    QString green = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Green", Q_NULLPTR);
-    QString blue = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Blue", Q_NULLPTR);
+    QString red = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Red", NULL);
+    QString green = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Green", NULL);
+    QString blue = QApplication::translate("qdesigner_internal::QtGradientStopsController", "Blue", NULL);
 
     m_ui->hLabel->setToolTip(red);
     m_ui->hueLabel->setText(red);
@@ -192,23 +192,31 @@ void QtGradientStopsControllerPrivate::setColorSpinBoxes(const QColor &color)
     m_ui->valueSpinBox->blockSignals(true);
     m_ui->alphaSpinBox->blockSignals(true);
     if (m_ui->hsvRadioButton->isChecked()) {
-        if (m_ui->hueSpinBox->maximum() != 359)
+        if (m_ui->hueSpinBox->maximum() != 359) {
             m_ui->hueSpinBox->setMaximum(359);
-        if (m_ui->hueSpinBox->value() != color.hue())
+        }
+        if (m_ui->hueSpinBox->value() != color.hue()) {
             m_ui->hueSpinBox->setValue(color.hue());
-        if (m_ui->saturationSpinBox->value() != color.saturation())
+        }
+        if (m_ui->saturationSpinBox->value() != color.saturation()) {
             m_ui->saturationSpinBox->setValue(color.saturation());
-        if (m_ui->valueSpinBox->value() != color.value())
+        }
+        if (m_ui->valueSpinBox->value() != color.value()) {
             m_ui->valueSpinBox->setValue(color.value());
+        }
     } else {
-        if (m_ui->hueSpinBox->maximum() != 255)
+        if (m_ui->hueSpinBox->maximum() != 255) {
             m_ui->hueSpinBox->setMaximum(255);
-        if (m_ui->hueSpinBox->value() != color.red())
+        }
+        if (m_ui->hueSpinBox->value() != color.red()) {
             m_ui->hueSpinBox->setValue(color.red());
-        if (m_ui->saturationSpinBox->value() != color.green())
+        }
+        if (m_ui->saturationSpinBox->value() != color.green()) {
             m_ui->saturationSpinBox->setValue(color.green());
-        if (m_ui->valueSpinBox->value() != color.blue())
+        }
+        if (m_ui->valueSpinBox->value() != color.blue()) {
             m_ui->valueSpinBox->setValue(color.blue());
+        }
     }
     m_ui->alphaSpinBox->setValue(color.alpha());
     m_ui->hueSpinBox->blockSignals(false);
@@ -307,8 +315,9 @@ void QtGradientStopsControllerPrivate::slotStopSelected(QtGradientStop *stop, bo
 void QtGradientStopsControllerPrivate::slotUpdatePositionSpinBox()
 {
     QtGradientStop *current = m_model->currentStop();
-    if (!current)
+    if (!current) {
         return;
+    }
 
     qreal min = 0.0;
     qreal max = 1.0;
@@ -321,15 +330,19 @@ void QtGradientStopsControllerPrivate::slotUpdatePositionSpinBox()
         const qreal minPos = pos - first->position() - 0.0004999;
         const qreal maxPos = pos + 1.0 - last->position() + 0.0004999;
 
-        if (max > maxPos)
+        if (max > maxPos) {
             max = maxPos;
-        if (min < minPos)
+        }
+        if (min < minPos) {
             min = minPos;
+        }
 
-        if (first->position() == 0.0)
+        if (first->position() == 0.0) {
             min = pos;
-        if (last->position() == 1.0)
+        }
+        if (last->position() == 1.0) {
             max = pos;
+        }
     }
 
     const int spinMin = qRound(m_ui->positionSpinBox->minimum() * 1000);
@@ -342,31 +355,35 @@ void QtGradientStopsControllerPrivate::slotUpdatePositionSpinBox()
     if (spinMin != newMin || spinMax != newMax) {
         m_ui->positionSpinBox->setRange((double)newMin / 1000, (double)newMax / 1000);
     }
-    if (m_ui->positionSpinBox->value() != pos)
+    if (m_ui->positionSpinBox->value() != pos) {
         m_ui->positionSpinBox->setValue(pos);
+    }
     m_ui->positionSpinBox->blockSignals(false);
 }
 
 void QtGradientStopsControllerPrivate::slotChangeColor(const QColor &color)
 {
     QtGradientStop *stop = m_model->currentStop();
-    if (!stop)
+    if (!stop) {
         return;
+    }
     m_model->changeStop(stop, color);
     QList<QtGradientStop *> stops = m_model->selectedStops();
     QListIterator<QtGradientStop *> itStop(stops);
     while (itStop.hasNext()) {
         QtGradientStop *s = itStop.next();
-        if (s != stop)
+        if (s != stop) {
             m_model->changeStop(s, color);
+        }
     }
 }
 
 void QtGradientStopsControllerPrivate::slotChangeHue(const QColor &color)
 {
     QtGradientStop *stop = m_model->currentStop();
-    if (!stop)
+    if (!stop) {
         return;
+    }
     m_model->changeStop(stop, color);
     QList<QtGradientStop *> stops = m_model->selectedStops();
     QListIterator<QtGradientStop *> itStop(stops);
@@ -374,10 +391,11 @@ void QtGradientStopsControllerPrivate::slotChangeHue(const QColor &color)
         QtGradientStop *s = itStop.next();
         if (s != stop) {
             QColor c = s->color();
-            if (m_ui->hsvRadioButton->isChecked())
+            if (m_ui->hsvRadioButton->isChecked()) {
                 c.setHsvF(color.hueF(), c.saturationF(), c.valueF(), c.alphaF());
-            else
+            } else {
                 c.setRgbF(color.redF(), c.greenF(), c.blueF(), c.alphaF());
+            }
             m_model->changeStop(s, c);
         }
     }
@@ -386,18 +404,20 @@ void QtGradientStopsControllerPrivate::slotChangeHue(const QColor &color)
 void QtGradientStopsControllerPrivate::slotChangeHue(int color)
 {
     QColor c = m_ui->hueColorLine->color();
-    if (m_ui->hsvRadioButton->isChecked())
+    if (m_ui->hsvRadioButton->isChecked()) {
         c.setHsvF((qreal)color / 360.0, c.saturationF(), c.valueF(), c.alphaF());
-    else
+    } else {
         c.setRed(color);
+    }
     slotChangeHue(c);
 }
 
 void QtGradientStopsControllerPrivate::slotChangeSaturation(const QColor &color)
 {
     QtGradientStop *stop = m_model->currentStop();
-    if (!stop)
+    if (!stop) {
         return;
+    }
     m_model->changeStop(stop, color);
     QList<QtGradientStop *> stops = m_model->selectedStops();
     QListIterator<QtGradientStop *> itStop(stops);
@@ -408,8 +428,9 @@ void QtGradientStopsControllerPrivate::slotChangeSaturation(const QColor &color)
             if (m_ui->hsvRadioButton->isChecked()) {
                 c.setHsvF(c.hueF(), color.saturationF(), c.valueF(), c.alphaF());
                 int hue = c.hue();
-                if (hue == 360 || hue == -1)
+                if (hue == 360 || hue == -1) {
                     c.setHsvF(0.0, c.saturationF(), c.valueF(), c.alphaF());
+                }
             } else {
                 c.setRgbF(c.redF(), color.greenF(), c.blueF(), c.alphaF());
             }
@@ -421,18 +442,20 @@ void QtGradientStopsControllerPrivate::slotChangeSaturation(const QColor &color)
 void QtGradientStopsControllerPrivate::slotChangeSaturation(int color)
 {
     QColor c = m_ui->saturationColorLine->color();
-    if (m_ui->hsvRadioButton->isChecked())
+    if (m_ui->hsvRadioButton->isChecked()) {
         c.setHsvF(c.hueF(), (qreal)color / 255, c.valueF(), c.alphaF());
-    else
+    } else {
         c.setGreen(color);
+    }
     slotChangeSaturation(c);
 }
 
 void QtGradientStopsControllerPrivate::slotChangeValue(const QColor &color)
 {
     QtGradientStop *stop = m_model->currentStop();
-    if (!stop)
+    if (!stop) {
         return;
+    }
     m_model->changeStop(stop, color);
     QList<QtGradientStop *> stops = m_model->selectedStops();
     QListIterator<QtGradientStop *> itStop(stops);
@@ -443,8 +466,9 @@ void QtGradientStopsControllerPrivate::slotChangeValue(const QColor &color)
             if (m_ui->hsvRadioButton->isChecked()) {
                 c.setHsvF(c.hueF(), c.saturationF(), color.valueF(), c.alphaF());
                 int hue = c.hue();
-                if (hue == 360 || hue == -1)
+                if (hue == 360 || hue == -1) {
                     c.setHsvF(0.0, c.saturationF(), c.valueF(), c.alphaF());
+                }
             } else {
                 c.setRgbF(c.redF(), c.greenF(), color.blueF(), c.alphaF());
             }
@@ -456,18 +480,20 @@ void QtGradientStopsControllerPrivate::slotChangeValue(const QColor &color)
 void QtGradientStopsControllerPrivate::slotChangeValue(int color)
 {
     QColor c = m_ui->valueColorLine->color();
-    if (m_ui->hsvRadioButton->isChecked())
+    if (m_ui->hsvRadioButton->isChecked()) {
         c.setHsvF(c.hueF(), c.saturationF(), (qreal)color / 255, c.alphaF());
-    else
+    } else {
         c.setBlue(color);
+    }
     slotChangeValue(c);
 }
 
 void QtGradientStopsControllerPrivate::slotChangeAlpha(const QColor &color)
 {
     QtGradientStop *stop = m_model->currentStop();
-    if (!stop)
+    if (!stop) {
         return;
+    }
     m_model->changeStop(stop, color);
     QList<QtGradientStop *> stops = m_model->selectedStops();
     QListIterator<QtGradientStop *> itStop(stops);
@@ -478,8 +504,9 @@ void QtGradientStopsControllerPrivate::slotChangeAlpha(const QColor &color)
             if (m_ui->hsvRadioButton->isChecked()) {
                 c.setHsvF(c.hueF(), c.saturationF(), c.valueF(), color.alphaF());
                 int hue = c.hue();
-                if (hue == 360 || hue == -1)
+                if (hue == 360 || hue == -1) {
                     c.setHsvF(0.0, c.saturationF(), c.valueF(), c.alphaF());
+                }
             } else {
                 c.setRgbF(c.redF(), c.greenF(), c.blueF(), color.alphaF());
             }
@@ -491,18 +518,20 @@ void QtGradientStopsControllerPrivate::slotChangeAlpha(const QColor &color)
 void QtGradientStopsControllerPrivate::slotChangeAlpha(int color)
 {
     QColor c = m_ui->alphaColorLine->color();
-    if (m_ui->hsvRadioButton->isChecked())
+    if (m_ui->hsvRadioButton->isChecked()) {
         c.setHsvF(c.hueF(), c.saturationF(), c.valueF(), (qreal)color / 255);
-    else
+    } else {
         c.setAlpha(color);
+    }
     slotChangeAlpha(c);
 }
 
 void QtGradientStopsControllerPrivate::slotChangePosition(double value)
 {
     QtGradientStop *stop = m_model->currentStop();
-    if (!stop)
+    if (!stop) {
         return;
+    }
 
     m_model->moveStops(value);
 }
@@ -515,16 +544,18 @@ void QtGradientStopsControllerPrivate::slotChangeZoom(int value)
 void QtGradientStopsControllerPrivate::slotZoomIn()
 {
     double newZoom = m_ui->gradientStopsWidget->zoom() * 2;
-    if (newZoom > 100)
+    if (newZoom > 100) {
         newZoom = 100;
+    }
     updateZoom(newZoom);
 }
 
 void QtGradientStopsControllerPrivate::slotZoomOut()
 {
     double newZoom = m_ui->gradientStopsWidget->zoom() / 2;
-    if (newZoom < 1)
+    if (newZoom < 1) {
         newZoom = 1;
+    }
     updateZoom(newZoom);
 }
 
@@ -558,58 +589,58 @@ void QtGradientStopsController::setUi(Ui::QtGradientEditor *ui)
     d_ptr->m_model = new QtGradientStopsModel(this);
     d_ptr->m_ui->gradientStopsWidget->setGradientStopsModel(d_ptr->m_model);
     connect(d_ptr->m_model, SIGNAL(currentStopChanged(QtGradientStop*)),
-                this, SLOT(slotCurrentStopChanged(QtGradientStop*)));
-    connect(d_ptr->m_model, SIGNAL(stopMoved(QtGradientStop*,qreal)),
-                this, SLOT(slotStopMoved(QtGradientStop*,qreal)));
-    connect(d_ptr->m_model, SIGNAL(stopsSwapped(QtGradientStop*,QtGradientStop*)),
-                this, SLOT(slotStopsSwapped(QtGradientStop*,QtGradientStop*)));
-    connect(d_ptr->m_model, SIGNAL(stopChanged(QtGradientStop*,QColor)),
-                this, SLOT(slotStopChanged(QtGradientStop*,QColor)));
-    connect(d_ptr->m_model, SIGNAL(stopSelected(QtGradientStop*,bool)),
-                this, SLOT(slotStopSelected(QtGradientStop*,bool)));
+            this, SLOT(slotCurrentStopChanged(QtGradientStop*)));
+    connect(d_ptr->m_model, SIGNAL(stopMoved(QtGradientStop*, qreal)),
+            this, SLOT(slotStopMoved(QtGradientStop*, qreal)));
+    connect(d_ptr->m_model, SIGNAL(stopsSwapped(QtGradientStop*, QtGradientStop*)),
+            this, SLOT(slotStopsSwapped(QtGradientStop*, QtGradientStop*)));
+    connect(d_ptr->m_model, SIGNAL(stopChanged(QtGradientStop*, QColor)),
+            this, SLOT(slotStopChanged(QtGradientStop*, QColor)));
+    connect(d_ptr->m_model, SIGNAL(stopSelected(QtGradientStop*, bool)),
+            this, SLOT(slotStopSelected(QtGradientStop*, bool)));
     connect(d_ptr->m_model, SIGNAL(stopAdded(QtGradientStop*)),
-                this, SLOT(slotStopAdded(QtGradientStop*)));
+            this, SLOT(slotStopAdded(QtGradientStop*)));
     connect(d_ptr->m_model, SIGNAL(stopRemoved(QtGradientStop*)),
-                this, SLOT(slotStopRemoved(QtGradientStop*)));
+            this, SLOT(slotStopRemoved(QtGradientStop*)));
 
     connect(d_ptr->m_ui->hueColorLine, SIGNAL(colorChanged(QColor)),
-                this, SLOT(slotChangeHue(QColor)));
+            this, SLOT(slotChangeHue(QColor)));
     connect(d_ptr->m_ui->saturationColorLine, SIGNAL(colorChanged(QColor)),
-                this, SLOT(slotChangeSaturation(QColor)));
+            this, SLOT(slotChangeSaturation(QColor)));
     connect(d_ptr->m_ui->valueColorLine, SIGNAL(colorChanged(QColor)),
-                this, SLOT(slotChangeValue(QColor)));
+            this, SLOT(slotChangeValue(QColor)));
     connect(d_ptr->m_ui->alphaColorLine, SIGNAL(colorChanged(QColor)),
-                this, SLOT(slotChangeAlpha(QColor)));
+            this, SLOT(slotChangeAlpha(QColor)));
     connect(d_ptr->m_ui->colorButton, SIGNAL(colorChanged(QColor)),
-                this, SLOT(slotChangeColor(QColor)));
+            this, SLOT(slotChangeColor(QColor)));
 
     connect(d_ptr->m_ui->hueSpinBox, SIGNAL(valueChanged(int)),
-                this, SLOT(slotChangeHue(int)));
+            this, SLOT(slotChangeHue(int)));
     connect(d_ptr->m_ui->saturationSpinBox, SIGNAL(valueChanged(int)),
-                this, SLOT(slotChangeSaturation(int)));
+            this, SLOT(slotChangeSaturation(int)));
     connect(d_ptr->m_ui->valueSpinBox, SIGNAL(valueChanged(int)),
-                this, SLOT(slotChangeValue(int)));
+            this, SLOT(slotChangeValue(int)));
     connect(d_ptr->m_ui->alphaSpinBox, SIGNAL(valueChanged(int)),
-                this, SLOT(slotChangeAlpha(int)));
+            this, SLOT(slotChangeAlpha(int)));
 
     connect(d_ptr->m_ui->positionSpinBox, SIGNAL(valueChanged(double)),
-                this, SLOT(slotChangePosition(double)));
+            this, SLOT(slotChangePosition(double)));
 
     connect(d_ptr->m_ui->zoomSpinBox, SIGNAL(valueChanged(int)),
-                this, SLOT(slotChangeZoom(int)));
+            this, SLOT(slotChangeZoom(int)));
     connect(d_ptr->m_ui->zoomInButton, SIGNAL(clicked()),
-                this, SLOT(slotZoomIn()));
+            this, SLOT(slotZoomIn()));
     connect(d_ptr->m_ui->zoomOutButton, SIGNAL(clicked()),
-                this, SLOT(slotZoomOut()));
+            this, SLOT(slotZoomOut()));
     connect(d_ptr->m_ui->zoomAllButton, SIGNAL(clicked()),
-                this, SLOT(slotZoomAll()));
+            this, SLOT(slotZoomAll()));
     connect(d_ptr->m_ui->gradientStopsWidget, SIGNAL(zoomChanged(double)),
-                this, SLOT(slotZoomChanged(double)));
+            this, SLOT(slotZoomChanged(double)));
 
     connect(d_ptr->m_ui->hsvRadioButton, SIGNAL(clicked()),
-                this, SLOT(slotHsvClicked()));
+            this, SLOT(slotHsvClicked()));
     connect(d_ptr->m_ui->rgbRadioButton, SIGNAL(clicked()),
-                this, SLOT(slotRgbClicked()));
+            this, SLOT(slotRgbClicked()));
 
     d_ptr->enableCurrent(false);
     d_ptr->m_ui->zoomInButton->setIcon(QIcon(QLatin1String(":/images/zoomin.png")));
@@ -629,11 +660,13 @@ void QtGradientStopsController::setGradientStops(const QGradientStops &stops)
     while (it.hasNext()) {
         QPair<qreal, QColor> pair = it.next();
         QtGradientStop *stop = d_ptr->m_model->addStop(pair.first, pair.second);
-        if (!first)
+        if (!first) {
             first = stop;
+        }
     }
-    if (first)
+    if (first) {
         d_ptr->m_model->setCurrentStop(first);
+    }
 }
 
 QGradientStops QtGradientStopsController::gradientStops() const
@@ -655,8 +688,9 @@ QColor::Spec QtGradientStopsController::spec() const
 
 void QtGradientStopsController::setSpec(QColor::Spec spec)
 {
-    if (d_ptr->m_spec == spec)
+    if (d_ptr->m_spec == spec) {
         return;
+    }
 
     d_ptr->m_spec = spec;
     if (d_ptr->m_spec == QColor::Rgb) {

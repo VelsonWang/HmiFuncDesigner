@@ -41,7 +41,7 @@ void QPushButtonHost::initProperty()
     QAbstractProperty* pObj = QPropertyFactory::create_property("Tag");
 
     pObj = QPropertyFactory::create_property("Function");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "funcs");
         pObj->setAttribute("show_name", tr("功能操作"));
         pObj->setAttribute("group", "HMI");
@@ -52,7 +52,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Script");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "script");
         pObj->setAttribute("show_name", tr("执行脚本"));
         pObj->setAttribute("group", "HMI");
@@ -66,7 +66,7 @@ void QPushButtonHost::initProperty()
     QWidgetHost::initProperty();
     /*
         pObj = QPropertyFactory::create_property("Script");
-        if(pObj != Q_NULLPTR) {
+        if(pObj != NULL) {
             pObj->setObjectProperty("name", "clicked_down");
             pObj->setAttribute("show_name", tr("按下"));
             pObj->setAttribute("group", "Events");
@@ -74,7 +74,7 @@ void QPushButtonHost::initProperty()
         }
 
         pObj = QPropertyFactory::create_property("Script");
-        if(pObj != Q_NULLPTR) {
+        if(pObj != NULL) {
             pObj->setObjectProperty("name", "clicked_up");
             pObj->setAttribute("show_name", tr("抬起"));
             pObj->setAttribute("group", "Events");
@@ -82,7 +82,7 @@ void QPushButtonHost::initProperty()
         }
     */
     pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "showContent");
         pObj->setAttribute("show_name", tr("显示内容"));
         pObj->setAttribute("group", "Attributes");
@@ -104,7 +104,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("String");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "text");
         pObj->setAttribute("show_name", tr("文本")); // tr("Text")
         pObj->setAttribute("group", "Attributes");
@@ -112,7 +112,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "hAlign");
         pObj->setAttribute("show_name", tr("水平对齐"));
         pObj->setAttribute("group", "Attributes");
@@ -134,7 +134,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "vAlign");
         pObj->setAttribute("show_name", tr("垂直对齐"));
         pObj->setAttribute("group", "Attributes");
@@ -156,7 +156,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Image");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "picture");
         pObj->setAttribute("show_name", tr("选择图片"));
         pObj->setAttribute("filters", "Images (*.png *.xpm *.jpg)");
@@ -165,7 +165,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "textColor");
         pObj->setAttribute("show_name", tr("文本颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -173,7 +173,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "backgroundColor");
         pObj->setAttribute("show_name", tr("背景颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -181,7 +181,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "transparent");
         pObj->setAttribute("show_name", tr("透明"));
         pObj->setAttribute("group", "Attributes");
@@ -189,7 +189,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Font");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "font");
         pObj->setAttribute("show_name", tr("字体"));
         pObj->setAttribute("group", "Attributes");
@@ -197,7 +197,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Number");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "borderWidth");
         pObj->setAttribute("show_name", tr("边框宽度"));
         pObj->setAttribute("group", "Attributes");
@@ -205,7 +205,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "borderColor");
         pObj->setAttribute("show_name", tr("边框颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -213,7 +213,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "enableOnInitial");
         pObj->setAttribute("show_name", tr("初始有效"));
         pObj->setAttribute("group", "Attributes");
@@ -221,7 +221,7 @@ void QPushButtonHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "showOnInitial");
         pObj->setAttribute("show_name", tr("初始可见"));
         pObj->setAttribute("group", "Attributes");

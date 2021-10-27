@@ -1,5 +1,4 @@
 #include "qsizeproperty.h"
-
 #include "qintproperty.h"
 
 QSizeProperty::QSizeProperty(QAbstractProperty *parent):

@@ -12,7 +12,7 @@ QString QAbstractUpdatePlugin::getPluginType()
 QAbstractUpdate* QAbstractUpdatePlugin::create(const QString &name)
 {
     (void)name;
-    return Q_NULLPTR;
+    return NULL;
 }
 
 QStringList QAbstractUpdatePlugin::supports()

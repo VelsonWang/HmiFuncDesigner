@@ -37,13 +37,13 @@ void PluginLoader::loadPlugin(const QString &xml_file_name)
 
             if(load.load()) {
                 QAbstractPlugin *plugin = qobject_cast<QAbstractPlugin*>(load.instance());
-                if(plugin != Q_NULLPTR) {
+                if(plugin != NULL) {
                     QString type = plugin->getPluginType();
                     QString name = plugin->getPluginName();
                     if(type != "" && name != "") {
                         QMap<QString, QAbstractPlugin*> plugins = m_plugins.value(type);
                         QAbstractPlugin *pl = plugins.value(name);
-                        if(pl != Q_NULLPTR) {
+                        if(pl != NULL) {
                             delete pl;
                         }
                         plugins.insert(name, plugin);

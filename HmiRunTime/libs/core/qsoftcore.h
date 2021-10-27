@@ -20,11 +20,11 @@ class QFileManager;
 class QActionArray
 {
 public:
-    QActionArray() : m_type(""), m_action(Q_NULLPTR) {}
+    QActionArray() : m_type(""), m_action(NULL) {}
     ~QActionArray()
     {
         qDeleteAll(m_children.values());
-        if(m_action != Q_NULLPTR) {
+        if(m_action != NULL) {
             delete m_action;
         }
     }

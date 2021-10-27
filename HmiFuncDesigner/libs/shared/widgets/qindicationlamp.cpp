@@ -12,7 +12,7 @@ QIndicationLamp::QIndicationLamp(QWidget *parent) : QLabel(parent)
     m_szSetImageFile = "";
     m_bNoScale = false;
     m_iBoardWidth = 1;
-    m_boardColorObj = Qt::black; 
+    m_boardColorObj = Qt::black;
     this->setAlignment(Qt::AlignCenter);
     setPropertyInner();
 }
@@ -118,9 +118,9 @@ void QIndicationLamp::setPropertyInner()
         QString szStyleSheet = "";
         szStyleSheet += QString("border-width: %1px; border-style: solid;").arg(QString::number(m_iBoardWidth));
         szStyleSheet += QString("border-color: rgb(%1, %2, %3);")
-                .arg(QString::number(m_boardColorObj.red()))
-                .arg(QString::number(m_boardColorObj.green()))
-                .arg(QString::number(m_boardColorObj.blue()));
+                        .arg(QString::number(m_boardColorObj.red()))
+                        .arg(QString::number(m_boardColorObj.green()))
+                        .arg(QString::number(m_boardColorObj.blue()));
         this->setStyleSheet(szStyleSheet);
     } else {
         this->setStyleSheet("");
@@ -135,26 +135,26 @@ void QIndicationLamp::paintEvent(QPaintEvent *event)
 
     if(szFileIndicationLamp == "") {
         QRect rect = QRect(0, 0, width(), height());
-        qreal fHalfWidth = rect.width()/2;
-        qreal fHalfHeight = rect.height()/2;
+        qreal fHalfWidth = rect.width() / 2;
+        qreal fHalfHeight = rect.height() / 2;
         qreal fRadius = (fHalfWidth < fHalfHeight) ? fHalfWidth : fHalfHeight;
         QRadialGradient radialGradient(fHalfWidth, fHalfHeight, fRadius, fHalfWidth, fHalfHeight);
         // 创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,
         // 如果需要对称那么中心坐标和焦点坐标要一致
-        if(m_bStateOnInitial){
+        if(m_bStateOnInitial) {
             radialGradient.setColorAt(0, Qt::yellow);
             radialGradient.setColorAt(0.8, Qt::blue); // 设置50%处的半径为蓝色
-        }else{
+        } else {
             radialGradient.setColorAt(0, Qt::black);
             radialGradient.setColorAt(0.8, Qt::white); // 设置50%处的半径为蓝色
         }
         radialGradient.setColorAt(1, Qt::darkGray);
         painter.setBrush(QBrush(radialGradient));
         QRectF tmpRect;
-        tmpRect.setX(rect.x()+rect.width()/2-fRadius);
-        tmpRect.setY(rect.y()+rect.height()/2-fRadius);
-        tmpRect.setWidth(fRadius*2);
-        tmpRect.setHeight(fRadius*2);
+        tmpRect.setX(rect.x() + rect.width() / 2 - fRadius);
+        tmpRect.setY(rect.y() + rect.height() / 2 - fRadius);
+        tmpRect.setWidth(fRadius * 2);
+        tmpRect.setHeight(fRadius * 2);
         painter.drawEllipse(tmpRect);
         return;
     }

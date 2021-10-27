@@ -91,15 +91,15 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
     wid->setLayout(v);
     splitter->addWidget(wid);
 
-    splitter->setStretchFactor(0,0);
-    splitter->setStretchFactor(1,1);
+    splitter->setStretchFactor(0, 0);
+    splitter->setStretchFactor(1, 1);
 
     v = new QVBoxLayout;
     v->setMargin(0);
     v->setSpacing(0);
     v->addWidget(splitter);
     this->setLayout(v);
-    this->resize(800,600);
+    this->resize(800, 600);
 
     connect(m_functionToolBar, SIGNAL(findNext(QString)), m_functionView, SLOT(findNext(QString)));
     connect(m_functionToolBar, SIGNAL(findPrev(QString)), m_functionView, SLOT(findPrev(QString)));
@@ -125,22 +125,22 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
 
     QSize sz = qApp->desktop()->size();
 
-    this->setGeometry(sz.width()*0.1, sz.height()*0.1, sz.width()*0.8, sz.height()*0.8);
+    this->setGeometry(sz.width() * 0.1, sz.height() * 0.1, sz.width() * 0.8, sz.height() * 0.8);
 }
 
 void QScriptEditDialog::save()
 {
     QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(m_property->get_host()->getUuid(),
-                                                                       m_property->getObjectProperty("name").toString(),
-                                                                       m_property->get_value(),
-                                                                       m_editView->toPlainText());
+            m_property->getObjectProperty("name").toString(),
+            m_property->get_value(),
+            m_editView->toPlainText());
     m_undo_stack->push(cmd);
 }
 
 void QScriptEditDialog::selectFunction(const QMetaMethod &method)
 {
     QAbstractHost *host = m_widgetView->currentHost();
-    if(host != Q_NULLPTR) {
+    if(host != NULL) {
         m_editView->insertMethod(method, host);
     }
 }
@@ -163,7 +163,7 @@ void QScriptEditDialog::closeEvent(QCloseEvent *e)
                                        QMessageBox::Yes | QMessageBox::No | QMessageBox::Cancel);
         if(ret == QMessageBox::Yes) {
             save();
-        } else if(ret==QMessageBox::Cancel) {
+        } else if(ret == QMessageBox::Cancel) {
             e->ignore();
             return;
         }

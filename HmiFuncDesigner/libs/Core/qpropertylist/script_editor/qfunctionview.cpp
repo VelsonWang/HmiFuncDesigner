@@ -18,29 +18,29 @@ public :
 
 void QFunctionDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QStyleOptionViewItemV3 opt=option;
+    QStyleOptionViewItem opt = option;
     QColor c;
-    c = QColor(255,191,239);
-    if(opt.features & QStyleOptionViewItemV2::Alternate) {
+    c = QColor(255, 191, 239);
+    if(opt.features & QStyleOptionViewItem::Alternate) {
         c = c.lighter(112);
     }
 
     painter->fillRect(option.rect, c);
-    opt.state &=~ QStyle::State_HasFocus;
-    QItemDelegate::paint(painter,opt,index);
+    opt.state &= ~ QStyle::State_HasFocus;
+    QItemDelegate::paint(painter, opt, index);
     opt.palette.setCurrentColorGroup(QPalette::Active);
-    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor,&opt));
+    QColor color = static_cast<QRgb>(QApplication::style()->styleHint(QStyle::SH_Table_GridLineColor, &opt));
     painter->setPen(color);
 
     if(index.column() == 0) {
-        int right = option.direction==Qt::LeftToRight?option.rect.right():option.rect.left();
-        painter->drawLine(right,option.rect.y(),right,option.rect.bottom());
+        int right = option.direction == Qt::LeftToRight ? option.rect.right() : option.rect.left();
+        painter->drawLine(right, option.rect.y(), right, option.rect.bottom());
     }
 }
 
 QSize QFunctionDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    QSize sz = QItemDelegate::sizeHint(option,index);
+    QSize sz = QItemDelegate::sizeHint(option, index);
     sz.setHeight(20);
     return sz;
 }
@@ -55,11 +55,11 @@ QFunctionView::QFunctionView(QWidget *parent) : QTreeWidget(parent)
     header()->hide();
 
     QPalette p = this->palette();
-    p.setColor(QPalette::Inactive,QPalette::Highlight,p.color(QPalette::Active,QPalette::Highlight));
-    p.setColor(QPalette::Inactive,QPalette::HighlightedText,p.color(QPalette::Active,QPalette::HighlightedText));
+    p.setColor(QPalette::Inactive, QPalette::Highlight, p.color(QPalette::Active, QPalette::Highlight));
+    p.setColor(QPalette::Inactive, QPalette::HighlightedText, p.color(QPalette::Active, QPalette::HighlightedText));
     this->setPalette(p);
 
-    connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(doubleClicked(QTreeWidgetItem*,int)));
+    connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(doubleClicked(QTreeWidgetItem*, int)));
 }
 
 void QFunctionView::setHost(QAbstractHost *host)
@@ -73,7 +73,7 @@ void QFunctionView::setHost(QAbstractHost *host)
     QString str;
 
     QStringList l = host->property("function_list").toStringList();
-    for(int i=0; i<count; i++) {
+    for(int i = 0; i < count; i++) {
         method = host->metaObject()->method(i);
         methodType = method.methodType();
         if(methodType == QMetaMethod::Slot && method.access() == QMetaMethod::Public) {
@@ -98,13 +98,13 @@ void QFunctionView::clearAll()
 void QFunctionView::addItem(const QMetaMethod &method, const QString &toolTip)
 {
     QTreeWidgetItem *item;
-    QString str=method.methodSignature();
+    QString str = method.methodSignature();
     int s = str.indexOf("(");
-    QString str1,str2;
+    QString str1, str2;
     str1 = str.left(s);
     str2 = str.mid(s);
     str2 = str2.replace("QString", "String");
-    str = str1+str2;
+    str = str1 + str2;
     item = new QTreeWidgetItem(this);
     item->setText(0, str);
     item->setToolTip(0, toolTip == "" ? str : toolTip);
@@ -126,7 +126,7 @@ void QFunctionView::findNext(const QString &text)
     QString str;
     if(root == NULL) {
         root = m_items.first();
-        str=root->text(0);
+        str = root->text(0);
         if(str.indexOf(text) >= 0) {
             root->setSelected(true);
             setCurrentItem(root);
@@ -136,10 +136,10 @@ void QFunctionView::findNext(const QString &text)
     int index = m_items.indexOf(root);
     int temp;
     int count = m_items.size();
-    for(int i=0; i<count; i++) {
-        temp = (index+i+1) % count;
+    for(int i = 0; i < count; i++) {
+        temp = (index + i + 1) % count;
         item = m_items.at(temp);
-        str=item->text(0);
+        str = item->text(0);
         if(str.indexOf(text) >= 0) {
             root->setSelected(false);
             item->setSelected(true);
@@ -151,7 +151,7 @@ void QFunctionView::findNext(const QString &text)
 
 void QFunctionView::findPrev(const QString &text)
 {
-    if(m_items.size()<=0) {
+    if(m_items.size() <= 0) {
         return;
     }
     QList<QTreeWidgetItem*> list = this->selectedItems();
@@ -173,7 +173,7 @@ void QFunctionView::findPrev(const QString &text)
     int index = m_items.indexOf(root);
     int temp;
     int count = m_items.size();
-    for(int i=0; i<count; i++) {
+    for(int i = 0; i < count; i++) {
         temp = (index - i - 1 + count) % count;
         item = m_items.at(temp);
         str = item->text(0);

@@ -8,11 +8,11 @@ QActionToolBar::QActionToolBar(Qt::Alignment align, QWidget *parent):
     QWidget(parent),
     m_align(align)
 {
-    QHBoxLayout *l=new QHBoxLayout();
-    l->setContentsMargins(5,0,5,0);//两头空出来
+    QHBoxLayout *l = new QHBoxLayout();
+    l->setContentsMargins(5, 0, 5, 0); //两头空出来
     l->setSpacing(1);
     this->setLayout(l);
-    m_emptyWidget=new QWidget(this);
+    m_emptyWidget = new QWidget(this);
     l->addWidget(m_emptyWidget);
 }
 
@@ -21,20 +21,17 @@ void QActionToolBar::addButtonActions(const QList<QAction *> &actions)
     qDeleteAll(m_buttons);
     m_buttons.clear();
     QToolBarButton *button;
-    QLayout *l=this->layout();
+    QLayout *l = this->layout();
     l->removeWidget(m_emptyWidget);
-    if(m_align==Qt::AlignRight)
-    {
+    if(m_align == Qt::AlignRight) {
         l->addWidget(m_emptyWidget);
     }
-    for(int i=0;i<actions.size();i++)
-    {
-        button=new QToolBarButton(actions.at(i),this);
+    for(int i = 0; i < actions.size(); i++) {
+        button = new QToolBarButton(actions.at(i), this);
         l->addWidget(button);
         m_buttons.append(button);//添加按钮
     }
-    if(m_align==Qt::AlignLeft)
-    {
+    if(m_align == Qt::AlignLeft) {
         l->addWidget(m_emptyWidget);
     }
     addActions(actions);
@@ -42,7 +39,7 @@ void QActionToolBar::addButtonActions(const QList<QAction *> &actions)
 
 void QActionToolBar::setLabelWidget(QWidget *widget)
 {
-    QHBoxLayout *l=new QHBoxLayout;
+    QHBoxLayout *l = new QHBoxLayout;
     l->setMargin(0);
     l->setSpacing(0);
     l->addWidget(widget);

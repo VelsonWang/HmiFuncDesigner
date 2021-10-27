@@ -81,12 +81,12 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
         if(items.first().m_attributes.value("title") != "Normal") {
             tagStylesheetItem it;
             it.m_attributes.insert("title", "Normal");
-            items.insert(0,it);
+            items.insert(0, it);
         }
     }
     foreach(tagStylesheetItem item, items) {
         maker = QStylesheetItemFactory::createItem(name);
-        if(maker != Q_NULLPTR) {
+        if(maker != NULL) {
             QVariant v;
             v.setValue<tagStylesheetItem>(item);
             maker->setAttribute("title", item.m_attributes.value("title").toString());
@@ -116,7 +116,7 @@ void QStyleSheetDialog::add_item(QAbstractStylesheetItem *item)
     m_item_list->add(item);
 
     QBaseEditorWidget *wid = create_editor_widget(m_property->getObjectProperty("name").toString());
-    if(wid!=Q_NULLPTR) {
+    if(wid != NULL) {
         connect(wid, SIGNAL(changed()), this, SLOT(item_changed()));
         wid->init(item);
         wid->set_item(item);
@@ -129,7 +129,7 @@ void QStyleSheetDialog::add_item(QAbstractStylesheetItem *item)
 void QStyleSheetDialog::select_changed(QAbstractStylesheetItem *item)
 {
     QBaseEditorWidget* wid = m_item_to_editor.value(item);
-    if(wid == Q_NULLPTR) {
+    if(wid == NULL) {
         m_stacked_widget->setCurrentIndex(-1);
         m_show_widget->set_item_sheet("");
     } else {
@@ -154,21 +154,21 @@ void QStyleSheetDialog::item_changed()
     }
     QVariant v;
     v.setValue<tagStylesheetItems>(items);
-    m_host->setPropertyValue(m_property->getObjectProperty("name").toString(),v);
+    m_host->setPropertyValue(m_property->getObjectProperty("name").toString(), v);
     m_host->makeStyleSheet();
 }
 
 void QStyleSheetDialog::clear()
 {
     QBaseEditorWidget* wid = (QBaseEditorWidget*)m_stacked_widget->currentWidget();
-    if(wid != Q_NULLPTR) {
+    if(wid != NULL) {
         QAbstractStylesheetItem *item = m_editor_to_item.value(wid);
-        if(item != Q_NULLPTR) {
+        if(item != NULL) {
             QString str;
             tagStylesheetItem it = item->value().value<tagStylesheetItem>();
-            str=it.m_attributes.value("title").toString();
+            str = it.m_attributes.value("title").toString();
             it.m_attributes.clear();
-            it.m_attributes.insert("title",str);
+            it.m_attributes.insert("title", str);
             QVariant v;
             v.setValue<tagStylesheetItem>(it);
             item->setValue(v);
@@ -188,7 +188,7 @@ void QStyleSheetDialog::clearall()
         tagStylesheetItem temp = it.value()->value().value<tagStylesheetItem>();
         str = temp.m_attributes.value("title").toString();
         temp.m_attributes.clear();
-        temp.m_attributes.insert("title",str);
+        temp.m_attributes.insert("title", str);
         QVariant v;
         v.setValue<tagStylesheetItem>(temp);
         it.value()->setValue(v);
@@ -200,8 +200,7 @@ void QStyleSheetDialog::clearall()
 void QStyleSheetDialog::ok()
 {
     if(m_host->getObject()->property("styleSheet").toString() !=
-            m_property->get_host()->getObject()->property("styleSheet").toString())
-    {
+            m_property->get_host()->getObject()->property("styleSheet").toString()) {
         QUndoCommand *cmd = new QUndoCommand;
 
         QVariant v = m_host->getPropertyValue(m_property->getObjectProperty("name").toString());
@@ -211,7 +210,7 @@ void QStyleSheetDialog::ok()
         new QPropertyChangedUndoCommand(m_property->get_host()->getUuid(),
                                         m_property->getObjectProperty("name").toString(),
                                         m_property->get_value(),
-                                        v,cmd);
+                                        v, cmd);
         foreach(QBaseEditorWidget *e, m_editor_to_item.keys()) {
             e->take_resource(cmd);
         }
@@ -235,7 +234,7 @@ void QStyleSheetDialog::add()
         }
 
         QAbstractStylesheetItem* maker = QStylesheetItemFactory::createItem(m_property->getObjectProperty("name").toString());
-        if(maker != Q_NULLPTR) {
+        if(maker != NULL) {
             tagStylesheetItem it;
             it.m_attributes.insert("title", title);
             QVariant v;

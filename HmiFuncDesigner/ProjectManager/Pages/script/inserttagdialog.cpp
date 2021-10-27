@@ -61,7 +61,7 @@ void InsertTagDialog::on_btnCancel_clicked()
  * @brief InsertTagDialog::on_listWidgetTagIO_itemClicked
  * @param item
  */
-void InsertTagDialog::on_listWidgetTagIO_itemClicked(QListWidgetItem *item)
+void InsertTagDialog::on_listWidgetTagIO_itemClicked(QListWidgetItem *)
 {
     ui->listWidgetTagSys->clearSelection();
     ui->listWidgetTagTmp->clearSelection();
@@ -72,7 +72,7 @@ void InsertTagDialog::on_listWidgetTagIO_itemClicked(QListWidgetItem *item)
  * @brief InsertTagDialog::on_listWidgetTagTmp_itemClicked
  * @param item
  */
-void InsertTagDialog::on_listWidgetTagTmp_itemClicked(QListWidgetItem *item)
+void InsertTagDialog::on_listWidgetTagTmp_itemClicked(QListWidgetItem *)
 {
     ui->listWidgetTagSys->clearSelection();
     ui->listWidgetTagIO->clearSelection();
@@ -83,7 +83,7 @@ void InsertTagDialog::on_listWidgetTagTmp_itemClicked(QListWidgetItem *item)
  * @brief InsertTagDialog::on_listWidgetTagSys_itemClicked
  * @param item
  */
-void InsertTagDialog::on_listWidgetTagSys_itemClicked(QListWidgetItem *item)
+void InsertTagDialog::on_listWidgetTagSys_itemClicked(QListWidgetItem *)
 {
     ui->listWidgetTagIO->clearSelection();
     ui->listWidgetTagTmp->clearSelection();

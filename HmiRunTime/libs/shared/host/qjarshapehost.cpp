@@ -35,7 +35,7 @@ void QJarShapeHost::createObject()
 void QJarShapeHost::initProperty()
 {
     QAbstractProperty* pObj = QPropertyFactory::create_property("Tag");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "tag");
         pObj->setAttribute("show_name", tr("选择变量"));
         pObj->setAttribute("group", "HMI");
@@ -44,7 +44,7 @@ void QJarShapeHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("String");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "jarShape");
         pObj->setAttribute("show_name", tr("容器标题"));
         pObj->setAttribute("group", "Attributes");
@@ -54,7 +54,7 @@ void QJarShapeHost::initProperty()
     QWidgetHost::initProperty();
 
     pObj = QPropertyFactory::create_property("Font");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "font");
         pObj->setAttribute("show_name", tr("字体"));
         pObj->setAttribute("group", "Attributes");
@@ -62,7 +62,7 @@ void QJarShapeHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "borderColor");
         pObj->setAttribute("show_name", tr("罐体颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -70,7 +70,7 @@ void QJarShapeHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "lessThanLowerLimitColor");
         pObj->setAttribute("show_name", tr("低于下限颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -78,7 +78,7 @@ void QJarShapeHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "normalColor");
         pObj->setAttribute("show_name", tr("正常液面颜色"));
         pObj->setAttribute("group", "Attributes");
@@ -86,47 +86,47 @@ void QJarShapeHost::initProperty()
     }
 
     pObj = QPropertyFactory::create_property("Color");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "greaterThanUpperLimitColor");
         pObj->setAttribute("show_name", tr("高于上限颜色"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }
 
-    pObj=QPropertyFactory::create_property("Float");
-    if(pObj != Q_NULLPTR) {
+    pObj = QPropertyFactory::create_property("Float");
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "upperLimitValue");
         pObj->setAttribute("show_name", tr("上限值"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }
 
-    pObj=QPropertyFactory::create_property("Float");
-    if(pObj != Q_NULLPTR) {
+    pObj = QPropertyFactory::create_property("Float");
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "lowerLimitValue");
         pObj->setAttribute("show_name", tr("下限值"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }
     // 满量程值-刻度最大值
-    pObj=QPropertyFactory::create_property("Float");
-    if(pObj != Q_NULLPTR) {
+    pObj = QPropertyFactory::create_property("Float");
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "maxValue");
         pObj->setAttribute("show_name", tr("满量程值"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }
 
-    pObj=QPropertyFactory::create_property("Number");
-    if(pObj != Q_NULLPTR) {
+    pObj = QPropertyFactory::create_property("Number");
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "scaleNum");
         pObj->setAttribute("show_name", tr("刻度个数"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }
 
-    pObj=QPropertyFactory::create_property("Bool");
-    if(pObj != Q_NULLPTR) {
+    pObj = QPropertyFactory::create_property("Bool");
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "showOnInitial");
         pObj->setAttribute("show_name", tr("初始可见"));
         pObj->setAttribute("group", "Attributes");

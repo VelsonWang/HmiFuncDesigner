@@ -34,7 +34,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     QAction *pActObj;
 
     pActObj = core->getAction("FormManager.Add");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), this, SLOT(add_page()));
         pActObj->setEnabled(false);
@@ -45,42 +45,42 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     list.append(pActObj);
 
     pActObj = core->getAction("FormManager.Same.Left");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_left()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.V-Center");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_v_centre()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Right");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_right()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Top");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_top()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.H-Center");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_h_centre()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Bottom");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_bottom()));
         pActObj->setEnabled(false);
@@ -91,21 +91,21 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     list.append(pActObj);
 
     pActObj = core->getAction("FormManager.Same.Width");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_width()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Height");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_height()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Gemotry");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         list.append(pActObj);
         connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_geometry()));
         pActObj->setEnabled(false);
@@ -155,65 +155,65 @@ void QFormWidgetView::project_opened()
     QAction *pActObj;
 
     pActObj = core->getAction("FormManager.Add");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Del");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.Left");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.V-Center");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.Right");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.Top");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.H-Center");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
 
     pActObj = core->getAction("FormManager.Same.Bottom");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.Width");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.Height");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 
     pActObj = core->getAction("FormManager.Same.Gemotry");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
 }
 
 void QFormWidgetView::project_closed()
 {
-    //emit select(Q_NULLPTR);
+    //emit select(NULL);
     m_language_uuid.clear();
     m_formWidget->clear();
     m_undo_stack->clear();
@@ -223,57 +223,57 @@ void QFormWidgetView::project_closed()
     QAction *pActObj;
 
     pActObj = core->getAction("FormManager.Add");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Del");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Left");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.V-Center");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Right");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Top");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.H-Center");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Bottom");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Width");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Height");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Gemotry");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
 }

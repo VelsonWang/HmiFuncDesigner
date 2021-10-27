@@ -28,9 +28,9 @@ protected slots:
     void onPropertyRefresh();
 
 protected:
-    QToolButton *m_resetButton;
-    QAbstractProperty *m_property;
-    QWidget* m_widget;
+    QToolButton *resetButton;
+    QAbstractProperty *property;
+    QWidget* widget;
 };
 
 #endif // QRESETWIDGET_H

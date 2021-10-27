@@ -5,15 +5,15 @@
 #include "../../shared/host/qabstracthost.h"
 
 QStringChangedUndoCommand::QStringChangedUndoCommand(const QString &host_uuid,
-                                                     const QString &property_name,
-                                                     const QString &uuid,
-                                                     bool old_tr,
-                                                     bool new_tr,
-                                                     const QString &old_text,
-                                                     const QString &new_text,
-                                                     const QMap<QString, QString> &old_translate,
-                                                     const QMap<QString, QString> &new_translate,
-                                                     QUndoCommand *parent):
+        const QString &property_name,
+        const QString &uuid,
+        bool old_tr,
+        bool new_tr,
+        const QString &old_text,
+        const QString &new_text,
+        const QMap<QString, QString> &old_translate,
+        const QMap<QString, QString> &new_translate,
+        QUndoCommand *parent):
     QBaseUndoCommand(parent),
     m_host_uuid(host_uuid),
     m_property_name(property_name),
@@ -35,24 +35,24 @@ int QStringChangedUndoCommand::id() const
 void QStringChangedUndoCommand::redo()
 {
     QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h != Q_NULLPTR) {
+    if(h != NULL) {
         QAbstractProperty* pro = h->getProperty(m_property_name);
-        if(pro != Q_NULLPTR) {
+        if(pro != NULL) {
             pro->setObjectProperty("tr", m_new_tr);
-            pro->setObjectProperty("uuid", m_new_tr?m_uuid:QVariant());
+            pro->setObjectProperty("uuid", m_new_tr ? m_uuid : QVariant());
         }
         if(m_old_tr) {
             if(!m_new_tr) {
                 h->setPropertyValue(m_property_name, m_new_text);
             } else {
-                QMapIterator<QString,QString> it(m_new_translates);
+                QMapIterator<QString, QString> it(m_new_translates);
                 while(it.hasNext()) {
                     it.next();
                 }
             }
         } else {
             if(m_new_tr) {
-                QMapIterator<QString,QString> it(m_new_translates);
+                QMapIterator<QString, QString> it(m_new_translates);
                 while(it.hasNext()) {
                     it.next();
                 }
@@ -66,9 +66,9 @@ void QStringChangedUndoCommand::redo()
 void QStringChangedUndoCommand::undo()
 {
     QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
-    if(h != Q_NULLPTR) {
+    if(h != NULL) {
         QAbstractProperty* pro = h->getProperty(m_property_name);
-        if(pro != Q_NULLPTR) {
+        if(pro != NULL) {
             pro->setObjectProperty("tr", m_old_tr);
             pro->setObjectProperty("uuid", m_old_tr ? m_uuid : QVariant());
         }

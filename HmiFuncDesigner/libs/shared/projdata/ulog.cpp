@@ -8,7 +8,7 @@
 
 
 QMutex gMutex;
-ULog* ULog::log_ = Q_NULLPTR;
+ULog* ULog::log_ = NULL;
 QMutex ULog::mutex_;
 
 /**
@@ -44,8 +44,8 @@ void ULog::delLogFile(int keepdays)
     QDir file;
     if(file.exists(logDir_)) {
         file.setPath(logDir_);
-        QFileInfoList flist = file.entryInfoList(QDir::Files|QDir::Readable|QDir::Writable|QDir::Hidden|QDir::NoDotAndDotDot,QDir::Name);
-        for(int i=0;i < flist.size();i++) {
+        QFileInfoList flist = file.entryInfoList(QDir::Files | QDir::Readable | QDir::Writable | QDir::Hidden | QDir::NoDotAndDotDot, QDir::Name);
+        for(int i = 0; i < flist.size(); i++) {
             int year = 0;
             int month = 0;
             int day = 0;
@@ -160,9 +160,9 @@ int ULog::openLogFile(QString logpath)
  */
 int ULog::addLog(ELogLevel level, QString aValue)
 {
-    QString datetime="";
-    QString logtype="";
-    QString loginfo="";
+    QString datetime = "";
+    QString logtype = "";
+    QString loginfo = "";
 
     QMutexLocker locker(&gMutex);
 
@@ -179,8 +179,7 @@ int ULog::addLog(ELogLevel level, QString aValue)
         return 0;
     }
 
-    switch(level)
-    {
+    switch(level) {
         case LOG_DEBUG:
             logtype = "DEBUG";
             break;
@@ -213,7 +212,8 @@ void ULog::setLogLevel(ELogLevel level)
     logLevel_ = level;
 }
 
-QString ULog::getSystemInfo() {
+QString ULog::getSystemInfo()
+{
 
     QString s = QString("");
     s.append("System Info: \n");
@@ -232,15 +232,15 @@ QString ULog::getSystemInfo() {
     out << " Byte Order:               " << systemInfo.buildAbi()               << endl;
     out << " Pretty ProductName:       " << systemInfo.prettyProductName()      << endl;
 
-    // root 
+    // root
     QStorageInfo storage = QStorageInfo::root();
 
     out << storage.rootPath()                                             << endl;
     out << "isReadOnly:" << storage.isReadOnly()                          << endl;
     out << "name:" << storage.name()                                      << endl;
     out << "fileSystemType:" << storage.fileSystemType()                  << endl;
-    out << "size:" << storage.bytesTotal()/1000/1000 << "MB"              << endl;
-    out << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB" << endl;
+    out << "size:" << storage.bytesTotal() / 1000 / 1000 << "MB"              << endl;
+    out << "availableSize:" << storage.bytesAvailable() / 1000 / 1000 << "MB" << endl;
 
     // current volumn
     QStorageInfo storageCurrent(qApp->applicationDirPath());
@@ -250,8 +250,8 @@ QString ULog::getSystemInfo() {
     out << "isReadOnly:" << storageCurrent.isReadOnly()                          << endl;
     out << "name:" << storageCurrent.name()                                      << endl;
     out << "fileSystemType:" << storageCurrent.fileSystemType()                  << endl;
-    out << "size:" << storageCurrent.bytesTotal()/1000/1000 << "MB"              << endl;
-    out << "availableSize:" << storageCurrent.bytesAvailable()/1000/1000 << "MB" << endl;
+    out << "size:" << storageCurrent.bytesTotal() / 1000 / 1000 << "MB"              << endl;
+    out << "availableSize:" << storageCurrent.bytesAvailable() / 1000 / 1000 << "MB" << endl;
 
     return s;
 }
@@ -262,10 +262,10 @@ QString ULog::getSystemInfo() {
 bool QLogHelper::bShowFileFuncLine_ = false;
 
 QLogHelper::QLogHelper(const char *fileName, int lineNumber, const char *functionName)
-       : version_(1)
-       , line_(lineNumber)
-       , file_(fileName)
-       , function_(functionName)
+    : version_(1)
+    , line_(lineNumber)
+    , file_(fileName)
+    , function_(functionName)
 {
 }
 
@@ -273,13 +273,13 @@ void QLogHelper::writelogToLocal(ELogLevel logtype, const QString &log)
 {
     QString threadText = QStringLiteral("0x%1").arg(quintptr(QThread::currentThreadId()));
     QString filter = QString("[file(%1)] [func(%2) line(%3) pid(%4)] ")
-            .arg(file_)
-            .arg(function_)
-            .arg(line_)
-            .arg(threadText);
+                     .arg(file_)
+                     .arg(function_)
+                     .arg(line_)
+                     .arg(threadText);
 
     if(bShowFileFuncLine_) {
-        ULog::getInstance()->addLog(logtype, filter+log);
+        ULog::getInstance()->addLog(logtype, filter + log);
     } else {
         ULog::getInstance()->addLog(logtype, log);
     }

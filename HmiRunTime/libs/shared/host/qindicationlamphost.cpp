@@ -39,7 +39,7 @@ void QIndicationLampHost::initProperty()
     QAbstractProperty *pPropObj;
 
     pPropObj = QPropertyFactory::create_property("Tag");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "tag");
         pPropObj->setAttribute("show_name", tr("选择变量"));
         pPropObj->setAttribute("group", "HMI");
@@ -48,8 +48,7 @@ void QIndicationLampHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Bool");
-    if(pPropObj != Q_NULLPTR)
-    {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "StateOnInitial");
         pPropObj->setAttribute("show_name", tr("初始状态"));
         pPropObj->setAttribute("group", "Attributes");
@@ -57,7 +56,7 @@ void QIndicationLampHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Image");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "ResetImageFile");
         pPropObj->setAttribute("show_name", tr("选择复位图片"));
         pPropObj->setAttribute("filters", "Images (*.png *.xpm *.jpg)");
@@ -66,7 +65,7 @@ void QIndicationLampHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Image");
-    if(pPropObj != Q_NULLPTR) {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "SetImageFile");
         pPropObj->setAttribute("show_name", tr("选择置位图片"));
         pPropObj->setAttribute("filters", "Images (*.png *.xpm *.jpg)");
@@ -75,8 +74,7 @@ void QIndicationLampHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Bool");
-    if(pPropObj != Q_NULLPTR)
-    {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "NoScale");
         pPropObj->setAttribute("show_name", tr("原尺寸显示"));
         pPropObj->setAttribute("group", "Attributes");
@@ -84,8 +82,7 @@ void QIndicationLampHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Number");
-    if(pPropObj != Q_NULLPTR)
-    {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "BoardWidth");
         pPropObj->setAttribute("show_name", tr("边框宽度"));
         pPropObj->setAttribute("group", "Attributes");
@@ -93,8 +90,7 @@ void QIndicationLampHost::initProperty()
     }
 
     pPropObj = QPropertyFactory::create_property("Color");
-    if(pPropObj != Q_NULLPTR)
-    {
+    if(pPropObj != NULL) {
         pPropObj->setObjectProperty("name", "BoardColor");
         pPropObj->setAttribute("show_name", tr("边框颜色"));
         pPropObj->setAttribute("group", "Attributes");

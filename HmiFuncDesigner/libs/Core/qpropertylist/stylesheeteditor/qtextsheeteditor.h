@@ -16,9 +16,7 @@ public:
     ~QTextSheetEditor();
 
     void set_item(QAbstractStylesheetItem *item);
-
     void init(QAbstractStylesheetItem *item);
-
     void take_resource(QUndoCommand *cmd);
     void add_resource(QUndoCommand *cmd);
     

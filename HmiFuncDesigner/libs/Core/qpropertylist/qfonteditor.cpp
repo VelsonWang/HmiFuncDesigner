@@ -9,15 +9,20 @@ QFontEditor::QFontEditor(QAbstractProperty *property, QUndoStack* stack, QWidget
 
 void QFontEditor::onBtnClicked()
 {
-    QFont f = m_property->get_value().value<QFont>();
+    QFont oldFont;
+    if(property) {
+        oldFont = property->get_value().value<QFont>();
+    }
 
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, f, this, tr("Set Font"));
+    QFont newFont = QFontDialog::getFont(&ok, oldFont, this, tr("选择字体"));
     if(ok) {
-        if(f != font) {
+        if(oldFont != newFont) {
             QVariant v;
-            v.setValue<QFont>(font);
-            m_property->notifyEditValue(v);
+            v.setValue<QFont>(newFont);
+            if(property) {
+                property->notifyEditValue(v);
+            }
         }
     }
 }

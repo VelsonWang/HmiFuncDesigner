@@ -24,7 +24,7 @@ class SHAREDLIB_EXPORT QAbstractHost : public QObject
 {
     Q_OBJECT
 public:
-    explicit QAbstractHost(QAbstractHost *parent = Q_NULLPTR);
+    explicit QAbstractHost(QAbstractHost *parent = NULL);
     ~QAbstractHost();
 
     void insertChildren(const QList<int> &indexs, const QList<QAbstractHost*> &children);

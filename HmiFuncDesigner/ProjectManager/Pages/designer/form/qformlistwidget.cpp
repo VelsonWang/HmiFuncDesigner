@@ -13,7 +13,7 @@
 
 QFormListWidget::QFormListWidget(QWidget *parent):
     QWidget(parent),
-    m_current_form(Q_NULLPTR)
+    m_current_form(NULL)
 {
     QVBoxLayout *l = new QVBoxLayout;
     l->setMargin(0);
@@ -24,31 +24,31 @@ QFormListWidget::QFormListWidget(QWidget *parent):
     QSoftCore *core = QSoftCore::getCore();
     QAction *pActObj;
     pActObj = core->getAction("FormManager.Copy");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setShortcut(QKeySequence::Copy);
         m_form_action_list.append(pActObj);
     }
 
     pActObj = core->getAction("FormManager.Cut");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setShortcut(QKeySequence::Cut);
         m_form_action_list.append(pActObj);
     }
 
     pActObj = core->getAction("FormManager.Paste");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         pActObj->setShortcut(QKeySequence::Paste);
         m_form_action_list.append(pActObj);
     }
 
     pActObj = core->getAction("FormManager.Delete");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         m_form_action_list.append(pActObj);
         pActObj->setShortcut(QKeySequence::Delete);
     }
 
     pActObj = core->getAction("FormManager.Select.All");
-    if(pActObj != Q_NULLPTR) {
+    if(pActObj != NULL) {
         m_form_action_list.append(pActObj);
         pActObj->setShortcut(QKeySequence::SelectAll);
     }
@@ -67,12 +67,12 @@ QFormListWidget::~QFormListWidget()
 
 void QFormListWidget::insert_form(QAbstractHost *host, int index)
 {
-    if(host == Q_NULLPTR || m_host_to_form.keys().contains(host) ||
+    if(host == NULL || m_host_to_form.keys().contains(host) ||
             !host->getObject()->isWidgetType()) {
         return;
     }
 
-    if(index<0 || index>m_forms.size()) {
+    if(index < 0 || index > m_forms.size()) {
         index = m_forms.size();
     }
     QDesignerFormHost *form = new QDesignerFormHost(host, this);
@@ -89,13 +89,13 @@ void QFormListWidget::insert_form(QAbstractHost *host, int index)
 
 void QFormListWidget::remove_form(QAbstractHost *host)
 {
-    if(host == Q_NULLPTR || !m_host_to_form.keys().contains(host)) {
+    if(host == NULL || !m_host_to_form.keys().contains(host)) {
         return;
     }
-    if(m_current_form != Q_NULLPTR && m_current_form->get_root_host() == host) {
+    if(m_current_form != NULL && m_current_form->get_root_host() == host) {
         if(m_forms.size() < 2) {
-            m_current_form = Q_NULLPTR;
-            select(Q_NULLPTR);
+            m_current_form = NULL;
+            select(NULL);
         } else {
             if(m_forms.first() == m_current_form) {
                 set_select(m_forms.at(1)->get_root_host());
@@ -108,7 +108,7 @@ void QFormListWidget::remove_form(QAbstractHost *host)
     }
     QDesignerFormHost *form = m_host_to_form.value(host);
     m_host_to_form.remove(host);
-    if(form != Q_NULLPTR) {
+    if(form != NULL) {
         m_forms.removeAll(form);
         delete form;
     }
@@ -121,11 +121,11 @@ void QFormListWidget::show_form(QAbstractHost *host)
     if(m_current_form == form) {
         return;
     }
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->hide();
     }
     m_current_form = form;
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->show();
     }
 }
@@ -135,14 +135,14 @@ void QFormListWidget::clear()
     qDeleteAll(m_forms);
     m_forms.clear();
     m_host_to_form.clear();
-    m_current_form=Q_NULLPTR;
+    m_current_form = NULL;
 }
 
 
 void QFormListWidget::property_edit_slot(QAbstractProperty *pro, const QVariant &value)
 {
-    if(m_current_form != Q_NULLPTR) {
-        m_current_form->property_edited(pro,value);
+    if(m_current_form != NULL) {
+        m_current_form->property_edited(pro, value);
     }
 }
 
@@ -153,14 +153,14 @@ void QFormListWidget::setUndoStack(QUndoStack *stack)
 
 void QFormListWidget::same_left()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_left();
     }
 }
 
 void QFormListWidget::same_top()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_top();
     }
 }
@@ -168,7 +168,7 @@ void QFormListWidget::same_top()
 
 void QFormListWidget::same_right()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_right();
     }
 }
@@ -176,7 +176,7 @@ void QFormListWidget::same_right()
 
 void QFormListWidget::same_bottom()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_bottom();
     }
 }
@@ -184,7 +184,7 @@ void QFormListWidget::same_bottom()
 
 void QFormListWidget::same_width()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_width();
     }
 }
@@ -192,7 +192,7 @@ void QFormListWidget::same_width()
 
 void QFormListWidget::same_height()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_height();
     }
 }
@@ -200,7 +200,7 @@ void QFormListWidget::same_height()
 
 void QFormListWidget::same_geometry()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_geometry();
     }
 }
@@ -208,7 +208,7 @@ void QFormListWidget::same_geometry()
 
 void QFormListWidget::same_v_centre()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_v_centre();
     }
 }
@@ -216,7 +216,7 @@ void QFormListWidget::same_v_centre()
 
 void QFormListWidget::same_h_centre()
 {
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         m_current_form->same_h_centre();
     }
 }
@@ -225,22 +225,22 @@ void QFormListWidget::same_h_centre()
 void QFormListWidget::set_select(QAbstractHost *host)
 {
     QAbstractHost *par = host;
-    while(par->getParent() != Q_NULLPTR) {
+    while(par->getParent() != NULL) {
         par = par->getParent();
     }
 
-    if(m_current_form != Q_NULLPTR) {
+    if(m_current_form != NULL) {
         if(m_current_form->get_root_host() == par) {
             m_current_form->set_select_widget(host);
         } else {
             show_form(par);
-            if(m_current_form != Q_NULLPTR) {
+            if(m_current_form != NULL) {
                 m_current_form->set_select_widget(host);
             }
         }
     } else {
         show_form(par);
-        if(m_current_form != Q_NULLPTR) {
+        if(m_current_form != NULL) {
             m_current_form->set_select_widget(host);
         }
     }
@@ -260,7 +260,7 @@ void QFormListWidget::remove_page_slot(QAbstractHost *host)
 
 void QFormListWidget::onSelect(QAbstractHost* host)
 {
-    if(host != Q_NULLPTR) {
+    if(host != NULL) {
         // 更新变量编辑器
         QList<QAbstractProperty*> listProps = host->getPropertys();
         foreach(QAbstractProperty* pPropObj, listProps) {

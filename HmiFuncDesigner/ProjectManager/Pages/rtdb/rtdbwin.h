@@ -16,7 +16,7 @@ class RTDBWin : public QWidget
 {
     Q_OBJECT
 public:
-    explicit RTDBWin(QWidget *parent = Q_NULLPTR);
+    explicit RTDBWin(QWidget *parent = NULL);
     ~RTDBWin();
 
 public:
@@ -29,8 +29,8 @@ private slots:
     void onSlotListViewProjectDoubleClicked(const QModelIndex &index);
 
 private:
-    ListViewEx *m_pListViewObj = Q_NULLPTR;
-    QStandardItemModel *m_pListViewModelObj = Q_NULLPTR;
+    ListViewEx *m_pListViewObj = NULL;
+    QStandardItemModel *m_pListViewModelObj = NULL;
 };
 
 #endif // RTDBWin_H

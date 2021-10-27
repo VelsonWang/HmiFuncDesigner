@@ -20,13 +20,16 @@ class QFileManager;
 class QActionArray
 {
 public:
-    QActionArray() : m_type(""), m_action(Q_NULLPTR){}
-    ~QActionArray() {
+    QActionArray() : m_type(""), m_action(NULL) {}
+    ~QActionArray()
+    {
         qDeleteAll(m_children.values());
-        if(m_action != Q_NULLPTR) delete m_action;
+        if(m_action != NULL) {
+            delete m_action;
+        }
     }
     QString m_type;
-    QMap<QString,QActionArray*> m_children;
+    QMap<QString, QActionArray*> m_children;
     QAction* m_action;
 };
 
@@ -63,7 +66,7 @@ protected:
     void initDriverAction();
 
 public:
-    void insertAction(const QString& key,QAction *action); // 添加全局action
+    void insertAction(const QString& key, QAction *action); // 添加全局action
     QAction* getAction(const QString &key); // 获取全局action
     QStringList getPages();
 

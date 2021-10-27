@@ -15,16 +15,19 @@ public:
 
     void setValue(const QString &value);
     QString value();
+
 protected:
-    void    resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *);
+
 signals:
 
 public slots:
-    void    btnClicked();
-    void    text_changed();
+    void btnClicked();
+    void textChanged();
+
 protected:
-    QPushButton     *m_button;
-    QString         m_value;
+    QPushButton *button;
+    QString textVal;
 };
 
 

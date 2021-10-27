@@ -11,15 +11,20 @@
 
 
 TagColorListEditorDialog::TagColorListEditorDialog(QWidget *parent)
-    : QDialog(parent), ui(new Ui::TagColorListEditorDialog) {
-  ui->setupUi(this);
-  this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
-  initUi();
+    : QDialog(parent), ui(new Ui::TagColorListEditorDialog)
+{
+    ui->setupUi(this);
+    this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
+    initUi();
 }
 
-TagColorListEditorDialog::~TagColorListEditorDialog() { delete ui; }
+TagColorListEditorDialog::~TagColorListEditorDialog()
+{
+    delete ui;
+}
 
-void TagColorListEditorDialog::initUi() {
+void TagColorListEditorDialog::initUi()
+{
     this->setWindowTitle(tr("设置颜色"));
     initTableWidget();
 }
@@ -28,7 +33,8 @@ void TagColorListEditorDialog::initUi() {
  * @brief TagColorListEditorDialog::initTableWidget
  * @details 初始化颜色设置表控件
  */
-void TagColorListEditorDialog::initTableWidget() {
+void TagColorListEditorDialog::initTableWidget()
+{
     QStringList hHeaderLabels;
     hHeaderLabels << tr("变量值") << tr("填充颜色");
     ui->tableTagColor->setColumnCount(hHeaderLabels.count());
@@ -42,7 +48,8 @@ void TagColorListEditorDialog::initTableWidget() {
 }
 
 
-void TagColorListEditorDialog::on_btnAdd_clicked() {
+void TagColorListEditorDialog::on_btnAdd_clicked()
+{
     int iRowCount = ui->tableTagColor->rowCount();
     ui->tableTagColor->insertRow(iRowCount);
     QLineEdit *valueEditor = new QLineEdit();
@@ -60,7 +67,8 @@ void TagColorListEditorDialog::on_btnAdd_clicked() {
  * @brief TagColorListEditorDialog::on_btnDel_clicked
  * @details 删除选中的功能函数
  */
-void TagColorListEditorDialog::on_btnDel_clicked() {
+void TagColorListEditorDialog::on_btnDel_clicked()
+{
     ui->tableTagColor->removeRow(ui->tableTagColor->currentRow());
 }
 
@@ -69,7 +77,8 @@ void TagColorListEditorDialog::on_btnDel_clicked() {
  * @brief TagColorListEditorDialog::on_btnOk_clicked
  * @details 单击确定
  */
-void TagColorListEditorDialog::on_btnOk_clicked() {
+void TagColorListEditorDialog::on_btnOk_clicked()
+{
     getValueColorList();
     this->accept();
 }
@@ -79,14 +88,16 @@ void TagColorListEditorDialog::on_btnOk_clicked() {
  * @brief TagColorListEditorDialog::on_btnCancel_clicked
  * @details 单击取消
  */
-void TagColorListEditorDialog::on_btnCancel_clicked() {
+void TagColorListEditorDialog::on_btnCancel_clicked()
+{
     this->reject();
 }
 
-QStringList TagColorListEditorDialog::getValueColorList() {
+QStringList TagColorListEditorDialog::getValueColorList()
+{
     valueColorList_.clear();
     int iRowCount = ui->tableTagColor->rowCount();
-    for(int i=0; i<iRowCount; i++) {
+    for(int i = 0; i < iRowCount; i++) {
         QStringList listValueColor;
         QLineEdit *valueEditor = qobject_cast<QLineEdit* >(ui->tableTagColor->cellWidget(i, 0));
         ColorEditor *colorEditor = qobject_cast<ColorEditor* >(ui->tableTagColor->cellWidget(i, 1));
@@ -100,14 +111,16 @@ QStringList TagColorListEditorDialog::getValueColorList() {
     return valueColorList_;
 }
 
-void TagColorListEditorDialog::setValueColorList(const QStringList &list) {
+void TagColorListEditorDialog::setValueColorList(const QStringList &list)
+{
     valueColorList_.clear();
     valueColorList_ = list;
 
-    while(ui->tableTagColor->rowCount())
+    while(ui->tableTagColor->rowCount()) {
         ui->tableTagColor->removeRow(0);
+    }
 
-    for(int i=0; i<list.size(); i++) {
+    for(int i = 0; i < list.size(); i++) {
         QString szValueColor = list.at(i);
         QStringList listValueColor = szValueColor.split(":");
         if(listValueColor.size() == 2) {

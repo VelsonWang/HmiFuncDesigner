@@ -13,7 +13,7 @@ class SysTag : public QWidget
     Q_OBJECT
 
 public:
-    explicit SysTag(QWidget *parent = Q_NULLPTR);
+    explicit SysTag(QWidget *parent = NULL);
     ~SysTag();
 
 protected:

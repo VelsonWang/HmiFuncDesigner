@@ -2,9 +2,8 @@
 #include "qenumproperty.h"
 #include "../qcommonstruct.h"
 
-
-QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent) : 
-        QAbstractProperty(parent)
+QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent) :
+    QAbstractProperty(parent)
 {
     m_propertys.insert("type", "Alignment");
 

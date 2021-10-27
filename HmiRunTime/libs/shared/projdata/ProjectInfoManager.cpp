@@ -21,12 +21,14 @@ public:
 
 
 
-ProjectInfoManager::ProjectInfoManager() : dPtr_(new ProjectInfoPrivate()) {
+ProjectInfoManager::ProjectInfoManager() : dPtr_(new ProjectInfoPrivate())
+{
 
 }
 
-ProjectInfoManager::~ProjectInfoManager() {
-    if(dPtr_ != Q_NULLPTR) {
+ProjectInfoManager::~ProjectInfoManager()
+{
+    if(dPtr_ != NULL) {
         delete dPtr_;
     }
 }
@@ -37,16 +39,19 @@ ProjectInfoManager::~ProjectInfoManager() {
  * @param pXmlObj
  * @return true-成功, false-失败
  */
-bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj) {
+bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj)
+{
     XMLObject *projInfoObj = pXmlObj->getCurrentChild("project_info");
-    if(projInfoObj == Q_NULLPTR) return false;
+    if(projInfoObj == NULL) {
+        return false;
+    }
     dPtr_->projectEncrypt_ = projInfoObj->getProperty("encrypt") == "1";
-    dPtr_->dataScanPeriod_= projInfoObj->getProperty("data_scan").toUInt();
+    dPtr_->dataScanPeriod_ = projInfoObj->getProperty("data_scan").toUInt();
     dPtr_->deviceType_ = projInfoObj->getProperty("device");
-    dPtr_->pageScanPeriod_= projInfoObj->getProperty("page_scan").toUInt();
-    dPtr_->projectDescription_= projInfoObj->getProperty("desc");
-    dPtr_->projectName_= projInfoObj->getProperty("name");
-    dPtr_->projectPath_= projInfoObj->getProperty("path");
+    dPtr_->pageScanPeriod_ = projInfoObj->getProperty("page_scan").toUInt();
+    dPtr_->projectDescription_ = projInfoObj->getProperty("desc");
+    dPtr_->projectName_ = projInfoObj->getProperty("name");
+    dPtr_->projectPath_ = projInfoObj->getProperty("path");
     dPtr_->startPage_ = projInfoObj->getProperty("start");
     dPtr_->stationAddress_ = projInfoObj->getProperty("address");
     dPtr_->stationNumber_ = projInfoObj->getProperty("number").toInt();
@@ -59,7 +64,8 @@ bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj) {
  * @param pXmlObj
  * @return true-成功, false-失败
  */
-bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj) {
+bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj)
+{
     XMLObject *projInfoObj = new XMLObject(pXmlObj);
     projInfoObj->setTagName("project_info");
     projInfoObj->setProperty("encrypt", dPtr_->projectEncrypt_ ? "1" : "0");
@@ -75,104 +81,127 @@ bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj) {
     return true;
 }
 
-QString ProjectInfoManager::getProjectName() const {
+QString ProjectInfoManager::getProjectName() const
+{
     return dPtr_->projectName_;
 }
 
 
-void ProjectInfoManager::setProjectName(const QString &name) {
+void ProjectInfoManager::setProjectName(const QString &name)
+{
     dPtr_->projectName_ = name;
 }
 
-QString ProjectInfoManager::getProjectDescription() const {
+QString ProjectInfoManager::getProjectDescription() const
+{
     return dPtr_->projectDescription_;
 }
 
 
-void ProjectInfoManager::setProjectDescription(const QString &desc) {
+void ProjectInfoManager::setProjectDescription(const QString &desc)
+{
     dPtr_->projectDescription_ = desc;
 }
 
 
-QString ProjectInfoManager::getProjectPath() const {
+QString ProjectInfoManager::getProjectPath() const
+{
     return dPtr_->projectPath_;
 }
 
-void ProjectInfoManager::setProjectPath(const QString &path) {
+void ProjectInfoManager::setProjectPath(const QString &path)
+{
     dPtr_->projectPath_ = path;
 }
 
-QString ProjectInfoManager::getDeviceType() const {
+QString ProjectInfoManager::getDeviceType() const
+{
     return dPtr_->deviceType_;
 }
 
-void ProjectInfoManager::setDeviceType(const QString &type){
+void ProjectInfoManager::setDeviceType(const QString &type)
+{
     dPtr_->deviceType_ = type;
 }
 
-int ProjectInfoManager::getStationNumber() const {
+int ProjectInfoManager::getStationNumber() const
+{
     return dPtr_->stationNumber_;
 }
 
-void ProjectInfoManager::setStationNumber(int number) {
+void ProjectInfoManager::setStationNumber(int number)
+{
     dPtr_->stationNumber_ = number;
 }
 
-QString ProjectInfoManager::getStartPage() const {
+QString ProjectInfoManager::getStartPage() const
+{
     return dPtr_->startPage_;
 }
 
-void ProjectInfoManager::setStartPage(const QString &page){
+void ProjectInfoManager::setStartPage(const QString &page)
+{
     dPtr_->startPage_ = page;
 }
 
-QString ProjectInfoManager::getStationAddress() const {
+QString ProjectInfoManager::getStationAddress() const
+{
     return dPtr_->stationAddress_;
 }
 
-void ProjectInfoManager::setStationAddress(const QString &address){
+void ProjectInfoManager::setStationAddress(const QString &address)
+{
     dPtr_->stationAddress_ = address;
 }
 
-bool ProjectInfoManager::getProjectEncrypt() {
+bool ProjectInfoManager::getProjectEncrypt()
+{
     return dPtr_->projectEncrypt_;
 }
 
-void ProjectInfoManager::setProjectEncrypt(bool encrypt) {
+void ProjectInfoManager::setProjectEncrypt(bool encrypt)
+{
     dPtr_->projectEncrypt_ = encrypt;
 }
 
-int ProjectInfoManager::getPageScanPeriod() const {
+int ProjectInfoManager::getPageScanPeriod() const
+{
     return dPtr_->pageScanPeriod_;
 }
 
-void ProjectInfoManager::setPageScanPeriod(int period){
+void ProjectInfoManager::setPageScanPeriod(int period)
+{
     dPtr_->pageScanPeriod_ = period;
 }
 
-int ProjectInfoManager::getDataScanPeriod() const {
+int ProjectInfoManager::getDataScanPeriod() const
+{
     return dPtr_->dataScanPeriod_;
 }
 
-void ProjectInfoManager::setDataScanPeriod(int period) {
+void ProjectInfoManager::setDataScanPeriod(int period)
+{
     dPtr_->dataScanPeriod_ = period;
 }
 
-bool getWidthHeight(const QString &input, int &width, int &height) {
+bool getWidthHeight(const QString &input, int &width, int &height)
+{
 
     QString str = input;
     int posLeft = str.indexOf("(");
     int posRight = str.indexOf(")");
 
-    if(posLeft == -1 || posRight == -1)
+    if(posLeft == -1 || posRight == -1) {
         return false;
+    }
 
-    QString strWidthHeight = str.mid(posLeft+1, posRight-posLeft-1);
+    QString strWidthHeight = str.mid(posLeft + 1, posRight - posLeft - 1);
 
     QStringList listWidthHeight = strWidthHeight.split('*');
 
-    if(listWidthHeight.size() != 2)
+    if(listWidthHeight.size() != 2) {
         return false;
+    }
 
     width = listWidthHeight.at(0).toInt();
     height = listWidthHeight.at(1).toInt();
@@ -184,12 +213,14 @@ bool getWidthHeight(const QString &input, int &width, int &height) {
  * @brief ProjectInfoManager::getGraphPageWidth
  * @return 画面宽度
  */
-int ProjectInfoManager::getGraphPageWidth() {
+int ProjectInfoManager::getGraphPageWidth()
+{
     QString devType = dPtr_->deviceType_;
     int width = 0;
     int height = 0;
-    if(getWidthHeight(devType, width, height))
+    if(getWidthHeight(devType, width, height)) {
         return width;
+    }
     return 0;
 }
 
@@ -197,12 +228,14 @@ int ProjectInfoManager::getGraphPageWidth() {
  * @brief ProjectInfoManager::getGraphPageHeight
  * @return 画面高度
  */
-int ProjectInfoManager::getGraphPageHeight() {
+int ProjectInfoManager::getGraphPageHeight()
+{
     QString devType = dPtr_->deviceType_;
     int width = 0;
     int height = 0;
-    if(getWidthHeight(devType, width, height))
+    if(getWidthHeight(devType, width, height)) {
         return height;
+    }
     return 0;
 }
 

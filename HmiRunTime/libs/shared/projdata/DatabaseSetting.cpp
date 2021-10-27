@@ -25,19 +25,24 @@ public:
 
 
 
-DatabaseSetting::DatabaseSetting() : dPtr_(new DatabaseSettingPrivate()) {
+DatabaseSetting::DatabaseSetting() : dPtr_(new DatabaseSettingPrivate())
+{
 
 }
 
-DatabaseSetting::~DatabaseSetting() {
-    if(dPtr_ != Q_NULLPTR) {
+DatabaseSetting::~DatabaseSetting()
+{
+    if(dPtr_ != NULL) {
         delete dPtr_;
     }
 }
 
-bool DatabaseSetting::openFromXml(XMLObject *pXmlObj) {
+bool DatabaseSetting::openFromXml(XMLObject *pXmlObj)
+{
     XMLObject *pDBSettingObj = pXmlObj->getCurrentChild("database_setting");
-    if(pDBSettingObj == Q_NULLPTR) return false;
+    if(pDBSettingObj == NULL) {
+        return false;
+    }
     dPtr_->iAlarmSize_ = pDBSettingObj->getProperty("alarm").toInt();
     dPtr_->bSpecialDB_ = pDBSettingObj->getProperty("special") == "1";
     dPtr_->bAutoDelete_ = pDBSettingObj->getProperty("aut") == "1";
@@ -56,7 +61,8 @@ bool DatabaseSetting::openFromXml(XMLObject *pXmlObj) {
 }
 
 
-bool DatabaseSetting::saveToXml(XMLObject *pXmlObj) {
+bool DatabaseSetting::saveToXml(XMLObject *pXmlObj)
+{
     XMLObject *pDBSettingObj = new XMLObject(pXmlObj);
     pDBSettingObj->setTagName("database_setting");
     pDBSettingObj->setProperty("alarm", QString::number(dPtr_->iAlarmSize_));
@@ -76,127 +82,155 @@ bool DatabaseSetting::saveToXml(XMLObject *pXmlObj) {
     return true;
 }
 
-int DatabaseSetting::getAlarmSize() {
+int DatabaseSetting::getAlarmSize()
+{
     return dPtr_->iAlarmSize_;
 }
 
-void DatabaseSetting::setAlarmSize(int size) {
+void DatabaseSetting::setAlarmSize(int size)
+{
     dPtr_->iAlarmSize_ = size;
 }
 
-bool DatabaseSetting::isSpecialDB() {
+bool DatabaseSetting::isSpecialDB()
+{
     return dPtr_->bSpecialDB_;
 }
 
-void DatabaseSetting::setSpecialDB(bool special) {
+void DatabaseSetting::setSpecialDB(bool special)
+{
     dPtr_->bSpecialDB_ = special;
 }
 
 
-bool DatabaseSetting::isAutoDelete() {
+bool DatabaseSetting::isAutoDelete()
+{
     return dPtr_->bAutoDelete_;
 }
 
-void DatabaseSetting::setAutoDelete(bool aut) {
+void DatabaseSetting::setAutoDelete(bool aut)
+{
     dPtr_->bAutoDelete_ = aut;
 }
 
 
-QString DatabaseSetting::getDBType() const {
+QString DatabaseSetting::getDBType() const
+{
     return dPtr_->szDBType_;
 }
 
-void DatabaseSetting::setDBType(const QString &type) {
+void DatabaseSetting::setDBType(const QString &type)
+{
     dPtr_->szDBType_ = type;
 }
 
 
-int DatabaseSetting::getDataKeepDays() {
+int DatabaseSetting::getDataKeepDays()
+{
     return dPtr_->iDataKeepDays_;
 }
 
-void DatabaseSetting::setDataKeepDays(int days) {
+void DatabaseSetting::setDataKeepDays(int days)
+{
     dPtr_->iDataKeepDays_ = days;
 }
 
 
-QString DatabaseSetting::getIPAddress() const {
+QString DatabaseSetting::getIPAddress() const
+{
     return dPtr_->szIPAddress_;
 }
 
-void DatabaseSetting::setIPAddress(const QString &ip) {
+void DatabaseSetting::setIPAddress(const QString &ip)
+{
     dPtr_->szIPAddress_ = ip;
 }
 
 
-bool DatabaseSetting::isUseSD() {
+bool DatabaseSetting::isUseSD()
+{
     return dPtr_->bUseSD_;
 }
 
-void DatabaseSetting::setUseSD(bool sd) {
+void DatabaseSetting::setUseSD(bool sd)
+{
     dPtr_->bUseSD_ = sd;
 }
 
 
-QString DatabaseSetting::getUserName() const {
+QString DatabaseSetting::getUserName() const
+{
     return dPtr_->szUser_;
 }
 
-void DatabaseSetting::setUserName(const QString &name) {
+void DatabaseSetting::setUserName(const QString &name)
+{
     dPtr_->szUser_ = name;
 }
 
 
-int DatabaseSetting::getSavePeriod() {
+int DatabaseSetting::getSavePeriod()
+{
     return dPtr_->iSavePeriod_;
 }
 
-void DatabaseSetting::setSavePeriod(int period) {
+void DatabaseSetting::setSavePeriod(int period)
+{
     dPtr_->iSavePeriod_ = period;
 }
 
 
-QString DatabaseSetting::getPassword() const {
+QString DatabaseSetting::getPassword() const
+{
     return dPtr_->szPassword_;
 }
 
-void DatabaseSetting::setPassword(const QString &password) {
+void DatabaseSetting::setPassword(const QString &password)
+{
     dPtr_->szPassword_ = password;
 }
 
 
-int DatabaseSetting::getSendPeriod() {
+int DatabaseSetting::getSendPeriod()
+{
     return dPtr_->iSendPeriod_;
 }
 
-void DatabaseSetting::setSendPeriod(int period) {
+void DatabaseSetting::setSendPeriod(int period)
+{
     dPtr_->iSendPeriod_ = period;
 }
 
 
-QString DatabaseSetting::getDBName() const {
+QString DatabaseSetting::getDBName() const
+{
     return dPtr_->szDBName_;
 }
 
-void DatabaseSetting::setDBName(const QString &name) {
+void DatabaseSetting::setDBName(const QString &name)
+{
     dPtr_->szDBName_ = name;
 }
 
 
-int DatabaseSetting::getStartTime() {
+int DatabaseSetting::getStartTime()
+{
     return dPtr_->iStartTime_;
 }
 
-void DatabaseSetting::setStartTime(int time) {
+void DatabaseSetting::setStartTime(int time)
+{
     dPtr_->iStartTime_ = time;
 }
 
 
-int DatabaseSetting::getPort() {
+int DatabaseSetting::getPort()
+{
     return dPtr_->iPort_;
 }
 
-void DatabaseSetting::setPort(int port) {
+void DatabaseSetting::setPort(int port)
+{
     dPtr_->iPort_ = port;
 }
 

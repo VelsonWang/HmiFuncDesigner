@@ -38,7 +38,7 @@ void QFrameHost::initProperty()
     QWidgetHost::initProperty();
 
     QAbstractProperty *pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "frameShape");
         pObj->setAttribute("show_name", tr("边框形状")); // tr("FrameShape")
         pObj->setAttribute("group", "Attributes");
@@ -76,16 +76,16 @@ void QFrameHost::initProperty()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pObj->setAttribute("items",v);
+        pObj->setAttribute("items", v);
         insertProperty(pObj);
     }
 
     pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != Q_NULLPTR) {
+    if(pObj != NULL) {
         pObj->setObjectProperty("name", "frameShadow");
         pObj->setAttribute("show_name", tr("边框阴影")); // tr("FrameShadow")
         pObj->setAttribute("group", "Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME,true);
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         tagComboItem item;
 
@@ -103,7 +103,7 @@ void QFrameHost::initProperty()
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pObj->setAttribute("items",v);
+        pObj->setAttribute("items", v);
         insertProperty(pObj);
     }
 }

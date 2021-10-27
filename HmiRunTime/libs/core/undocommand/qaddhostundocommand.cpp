@@ -3,10 +3,10 @@
 #include "../../shared/host/qabstracthost.h"
 
 QAddHostUndoCommand::QAddHostUndoCommand(QAbstractHost *parent_host,
-                                         const QList<QAbstractHost *> &hosts,
-                                         const QList<int> &indexs,
-                                         enAddHostType type,
-                                         QUndoCommand *parent):
+        const QList<QAbstractHost *> &hosts,
+        const QList<int> &indexs,
+        enAddHostType type,
+        QUndoCommand *parent):
     QBaseUndoCommand(parent),
     m_parent_host(parent_host),
     m_hosts(hosts),
@@ -49,14 +49,14 @@ void QAddHostUndoCommand::undo()
 
 void QAddHostUndoCommand::add()
 {
-    if(m_parent_host != Q_NULLPTR) {
+    if(m_parent_host != NULL) {
         m_parent_host->insertChildren(m_indexs, m_hosts);
     }
 }
 
 void QAddHostUndoCommand::remove()
 {
-    if(m_parent_host != Q_NULLPTR) {
+    if(m_parent_host != NULL) {
         m_parent_host->removeChildren(m_hosts);
     }
 }

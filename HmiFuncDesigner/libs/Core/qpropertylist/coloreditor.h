@@ -11,10 +11,10 @@ class ColorEditor : public QWidget
 {
     Q_OBJECT
 public:
-    explicit ColorEditor(QWidget *parent = Q_NULLPTR);
+    explicit ColorEditor(QWidget *parent = NULL);
     ~ColorEditor();
 
-    void setColor(const QColor &color);
+    void setColor(const QColor &c);
     QColor getColor() const;
 
     bool eventFilter(QObject *obj, QEvent *ev);
@@ -23,9 +23,9 @@ private slots:
     void onToolButtonClicked();
 
 private:
-    QColor color_;
-    QToolButton* toolButton_;
-    QLabel* colorLabel_;
+    QColor color;
+    QToolButton* toolButton;
+    QLabel* colorLabel;
 };
 
 #endif

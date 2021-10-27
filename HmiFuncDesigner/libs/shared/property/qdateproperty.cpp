@@ -1,6 +1,6 @@
 #include "qdateproperty.h"
 
-QDateProperty::QDateProperty(QAbstractProperty *parent) : 
+QDateProperty::QDateProperty(QAbstractProperty *parent) :
     QAbstractProperty(parent)
 {
     setObjectProperty("type", "Date");

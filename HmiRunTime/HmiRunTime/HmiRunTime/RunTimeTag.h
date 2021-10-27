@@ -11,7 +11,7 @@ class RunTimeTag : public QObject
 {
     Q_OBJECT
 public:
-    explicit RunTimeTag(QObject *parent = Q_NULLPTR);
+    explicit RunTimeTag(QObject *parent = NULL);
     RunTimeTag(const RunTimeTag &obj);
     RunTimeTag &operator=(const RunTimeTag &obj);
     void copyObject(const RunTimeTag &obj);

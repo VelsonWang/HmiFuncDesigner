@@ -2,23 +2,26 @@
 #include <QFileDialog>
 #include <QStandardPaths>
 #include "../../shared/property/qabstractproperty.h"
-#include "../../shared/projdata/PictureResourceManager.h"
+#include "../../shared/projdata/pictureresourcemanager.h"
 
-QImageEditor::QImageEditor(QAbstractProperty *property, QUndoStack* stack, QWidget *parent):
+QImageEditor::QImageEditor(QAbstractProperty *property, QUndoStack* stack, QWidget *parent) :
     QButtonCommonEditor(property, stack, parent)
 {
 }
 
 void QImageEditor::onBtnClicked()
 {
-    QString szFilter = m_property->getAttribute("filters").toString();
+    QString szFilter = "";
+    if(property) {
+        szFilter = property->getAttribute("filters").toString();
+    }
     // 使用Windows自带的文件对话框程序会崩溃
     QString szFileName = QFileDialog::getOpenFileName(this,
-                                                      tr("选择文件"),
-                                                      QStandardPaths::displayName(QStandardPaths::DesktopLocation),
-                                                      szFilter,
-                                                      Q_NULLPTR,
-                                                      QFileDialog::DontUseNativeDialog);
+                         tr("选择文件"),
+                         QStandardPaths::displayName(QStandardPaths::DesktopLocation),
+                         szFilter,
+                         NULL,
+                         QFileDialog::DontUseNativeDialog);
     QFileInfo info(szFileName);
     if(!info.exists()) {
         return;
@@ -31,7 +34,9 @@ void QImageEditor::onBtnClicked()
 
     if (!szFileName.isEmpty()) {
         QVariant v(szListData.join("|"));
-        m_property->notifyEditValue(v);
+        if(property) {
+            property->notifyEditValue(v);
+        }
     }
 }
 

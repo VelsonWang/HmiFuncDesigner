@@ -10,7 +10,7 @@ class CommunicationDevice : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CommunicationDevice(QWidget *parent = Q_NULLPTR);
+    explicit CommunicationDevice(QWidget *parent = NULL);
     ~CommunicationDevice();
 
 private:
@@ -31,8 +31,8 @@ public slots:
     void onSlotDeleteDevice();
 
 private:
-    QStandardItemModel *m_pCommDevModelObj = Q_NULLPTR;
-    ListViewEx *m_pListViewCommDevObj = Q_NULLPTR;
+    QStandardItemModel *m_pCommDevModelObj = NULL;
+    ListViewEx *m_pListViewCommDevObj = NULL;
     QString m_szItemName = "";
 };
 

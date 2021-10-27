@@ -80,9 +80,9 @@ QJsonObject TagEditDialog::getTagObj()
 /// \param mapDataType 数据类型=数据类型,数据类型,数据类型
 ///
 void TagEditDialog::setAddrTypeAndDataType(QMap<QString, QStringList> mapDevToAddrType,
-                                           QMap<QString, QString> mapAddrTypeToAddrTypeAlias,
-                                           QMap<QString, QStringList> mapAddrTypeToSubAddrType,
-                                           QMap<QString, QStringList> mapAddrTypeToDataType)
+        QMap<QString, QString> mapAddrTypeToAddrTypeAlias,
+        QMap<QString, QStringList> mapAddrTypeToSubAddrType,
+        QMap<QString, QStringList> mapAddrTypeToDataType)
 {
     m_mapDevToAddrType = mapDevToAddrType;
     m_mapAddrTypeToAddrTypeAlias = mapAddrTypeToAddrTypeAlias;

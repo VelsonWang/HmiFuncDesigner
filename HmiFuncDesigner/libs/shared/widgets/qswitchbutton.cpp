@@ -47,10 +47,13 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
         painter->drawRect(rect);
     } else {
         if(showContentText) { // 文本+背景
-            for(int i=0; i<borderWidth; i++) {
+            for(int i = 0; i < borderWidth; i++) {
                 PubTool::DrawFrameRect(painter, rect, borderColor);
-                if(i<borderWidth/2) rect.adjust(1, 1, -1, -1);
-                else rect.adjust(1, 1, 0, 0);
+                if(i < borderWidth / 2) {
+                    rect.adjust(1, 1, -1, -1);
+                } else {
+                    rect.adjust(1, 1, 0, 0);
+                }
             }
 
             PubTool::DrawFrameRect(painter, rect, QColor(252, 252, 252));
@@ -92,7 +95,7 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
             }
 
             QRectF textRect = rect.normalized().adjusted(borderWidth, borderWidth, -borderWidth, -borderWidth);
-            painter->drawText(textRect, hFlags|vFlags, szElementText);
+            painter->drawText(textRect, hFlags | vFlags, szElementText);
         } else { // 图片
             QString szPictureFile = stateOnInitial ? setPictureFile : resetPictureFile;
             if(szPictureFile != QString()) {
@@ -107,7 +110,7 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
                     painter->drawImage(drawRect, scaleImage);
                 } else {
                     painter->drawImage(rect, scaleImage);
-                } 
+                }
             }
             painter->setPen(QPen(Qt::gray, 1, Qt::DashDotLine));
             painter->drawRect(rect);

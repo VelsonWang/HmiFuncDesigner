@@ -21,11 +21,13 @@ InsertFunctionDlg::InsertFunctionDlg(QWidget* parent)
     treeWidgetInit();
 }
 
-InsertFunctionDlg::~InsertFunctionDlg() {
+InsertFunctionDlg::~InsertFunctionDlg()
+{
     delete ui;
 }
 
-void InsertFunctionDlg::treeWidgetInit() {
+void InsertFunctionDlg::treeWidgetInit()
+{
     ui->treeWidgetFunc->setHeaderHidden(true);
 
     // file encoding="UTF-8"
@@ -42,7 +44,7 @@ void InsertFunctionDlg::treeWidgetInit() {
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if (!xmlFuncSupportList.load(buffer, Q_NULLPTR)) {
+    if (!xmlFuncSupportList.load(buffer, NULL)) {
         return;
     }
 
@@ -57,7 +59,9 @@ void InsertFunctionDlg::treeWidgetInit() {
 
         // add child
         QList<XMLObject*> childrenGroup = funcGroup->getChildren();
-        if (childrenGroup.size() < 1) continue;
+        if (childrenGroup.size() < 1) {
+            continue;
+        }
         foreach (XMLObject* func, childrenGroup) {
             QTreeWidgetItem* pChildItem = new QTreeWidgetItem();
             QString funcName = func->getProperty("name");
@@ -65,7 +69,9 @@ void InsertFunctionDlg::treeWidgetInit() {
             pItem->addChild(pChildItem);
 
             QList<XMLObject*> funcDesc = func->getChildren();
-            if (funcDesc.size() < 1) continue;
+            if (funcDesc.size() < 1) {
+                continue;
+            }
             QString strDesc = "";
             QString strFuncOrgName = func->getCurrentChild("name")->getText();
             strDesc += strFuncOrgName;
@@ -95,7 +101,7 @@ void InsertFunctionDlg::treeWidgetInit() {
 
             m_funcNameDescMap.insert(funcName, strDesc);
             QString strFuncOrg = strFuncOrgName.right(
-                        strFuncOrgName.length() - strFuncOrgName.indexOf(":") - 1);
+                                     strFuncOrgName.length() - strFuncOrgName.indexOf(":") - 1);
             m_funcNameNameMap.insert(funcName, strFuncOrg);
             // qDebug() << funcName << "    " << strFuncOrg;
         }
@@ -104,7 +110,8 @@ void InsertFunctionDlg::treeWidgetInit() {
 }
 
 void InsertFunctionDlg::on_treeWidgetFunc_itemClicked(QTreeWidgetItem* item,
-                                                         int column) {
+        int column)
+{
     Q_UNUSED(column)
     if (m_funcNameDescMap.contains(item->text(0))) {
         ui->textEditFuncDesc->setText(m_funcNameDescMap.value(item->text(0)));
@@ -112,15 +119,18 @@ void InsertFunctionDlg::on_treeWidgetFunc_itemClicked(QTreeWidgetItem* item,
     }
 }
 
-void InsertFunctionDlg::on_btnOk_clicked() {
+void InsertFunctionDlg::on_btnOk_clicked()
+{
     this->accept();
 }
 
-void InsertFunctionDlg::on_btnCancel_clicked() {
+void InsertFunctionDlg::on_btnCancel_clicked()
+{
     m_strSelectedFuncName = "";
     this->reject();
 }
 
-QString InsertFunctionDlg::getSelectedFuncName(void) const {
+QString InsertFunctionDlg::getSelectedFuncName(void) const
+{
     return m_strSelectedFuncName;
 }
