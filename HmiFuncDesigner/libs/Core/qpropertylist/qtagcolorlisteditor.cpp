@@ -11,14 +11,19 @@ QTagColorListEditor::QTagColorListEditor(QAbstractProperty *property, QUndoStack
 
 void QTagColorListEditor::onBtnClicked()
 {
-    QStringList szListColorList = property->get_value().toStringList();
+    QStringList szListColorList;
+    if(m_property) {
+        szListColorList = m_property->get_value().toStringList();
+    }
     TagColorListEditorDialog dlg;
     dlg.setValueColorList(szListColorList);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList szListColorListNew = dlg.getValueColorList();
         if (szListColorListNew != szListColorList) {
             QVariant v(szListColorListNew);
-            property->notifyEditValue(v);
+            if(m_property) {
+                m_property->notifyEditValue(v);
+            }
         }
     }
 }

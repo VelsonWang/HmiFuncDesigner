@@ -18,7 +18,7 @@ class QLineWidget : public QWidget
 {
     Q_OBJECT
 public:
-    QLineWidget(QTextDocument *document, QWidget* parent=0);
+    QLineWidget(QTextDocument *document, QWidget* parent = 0);
 
 protected:
     void mousePressEvent(QMouseEvent *);
@@ -39,7 +39,7 @@ class QScriptEditView : public QPlainTextEdit
 public:
     QScriptEditView(QAbstractProperty* property,
                     QAbstractHost *host,
-                    QWidget* parent=0);
+                    QWidget* parent = 0);
 
     int extraAreaWidth() const;
 

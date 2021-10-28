@@ -1,5 +1,4 @@
 #include "qstylesheetitemfactory.h"
-
 #include "qbackgrounditem.h"
 #include "qborderitem.h"
 #include "qtextitem.h"

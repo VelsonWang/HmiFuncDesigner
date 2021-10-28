@@ -9,8 +9,6 @@
 #include "../xmlobject.h"
 #include "../sharedlibglobal.h"
 
-
-
 class SHAREDLIB_EXPORT Tag
 {
 public:
@@ -33,18 +31,18 @@ public:
 public:
     ////////////////////<基本信息>//////////////////////////
 
-    int m_iID = 0; // 变量ID
-    QString m_szName = ""; // 变量名称
-    QString m_szUnit = ""; // 变量单位
-    QString m_szAddrType = ""; // 地址类型
-    QString m_szAddrOffset = "0"; // 地址偏移
-    QString m_szAddrType2 = ""; // 地址类型2
-    QString m_szAddrOffset2 = "0"; // 地址偏移2
-    QString m_szDataType = ""; // 数据类型
-    int m_iWriteable = 1; // 读写类型  0-只读, 1-可写
-    QString m_szRemark = ""; // 变量描述
-    QString m_szOwnGroup = ""; // 变量所属组
-    QString m_szDevType = ""; // 变量设备类型-设备协议名称, 内存变量-MEMORY, 系统变量-SYSTEM
+    int m_id = 0; // 变量ID
+    QString m_name = ""; // 变量名称
+    QString m_unit = ""; // 变量单位
+    QString m_addrType = ""; // 地址类型
+    QString m_addrOffset = "0"; // 地址偏移
+    QString m_addrType2 = ""; // 地址类型2
+    QString m_addrOffset2 = "0"; // 地址偏移2
+    QString m_dataType = ""; // 数据类型
+    int m_writeable = 1; // 读写类型  0-只读, 1-可写
+    QString m_remark = ""; // 变量描述
+    QString m_ownGroup = ""; // 变量所属组
+    QString m_devType = ""; // 变量设备类型-设备协议名称, 内存变量-MEMORY, 系统变量-SYSTEM
 
 private:
     bool saveToXmlInner(XMLObject *pXmlObj);
@@ -67,7 +65,7 @@ public:
 
 public:
     QVector<Tag *> m_vecTags;
-    static int m_iStartNewID;
+    static int m_startNewID;
 };
 Q_DECLARE_METATYPE(TagManager)
 

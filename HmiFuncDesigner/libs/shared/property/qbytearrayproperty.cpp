@@ -6,12 +6,12 @@ QByteArrayProperty::QByteArrayProperty(QAbstractProperty *parent) :
     setObjectProperty("type", "ByteArray");
 }
 
-QString QByteArrayProperty::get_value_text()
+QString QByteArrayProperty::getValueText()
 {
     return get_value().toString();
 }
 
-QIcon QByteArrayProperty::get_value_icon()
+QIcon QByteArrayProperty::getValueIcon()
 {
     return QIcon();
 }

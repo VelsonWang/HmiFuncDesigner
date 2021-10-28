@@ -7,7 +7,7 @@ SelectProtocolDialog::SelectProtocolDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
-    m_strProtocolName = "";
+    m_protocolName = "";
 }
 
 SelectProtocolDialog::~SelectProtocolDialog()
@@ -20,8 +20,7 @@ SelectProtocolDialog::~SelectProtocolDialog()
 */
 void SelectProtocolDialog::SetProtocolList(QStringList list)
 {
-    foreach (QString s, list)
-    {
+    foreach (QString s, list) {
         ui->ProtocolListWidget->addItem(s);
     }
 }
@@ -31,12 +30,12 @@ void SelectProtocolDialog::SetProtocolList(QStringList list)
 */
 QString SelectProtocolDialog::GetProtocolName()
 {
-    return m_strProtocolName;
+    return m_protocolName;
 }
 
 void SelectProtocolDialog::on_ProtocolListWidget_currentTextChanged(const QString &currentText)
 {
-    m_strProtocolName = currentText;
+    m_protocolName = currentText;
 }
 
 void SelectProtocolDialog::on_btnOk_clicked()

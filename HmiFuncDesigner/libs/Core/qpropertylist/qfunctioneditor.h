@@ -7,7 +7,7 @@ class QFunctionEditor : public QButtonCommonEditor
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QFunctionEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
+    Q_INVOKABLE QFunctionEditor(QAbstractProperty* m_property, QUndoStack* stack, QWidget *parent = 0);
 
 protected:
     void onBtnClicked();

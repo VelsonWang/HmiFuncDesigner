@@ -3,7 +3,7 @@
 
 QNumberEditor::QNumberEditor(QAbstractProperty *property, QUndoStack*, QWidget *parent) :
     QSpinBox(parent),
-    property(property)
+    m_property(property)
 {
     setRange(-9999, 9999);
     if(property) {
@@ -16,14 +16,14 @@ QNumberEditor::QNumberEditor(QAbstractProperty *property, QUndoStack*, QWidget *
 
 void QNumberEditor::onValueChanged(int value)
 {
-    if(property) {
-        property->notifyEditValue(value);
+    if(m_property) {
+        m_property->notifyEditValue(value);
     }
 }
 
 void QNumberEditor::onPropertyChanged()
 {
-    if(property) {
-        setValue(property->get_value().toInt());
+    if(m_property) {
+        setValue(m_property->get_value().toInt());
     }
 }

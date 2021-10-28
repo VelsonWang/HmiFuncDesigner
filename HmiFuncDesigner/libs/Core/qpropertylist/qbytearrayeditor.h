@@ -19,7 +19,7 @@ protected slots:
     void onPropertyChanged();
 
 protected:
-    QAbstractProperty *property;
+    QAbstractProperty *m_property;
 };
 
 #endif // QBYTEARRAYEDITOR_H

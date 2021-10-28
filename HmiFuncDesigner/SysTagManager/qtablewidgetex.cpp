@@ -289,20 +289,20 @@ void QTableWidgetEx::updateTable()
 void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj)
 {
     rowDat.clear();
-    rowDat << QString::number(pObj->m_iID); // 变量ID
-    rowDat << QString("$%1").arg(pObj->m_szName); // 变量名称
-    rowDat << pObj->m_szDataType; // 数据类型
+    rowDat << QString::number(pObj->m_id); // 变量ID
+    rowDat << QString("$%1").arg(pObj->m_name); // 变量名称
+    rowDat << pObj->m_dataType; // 数据类型
 
     QString szWriteable = "只读";
-    if (pObj->m_iWriteable == 0) {
+    if (pObj->m_writeable == 0) {
         szWriteable = tr("只读");
-    } else if (pObj->m_iWriteable == 1) {
+    } else if (pObj->m_writeable == 1) {
         szWriteable = tr("可读可写");
     }
     rowDat << szWriteable; // 读写
 
-    rowDat << pObj->m_szUnit; // 单位
-    rowDat << pObj->m_szRemark; // 变量描述
+    rowDat << pObj->m_unit; // 单位
+    rowDat << pObj->m_remark; // 变量描述
 }
 
 
@@ -322,7 +322,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
     int iTagID = rowDat.at(0).toInt();
     for(int i = 0; i < m_tagMgr.m_vecTags.count(); i++) {
         Tag *pTagObj = m_tagMgr.m_vecTags[i];
-        if(pTagObj->m_iID == iTagID) {
+        if(pTagObj->m_id == iTagID) {
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
             QMap<QString, QStringList> mapDevToAddrType;
@@ -354,8 +354,8 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
             if(dlg.exec() == QDialog::Accepted) {
                 jsonTagObj = dlg.getTagObj();
                 pTagObj->fromJsonObject(jsonTagObj);
-                if(pTagObj->m_szAddrType == tr("自动分配")) {
-                    pTagObj->m_szAddrType = "AutoAlloc";
+                if(pTagObj->m_addrType == tr("自动分配")) {
+                    pTagObj->m_addrType = "AutoAlloc";
                 }
                 updateTable();
             }
@@ -492,11 +492,11 @@ void QTableWidgetEx::onAddTag()
     if(dlg.exec() == QDialog::Accepted) {
         Tag *pTagObj = new Tag();
         pTagObj->fromJsonObject(dlg.getTagObj());
-        pTagObj->m_iID = m_tagMgr.allocID();
-        if(pTagObj->m_szAddrType == tr("自动分配")) {
-            pTagObj->m_szAddrType = "AutoAlloc";
+        pTagObj->m_id = m_tagMgr.allocID();
+        if(pTagObj->m_addrType == tr("自动分配")) {
+            pTagObj->m_addrType = "AutoAlloc";
         }
-        pTagObj->m_szDevType = "SYSTEM";
+        pTagObj->m_devType = "SYSTEM";
         m_tagMgr.m_vecTags.append(pTagObj);
         updateTable();
     }
@@ -522,7 +522,7 @@ void QTableWidgetEx::onCopyTag()
         tagIDMapIterator.next();
         int iTagID = tagIDMapIterator.key();
         foreach (Tag *pTagObj, m_tagMgr.m_vecTags) {
-            if(pTagObj->m_iID == iTagID) {
+            if(pTagObj->m_id == iTagID) {
                 emit copyOrCutTagToClipboard();
                 setActionEnable(TagAct_Paste, true);
                 QClipboard *clipboard = QApplication::clipboard();
@@ -545,7 +545,7 @@ void QTableWidgetEx::onPasteTag()
 
     Tag *pTagObj = new Tag;
     if(pTagObj->fromXmlNodeString(szTagObj)) {
-        pTagObj->m_iID = m_tagMgr.allocID();
+        pTagObj->m_id = m_tagMgr.allocID();
         m_tagMgr.m_vecTags.append(pTagObj);
         updateTable();
     } else {
@@ -580,7 +580,7 @@ void QTableWidgetEx::onDeleteTag()
         iIDToDel = tagIDMapIterator.key();
         Tag *pFindTagObj = NULL;
         foreach (Tag *pTagObj, m_tagMgr.m_vecTags) {
-            if(pTagObj->m_iID == iIDToDel) {
+            if(pTagObj->m_id == iIDToDel) {
                 pFindTagObj = pTagObj;
                 break;
             }
@@ -607,7 +607,7 @@ void QTableWidgetEx::onEditTag()
     QStringList rowDat = m_pTagTableModel->m_tagRows.at(iRow);
     int iTagID = rowDat.at(0).toInt();
     foreach (Tag *pTagObj, m_tagMgr.m_vecTags) {
-        if(pTagObj->m_iID == iTagID) {
+        if(pTagObj->m_id == iTagID) {
             TagEditDialog dlg(this);
             QMap<QString, QStringList> mapDevToAddrType;
             QMap<QString, QString> mapAddrTypeToAddrTypeAlias;
@@ -638,8 +638,8 @@ void QTableWidgetEx::onEditTag()
             dlg.updateUI();
             if(dlg.exec() == QDialog::Accepted) {
                 pTagObj->fromJsonObject(dlg.getTagObj());
-                if(pTagObj->m_szAddrType == tr("自动分配")) {
-                    pTagObj->m_szAddrType = "AutoAlloc";
+                if(pTagObj->m_addrType == tr("自动分配")) {
+                    pTagObj->m_addrType = "AutoAlloc";
                 }
                 updateTable();
             }

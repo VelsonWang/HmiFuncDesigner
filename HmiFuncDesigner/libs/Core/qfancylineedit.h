@@ -43,6 +43,7 @@ public:
     {
         return m_autoHide;
     }
+
 private:
     float m_iconOpacity;
     bool m_autoHide;

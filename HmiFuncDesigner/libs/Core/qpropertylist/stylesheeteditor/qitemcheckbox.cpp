@@ -7,7 +7,6 @@ QItemCheckBox::QItemCheckBox(const QString &text, bool show, QWidget *parent):
     ui(new Ui::QItemCheckBox)
 {
     ui->setupUi(this);
-
     ui->checkBox->setText(text);
 
     if(!show) {
@@ -16,7 +15,6 @@ QItemCheckBox::QItemCheckBox(const QString &text, bool show, QWidget *parent):
     }
 
     ui->comboBox->setCurrentIndex(0);
-
     connect(ui->checkBox, SIGNAL(stateChanged(int)), this, SIGNAL(changed()));
     connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SIGNAL(changed()));
 }

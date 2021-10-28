@@ -12,12 +12,12 @@ class tagStylesheetItem
 public:
     bool operator ==(const tagStylesheetItem &item)
     {
-        return (m_attributes==item.m_attributes);
+        return (m_attributes == item.m_attributes);
     }
 
     bool operator !=(const tagStylesheetItem &item)
     {
-        return !(*this==item);
+        return !(*this == item);
     }
 
 public:

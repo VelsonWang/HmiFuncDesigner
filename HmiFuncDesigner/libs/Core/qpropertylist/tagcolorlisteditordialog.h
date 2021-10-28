@@ -33,7 +33,7 @@ private:
 
 private:
     Ui::TagColorListEditorDialog *ui;
-    QStringList valueColorList_;
+    QStringList m_valueColorList;
 };
 
 #endif // TAGCOLORLISTEDITORDIALOG_H

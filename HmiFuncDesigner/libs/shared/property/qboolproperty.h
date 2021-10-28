@@ -9,8 +9,8 @@ class QBoolProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QBoolProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 };
 
 #endif // QBOOLPROPERTY_H

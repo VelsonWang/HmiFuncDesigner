@@ -9,8 +9,8 @@ class QColorProperty : public QAbstractProperty
     Q_OBJECT
 public:
     Q_INVOKABLE QColorProperty(QAbstractProperty* parent = NULL);
-    QIcon get_value_icon();
-    QString get_value_text();
+    QIcon getValueIcon();
+    QString getValueText();
 };
 
 #endif

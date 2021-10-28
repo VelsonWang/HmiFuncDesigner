@@ -33,17 +33,17 @@ void QSizeProperty::child_value_changed(const QVariant &, const QVariant &)
     QAbstractProperty::set_value(sz);
 }
 
-QString QSizeProperty::get_value_text()
+QString QSizeProperty::getValueText()
 {
     return QString("%1 x %2").arg(m_width->get_value().toInt()).arg(m_height->get_value().toInt());
 }
 
-QIcon QSizeProperty::get_value_icon()
+QIcon QSizeProperty::getValueIcon()
 {
     return QIcon();
 }
 
-void QSizeProperty::make_value()
+void QSizeProperty::makeValue()
 {
     QSize sz;
     sz.setWidth(m_width->get_value().toInt());
@@ -51,7 +51,7 @@ void QSizeProperty::make_value()
     m_value.setValue<QSize>(sz);
 }
 
-void QSizeProperty::write_value()
+void QSizeProperty::writeValue()
 {
 
 }

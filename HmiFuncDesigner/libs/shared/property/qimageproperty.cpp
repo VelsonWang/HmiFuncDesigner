@@ -7,7 +7,7 @@ QImageProperty::QImageProperty(QAbstractProperty *parent) :
     setAttribute(ATTR_RESET_ABLEABLE, false);
 }
 
-QString QImageProperty::get_value_text()
+QString QImageProperty::getValueText()
 {
     QStringList szListInfo = get_value().toString().split("|");
     if(szListInfo.size() == 2) {
@@ -16,7 +16,7 @@ QString QImageProperty::get_value_text()
     return QString();
 }
 
-QIcon QImageProperty::get_value_icon()
+QIcon QImageProperty::getValueIcon()
 {
     return QIcon();
 }

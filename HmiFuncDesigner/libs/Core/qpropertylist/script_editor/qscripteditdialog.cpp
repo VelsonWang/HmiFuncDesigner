@@ -28,8 +28,8 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
     m_functionToolBar(new QWidgetViewToolBar),
     m_editStyledBar(new StyledBar(this)),
     m_property(property),
-    m_find_widget(new QFindWidget),
-    m_undo_stack(stack)
+    m_findWidget(new QFindWidget),
+    m_undoStack(stack)
 {
     MiniSplitter *splitter;
 
@@ -87,7 +87,7 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
     v->setSpacing(0);
     v->addWidget(m_editStyledBar);
     v->addWidget(m_editView);
-    v->addWidget(m_find_widget);
+    v->addWidget(m_findWidget);
     wid->setLayout(v);
     splitter->addWidget(wid);
 
@@ -105,12 +105,12 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
     connect(m_functionToolBar, SIGNAL(findPrev(QString)), m_functionView, SLOT(findPrev(QString)));
     connect(m_widgetView, SIGNAL(select(QAbstractHost*)), m_functionView, SLOT(setHost(QAbstractHost*)));
     connect(m_editView, SIGNAL(find()), this, SLOT(script_find()));
-    connect(m_find_widget, SIGNAL(find(QString)), m_editView, SLOT(find(QString)));
-    connect(m_find_widget, SIGNAL(findNext()), m_editView, SLOT(findNext()));
-    connect(m_find_widget, SIGNAL(findPrev()), m_editView, SLOT(findPrev()));
-    connect(m_find_widget, SIGNAL(replace(QString)), m_editView, SLOT(replace(QString)));
-    connect(m_find_widget, SIGNAL(replaceAll(QString)), m_editView, SLOT(replaceAll(QString)));
-    connect(m_find_widget, SIGNAL(replaceAndNext(QString)), m_editView, SLOT(replaceNext(QString)));
+    connect(m_findWidget, SIGNAL(find(QString)), m_editView, SLOT(find(QString)));
+    connect(m_findWidget, SIGNAL(findNext()), m_editView, SLOT(findNext()));
+    connect(m_findWidget, SIGNAL(findPrev()), m_editView, SLOT(findPrev()));
+    connect(m_findWidget, SIGNAL(replace(QString)), m_editView, SLOT(replace(QString)));
+    connect(m_findWidget, SIGNAL(replaceAll(QString)), m_editView, SLOT(replaceAll(QString)));
+    connect(m_findWidget, SIGNAL(replaceAndNext(QString)), m_editView, SLOT(replaceNext(QString)));
 
     QAbstractHost *host = m_property->get_host();
     m_widgetView->setSelect(host);
@@ -134,7 +134,7 @@ void QScriptEditDialog::save()
             m_property->getObjectProperty("name").toString(),
             m_property->get_value(),
             m_editView->toPlainText());
-    m_undo_stack->push(cmd);
+    m_undoStack->push(cmd);
 }
 
 void QScriptEditDialog::selectFunction(const QMetaMethod &method)
@@ -175,8 +175,8 @@ void QScriptEditDialog::script_find()
 {
     QTextCursor cursor = m_editView->textCursor();
     QString str = cursor.selectedText();
-    if(!m_find_widget->isVisible()) {
-        m_find_widget->show();
+    if(!m_findWidget->isVisible()) {
+        m_findWidget->show();
     }
-    m_find_widget->setFindText(str);
+    m_findWidget->setFindText(str);
 }

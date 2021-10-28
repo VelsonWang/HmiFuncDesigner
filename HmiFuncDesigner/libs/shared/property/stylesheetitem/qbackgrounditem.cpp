@@ -1,7 +1,5 @@
 #include "qbackgrounditem.h"
-
 #include "qgradientitem.h"
-
 #include "stylesheetstruct.h"
 #include "qgradientmaker.h"
 

@@ -4,12 +4,12 @@
 
 QStringEditor::QStringEditor(QAbstractProperty *property, QUndoStack* stack, QWidget *parent) :
     QButtonCommonEditor(property, stack, parent),
-    undoStack(stack)
+    m_undoStack(stack)
 {
 }
 
 void QStringEditor::onBtnClicked()
 {
-    QStringEditDialog dlg(property, undoStack, this);
+    QStringEditDialog dlg(m_property, m_undoStack, this);
     dlg.exec();
 }

@@ -11,12 +11,12 @@ QStylesheetProperty::QStylesheetProperty(QAbstractProperty *parent) :
     setAttribute(ATTR_RESET_ABLEABLE, false);
 }
 
-QString QStylesheetProperty::get_value_text()
+QString QStylesheetProperty::getValueText()
 {
     return tr("点击更多"); // tr("Clicked for more");
 }
 
-QIcon QStylesheetProperty::get_value_icon()
+QIcon QStylesheetProperty::getValueIcon()
 {
     return QIcon();
 }

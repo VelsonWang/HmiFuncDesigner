@@ -10,8 +10,8 @@ class QFloatProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QFloatProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 };
 
 

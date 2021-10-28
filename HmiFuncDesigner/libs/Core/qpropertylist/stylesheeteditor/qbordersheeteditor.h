@@ -3,23 +3,24 @@
 
 #include "qbaseeditorwidget.h"
 
-namespace Ui {
+namespace Ui
+{
 class QBorderSheetEditor;
 }
 
 class QBorderSheetEditor : public QBaseEditorWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit QBorderSheetEditor(QWidget *parent = 0);
     ~QBorderSheetEditor();
 
-    void set_item(QAbstractStylesheetItem *item);
+    void setItem(QAbstractStylesheetItem *item);
     void init(QAbstractStylesheetItem *item);
 
-    void take_resource(QUndoCommand *cmd);
-    void add_resource(QUndoCommand *cmd);
+    void takeResource(QUndoCommand *cmd);
+    void addResource(QUndoCommand *cmd);
 
 protected:
     void same_color();

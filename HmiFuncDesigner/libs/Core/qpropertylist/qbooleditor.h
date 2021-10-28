@@ -7,7 +7,7 @@ class QBoolEditor : public QCommonEditor
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QBoolEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
+    Q_INVOKABLE QBoolEditor(QAbstractProperty* m_property, QUndoStack* stack, QWidget *parent = 0);
 
 protected:
     bool eventFilter(QObject *, QEvent *);

@@ -54,29 +54,33 @@ NewProjectDialog::NewProjectDialog(QWidget *parent)
     settingsDev.beginGroup("DeviceID");
     for (int i = 0; i < slistDev.count(); i++) {
         int value = settingsDev.value(slistDev.at(i)).toInt();
-        deviceMap_.insert(slistDev.at(i), value);
+        m_device.insert(slistDev.at(i), value);
         ui->cboDevType->insertItem(i, slistDev.at(i));
     }
     settingsDev.endGroup();
 }
 
-NewProjectDialog::~NewProjectDialog() {
+NewProjectDialog::~NewProjectDialog()
+{
     delete ui;
 }
 
-void NewProjectDialog::on_btnFileDialog_clicked() {
+void NewProjectDialog::on_btnFileDialog_clicked()
+{
     QString dir = QFileDialog::getExistingDirectory(this,
-                                                    tr("选择工程目录"),
-                                                    "C:/",
-                                                    QFileDialog::ShowDirsOnly);
+                  tr("选择工程目录"),
+                  "C:/",
+                  QFileDialog::ShowDirsOnly);
     ui->editProjectPath->setText(dir);
 }
 
-void NewProjectDialog::on_btnHelp_clicked() {
+void NewProjectDialog::on_btnHelp_clicked()
+{
     // this time we do nothing!
 }
 
-bool NewProjectDialog::check_data() {
+bool NewProjectDialog::check_data()
+{
     bool ret = true;
 
     QDir dir(ui->editProjectPath->text());
@@ -113,13 +117,15 @@ bool NewProjectDialog::check_data() {
     return ret;
 }
 
-void NewProjectDialog::on_btnCheck_clicked() {
+void NewProjectDialog::on_btnCheck_clicked()
+{
     if (check_data()) {
         QMessageBox::information(this, tr("系统提示"), tr("设置正确！"));
     }
 }
 
-void NewProjectDialog::on_btnOk_clicked() {
+void NewProjectDialog::on_btnOk_clicked()
+{
     if (check_data()) {
         QString szProjPath = ui->editProjectPath->text();
         QSoftCore::getCore()->getProjectCore()->m_szProjPath = szProjPath;
@@ -131,12 +137,14 @@ void NewProjectDialog::on_btnOk_clicked() {
     }
 }
 
-void NewProjectDialog::on_btnExit_clicked() {
+void NewProjectDialog::on_btnExit_clicked()
+{
     QDialog::reject();
 }
 
 
-bool NewProjectDialog::load() {
+bool NewProjectDialog::load()
+{
     ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
     projInfoMgr.setProjectName(QSoftCore::getCore()->getProjectCore()->m_szProjName);
     ui->editProjectName->setText(projInfoMgr.getProjectName());
@@ -153,7 +161,8 @@ bool NewProjectDialog::load() {
     return true;
 }
 
-bool NewProjectDialog::save() {
+bool NewProjectDialog::save()
+{
     ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
     projInfoMgr.setProjectName(ui->editProjectName->text());
     projInfoMgr.setProjectDescription(ui->editProjectDescription->toPlainText());

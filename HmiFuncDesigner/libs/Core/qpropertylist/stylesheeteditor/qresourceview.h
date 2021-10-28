@@ -11,23 +11,23 @@ struct tagFileInfo;
 class QResourceView : public QDialog
 {
     Q_OBJECT
-    
+
 public:
     explicit QResourceView(QWidget *parent = 0);
     ~QResourceView();
-    
-    void set_file(const QByteArray &data);
-    tagFileInfo* get_file();
-    int get_ret();
+
+    void setFile(const QByteArray &data);
+    tagFileInfo* getFile();
+    int getRet();
 
 protected slots:
     void select(tagFileInfo* file);
     void ok();
 
 protected:
-    QFileListView *m_file_view;
-    QResourceShowWidget *m_show_widget;
-    tagFileInfo *m_file_info;
+    QFileListView *m_fileView;
+    QResourceShowWidget *m_showWidget;
+    tagFileInfo *m_fileInfo;
     int m_ret;
 };
 

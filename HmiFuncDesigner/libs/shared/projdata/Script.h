@@ -10,12 +10,12 @@
 class SHAREDLIB_EXPORT ScriptObject
 {
 public:
-    QString m_szName;
-    bool m_bInUse;
-    QString m_szDescription;
-    QString m_szRunMode;
-    QString m_szRunModeArgs;
-    QString m_szScriptText;
+    QString m_name;
+    bool m_inUse;
+    QString m_desc;
+    QString m_runMode;
+    QString m_runModeArgs;
+    QString m_scriptText;
 };
 
 
@@ -34,7 +34,7 @@ public:
     bool saveToXml(XMLObject *pXmlObj);
 
 public:
-    QList<ScriptObject *> m_listScriptObjects;
+    QList<ScriptObject *> m_scriptObjects;
 };
 
 

@@ -1,7 +1,5 @@
 #include "qfilemanager.h"
-
 #include "../shared/xmlobject.h"
-
 #include <QApplication>
 #include <QDir>
 #include <QFile>
@@ -116,12 +114,12 @@ void QFileManager::load(const QString &file)
     }
 
     m_groups.append(group);
-    m_uuid_to_group.insert(group->m_uuid, group);
+    m_uuidToGroup.insert(group->m_uuid, group);
 }
 
 void QFileManager::save(const QString &uuid)
 {
-    tagFileGroupInfo *group = m_uuid_to_group.value(uuid);
+    tagFileGroupInfo *group = m_uuidToGroup.value(uuid);
 
     if(group == NULL) {
         return;
@@ -156,7 +154,7 @@ void QFileManager::save(const QString &uuid)
 
 void QFileManager::clear()
 {
-    m_uuid_to_group.clear();
+    m_uuidToGroup.clear();
 
     while(m_groups.size() > 0) {
         qDeleteAll(m_groups.first()->m_files);
@@ -166,7 +164,7 @@ void QFileManager::clear()
 
 void QFileManager::rename(const QString &uuid, const QString &new_group_name)
 {
-    tagFileGroupInfo *info = m_uuid_to_group.value(uuid);
+    tagFileGroupInfo *info = m_uuidToGroup.value(uuid);
     if(info == NULL || info->m_group_name == new_group_name) {
         return;
     }
@@ -216,9 +214,9 @@ void QFileManager::save_group_list()
     f.close();
 }
 
-void QFileManager::insert_group(tagFileGroupInfo *group, int index)
+void QFileManager::insertGroup(tagFileGroupInfo *group, int index)
 {
-    tagFileGroupInfo *g = m_uuid_to_group.value(group->m_uuid);
+    tagFileGroupInfo *g = m_uuidToGroup.value(group->m_uuid);
     if(g != NULL) {
         return;
     }
@@ -242,24 +240,24 @@ void QFileManager::insert_group(tagFileGroupInfo *group, int index)
         index = m_groups.size();
     }
     m_groups.insert(index, g);
-    m_uuid_to_group.insert(g->m_uuid, g);
-    emit insert_group_signal(g, index);
+    m_uuidToGroup.insert(g->m_uuid, g);
+    emit sigInsertGroup(g, index);
 }
 
-void QFileManager::remove_group(const QString &uuid)
+void QFileManager::removeGroup(const QString &uuid)
 {
-    tagFileGroupInfo *group = m_uuid_to_group.value(uuid);
+    tagFileGroupInfo *group = m_uuidToGroup.value(uuid);
     if(group != NULL) {
-        emit remove_group_signal(group);
+        emit sigRemoveGroup(group);
         qDeleteAll(group->m_files);
         m_groups.removeAll(group);
-        m_uuid_to_group.remove(uuid);
+        m_uuidToGroup.remove(uuid);
     }
 }
 
-void QFileManager::insert_file(const QString &group_uuid, tagFileInfo *info, int index)
+void QFileManager::insertFile(const QString &group_uuid, tagFileInfo *info, int index)
 {
-    tagFileGroupInfo *group = m_uuid_to_group.value(group_uuid);
+    tagFileGroupInfo *group = m_uuidToGroup.value(group_uuid);
 
     if(group != NULL) {
         tagFileInfo *f = new tagFileInfo;
@@ -276,19 +274,19 @@ void QFileManager::insert_file(const QString &group_uuid, tagFileInfo *info, int
 
         group->m_files.insert(index, f);
         group->m_uuid_to_file.insert(f->m_uuid, f);
-        emit insert_file_signal(group, f, index);
+        emit sigInsertFile(group, f, index);
     }
 }
 
-void QFileManager::remove_file(const QString &group_uuid, const QString &file_uuid)
+void QFileManager::removeFile(const QString &group_uuid, const QString &file_uuid)
 {
-    tagFileGroupInfo *group = m_uuid_to_group.value(group_uuid);
+    tagFileGroupInfo *group = m_uuidToGroup.value(group_uuid);
 
     if(group != NULL) {
         tagFileInfo *f = group->m_uuid_to_file.value(file_uuid);
 
         if(f != NULL) {
-            emit remove_file_signal(group, f);
+            emit sigRemoveFile(group, f);
             group->m_uuid_to_file.remove(file_uuid);
             group->m_files.removeAll(f);
             delete f;
@@ -296,9 +294,9 @@ void QFileManager::remove_file(const QString &group_uuid, const QString &file_uu
     }
 }
 
-void QFileManager::changed_file(const QString &group_uuid, tagFileInfo *info)
+void QFileManager::changedFile(const QString &group_uuid, tagFileInfo *info)
 {
-    tagFileGroupInfo *group = m_uuid_to_group.value(group_uuid);
+    tagFileGroupInfo *group = m_uuidToGroup.value(group_uuid);
 
     if(group != NULL) {
         tagFileInfo *f = group->m_uuid_to_file.value(info->m_uuid);
@@ -313,17 +311,17 @@ void QFileManager::changed_file(const QString &group_uuid, tagFileInfo *info)
     }
 }
 
-tagFileGroupInfo* QFileManager::get_group(const QString &group_uuid)
+tagFileGroupInfo* QFileManager::getGroup(const QString &group_uuid)
 {
-    return m_uuid_to_group.value(group_uuid);
+    return m_uuidToGroup.value(group_uuid);
 }
 
-QList<tagFileGroupInfo*> QFileManager::get_all_group()
+QList<tagFileGroupInfo*> QFileManager::getAllGroup()
 {
     return m_groups;
 }
 
-tagFileInfo *QFileManager::get_file(const QString &file_uuid)
+tagFileInfo *QFileManager::getFile(const QString &file_uuid)
 {
     tagFileInfo *ret = NULL;
     foreach(tagFileGroupInfo *group, m_groups) {

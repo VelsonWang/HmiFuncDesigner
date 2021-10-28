@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class QShowWidget;
 }
 
@@ -12,24 +13,21 @@ class QAbstractHost;
 class QShowWidget : public QWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit QShowWidget(QWidget *parent = 0);
     ~QShowWidget();
-    
-    void set_item_sheet(const QString &sheet);
-    void set_host(QAbstractHost* host);
+
+    void setItemSheet(const QString &sheet);
+    void setHost(QAbstractHost* host);
 
 protected:
     bool eventFilter(QObject *, QEvent *);
 
 private slots:
     void on_okbtn_clicked();
-
     void on_cancelbtn_clicked();
-
     void on_clear_clicked();
-
     void on_clearall_clicked();
 
 signals:

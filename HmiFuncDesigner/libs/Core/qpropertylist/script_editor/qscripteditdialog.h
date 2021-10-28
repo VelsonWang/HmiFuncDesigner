@@ -46,8 +46,8 @@ protected:
     QWidgetViewToolBar *m_functionToolBar;
     StyledBar *m_editStyledBar;
     QAbstractProperty *m_property;
-    QFindWidget *m_find_widget;
-    QUndoStack *m_undo_stack;
+    QFindWidget *m_findWidget;
+    QUndoStack *m_undoStack;
 };
 
 #endif // QSCRIPTEDITDIALOG_H

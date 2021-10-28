@@ -11,15 +11,15 @@ QColorEditor::QColorEditor(QAbstractProperty *property, QUndoStack* stack, QWidg
 void QColorEditor::onBtnClicked()
 {
     QColor oldColor;
-    if(property) {
-        oldColor = property->get_value().value<QColor>();
+    if(m_property) {
+        oldColor = m_property->get_value().value<QColor>();
     }
     QColor newColor = QColorDialog::getColor(oldColor, this, tr("选择颜色"));
     if (newColor.isValid() && newColor != oldColor) {
         QVariant v;
         v.setValue<QColor>(newColor);
-        if(property) {
-            property->notifyEditValue(v);
+        if(m_property) {
+            m_property->notifyEditValue(v);
         }
     }
 }

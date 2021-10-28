@@ -20,8 +20,7 @@
 class QAbstractHost;
 class QAbstractProperty;
 
-struct tagHostInfo
-{
+struct tagHostInfo {
     QString m_name;
     QAbstractHost *m_host;
     QMap<QString, QMetaMethod> m_methods;
@@ -29,16 +28,14 @@ struct tagHostInfo
     QString m_type;
 };
 
-struct tagReturnInfo
-{
+struct tagReturnInfo {
     QString m_type;
     QString m_param;
     QMetaMethod m_method;
     bool m_is_last;
 };
 
-struct tagReturnList
-{
+struct tagReturnList {
     QList<tagReturnInfo> m_returns;
     QMap<QString, tagReturnInfo> m_name_to_return;
 };
@@ -48,15 +45,15 @@ class QHostObjectMap
 public:
     QHostObjectMap(QAbstractProperty *property, QAbstractHost *host);
 
-    tagReturnList get_info(const QString &text);
+    tagReturnList getInfo(const QString &text);
 
 protected:
-    tagHostInfo* get_all_by_text(const QString &text);
-    tagHostInfo* make_info(QAbstractHost *host);
+    tagHostInfo* getAllByText(const QString &text);
+    tagHostInfo* makeInfo(QAbstractHost *host);
 
 protected:
     QMap<QString, tagHostInfo*> m_infos;
-    QStringList m_param_list;
+    QStringList m_paramList;
 };
 
 #endif // QHOSTOBJECTMAP_H

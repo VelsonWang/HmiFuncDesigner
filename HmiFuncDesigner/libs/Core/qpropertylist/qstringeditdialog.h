@@ -30,7 +30,7 @@ class QStringEditDialog : public QDialog
 {
     Q_OBJECT
 public:
-    explicit QStringEditDialog(QAbstractProperty *property, QUndoStack* stack, QWidget* parent = 0);
+    explicit QStringEditDialog(QAbstractProperty *m_property, QUndoStack* stack, QWidget* parent = 0);
     ~QStringEditDialog();
 
 private slots:
@@ -39,9 +39,9 @@ private slots:
     void on_cancelBtn_clicked();
 
 protected:
-    QAbstractProperty *property;
-    QMap<QTreeWidgetItem*, QLanguage*> items;
-    QUndoStack *undoStack;
+    QAbstractProperty *m_property;
+    QMap<QTreeWidgetItem*, QLanguage*> m_items;
+    QUndoStack *m_undoStack;
 
 private:
     Ui::QStringEditDialog *ui;

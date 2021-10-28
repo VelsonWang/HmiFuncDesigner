@@ -6,12 +6,12 @@ QIntProperty::QIntProperty(QAbstractProperty *parent) :
     setObjectProperty("type", "Number");
 }
 
-QString QIntProperty::get_value_text()
+QString QIntProperty::getValueText()
 {
     return get_value().toString();
 }
 
-QIcon QIntProperty::get_value_icon()
+QIcon QIntProperty::getValueIcon()
 {
     return QIcon();
 }

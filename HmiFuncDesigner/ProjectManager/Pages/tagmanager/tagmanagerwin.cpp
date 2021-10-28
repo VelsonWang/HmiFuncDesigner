@@ -318,21 +318,21 @@ void QTableWidgetEx::updateTable()
 void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj)
 {
     rowDat.clear();
-    rowDat << QString::number(pObj->m_iID); // 变量ID
+    rowDat << QString::number(pObj->m_id); // 变量ID
 
-    if(pObj->m_szDevType == "SYSTEM") {
-        rowDat << QString("$%1").arg(pObj->m_szName);    // 变量名称
+    if(pObj->m_devType == "SYSTEM") {
+        rowDat << QString("$%1").arg(pObj->m_name);    // 变量名称
     } else {
-        rowDat << pObj->m_szName;
+        rowDat << pObj->m_name;
     }
 
-    if(pObj->m_szDevType == "MEMORY") { // 内存变量
+    if(pObj->m_devType == "MEMORY") { // 内存变量
         rowDat << tr("自动分配"); // 地址类型
-    } else if(pObj->m_szDevType == "SYSTEM") { // 系统变量
+    } else if(pObj->m_devType == "SYSTEM") { // 系统变量
         rowDat << tr("自动分配"); // 地址类型
     } else {
         QString szAddrType = "";
-        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_szDevType);
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_devType);
         if (pDevPluginObj) {
             QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
             XMLObject xmlObj;
@@ -341,13 +341,13 @@ void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj)
                 if(pRegAreasObj) {
                     QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
                     foreach(XMLObject* pXmlObj, pRegAreaObjs) {
-                        if(pXmlObj->getProperty("Name") == pObj->m_szAddrType || pXmlObj->getProperty("Alias") == pObj->m_szAddrType) {
-                            QString szAddrTypeAlias = pObj->m_szAddrType;
-                            szAddrTypeAlias += pObj->m_szAddrOffset;
-                            if(pObj->m_szAddrType2 != "") {
+                        if(pXmlObj->getProperty("Name") == pObj->m_addrType || pXmlObj->getProperty("Alias") == pObj->m_addrType) {
+                            QString szAddrTypeAlias = pObj->m_addrType;
+                            szAddrTypeAlias += pObj->m_addrOffset;
+                            if(pObj->m_addrType2 != "") {
                                 szAddrTypeAlias += ".";
-                                szAddrTypeAlias += pObj->m_szAddrType2;
-                                szAddrTypeAlias += pObj->m_szAddrOffset2;
+                                szAddrTypeAlias += pObj->m_addrType2;
+                                szAddrTypeAlias += pObj->m_addrOffset2;
                             }
                             szAddrType = szAddrTypeAlias; // 地址类型
                         }
@@ -357,17 +357,17 @@ void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj)
         }
         rowDat << szAddrType;
     }
-    rowDat << pObj->m_szDataType; // 数据类型
+    rowDat << pObj->m_dataType; // 数据类型
     QString szWriteable = "只读";
-    if (pObj->m_iWriteable == 0) {
+    if (pObj->m_writeable == 0) {
         szWriteable = tr("只读");
-    } else if (pObj->m_iWriteable == 1) {
+    } else if (pObj->m_writeable == 1) {
         szWriteable = tr("可读可写");
     }
     rowDat << szWriteable; // 读写
 
-    rowDat << pObj->m_szUnit; // 单位
-    rowDat << pObj->m_szRemark; // 变量描述
+    rowDat << pObj->m_unit; // 单位
+    rowDat << pObj->m_remark; // 变量描述
 }
 
 
@@ -387,7 +387,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
     int iTagID = rowDat.at(0).toInt();
     for(int i = 0; i < QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.count(); i++) {
         Tag *pTagObj = QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags[i];
-        if(pTagObj->m_iID == iTagID) {
+        if(pTagObj->m_id == iTagID) {
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
             QMap<QString, QStringList> mapDevToAddrType;
@@ -395,9 +395,9 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
             QMap<QString, QStringList> mapAddrTypeToSubAddrType;
             QMap<QString, QStringList> mapAddrTypeToDataType;
 
-            if(pTagObj->m_szDevType == "SYSTEM") { // 系统变量
+            if(pTagObj->m_devType == "SYSTEM") { // 系统变量
                 return;
-            } else if(pTagObj->m_szDevType == "MEMORY") { // 内存变量
+            } else if(pTagObj->m_devType == "MEMORY") { // 内存变量
                 QStringList szListAddrType;
                 szListAddrType << tr("自动分配");
                 mapDevToAddrType.insert("MEMORY", szListAddrType);
@@ -423,7 +423,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
             } else {
                 QStringList szListAddrType;
                 QStringList szListDataType;
-                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_szDevType);
+                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
                 if (pDevPluginObj) {
                     QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                     XMLObject xmlObj;
@@ -452,7 +452,7 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                         }
                     }
                 }
-                mapDevToAddrType.insert(pTagObj->m_szDevType, szListAddrType);
+                mapDevToAddrType.insert(pTagObj->m_devType, szListAddrType);
             }
 
             dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToAddrTypeAlias, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
@@ -463,12 +463,12 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                 jsonTagObj = dlg.getTagObj();
                 pTagObj->fromJsonObject(jsonTagObj);
 
-                if(pTagObj->m_szDevType == "MEMORY") { // 内存变量
-                    if(pTagObj->m_szAddrType == tr("自动分配")) {
-                        pTagObj->m_szAddrType = "AutoAlloc";
+                if(pTagObj->m_devType == "MEMORY") { // 内存变量
+                    if(pTagObj->m_addrType == tr("自动分配")) {
+                        pTagObj->m_addrType = "AutoAlloc";
                     }
                 } else {
-                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_szDevType);
+                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
                     if (pDevPluginObj) {
                         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                         XMLObject xmlObj;
@@ -477,9 +477,9 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                             if(pRegAreasObj) {
                                 QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
                                 foreach(XMLObject* pXmlObj, pRegAreaObjs) {
-                                    if(pXmlObj->getProperty("Name") == pTagObj->m_szAddrType || pXmlObj->getProperty("Alias") == pTagObj->m_szAddrType) {
+                                    if(pXmlObj->getProperty("Name") == pTagObj->m_addrType || pXmlObj->getProperty("Alias") == pTagObj->m_addrType) {
                                         if(pXmlObj->getProperty("Alias") != "") {
-                                            pTagObj->m_szAddrType = pXmlObj->getProperty("Alias");
+                                            pTagObj->m_addrType = pXmlObj->getProperty("Alias");
                                         }
                                     }
                                 }
@@ -625,11 +625,11 @@ void QTableWidgetEx::onAddTag()
     //--------------------------------------------------------------------------
 
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
-    for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+    for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
         QStringList szListAddrType;
         QStringList szListDataType;
-        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->szName_);
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_name);
         if (pDevPluginObj) {
             QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
             XMLObject xmlObj;
@@ -657,7 +657,7 @@ void QTableWidgetEx::onAddTag()
                 }
             }
         }
-        mapDevToAddrType.insert(pObj->szName_, szListAddrType);
+        mapDevToAddrType.insert(pObj->m_name, szListAddrType);
     }
 
     dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToAddrTypeAlias, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
@@ -667,14 +667,14 @@ void QTableWidgetEx::onAddTag()
     if(dlg.exec() == QDialog::Accepted) {
         Tag *pTagObj = new Tag();
         pTagObj->fromJsonObject(dlg.getTagObj());
-        pTagObj->m_iID = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
+        pTagObj->m_id = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
 
-        if(pTagObj->m_szDevType == "MEMORY") { // 内存变量
-            if(pTagObj->m_szAddrType == tr("自动分配")) {
-                pTagObj->m_szAddrType = "AutoAlloc";
+        if(pTagObj->m_devType == "MEMORY") { // 内存变量
+            if(pTagObj->m_addrType == tr("自动分配")) {
+                pTagObj->m_addrType = "AutoAlloc";
             }
         } else {
-            IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_szDevType);
+            IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
             if (pDevPluginObj) {
                 QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                 XMLObject xmlObj;
@@ -683,9 +683,9 @@ void QTableWidgetEx::onAddTag()
                     if(pRegAreasObj) {
                         QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
                         foreach(XMLObject* pXmlObj, pRegAreaObjs) {
-                            if(pXmlObj->getProperty("Name") == pTagObj->m_szAddrType || pXmlObj->getProperty("Alias") == pTagObj->m_szAddrType) {
+                            if(pXmlObj->getProperty("Name") == pTagObj->m_addrType || pXmlObj->getProperty("Alias") == pTagObj->m_addrType) {
                                 if(pXmlObj->getProperty("Alias") != "") {
-                                    pTagObj->m_szAddrType = pXmlObj->getProperty("Alias");
+                                    pTagObj->m_addrType = pXmlObj->getProperty("Alias");
                                 }
                             }
                         }
@@ -722,7 +722,7 @@ void QTableWidgetEx::onCopyTag()
         tagIDMapIterator.next();
         int iTagID = tagIDMapIterator.key();
         foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
-            if(pTagObj->m_iID == iTagID) {
+            if(pTagObj->m_id == iTagID) {
                 emit copyOrCutTagToClipboard();
                 setActionEnable(TagAct_Paste, true);
                 QClipboard *clipboard = QApplication::clipboard();
@@ -745,7 +745,7 @@ void QTableWidgetEx::onPasteTag()
 
     Tag *pTagObj = new Tag;
     if(pTagObj->fromXmlNodeString(szTagObj)) {
-        pTagObj->m_iID = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
+        pTagObj->m_id = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
         QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.append(pTagObj);
         updateTable();
     } else {
@@ -783,7 +783,7 @@ void QTableWidgetEx::onDeleteTag()
         iIDToDel = tagIDMapIterator.key();
         Tag *pFindTagObj = NULL;
         foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
-            if(pTagObj->m_iID == iIDToDel) {
+            if(pTagObj->m_id == iIDToDel) {
                 pFindTagObj = pTagObj;
                 break;
             }
@@ -813,7 +813,7 @@ void QTableWidgetEx::onEditTag()
         return;    // 系统变量不可以编辑
     }
     foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
-        if(pTagObj->m_iID == iTagID) {
+        if(pTagObj->m_id == iTagID) {
             TagEditDialog dlg(this);
             dlg.setWindowTitle(tr("编辑变量"));
             QMap<QString, QStringList> mapDevToAddrType;
@@ -847,11 +847,11 @@ void QTableWidgetEx::onEditTag()
             //--------------------------------------------------------------------------
 
             DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
-            for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-                DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
+            for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
+                DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
                 QStringList szListAddrType;
                 QStringList szListDataType;
-                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->szName_);
+                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_name);
                 if (pDevPluginObj) {
                     QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                     XMLObject xmlObj;
@@ -879,7 +879,7 @@ void QTableWidgetEx::onEditTag()
                         }
                     }
                 }
-                mapDevToAddrType.insert(pObj->szName_, szListAddrType);
+                mapDevToAddrType.insert(pObj->m_name, szListAddrType);
             }
 
             dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToAddrTypeAlias, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
@@ -888,12 +888,12 @@ void QTableWidgetEx::onEditTag()
             dlg.updateUI();
             if(dlg.exec() == QDialog::Accepted) {
                 pTagObj->fromJsonObject(dlg.getTagObj());
-                if(pTagObj->m_szDevType == "MEMORY") { // 内存变量
-                    if(pTagObj->m_szAddrType == tr("自动分配")) {
-                        pTagObj->m_szAddrType = "AutoAlloc";
+                if(pTagObj->m_devType == "MEMORY") { // 内存变量
+                    if(pTagObj->m_addrType == tr("自动分配")) {
+                        pTagObj->m_addrType = "AutoAlloc";
                     }
                 } else {
-                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_szDevType);
+                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
                     if (pDevPluginObj) {
                         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                         XMLObject xmlObj;
@@ -902,9 +902,9 @@ void QTableWidgetEx::onEditTag()
                             if(pRegAreasObj) {
                                 QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
                                 foreach(XMLObject* pXmlObj, pRegAreaObjs) {
-                                    if(pXmlObj->getProperty("Name") == pTagObj->m_szAddrType || pXmlObj->getProperty("Alias") == pTagObj->m_szAddrType) {
+                                    if(pXmlObj->getProperty("Name") == pTagObj->m_addrType || pXmlObj->getProperty("Alias") == pTagObj->m_addrType) {
                                         if(pXmlObj->getProperty("Alias") != "") {
-                                            pTagObj->m_szAddrType = pXmlObj->getProperty("Alias");
+                                            pTagObj->m_addrType = pXmlObj->getProperty("Alias");
                                         }
                                     }
                                 }
@@ -952,18 +952,18 @@ void QTableWidgetEx::onExportToCsv()
     QtCSV::StringData varData;
     foreach (Tag *pTagObj, QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags) {
         QStringList varRow;
-        varRow << QString::number(pTagObj->m_iID)
-               << pTagObj->m_szName
-               << pTagObj->m_szUnit
-               << pTagObj->m_szAddrType
-               << pTagObj->m_szAddrOffset
-               << pTagObj->m_szAddrType2
-               << pTagObj->m_szAddrOffset2
-               << pTagObj->m_szDataType
-               << QString::number(pTagObj->m_iWriteable)
-               << pTagObj->m_szRemark
-               << pTagObj->m_szOwnGroup
-               << pTagObj->m_szDevType;
+        varRow << QString::number(pTagObj->m_id)
+               << pTagObj->m_name
+               << pTagObj->m_unit
+               << pTagObj->m_addrType
+               << pTagObj->m_addrOffset
+               << pTagObj->m_addrType2
+               << pTagObj->m_addrOffset2
+               << pTagObj->m_dataType
+               << QString::number(pTagObj->m_writeable)
+               << pTagObj->m_remark
+               << pTagObj->m_ownGroup
+               << pTagObj->m_devType;
         varData.addRow(varRow);
     }
 
@@ -1017,18 +1017,18 @@ void QTableWidgetEx::onImportFromCsv()
             continue;
         }
         Tag *pObj = new Tag();
-        pObj->m_iID = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
-        pObj->m_szName = row.at(1);
-        pObj->m_szUnit = row.at(2);
-        pObj->m_szAddrType = row.at(3);
-        pObj->m_szAddrOffset = row.at(4);
-        pObj->m_szAddrType2 = row.at(5);
-        pObj->m_szAddrOffset2 = row.at(6);
-        pObj->m_szDataType = row.at(7);
-        pObj->m_iWriteable = row.at(8).toInt();
-        pObj->m_szRemark = row.at(9);
-        pObj->m_szOwnGroup = row.at(10);
-        pObj->m_szDevType = row.at(11);
+        pObj->m_id = QSoftCore::getCore()->getProjectCore()->tagMgr_.allocID();
+        pObj->m_name = row.at(1);
+        pObj->m_unit = row.at(2);
+        pObj->m_addrType = row.at(3);
+        pObj->m_addrOffset = row.at(4);
+        pObj->m_addrType2 = row.at(5);
+        pObj->m_addrOffset2 = row.at(6);
+        pObj->m_dataType = row.at(7);
+        pObj->m_writeable = row.at(8).toInt();
+        pObj->m_remark = row.at(9);
+        pObj->m_ownGroup = row.at(10);
+        pObj->m_devType = row.at(11);
         QSoftCore::getCore()->getProjectCore()->tagMgr_.m_vecTags.append(pObj);
     }
 

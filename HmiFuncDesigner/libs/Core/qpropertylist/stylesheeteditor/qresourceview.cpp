@@ -7,14 +7,14 @@
 
 QResourceView::QResourceView(QWidget *parent) :
     QDialog(parent),
-    m_file_view(new QFileListView(false, true, false)),
-    m_show_widget(new QResourceShowWidget),
-    m_file_info(NULL),
+    m_fileView(new QFileListView(false, true, false)),
+    m_showWidget(new QResourceShowWidget),
+    m_fileInfo(NULL),
     m_ret(0)
 {
     MiniSplitter *s = new MiniSplitter;
-    s->addWidget(m_file_view);
-    s->addWidget(m_show_widget);
+    s->addWidget(m_fileView);
+    s->addWidget(m_showWidget);
 
     QVBoxLayout *v = new QVBoxLayout;
     v->setMargin(0);
@@ -24,11 +24,11 @@ QResourceView::QResourceView(QWidget *parent) :
     this->setLayout(v);
     this->resize(200, 300);
 
-    connect(m_file_view, SIGNAL(select_file_signal(tagFileInfo*)),
+    connect(m_fileView, SIGNAL(sigSelectFile(tagFileInfo*)),
             this, SLOT(select(tagFileInfo*)));
 
-    connect(m_show_widget, SIGNAL(cancel()), this, SLOT(close()));
-    connect(m_show_widget, SIGNAL(ok()), this, SLOT(ok()));
+    connect(m_showWidget, SIGNAL(cancel()), this, SLOT(close()));
+    connect(m_showWidget, SIGNAL(ok()), this, SLOT(ok()));
 }
 
 QResourceView::~QResourceView()
@@ -37,24 +37,24 @@ QResourceView::~QResourceView()
 
 void QResourceView::select(tagFileInfo *file)
 {
-    m_file_info = file;
-    m_show_widget->set_image(file->m_file_data);
+    m_fileInfo = file;
+    m_showWidget->setImage(file->m_file_data);
 }
 
-void QResourceView::set_file(const QByteArray &data)
+void QResourceView::setFile(const QByteArray &data)
 {
-    m_file_info = NULL;
-    m_show_widget->set_image(data);
+    m_fileInfo = NULL;
+    m_showWidget->setImage(data);
 }
 
-int QResourceView::get_ret()
+int QResourceView::getRet()
 {
     return m_ret;
 }
 
-tagFileInfo *QResourceView::get_file()
+tagFileInfo *QResourceView::getFile()
 {
-    return m_file_info;
+    return m_fileInfo;
 }
 
 void QResourceView::ok()

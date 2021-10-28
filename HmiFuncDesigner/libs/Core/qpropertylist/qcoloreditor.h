@@ -7,7 +7,7 @@ class QColorEditor : public QButtonCommonEditor
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QColorEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
+    Q_INVOKABLE QColorEditor(QAbstractProperty* m_property, QUndoStack* stack, QWidget *parent = 0);
 
 protected:
     void onBtnClicked();

@@ -6,7 +6,6 @@
 #include <QRegExpValidator>
 #include <QMessageBox>
 
-
 NetSettingDialog::NetSettingDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NetSettingDialog)

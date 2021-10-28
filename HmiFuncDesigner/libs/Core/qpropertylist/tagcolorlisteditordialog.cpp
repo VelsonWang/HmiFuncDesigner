@@ -95,7 +95,7 @@ void TagColorListEditorDialog::on_btnCancel_clicked()
 
 QStringList TagColorListEditorDialog::getValueColorList()
 {
-    valueColorList_.clear();
+    m_valueColorList.clear();
     int iRowCount = ui->tableTagColor->rowCount();
     for(int i = 0; i < iRowCount; i++) {
         QStringList listValueColor;
@@ -106,15 +106,15 @@ QStringList TagColorListEditorDialog::getValueColorList()
         listValueColor.append(szValue);
         listValueColor.append(szColor);
         QString szValueColor = listValueColor.join(":");
-        valueColorList_.append(szValueColor);
+        m_valueColorList.append(szValueColor);
     }
-    return valueColorList_;
+    return m_valueColorList;
 }
 
 void TagColorListEditorDialog::setValueColorList(const QStringList &list)
 {
-    valueColorList_.clear();
-    valueColorList_ = list;
+    m_valueColorList.clear();
+    m_valueColorList = list;
 
     while(ui->tableTagColor->rowCount()) {
         ui->tableTagColor->removeRow(0);

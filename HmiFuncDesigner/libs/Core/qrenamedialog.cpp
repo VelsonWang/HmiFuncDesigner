@@ -1,6 +1,5 @@
 #include "qrenamedialog.h"
 #include "ui_qrenamedialog.h"
-
 #include "qnamevalidator.h"
 
 QRenameDialog::QRenameDialog(QWidget *parent) :
@@ -19,17 +18,17 @@ QRenameDialog::~QRenameDialog()
     delete ui;
 }
 
-void QRenameDialog::set_name_list(const QStringList &list)
+void QRenameDialog::setNameList(const QStringList &list)
 {
     m_nameEdit->setIntermediateList(list);
 }
 
-QString QRenameDialog::get_new_name()
+QString QRenameDialog::getNewName()
 {
     return m_nameEdit->value();
 }
 
-void QRenameDialog::set_old_name(const QString &name)
+void QRenameDialog::setOldName(const QString &name)
 {
     m_nameEdit->setText(name);
     m_nameEdit->selectAll();
@@ -50,7 +49,7 @@ void QRenameDialog::on_cancelbtn_clicked()
     close();
 }
 
-int QRenameDialog::get_ret()
+int QRenameDialog::getRet()
 {
     return m_ret;
 }

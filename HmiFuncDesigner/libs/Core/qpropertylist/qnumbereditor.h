@@ -10,7 +10,7 @@ class QNumberEditor : public QSpinBox
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QNumberEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
+    Q_INVOKABLE QNumberEditor(QAbstractProperty* m_property, QUndoStack* stack, QWidget *parent = 0);
 
 signals:
 
@@ -19,7 +19,7 @@ protected slots:
     void onPropertyChanged();
 
 protected:
-    QAbstractProperty *property;
+    QAbstractProperty *m_property;
 };
 
 #endif // QNUMBEREDITOR_H

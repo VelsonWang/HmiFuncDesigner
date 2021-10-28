@@ -15,7 +15,7 @@ QHostObjectMap::QHostObjectMap(QAbstractProperty *property, QAbstractHost *host)
     bool keyboard = host->property("title").toString() == "keyboard";
     bool project = host->property("title").toString() == "Project";
 
-    tagHostInfo *info = make_info(h);
+    tagHostInfo *info = makeInfo(h);
     info->m_name = "global";
 
     m_infos.insert("global", info);
@@ -24,30 +24,30 @@ QHostObjectMap::QHostObjectMap(QAbstractProperty *property, QAbstractHost *host)
     if(!keyboard || project) {
         foreach(QAbstractHost* h, list) {
             if(h->property("title").toString() != "keyboard" || project) {
-                tagHostInfo *info = make_info(h);
+                tagHostInfo *info = makeInfo(h);
                 m_infos.insert(info->m_name, info);
             }
         }
     }
 
-    info = make_info(host);
+    info = makeInfo(host);
     info->m_name = "self";
     m_infos.insert(info->m_name, info);
     if(!keyboard || project) {
         if(host->getParent() != NULL) {
-            info = make_info(host->getParent());
+            info = makeInfo(host->getParent());
             info->m_name = "parent";
             m_infos.insert(info->m_name, info);
         }
     } else {
-        info = make_info(host);
+        info = makeInfo(host);
         m_infos.insert(info->m_name, info);
     }
 
-    m_param_list = property->getAttribute("param").toStringList();
+    m_paramList = property->getAttribute("param").toStringList();
 }
 
-tagHostInfo *QHostObjectMap::make_info(QAbstractHost *host)
+tagHostInfo *QHostObjectMap::makeInfo(QAbstractHost *host)
 {
     tagHostInfo *info = new tagHostInfo;
     info->m_host = host;
@@ -57,7 +57,7 @@ tagHostInfo *QHostObjectMap::make_info(QAbstractHost *host)
     QList<QAbstractHost*> list = host->getChildren();
 
     foreach(QAbstractHost* h, list) {
-        tagHostInfo *in = make_info(h);
+        tagHostInfo *in = makeInfo(h);
         info->m_children.insert(in->m_name, in);
     }
 
@@ -66,7 +66,7 @@ tagHostInfo *QHostObjectMap::make_info(QAbstractHost *host)
     int count = meta->methodCount();
     QString str;
     QStringList l = host->property("function_list").toStringList();
-    for(int i=0; i<count; i++) {
+    for(int i = 0; i < count; i++) {
         QMetaMethod method = meta->method(i);
         if(method.methodType() == QMetaMethod::Slot && method.access() == QMetaMethod::Public) {
             str = method.methodSignature();
@@ -83,11 +83,11 @@ tagHostInfo *QHostObjectMap::make_info(QAbstractHost *host)
     return info;
 }
 
-tagHostInfo* QHostObjectMap::get_all_by_text(const QString &text)
+tagHostInfo* QHostObjectMap::getAllByText(const QString &text)
 {
     QString s = text;
     if(s.endsWith(".")) {
-        s = s.left(s.size()-1);
+        s = s.left(s.size() - 1);
     }
     QStringList list = s.split(".");
     if(list.size() == 0) {
@@ -105,15 +105,15 @@ tagHostInfo* QHostObjectMap::get_all_by_text(const QString &text)
     return info;
 }
 
-tagReturnList QHostObjectMap::get_info(const QString &text)
+tagReturnList QHostObjectMap::getInfo(const QString &text)
 {
     tagReturnList ret;
     int index = text.lastIndexOf(".");
     QString temp1, temp2;
     if(index > 0) {
-        tagHostInfo* info = get_all_by_text(text.left(index));
+        tagHostInfo* info = getAllByText(text.left(index));
         if(info != NULL) {
-            QString s = text.mid(index+1);
+            QString s = text.mid(index + 1);
             temp1 = s.toLower();
             QList<tagReturnInfo> retList1, retList2;
             if(info->m_type == "form") {
@@ -132,7 +132,7 @@ tagReturnList QHostObjectMap::get_info(const QString &text)
                     }
                 }
 
-                QMapIterator<QString,QMetaMethod> itt(info->m_methods);
+                QMapIterator<QString, QMetaMethod> itt(info->m_methods);
                 while(itt.hasNext()) {
                     itt.next();
                     temp2 = itt.key().toLower();
@@ -183,7 +183,7 @@ tagReturnList QHostObjectMap::get_info(const QString &text)
             }
         }
 
-        foreach(const QString &str, m_param_list) {
+        foreach(const QString &str, m_paramList) {
             temp2 = str.toLower();
             tagReturnInfo info;
             info.m_type = TYPE_PARAM;

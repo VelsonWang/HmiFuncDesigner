@@ -4,7 +4,6 @@ QNameValidator::QNameValidator(const QString & reg, QObject* parent):
     QValidator(parent),
     m_reg(reg)
 {
-
 }
 
 QValidator::State QNameValidator::validate(QString &input, int &) const

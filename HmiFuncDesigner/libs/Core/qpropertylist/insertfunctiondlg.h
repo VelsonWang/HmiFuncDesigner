@@ -29,9 +29,9 @@ private:
 
 private:
     Ui::InsertFunctionDlg *ui;
-    QString m_strSelectedFuncName;
-    QMap<QString, QString> m_funcNameDescMap;
-    QMap<QString, QString> m_funcNameNameMap;
+    QString m_selectedFuncName;
+    QMap<QString, QString> m_funcNameToDesc;
+    QMap<QString, QString> m_funcNameToName;
 };
 
 #endif // INSERTFUNCTIONDLG_H

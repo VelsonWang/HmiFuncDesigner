@@ -13,14 +13,14 @@ QSoftCore* QSoftCore::m_core = NULL;
 
 QSoftCore::QSoftCore(QObject *parent) :
     QObject(parent),
-    m_project_core(new QProjectCore),
-    m_undo_group(new QUndoGroup(this)),
-    m_devicesManager(new QDevicesManager(this)),
-    m_file_manager(new QFileManager)
+    m_projectCore(new QProjectCore),
+    m_undoGroup(new QUndoGroup(this)),
+    m_devicesMgr(new QDevicesManager(this)),
+    m_fileMgr(new QFileManager)
 {
     QDir dir;
     dir.mkpath(QApplication::applicationDirPath() + "/resources");
-    m_file_manager->load();
+    m_fileMgr->load();
 
     initUserManagerAction();
     initLanguageManagerAction();
@@ -266,11 +266,11 @@ void QSoftCore::initDeviceAction()
 void QSoftCore::initUndoAction()
 {
     QAction* ac;
-    ac = m_undo_group->createRedoAction(NULL);
+    ac = m_undoGroup->createRedoAction(NULL);
     ac->setIcon(QIcon(":/images/redo.png"));
     ac->setShortcut(QKeySequence::Redo);
     insertAction("Undo.Redo", ac);
-    ac = m_undo_group->createUndoAction(NULL);
+    ac = m_undoGroup->createUndoAction(NULL);
     ac->setIcon(QIcon(":/images/undo.png"));
     ac->setShortcut(QKeySequence::Undo);
     insertAction("Undo.Undo", ac);
@@ -278,17 +278,17 @@ void QSoftCore::initUndoAction()
 
 QProjectCore* QSoftCore::getProjectCore()
 {
-    return m_project_core;
+    return m_projectCore;
 }
 
 void QSoftCore::addUndoStack(QUndoStack *stack)
 {
-    m_undo_group->addStack(stack);
+    m_undoGroup->addStack(stack);
 }
 
 void QSoftCore::setActivityStack(QUndoStack *stack)
 {
-    m_undo_group->setActiveStack(stack);
+    m_undoGroup->setActiveStack(stack);
 }
 
 void QSoftCore::startUpdatePlugin()
@@ -304,7 +304,7 @@ void QSoftCore::startUpdatePlugin()
         foreach(const QString &n, list) {
             QAbstractUpdate *up = pl->create(n);
             if(up != NULL) {
-                m_devicesManager->addUpdate(up);
+                m_devicesMgr->addUpdate(up);
             }
         }
     }
@@ -312,12 +312,12 @@ void QSoftCore::startUpdatePlugin()
 
 QDevicesManager *QSoftCore::getDevicesManager()
 {
-    return m_devicesManager;
+    return m_devicesMgr;
 }
 
 QFileManager* QSoftCore::getFileManager()
 {
-    return m_file_manager;
+    return m_fileMgr;
 }
 
 /**

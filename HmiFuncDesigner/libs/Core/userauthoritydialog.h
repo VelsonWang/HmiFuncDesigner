@@ -18,21 +18,21 @@ struct CORELIB_EXPORT TagUserItem {
                          const QString &sName3 = QString(),
                          const QString &sName4 = QString(),
                          const QString &sName5 = QString())
-        : m_sIndex(sIndex), m_sName(sName), m_sPassWord(sPassWord), m_sAuthority(sAuthority),
-          m_sComments(sComments), m_sName2(sName2), m_sName3(sName3), m_sName4(sName4), m_sName5(sName5)
+        : m_index(sIndex), m_name(sName), m_passWord(sPassWord), m_authority(sAuthority),
+          m_comments(sComments), m_name2(sName2), m_name3(sName3), m_name4(sName4), m_name5(sName5)
     {
 
     }
 
-    QString m_sIndex;
-    QString m_sName;
-    QString m_sPassWord;
-    QString m_sAuthority;
-    QString m_sComments;
-    QString m_sName2;
-    QString m_sName3;
-    QString m_sName4;
-    QString m_sName5;
+    QString m_index;
+    QString m_name;
+    QString m_passWord;
+    QString m_authority;
+    QString m_comments;
+    QString m_name2;
+    QString m_name3;
+    QString m_name4;
+    QString m_name5;
 };
 
 //////////////////////////////////////////////////////////
@@ -110,7 +110,7 @@ private slots:
 
 private:
     Ui::UserAuthorityDialog *ui;
-    TagUserTableModel *pUserModel_;
+    TagUserTableModel *pUserModel;
 };
 
 #endif // USERAUTHORITYDIALOG_H

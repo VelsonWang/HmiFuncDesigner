@@ -12,8 +12,8 @@ QImageEditor::QImageEditor(QAbstractProperty *property, QUndoStack* stack, QWidg
 void QImageEditor::onBtnClicked()
 {
     QString szFilter = "";
-    if(property) {
-        szFilter = property->getAttribute("filters").toString();
+    if(m_property) {
+        szFilter = m_property->getAttribute("filters").toString();
     }
     // 使用Windows自带的文件对话框程序会崩溃
     QString szFileName = QFileDialog::getOpenFileName(this,
@@ -34,8 +34,8 @@ void QImageEditor::onBtnClicked()
 
     if (!szFileName.isEmpty()) {
         QVariant v(szListData.join("|"));
-        if(property) {
-            property->notifyEditValue(v);
+        if(m_property) {
+            m_property->notifyEditValue(v);
         }
     }
 }

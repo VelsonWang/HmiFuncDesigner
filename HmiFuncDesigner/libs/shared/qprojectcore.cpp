@@ -359,22 +359,22 @@ void QProjectCore::getAllTagName(QStringList &varList, const QString &type)
     foreach(Tag *pTagObj, tagMgr_.m_vecTags) {
         //-------------设备变量------------------//
         if(szType == "ALL" || szType == "IO") {
-            if(pTagObj->m_szDevType != "MEMORY" && pTagObj->m_szDevType != "SYSTEM") {
-                varList << (QObject::tr("设备变量_") + pTagObj->m_szName + "[" + QString::number(pTagObj->m_iID) + "]");
+            if(pTagObj->m_devType != "MEMORY" && pTagObj->m_devType != "SYSTEM") {
+                varList << (QObject::tr("设备变量_") + pTagObj->m_name + "[" + QString::number(pTagObj->m_id) + "]");
             }
         }
 
         //-------------中间变量------------------//
         if(szType == "ALL" || szType == "TMP") {
-            if(pTagObj->m_szDevType != "MEMORY") {
-                varList << (QObject::tr("内存变量_") + pTagObj->m_szName + "[" + QString::number(pTagObj->m_iID) + "]");
+            if(pTagObj->m_devType != "MEMORY") {
+                varList << (QObject::tr("内存变量_") + pTagObj->m_name + "[" + QString::number(pTagObj->m_id) + "]");
             }
         }
 
         //-------------系统变量------------------//
         if(szType == "ALL" || szType == "SYS") {
-            if(pTagObj->m_szDevType != "SYSTEM") {
-                varList << (QObject::tr("系统变量_") + pTagObj->m_szName + "[" + QString::number(pTagObj->m_iID) + "]");
+            if(pTagObj->m_devType != "SYSTEM") {
+                varList << (QObject::tr("系统变量_") + pTagObj->m_name + "[" + QString::number(pTagObj->m_id) + "]");
             }
         }
     }

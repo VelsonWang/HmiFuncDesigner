@@ -11,14 +11,19 @@ QTagTextListEditor::QTagTextListEditor(QAbstractProperty *property, QUndoStack* 
 
 void QTagTextListEditor::onBtnClicked()
 {
-    QStringList szListTextList = property->get_value().toStringList();
+    QStringList szListTextList;
+    if(m_property) {
+        szListTextList = m_property->get_value().toStringList();
+    }
     TagTextListEditorDialog dlg;
     dlg.setValueTextList(szListTextList);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList szListTextListNew = dlg.getValueTextList();
         if (szListTextListNew != szListTextList) {
             QVariant v(szListTextListNew);
-            property->notifyEditValue(v);
+            if(m_property) {
+                m_property->notifyEditValue(v);
+            }
         }
     }
 }

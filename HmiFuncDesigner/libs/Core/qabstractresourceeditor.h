@@ -2,7 +2,6 @@
 #define QABSTRACTRESOURCEEDITOR_H
 
 #include "corelibglobal.h"
-
 #include <QWidget>
 
 struct tagFileInfo;
@@ -13,10 +12,10 @@ class CORELIB_EXPORT QAbstractResourceEditor : public QWidget
 public:
     explicit QAbstractResourceEditor(QWidget *parent = 0);
 
-    virtual QWidget*    tool_bar() = 0;
-    virtual QString     show_name() = 0;
-    virtual bool        support(const QString &type) = 0;
-    virtual void        set_file(tagFileInfo *info) = 0;
+    virtual QWidget* toolBar() = 0;
+    virtual QString showName() = 0;
+    virtual bool support(const QString &type) = 0;
+    virtual void setFile(tagFileInfo *info) = 0;
 
 };
 

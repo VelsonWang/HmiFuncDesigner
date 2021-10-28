@@ -6,7 +6,7 @@ QDateTimeProperty::QDateTimeProperty(QAbstractProperty *parent) :
     setObjectProperty("type", "DateTime");
 }
 
-QString QDateTimeProperty::get_value_text()
+QString QDateTimeProperty::getValueText()
 {
     QDateTime ti = get_value().toDateTime();
     return QString("%1-%2-%3 %4:%5:%6").arg(ti.date().year(), 2).arg(ti.date().month(), 2)
@@ -15,12 +15,12 @@ QString QDateTimeProperty::get_value_text()
 }
 
 
-QIcon QDateTimeProperty::get_value_icon()
+QIcon QDateTimeProperty::getValueIcon()
 {
     return QIcon();
 }
 
-void QDateTimeProperty::make_value()
+void QDateTimeProperty::makeValue()
 {
     int y = m_propertys.value("year").toInt();
     int mon = m_propertys.value("month").toInt();
@@ -33,7 +33,7 @@ void QDateTimeProperty::make_value()
     m_value.setValue<QDateTime>(dt);
 }
 
-void QDateTimeProperty::write_value()
+void QDateTimeProperty::writeValue()
 {
     QDateTime dt = m_value.toDateTime();
     m_propertys.insert("year", dt.date().year());

@@ -1,9 +1,6 @@
 #include "qtoolbarbutton.h"
-
 #include "stylehelper.h"
-
 #include <QPropertyAnimation>
-
 #include <QPainter>
 #include <QEvent>
 #include <QAction>

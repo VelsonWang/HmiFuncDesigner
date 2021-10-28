@@ -6,8 +6,6 @@
 #include <QStringList>
 #include <QString>
 
-
-
 namespace Ui
 {
 class InsertTagDlg;
@@ -32,7 +30,7 @@ private slots:
 private:
     Ui::InsertTagDlg *ui;
     QStringList m_varsList;
-    QString m_strSelectedTagName;
+    QString m_selectedTagName;
 };
 
 #endif // INSERTTAGDLG_H

@@ -61,8 +61,8 @@ void QLanguageDelegate::paint(QPainter *painter, const QStyleOptionViewItem &opt
 
 QStringEditDialog::QStringEditDialog(QAbstractProperty *property, QUndoStack* stack, QWidget *parent):
     QDialog(parent),
-    property(property),
-    undoStack(stack),
+    m_property(property),
+    m_undoStack(stack),
     ui(new Ui::QStringEditDialog)
 {
     setProperty("panelwidget", true);
@@ -118,17 +118,17 @@ void QStringEditDialog::on_enabled_clicked()
 void QStringEditDialog::on_okBtn_clicked()
 {
     bool new_tr = ui->enabled->isChecked();
-    bool old_tr = property->getObjectProperty("tr").toBool();
+    bool old_tr = m_property->getObjectProperty("tr").toBool();
     QMap<QString, QString> old_translate;
     QMap<QString, QString> new_translate;
     QString old_text;
     QString new_text;
-    QString uuid = property->getObjectProperty("uuid").toString();
+    QString uuid = m_property->getObjectProperty("uuid").toString();
     if(uuid == "") {
         uuid = QUuid::createUuid().toString();
     }
     if(new_tr) {
-        QMapIterator<QTreeWidgetItem*, QLanguage*> it(items);
+        QMapIterator<QTreeWidgetItem*, QLanguage*> it(m_items);
         while(it.hasNext()) {
             it.next();
         }
@@ -143,7 +143,7 @@ void QStringEditDialog::on_okBtn_clicked()
         //            old_translate.insert(l->getUuid(),info==NULL?"":info->m_translate);
         //        }
     } else {
-        old_text = property->get_value().toString();
+        old_text = m_property->get_value().toString();
     }
 
 #if 0
@@ -158,7 +158,7 @@ void QStringEditDialog::on_okBtn_clicked()
             new_translate);
     m_undo_stack->push(cmd);
 #else
-    property->notifyEditValue(new_text);
+    m_property->notifyEditValue(new_text);
 #endif
     close();
 }

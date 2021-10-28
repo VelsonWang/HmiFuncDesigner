@@ -31,7 +31,7 @@ QPropertyBaseEditor::QPropertyBaseEditor(QAbstractProperty *pro, QUndoStack* sta
     if(widget == NULL) {
         QLabel *lablel = new QLabel;
         lablel->setFocusPolicy(Qt::StrongFocus);
-        lablel->setText(pro->get_value_text());
+        lablel->setText(pro->getValueText());
         lablel->setMargin(3);
         widget = lablel;
     }

@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class QItemListWidget;
 }
 
@@ -12,13 +13,13 @@ class QToolBarButton;
 class QItemListWidget : public QWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit QItemListWidget(QWidget *parent = 0);
     ~QItemListWidget();
-    
-    void set_text(const QString &text);
-    void set_icon(const QString &icon);
+
+    void setText(const QString &text);
+    void setIcon(const QString &icon);
 
 private:
     Ui::QItemListWidget *ui;
@@ -32,8 +33,8 @@ signals:
     void changed();
 
 protected:
-    QToolBarButton *m_changed_button;
-    QToolBarButton *m_remove_button;
+    QToolBarButton *m_changedButton;
+    QToolBarButton *m_removeButton;
 };
 
 #endif // QITEMLISTWIDGET_H

@@ -69,12 +69,12 @@ private slots:
 
 private:
     Ui::ScriptPropertyEditorDlg *ui;
-    QsciScintilla *scriptEdit;
-    QString szScript_;
-    QString szEvent_;
-    QStringList supportEvents_;
-    QMap<QString, QString> mapNameToShowName_;
-    QMap<QString, QString> mapShowNameToName_;
+    QsciScintilla *m_scriptEdit;
+    QString m_script;
+    QString m_event;
+    QStringList m_supportEvents;
+    QMap<QString, QString> m_nameToShowName;
+    QMap<QString, QString> m_showNameToName;
 };
 
 #endif // SCRIPTPROPERTYEDITORDLG_H

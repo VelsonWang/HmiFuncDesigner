@@ -70,7 +70,7 @@ void QAbstractProperty::toObject(XMLObject *xml)
     if(xml != NULL) {
         xml->clear();
         xml->setTagName(PROPERTY_TITLE);
-        write_value();
+        writeValue();
 
         QMapIterator<QString, QVariant> it(m_propertys);
 
@@ -109,19 +109,19 @@ void QAbstractProperty::fromObject(XMLObject *xml)
             }
         }
 
-        make_value();
+        makeValue();
         refresh();
     }
 }
 
-void QAbstractProperty::make_value()
+void QAbstractProperty::makeValue()
 {
     if(m_propertys.keys().contains("value")) {
         m_value = m_propertys.value("value");
     }
 }
 
-void QAbstractProperty::write_value()
+void QAbstractProperty::writeValue()
 {
     m_propertys.insert("value", m_value);
 }

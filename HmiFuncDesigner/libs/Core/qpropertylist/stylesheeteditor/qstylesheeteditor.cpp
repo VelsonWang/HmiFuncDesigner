@@ -3,13 +3,13 @@
 #include "../../../shared/property/qabstractproperty.h"
 
 QStyleSheetEditor::QStyleSheetEditor(QAbstractProperty *property, QUndoStack* stack, QWidget *parent):
-    QButtonCommonEditor(property,stack,parent),
-    m_undo_stack(stack)
+    QButtonCommonEditor(property, stack, parent),
+    m_undoStack(stack)
 {
 }
 
 void QStyleSheetEditor::onBtnClicked()
 {
-    QStyleSheetDialog dlg(property, m_undo_stack, this);
+    QStyleSheetDialog dlg(m_property, m_undoStack, this);
     dlg.exec();
 }

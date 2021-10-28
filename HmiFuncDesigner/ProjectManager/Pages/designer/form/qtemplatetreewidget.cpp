@@ -52,7 +52,7 @@ QSize QTemplateDeletgate::sizeHint(const QStyleOptionViewItem &option, const QMo
     return sz;
 }
 
-QWidget* QTemplateDeletgate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
+QWidget* QTemplateDeletgate::createEditor(QWidget *, const QStyleOptionViewItem &option, const QModelIndex &) const
 {
     QTemplateNameWidget* wid = NULL;
     return wid;

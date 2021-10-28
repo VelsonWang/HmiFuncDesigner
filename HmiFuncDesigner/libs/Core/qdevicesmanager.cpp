@@ -1,7 +1,5 @@
 #include "qdevicesmanager.h"
-
 #include "qabstractupdate.h"
-
 #include <QVariant>
 
 QDevicesManager::QDevicesManager(QObject *parent) :

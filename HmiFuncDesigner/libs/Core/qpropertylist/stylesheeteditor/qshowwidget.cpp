@@ -27,12 +27,12 @@ void QShowWidget::on_cancelbtn_clicked()
     emit cancel();
 }
 
-void QShowWidget::set_item_sheet(const QString &sheet)
+void QShowWidget::setItemSheet(const QString &sheet)
 {
     ui->plainTextEdit->setPlainText(sheet);
 }
 
-void QShowWidget::set_host(QAbstractHost *host)
+void QShowWidget::setHost(QAbstractHost *host)
 {
     m_host = host;
     QWidget* pWidgetObj = (QWidget*)host->getObject();

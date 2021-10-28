@@ -3,19 +3,20 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class QResourceShowWidget;
 }
 
 class QResourceShowWidget : public QWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit QResourceShowWidget(QWidget *parent = 0);
     ~QResourceShowWidget();
-    
-    void set_image(const QByteArray &data);
+
+    void setImage(const QByteArray &data);
 
 signals:
     void ok();

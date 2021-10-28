@@ -3,8 +3,7 @@
 #include <QPainter>
 #include <QStyleOption>
 
-StyledBar::StyledBar(QWidget *parent)
-    : QWidget(parent)
+StyledBar::StyledBar(QWidget *parent) : QWidget(parent)
 {
     setProperty("panelwidget", true);
     setProperty("panelwidget_singlerow", true);

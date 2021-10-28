@@ -3,7 +3,7 @@
 
 QFloatEditor::QFloatEditor(QAbstractProperty *property, QUndoStack*, QWidget *parent) :
     QDoubleSpinBox(parent),
-    property(property)
+    m_property(property)
 {
     setRange(-9999999, 9999999);
     if(property) {
@@ -16,14 +16,14 @@ QFloatEditor::QFloatEditor(QAbstractProperty *property, QUndoStack*, QWidget *pa
 
 void QFloatEditor::onValueChanged(double value)
 {
-    if(property) {
-        property->notifyEditValue(value);
+    if(m_property) {
+        m_property->notifyEditValue(value);
     }
 }
 
 void QFloatEditor::onPropertyChanged()
 {
-    if(property) {
-        setValue(property->get_value().toDouble());
+    if(m_property) {
+        setValue(m_property->get_value().toDouble());
     }
 }

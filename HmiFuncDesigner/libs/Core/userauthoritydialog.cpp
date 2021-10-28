@@ -37,60 +37,60 @@ QVariant TagUserTableModel::data(const QModelIndex &index, int role) const
         QStyleOptionComboBox option;
         switch (index.column()) {
             case Index:
-                option.currentText = item.m_sIndex;
+                option.currentText = item.m_index;
                 break;
             case Name:
-                option.currentText = item.m_sName;
+                option.currentText = item.m_name;
                 break;
             case PassWord:
-                option.currentText = item.m_sPassWord;
+                option.currentText = item.m_passWord;
                 break;
             case Authority:
-                option.currentText = item.m_sAuthority;
+                option.currentText = item.m_authority;
                 break;
             case Comments:
-                option.currentText = item.m_sComments;
+                option.currentText = item.m_comments;
                 break;
             case Name2:
-                option.currentText = item.m_sName2;
+                option.currentText = item.m_name2;
                 break;
             case Name3:
-                option.currentText = item.m_sName3;
+                option.currentText = item.m_name3;
                 break;
             case Name4:
-                option.currentText = item.m_sName4;
+                option.currentText = item.m_name4;
                 break;
             case Name5:
-                option.currentText = item.m_sName5;
+                option.currentText = item.m_name5;
                 break;
             default:
                 Q_ASSERT(false);
         }
         QFontMetrics fontMetrics(data(index, Qt::FontRole).value<QFont>());
         option.fontMetrics = fontMetrics;
-        QSize size(fontMetrics.width(option.currentText), fontMetrics.height());
+        QSize size(fontMetrics.horizontalAdvance(option.currentText), fontMetrics.height());
         return qApp->style()->sizeFromContents(QStyle::CT_ComboBox, &option, size);
     }
     if (role == Qt::DisplayRole || role == Qt::EditRole) {
         switch (index.column()) {
             case Index:
-                return item.m_sIndex;
+                return item.m_index;
             case Name:
-                return item.m_sName;
+                return item.m_name;
             case PassWord:
-                return item.m_sPassWord;
+                return item.m_passWord;
             case Authority:
-                return item.m_sAuthority;
+                return item.m_authority;
             case Comments:
-                return item.m_sComments;
+                return item.m_comments;
             case Name2:
-                return item.m_sName2;
+                return item.m_name2;
             case Name3:
-                return item.m_sName3;
+                return item.m_name3;
             case Name4:
-                return item.m_sName4;
+                return item.m_name4;
             case Name5:
-                return item.m_sName5;
+                return item.m_name5;
 
             default:
                 Q_ASSERT(false);
@@ -101,7 +101,8 @@ QVariant TagUserTableModel::data(const QModelIndex &index, int role) const
 
 
 QVariant TagUserTableModel::headerData(int section,
-                                       Qt::Orientation orientation, int role) const
+                                       Qt::Orientation orientation,
+                                       int role) const
 {
     if (role != Qt::DisplayRole) {
         return QVariant();
@@ -159,31 +160,31 @@ bool TagUserTableModel::setData(const QModelIndex &index,
     TagUserItem &item = m_tagUserItems[index.row()];
     switch (index.column()) {
         case Index:
-            item.m_sIndex = value.toString();
+            item.m_index = value.toString();
             break;
         case Name:
-            item.m_sName = value.toString();
+            item.m_name = value.toString();
             break;
         case PassWord:
-            item.m_sPassWord = value.toString();
+            item.m_passWord = value.toString();
             break;
         case Authority:
-            item.m_sAuthority = value.toString();
+            item.m_authority = value.toString();
             break;
         case Comments:
-            item.m_sComments = value.toString();
+            item.m_comments = value.toString();
             break;
         case Name2:
-            item.m_sName2 = value.toString();
+            item.m_name2 = value.toString();
             break;
         case Name3:
-            item.m_sName3 = value.toString();
+            item.m_name3 = value.toString();
             break;
         case Name4:
-            item.m_sName4 = value.toString();
+            item.m_name4 = value.toString();
             break;
         case Name5:
-            item.m_sName5 = value.toString();
+            item.m_name5 = value.toString();
             break;
 
         default:
@@ -225,7 +226,7 @@ UserAuthorityDialog::UserAuthorityDialog(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
-    pUserModel_ = new TagUserTableModel(this);
+    pUserModel = new TagUserTableModel(this);
     ui->tableViewUser->verticalHeader()->hide();
 }
 
@@ -261,15 +262,15 @@ void UserAuthorityDialog::on_btnExit_clicked()
 void UserAuthorityDialog::on_brnAddUser_clicked()
 {
     QModelIndex index;
-    pUserModel_->insertRows(pUserModel_->rowCount(), 1);
-    index = pUserModel_->index(pUserModel_->rowCount() - 1, 0);
-    pUserModel_->setData(index, QString("%1").arg(pUserModel_->rowCount()));
+    pUserModel->insertRows(pUserModel->rowCount(), 1);
+    index = pUserModel->index(pUserModel->rowCount() - 1, 0);
+    pUserModel->setData(index, QString("%1").arg(pUserModel->rowCount()));
 }
 
 void UserAuthorityDialog::on_brnDelUser_clicked()
 {
     QModelIndex ModelIndex = ui->tableViewUser->selectionModel()->currentIndex();
-    pUserModel_->removeRow(ModelIndex.row(), ModelIndex.parent());
+    pUserModel->removeRow(ModelIndex.row(), ModelIndex.parent());
     check_data();
 }
 
@@ -283,9 +284,9 @@ bool UserAuthorityDialog::check_data()
 {
     bool ret = true;
 
-    for(int i = 0; i < pUserModel_->rowCount(); i++) {
-        QModelIndex index = pUserModel_->index(i, 0);
-        pUserModel_->setData(index, i + 1);
+    for(int i = 0; i < pUserModel->rowCount(); i++) {
+        QModelIndex index = pUserModel->index(i, 0);
+        pUserModel->setData(index, i + 1);
     }
     return ret;
 }
@@ -293,19 +294,19 @@ bool UserAuthorityDialog::check_data()
 void UserAuthorityDialog::load()
 {
     UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->userAuthority_;
-    pUserModel_->m_tagUserItems.clear();
+    pUserModel->m_tagUserItems.clear();
     for (int i = 0; i < userAuthority.getCount(); ++i) {
         TagUserItem item;
-        item.m_sIndex = userAuthority.getIndex(i);
-        item.m_sName = userAuthority.getName(i);
-        item.m_sPassWord = userAuthority.getPassword(i);
-        item.m_sAuthority = userAuthority.getAuthority(i);
-        item.m_sComments = userAuthority.getComments(i);
-        item.m_sName2 = userAuthority.getName2(i);
-        item.m_sName3 = userAuthority.getName3(i);
-        item.m_sName4 = userAuthority.getName4(i);
-        item.m_sName5 = userAuthority.getName5(i);
-        pUserModel_->m_tagUserItems.append(item);
+        item.m_index = userAuthority.getIndex(i);
+        item.m_name = userAuthority.getName(i);
+        item.m_passWord = userAuthority.getPassword(i);
+        item.m_authority = userAuthority.getAuthority(i);
+        item.m_comments = userAuthority.getComments(i);
+        item.m_name2 = userAuthority.getName2(i);
+        item.m_name3 = userAuthority.getName3(i);
+        item.m_name4 = userAuthority.getName4(i);
+        item.m_name5 = userAuthority.getName5(i);
+        pUserModel->m_tagUserItems.append(item);
     }
 
     if(userAuthority.getCount()) {
@@ -313,30 +314,30 @@ void UserAuthorityDialog::load()
         ui->checkLogOut->setChecked(userAuthority.isLogout(0));
     }
 
-    ui->tableViewUser->setModel(pUserModel_);
+    ui->tableViewUser->setModel(pUserModel);
 }
 
 void UserAuthorityDialog::save()
 {
     UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->userAuthority_;
-    userAuthority.listUserAuthority_.clear();
+    userAuthority.m_userAuthority.clear();
     TagUserItem item;
 
-    for(int i = 0; i < pUserModel_->m_tagUserItems.size(); i++) {
+    for(int i = 0; i < pUserModel->m_tagUserItems.size(); i++) {
         UserAuthorityPrivate *pObj = new UserAuthorityPrivate();
-        item = pUserModel_->m_tagUserItems.at(i);
-        pObj->szIndex_ = item.m_sIndex;
-        pObj->szName_ = item.m_sName;
-        pObj->szPassword_ = item.m_sPassWord;
-        pObj->szAuthority_ = item.m_sAuthority;
-        pObj->szComments_ = item.m_sComments;
-        pObj->szName2_ = item.m_sName2;
-        pObj->szName3_ = item.m_sName3;
-        pObj->szName4_ = item.m_sName4;
-        pObj->szName5_ = item.m_sName5;
-        pObj->bLogin_ = ui->checkLogIn->isChecked();
-        pObj->bLogout_ = ui->checkLogOut->isChecked();
-        userAuthority.listUserAuthority_.append(pObj);
+        item = pUserModel->m_tagUserItems.at(i);
+        pObj->m_index = item.m_index;
+        pObj->m_name = item.m_name;
+        pObj->m_password = item.m_passWord;
+        pObj->m_authority = item.m_authority;
+        pObj->m_comments = item.m_comments;
+        pObj->m_name2 = item.m_name2;
+        pObj->m_name3 = item.m_name3;
+        pObj->m_name4 = item.m_name4;
+        pObj->m_name5 = item.m_name5;
+        pObj->m_login = ui->checkLogIn->isChecked();
+        pObj->m_logout = ui->checkLogOut->isChecked();
+        userAuthority.m_userAuthority.append(pObj);
     }
 }
 

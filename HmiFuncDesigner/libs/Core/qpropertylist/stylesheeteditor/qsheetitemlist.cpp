@@ -37,7 +37,7 @@ QSize QSheetItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMo
 
 QSheetItemList::QSheetItemList(QWidget *parent) :
     QTreeWidget(parent),
-    m_select_item(NULL)
+    m_selectItem(NULL)
 {
     this->setFrameStyle(QFrame::NoFrame);
     this->header()->hide();
@@ -76,18 +76,18 @@ void QSheetItemList::add(QAbstractStylesheetItem *item)
     title = title.replace(":", ".");
 
     QItemListWidget *wid = new QItemListWidget;
-    wid->set_text(title);
+    wid->setText(title);
     connect(wid, SIGNAL(remove()), this, SLOT(remove()));
     connect(wid, SIGNAL(changed()), this, SLOT(changed()));
     setItemWidget(temp, 0, wid);
 
-    m_item_to_sheet.insert(temp, item);
-    m_sheet_to_item.insert(item, temp);
+    m_itemToSheet.insert(temp, item);
+    m_sheetToItem.insert(item, temp);
 }
 
 void QSheetItemList::changed_item(QAbstractStylesheetItem *item)
 {
-    QTreeWidgetItem *temp = m_sheet_to_item.value(item);
+    QTreeWidgetItem *temp = m_sheetToItem.value(item);
     if(temp != NULL) {
         QString title = item->attribute("title");
         if(title.startsWith("::")) {
@@ -99,7 +99,7 @@ void QSheetItemList::changed_item(QAbstractStylesheetItem *item)
         title = title.replace(":", ".");
 
         QItemListWidget* wid = (QItemListWidget*)itemWidget(temp, 0);
-        wid->set_text(title);
+        wid->setText(title);
     }
 }
 
@@ -107,16 +107,16 @@ void QSheetItemList::remove()
 {
     QItemListWidget* wid = (QItemListWidget*)sender();
 
-    QMapIterator<QAbstractStylesheetItem*, QTreeWidgetItem*> it(m_sheet_to_item);
+    QMapIterator<QAbstractStylesheetItem*, QTreeWidgetItem*> it(m_sheetToItem);
 
     while(it.hasNext()) {
         it.next();
         if(itemWidget(it.value(), 0) == wid) {
-            if(m_select_item == it.value()) {
-                set_select(m_item_to_sheet.value(topLevelItem(0)));
+            if(m_selectItem == it.value()) {
+                setSelect(m_itemToSheet.value(topLevelItem(0)));
             }
-            m_sheet_to_item.remove(it.key());
-            m_item_to_sheet.remove(it.value());
+            m_sheetToItem.remove(it.key());
+            m_itemToSheet.remove(it.value());
             emit remove(it.key());
             delete it.value();
             return;
@@ -128,7 +128,7 @@ void QSheetItemList::changed()
 {
     QItemListWidget* wid = (QItemListWidget*)sender();
 
-    QMapIterator<QAbstractStylesheetItem*, QTreeWidgetItem*> it(m_sheet_to_item);
+    QMapIterator<QAbstractStylesheetItem*, QTreeWidgetItem*> it(m_sheetToItem);
 
     while(it.hasNext()) {
         it.next();
@@ -141,30 +141,30 @@ void QSheetItemList::changed()
 
 void QSheetItemList::double_clicked(QTreeWidgetItem *item)
 {
-    if(m_select_item != item) {
-        if(m_select_item != NULL) {
-            QItemListWidget *wid = (QItemListWidget*)itemWidget(m_select_item, 0);
-            wid->set_icon("");
+    if(m_selectItem != item) {
+        if(m_selectItem != NULL) {
+            QItemListWidget *wid = (QItemListWidget*)itemWidget(m_selectItem, 0);
+            wid->setIcon("");
         }
-        m_select_item = item;
-        if(m_select_item != NULL) {
-            QItemListWidget *wid = (QItemListWidget*)itemWidget(m_select_item, 0);
-            wid->set_icon(":/images/check.png");
+        m_selectItem = item;
+        if(m_selectItem != NULL) {
+            QItemListWidget *wid = (QItemListWidget*)itemWidget(m_selectItem, 0);
+            wid->setIcon(":/images/check.png");
         }
-        emit select(m_item_to_sheet.value(item));
+        emit select(m_itemToSheet.value(item));
     }
 }
 
-void QSheetItemList::set_select(QAbstractStylesheetItem *item)
+void QSheetItemList::setSelect(QAbstractStylesheetItem *item)
 {
-    if(m_select_item != NULL) {
-        QItemListWidget *wid = (QItemListWidget*)itemWidget(m_select_item, 0);
-        wid->set_icon("");
+    if(m_selectItem != NULL) {
+        QItemListWidget *wid = (QItemListWidget*)itemWidget(m_selectItem, 0);
+        wid->setIcon("");
     }
-    m_select_item = m_sheet_to_item.value(item);
-    if(m_select_item != NULL) {
-        QItemListWidget *wid = (QItemListWidget*)itemWidget(m_select_item, 0);
-        wid->set_icon(":/images/check.png");
+    m_selectItem = m_sheetToItem.value(item);
+    if(m_selectItem != NULL) {
+        QItemListWidget *wid = (QItemListWidget*)itemWidget(m_selectItem, 0);
+        wid->setIcon(":/images/check.png");
     }
     emit select(item);
 }

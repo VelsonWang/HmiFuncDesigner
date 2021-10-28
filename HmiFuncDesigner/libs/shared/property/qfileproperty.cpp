@@ -7,13 +7,13 @@ QFileProperty::QFileProperty(QAbstractProperty *parent) :
     setAttribute(ATTR_RESET_ABLEABLE, false);
 }
 
-QString QFileProperty::get_value_text()
+QString QFileProperty::getValueText()
 {
     //return get_value().toString();
     return tr("文件数据");
 }
 
-QIcon QFileProperty::get_value_icon()
+QIcon QFileProperty::getValueIcon()
 {
     return QIcon();
 }

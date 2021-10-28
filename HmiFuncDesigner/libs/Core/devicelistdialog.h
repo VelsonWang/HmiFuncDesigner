@@ -5,7 +5,6 @@
 #include <QDialog>
 #include <QStandardItemModel>
 
-
 namespace Ui
 {
 class DeviceListDialog;
@@ -33,10 +32,10 @@ private:
     void TreeViewInit();
 
 private:
-    QString m_DeviceName;
-    QStandardItemModel *pTreeViewItemModel;
-    QStringList m_SupportDevList;
-    QString m_strPortType;
+    QString m_deviceName;
+    QStandardItemModel *m_treeViewItemModel;
+    QStringList m_supportDevList;
+    QString m_portType;
 };
 
 #endif // DEVICELISTDIALOG_H

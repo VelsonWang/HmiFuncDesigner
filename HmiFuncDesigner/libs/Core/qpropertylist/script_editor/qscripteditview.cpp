@@ -529,7 +529,7 @@ void QScriptEditView::keyPressEvent(QKeyEvent *e)
     if(reg.exactMatch(text) || e->key() == Qt::Key_Backspace) {
         QString str = get_current_text();
         if(!str.startsWith(".") && str != "") {
-            tagReturnList return_info = m_host_object_map->get_info(str);
+            tagReturnList return_info = m_host_object_map->getInfo(str);
             if(return_info.m_returns.size() > 0) {
                 m_completer->init(&return_info, str);
                 QTextCursor cursor = textCursor();
@@ -547,7 +547,7 @@ void QScriptEditView::keyPressEvent(QKeyEvent *e)
             m_completer->hide();
         } else {
             QString str = get_current_text();
-            tagReturnList return_info = m_host_object_map->get_info(str);
+            tagReturnList return_info = m_host_object_map->getInfo(str);
             if(return_info.m_returns.size() > 0) {
                 m_completer->init(&return_info, str);
                 QTextCursor cursor = textCursor();
@@ -767,7 +767,7 @@ void QScriptEditView::auto_select(const QString &text)
             s = text;
         }
         s += ".";
-        tagReturnList return_info = m_host_object_map->get_info(s);
+        tagReturnList return_info = m_host_object_map->getInfo(s);
         if(return_info.m_returns.size() > 0) {
             m_completer->init(&return_info, s);
             QTextCursor cursor = textCursor();
@@ -807,7 +807,7 @@ void QScriptEditView::auto_select(const QString &text)
                 s = text;
             }
             s += ".";
-            tagReturnList return_info = m_host_object_map->get_info(s);
+            tagReturnList return_info = m_host_object_map->getInfo(s);
             if(return_info.m_returns.size() > 0) {
                 m_completer->init(&return_info, s);
                 QTextCursor cursor = textCursor();

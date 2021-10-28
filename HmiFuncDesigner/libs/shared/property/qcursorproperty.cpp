@@ -112,13 +112,13 @@ QCursorProperty::QCursorProperty(QAbstractProperty *parent) :
     setAttribute("items", v);
 }
 
-void QCursorProperty::make_value()
+void QCursorProperty::makeValue()
 {
     QCursor c((Qt::CursorShape)m_propertys.value("value").toInt());
     m_value.setValue<QCursor>(c);
 }
 
-void QCursorProperty::write_value()
+void QCursorProperty::writeValue()
 {
     QCursor c = m_value.value<QCursor>();
     m_propertys.insert("value", int(c.shape()));

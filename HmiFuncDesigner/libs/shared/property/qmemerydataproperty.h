@@ -11,8 +11,8 @@ class QMemeryDataProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QMemeryDataProperty(QAbstractProperty *parent = 0);
 
-    QIcon get_value_icon();
-    QString get_value_text();
+    QIcon getValueIcon();
+    QString getValueText();
     void toObject(XMLObject *xml);
     void fromObject(XMLObject *xml);
 };

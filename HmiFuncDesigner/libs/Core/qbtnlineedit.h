@@ -2,7 +2,6 @@
 #define QBTNLINEEDIT_H
 
 #include "corelibglobal.h"
-
 #include <QLineEdit>
 #include <QPushButton>
 
@@ -26,8 +25,8 @@ public slots:
     void textChanged();
 
 protected:
-    QPushButton *button;
-    QString textVal;
+    QPushButton *m_button;
+    QString m_text;
 };
 
 

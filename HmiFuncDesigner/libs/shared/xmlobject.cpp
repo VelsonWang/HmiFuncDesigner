@@ -1,5 +1,4 @@
 #include "xmlobject.h"
-
 #include "qpropertyfactory.h"
 
 XMLObject::XMLObject(XMLObject *parent) :

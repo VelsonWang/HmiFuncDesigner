@@ -107,17 +107,17 @@ void CommunicationDevice::listViewCommunicationDeviceUpdate()
     ////////////////////////////////////////////////////////////////////////////
 
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
-    for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-        if(pObj->szDeviceType_ == "COM") {
-            QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), pObj->szName_);
+    for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
+        if(pObj->m_deviceType == "COM") {
+            QStandardItem *pNewComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), pObj->m_name);
             pNewComDevice->setEditable(false);
-            pNewComDevice->setData(pObj->szName_, Qt::UserRole + 1);
+            pNewComDevice->setData(pObj->m_name, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pNewComDevice);
-        } else if(pObj->szDeviceType_ == "NET") {
-            QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), pObj->szName_);
+        } else if(pObj->m_deviceType == "NET") {
+            QStandardItem *pNewNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), pObj->m_name);
             pNewNetDevice->setEditable(false);
-            pNewNetDevice->setData(pObj->szName_, Qt::UserRole + 1);
+            pNewNetDevice->setData(pObj->m_name, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pNewNetDevice);
         }
     }
@@ -138,12 +138,12 @@ void CommunicationDevice::listViewCOMDeviceUpdate()
     m_pCommDevModelObj->appendRow(pNewComDevice);
 
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
-    for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-        if(pObj->szDeviceType_ == "COM") {
-            QStandardItem *pComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), pObj->szName_);
+    for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
+        if(pObj->m_deviceType == "COM") {
+            QStandardItem *pComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), pObj->m_name);
             pComDevice->setEditable(false);
-            pComDevice->setData(pObj->szName_, Qt::UserRole + 1);
+            pComDevice->setData(pObj->m_name, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pComDevice);
         }
     }
@@ -164,12 +164,12 @@ void CommunicationDevice::listViewNetDeviceUpdate()
     m_pCommDevModelObj->appendRow(pNewNetDevice);
 
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
-    for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-        if(pObj->szDeviceType_ == "NET") {
-            QStandardItem *pNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), pObj->szName_);
+    for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
+        if(pObj->m_deviceType == "NET") {
+            QStandardItem *pNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), pObj->m_name);
             pNetDevice->setEditable(false);
-            pNetDevice->setData(pObj->szName_, Qt::UserRole + 1);
+            pNetDevice->setData(pObj->m_name, Qt::UserRole + 1);
             m_pCommDevModelObj->appendRow(pNetDevice);
         }
     }
@@ -259,18 +259,18 @@ void CommunicationDevice::onSlotModifyDevice()
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(pItemObj->text());
     if(pObj != NULL) {
-        if(pObj->szDeviceType_ == "COM") {
+        if(pObj->m_deviceType == "COM") {
             NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
-            pNewComDeviceDlg->load(pObj->szName_);
+            pNewComDeviceDlg->load(pObj->m_name);
             pNewComDeviceDlg->exec();
-            pObj->szDeviceName_ = pNewComDeviceDlg->GetDeviceName();
-            pNewComDeviceDlg->save(pObj->szName_);
-        } else if(pObj->szDeviceType_ == "NET") {
+            pObj->m_deviceName = pNewComDeviceDlg->GetDeviceName();
+            pNewComDeviceDlg->save(pObj->m_name);
+        } else if(pObj->m_deviceType == "NET") {
             NewNetDeviceDialog *pNewDeviceDlg = new NewNetDeviceDialog(this);
-            pNewDeviceDlg->load(pObj->szName_);
+            pNewDeviceDlg->load(pObj->m_name);
             pNewDeviceDlg->exec();
-            pObj->szDeviceName_ = pNewDeviceDlg->GetDeviceName();
-            pNewDeviceDlg->save(pObj->szName_);
+            pObj->m_deviceName = pNewDeviceDlg->GetDeviceName();
+            pNewDeviceDlg->save(pObj->m_name);
         }
     }
 
@@ -286,10 +286,10 @@ void CommunicationDevice::onSlotDeleteDevice()
     QStandardItem *pItemObj = m_pCommDevModelObj->itemFromIndex(idx);
 
     DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
-    for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-        if(pItemObj->text() == pObj->szName_) {
-            deviceInfo.listDeviceInfoObject_.removeOne(pObj);
+    for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
+        if(pItemObj->text() == pObj->m_name) {
+            deviceInfo.m_listDeviceInfoObject.removeOne(pObj);
             break;
         }
     }
@@ -322,18 +322,18 @@ void CommunicationDevice::onSlotListViewProjectDoubleClicked(const QModelIndex &
         DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
         DeviceInfoObject *pObj = deviceInfo.getObjectByName(pItemObj->text());
         if(pObj != NULL) {
-            if(pObj->szDeviceType_ == "COM") {
+            if(pObj->m_deviceType == "COM") {
                 NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
-                pNewComDeviceDlg->load(pObj->szName_);
+                pNewComDeviceDlg->load(pObj->m_name);
                 pNewComDeviceDlg->exec();
-                pObj->szDeviceName_ = pNewComDeviceDlg->GetDeviceName();
-                pNewComDeviceDlg->save(pObj->szName_);
-            } else if(pObj->szDeviceType_ == "NET") {
+                pObj->m_deviceName = pNewComDeviceDlg->GetDeviceName();
+                pNewComDeviceDlg->save(pObj->m_name);
+            } else if(pObj->m_deviceType == "NET") {
                 NewNetDeviceDialog *pNewDeviceDlg = new NewNetDeviceDialog(this);
-                pNewDeviceDlg->load(pObj->szName_);
+                pNewDeviceDlg->load(pObj->m_name);
                 pNewDeviceDlg->exec();
-                pObj->szDeviceName_ = pNewDeviceDlg->GetDeviceName();
-                pNewDeviceDlg->save(pObj->szName_);
+                pObj->m_deviceName = pNewDeviceDlg->GetDeviceName();
+                pNewDeviceDlg->save(pObj->m_name);
             }
         }
     }

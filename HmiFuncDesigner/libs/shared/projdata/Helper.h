@@ -7,7 +7,6 @@
 
 class Helper
 {
-
 private:
     Helper();
 

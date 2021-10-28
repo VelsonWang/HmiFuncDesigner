@@ -2,7 +2,7 @@
 
 #include <QVariant>
 
-QAbstractUpdate::QAbstractUpdate(QObject *parent):
+QAbstractUpdate::QAbstractUpdate(QObject *parent) :
     QObject(parent)
 {
 

@@ -1,10 +1,8 @@
 #include "qactiontoolbar.h"
-
 #include "qtoolbarbutton.h"
-
 #include <QHBoxLayout>
 
-QActionToolBar::QActionToolBar(Qt::Alignment align, QWidget *parent):
+QActionToolBar::QActionToolBar(Qt::Alignment align, QWidget *parent) :
     QWidget(parent),
     m_align(align)
 {

@@ -3,7 +3,8 @@
 
 #include <QWidget>
 
-namespace Ui {
+namespace Ui
+{
 class QFileListItemWidget;
 }
 
@@ -14,21 +15,24 @@ class QFileListView;
 class QFileListItemWidget : public QWidget
 {
     Q_OBJECT
-    
+
 public:
-    explicit QFileListItemWidget(QFileListView* view,QTreeWidgetItem* item,QWidget *parent = 0);
+    explicit QFileListItemWidget(QFileListView* view, QTreeWidgetItem* item, QWidget *parent = 0);
     ~QFileListItemWidget();
-    
-    void    set_text(const QString &text);
-    void    set_icon(const QString &icon);
+
+    void setText(const QString &text);
+    void setIcon(const QString &icon);
+
 protected:
-    void    enterEvent(QEvent *);
-    void    leaveEvent(QEvent *);
+    void enterEvent(QEvent *);
+    void leaveEvent(QEvent *);
+
 signals:
-    void    remove();
+    void remove();
+
 private:
     Ui::QFileListItemWidget *ui;
-    QToolBarButton      *m_remove_button;
+    QToolBarButton      *m_removeButton;
     QTreeWidgetItem     *m_item;
     QFileListView       *m_view;
 };

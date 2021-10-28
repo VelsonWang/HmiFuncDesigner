@@ -1,7 +1,7 @@
 #include "qabstractpage.h"
 
-
-void QAbstractPage::initPlugin()//初始化插件
+//初始化插件
+void QAbstractPage::initPlugin()
 {
     m_undo_stack = new QUndoStack;
     m_widget = NULL;

@@ -29,21 +29,21 @@ public:
 
     tagProperty* getProperty(const QString &uuid);
     QList<tagProperty*> getPropertys();
-    void add_property(tagProperty* property);
+    void addProperty(tagProperty* property);
 
-    tagProjectDataInfo* get_project_data(const QString &uuid);
-    QList<tagProjectDataInfo*> get_project_datas();
-    void add_project_data(tagProjectDataInfo* project_data);
+    tagProjectDataInfo* getProjectData(const QString &uuid);
+    QList<tagProjectDataInfo*> getProjectDatas();
+    void addProjectData(tagProjectDataInfo* project_data);
 
 signals:
 
 public slots:
 protected:
     QList<tagProperty*> m_propertys;
-    QMap<QString, tagProperty*> m_uuid_to_property;
+    QMap<QString, tagProperty*> m_uuidToProperty;
 
-    QList<tagProjectDataInfo*> m_project_datas;
-    QMap<QString, tagProjectDataInfo*> m_uuid_to_project_data;
+    QList<tagProjectDataInfo*> m_projectDatas;
+    QMap<QString, tagProjectDataInfo*> m_uuidToProjectData;
 };
 
 #endif // QPROJECTINFORMATION_H

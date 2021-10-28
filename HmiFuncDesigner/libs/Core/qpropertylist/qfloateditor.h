@@ -10,7 +10,7 @@ class QFloatEditor : public QDoubleSpinBox
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QFloatEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
+    Q_INVOKABLE QFloatEditor(QAbstractProperty* m_property, QUndoStack* stack, QWidget *parent = 0);
 
 signals:
 
@@ -19,7 +19,7 @@ protected slots:
     void onPropertyChanged();
 
 protected:
-    QAbstractProperty *property;
+    QAbstractProperty *m_property;
 };
 
 #endif // QFLOATEDITOR_H

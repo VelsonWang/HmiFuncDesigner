@@ -5,14 +5,14 @@
 #include "../../../shared/property/qabstractproperty.h"
 
 QAddSheetItemDialog::QAddSheetItemDialog(QAbstractProperty *property,
-                                         const QString &title,
-                                         QWidget *parent):
+        const QString &title,
+        QWidget *parent):
     QDialog(parent),
     ui(new Ui::QAddSheetItemDialog)
 {
     ui->setupUi(this);
 
-    QString fir,sec;
+    QString fir, sec;
     QString s;
     int index;
     if(title != "") {
@@ -22,9 +22,9 @@ QAddSheetItemDialog::QAddSheetItemDialog(QAbstractProperty *property,
         fir = title.left(index);
         sec = title.mid(index);
     }
-    m_check_widget = new QStateCheckWidget(property,sec);
-    ui->verticalLayout->insertWidget(2, m_check_widget);
-    connect(m_check_widget, SIGNAL(changed()), this, SLOT(check_changed()));
+    m_checkWidget = new QStateCheckWidget(property, sec);
+    ui->verticalLayout->insertWidget(2, m_checkWidget);
+    connect(m_checkWidget, SIGNAL(changed()), this, SLOT(checkChanged()));
 
     QStringList list = property->get_host()->property("children_widget").toStringList();
 
@@ -50,7 +50,7 @@ QAddSheetItemDialog::QAddSheetItemDialog(QAbstractProperty *property,
                 ui->sub_control_list->setCurrentIndex(in);
             }
         }
-        connect(ui->sub_control_list, SIGNAL(currentIndexChanged(int)), this, SLOT(make_title()));
+        connect(ui->sub_control_list, SIGNAL(currentIndexChanged(int)), this, SLOT(makeTitle()));
     } else {
         ui->label_4->setVisible(false);
         ui->sub_control_list->setVisible(false);
@@ -62,20 +62,20 @@ QAddSheetItemDialog::~QAddSheetItemDialog()
     delete ui;
 }
 
-void QAddSheetItemDialog::make_title()
+void QAddSheetItemDialog::makeTitle()
 {
     QString str;
     QString s = ui->sub_control_list->currentText();
     if(s != tr("None")) {
         str += s;
     }
-    str += m_check_widget->getTagName();
+    str += m_checkWidget->getTagName();
     ui->title->setText(str);
 }
 
-void QAddSheetItemDialog::check_changed()
+void QAddSheetItemDialog::checkChanged()
 {
-    make_title();
+    makeTitle();
 }
 
 QString QAddSheetItemDialog::getTagName()

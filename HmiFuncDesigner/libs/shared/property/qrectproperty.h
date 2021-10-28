@@ -11,17 +11,17 @@ class QRectProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QRectProperty(QAbstractProperty *parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 
     void set_value(const QVariant &value);
     QVariant get_value();
 
 protected:
     void child_value_changed(const QVariant &old, const QVariant &now);
-    void make_value();
-    void write_value();
-	
+    void makeValue();
+    void writeValue();
+
 protected:
     QIntProperty *m_x;
     QIntProperty *m_y;

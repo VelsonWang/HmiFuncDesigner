@@ -7,7 +7,6 @@
 /*
  *这个类是分割窗口，主要是实现了宽度为1的分割线
  */
-
 class CORELIB_EXPORT MiniSplitter : public QSplitter
 {
 public:
@@ -15,9 +14,8 @@ public:
     MiniSplitter(Qt::Orientation orientation);
 
 protected:
-    QSplitterHandle *createHandle(); // 创建分割线
+    QSplitterHandle *createHandle();
 
-protected:
 };
 
 #endif // MINISPLITTER_H

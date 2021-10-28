@@ -52,10 +52,10 @@ int QFileGroupAddUndoCommand::id() const
 
 void QFileGroupAddUndoCommand::add()
 {
-    QSoftCore::getCore()->getFileManager()->insert_group(&m_data, m_index);
+    QSoftCore::getCore()->getFileManager()->insertGroup(&m_data, m_index);
 }
 
 void QFileGroupAddUndoCommand::remove()
 {
-    QSoftCore::getCore()->getFileManager()->remove_group(m_data.m_uuid);
+    QSoftCore::getCore()->getFileManager()->removeGroup(m_data.m_uuid);
 }

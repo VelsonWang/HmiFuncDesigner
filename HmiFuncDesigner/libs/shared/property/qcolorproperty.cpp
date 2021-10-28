@@ -7,12 +7,12 @@ QColorProperty::QColorProperty(QAbstractProperty *parent) :
     setAttribute(ATTR_RESET_ABLEABLE, false);
 }
 
-QString QColorProperty::get_value_text()
+QString QColorProperty::getValueText()
 {
     return get_value().toString();
 }
 
-QIcon QColorProperty::get_value_icon()
+QIcon QColorProperty::getValueIcon()
 {
     return QIcon();
 }

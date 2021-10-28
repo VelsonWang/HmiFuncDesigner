@@ -48,12 +48,12 @@ QAlignmentProperty::QAlignmentProperty(QAbstractProperty *parent) :
     m_vertical->setAttribute("items", v);
 }
 
-QString QAlignmentProperty::get_value_text()
+QString QAlignmentProperty::getValueText()
 {
-    return m_horizonta->get_value_text() + " | " + m_vertical->get_value_text();
+    return m_horizonta->getValueText() + " | " + m_vertical->getValueText();
 }
 
-QIcon QAlignmentProperty::get_value_icon()
+QIcon QAlignmentProperty::getValueIcon()
 {
     return QIcon();
 }
@@ -74,12 +74,12 @@ void QAlignmentProperty::child_value_changed(const QVariant &, const QVariant &)
     QAbstractProperty::set_value(align);
 }
 
-void QAlignmentProperty::make_value()
+void QAlignmentProperty::makeValue()
 {
     m_value = m_horizonta->get_value().toInt() | m_vertical->get_value().toInt();
 }
 
-void QAlignmentProperty::write_value()
+void QAlignmentProperty::writeValue()
 {
 
 }

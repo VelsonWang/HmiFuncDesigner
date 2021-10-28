@@ -2,7 +2,6 @@
 #define QSTYLESHEETITEMFACTORY_H
 
 #include "../../sharedlibglobal.h"
-
 #include <QString>
 
 class QAbstractStylesheetItem;

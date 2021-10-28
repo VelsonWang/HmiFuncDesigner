@@ -6,7 +6,6 @@
 #include "../../../gradienteditor/qtgradientdialog.h"
 #include "../../../shared/qprojectcore.h"
 #include "../../../shared/property/stylesheetitem/qabstractstylesheetitem.h"
-
 #include <QColorDialog>
 #include <QPainter>
 
@@ -61,7 +60,7 @@ void QBorderSheetEditor::init(QAbstractStylesheetItem *item)
     m_start_resource = temp.m_attributes.value("image").toString();
 }
 
-void QBorderSheetEditor::take_resource(QUndoCommand *cmd)
+void QBorderSheetEditor::takeResource(QUndoCommand *cmd)
 {
     if(m_start_resource != m_tempResource) {
         if(cmd != NULL) {
@@ -71,7 +70,7 @@ void QBorderSheetEditor::take_resource(QUndoCommand *cmd)
     }
 }
 
-void QBorderSheetEditor::add_resource(QUndoCommand *cmd)
+void QBorderSheetEditor::addResource(QUndoCommand *cmd)
 {
     if(m_start_resource != m_tempResource) {
         if(cmd != NULL) {
@@ -84,9 +83,9 @@ void QBorderSheetEditor::add_resource(QUndoCommand *cmd)
     }
 }
 
-void QBorderSheetEditor::set_item(QAbstractStylesheetItem *item)
+void QBorderSheetEditor::setItem(QAbstractStylesheetItem *item)
 {
-    QBaseEditorWidget::set_item(item);
+    QBaseEditorWidget::setItem(item);
 
     QVariant value;
 
@@ -342,10 +341,10 @@ void QBorderSheetEditor::on_image_clicked()
     //dlg.set_file(info->m_resourceData);
     dlg.exec();
 
-    if(dlg.get_ret() == 1) {
-        tagFileInfo *info = dlg.get_file();
+    if(dlg.getRet() == 1) {
+        tagFileInfo *info = dlg.getFile();
         if(info != NULL) {
-            tagFileGroupInfo *g = QSoftCore::getCore()->getFileManager()->get_group(info->m_group_uuid);
+            tagFileGroupInfo *g = QSoftCore::getCore()->getFileManager()->getGroup(info->m_group_uuid);
             QString s = g->m_group_name + "/" + info->m_file_name;
             if(s != name) {
                 m_item.m_attributes.insert("image", s);

@@ -26,7 +26,7 @@ protected slots:
 
 protected:
     QList<QItemCheckBox*> m_widgets;
-    QMap<QItemCheckBox*, QString> m_widget_to_name;
+    QMap<QItemCheckBox*, QString> m_widgetToName;
 };
 
 #endif // QSTATECHECKWIDGET_H

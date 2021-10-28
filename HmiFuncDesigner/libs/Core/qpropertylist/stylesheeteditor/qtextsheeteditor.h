@@ -3,23 +3,24 @@
 
 #include "qbaseeditorwidget.h"
 
-namespace Ui {
+namespace Ui
+{
 class QTextSheetEditor;
 }
 
 class QTextSheetEditor : public QBaseEditorWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit QTextSheetEditor(QWidget *parent = 0);
     ~QTextSheetEditor();
 
-    void set_item(QAbstractStylesheetItem *item);
+    void setItem(QAbstractStylesheetItem *item);
     void init(QAbstractStylesheetItem *item);
-    void take_resource(QUndoCommand *cmd);
-    void add_resource(QUndoCommand *cmd);
-    
+    void takeResource(QUndoCommand *cmd);
+    void addResource(QUndoCommand *cmd);
+
 private slots:
     void on_pushButton_clicked();
 

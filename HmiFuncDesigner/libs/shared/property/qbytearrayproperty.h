@@ -9,8 +9,8 @@ class QByteArrayProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QByteArrayProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 };
 
 #endif // QBYTEARRAYPROPERTY_H

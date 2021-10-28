@@ -13,5 +13,5 @@ void QAbstractPageWidget::setVisible(bool visible)
 
 void QAbstractPageWidget::setUndoStack(QUndoStack *stack)
 {
-    m_undo_stack=stack;
+    m_undo_stack = stack;
 }

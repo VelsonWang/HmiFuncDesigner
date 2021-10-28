@@ -1,5 +1,4 @@
 #include "qmemerydataproperty.h"
-
 #include "../xmlobject.h"
 #include "../qcommonstruct.h"
 
@@ -60,7 +59,7 @@ void QMemeryDataProperty::fromObject(XMLObject *xml)
     }
 }
 
-QString QMemeryDataProperty::get_value_text()
+QString QMemeryDataProperty::getValueText()
 {
     MemeryValueItems c = get_value().value<MemeryValueItems>();
     if(c.size() == 0) {
@@ -70,7 +69,7 @@ QString QMemeryDataProperty::get_value_text()
     }
 }
 
-QIcon QMemeryDataProperty::get_value_icon()
+QIcon QMemeryDataProperty::getValueIcon()
 {
     return QIcon();
 }

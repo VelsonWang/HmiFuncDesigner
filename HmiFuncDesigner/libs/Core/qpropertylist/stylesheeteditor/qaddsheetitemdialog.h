@@ -5,25 +5,25 @@
 
 class QStateCheckWidget;
 class QAbstractProperty;
-namespace Ui {
+namespace Ui
+{
 class QAddSheetItemDialog;
 }
 
 class QAddSheetItemDialog : public QDialog
 {
     Q_OBJECT
-    
+
 public:
     explicit QAddSheetItemDialog(QAbstractProperty* property,
-                                 const QString &title="",
+                                 const QString &title = "",
                                  QWidget *parent = 0);
     ~QAddSheetItemDialog();
-
     QString getTagName();
 
 protected slots:
-    void make_title();
-    void check_changed();
+    void makeTitle();
+    void checkChanged();
 
 private slots:
     void on_pushButton_2_clicked();
@@ -31,7 +31,7 @@ private slots:
 
 private:
     Ui::QAddSheetItemDialog *ui;
-    QStateCheckWidget *m_check_widget;
+    QStateCheckWidget *m_checkWidget;
     QString m_title;
 };
 

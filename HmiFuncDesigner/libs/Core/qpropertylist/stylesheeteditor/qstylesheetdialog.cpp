@@ -68,7 +68,7 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
         }
     }
 
-    m_show_widget->set_host(m_host);
+    m_show_widget->setHost(m_host);
 
     tagStylesheetItems items = m_property->get_value().value<tagStylesheetItems>();
     QString name = m_property->getObjectProperty("name").toString();
@@ -96,7 +96,7 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
     }
 
     if(m_items.size() > 0) {
-        m_item_list->set_select(m_items.first());
+        m_item_list->setSelect(m_items.first());
     }
 
     item_changed();
@@ -115,11 +115,11 @@ void QStyleSheetDialog::add_item(QAbstractStylesheetItem *item)
     m_items.append(item);
     m_item_list->add(item);
 
-    QBaseEditorWidget *wid = create_editor_widget(m_property->getObjectProperty("name").toString());
+    QBaseEditorWidget *wid = createEditorWidget(m_property->getObjectProperty("name").toString());
     if(wid != NULL) {
         connect(wid, SIGNAL(changed()), this, SLOT(item_changed()));
         wid->init(item);
-        wid->set_item(item);
+        wid->setItem(item);
         m_item_to_editor.insert(item, wid);
         m_editor_to_item.insert(wid, item);
         m_stacked_widget->insertWidget(-1, wid);
@@ -131,10 +131,10 @@ void QStyleSheetDialog::select_changed(QAbstractStylesheetItem *item)
     QBaseEditorWidget* wid = m_item_to_editor.value(item);
     if(wid == NULL) {
         m_stacked_widget->setCurrentIndex(-1);
-        m_show_widget->set_item_sheet("");
+        m_show_widget->setItemSheet("");
     } else {
         m_stacked_widget->setCurrentWidget(wid);
-        m_show_widget->set_item_sheet(item->makeStylesheet());
+        m_show_widget->setItemSheet(item->makeStylesheet());
     }
 }
 
@@ -149,7 +149,7 @@ void QStyleSheetDialog::item_changed()
         it.value()->setValue(va);
         items.append(it.key()->get_value());
         if(it.key() == m_stacked_widget->currentWidget()) {
-            m_show_widget->set_item_sheet(it.value()->makeStylesheet());
+            m_show_widget->setItemSheet(it.value()->makeStylesheet());
         }
     }
     QVariant v;
@@ -172,7 +172,7 @@ void QStyleSheetDialog::clear()
             QVariant v;
             v.setValue<tagStylesheetItem>(it);
             item->setValue(v);
-            wid->set_item(item);
+            wid->setItem(item);
             item_changed();
         }
     }
@@ -192,7 +192,7 @@ void QStyleSheetDialog::clearall()
         QVariant v;
         v.setValue<tagStylesheetItem>(temp);
         it.value()->setValue(v);
-        it.key()->set_item(it.value());
+        it.key()->setItem(it.value());
     }
     item_changed();
 }
@@ -205,14 +205,14 @@ void QStyleSheetDialog::ok()
 
         QVariant v = m_host->getPropertyValue(m_property->getObjectProperty("name").toString());
         foreach(QBaseEditorWidget *e, m_editor_to_item.keys()) {
-            e->add_resource(cmd);
+            e->addResource(cmd);
         }
         new QPropertyChangedUndoCommand(m_property->get_host()->getUuid(),
                                         m_property->getObjectProperty("name").toString(),
                                         m_property->get_value(),
                                         v, cmd);
         foreach(QBaseEditorWidget *e, m_editor_to_item.keys()) {
-            e->take_resource(cmd);
+            e->takeResource(cmd);
         }
 
         m_undo_stack->push(cmd);
@@ -228,7 +228,7 @@ void QStyleSheetDialog::add()
     if(title != "") {
         foreach(QAbstractStylesheetItem *item, m_items) {
             if(item->attribute("title") == title) {
-                m_item_list->set_select(item);
+                m_item_list->setSelect(item);
                 return;
             }
         }
@@ -242,7 +242,7 @@ void QStyleSheetDialog::add()
             maker->setAttribute("title", title);
             maker->setValue(v);
             add_item(maker);
-            m_item_list->set_select(maker);
+            m_item_list->setSelect(maker);
         }
     }
 }
@@ -273,7 +273,7 @@ void QStyleSheetDialog::changed(QAbstractStylesheetItem *item)
             item->setValue(v);
             m_item_list->changed_item(item);
             QBaseEditorWidget *wid = m_item_to_editor.value(item);
-            wid->set_item(item);
+            wid->setItem(item);
             item_changed();
         }
     }

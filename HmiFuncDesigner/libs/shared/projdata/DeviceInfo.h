@@ -22,7 +22,6 @@ public:
 
     ~DeviceInfoObject()
     {
-
     }
 
     DeviceInfoObject &operator=(const DeviceInfoObject &obj)
@@ -33,37 +32,37 @@ public:
 
     void copyObject(const DeviceInfoObject &obj)
     {
-        iID_ = obj.iID_;
-        szDeviceType_ = obj.szDeviceType_;
-        szName_ = obj.szName_;
-        szDeviceName_ = obj.szDeviceName_;
-        iFrameLen_ = obj.iFrameLen_;
-        szProtocol_ = obj.szProtocol_;
-        szLink_ = obj.szLink_;
-        iStateVar_ = obj.iStateVar_;
-        iFrameTimePeriod_ = obj.iFrameTimePeriod_;
-        iCtrlVar_ = obj.iCtrlVar_;
-        bDynamicOptimization_ = obj.bDynamicOptimization_;
-        iRemotePort_ = obj.iRemotePort_;
-        szPortParameters_ = obj.szPortParameters_;
-        szProperties_ = obj.szProperties_;
+        m_id = obj.m_id;
+        m_deviceType = obj.m_deviceType;
+        m_name = obj.m_name;
+        m_deviceName = obj.m_deviceName;
+        m_frameLen = obj.m_frameLen;
+        m_protocol = obj.m_protocol;
+        m_link = obj.m_link;
+        m_stateVar = obj.m_stateVar;
+        m_frameTimePeriod = obj.m_frameTimePeriod;
+        m_ctrlVar = obj.m_ctrlVar;
+        m_dynamicOptimization = obj.m_dynamicOptimization;
+        m_remotePort = obj.m_remotePort;
+        m_portParameters = obj.m_portParameters;
+        m_properties = obj.m_properties;
     }
 
 public:
-    int iID_;
-    QString szDeviceType_; //COM, NET, BUS, OPC
-    QString szName_; // 显示名称
-    QString szDeviceName_; // 设备插件名称
-    int iFrameLen_;
-    QString szProtocol_;
-    QString szLink_;
-    int iStateVar_;
-    int iFrameTimePeriod_;
-    int iCtrlVar_;
-    bool bDynamicOptimization_;
-    int iRemotePort_;
-    QString szPortParameters_;
-    QString szProperties_; // 设备私有属性
+    int m_id;
+    QString m_deviceType; //COM, NET, BUS, OPC
+    QString m_name; // 显示名称
+    QString m_deviceName; // 设备插件名称
+    int m_frameLen;
+    QString m_protocol;
+    QString m_link;
+    int m_stateVar;
+    int m_frameTimePeriod;
+    int m_ctrlVar;
+    bool m_dynamicOptimization;
+    int m_remotePort;
+    QString m_portParameters;
+    QString m_properties; // 设备私有属性
 };
 
 class SHAREDLIB_EXPORT ComDevice : public DeviceInfoObject
@@ -93,46 +92,46 @@ public:
     void copyObject(const ComDevice &obj)
     {
         DeviceInfoObject::copyObject(obj);
-        szPortNumber_ = obj.szPortNumber_;
-        iBaudrate_ = obj.iBaudrate_;
-        iDatabit_ = obj.iDatabit_;
-        fStopbit_ = obj.fStopbit_;
-        szVerifybit_ = obj.szVerifybit_;
-        iTimeout_ = obj.iTimeout_;
+        m_portNumber = obj.m_portNumber;
+        m_baudrate = obj.m_baudrate;
+        m_databit = obj.m_databit;
+        m_stopbit = obj.m_stopbit;
+        m_verifybit = obj.m_verifybit;
+        m_timeout = obj.m_timeout;
     }
 
     void fromString(const QString &param)
     {
         QStringList listParam = param.split('|');
         if(listParam.count() == 6) {
-            szPortNumber_ = listParam.at(0);
-            iBaudrate_ = listParam.at(1).toInt();
-            iDatabit_ = listParam.at(2).toInt();
-            fStopbit_ = listParam.at(3).toFloat();
-            szVerifybit_ = listParam.at(4);
-            iTimeout_ = listParam.at(5).toInt();
+            m_portNumber = listParam.at(0);
+            m_baudrate = listParam.at(1).toInt();
+            m_databit = listParam.at(2).toInt();
+            m_stopbit = listParam.at(3).toFloat();
+            m_verifybit = listParam.at(4);
+            m_timeout = listParam.at(5).toInt();
         }
     }
 
     QString toString()
     {
         QStringList param;
-        param.append(szPortNumber_);
-        param.append(QString::number(iBaudrate_));
-        param.append(QString::number(iDatabit_));
-        param.append(QString::number(fStopbit_));
-        param.append(szVerifybit_);
-        param.append(QString::number(iTimeout_));
+        param.append(m_portNumber);
+        param.append(QString::number(m_baudrate));
+        param.append(QString::number(m_databit));
+        param.append(QString::number(m_stopbit));
+        param.append(m_verifybit);
+        param.append(QString::number(m_timeout));
         return param.join("|");
     }
 
 public:
-    QString szPortNumber_;
-    int iBaudrate_;
-    int iDatabit_;
-    float fStopbit_;
-    QString szVerifybit_;
-    int iTimeout_;
+    QString m_portNumber;
+    int m_baudrate;
+    int m_databit;
+    float m_stopbit;
+    QString m_verifybit;
+    int m_timeout;
 };
 
 
@@ -163,38 +162,38 @@ public:
     void copyObject(const NetDevice &obj)
     {
         DeviceInfoObject::copyObject(obj);
-        szIpAddress_ = obj.szIpAddress_;
-        iPort_ = obj.iPort_;
-        szIpAddress1_ = obj.szIpAddress1_;
-        iPort1_ = obj.iPort1_;
+        m_ipAddress = obj.m_ipAddress;
+        m_port = obj.m_port;
+        m_ipAddress1 = obj.m_ipAddress1;
+        m_port1 = obj.m_port1;
     }
 
     void fromString(const QString &param)
     {
         QStringList listParam = param.split('|');
         if(listParam.count() == 4) {
-            szIpAddress_ = listParam.at(0);
-            iPort_ = listParam.at(1).toInt();
-            szIpAddress1_ = listParam.at(2);
-            iPort1_ = listParam.at(3).toInt();
+            m_ipAddress = listParam.at(0);
+            m_port = listParam.at(1).toInt();
+            m_ipAddress1 = listParam.at(2);
+            m_port1 = listParam.at(3).toInt();
         }
     }
 
     QString toString()
     {
         QStringList param;
-        param.append(szIpAddress_);
-        param.append(QString::number(iPort_));
-        param.append(szIpAddress1_);
-        param.append(QString::number(iPort1_));
+        param.append(m_ipAddress);
+        param.append(QString::number(m_port));
+        param.append(m_ipAddress1);
+        param.append(QString::number(m_port1));
         return param.join("|");
     }
 
 public:
-    QString szIpAddress_;
-    int iPort_;
-    QString szIpAddress1_;
-    int iPort1_;
+    QString m_ipAddress;
+    int m_port;
+    QString m_ipAddress1;
+    int m_port1;
 };
 
 
@@ -215,10 +214,10 @@ public:
     static int allocNewDeviceID();
 
 public:
-    QList<DeviceInfoObject *> listDeviceInfoObject_;
+    QList<DeviceInfoObject *> m_listDeviceInfoObject;
 
 private:
-    static int iStartNewDeviceID_;
+    static int m_startNewDeviceID;
 };
 
 #endif // DEVICEINFO_H

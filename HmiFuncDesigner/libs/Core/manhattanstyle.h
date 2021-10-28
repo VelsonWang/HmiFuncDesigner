@@ -20,11 +20,13 @@ public:
     void drawComplexControl(ComplexControl control, const QStyleOptionComplex *option, QPainter *painter, const QWidget *widget) const;
     void polish(QWidget *widget);
     int pixelMetric(PixelMetric metric, const QStyleOption *option, const QWidget *widget) const;
+
 protected:
-    void    drawButtonSeparator(QPainter *painter, const QRect &rect, bool reverse)const;
+    void drawButtonSeparator(QPainter *painter, const QRect &rect, bool reverse)const;
+
 protected:
-    QImage  m_lineeditImage;
-    QImage  m_lineeditImage_disabled;
+    QImage m_lineEditImage;
+    QImage m_lineEditImageDisabled;
 };
 
 #endif // MANHATTANSTYLE_H

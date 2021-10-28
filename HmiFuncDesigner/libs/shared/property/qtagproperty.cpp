@@ -7,7 +7,7 @@ QTagProperty::QTagProperty(QAbstractProperty *parent) :
     setObjectProperty("type", "Tag");
 }
 
-QIcon QTagProperty::get_value_icon()
+QIcon QTagProperty::getValueIcon()
 {
     ComboItems items = this->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item, items) {
@@ -18,7 +18,7 @@ QIcon QTagProperty::get_value_icon()
     return QIcon();
 }
 
-QString QTagProperty::get_value_text()
+QString QTagProperty::getValueText()
 {
     ComboItems items = this->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item, items) {

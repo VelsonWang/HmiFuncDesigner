@@ -1,5 +1,4 @@
 #include "qfancylineedit.h"
-
 #include <QAbstractItemView>
 #include <QApplication>
 #include <QDebug>

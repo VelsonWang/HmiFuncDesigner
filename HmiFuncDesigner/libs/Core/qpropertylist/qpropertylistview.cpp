@@ -198,9 +198,9 @@ void QPropertyListView::insertItem(QAbstractProperty *property, QAbstractPropert
     QTreeWidgetItem *item = new QTreeWidgetItem(parentItem);
     item->setText(0, property->getAttribute("show_name").toString());
     item->setToolTip(0, property->getAttribute("show_name").toString());
-    item->setText(1, property->get_value_text());
-    item->setToolTip(1, property->get_value_text());
-    item->setIcon(1, property->get_value_icon());
+    item->setText(1, property->getValueText());
+    item->setToolTip(1, property->getValueText());
+    item->setIcon(1, property->getValueIcon());
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
     widgetItemToProperty.insert(item, property);
     propertyToWidgetItem.insert(property, item);
@@ -292,9 +292,9 @@ void QPropertyListView::onPropertyChanged()
     if(item == NULL) {
         return;
     }
-    item->setText(1, pro->get_value_text());
-    item->setToolTip(1, pro->get_value_text());
-    item->setIcon(1, pro->get_value_icon());
+    item->setText(1, pro->getValueText());
+    item->setToolTip(1, pro->getValueText());
+    item->setIcon(1, pro->getValueIcon());
     this->update(indexFromItem(item));
     emit active();
 }

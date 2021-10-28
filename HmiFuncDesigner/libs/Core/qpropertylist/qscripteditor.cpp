@@ -7,12 +7,12 @@ QScriptEditor::QScriptEditor(QAbstractProperty *property,
                              QUndoStack* stack,
                              QWidget *parent) :
     QButtonCommonEditor(property, stack, parent),
-    undoStack(stack)
+    m_undoStack(stack)
 {
 }
 
 void QScriptEditor::onBtnClicked()
 {
-    QScriptEditDialog dlg(property, undoStack, this);
+    QScriptEditDialog dlg(m_property, m_undoStack, this);
     dlg.exec();
 }

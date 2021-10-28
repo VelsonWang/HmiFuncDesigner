@@ -3,25 +3,23 @@
 
 #include "qbaseeditorwidget.h"
 
-namespace Ui {
+namespace Ui
+{
 class QBackgrounSheetEditor;
 }
 
 class QBackgrounSheetEditor : public QBaseEditorWidget
 {
     Q_OBJECT
-    
+
 public:
     explicit QBackgrounSheetEditor(QWidget *parent = 0);
     ~QBackgrounSheetEditor();
 
-
-    void set_item(QAbstractStylesheetItem *item);
-
+    void setItem(QAbstractStylesheetItem *item);
     void init(QAbstractStylesheetItem *item);
-
-    void take_resource(QUndoCommand *cmd);
-    void add_resource(QUndoCommand *cmd);
+    void takeResource(QUndoCommand *cmd);
+    void addResource(QUndoCommand *cmd);
 
 private slots:
     void on_colorBtn_clicked();
@@ -35,7 +33,7 @@ private:
 
 protected:
     QString m_tempResource;
-    QString m_start_resource;
+    QString m_startResource;
 };
 
 #endif // QBACKGROUNSHEETEDITOR_H

@@ -9,22 +9,22 @@ class QSizeProperty : public QAbstractProperty
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QSizeProperty(QAbstractProperty *parent=0);
+    Q_INVOKABLE QSizeProperty(QAbstractProperty *parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 
     void set_value(const QVariant &value);
 
 protected:
     void child_value_changed(const QVariant &old, const QVariant &now);
-    void make_value();
-    void write_value();
-	
+    void makeValue();
+    void writeValue();
+
 protected:
     QIntProperty *m_width;
     QIntProperty *m_height;
-	
+
 };
 
 #endif // QSIZEPROPERTY_H

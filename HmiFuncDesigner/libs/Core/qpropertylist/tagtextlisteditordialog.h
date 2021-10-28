@@ -33,7 +33,7 @@ private:
 
 private:
     Ui::TagTextListEditorDialog *ui;
-    QStringList valueTextList;
+    QStringList m_valueTextList;
 };
 
 #endif // TAGTEXTLISTEDITORDIALOG_H

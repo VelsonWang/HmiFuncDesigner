@@ -82,8 +82,7 @@ static const char *const keywords[MAX_KEYWORD] = {
     0
 };
 
-struct KeywordHelper
-{
+struct KeywordHelper {
     inline KeywordHelper(const QString &word) : needle(word) {}
     const QString needle;
 };
@@ -132,11 +131,13 @@ void QScriptHighLight::highlightBlock(const QString &text)
                   StateScriptCommentStart2, StateCComment, StateScriptComment, StateCCommentEnd1,
                   StateCCommentEnd2, StateStringStart, StateString, StateStringEnd,
                   StateString2Start, StateString2, StateString2End,
-                  StateNumber, StatePreProcessor, NumStates  };
+                  StateNumber, StatePreProcessor, NumStates
+                };
 
     // tokens
     enum Tokens { InputAlpha, InputNumber, InputAsterix, InputSlash, InputParen,
-                  InputSpace, InputHash, InputQuotation, InputApostrophe, InputSep, NumTokens };
+                  InputSpace, InputHash, InputQuotation, InputApostrophe, InputSep, NumTokens
+                };
 
     static uchar table[NumStates][NumTokens] = {
         { StateStandard,      StateNumber,     StateStandard,       StateCommentStart1,    StateStandard,   StateStandard,   StatePreProcessor, StateStringStart, StateString2Start, StateStandard }, // StateStandard
@@ -202,225 +203,258 @@ void QScriptHighLight::highlightBlock(const QString &text)
             input = InputSep;
         } else {
             switch (c.toLatin1()) {
-            case '*':
-                input = InputAsterix;
-                break;
-            case '/':
-                input = InputSlash;
-                break;
-            case '{':
-                braceDepth++;
+                case '*':
+                    input = InputAsterix;
+                    break;
+                case '/':
+                    input = InputSlash;
+                    break;
+                case '{':
+                    braceDepth++;
                 // fall through
-            case '(': case '[':
-                input = InputParen;
-                switch (state) {
-                case StateStandard:
-                case StateNumber:
-                case StatePreProcessor:
-                case StateCCommentEnd2:
-                case StateCCommentEnd1:
-                case StateString2End:
-                case StateStringEnd:
-                    //                        parentheses.push_back(Parenthesis(Parenthesis::Opened, c, i));
+                case '(':
+                case '[':
+                    input = InputParen;
+                    switch (state) {
+                        case StateStandard:
+                        case StateNumber:
+                        case StatePreProcessor:
+                        case StateCCommentEnd2:
+                        case StateCCommentEnd1:
+                        case StateString2End:
+                        case StateStringEnd:
+                            //                        parentheses.push_back(Parenthesis(Parenthesis::Opened, c, i));
+                            break;
+                        default:
+                            break;
+                    }
                     break;
-                default:
-                    break;
-                }
-                break;
-            case '}':
-                if (--braceDepth < 0)
-                    braceDepth = 0;
+                case '}':
+                    if (--braceDepth < 0) {
+                        braceDepth = 0;
+                    }
                 // fall through
-            case ')': case ']':
-                input = InputParen;
-                switch (state) {
-                case StateStandard:
-                case StateNumber:
-                case StatePreProcessor:
-                case StateCCommentEnd2:
-                case StateCCommentEnd1:
-                case StateString2End:
-                case StateStringEnd:
-                    //                        parentheses.push_back(Parenthesis(Parenthesis::Closed, c, i));
+                case ')':
+                case ']':
+                    input = InputParen;
+                    switch (state) {
+                        case StateStandard:
+                        case StateNumber:
+                        case StatePreProcessor:
+                        case StateCCommentEnd2:
+                        case StateCCommentEnd1:
+                        case StateString2End:
+                        case StateStringEnd:
+                            //                        parentheses.push_back(Parenthesis(Parenthesis::Closed, c, i));
+                            break;
+                        default:
+                            break;
+                    }
                     break;
-                default:
+                case '#':
+                    input = InputHash;
                     break;
-                }
-                break;
-            case '#':
-                input = InputHash;
-                break;
-            case '"':
-                input = InputQuotation;
-                break;
-            case '\'':
-                input = InputApostrophe;
-                break;
-            case ' ':
-                input = InputSpace;
-                break;
-            case '1': case '2': case '3': case '4': case '5':
-            case '6': case '7': case '8': case '9': case '0':
-                if (alphabeth.contains(lastChar)
-                        && (!mathChars.contains(lastChar) || !numbers.contains(text.at(i - 1)))
-                        ) {
-                    input = InputAlpha;
-                } else {
-                    if (input == InputAlpha && numbers.contains(lastChar))
+                case '"':
+                    input = InputQuotation;
+                    break;
+                case '\'':
+                    input = InputApostrophe;
+                    break;
+                case ' ':
+                    input = InputSpace;
+                    break;
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                case '0':
+                    if (alphabeth.contains(lastChar)
+                            && (!mathChars.contains(lastChar) || !numbers.contains(text.at(i - 1)))
+                       ) {
                         input = InputAlpha;
-                    else
-                        input = InputNumber;
-                }
-                break;
-            case ':': {
-                input = InputAlpha;
-                const QChar colon = QLatin1Char(':');
-                if (state == StateStandard && !questionMark && lastChar != colon) {
-                    const QChar nextChar = i < text.length() - 1 ?  text.at(i + 1) : QLatin1Char(' ');
-                    if (nextChar != colon)
-                        for (int j = 0; j < i; ++j) {
-                            if (format(j) == emptyFormat )
-                                setFormat(j, 1, m_formats[ScriptLabelFormat]);
+                    } else {
+                        if (input == InputAlpha && numbers.contains(lastChar)) {
+                            input = InputAlpha;
+                        } else {
+                            input = InputNumber;
                         }
-                }
-            } break;
-            default:
-                if (!questionMark && c == QLatin1Char('?'))
-                    questionMark = true;
-                if (c.isLetter() || c == QLatin1Char('_'))
+                    }
+                    break;
+                case ':': {
                     input = InputAlpha;
-                else
-                    input = InputSep;
+                    const QChar colon = QLatin1Char(':');
+                    if (state == StateStandard && !questionMark && lastChar != colon) {
+                        const QChar nextChar = i < text.length() - 1 ?  text.at(i + 1) : QLatin1Char(' ');
+                        if (nextChar != colon)
+                            for (int j = 0; j < i; ++j) {
+                                if (format(j) == emptyFormat ) {
+                                    setFormat(j, 1, m_formats[ScriptLabelFormat]);
+                                }
+                            }
+                    }
+                }
                 break;
+                default:
+                    if (!questionMark && c == QLatin1Char('?')) {
+                        questionMark = true;
+                    }
+                    if (c.isLetter() || c == QLatin1Char('_')) {
+                        input = InputAlpha;
+                    } else {
+                        input = InputSep;
+                    }
+                    break;
             }
         }
 
         if (input != InputSpace) {
-            if (firstNonSpace < 0)
+            if (firstNonSpace < 0) {
                 firstNonSpace = i;
+            }
             lastNonSpace = i;
         }
 
         lastWasBackSlash = !lastWasBackSlash && c == QLatin1Char('\\');
 
-        if (input == InputAlpha)
+        if (input == InputAlpha) {
             buffer += c;
+        }
 
         state = table[state][input];
 
         switch (state) {
-        case StateStandard: {
-            setFormat(i, 1, emptyFormat);
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            if (input != InputAlpha) {
-                highlightWord(i, buffer);
-                buffer = QString::null;
+            case StateStandard: {
+                setFormat(i, 1, emptyFormat);
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                if (input != InputAlpha) {
+                    highlightWord(i, buffer);
+                    buffer = QString::null;
+                }
             }
-        } break;
-        case StateCommentStart1:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = true;
-            buffer = QString::null;
             break;
-        case StateCCommentStart2:
-            setFormat(i - 1, 2, m_formats[ScriptCommentFormat]);
-            makeLastStandard = false;
-            //                                parentheses.push_back(Parenthesis(Parenthesis::Opened, QLatin1Char('/'), i-1));
-            buffer = QString::null;
-            break;
-        case StateScriptCommentStart2:
-            setFormat(i - 1, 2, m_formats[ScriptCommentFormat]);
-            makeLastStandard = false;
-            buffer = QString::null;
-            break;
-        case StateCComment:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptCommentFormat]);
-            buffer = QString::null;
-            break;
-        case StateScriptComment:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptCommentFormat]);
-            buffer = QString::null;
-            break;
-        case StateCCommentEnd1:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptCommentFormat]);
-            buffer = QString::null;
-            break;
-        case StateCCommentEnd2:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptCommentFormat]);
-            //                                parentheses.push_back(Parenthesis(Parenthesis::Closed, QLatin1Char('/'), i));
-            buffer = QString::null;
-            break;
-        case StateStringStart:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, emptyFormat);
-            buffer = QString::null;
-            break;
-        case StateString:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptStringFormat]);
-            buffer = QString::null;
-            break;
-        case StateStringEnd:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, emptyFormat);
-            buffer = QString::null;
-            break;
-        case StateString2Start:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, emptyFormat);
-            buffer = QString::null;
-            break;
-        case StateString2:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptStringFormat]);
-            buffer = QString::null;
-            break;
-        case StateString2End:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, emptyFormat);
-            buffer = QString::null;
-            break;
-        case StateNumber:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptNumberFormat]);
-            buffer = QString::null;
-            break;
-        case StatePreProcessor:
-            if (makeLastStandard)
-                setFormat(i - 1, 1, emptyFormat);
-            makeLastStandard = false;
-            setFormat(i, 1, m_formats[ScriptPreprocessorFormat]);
-            buffer = QString::null;
-            break;
+            case StateCommentStart1:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = true;
+                buffer = QString::null;
+                break;
+            case StateCCommentStart2:
+                setFormat(i - 1, 2, m_formats[ScriptCommentFormat]);
+                makeLastStandard = false;
+                //                                parentheses.push_back(Parenthesis(Parenthesis::Opened, QLatin1Char('/'), i-1));
+                buffer = QString::null;
+                break;
+            case StateScriptCommentStart2:
+                setFormat(i - 1, 2, m_formats[ScriptCommentFormat]);
+                makeLastStandard = false;
+                buffer = QString::null;
+                break;
+            case StateCComment:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptCommentFormat]);
+                buffer = QString::null;
+                break;
+            case StateScriptComment:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptCommentFormat]);
+                buffer = QString::null;
+                break;
+            case StateCCommentEnd1:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptCommentFormat]);
+                buffer = QString::null;
+                break;
+            case StateCCommentEnd2:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptCommentFormat]);
+                //                                parentheses.push_back(Parenthesis(Parenthesis::Closed, QLatin1Char('/'), i));
+                buffer = QString::null;
+                break;
+            case StateStringStart:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, emptyFormat);
+                buffer = QString::null;
+                break;
+            case StateString:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptStringFormat]);
+                buffer = QString::null;
+                break;
+            case StateStringEnd:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, emptyFormat);
+                buffer = QString::null;
+                break;
+            case StateString2Start:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, emptyFormat);
+                buffer = QString::null;
+                break;
+            case StateString2:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptStringFormat]);
+                buffer = QString::null;
+                break;
+            case StateString2End:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, emptyFormat);
+                buffer = QString::null;
+                break;
+            case StateNumber:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptNumberFormat]);
+                buffer = QString::null;
+                break;
+            case StatePreProcessor:
+                if (makeLastStandard) {
+                    setFormat(i - 1, 1, emptyFormat);
+                }
+                makeLastStandard = false;
+                setFormat(i, 1, m_formats[ScriptPreprocessorFormat]);
+                buffer = QString::null;
+                break;
         }
 
         lastChar = c;
@@ -433,10 +467,11 @@ void QScriptHighLight::highlightBlock(const QString &text)
             }
             int collapse = Parenthesis::collapseAtPos(parentheses);
             if (collapse >= 0) {
-                if (collapse == firstNonSpace)
+                if (collapse == firstNonSpace) {
                     TextEditDocumentLayout::userData(currentBlock())->setCollapseMode(TextBlockUserData::CollapseThis);
-                else
+                } else {
                     TextEditDocumentLayout::userData(currentBlock())->setCollapseMode(TextBlockUserData::CollapseAfter);
+                }
             }
             if (Parenthesis::hasClosingCollapse(parentheses)) {
                 TextEditDocumentLayout::userData(currentBlock())->setHasClosingCollapse(true);
@@ -450,24 +485,24 @@ void QScriptHighLight::highlightBlock(const QString &text)
     highlightWord(text.length(), buffer);
 
     switch (state) {
-    case  StateCComment:
-    case  StateCCommentEnd1:
-    case  StateCCommentStart2:
-        state = StateCComment;
-        break;
-    case StateString:
-        // quotes cannot span multiple lines, so if somebody starts
-        // typing a quoted string we don't need to look for the ending
-        // quote in another line (or highlight until the end of the
-        // document) and therefore slow down editing.
-        state = StateStandard;
-        break;
-    case StateString2:
-        state =  StateStandard;
-        break;
-    default:
-        state = StateStandard;
-        break;
+        case  StateCComment:
+        case  StateCCommentEnd1:
+        case  StateCCommentStart2:
+            state = StateCComment;
+            break;
+        case StateString:
+            // quotes cannot span multiple lines, so if somebody starts
+            // typing a quoted string we don't need to look for the ending
+            // quote in another line (or highlight until the end of the
+            // document) and therefore slow down editing.
+            state = StateStandard;
+            break;
+        case StateString2:
+            state =  StateStandard;
+            break;
+        default:
+            state = StateStandard;
+            break;
     }
 
 #if 0
@@ -479,8 +514,10 @@ void QScriptHighLight::highlightBlock(const QString &text)
 
 void QScriptHighLight::highlightWord(int currentPos, const QString &buffer)
 {
-    if (buffer.isEmpty())
+    if (buffer.isEmpty()) {
         return;
-    if (isKeyword(buffer))
+    }
+    if (isKeyword(buffer)) {
         setFormat(currentPos - buffer.length(), buffer.length(), m_formats[ScriptKeywordFormat]);
+    }
 }

@@ -22,7 +22,7 @@ QStateCheckWidget::QStateCheckWidget(QAbstractProperty *property, const QString 
         sheet s = StyleSheetInfo::get_info(item.m_item_id);
         if(s.m_name != "") {
             QItemCheckBox *c = new QItemCheckBox(s.m_show_name, s.m_not);
-            m_widget_to_name.insert(c,s.m_name);
+            m_widgetToName.insert(c, s.m_name);
             if(list.contains(s.m_name)) {
                 c->set_checked(true);
                 c->set_yes(true);
@@ -33,8 +33,8 @@ QStateCheckWidget::QStateCheckWidget(QAbstractProperty *property, const QString 
 
             connect(c, SIGNAL(changed()), this, SLOT(check_changed()));
             m_widgets.append(c);
-            int index = m_widgets.size()-1;
-            g->addWidget(c, index/4, index%4);
+            int index = m_widgets.size() - 1;
+            g->addWidget(c, index / 4, index % 4);
         }
     }
 
@@ -63,7 +63,7 @@ QString QStateCheckWidget::getTagName()
             if(!c->get_yes()) {
                 str += "!";
             }
-            str += m_widget_to_name.value(c);
+            str += m_widgetToName.value(c);
         }
     }
     return str;

@@ -15,13 +15,13 @@ public:
 
     void set_value(const QVariant &value);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 	
 protected:
     void child_value_changed(const QVariant &old, const QVariant &now);
-    void make_value();
-    void write_value();
+    void makeValue();
+    void writeValue();
 	
 protected:
     QEnumProperty *m_family;

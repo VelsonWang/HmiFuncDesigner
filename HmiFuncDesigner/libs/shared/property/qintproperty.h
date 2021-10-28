@@ -10,8 +10,8 @@ class QIntProperty: public QAbstractProperty
 public:
     Q_INVOKABLE QIntProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 };
 
 #endif // QINTPROPERTY_H

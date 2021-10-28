@@ -23,32 +23,32 @@ QStringList QGradientMaker::styleSheetParameters(const QGradient &gradient)
     }
 
     switch (gradient.type()) {
-    case QGradient::LinearGradient: {
-        const QLinearGradient *linearGradient = static_cast<const QLinearGradient*>(&gradient);
-        result << QLatin1String("x1:") + QString::number(linearGradient->start().x())
-                << QLatin1String("y1:")    + QString::number(linearGradient->start().y())
-                << QLatin1String("x2:")    + QString::number(linearGradient->finalStop().x())
-                << QLatin1String("y2:")    + QString::number(linearGradient->finalStop().y());
-        break;
-    }
-    case QGradient::RadialGradient: {
-        const QRadialGradient *radialGradient = static_cast<const QRadialGradient*>(&gradient);
-        result << QLatin1String("cx:")  + QString::number(radialGradient->center().x())
-                << QLatin1String("cy:")     + QString::number(radialGradient->center().y())
-                << QLatin1String("radius:") + QString::number(radialGradient->radius())
-                << QLatin1String("fx:")     + QString::number(radialGradient->focalPoint().x())
-                << QLatin1String("fy:")     + QString::number(radialGradient->focalPoint().y());
-        break;
-    }
-    case QGradient::ConicalGradient: {
-        const QConicalGradient *conicalGradient = static_cast<const QConicalGradient*>(&gradient);
-        result << QLatin1String("cx:") + QString::number(conicalGradient->center().x())
-                << QLatin1String("cy:")    + QString::number(conicalGradient->center().y())
-                << QLatin1String("angle:") + QString::number(conicalGradient->angle());
-        break;
-    }
-    default:
-        break;
+        case QGradient::LinearGradient: {
+            const QLinearGradient *linearGradient = static_cast<const QLinearGradient*>(&gradient);
+            result << QLatin1String("x1:") + QString::number(linearGradient->start().x())
+                   << QLatin1String("y1:")    + QString::number(linearGradient->start().y())
+                   << QLatin1String("x2:")    + QString::number(linearGradient->finalStop().x())
+                   << QLatin1String("y2:")    + QString::number(linearGradient->finalStop().y());
+            break;
+        }
+        case QGradient::RadialGradient: {
+            const QRadialGradient *radialGradient = static_cast<const QRadialGradient*>(&gradient);
+            result << QLatin1String("cx:")  + QString::number(radialGradient->center().x())
+                   << QLatin1String("cy:")     + QString::number(radialGradient->center().y())
+                   << QLatin1String("radius:") + QString::number(radialGradient->radius())
+                   << QLatin1String("fx:")     + QString::number(radialGradient->focalPoint().x())
+                   << QLatin1String("fy:")     + QString::number(radialGradient->focalPoint().y());
+            break;
+        }
+        case QGradient::ConicalGradient: {
+            const QConicalGradient *conicalGradient = static_cast<const QConicalGradient*>(&gradient);
+            result << QLatin1String("cx:") + QString::number(conicalGradient->center().x())
+                   << QLatin1String("cy:")    + QString::number(conicalGradient->center().y())
+                   << QLatin1String("angle:") + QString::number(conicalGradient->angle());
+            break;
+        }
+        default:
+            break;
     }
 
     return result;
@@ -61,10 +61,10 @@ QStringList QGradientMaker::styleSheetStops(const QGradient &gradient)
         const QColor color = stop.second;
 
         const QString stopDescription = QLatin1String("stop:") + QString::number(stop.first) + QLatin1String(" rgba(")
-                + QString::number(color.red()) + QLatin1String(", ")
-                + QString::number(color.green()) + QLatin1String(", ")
-                + QString::number(color.blue()) + QLatin1String(", ")
-                + QString::number(color.alpha()) + QLatin1Char(')');
+                                        + QString::number(color.red()) + QLatin1String(", ")
+                                        + QString::number(color.green()) + QLatin1String(", ")
+                                        + QString::number(color.blue()) + QLatin1String(", ")
+                                        + QString::number(color.alpha()) + QLatin1Char(')');
         result << (stopDescription);
     }
 
@@ -87,7 +87,7 @@ QString QGradientMaker::styleSheetFillName(const QGradient &gradient)
             result += QLatin1String("qconicalgradient");
             break;
         default:
-        break;
+            break;
     }
 
     return result;
@@ -105,7 +105,7 @@ QString QGradientMaker::styleSheetCode(const QGradient &gradient)
 
     list = styleSheetStops(gradient);
     foreach(const QString &str, list) {
-        ret += ("\n" + QString(25,' ') + str);
+        ret += ("\n" + QString(25, ' ') + str);
     }
     ret += ")";
     return ret;

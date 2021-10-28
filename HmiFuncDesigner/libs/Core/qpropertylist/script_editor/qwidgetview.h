@@ -6,8 +6,7 @@
 
 class QAbstractHost;
 
-enum FIND_POINT
-{
+enum FIND_POINT {
     FP_NEXT,
     FP_PREV
 };
@@ -34,7 +33,7 @@ public slots:
 
 protected:
     QMap<QAbstractHost*, QTreeWidgetItem*> m_items;
-    QAbstractHost *m_property_host;
+    QAbstractHost *m_propertyHost;
 };
 
 #endif // QWIDGETVIEW_H

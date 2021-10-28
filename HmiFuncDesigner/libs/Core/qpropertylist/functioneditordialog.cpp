@@ -17,28 +17,28 @@
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent, QStringList events)
     : QDialog(parent),
       ui(new Ui::FunctionEditorDialog),
-      iSelectedCurRow_(-1)
+      m_selectedCurRow(-1)
 {
     ui->setupUi(this);
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
     this->setWindowTitle(tr("功能操作编辑"));
 
-    mapNameToShowName_.clear();
-    mapShowNameToName_.clear();
-    supportEvents_.clear();
+    m_nameToShowName.clear();
+    m_showNameToName.clear();
+    m_supportEvents.clear();
 
     for(int i = 0; i < events.size(); i++) {
         QString szNameToShowName = events.at(i);
         QStringList listNameToShowName = szNameToShowName.split('-');
         if ( listNameToShowName.size() == 2 ) {
-            supportEvents_ << listNameToShowName.at(1);
-            mapNameToShowName_[listNameToShowName.at(0)] = listNameToShowName.at(1);
-            mapShowNameToName_[listNameToShowName.at(1)] = listNameToShowName.at(0);
+            m_supportEvents << listNameToShowName.at(1);
+            m_nameToShowName[listNameToShowName.at(0)] = listNameToShowName.at(1);
+            m_showNameToName[listNameToShowName.at(1)] = listNameToShowName.at(0);
         }
     }
 
-    selectFuncObjItemList_.clear();
-    funcObjItemList_.clear();
+    m_selectFuncObjItemList.clear();
+    m_funcObjItemList.clear();
 
     m_propertyView = new QPropertyListView(this);
     connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
@@ -53,19 +53,19 @@ FunctionEditorDialog::~FunctionEditorDialog()
 {
     delete ui;
 
-    for(int i = 0; i < funcObjItemList_.count(); i++) {
-        qDeleteAll(funcObjItemList_.at(i)->argList_);
-        funcObjItemList_.at(i)->argList_.clear();
+    for(int i = 0; i < m_funcObjItemList.count(); i++) {
+        qDeleteAll(m_funcObjItemList.at(i)->m_argList);
+        m_funcObjItemList.at(i)->m_argList.clear();
     }
-    qDeleteAll(funcObjItemList_);
-    funcObjItemList_.clear();
+    qDeleteAll(m_funcObjItemList);
+    m_funcObjItemList.clear();
 
-    for(int i = 0; i < selectFuncObjItemList_.count(); i++) {
-        qDeleteAll(selectFuncObjItemList_.at(i)->argList_);
-        selectFuncObjItemList_.at(i)->argList_.clear();
+    for(int i = 0; i < m_selectFuncObjItemList.count(); i++) {
+        qDeleteAll(m_selectFuncObjItemList.at(i)->m_argList);
+        m_selectFuncObjItemList.at(i)->m_argList.clear();
     }
-    qDeleteAll(selectFuncObjItemList_);
-    selectFuncObjItemList_.clear();
+    qDeleteAll(m_selectFuncObjItemList);
+    m_selectFuncObjItemList.clear();
 
     if(m_propertyView) {
         delete m_propertyView;
@@ -113,7 +113,7 @@ void FunctionEditorDialog::initListWidget()
         QString szFuncGroupName = funcGroup->getProperty("funcName");
         QTabWidget *pTab = ui->tabFuncSelect;
         QListWidget *pListWidget = new QListWidget(pTab);
-        listWidgetList_.append(pListWidget);
+        m_listWidgetList.append(pListWidget);
         connect(pListWidget, SIGNAL(itemClicked(QListWidgetItem*)),
                 this, SLOT(listItemClicked(QListWidgetItem*)));
         connect(pListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)),
@@ -129,7 +129,7 @@ void FunctionEditorDialog::initListWidget()
         foreach(XMLObject* func, childrenGroup) {
             TFuncObjectItem *pFuncObjItem = new TFuncObjectItem();
             QString funcName = func->getProperty("name");
-            pFuncObjItem->szName_ = funcName;
+            pFuncObjItem->m_name = funcName;
             QListWidgetItem *pItem = new QListWidgetItem(funcName, pListWidget);
             pListWidget->addItem(pItem);
 
@@ -155,7 +155,7 @@ void FunctionEditorDialog::initListWidget()
                     TArgItem *pArgItem = new TArgItem();
                     pArgItem->name = arg->getProperty("name");
                     pArgItem->type = arg->getProperty("type").toUpper();
-                    pFuncObjItem->argList_.append(pArgItem);
+                    pFuncObjItem->m_argList.append(pArgItem);
                     strDesc += QString("\t");
                     strDesc += strArg;
                     strDesc += QString("\n");
@@ -168,13 +168,13 @@ void FunctionEditorDialog::initListWidget()
             strDesc.replace(QString("_N"), QString("\n"));
             strDesc.replace(QString("_T"), QString("    "));
 
-            if(supportEvents_.count() > 0) {
-                pFuncObjItem->szEvent_ = supportEvents_.at(0);
+            if(m_supportEvents.count() > 0) {
+                pFuncObjItem->m_event = m_supportEvents.at(0);
             }
-            pFuncObjItem->szDesc_ = strDesc;
+            pFuncObjItem->m_desc = strDesc;
             QString strFuncOrg = strFuncOrgName.right(strFuncOrgName.length() - strFuncOrgName.indexOf(":") - 1);
-            pFuncObjItem->szFuncNameOrg_ = strFuncOrg;
-            funcObjItemList_.append(pFuncObjItem);
+            pFuncObjItem->m_funcNameOrg = strFuncOrg;
+            m_funcObjItemList.append(pFuncObjItem);
         }
     }
 }
@@ -202,50 +202,50 @@ void FunctionEditorDialog::initTableWidget()
 
 QStringList FunctionEditorDialog::getFunctions()
 {
-    funcs_.clear();
+    m_funcs.clear();
     int iRowCount = ui->tableEventFunc->rowCount();
     for(int i = 0; i < iRowCount; i++) {
         QTableWidgetItem *pItemFuncName = ui->tableEventFunc->item(i, 0);
         QTableWidgetItem *pItemFuncEvent = ui->tableEventFunc->item(i, 1);
         QString szFuncName = pItemFuncName->text();
-        QString szFuncEvent = mapShowNameToName_[pItemFuncEvent->text()];
+        QString szFuncEvent = m_showNameToName[pItemFuncEvent->text()];
         QString szRowFuncEvent = szFuncName + ":" + szFuncEvent;
-        funcs_.append(szRowFuncEvent);
+        m_funcs.append(szRowFuncEvent);
     }
-    return funcs_;
+    return m_funcs;
 }
 
 void FunctionEditorDialog::setFunctions(const QStringList &funcs)
 {
-    if (funcs_ != funcs) {
-        selectFuncObjItemList_.clear();
-        funcs_ = funcs;
-        foreach (QString szFuncEvent, funcs_) {
+    if (m_funcs != funcs) {
+        m_selectFuncObjItemList.clear();
+        m_funcs = funcs;
+        foreach (QString szFuncEvent, m_funcs) {
             if(szFuncEvent == "") {
                 continue;
             }
             TFuncObjectItem *pNewFuncObj = new TFuncObjectItem();
             pNewFuncObj->setFuncString(szFuncEvent);
-            pNewFuncObj->szEvent_ = mapNameToShowName_[pNewFuncObj->szEvent_];
-            TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(pNewFuncObj->szName_);
+            pNewFuncObj->m_event = m_nameToShowName[pNewFuncObj->m_event];
+            TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(pNewFuncObj->m_name);
             if(pFuncObjectItem == NULL) {
                 continue;
             }
-            int count = pNewFuncObj->argList_.count();
+            int count = pNewFuncObj->m_argList.count();
             for(int i = 0; i < count; i++) {
-                ArgItem *pArgItem = pNewFuncObj->argList_.at(i);
-                pArgItem->type = pFuncObjectItem->argList_.at(i)->type;
-                pArgItem->name = pFuncObjectItem->argList_.at(i)->name;
+                ArgItem *pArgItem = pNewFuncObj->m_argList.at(i);
+                pArgItem->type = pFuncObjectItem->m_argList.at(i)->type;
+                pArgItem->name = pFuncObjectItem->m_argList.at(i)->name;
             }
-            pNewFuncObj->szDesc_ = pFuncObjectItem->szDesc_;
-            pNewFuncObj->szFuncNameOrg_ = pFuncObjectItem->szFuncNameOrg_;
-            selectFuncObjItemList_.append(pNewFuncObj);
+            pNewFuncObj->m_desc = pFuncObjectItem->m_desc;
+            pNewFuncObj->m_funcNameOrg = pFuncObjectItem->m_funcNameOrg;
+            m_selectFuncObjItemList.append(pNewFuncObj);
 
             int iRowCount = ui->tableEventFunc->rowCount();
             ui->tableEventFunc->insertRow(iRowCount);
             QTableWidgetItem *itemFuncName = new QTableWidgetItem(pNewFuncObj->getFuncString());
             ui->tableEventFunc->setItem(iRowCount, 0, itemFuncName);
-            QTableWidgetItem *itemFuncEvent = new QTableWidgetItem(pNewFuncObj->szEvent_);
+            QTableWidgetItem *itemFuncEvent = new QTableWidgetItem(pNewFuncObj->m_event);
             ui->tableEventFunc->setItem(iRowCount, 1, itemFuncEvent);
         }
     }
@@ -253,7 +253,7 @@ void FunctionEditorDialog::setFunctions(const QStringList &funcs)
 
 void FunctionEditorDialog::on_btnAdd_clicked()
 {
-    foreach (QListWidget *pListWidget, listWidgetList_) {
+    foreach (QListWidget *pListWidget, m_listWidgetList) {
         QListWidgetItem *pCurItem = pListWidget->currentItem();
         if(pCurItem != NULL) {
             listItemDoubleClicked(pCurItem);
@@ -353,8 +353,8 @@ void FunctionEditorDialog::listItemClicked(QListWidgetItem *item)
 {
     TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(item->text());
     if(pFuncObjectItem != NULL) {
-        ui->plainTextFuncDesc->setPlainText(pFuncObjectItem->szDesc_);
-        szSelectedFuncName_ = pFuncObjectItem->szName_;
+        ui->plainTextFuncDesc->setPlainText(pFuncObjectItem->m_desc);
+        m_selectedFuncName = pFuncObjectItem->m_name;
     }
 }
 
@@ -368,30 +368,30 @@ void FunctionEditorDialog::listItemDoubleClicked(QListWidgetItem *item)
     int iRowCount = ui->tableEventFunc->rowCount();
     ui->tableEventFunc->insertRow(iRowCount);
     TFuncObjectItem *pFuncObjectItem = getFuncObjectItem(item->text());
-    QString szFuncNameOrg = pFuncObjectItem->szFuncNameOrg_;
+    QString szFuncNameOrg = pFuncObjectItem->m_funcNameOrg;
     QTableWidgetItem *itemFuncName = new QTableWidgetItem(szFuncNameOrg);
     ui->tableEventFunc->setItem(iRowCount, 0, itemFuncName);
 
-    QString szFuncEvent = pFuncObjectItem->szEvent_;
+    QString szFuncEvent = pFuncObjectItem->m_event;
     QTableWidgetItem *itemFuncEvent = new QTableWidgetItem(szFuncEvent);
     ui->tableEventFunc->setItem(iRowCount, 1, itemFuncEvent);
 
-    szSelectedFuncName_ = pFuncObjectItem->szName_;
+    m_selectedFuncName = pFuncObjectItem->m_name;
 
     TFuncObjectItem *pNewFuncObj = new TFuncObjectItem();
-    pNewFuncObj->szName_ = pFuncObjectItem->szName_;
-    pNewFuncObj->szEvent_ = pFuncObjectItem->szEvent_;
-    int count = pFuncObjectItem->argList_.count();
+    pNewFuncObj->m_name = pFuncObjectItem->m_name;
+    pNewFuncObj->m_event = pFuncObjectItem->m_event;
+    int count = pFuncObjectItem->m_argList.count();
     for(int i = 0; i < count; i++) {
         ArgItem *pArgItem = new ArgItem();
-        pArgItem->type = pFuncObjectItem->argList_.at(i)->type;
-        pArgItem->name = pFuncObjectItem->argList_.at(i)->name;
-        pArgItem->value = pFuncObjectItem->argList_.at(i)->value;
-        pNewFuncObj->argList_.append(pArgItem);
+        pArgItem->type = pFuncObjectItem->m_argList.at(i)->type;
+        pArgItem->name = pFuncObjectItem->m_argList.at(i)->name;
+        pArgItem->value = pFuncObjectItem->m_argList.at(i)->value;
+        pNewFuncObj->m_argList.append(pArgItem);
     }
-    pNewFuncObj->szDesc_ = pFuncObjectItem->szDesc_;
-    pNewFuncObj->szFuncNameOrg_ = pFuncObjectItem->szFuncNameOrg_;
-    selectFuncObjItemList_.append(pNewFuncObj);
+    pNewFuncObj->m_desc = pFuncObjectItem->m_desc;
+    pNewFuncObj->m_funcNameOrg = pFuncObjectItem->m_funcNameOrg;
+    m_selectFuncObjItemList.append(pNewFuncObj);
 }
 
 
@@ -403,9 +403,9 @@ void FunctionEditorDialog::listItemDoubleClicked(QListWidgetItem *item)
  */
 TFuncObjectItem *FunctionEditorDialog::getFuncObjectItem(const QString &name)
 {
-    for(int i = 0; i < funcObjItemList_.count(); i++) {
-        TFuncObjectItem *pFuncObjItem = funcObjItemList_.at(i);
-        if(pFuncObjItem->szName_ == name) {
+    for(int i = 0; i < m_funcObjItemList.count(); i++) {
+        TFuncObjectItem *pFuncObjItem = m_funcObjItemList.at(i);
+        if(pFuncObjItem->m_name == name) {
             return pFuncObjItem;
         }
     }
@@ -419,23 +419,23 @@ TFuncObjectItem *FunctionEditorDialog::getFuncObjectItem(const QString &name)
  */
 void FunctionEditorDialog::setSupportEvents(QStringList events)
 {
-    supportEvents_ = events;
+    m_supportEvents = events;
 }
 
 
 void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
 {
     Q_UNUSED(index)
-    iSelectedCurRow_ = ui->tableEventFunc->currentRow();
+    m_selectedCurRow = ui->tableEventFunc->currentRow();
     QTableWidgetItem *pItem = ui->tableEventFunc->currentItem();
     if(pItem == NULL) {
         return;
     }
-    QString szFuncNameOrg = ui->tableEventFunc->item(iSelectedCurRow_, 0)->text();
-    TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
-    if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
-        ui->plainTextFuncDesc->setPlainText(pFuncObjItem->szDesc_);
-        szSelectedFuncName_ = pFuncObjItem->szName_;
+    QString szFuncNameOrg = ui->tableEventFunc->item(m_selectedCurRow, 0)->text();
+    TFuncObjectItem *pFuncObjItem = m_selectFuncObjItemList.at(m_selectedCurRow);
+    if(szFuncNameOrg.indexOf(pFuncObjItem->m_name) > -1) {
+        ui->plainTextFuncDesc->setPlainText(pFuncObjItem->m_desc);
+        m_selectedFuncName = pFuncObjItem->m_name;
         updatePropertyEditor();
     }
 }
@@ -452,8 +452,8 @@ void FunctionEditorDialog::updatePropertyEditor()
 
     QTableWidgetItem *pItemNeed = ui->tableEventFunc->item(pItem->row(), 0);
     QString szFuncNameOrg = pItemNeed->text();
-    TFuncObjectItem *pFuncObjItem = selectFuncObjItemList_.at(pItem->row());
-    if(szFuncNameOrg.indexOf(pFuncObjItem->szName_) > -1) {
+    TFuncObjectItem *pFuncObjItem = m_selectFuncObjItemList.at(pItem->row());
+    if(szFuncNameOrg.indexOf(pFuncObjItem->m_name) > -1) {
         pProObj = QPropertyFactory::create_property("Enum");
         if(pProObj != NULL) {
             pProObj->setObjectProperty("name", "eventType");
@@ -462,7 +462,7 @@ void FunctionEditorDialog::updatePropertyEditor()
             pProObj->setAttribute(ATTR_CAN_SAME, true);
 
             ComboItems items;
-            foreach(QString szEv, supportEvents_) {
+            foreach(QString szEv, m_supportEvents) {
                 tagComboItem item;
                 item.m_text = szEv;
                 item.m_value = szEv;
@@ -472,7 +472,7 @@ void FunctionEditorDialog::updatePropertyEditor()
             QVariant v;
             v.setValue<ComboItems>(items);
             pProObj->setAttribute("items", v);
-            pProObj->set_value(pFuncObjItem->szEvent_);
+            pProObj->set_value(pFuncObjItem->m_event);
             listProperties.append(pProObj);
         }
 
@@ -484,11 +484,11 @@ void FunctionEditorDialog::updatePropertyEditor()
             pProObj->setAttribute("group", "Attributes");
             pProObj->setAttribute("type", "funcName");
             pProObj->setAttribute(ATTR_CAN_SAME, true);
-            pProObj->set_value(pFuncObjItem->szName_);
+            pProObj->set_value(pFuncObjItem->m_name);
             listProperties.append(pProObj);
         }
 
-        foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
+        foreach (TArgItem *pArgItem, pFuncObjItem->m_argList) {
             if(pArgItem->type == "VALUE") {
                 pProObj = QPropertyFactory::create_property("String");
                 if(pProObj != NULL) {
@@ -506,15 +506,15 @@ void FunctionEditorDialog::updatePropertyEditor()
             } else if(pArgItem->type == "TAGLIST") {
                 pProObj = QPropertyFactory::create_property("Tag");
                 if(pProObj != NULL) {
-                    tagNames_.clear();
-                    QSoftCore::getCore()->getProjectCore()->getAllTagName(tagNames_);
+                    m_tagNames.clear();
+                    QSoftCore::getCore()->getProjectCore()->getAllTagName(m_tagNames);
                     pProObj->setObjectProperty("name", "tag");
                     pProObj->setAttribute("show_name", pArgItem->name);
                     pProObj->setAttribute("group", "Attributes");
                     pProObj->setAttribute(ATTR_CAN_SAME, true);
 
                     ComboItems items;
-                    foreach(QString szTagName, tagNames_) {
+                    foreach(QString szTagName, m_tagNames) {
                         tagComboItem item;
                         item.m_text = szTagName;
                         item.m_value = szTagName;
@@ -524,15 +524,15 @@ void FunctionEditorDialog::updatePropertyEditor()
                     v.setValue<ComboItems>(items);
                     pProObj->setAttribute("items", v);
 
-                    if(pArgItem->value == "" && tagNames_.size() > 0) {
-                        pArgItem->value = tagNames_.at(0);
+                    if(pArgItem->value == "" && m_tagNames.size() > 0) {
+                        pArgItem->value = m_tagNames.at(0);
                     }
                     pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "GRAPHPAGELIST") {
-                graphPageNames_.clear();
-                QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(graphPageNames_);
+                m_graphPageNames.clear();
+                QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(m_graphPageNames);
 
                 pProObj = QPropertyFactory::create_property("Enum");
                 if(pProObj != NULL) {
@@ -542,7 +542,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     pProObj->setAttribute(ATTR_CAN_SAME, true);
 
                     ComboItems items;
-                    foreach(QString szName, graphPageNames_) {
+                    foreach(QString szName, m_graphPageNames) {
                         tagComboItem item;
                         item.m_text = szName;
                         item.m_value = szName;
@@ -553,15 +553,15 @@ void FunctionEditorDialog::updatePropertyEditor()
                     v.setValue<ComboItems>(items);
                     pProObj->setAttribute("items", v);
 
-                    if(pArgItem->value == "" && graphPageNames_.size() > 0) {
-                        pArgItem->value = graphPageNames_.at(0);
+                    if(pArgItem->value == "" && m_graphPageNames.size() > 0) {
+                        pArgItem->value = m_graphPageNames.at(0);
                     }
                     pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "ELEMENTIDLIST") {
-                elementIds_.clear();
-                QSoftCore::getCore()->getProjectCore()->getAllElementIDName(elementIds_);
+                m_elementIds.clear();
+                QSoftCore::getCore()->getProjectCore()->getAllElementIDName(m_elementIds);
                 pProObj = QPropertyFactory::create_property("Enum");
                 if(pProObj != NULL) {
                     pProObj->setObjectProperty("name", "element");
@@ -570,7 +570,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     pProObj->setAttribute(ATTR_CAN_SAME, true);
 
                     ComboItems items;
-                    foreach(QString szEle, elementIds_) {
+                    foreach(QString szEle, m_elementIds) {
                         tagComboItem item;
                         item.m_text = szEle;
                         item.m_value = szEle;
@@ -581,8 +581,8 @@ void FunctionEditorDialog::updatePropertyEditor()
                     v.setValue<ComboItems>(items);
                     pProObj->setAttribute("items", v);
 
-                    if(pArgItem->value == "" && elementIds_.size() > 0) {
-                        pArgItem->value = elementIds_.at(0);
+                    if(pArgItem->value == "" && m_elementIds.size() > 0) {
+                        pArgItem->value = m_elementIds.at(0);
                     }
                     pProObj->set_value(pArgItem->value);
                     listProperties.append(pProObj);
@@ -597,10 +597,10 @@ void FunctionEditorDialog::updatePropertyEditor()
 void FunctionEditorDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &value)
 {
     TFuncObjectItem *pFuncObjItem;
-    pFuncObjItem = selectFuncObjItemList_.at(iSelectedCurRow_);
+    pFuncObjItem = m_selectFuncObjItemList.at(m_selectedCurRow);
 
     QString szName = pro->getAttribute("show_name").toString();
-    foreach (TArgItem *pArgItem, pFuncObjItem->argList_) {
+    foreach (TArgItem *pArgItem, pFuncObjItem->m_argList) {
         if(pArgItem->name == szName) {
             pArgItem->value = value.toString();
             break;
@@ -608,11 +608,11 @@ void FunctionEditorDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant
     }
 
     if(szName == tr("事件类型")) {
-        pFuncObjItem->szEvent_ = value.toString();
+        pFuncObjItem->m_event = value.toString();
     }
 
     QString szFunc = pFuncObjItem->getFuncString();
-    ui->tableEventFunc->item(iSelectedCurRow_, 0)->setText(szFunc);
-    ui->tableEventFunc->item(iSelectedCurRow_, 1)->setText(pFuncObjItem->szEvent_);
+    ui->tableEventFunc->item(m_selectedCurRow, 0)->setText(szFunc);
+    ui->tableEventFunc->item(m_selectedCurRow, 1)->setText(pFuncObjItem->m_event);
     pro->set_value(value);
 }

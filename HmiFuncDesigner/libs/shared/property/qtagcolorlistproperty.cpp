@@ -7,12 +7,12 @@ QTagColorListProperty::QTagColorListProperty(QAbstractProperty *parent) :
     setAttribute(ATTR_RESET_ABLEABLE, false);
 }
 
-QString QTagColorListProperty::get_value_text()
+QString QTagColorListProperty::getValueText()
 {
     return get_value().toString();
 }
 
-QIcon QTagColorListProperty::get_value_icon()
+QIcon QTagColorListProperty::getValueIcon()
 {
     return QIcon();
 }

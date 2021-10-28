@@ -9,8 +9,8 @@ class QStylesheetProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QStylesheetProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 
     void fromObject(XMLObject *xml);
     void toObject(XMLObject *xml);

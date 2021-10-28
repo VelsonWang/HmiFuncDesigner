@@ -95,10 +95,10 @@ QPalette panelPalette(const QPalette &oldPalette, bool lightColored = false)
 }
 
 
-ManhattanStyle::ManhattanStyle(const QString &baseStyleName)
-    : QProxyStyle(QStyleFactory::create(baseStyleName)),
-      m_lineeditImage(":/images/inputfield.png"),
-      m_lineeditImage_disabled(":/images/inputfield_disabled.png")
+ManhattanStyle::ManhattanStyle(const QString &baseStyleName) :
+    QProxyStyle(QStyleFactory::create(baseStyleName)),
+    m_lineEditImage(":/images/inputfield.png"),
+    m_lineEditImageDisabled(":/images/inputfield_disabled.png")
 {
 }
 
@@ -187,8 +187,8 @@ void ManhattanStyle::drawControl(ControlElement element, const QStyleOption *opt
             break;
 
         case CE_TabBarTabShape:
-            if (const QStyleOptionTabV3 *tab = qstyleoption_cast<const QStyleOptionTabV3 *>(option)) {
-                QStyleOptionTabV3 adjustedTab = *tab;
+            if (const QStyleOptionTab *tab = qstyleoption_cast<const QStyleOptionTab *>(option)) {
+                QStyleOptionTab adjustedTab = *tab;
                 if (tab->cornerWidgets == QStyleOptionTab::NoCornerWidgets && (
                             tab->position == QStyleOptionTab::Beginning ||
                             tab->position == QStyleOptionTab::OnlyOneTab)) {
@@ -284,11 +284,11 @@ void ManhattanStyle::drawControl(ControlElement element, const QStyleOption *opt
 
                     bool notElideAsterisk = widget && widget->property("notelideasterisk").toBool()
                                             && cb->currentText.endsWith(asterisk)
-                                            && option->fontMetrics.width(cb->currentText) > elideWidth;
+                                            && option->fontMetrics.horizontalAdvance(cb->currentText) > elideWidth;
 
                     QString text;
                     if (notElideAsterisk) {
-                        elideWidth -= option->fontMetrics.width(asterisk);
+                        elideWidth -= option->fontMetrics.horizontalAdvance(asterisk);
                         text = asterisk;
                     }
                     text.prepend(option->fontMetrics.elidedText(cb->currentText, Qt::ElideRight, elideWidth));
@@ -462,9 +462,9 @@ void ManhattanStyle::drawPrimitive(PrimitiveElement element, const QStyleOption 
             painter->fillRect(filedRect, option->palette.base());
 
             if(option->state & State_Enabled) {
-                StyleHelper::drawCornerImage(m_lineeditImage, painter, option->rect, 5, 5, 5, 5);
+                StyleHelper::drawCornerImage(m_lineEditImage, painter, option->rect, 5, 5, 5, 5);
             } else {
-                StyleHelper::drawCornerImage(m_lineeditImage_disabled, painter, option->rect, 5, 5, 5, 5);
+                StyleHelper::drawCornerImage(m_lineEditImageDisabled, painter, option->rect, 5, 5, 5, 5);
             }
 
             if(option->state & State_HasFocus || option->state & State_MouseOver) {
@@ -596,7 +596,7 @@ void ManhattanStyle::drawComplexControl(ComplexControl control, const QStyleOpti
 
                 QRect arrowRect((left + right) / 2 + (reverse ? 6 : -6), rect.center().y() - 3, 9, 9);
                 if(!alignarrow) {
-                    int labelwidth = option->fontMetrics.width(cb->currentText);
+                    int labelwidth = option->fontMetrics.horizontalAdvance(cb->currentText);
                     if(reverse) {
                         arrowRect.moveLeft(qMax(rect.width() - labelwidth - menuButtonWidth - 2, 4));
                     } else {

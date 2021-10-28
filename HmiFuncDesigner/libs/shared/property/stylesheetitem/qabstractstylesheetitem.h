@@ -2,7 +2,6 @@
 #define QABSTRACTSTYLESHEETITEM_H
 
 #include "../../sharedlibglobal.h"
-
 #include <QObject>
 #include <QMap>
 #include <QList>
@@ -20,7 +19,7 @@ public:
     virtual QVariant value();
     virtual void setValue(const QVariant &value);
 
-    QString attribute(const QString &key, const QString &def="");
+    QString attribute(const QString &key, const QString &def = "");
     void setAttribute(const QString &key, const QString &value);
 
     virtual void read(XMLObject *xml);
@@ -32,16 +31,16 @@ public:
     virtual void setDefault(const QVariant &value);
 
     void clear();
-	
+
 protected:
     QAbstractStylesheetItem *getChild(const QString &name);
 
 signals:
     void valueChanged();
-	
+
 protected slots:
     virtual void subValueChanged();
-	
+
 protected:
     QList<QAbstractStylesheetItem*> m_children;
     QAbstractStylesheetItem* m_parent;

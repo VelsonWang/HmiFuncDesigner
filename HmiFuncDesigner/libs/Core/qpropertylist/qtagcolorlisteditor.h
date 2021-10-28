@@ -8,7 +8,7 @@ class QTagColorListEditor : public QButtonCommonEditor
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QTagColorListEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
+    Q_INVOKABLE QTagColorListEditor(QAbstractProperty* m_property, QUndoStack* stack, QWidget *parent = 0);
 
 protected:
     void onBtnClicked();

@@ -8,7 +8,7 @@ class QTagTextListEditor : public QButtonCommonEditor
 {
     Q_OBJECT
 public:
-    Q_INVOKABLE QTagTextListEditor(QAbstractProperty* property, QUndoStack* stack, QWidget *parent = 0);
+    Q_INVOKABLE QTagTextListEditor(QAbstractProperty* m_property, QUndoStack* stack, QWidget *parent = 0);
 
 protected:
     void onBtnClicked();

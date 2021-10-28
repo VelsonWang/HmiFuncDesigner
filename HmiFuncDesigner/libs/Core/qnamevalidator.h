@@ -29,15 +29,18 @@ public:
 
     QString value() const;
 
-    void    setIntermediateList(QStringList list);
-    void    markIntermediateState();
+    void setIntermediateList(QStringList list);
+    void markIntermediateState();
+
 public slots:
     void setValue(const QString & text);
+
 private slots:
     void slotTextChanged(const QString &text);
+
 protected:
-    QString     m_text;
-    QNameValidator  *m_validator;
+    QString m_text;
+    QNameValidator *m_validator;
 };
 
 #endif // QNAMEVALIDATOR_H

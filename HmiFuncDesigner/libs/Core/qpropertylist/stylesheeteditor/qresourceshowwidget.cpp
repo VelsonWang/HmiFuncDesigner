@@ -23,7 +23,7 @@ void QResourceShowWidget::on_cancelbtn_clicked()
     emit cancel();
 }
 
-void QResourceShowWidget::set_image(const QByteArray &data)
+void QResourceShowWidget::setImage(const QByteArray &data)
 {
     QImage image = QImage::fromData(data);
 

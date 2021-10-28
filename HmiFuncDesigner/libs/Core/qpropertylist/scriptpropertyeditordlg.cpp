@@ -23,44 +23,44 @@ ScriptPropertyEditorDlg::ScriptPropertyEditorDlg(QWidget *parent, QStringList ev
     ui->setupUi(this);
     this->setWindowTitle(tr("JavaScript脚本编辑器"));
     this->setWindowFlags(this->windowFlags() & (~Qt::WindowContextHelpButtonHint));
-    mapNameToShowName_.clear();
-    mapShowNameToName_.clear();
-    supportEvents_.clear();
+    m_nameToShowName.clear();
+    m_showNameToName.clear();
+    m_supportEvents.clear();
     ui->cboEventTrigger->clear();
 
     for(int i = 0; i < events.size(); i++) {
         QString szNameToShowName = events.at(i);
         QStringList listNameToShowName = szNameToShowName.split('-');
         if ( listNameToShowName.size() == 2 ) {
-            supportEvents_ << listNameToShowName.at(1);
-            mapNameToShowName_[listNameToShowName.at(0)] = listNameToShowName.at(1);
-            mapShowNameToName_[listNameToShowName.at(1)] = listNameToShowName.at(0);
+            m_supportEvents << listNameToShowName.at(1);
+            m_nameToShowName[listNameToShowName.at(0)] = listNameToShowName.at(1);
+            m_showNameToName[listNameToShowName.at(1)] = listNameToShowName.at(0);
         }
     }
-    ui->cboEventTrigger->addItems(supportEvents_);
+    ui->cboEventTrigger->addItems(m_supportEvents);
 
     ///////////////////////////////>>////////////////
 
-    scriptEdit = new QsciScintilla(ui->widgetEditor);
+    m_scriptEdit = new QsciScintilla(ui->widgetEditor);
     QsciLexerJavaScript *scriptLexer = new QsciLexerJavaScript();      //创建一个词法分析器
-    scriptEdit->setLexer(scriptLexer);  //设置词法分析器
+    m_scriptEdit->setLexer(scriptLexer);  //设置词法分析器
 
-    scriptEdit->setMarginType(0, QsciScintilla::NumberMargin);  //设置编号为0的页边显示行号。
-    scriptEdit->setMarginLineNumbers(0, true);  //启用行号
-    scriptEdit->setMarginWidth(0, 26);
+    m_scriptEdit->setMarginType(0, QsciScintilla::NumberMargin);  //设置编号为0的页边显示行号。
+    m_scriptEdit->setMarginLineNumbers(0, true);  //启用行号
+    m_scriptEdit->setMarginWidth(0, 26);
 
     QsciAPIs *apis = new QsciAPIs(scriptLexer);  //代码提示
     apis->add(QString("local"));
     apis->prepare();
 
-    scriptEdit->setFont(QFont("Courier New"));  //设置字体
-    scriptEdit->SendScintilla(QsciScintilla::SCI_SETCODEPAGE, QsciScintilla::SC_CP_UTF8);  //设置编码为UTF-8
-    connect(scriptEdit, SIGNAL(textChanged()), this, SLOT(documentWasModified()));
+    m_scriptEdit->setFont(QFont("Courier New"));  //设置字体
+    m_scriptEdit->SendScintilla(QsciScintilla::SCI_SETCODEPAGE, QsciScintilla::SC_CP_UTF8);  //设置编码为UTF-8
+    connect(m_scriptEdit, SIGNAL(textChanged()), this, SLOT(documentWasModified()));
 
     QVBoxLayout *vLayout = new QVBoxLayout();
     vLayout->setContentsMargins(1, 1, 1, 1);
     vLayout->setObjectName(QStringLiteral("vLayout"));
-    vLayout->addWidget(scriptEdit);
+    vLayout->addWidget(m_scriptEdit);
     ui->widgetEditor->setLayout(vLayout);
 
     this->resize(700, 500);
@@ -68,7 +68,7 @@ ScriptPropertyEditorDlg::ScriptPropertyEditorDlg(QWidget *parent, QStringList ev
 
 ScriptPropertyEditorDlg::~ScriptPropertyEditorDlg()
 {
-    delete scriptEdit;
+    delete m_scriptEdit;
     delete ui;
 }
 
@@ -76,13 +76,13 @@ QString ScriptPropertyEditorDlg::getScript()
 {
     QStringList listEvScript;
 
-    szScript_ = scriptEdit->text();
-    QString szScriptTmp = szScript_;
+    m_script = m_scriptEdit->text();
+    QString szScriptTmp = m_script;
     szScriptTmp = szScriptTmp.replace("\r", "_R");
     szScriptTmp = szScriptTmp.replace("\n", "_N");
 
-    szEvent_ = ui->cboEventTrigger->currentText();
-    QString szScriptEvent = mapShowNameToName_[szEvent_];
+    m_event = ui->cboEventTrigger->currentText();
+    QString szScriptEvent = m_showNameToName[m_event];
 
     listEvScript << szScriptEvent << szScriptTmp;
     return listEvScript.join("][");
@@ -95,13 +95,13 @@ void ScriptPropertyEditorDlg::setScript(const QString &szScript)
     szScriptTmp = szScriptTmp.replace("_R", "\r");
     szScriptTmp = szScriptTmp.replace("_N", "\n");
 
-    if (szScript_ != szScriptTmp) {
+    if (m_script != szScriptTmp) {
         QStringList listEvScript = szScriptTmp.split("][");
         if(listEvScript.size() == 2) {
-            szEvent_ = listEvScript.at(0);
-            szScript_ = listEvScript.at(1);
-            scriptEdit->setText(szScript_);
-            QString szScriptEvent = mapNameToShowName_[szEvent_];
+            m_event = listEvScript.at(0);
+            m_script = listEvScript.at(1);
+            m_scriptEdit->setText(m_script);
+            QString szScriptEvent = m_nameToShowName[m_event];
             ui->cboEventTrigger->setCurrentText(szScriptEvent);
         }
     }
@@ -131,9 +131,9 @@ void ScriptPropertyEditorDlg::resizeEvent(QResizeEvent *event)
 */
 void ScriptPropertyEditorDlg::on_btnTypeInteger_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString("%1\n%2\n").arg("// type Integer").arg("var tInt = 0;");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -141,10 +141,10 @@ void ScriptPropertyEditorDlg::on_btnTypeInteger_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnTypeFloat_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText +=
         QString("%1\n%2\n").arg("// type Float").arg("var tFloat = 0.0;");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -152,10 +152,10 @@ void ScriptPropertyEditorDlg::on_btnTypeFloat_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnTypeString_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText +=
         QString("%1\n%2\n").arg("// type String").arg("var tString = \"\";");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -163,10 +163,10 @@ void ScriptPropertyEditorDlg::on_btnTypeString_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnTypeBool_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText +=
         QString("%1\n%2\n").arg("// type Bool").arg("var tBool = false;");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -190,9 +190,9 @@ void ScriptPropertyEditorDlg::on_btnCancel_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnOptAdd_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("+");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -200,9 +200,9 @@ void ScriptPropertyEditorDlg::on_btnOptAdd_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnOptSub_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("-");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -210,9 +210,9 @@ void ScriptPropertyEditorDlg::on_btnOptSub_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnOptMul_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("*");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -220,9 +220,9 @@ void ScriptPropertyEditorDlg::on_btnOptMul_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnOptDiv_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("/");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -230,9 +230,9 @@ void ScriptPropertyEditorDlg::on_btnOptDiv_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnOptAssign_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("=");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -240,9 +240,9 @@ void ScriptPropertyEditorDlg::on_btnOptAssign_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnOptMod_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("%");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -250,9 +250,9 @@ void ScriptPropertyEditorDlg::on_btnOptMod_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpGt_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg(">");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -260,9 +260,9 @@ void ScriptPropertyEditorDlg::on_btnCmpGt_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpGE_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg(">=");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -270,9 +270,9 @@ void ScriptPropertyEditorDlg::on_btnCmpGE_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpLt_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("<");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -280,9 +280,9 @@ void ScriptPropertyEditorDlg::on_btnCmpLt_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpLe_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("<=");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -290,9 +290,9 @@ void ScriptPropertyEditorDlg::on_btnCmpLe_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpNeq_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("!=");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -300,9 +300,9 @@ void ScriptPropertyEditorDlg::on_btnCmpNeq_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpEq_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("==");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -310,9 +310,9 @@ void ScriptPropertyEditorDlg::on_btnCmpEq_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpAnd_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("&&");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -320,9 +320,9 @@ void ScriptPropertyEditorDlg::on_btnCmpAnd_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpNot_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("!");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -330,9 +330,9 @@ void ScriptPropertyEditorDlg::on_btnCmpNot_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpOr_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("||");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -340,9 +340,9 @@ void ScriptPropertyEditorDlg::on_btnCmpOr_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnCmpXor_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("^");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -350,9 +350,9 @@ void ScriptPropertyEditorDlg::on_btnCmpXor_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnBitoptOr_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("|");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -360,9 +360,9 @@ void ScriptPropertyEditorDlg::on_btnBitoptOr_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnBitoptInv_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("~");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -370,9 +370,9 @@ void ScriptPropertyEditorDlg::on_btnBitoptInv_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnBitoptAnd_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("&");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -380,9 +380,9 @@ void ScriptPropertyEditorDlg::on_btnBitoptAnd_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnBitoptXor_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("^");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -390,9 +390,9 @@ void ScriptPropertyEditorDlg::on_btnBitoptXor_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnBitoptLShift_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg("<<");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -400,9 +400,9 @@ void ScriptPropertyEditorDlg::on_btnBitoptLShift_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnBitoptRShift_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString(" %1 ").arg(">>");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -410,12 +410,12 @@ void ScriptPropertyEditorDlg::on_btnBitoptRShift_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnStatementIf_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString("\n%1%2%3\n")
                   .arg("if(condition1)\n{\n\tstatement1;\n}\n")
                   .arg("else if(condition2)\n{\n\tstatement2;\n}\n")
                   .arg("else\n{\n\tstatement3;\n}\n");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -423,14 +423,14 @@ void ScriptPropertyEditorDlg::on_btnStatementIf_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnStatementFor_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText +=
         QString("\n%1%2%3%4\n")
         .arg("for (initialization; expression; post-loop-expression)")
         .arg("\n{")
         .arg("\n\tstatement;")
         .arg("\n}");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -438,13 +438,13 @@ void ScriptPropertyEditorDlg::on_btnStatementFor_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnStatementWhile_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString("\n%1%2%3%4\n")
                   .arg("while (expression)")
                   .arg("\n{")
                   .arg("\n\tstatement;")
                   .arg("\n}");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -452,7 +452,7 @@ void ScriptPropertyEditorDlg::on_btnStatementWhile_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnStatementSwitch_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString("\n%1%2%3%4%5%6%7%8%9\n")
                   .arg("switch (expression)")
                   .arg("\n{")
@@ -463,7 +463,7 @@ void ScriptPropertyEditorDlg::on_btnStatementSwitch_clicked()
                   .arg("\n\tdefault: statement;")
                   .arg("\n\t\tbreak;")
                   .arg("\n}");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -471,9 +471,9 @@ void ScriptPropertyEditorDlg::on_btnStatementSwitch_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnStatementBreak_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString("%1;\n").arg("break");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -481,9 +481,9 @@ void ScriptPropertyEditorDlg::on_btnStatementBreak_clicked()
 */
 void ScriptPropertyEditorDlg::on_btnToolComment_clicked()
 {
-    QString scriptText = scriptEdit->text();
+    QString scriptText = m_scriptEdit->text();
     scriptText += QString("%1").arg("//");
-    scriptEdit->setText(scriptText);
+    m_scriptEdit->setText(scriptText);
 }
 
 /*
@@ -500,7 +500,7 @@ void ScriptPropertyEditorDlg::on_btnToolSyntaxcheck_clicked()
     QString scriptContentsTmp = stream.readAll();
     scriptFile.close();
 
-    QString scriptContents = scriptEdit->text() + "\n" + scriptContentsTmp;
+    QString scriptContents = m_scriptEdit->text() + "\n" + scriptContentsTmp;
     // qDebug() << "scriptContents:\n" << scriptContents;
 
     QScriptSyntaxCheckResult syntaxCheckResult =
@@ -535,9 +535,9 @@ void ScriptPropertyEditorDlg::on_btnToolFunc_clicked()
 {
     InsertFunctionDlg *pDlg = new InsertFunctionDlg(this);
     if (pDlg->exec() == QDialog::Accepted) {
-        QString scriptText = scriptEdit->text();
+        QString scriptText = m_scriptEdit->text();
         scriptText += QString("%1").arg(pDlg->getSelectedFuncName());
-        scriptEdit->setText(scriptText);
+        m_scriptEdit->setText(scriptText);
     }
     delete pDlg;
 }
@@ -549,9 +549,9 @@ void ScriptPropertyEditorDlg::on_btnToolRtdb_clicked()
 {
     InsertTagDlg *pDlg = new InsertTagDlg(this);
     if (pDlg->exec() == QDialog::Accepted) {
-        QString scriptText = scriptEdit->text();
+        QString scriptText = m_scriptEdit->text();
         scriptText += QString("%1").arg(pDlg->getSelectedTagName());
-        scriptEdit->setText(scriptText);
+        m_scriptEdit->setText(scriptText);
     }
     delete pDlg;
 }

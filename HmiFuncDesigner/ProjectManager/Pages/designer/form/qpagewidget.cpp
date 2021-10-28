@@ -70,10 +70,10 @@ void QPageWidget::add_file(const QString &file)
     info->m_name = info->m_name.left(info->m_name.size()-4);
     if(m_tree_widget->get_all_name().contains(info->m_name)) {
         QRenameDialog dlg(this);
-        dlg.set_name_list(m_tree_widget->get_all_name());
+        dlg.setNameList(m_tree_widget->get_all_name());
         dlg.exec();
-        if(dlg.get_ret() == 1) {
-            info->m_name = dlg.get_new_name();
+        if(dlg.getRet() == 1) {
+            info->m_name = dlg.getNewName();
         } else {
             delete info;
             return;

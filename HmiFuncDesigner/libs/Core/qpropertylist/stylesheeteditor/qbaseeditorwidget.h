@@ -13,12 +13,12 @@ class QBaseEditorWidget : public QWidget
     Q_OBJECT
 public:
     explicit QBaseEditorWidget(QWidget *parent = 0);
-    
-    virtual void set_item(QAbstractStylesheetItem* item);
+
+    virtual void setItem(QAbstractStylesheetItem* item);
     virtual void init(QAbstractStylesheetItem *item) = 0;
     tagStylesheetItem get_value();
-    virtual void take_resource(QUndoCommand *cmd) = 0;
-    virtual void add_resource(QUndoCommand *cmd) = 0;
+    virtual void takeResource(QUndoCommand *cmd) = 0;
+    virtual void addResource(QUndoCommand *cmd) = 0;
 
 protected:
     QGradient get_color(const QColor &color);
@@ -35,6 +35,6 @@ protected:
     tagStylesheetItem m_item;
 };
 
-extern QBaseEditorWidget* create_editor_widget(const QString &name);
+extern QBaseEditorWidget* createEditorWidget(const QString &name);
 
 #endif // QBASEEDITORWIDGET_H

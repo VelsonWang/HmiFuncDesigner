@@ -6,7 +6,6 @@
 #include <QSettings>
 #include <QCoreApplication>
 
-
 QMutex gMutex;
 ULog* ULog::log_ = NULL;
 QMutex ULog::mutex_;

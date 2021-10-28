@@ -10,8 +10,8 @@ QFontEditor::QFontEditor(QAbstractProperty *property, QUndoStack* stack, QWidget
 void QFontEditor::onBtnClicked()
 {
     QFont oldFont;
-    if(property) {
-        oldFont = property->get_value().value<QFont>();
+    if(m_property) {
+        oldFont = m_property->get_value().value<QFont>();
     }
 
     bool ok;
@@ -20,8 +20,8 @@ void QFontEditor::onBtnClicked()
         if(oldFont != newFont) {
             QVariant v;
             v.setValue<QFont>(newFont);
-            if(property) {
-                property->notifyEditValue(v);
+            if(m_property) {
+                m_property->notifyEditValue(v);
             }
         }
     }

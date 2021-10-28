@@ -2,7 +2,6 @@
 #define QFILELISTVIEW_H
 
 #include "corelibglobal.h"
-
 #include <QTreeWidget>
 
 struct tagFileInfo;
@@ -12,48 +11,50 @@ class CORELIB_EXPORT QFileListView : public QTreeWidget
 {
     Q_OBJECT
 public:
-    explicit QFileListView(bool can_remove = true, bool show_picture = false, bool double_clicked = true, QWidget *parent = 0);
+    explicit QFileListView(bool canRemove = true, bool show_picture = false, bool doubleClicked = true, QWidget *parent = 0);
 
-    void    init();
+    void init();
 
-    tagFileInfo* get_file(QTreeWidgetItem* item);
-    tagFileGroupInfo *get_group(QTreeWidgetItem* item);
+    tagFileInfo* getFile(QTreeWidgetItem* item);
+    tagFileGroupInfo *getGroup(QTreeWidgetItem* item);
 
-    bool        can_remove();
+    bool canRemove();
+
 protected:
     void drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const;
     void mousePressEvent(QMouseEvent *event);
+    void selectFirst(tagFileGroupInfo *g, tagFileInfo *f);
+    void select(tagFileInfo* f);
 
-    void    select_first(tagFileGroupInfo *g, tagFileInfo *f);
-
-    void    select(tagFileInfo* f);
 signals:
-    void    remove_group_signal(tagFileGroupInfo *g);
-    void    remove_file_signal(tagFileInfo *f);
-    void    select_file_signal(tagFileInfo *f);
+    void sigRemoveGroup(tagFileGroupInfo *g);
+    void sigRemoveFile(tagFileInfo *f);
+    void sigSelectFile(tagFileInfo *f);
+
 protected slots:
-    void    insert_group(tagFileGroupInfo *g, int index);
-    void    remove_group(tagFileGroupInfo *g);
+    void insertGroup(tagFileGroupInfo *g, int index);
+    void removeGroup(tagFileGroupInfo *g);
 
-    void    insert_file(tagFileGroupInfo *g, tagFileInfo *f, int index);
-    void    remove_file(tagFileGroupInfo *g, tagFileInfo *f);
+    void insertFile(tagFileGroupInfo *g, tagFileInfo *f, int index);
+    void removeFile(tagFileGroupInfo *g, tagFileInfo *f);
 
-    void    button_clicked();
+    void buttonClicked();
+    void doubleClicked(QTreeWidgetItem *item);
 
-    void    double_clicked(QTreeWidgetItem *item);
 protected:
     friend class QFileDelegate;
+
 protected:
-    QMap<tagFileInfo*, QTreeWidgetItem*>     m_file_to_item;
-    QMap<QTreeWidgetItem*, tagFileInfo*>     m_item_to_file;
-    QMap<tagFileGroupInfo*, QTreeWidgetItem*>     m_group_to_item;
-    QMap<QTreeWidgetItem*, tagFileGroupInfo*>     m_item_to_group;
-    QIcon                                   m_icon;
-    bool                                    m_can_remove;
-    QString                                 m_select_uuid;
-    QTreeWidgetItem                         *m_current;
-    bool                                    m_show_picture;
-    bool                                    m_double_clicked;
+    QMap<tagFileInfo*, QTreeWidgetItem*> m_fileToItem;
+    QMap<QTreeWidgetItem*, tagFileInfo*> m_itemToFile;
+    QMap<tagFileGroupInfo*, QTreeWidgetItem*> m_groupToItem;
+    QMap<QTreeWidgetItem*, tagFileGroupInfo*> m_itemToGroup;
+    QIcon m_icon;
+    bool m_canRemove;
+    QString m_selectUuid;
+    QTreeWidgetItem *m_current;
+    bool m_showPicture;
+    bool m_doubleClicked;
 };
 
 #endif // QFILELISTVIEW_H

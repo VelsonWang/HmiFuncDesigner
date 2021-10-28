@@ -2,7 +2,6 @@
 #define QSOFTCORE_H
 
 #include "corelibglobal.h"
-
 #include <QObject>
 #include <QString>
 #include <QMap>
@@ -79,10 +78,10 @@ protected:
     QActionArray m_actions; // 全局action
     QMap<QString, QToolBar*> m_mapToolBar; // 全局工具条
     static  QSoftCore* m_core; // 单实例
-    QProjectCore* m_project_core;
-    QUndoGroup* m_undo_group;
-    QDevicesManager* m_devicesManager;
-    QFileManager* m_file_manager;
+    QProjectCore* m_projectCore;
+    QUndoGroup* m_undoGroup;
+    QDevicesManager* m_devicesMgr;
+    QFileManager* m_fileMgr;
 };
 
 #endif // QSOFTCORE_H

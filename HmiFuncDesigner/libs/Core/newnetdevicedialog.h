@@ -50,7 +50,7 @@ private:
 public:
     QString m_szDeviceName;
     QVector<QPair<QString, QString>> m_properties;
-    QVector<QPair<QString, QString>> m_prop_type;
+    QVector<QPair<QString, QString>> m_propType;
 
 private:
     Ui::NewNetDeviceDialog *ui;

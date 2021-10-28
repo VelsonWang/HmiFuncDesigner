@@ -7,7 +7,7 @@
 #include <QColorDialog>
 #include <QPainter>
 
-QBaseEditorWidget* create_editor_widget(const QString &name)
+QBaseEditorWidget* createEditorWidget(const QString &name)
 {
     if(name == "background") {
         return new QBackgrounSheetEditor;
@@ -25,7 +25,7 @@ QBaseEditorWidget::QBaseEditorWidget(QWidget *parent) : QWidget(parent)
 }
 
 
-void QBaseEditorWidget::set_item(QAbstractStylesheetItem *item)
+void QBaseEditorWidget::setItem(QAbstractStylesheetItem *item)
 {
     m_item = item->value().value<tagStylesheetItem>();
 }

@@ -5,16 +5,16 @@
 QBoolEditor::QBoolEditor(QAbstractProperty *property, QUndoStack *stack, QWidget *parent) :
     QCommonEditor(property, stack, parent)
 {
-    icon->installEventFilter(this);
-    text->installEventFilter(this);
+    m_icon->installEventFilter(this);
+    m_text->installEventFilter(this);
 }
 
 bool QBoolEditor::eventFilter(QObject *o, QEvent *e)
 {
-    if(e->type() == QEvent::MouseButtonPress && (icon == o || text == o)) {
+    if(e->type() == QEvent::MouseButtonPress && (m_icon == o || m_text == o)) {
         if(((QMouseEvent*)e)->button() == Qt::LeftButton) {
-            if(property) {
-                property->notifyEditValue(!property->get_value().toBool());
+            if(m_property) {
+                m_property->notifyEditValue(!m_property->get_value().toBool());
             }
             return true;
         }
@@ -24,8 +24,8 @@ bool QBoolEditor::eventFilter(QObject *o, QEvent *e)
 
 void QBoolEditor::mousePressEvent(QMouseEvent *)
 {
-    if(property) {
-        property->notifyEditValue(!property->get_value().toBool());
+    if(m_property) {
+        m_property->notifyEditValue(!m_property->get_value().toBool());
     }
 }
 

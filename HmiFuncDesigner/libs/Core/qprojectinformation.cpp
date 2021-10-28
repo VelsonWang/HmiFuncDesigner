@@ -9,12 +9,12 @@ QProjectInformation::~QProjectInformation()
 {
     qDeleteAll(m_propertys);
     m_propertys.clear();
-    m_uuid_to_property.clear();
+    m_uuidToProperty.clear();
 }
 
 tagProperty* QProjectInformation::getProperty(const QString &uuid)
 {
-    return m_uuid_to_property.value(uuid);
+    return m_uuidToProperty.value(uuid);
 }
 
 QList<tagProperty*> QProjectInformation::getPropertys()
@@ -22,34 +22,32 @@ QList<tagProperty*> QProjectInformation::getPropertys()
     return m_propertys;
 }
 
-void QProjectInformation::add_property(tagProperty *property)
+void QProjectInformation::addProperty(tagProperty *property)
 {
-    if(m_uuid_to_property.value(property->m_uuid)!=NULL)
-    {
+    if(m_uuidToProperty.value(property->m_uuid) != NULL) {
         delete property;
         return;
     }
     m_propertys.append(property);
-    m_uuid_to_property.insert(property->m_uuid,property);
+    m_uuidToProperty.insert(property->m_uuid, property);
 }
 
-tagProjectDataInfo* QProjectInformation::get_project_data(const QString &uuid)
+tagProjectDataInfo* QProjectInformation::getProjectData(const QString &uuid)
 {
-    return m_uuid_to_project_data.value(uuid);
+    return m_uuidToProjectData.value(uuid);
 }
 
-QList<tagProjectDataInfo*> QProjectInformation::get_project_datas()
+QList<tagProjectDataInfo*> QProjectInformation::getProjectDatas()
 {
-    return m_project_datas;
+    return m_projectDatas;
 }
 
-void QProjectInformation::add_project_data(tagProjectDataInfo *project_data)
+void QProjectInformation::addProjectData(tagProjectDataInfo *project_data)
 {
-    if(m_uuid_to_project_data.value(project_data->m_uuid)!=NULL)
-    {
+    if(m_uuidToProjectData.value(project_data->m_uuid) != NULL) {
         delete project_data;
         return;
     }
-    m_project_datas.append(project_data);
-    m_uuid_to_project_data.insert(project_data->m_uuid,project_data);
+    m_projectDatas.append(project_data);
+    m_uuidToProjectData.insert(project_data->m_uuid, project_data);
 }

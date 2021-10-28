@@ -69,13 +69,13 @@ void QFontProperty::set_value(const QVariant &value)
     connect_children();
 }
 
-QString QFontProperty::get_value_text()
+QString QFontProperty::getValueText()
 {
     QFont f = get_value().value<QFont>();
     return f.family();
 }
 
-QIcon QFontProperty::get_value_icon()
+QIcon QFontProperty::getValueIcon()
 {
     QFont f = get_value().value<QFont>();
     QImage img(16, 16, QImage::Format_ARGB32_Premultiplied);
@@ -108,7 +108,7 @@ void QFontProperty::child_value_changed(const QVariant &, const QVariant &)
     QAbstractProperty::set_value(v);
 }
 
-void QFontProperty::make_value()
+void QFontProperty::makeValue()
 {
     QFont f = get_value().value<QFont>();
     f.setBold(m_bold->get_value().toBool());
@@ -120,7 +120,7 @@ void QFontProperty::make_value()
     m_value.setValue<QFont>(f);
 }
 
-void QFontProperty::write_value()
+void QFontProperty::writeValue()
 {
 
 }

@@ -6,27 +6,27 @@
 
 ColorEditor::ColorEditor(QWidget *parent) :
     QWidget(parent),
-    color(Qt::white)
+    m_color(Qt::white)
 {
-    toolButton = new QToolButton(this);
-    toolButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
-    toolButton->setText(tr("..."));
-    toolButton->setFixedWidth(20);
-    toolButton->installEventFilter(this);
-    setFocusProxy(toolButton);
-    setFocusPolicy(toolButton->focusPolicy());
-    connect(toolButton, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
+    m_toolButton = new QToolButton(this);
+    m_toolButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Ignored);
+    m_toolButton->setText(tr("..."));
+    m_toolButton->setFixedWidth(20);
+    m_toolButton->installEventFilter(this);
+    setFocusProxy(m_toolButton);
+    setFocusPolicy(m_toolButton->focusPolicy());
+    connect(m_toolButton, SIGNAL(clicked()), this, SLOT(onToolButtonClicked()));
 
-    colorLabel = new QLabel(this);
-    QString styleSheet = QString("background:%1;").arg(color.name());
-    colorLabel->setStyleSheet(styleSheet);
-    colorLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_colorLabel = new QLabel(this);
+    QString styleSheet = QString("background:%1;").arg(m_color.name());
+    m_colorLabel->setStyleSheet(styleSheet);
+    m_colorLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->setSpacing(0);
     layout->setMargin(0);
-    layout->addWidget(colorLabel);
-    layout->addWidget(toolButton);
+    layout->addWidget(m_colorLabel);
+    layout->addWidget(m_toolButton);
 }
 
 ColorEditor::~ColorEditor()
@@ -36,24 +36,24 @@ ColorEditor::~ColorEditor()
 
 void ColorEditor::setColor(const QColor &c)
 {
-    if (color != c) {
-        color = c;
-        QString styleSheet = QString("background:%1;").arg(color.name());
-        colorLabel->setStyleSheet(styleSheet);
+    if (m_color != c) {
+        m_color = c;
+        QString styleSheet = QString("background:%1;").arg(m_color.name());
+        m_colorLabel->setStyleSheet(styleSheet);
     }
 }
 
 void ColorEditor::onToolButtonClicked()
 {
-    QColor newColor = QColorDialog::getColor(color, this, tr("选择颜色"));
-    if (newColor.isValid() && newColor != color) {
+    QColor newColor = QColorDialog::getColor(m_color, this, tr("选择颜色"));
+    if (newColor.isValid() && newColor != m_color) {
         setColor(newColor);
     }
 }
 
 bool ColorEditor::eventFilter(QObject *obj, QEvent *ev)
 {
-    if (obj == toolButton && (ev->type() == QEvent::KeyPress || ev->type() == QEvent::KeyRelease)) {
+    if (obj == m_toolButton && (ev->type() == QEvent::KeyPress || ev->type() == QEvent::KeyRelease)) {
         ev->ignore();
         return true;
     }
@@ -62,6 +62,6 @@ bool ColorEditor::eventFilter(QObject *obj, QEvent *ev)
 
 QColor ColorEditor::getColor() const
 {
-    return color;
+    return m_color;
 }
 

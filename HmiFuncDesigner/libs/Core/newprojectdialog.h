@@ -33,7 +33,7 @@ private slots:
 
 private:
     Ui::NewProjectDialog *ui;
-    QMap<QString, int> deviceMap_;
+    QMap<QString, int> m_device;
 };
 
 #endif // NEWPROJECTDIALOG_H

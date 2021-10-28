@@ -14,9 +14,9 @@ QTextSheetEditor::~QTextSheetEditor()
     delete ui;
 }
 
-void QTextSheetEditor::set_item(QAbstractStylesheetItem *item)
+void QTextSheetEditor::setItem(QAbstractStylesheetItem *item)
 {
-    QBaseEditorWidget::set_item(item);
+    QBaseEditorWidget::setItem(item);
     QGradient g = m_item.m_attributes.value("color").value<QGradient>();
     ui->pushButton->setIcon(get_icon(g));
 }
@@ -26,12 +26,12 @@ void QTextSheetEditor::init(QAbstractStylesheetItem *item)
     Q_UNUSED(item)
 }
 
-void QTextSheetEditor::add_resource(QUndoCommand *cmd)
+void QTextSheetEditor::addResource(QUndoCommand *cmd)
 {
     Q_UNUSED(cmd)
 }
 
-void QTextSheetEditor::take_resource(QUndoCommand *cmd)
+void QTextSheetEditor::takeResource(QUndoCommand *cmd)
 {
     Q_UNUSED(cmd)
 }
@@ -55,7 +55,7 @@ void QTextSheetEditor::on_pushButton_clicked()
     }
     QColor cc = QColorDialog::getColor(c, this);
     if(cc.isValid()) {
-        QGradient g = QLinearGradient(0,0,1,0);
+        QGradient g = QLinearGradient(0, 0, 1, 0);
         g.setColorAt(0, cc);
         g.setColorAt(1, cc);
         QVariant v;

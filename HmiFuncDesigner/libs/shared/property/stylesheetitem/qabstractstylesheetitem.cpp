@@ -1,5 +1,4 @@
 #include "qabstractstylesheetitem.h"
-
 #include "../../xmlobject.h"
 
 QAbstractStylesheetItem::QAbstractStylesheetItem(QAbstractStylesheetItem *parent) :

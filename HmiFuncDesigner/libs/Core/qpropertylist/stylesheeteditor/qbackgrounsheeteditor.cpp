@@ -81,10 +81,10 @@ void QBackgrounSheetEditor::on_imageBtn_clicked()
     //dlg.set_file(info->m_resourceData);
     dlg.exec();
 
-    if(dlg.get_ret() == 1) {
-        tagFileInfo *info = dlg.get_file();
+    if(dlg.getRet() == 1) {
+        tagFileInfo *info = dlg.getFile();
         if(info != NULL) {
-            tagFileGroupInfo *g = QSoftCore::getCore()->getFileManager()->get_group(info->m_group_uuid);
+            tagFileGroupInfo *g = QSoftCore::getCore()->getFileManager()->getGroup(info->m_group_uuid);
             QString s = g->m_group_name + "/" + info->m_file_name;
             if(s != name) {
                 m_item.m_attributes.insert("image", s);
@@ -97,9 +97,9 @@ void QBackgrounSheetEditor::on_imageBtn_clicked()
     }
 }
 
-void QBackgrounSheetEditor::set_item(QAbstractStylesheetItem *item)
+void QBackgrounSheetEditor::setItem(QAbstractStylesheetItem *item)
 {
-    QBaseEditorWidget::set_item(item);
+    QBaseEditorWidget::setItem(item);
 
     QString str;
 
@@ -132,19 +132,19 @@ void QBackgrounSheetEditor::position_changed()
     }
 }
 
-void QBackgrounSheetEditor::take_resource(QUndoCommand *cmd)
+void QBackgrounSheetEditor::takeResource(QUndoCommand *cmd)
 {
-    if(m_start_resource != m_tempResource) {
+    if(m_startResource != m_tempResource) {
         if(cmd != NULL) {
-            if(m_start_resource != "") {
+            if(m_startResource != "") {
             }
         }
     }
 }
 
-void QBackgrounSheetEditor::add_resource(QUndoCommand *cmd)
+void QBackgrounSheetEditor::addResource(QUndoCommand *cmd)
 {
-    if(m_start_resource != m_tempResource) {
+    if(m_startResource != m_tempResource) {
         if(cmd != NULL) {
             if(m_tempResource != "") {
             }
@@ -159,5 +159,5 @@ void QBackgrounSheetEditor::init(QAbstractStylesheetItem *item)
 {
     tagStylesheetItem temp = item->value().value<tagStylesheetItem>();
 
-    m_start_resource = temp.m_attributes.value("image").toString();
+    m_startResource = temp.m_attributes.value("image").toString();
 }

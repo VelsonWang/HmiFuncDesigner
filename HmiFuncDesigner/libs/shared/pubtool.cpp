@@ -2,7 +2,6 @@
 
 PubTool::PubTool()
 {
-
 }
 
 /*

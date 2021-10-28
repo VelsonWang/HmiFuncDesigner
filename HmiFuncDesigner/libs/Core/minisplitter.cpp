@@ -4,7 +4,7 @@
 #include <QPainter>
 #include <QSplitterHandle>
 
-class MiniSplitterHandle : public QSplitterHandle//自定义分割线
+class MiniSplitterHandle : public QSplitterHandle
 {
 public:
     MiniSplitterHandle(Qt::Orientation orientation, QSplitter *parent)
@@ -13,6 +13,7 @@ public:
         setMask(QRegion(contentsRect()));
         setAttribute(Qt::WA_MouseNoMask, true);
     }
+
 protected:
     void resizeEvent(QResizeEvent *event);
     void paintEvent(QPaintEvent *event);

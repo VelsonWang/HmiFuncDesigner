@@ -14,13 +14,13 @@ class QCompleterTreeWidget : public QTreeWidget
 public:
     explicit QCompleterTreeWidget(QWidget *parent = 0);
 
-    void init(tagReturnList* info,const QString &text);
+    void init(tagReturnList* info, const QString &text);
     tagReturnList *returnInfo();
     QString get_source_text();
     void move_position(const QRect &re);
 
 protected slots:
-    void itemselect(QTreeWidgetItem* item,int index);
+    void itemselect(QTreeWidgetItem* item, int index);
 signals:
     void select(const QString &text);
 
@@ -28,7 +28,7 @@ protected:
     bool eventFilter(QObject *o, QEvent *e);
 
 protected:
-    tagReturnList m_return_info;
+    tagReturnList m_returnInfo;
     QString m_text;
 };
 

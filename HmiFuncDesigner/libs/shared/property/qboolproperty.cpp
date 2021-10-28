@@ -11,12 +11,12 @@ QBoolProperty::QBoolProperty(QAbstractProperty *parent) :
     setObjectProperty("type", "Bool");
 }
 
-QString QBoolProperty::get_value_text()
+QString QBoolProperty::getValueText()
 {
     return get_value().toString();
 }
 
-QIcon QBoolProperty::get_value_icon()
+QIcon QBoolProperty::getValueIcon()
 {
     QStyleOptionButton opt;
     opt.state |= get_value().toBool() ? QStyle::State_On : QStyle::State_Off;

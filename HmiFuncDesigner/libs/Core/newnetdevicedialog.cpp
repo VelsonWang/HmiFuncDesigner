@@ -20,8 +20,6 @@
 #include "devicepluginloader.h"
 #include <QDebug>
 
-
-
 NewNetDeviceDialog::NewNetDeviceDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::NewNetDeviceDialog)
@@ -65,9 +63,9 @@ void NewNetDeviceDialog::on_btnDeviceSelect_clicked()
         int findCnt = 0;
         DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
 continueFind:
-        for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-            DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-            if(pObj->szName_ == devName) {
+        for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
+            DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
+            if(pObj->m_name == devName) {
                 findCnt++;
                 devName = pDlg->GetDeviceName() + QString("_%1").arg(findCnt);
                 goto continueFind;
@@ -78,7 +76,7 @@ continueFind:
         IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(m_szPluginName);
         if (pDevPluginObj) {
             pDevPluginObj->getDefaultDeviceProperty(m_properties);
-            pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
+            pDevPluginObj->getDefaultDevicePropertyDataType(m_propType);
         }
         this->updatePropertyEditor();
     }
@@ -154,33 +152,33 @@ void NewNetDeviceDialog::load(const QString &szName)
     if(pObj == NULL) {
         return;
     }
-    ui->editDeviceName->setText(pObj->szName_);
-    m_szPluginName = pObj->szDeviceName_;
-    ui->editFrameLen->setText(QString::number(pObj->iFrameLen_));
-    ui->editProtocol->setText(pObj->szProtocol_);
-    ui->cboLink->setCurrentText(pObj->szLink_);
-    ui->editStateVar->setText(QString::number(pObj->iStateVar_));
-    ui->editFrameTimePeriod->setText(QString::number(pObj->iFrameTimePeriod_));
-    ui->editCtrlVar->setText(QString::number(pObj->iCtrlVar_));
-    ui->checkDynamicOptimization->setChecked(pObj->bDynamicOptimization_);
-    ui->editRemotePort->setText(QString::number(pObj->iRemotePort_));
+    ui->editDeviceName->setText(pObj->m_name);
+    m_szPluginName = pObj->m_deviceName;
+    ui->editFrameLen->setText(QString::number(pObj->m_frameLen));
+    ui->editProtocol->setText(pObj->m_protocol);
+    ui->cboLink->setCurrentText(pObj->m_link);
+    ui->editStateVar->setText(QString::number(pObj->m_stateVar));
+    ui->editFrameTimePeriod->setText(QString::number(pObj->m_frameTimePeriod));
+    ui->editCtrlVar->setText(QString::number(pObj->m_ctrlVar));
+    ui->checkDynamicOptimization->setChecked(pObj->m_dynamicOptimization);
+    ui->editRemotePort->setText(QString::number(pObj->m_remotePort));
 
     NetDevice netDev;
-    netDev.fromString(pObj->szPortParameters_);
-    ui->editIpAddress->setText(netDev.szIpAddress_);
-    ui->editPort->setText(QString::number(netDev.iPort_));
-    ui->editIpAddress1->setText(netDev.szIpAddress1_);
-    ui->editPort1->setText(QString::number(netDev.iPort1_));
+    netDev.fromString(pObj->m_portParameters);
+    ui->editIpAddress->setText(netDev.m_ipAddress);
+    ui->editPort->setText(QString::number(netDev.m_port));
+    ui->editIpAddress1->setText(netDev.m_ipAddress1);
+    ui->editPort1->setText(QString::number(netDev.m_port1));
 
-    QString pluginName = pObj->szDeviceName_;
+    QString pluginName = pObj->m_deviceName;
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
     if (pDevPluginObj) {
-        if(pObj->szProperties_ == "") {
+        if(pObj->m_properties == "") {
             pDevPluginObj->getDefaultDeviceProperty(m_properties);
         } else {
-            pDevPluginObj->readProperties(pObj->szProperties_, m_properties);
+            pDevPluginObj->readProperties(pObj->m_properties, m_properties);
         }
-        pDevPluginObj->getDefaultDevicePropertyDataType(m_prop_type);
+        pDevPluginObj->getDefaultDevicePropertyDataType(m_propType);
     }
     this->updatePropertyEditor();
 }
@@ -197,30 +195,30 @@ void NewNetDeviceDialog::save(const QString &szName)
         }
     }
 
-    pObj->szDeviceType_ = "NET";
-    pObj->szName_ = ui->editDeviceName->text();
-    pObj->szDeviceName_ = m_szPluginName;
-    pObj->iFrameLen_ = ui->editFrameLen->text().toInt();
-    pObj->szProtocol_ = ui->editProtocol->text();
-    pObj->szLink_ = ui->cboLink->currentText();
-    pObj->iStateVar_ = ui->editStateVar->text().toInt();
-    pObj->iFrameTimePeriod_ = ui->editFrameTimePeriod->text().toInt();
-    pObj->iCtrlVar_ = ui->editCtrlVar->text().toInt();
-    pObj->bDynamicOptimization_ = ui->checkDynamicOptimization->isChecked();
-    pObj->iRemotePort_ = ui->editRemotePort->text().toInt();
+    pObj->m_deviceType = "NET";
+    pObj->m_name = ui->editDeviceName->text();
+    pObj->m_deviceName = m_szPluginName;
+    pObj->m_frameLen = ui->editFrameLen->text().toInt();
+    pObj->m_protocol = ui->editProtocol->text();
+    pObj->m_link = ui->cboLink->currentText();
+    pObj->m_stateVar = ui->editStateVar->text().toInt();
+    pObj->m_frameTimePeriod = ui->editFrameTimePeriod->text().toInt();
+    pObj->m_ctrlVar = ui->editCtrlVar->text().toInt();
+    pObj->m_dynamicOptimization = ui->checkDynamicOptimization->isChecked();
+    pObj->m_remotePort = ui->editRemotePort->text().toInt();
 
     NetDevice netDev;
-    netDev.szIpAddress_ = ui->editIpAddress->text();
-    netDev.iPort_ = ui->editPort->text().toInt();
-    netDev.szIpAddress1_ = ui->editIpAddress1->text();
-    netDev.iPort1_ = ui->editPort1->text().toInt();
+    netDev.m_ipAddress = ui->editIpAddress->text();
+    netDev.m_port = ui->editPort->text().toInt();
+    netDev.m_ipAddress1 = ui->editIpAddress1->text();
+    netDev.m_port1 = ui->editPort1->text().toInt();
 
-    pObj->szPortParameters_ = netDev.toString();
+    pObj->m_portParameters = netDev.toString();
 
-    QString pluginName = pObj->szDeviceName_;
+    QString pluginName = pObj->m_deviceName;
     IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pluginName);
     if (pDevPluginObj) {
-        pDevPluginObj->writeProperties(pObj->szProperties_, m_properties);
+        pDevPluginObj->writeProperties(pObj->m_properties, m_properties);
     }
 }
 
@@ -254,7 +252,7 @@ void NewNetDeviceDialog::setValue2ByValue1(const QString &szVal1,
 ///
 void NewNetDeviceDialog::updatePropertyEditor()
 {
-    if(m_properties.count() != m_prop_type.count()) {
+    if(m_properties.count() != m_propType.count()) {
         return;
     }
 
@@ -264,7 +262,7 @@ void NewNetDeviceDialog::updatePropertyEditor()
     for (int i = 0; i < m_properties.size(); ++i) {
         QString szKey = m_properties[i].first;
         QString szValue = m_properties[i].second;
-        QString szType = m_prop_type[i].second;
+        QString szType = m_propType[i].second;
 
         if(szType == QString("int")) {
             pProObj = QPropertyFactory::create_property("Number");
@@ -302,12 +300,12 @@ void NewNetDeviceDialog::updatePropertyEditor()
 
 void NewNetDeviceDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &value)
 {
-    if(m_properties.count() != m_prop_type.count()) {
+    if(m_properties.count() != m_propType.count()) {
         return;
     }
 
     QString id = pro->getObjectProperty("name").toString();
-    QString szType = getValue2ByValue1(id, m_prop_type);
+    QString szType = getValue2ByValue1(id, m_propType);
 
     if(szType == QString("int")) {
         setValue2ByValue1(id, value.toString(), m_properties);

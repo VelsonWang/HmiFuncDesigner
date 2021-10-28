@@ -53,7 +53,7 @@ void InsertTagDlg::on_btnOk_clicked()
  */
 void InsertTagDlg::on_btnCancel_clicked()
 {
-    m_strSelectedTagName = "";
+    m_selectedTagName = "";
     QDialog::reject();
 }
 
@@ -66,7 +66,7 @@ void InsertTagDlg::on_listWidgetTagIO_itemClicked(QListWidgetItem *item)
     Q_UNUSED(item)
     ui->listWidgetTagSys->clearSelection();
     ui->listWidgetTagTmp->clearSelection();
-    m_strSelectedTagName = ui->listWidgetTagIO->currentItem()->text();
+    m_selectedTagName = ui->listWidgetTagIO->currentItem()->text();
 }
 
 /**
@@ -78,7 +78,7 @@ void InsertTagDlg::on_listWidgetTagTmp_itemClicked(QListWidgetItem *item)
     Q_UNUSED(item)
     ui->listWidgetTagSys->clearSelection();
     ui->listWidgetTagIO->clearSelection();
-    m_strSelectedTagName = ui->listWidgetTagTmp->currentItem()->text();
+    m_selectedTagName = ui->listWidgetTagTmp->currentItem()->text();
 }
 
 /**
@@ -90,10 +90,10 @@ void InsertTagDlg::on_listWidgetTagSys_itemClicked(QListWidgetItem *item)
     Q_UNUSED(item)
     ui->listWidgetTagIO->clearSelection();
     ui->listWidgetTagTmp->clearSelection();
-    m_strSelectedTagName = ui->listWidgetTagSys->currentItem()->text();
+    m_selectedTagName = ui->listWidgetTagSys->currentItem()->text();
 }
 
 QString InsertTagDlg::getSelectedTagName(void) const
 {
-    return m_strSelectedTagName;
+    return m_selectedTagName;
 }

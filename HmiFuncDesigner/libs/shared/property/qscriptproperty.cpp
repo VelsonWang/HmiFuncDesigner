@@ -6,7 +6,7 @@ QScriptProperty::QScriptProperty(QAbstractProperty *parent) :
     setObjectProperty("type", "Script");
 }
 
-QString QScriptProperty::get_value_text()
+QString QScriptProperty::getValueText()
 {
     QString str = get_value().toString();
     str.replace("\r\n", " ");
@@ -14,7 +14,7 @@ QString QScriptProperty::get_value_text()
     return str;
 }
 
-QIcon QScriptProperty::get_value_icon()
+QIcon QScriptProperty::getValueIcon()
 {
     return QIcon();
 }

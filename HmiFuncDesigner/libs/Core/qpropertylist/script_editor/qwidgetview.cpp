@@ -50,7 +50,7 @@ QSize QObjectDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
 
 QWidgetView::QWidgetView(QAbstractHost *host, QWidget *parent) :
     QTreeWidget(parent),
-    m_property_host(host)
+    m_propertyHost(host)
 {
     setFrameStyle(QFrame::NoFrame);
     setAlternatingRowColors(true);

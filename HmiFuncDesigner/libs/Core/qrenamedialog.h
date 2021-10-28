@@ -2,10 +2,10 @@
 #define QRENAMEDIALOG_H
 
 #include "corelibglobal.h"
-
 #include <QDialog>
 
-namespace Ui {
+namespace Ui
+{
 class QRenameDialog;
 }
 
@@ -18,20 +18,18 @@ public:
     explicit QRenameDialog(QWidget *parent = 0);
     ~QRenameDialog();
 
-    void set_name_list(const QStringList &list);
-    void    set_old_name(const QString &name);
-    QString get_new_name();
-    int     get_ret();
+    void setNameList(const QStringList &list);
+    void setOldName(const QString &name);
+    QString getNewName();
+    int getRet();
+
 private slots:
     void on_okbtn_clicked();
-
     void on_cancelbtn_clicked();
 
 private:
     Ui::QRenameDialog *ui;
-
     QNameEdit    *m_nameEdit;
-
     int                 m_ret;
 };
 

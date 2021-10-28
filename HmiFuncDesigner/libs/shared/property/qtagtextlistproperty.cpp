@@ -7,12 +7,12 @@ QTagTextListProperty::QTagTextListProperty(QAbstractProperty *parent) :
     setAttribute(ATTR_RESET_ABLEABLE, false);
 }
 
-QString QTagTextListProperty::get_value_text()
+QString QTagTextListProperty::getValueText()
 {
     return get_value().toString();
 }
 
-QIcon QTagTextListProperty::get_value_icon()
+QIcon QTagTextListProperty::getValueIcon()
 {
     return QIcon();
 }

@@ -2,13 +2,11 @@
 #define QABSTRACTPAGE_H
 
 #include "corelibglobal.h"
-
 #include "../shared/qabstractplugin.h"
-
 #include <QWidget>
 #include <QUndoStack>
 
-#define PAGE_PLUGIN_NAME       "Plugin.Page"
+#define PAGE_PLUGIN_NAME "Plugin.Page"
 
 
 class CORELIB_EXPORT QAbstractPage : public QAbstractPlugin

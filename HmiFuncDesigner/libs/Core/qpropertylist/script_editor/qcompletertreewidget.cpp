@@ -200,8 +200,8 @@ void QCompleterTreeWidget::itemselect(QTreeWidgetItem *item, int)
 
 void QCompleterTreeWidget::init(tagReturnList *info, const QString &text)
 {
-    m_return_info.m_returns = info->m_returns;
-    m_return_info.m_name_to_return = info->m_name_to_return;
+    m_returnInfo.m_returns = info->m_returns;
+    m_returnInfo.m_name_to_return = info->m_name_to_return;
     m_text = text;
     this->clear();
     QTreeWidgetItem *item;
@@ -215,7 +215,7 @@ void QCompleterTreeWidget::init(tagReturnList *info, const QString &text)
 
 tagReturnList* QCompleterTreeWidget::returnInfo()
 {
-    return &m_return_info;
+    return &m_returnInfo;
 }
 
 QString QCompleterTreeWidget::get_source_text()

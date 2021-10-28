@@ -2,7 +2,6 @@
 #define QGRADIENTMAKE_H
 
 #include "../../sharedlibglobal.h"
-
 #include <QString>
 #include <QGradient>
 #include <QStringList>

@@ -30,7 +30,7 @@ private slots:
 
 private:
     Ui::SelectProtocolDialog *ui;
-    QString m_strProtocolName;
+    QString m_protocolName;
 };
 
 #endif // SELECTPROTOCOLDIALOG_H

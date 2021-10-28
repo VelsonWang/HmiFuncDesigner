@@ -50,47 +50,47 @@ class FuncObjectItem
 public:
     FuncObjectItem()
     {
-        szName_ = "";
-        szEvent_ = "";
-        argList_.clear();
-        szDesc_ = "";
-        szFuncNameOrg_ = "";
+        m_name = "";
+        m_event = "";
+        m_argList.clear();
+        m_desc = "";
+        m_funcNameOrg = "";
     }
 
     FuncObjectItem(const FuncObjectItem &rh)
     {
-        szName_ = rh.szName_;
-        szEvent_ = rh.szEvent_;
-        argList_ = rh.argList_;
-        szDesc_ = rh.szDesc_;
-        szFuncNameOrg_ = rh.szFuncNameOrg_;
+        m_name = rh.m_name;
+        m_event = rh.m_event;
+        m_argList = rh.m_argList;
+        m_desc = rh.m_desc;
+        m_funcNameOrg = rh.m_funcNameOrg;
     }
 
     FuncObjectItem &operator=(const FuncObjectItem &rh)
     {
-        szName_ = rh.szName_;
-        szEvent_ = rh.szEvent_;
-        argList_ = rh.argList_;
-        szDesc_ = rh.szDesc_;
-        szFuncNameOrg_ = rh.szFuncNameOrg_;
+        m_name = rh.m_name;
+        m_event = rh.m_event;
+        m_argList = rh.m_argList;
+        m_desc = rh.m_desc;
+        m_funcNameOrg = rh.m_funcNameOrg;
         return *this;
     }
 
     QString getFuncString()
     {
-        QString ret = szName_;
+        QString ret = m_name;
         ret += "(";
-        int count = argList_.count();
+        int count = m_argList.count();
         for(int i = 0; i < count; i++) {
-            if(argList_.at(i)->type == "GRAPHPAGELIST" ||
-                    argList_.at(i)->type == "TAGLIST" ||
-                    argList_.at(i)->type == "ELEMENTIDLIST") {
+            if(m_argList.at(i)->type == "GRAPHPAGELIST" ||
+                    m_argList.at(i)->type == "TAGLIST" ||
+                    m_argList.at(i)->type == "ELEMENTIDLIST") {
                 ret += "\"";
             }
-            ret += argList_.at(i)->value;
-            if(argList_.at(i)->type == "GRAPHPAGELIST" ||
-                    argList_.at(i)->type == "TAGLIST" ||
-                    argList_.at(i)->type == "ELEMENTIDLIST") {
+            ret += m_argList.at(i)->value;
+            if(m_argList.at(i)->type == "GRAPHPAGELIST" ||
+                    m_argList.at(i)->type == "TAGLIST" ||
+                    m_argList.at(i)->type == "ELEMENTIDLIST") {
                 ret += "\"";
             }
             ret += ",";
@@ -107,12 +107,12 @@ public:
         if(szFuncInfo == "") {
             return;
         }
-        argList_.clear();
+        m_argList.clear();
         QStringList szObjList = szFuncInfo.split(':');
         if(szObjList.size() == 2) {
-            szEvent_ = szObjList.at(1);
+            m_event = szObjList.at(1);
             QString szFunc = szObjList.at(0);
-            szName_ = szFunc.left(szFunc.indexOf("("));
+            m_name = szFunc.left(szFunc.indexOf("("));
             QString szArgs = (szFunc.mid(szFunc.indexOf("(") + 1, szFunc.indexOf(")") - szFunc.indexOf("(") - 1)).trimmed();
 
             if(szArgs.length() > 0) {
@@ -122,7 +122,7 @@ public:
                     TArgItem *pArgItem = new TArgItem();
                     QString szValue = szList.at(i);
                     pArgItem->value = szValue.replace("\"", "");
-                    argList_.append(pArgItem);
+                    m_argList.append(pArgItem);
                 }
             }
         }
@@ -131,24 +131,24 @@ public:
     void showInfo()
     {
         qDebug() << "\n[";
-        qDebug() << szName_;
-        for(int i = 0; i < argList_.count(); i++) {
-            TArgItem *pArgItem = argList_.at(i);
+        qDebug() << m_name;
+        for(int i = 0; i < m_argList.count(); i++) {
+            TArgItem *pArgItem = m_argList.at(i);
             qDebug() << pArgItem->name << " " << pArgItem->type << " " << pArgItem->value;
         }
-        qDebug() << szEvent_;
-        qDebug() << szFuncNameOrg_;
-        qDebug() << szDesc_;
+        qDebug() << m_event;
+        qDebug() << m_funcNameOrg;
+        qDebug() << m_desc;
         qDebug() << "]\n";
     }
 
 public:
-    QString szName_;
-    QList<TArgItem *> argList_;
-    QString szEvent_;
+    QString m_name;
+    QList<TArgItem *> m_argList;
+    QString m_event;
 
-    QString szDesc_;
-    QString szFuncNameOrg_;
+    QString m_desc;
+    QString m_funcNameOrg;
 };
 
 typedef FuncObjectItem TFuncObjectItem;
@@ -190,18 +190,18 @@ private slots:
 
 private:
     Ui::FunctionEditorDialog *ui;
-    QString szSelectedFuncName_;
-    int iSelectedCurRow_;
-    QList<TFuncObjectItem *> funcObjItemList_;
-    QList<TFuncObjectItem *> selectFuncObjItemList_;
-    QList<QListWidget *> listWidgetList_;
-    QStringList funcs_;
-    QStringList supportEvents_;
-    QMap<QString, QString> mapNameToShowName_;
-    QMap<QString, QString> mapShowNameToName_;
-    QStringList tagNames_;
-    QStringList elementIds_;
-    QStringList graphPageNames_;
+    QString m_selectedFuncName;
+    int m_selectedCurRow;
+    QList<TFuncObjectItem *> m_funcObjItemList;
+    QList<TFuncObjectItem *> m_selectFuncObjItemList;
+    QList<QListWidget *> m_listWidgetList;
+    QStringList m_funcs;
+    QStringList m_supportEvents;
+    QMap<QString, QString> m_nameToShowName;
+    QMap<QString, QString> m_showNameToName;
+    QStringList m_tagNames;
+    QStringList m_elementIds;
+    QStringList m_graphPageNames;
 
 private:
     QPropertyListView *m_propertyView;

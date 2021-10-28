@@ -1,10 +1,8 @@
 #include "qfilelistview.h"
-
 #include "qfilemanager.h"
 #include "qsoftcore.h"
 #include "stylehelper.h"
 #include "qfilelistitemwidget.h"
-
 #include <QHeaderView>
 #include <QItemDelegate>
 #include <QPainter>
@@ -27,7 +25,7 @@ void QFileDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
     QStyleOptionViewItem opt = option;
     QColor c;
     QTreeWidgetItem *item = m_view->itemFromIndex(index);
-    if(m_view->m_item_to_file.keys().contains(item)) {
+    if(m_view->m_itemToFile.keys().contains(item)) {
         c = QColor(255, 255, 191);
         if(opt.features & QStyleOptionViewItem::Alternate) {
             c = c.lighter(112);
@@ -50,10 +48,10 @@ QSize QFileDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIn
 
 QFileListView::QFileListView(bool can_remove, bool show_picture, bool double_clicked, QWidget *parent):
     QTreeWidget(parent),
-    m_can_remove(can_remove),
+    m_canRemove(can_remove),
     m_current(NULL),
-    m_show_picture(show_picture),
-    m_double_clicked(double_clicked)
+    m_showPicture(show_picture),
+    m_doubleClicked(double_clicked)
 {
     this->setFrameStyle(QFrame::NoFrame);
     this->header()->hide();
@@ -68,17 +66,17 @@ QFileListView::QFileListView(bool can_remove, bool show_picture, bool double_cli
     p.setColor(QPalette::Inactive, QPalette::HighlightedText, p.color(QPalette::Active, QPalette::HighlightedText));
     setPalette(p);
 
-    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(insert_group_signal(tagFileGroupInfo*, int)),
-            this, SLOT(insert_group(tagFileGroupInfo*, int)));
-    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(remove_group_signal(tagFileGroupInfo*)),
-            this, SLOT(remove_group(tagFileGroupInfo*)));
+    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(sigInsertGroup(tagFileGroupInfo*, int)),
+            this, SLOT(insertGroup(tagFileGroupInfo*, int)));
+    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(sigRemoveGroup(tagFileGroupInfo*)),
+            this, SLOT(removeGroup(tagFileGroupInfo*)));
 
-    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(insert_file_signal(tagFileGroupInfo*, tagFileInfo*, int)),
-            this, SLOT(insert_file(tagFileGroupInfo*, tagFileInfo*, int)));
-    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(remove_file_signal(tagFileGroupInfo*, tagFileInfo*)),
-            this, SLOT(remove_file(tagFileGroupInfo*, tagFileInfo*)));
+    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(sigInsertFile(tagFileGroupInfo*, tagFileInfo*, int)),
+            this, SLOT(insertFile(tagFileGroupInfo*, tagFileInfo*, int)));
+    connect(QSoftCore::getCore()->getFileManager(), SIGNAL(sigRemoveFile(tagFileGroupInfo*, tagFileInfo*)),
+            this, SLOT(removeFile(tagFileGroupInfo*, tagFileInfo*)));
 
-    if(m_double_clicked) {
+    if(m_doubleClicked) {
         connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(double_clicked(QTreeWidgetItem*)));
     } else {
         connect(this, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(double_clicked(QTreeWidgetItem*)));
@@ -88,7 +86,7 @@ QFileListView::QFileListView(bool can_remove, bool show_picture, bool double_cli
 
 void QFileListView::init()
 {
-    QList<tagFileGroupInfo*>    groups = QSoftCore::getCore()->getFileManager()->get_all_group();
+    QList<tagFileGroupInfo*>    groups = QSoftCore::getCore()->getFileManager()->getAllGroup();
 
     QFileListItemWidget *wid;
 
@@ -97,32 +95,32 @@ void QFileListView::init()
         QTreeWidgetItem *p = new QTreeWidgetItem(this);
 
         wid = new QFileListItemWidget(this, p);
-        wid->set_text(group->m_group_name);
-        connect(wid, SIGNAL(remove()), this, SLOT(button_clicked()));
+        wid->setText(group->m_group_name);
+        connect(wid, SIGNAL(remove()), this, SLOT(buttonClicked()));
         setItemWidget(p, 0, wid);
         p->setIcon(0, m_icon);
         p->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         p->setExpanded(true);
-        m_item_to_group.insert(p, group);
-        m_group_to_item.insert(group, p);
+        m_itemToGroup.insert(p, group);
+        m_groupToItem.insert(group, p);
 
         foreach(tagFileInfo *f, group->m_files) {
-            if(m_show_picture && !list.contains(f->m_exp)) {
+            if(m_showPicture && !list.contains(f->m_exp)) {
                 continue;
             }
             QTreeWidgetItem *item = new QTreeWidgetItem(p);
             wid = new QFileListItemWidget(this, item);
-            connect(wid, SIGNAL(remove()), this, SLOT(button_clicked()));
-            wid->set_text(f->m_file_name);
+            connect(wid, SIGNAL(remove()), this, SLOT(buttonClicked()));
+            wid->setText(f->m_file_name);
             setItemWidget(item, 0, wid);
             item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            m_item_to_file.insert(item, f);
-            m_file_to_item.insert(f, item);
+            m_itemToFile.insert(item, f);
+            m_fileToItem.insert(f, item);
         }
 
-        if(m_show_picture && p->childCount() == 0) {
-            m_item_to_group.remove(p);
-            m_group_to_item.remove(group);
+        if(m_showPicture && p->childCount() == 0) {
+            m_itemToGroup.remove(p);
+            m_groupToItem.remove(group);
             delete p;
         }
     }
@@ -134,7 +132,7 @@ void QFileListView::drawRow(QPainter *painter, const QStyleOptionViewItem &optio
 
     QColor c;
     QStyleOptionViewItem opt = options;
-    if(m_item_to_group.keys().contains(item)) {
+    if(m_itemToGroup.keys().contains(item)) {
         c = opt.palette.color(QPalette::Dark);
     } else {
         c = QColor(255, 255, 191);
@@ -150,67 +148,67 @@ void QFileListView::drawRow(QPainter *painter, const QStyleOptionViewItem &optio
     painter->drawLine(opt.rect.x(), opt.rect.bottom(), opt.rect.right(), opt.rect.bottom());
 }
 
-tagFileInfo* QFileListView::get_file(QTreeWidgetItem *item)
+tagFileInfo* QFileListView::getFile(QTreeWidgetItem *item)
 {
-    return m_item_to_file.value(item);
+    return m_itemToFile.value(item);
 }
 
-tagFileGroupInfo* QFileListView::get_group(QTreeWidgetItem *item)
+tagFileGroupInfo* QFileListView::getGroup(QTreeWidgetItem *item)
 {
-    return m_item_to_group.value(item);
+    return m_itemToGroup.value(item);
 }
 
-void QFileListView::insert_group(tagFileGroupInfo *g, int index)
+void QFileListView::insertGroup(tagFileGroupInfo *g, int index)
 {
     QTreeWidgetItem *p = new QTreeWidgetItem;
     this->insertTopLevelItem(index, p);
     QFileListItemWidget *wid = new QFileListItemWidget(this, p);
-    connect(wid, SIGNAL(remove()), this, SLOT(button_clicked()));
-    wid->set_text(g->m_group_name);
+    connect(wid, SIGNAL(remove()), this, SLOT(buttonClicked()));
+    wid->setText(g->m_group_name);
     setItemWidget(p, 0, wid);
     p->setIcon(0, m_icon);
     p->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     p->setExpanded(true);
-    m_item_to_group.insert(p, g);
-    m_group_to_item.insert(g, p);
+    m_itemToGroup.insert(p, g);
+    m_groupToItem.insert(g, p);
 
     foreach(tagFileInfo *f, g->m_files) {
         QTreeWidgetItem *item = new QTreeWidgetItem(p);
         wid = new QFileListItemWidget(this, item);
-        connect(wid, SIGNAL(remove()), this, SLOT(button_clicked()));
-        wid->set_text(f->m_file_name);
+        connect(wid, SIGNAL(remove()), this, SLOT(buttonClicked()));
+        wid->setText(f->m_file_name);
         setItemWidget(item, 0, wid);
         item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-        m_item_to_file.insert(item, f);
-        m_file_to_item.insert(f, item);
+        m_itemToFile.insert(item, f);
+        m_fileToItem.insert(f, item);
     }
 }
 
-void QFileListView::remove_group(tagFileGroupInfo *g)
+void QFileListView::removeGroup(tagFileGroupInfo *g)
 {
     foreach(tagFileInfo* info, g->m_files) {
-        QTreeWidgetItem *item = m_file_to_item.value(info);
+        QTreeWidgetItem *item = m_fileToItem.value(info);
         if(item != NULL) {
-            m_item_to_file.remove(item);
-            m_file_to_item.remove(info);
+            m_itemToFile.remove(item);
+            m_fileToItem.remove(info);
         }
     }
 
-    QTreeWidgetItem *item = m_group_to_item.value(g);
+    QTreeWidgetItem *item = m_groupToItem.value(g);
     if(item != NULL) {
-        m_group_to_item.remove(g);
-        m_item_to_group.remove(item);
+        m_groupToItem.remove(g);
+        m_itemToGroup.remove(item);
         delete item;
     }
-    tagFileInfo *select = QSoftCore::getCore()->getFileManager()->get_file(m_select_uuid);
+    tagFileInfo *select = QSoftCore::getCore()->getFileManager()->getFile(m_selectUuid);
     if(select == NULL || select->m_group_uuid == g->m_uuid) {
-        select_first(g, NULL);
+        selectFirst(g, NULL);
     }
 }
 
-void QFileListView::insert_file(tagFileGroupInfo *g, tagFileInfo *f, int index)
+void QFileListView::insertFile(tagFileGroupInfo *g, tagFileInfo *f, int index)
 {
-    QTreeWidgetItem *p = m_group_to_item.value(g);
+    QTreeWidgetItem *p = m_groupToItem.value(g);
     if(p == NULL) {
         return;
     }
@@ -219,25 +217,25 @@ void QFileListView::insert_file(tagFileGroupInfo *g, tagFileInfo *f, int index)
     item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     p->insertChild(index, item);
     QFileListItemWidget *wid = new QFileListItemWidget(this, item);
-    connect(wid, SIGNAL(remove()), this, SLOT(button_clicked()));
-    wid->set_text(f->m_file_name);
+    connect(wid, SIGNAL(remove()), this, SLOT(buttonClicked()));
+    wid->setText(f->m_file_name);
     setItemWidget(item, 0, wid);
-    m_item_to_file.insert(item, f);
-    m_file_to_item.insert(f, item);
+    m_itemToFile.insert(item, f);
+    m_fileToItem.insert(f, item);
     select(f);
 }
 
-void QFileListView::remove_file(tagFileGroupInfo *g, tagFileInfo *f)
+void QFileListView::removeFile(tagFileGroupInfo *g, tagFileInfo *f)
 {
-    QTreeWidgetItem *item = m_file_to_item.value(f);
+    QTreeWidgetItem *item = m_fileToItem.value(f);
     if(item != NULL) {
-        m_item_to_file.remove(item);
-        m_file_to_item.remove(f);
+        m_itemToFile.remove(item);
+        m_fileToItem.remove(f);
         delete item;
 
-        if(f->m_uuid == m_select_uuid) {
+        if(f->m_uuid == m_selectUuid) {
             m_current = NULL;
-            select_first(g, f);
+            selectFirst(g, f);
         }
     }
 }
@@ -253,47 +251,47 @@ void QFileListView::mousePressEvent(QMouseEvent *event)
     }
 }
 
-bool QFileListView::can_remove()
+bool QFileListView::canRemove()
 {
-    return m_can_remove;
+    return m_canRemove;
 }
 
-void QFileListView::button_clicked()
+void QFileListView::buttonClicked()
 {
     QFileListItemWidget* wid = (QFileListItemWidget*)sender();
 
-    QMapIterator<tagFileInfo*, QTreeWidgetItem*>     it(m_file_to_item);
+    QMapIterator<tagFileInfo*, QTreeWidgetItem*>     it(m_fileToItem);
     while(it.hasNext()) {
         it.next();
         if(itemWidget(it.value(), 0) == wid) {
-            emit remove_file_signal(it.key());
+            emit sigRemoveFile(it.key());
             return;
         }
     }
 
-    QMapIterator<tagFileGroupInfo*, QTreeWidgetItem*>     itt(m_group_to_item);
+    QMapIterator<tagFileGroupInfo*, QTreeWidgetItem*>     itt(m_groupToItem);
     while(itt.hasNext()) {
         itt.next();
         if(itemWidget(itt.value(), 0) == wid) {
-            emit remove_group_signal(itt.key());
+            emit sigRemoveGroup(itt.key());
             return;
         }
     }
 }
 
-void QFileListView::double_clicked(QTreeWidgetItem *item)
+void QFileListView::doubleClicked(QTreeWidgetItem *item)
 {
-    tagFileInfo *file = m_item_to_file.value(item);
+    tagFileInfo *file = m_itemToFile.value(item);
     if(file != NULL) {
-        if(m_select_uuid != file->m_uuid) {
+        if(m_selectUuid != file->m_uuid) {
             select(file);
         }
     }
 }
 
-void QFileListView::select_first(tagFileGroupInfo *g, tagFileInfo *f)
+void QFileListView::selectFirst(tagFileGroupInfo *g, tagFileInfo *f)
 {
-    QList<tagFileGroupInfo*> list = QSoftCore::getCore()->getFileManager()->get_all_group();
+    QList<tagFileGroupInfo*> list = QSoftCore::getCore()->getFileManager()->getAllGroup();
     if(f == NULL) {
         list.removeAll(g);
     }
@@ -321,23 +319,23 @@ void QFileListView::select_first(tagFileGroupInfo *g, tagFileInfo *f)
 void QFileListView::select(tagFileInfo *f)
 {
     if(f != NULL) {
-        m_select_uuid = f->m_uuid;
+        m_selectUuid = f->m_uuid;
     } else {
-        m_select_uuid = "";
+        m_selectUuid = "";
     }
     if(m_current != NULL) {
         QFileListItemWidget *wid = (QFileListItemWidget*)itemWidget(m_current, 0);
         if(wid != NULL) {
-            wid->set_icon("");
+            wid->setIcon("");
         }
     }
-    m_current = m_file_to_item.value(f);
+    m_current = m_fileToItem.value(f);
     if(m_current != NULL) {
         QFileListItemWidget *wid = (QFileListItemWidget*)itemWidget(m_current, 0);
         if(wid != NULL) {
-            wid->set_icon(":/images/check.png");
+            wid->setIcon(":/images/check.png");
         }
         setCurrentItem(m_current);
     }
-    emit select_file_signal(f);
+    emit sigSelectFile(f);
 }

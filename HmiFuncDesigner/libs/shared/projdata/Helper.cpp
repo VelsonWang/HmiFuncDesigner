@@ -1,4 +1,3 @@
-
 #include <QString>
 #include <QSettings>
 #include <QApplication>
@@ -10,8 +9,7 @@
 #include <QTextCodec>
 #include <QDesktopWidget>
 #include <QRect>
-
-#include "Helper.h"
+#include "helper.h"
 
 
 Helper::Helper()
@@ -34,41 +32,36 @@ QString Helper::AppDir()
 bool Helper::CopyDir(const QString &source, const QString &destination, bool override)
 {
     QDir directory(source);
-    if (!directory.exists())
-    {
+    if (!directory.exists()) {
         //qDebug()<< source << " not exists.";
         return false;
     }
 
     QString srcPath = QDir::toNativeSeparators(source);
-    if (!srcPath.endsWith(QDir::separator()))
+    if (!srcPath.endsWith(QDir::separator())) {
         srcPath += QDir::separator();
+    }
     QString dstPath = QDir::toNativeSeparators(destination);
-    if (!dstPath.endsWith(QDir::separator()))
+    if (!dstPath.endsWith(QDir::separator())) {
         dstPath += QDir::separator();
+    }
 
     bool error = false;
     QStringList fileNames = directory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
-    for (QStringList::size_type i=0; i != fileNames.size(); ++i)
-    {
+    for (QStringList::size_type i = 0; i != fileNames.size(); ++i) {
         QString fileName = fileNames.at(i);
         QString srcFilePath = srcPath + fileName;
         QString dstFilePath = dstPath + fileName;
         QFileInfo fileInfo(srcFilePath);
-        if (fileInfo.isFile() || fileInfo.isSymLink())
-        {
-            if (override)
-            {
+        if (fileInfo.isFile() || fileInfo.isSymLink()) {
+            if (override) {
                 QFile::setPermissions(dstFilePath, QFile::WriteOwner);
             }
             QFile::copy(srcFilePath, dstFilePath);
-        }
-        else if (fileInfo.isDir())
-        {
+        } else if (fileInfo.isDir()) {
             QDir dstDir(dstFilePath);
             dstDir.mkpath(dstFilePath);
-            if (!CopyDir(srcFilePath, dstFilePath, override))
-            {
+            if (!CopyDir(srcFilePath, dstFilePath, override)) {
                 error = true;
             }
         }
@@ -87,21 +80,24 @@ bool Helper::CopyRecursively(const QString &srcFilePath, const QString &tgtFileP
     if (srcFileInfo.isDir()) {
         QDir targetDir(tgtFilePath);
         targetDir.cdUp();
-        if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName()))
+        if (!targetDir.mkdir(QFileInfo(tgtFilePath).fileName())) {
             return false;
+        }
         QDir sourceDir(srcFilePath);
         QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
         foreach (const QString &fileName, fileNames) {
             const QString newSrcFilePath
-                    = srcFilePath + QLatin1Char('/') + fileName;
+                = srcFilePath + QLatin1Char('/') + fileName;
             const QString newTgtFilePath
-                    = tgtFilePath + QLatin1Char('/') + fileName;
-            if (!CopyRecursively(newSrcFilePath, newTgtFilePath))
+                = tgtFilePath + QLatin1Char('/') + fileName;
+            if (!CopyRecursively(newSrcFilePath, newTgtFilePath)) {
                 return false;
+            }
         }
     } else {
-        if (!QFile::copy(srcFilePath, tgtFilePath))
+        if (!QFile::copy(srcFilePath, tgtFilePath)) {
             return false;
+        }
     }
     return true;
 }
@@ -113,41 +109,34 @@ bool Helper::CopyRecursively(const QString &srcFilePath, const QString &tgtFileP
 bool Helper::DeleteDir(const QString &dirName)
 {
     QDir directory(dirName);
-    if (!directory.exists())
-    {
+    if (!directory.exists()) {
         return true;
     }
 
     QString srcPath = QDir::toNativeSeparators(dirName);
-    if (!srcPath.endsWith(QDir::separator()))
+    if (!srcPath.endsWith(QDir::separator())) {
         srcPath += QDir::separator();
+    }
 
     QStringList fileNames = directory.entryList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden);
     bool error = false;
-    for (QStringList::size_type i=0; i != fileNames.size(); ++i)
-    {
+    for (QStringList::size_type i = 0; i != fileNames.size(); ++i) {
         QString filePath = srcPath + fileNames.at(i);
         QFileInfo fileInfo(filePath);
-        if (fileInfo.isFile() || fileInfo.isSymLink())
-        {
+        if (fileInfo.isFile() || fileInfo.isSymLink()) {
             QFile::setPermissions(filePath, QFile::WriteOwner);
-            if (!QFile::remove(filePath))
-            {
+            if (!QFile::remove(filePath)) {
                 //qDebug() << "remove file" << filePath << " faild!";
                 error = true;
             }
-        }
-        else if (fileInfo.isDir())
-        {
-            if (!DeleteDir(filePath))
-            {
+        } else if (fileInfo.isDir()) {
+            if (!DeleteDir(filePath)) {
                 error = true;
             }
         }
     }
 
-    if (!directory.rmdir(QDir::toNativeSeparators(directory.path())))
-    {
+    if (!directory.rmdir(QDir::toNativeSeparators(directory.path()))) {
         //qDebug() << "remove dir" << directory.path() << " faild!";
         error = true;
     }
@@ -167,7 +156,7 @@ void Helper::WidgetMoveCenter(QWidget *w)
 
     int wWidth = w->geometry().width();
     int wHeight = w->geometry().height();
-    w->move((screenWidth-wWidth)/2,(screenHeight-wHeight)/2);
+    w->move((screenWidth - wWidth) / 2, (screenHeight - wHeight) / 2);
 }
 
 QString Helper::GBK2UTF8(const QString &inStr)
@@ -206,8 +195,9 @@ QString Helper::utf82gbk(const std::string &inStr)
 void Helper::writeString(const QString& filePath, QString str, QTextCodec* codec)
 {
     QFile writeFile(filePath);
-    if (!writeFile.open(QIODevice::WriteOnly))
+    if (!writeFile.open(QIODevice::WriteOnly)) {
         return;
+    }
     QTextStream out(&writeFile);
     out.setCodec(codec);
     out << str;
@@ -222,8 +212,9 @@ QString Helper::readString(const QString& filePath, QTextCodec* codec)
 {
     QString ret = "";
     QFile readFile(filePath);
-    if (!readFile.open(QIODevice::ReadOnly))
+    if (!readFile.open(QIODevice::ReadOnly)) {
         return ret;
+    }
     QTextStream in(&readFile);
     in.setCodec(codec);
     ret = in.readAll();

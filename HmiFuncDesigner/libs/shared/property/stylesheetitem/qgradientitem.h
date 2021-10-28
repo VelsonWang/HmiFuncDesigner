@@ -3,7 +3,6 @@
 
 #include "../../sharedlibglobal.h"
 #include "qabstractstylesheetitem.h"
-
 #include <QGradient>
 
 class QGradientItem : public QAbstractStylesheetItem
@@ -16,13 +15,13 @@ public:
 
     void setValue(const QVariant &value);
     void setDefault(const QVariant &value);
-	
+
 protected:
     void subValueChanged();
-	
+
 protected:
     void makeValue();
-	
+
 };
 
 #endif // QLINEARGRADIENTITEM_H

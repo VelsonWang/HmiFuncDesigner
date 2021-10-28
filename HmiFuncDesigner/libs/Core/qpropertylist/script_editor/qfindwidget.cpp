@@ -1,6 +1,5 @@
 #include "qfindwidget.h"
 #include "ui_qfindwidget.h"
-
 #include "../../qfancylineedit.h"
 
 QFindWidget::QFindWidget(QWidget *parent) :
@@ -19,17 +18,17 @@ QFindWidget::QFindWidget(QWidget *parent) :
     ui->close->setIcon(QIcon(QLatin1String(":/images/button_close.png")));
     connect(ui->close, SIGNAL(clicked()), this, SLOT(hideAndResetFocus()));
 
-    m_findEdit->setButtonVisible(QFancyLineEdit::Right,true);
-    m_replaceEdit->setButtonVisible(QFancyLineEdit::Right,true);
+    m_findEdit->setButtonVisible(QFancyLineEdit::Right, true);
+    m_replaceEdit->setButtonVisible(QFancyLineEdit::Right, true);
 
-    connect(m_findEdit,SIGNAL(buttonClicked(QFancyLineEdit::Side)),this,SLOT(clearFindEdit()));
-    connect(m_replaceEdit,SIGNAL(buttonClicked(QFancyLineEdit::Side)),this,SLOT(clearReplaceEdit()));
-    connect(m_findEdit,SIGNAL(textChanged(QString)),this,SLOT(checkFind()));
-    connect(ui->findNextButton,SIGNAL(clicked()),this,SIGNAL(findNext()));
-    connect(ui->findPreviousButton,SIGNAL(clicked()),this,SIGNAL(findPrev()));
-    connect(ui->replaceButton,SIGNAL(clicked()),this,SLOT(replace_signal()));
-    connect(ui->replaceAllButton,SIGNAL(clicked()),this,SLOT(replaceAll_signal()));
-    connect(ui->replaceNextButton,SIGNAL(clicked()),this,SLOT(replaceAndNext_signal()));
+    connect(m_findEdit, SIGNAL(buttonClicked(QFancyLineEdit::Side)), this, SLOT(clearFindEdit()));
+    connect(m_replaceEdit, SIGNAL(buttonClicked(QFancyLineEdit::Side)), this, SLOT(clearReplaceEdit()));
+    connect(m_findEdit, SIGNAL(textChanged(QString)), this, SLOT(checkFind()));
+    connect(ui->findNextButton, SIGNAL(clicked()), this, SIGNAL(findNext()));
+    connect(ui->findPreviousButton, SIGNAL(clicked()), this, SIGNAL(findPrev()));
+    connect(ui->replaceButton, SIGNAL(clicked()), this, SLOT(replace_signal()));
+    connect(ui->replaceAllButton, SIGNAL(clicked()), this, SLOT(replaceAll_signal()));
+    connect(ui->replaceNextButton, SIGNAL(clicked()), this, SLOT(replaceAndNext_signal()));
 }
 
 QFindWidget::~QFindWidget()

@@ -32,7 +32,7 @@ public:
     virtual void set_value(const QVariant& value);
     virtual QVariant get_value();
     void reset();
-    virtual QString get_value_text() = 0;
+    virtual QString getValueText() = 0;
     virtual QIcon get_value_icon() = 0;
 
     void setDefault();
@@ -64,8 +64,8 @@ protected slots:
 protected:
     void connect_children();
     void disconnect_children();
-    virtual void make_value();
-    virtual void write_value();
+    virtual void makeValue();
+    virtual void writeValue();
 	
 signals:
     void value_chaged(const QVariant& old, const QVariant &now);

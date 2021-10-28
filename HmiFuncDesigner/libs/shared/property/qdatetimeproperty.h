@@ -11,12 +11,12 @@ class QDateTimeProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QDateTimeProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 	
 protected:
-    void make_value();
-    void write_value();
+    void makeValue();
+    void writeValue();
 };
 
 #endif // QDATETIMEPROPERTY_H

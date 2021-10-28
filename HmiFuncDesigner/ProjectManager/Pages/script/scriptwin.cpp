@@ -100,11 +100,11 @@ void ScriptWin::NewScript()
     pDlg->SetName(pCurItem->text());
     if (pDlg->exec() == QDialog::Accepted) {
         ScriptObject *pObj = new ScriptObject();
-        pObj->m_szName = pDlg->GetName();
-        pObj->m_bInUse = pDlg->isInUse();
-        pObj->m_szDescription = pDlg->GetDescription();
-        pObj->m_szRunMode = pDlg->GetRunMode();
-        pObj->m_szRunModeArgs = pDlg->GetRunModeArgs();
+        pObj->m_name = pDlg->GetName();
+        pObj->m_inUse = pDlg->isInUse();
+        pObj->m_desc = pDlg->GetDescription();
+        pObj->m_runMode = pDlg->GetRunMode();
+        pObj->m_runModeArgs = pDlg->GetRunModeArgs();
         QSoftCore::getCore()->getProjectCore()->script_.AddScriptObject(pObj);
         updateUI();
     }
@@ -120,26 +120,26 @@ void ScriptWin::ModifyScript()
     ScriptConditionConfigForm *pDlg = new ScriptConditionConfigForm(this);
     pDlg->setWindowTitle(tr("脚本属性"));
     ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.GetScriptObject(pCurItem->text());
-    pDlg->SetName(pObj->m_szName);
-    pDlg->SetInUse(pObj->m_bInUse);
-    pDlg->SetDescription(pObj->m_szDescription);
-    pDlg->SetRunMode(pObj->m_szRunMode);
-    pDlg->SetRunModeArgs(pObj->m_szRunModeArgs);
+    pDlg->SetName(pObj->m_name);
+    pDlg->SetInUse(pObj->m_inUse);
+    pDlg->SetDescription(pObj->m_desc);
+    pDlg->SetRunMode(pObj->m_runMode);
+    pDlg->SetRunModeArgs(pObj->m_runModeArgs);
     if (pDlg->exec() == QDialog::Accepted) {
-        pObj->m_szName = pDlg->GetName();
-        pObj->m_bInUse = pDlg->isInUse();
-        pObj->m_szDescription = pDlg->GetDescription();
-        pObj->m_szRunMode = pDlg->GetRunMode();
-        pObj->m_szRunModeArgs = pDlg->GetRunModeArgs();
-        pCurItem->setText(pObj->m_szName);
+        pObj->m_name = pDlg->GetName();
+        pObj->m_inUse = pDlg->isInUse();
+        pObj->m_desc = pDlg->GetDescription();
+        pObj->m_runMode = pDlg->GetRunMode();
+        pObj->m_runModeArgs = pDlg->GetRunModeArgs();
+        pCurItem->setText(pObj->m_name);
         updateUI();
 
         /////////////////////////////////////////////////////////////////////////////
 
         ScriptEditorDlg *pScriptEditorDlg = new ScriptEditorDlg(this);
-        pScriptEditorDlg->setScriptText(pObj->m_szScriptText);
+        pScriptEditorDlg->setScriptText(pObj->m_scriptText);
         if (pScriptEditorDlg->exec() == QDialog::Accepted) {
-            pObj->m_szScriptText = pScriptEditorDlg->getScriptText();
+            pObj->m_scriptText = pScriptEditorDlg->getScriptText();
         }
         delete pScriptEditorDlg;
     }
@@ -165,9 +165,9 @@ void ScriptWin::updateUI()
     m_pListWidgetObj->clear();
     QListWidgetItem *pNewItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), tr("新建脚本"));
     m_pListWidgetObj->addItem(pNewItemObj);
-    for (int i = 0; i < QSoftCore::getCore()->getProjectCore()->script_.m_listScriptObjects.count(); i++) {
-        ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.m_listScriptObjects.at(i);
-        QListWidgetItem *pItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), pObj->m_szName);
+    for (int i = 0; i < QSoftCore::getCore()->getProjectCore()->script_.m_scriptObjects.count(); i++) {
+        ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.m_scriptObjects.at(i);
+        QListWidgetItem *pItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), pObj->m_name);
         m_pListWidgetObj->addItem(pItemObj);
     }
 }

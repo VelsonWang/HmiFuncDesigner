@@ -13,7 +13,7 @@
 
 InsertFunctionDlg::InsertFunctionDlg(QWidget* parent)
     : QDialog(parent),
-      m_strSelectedFuncName(""),
+      m_selectedFuncName(""),
       ui(new Ui::InsertFunctionDlg)
 {
     ui->setupUi(this);
@@ -99,10 +99,10 @@ void InsertFunctionDlg::treeWidgetInit()
             // strDesc.replace(QString("_T"), QString("\t"));
             strDesc.replace(QString("_T"), QString("    "));
 
-            m_funcNameDescMap.insert(funcName, strDesc);
+            m_funcNameToDesc.insert(funcName, strDesc);
             QString strFuncOrg = strFuncOrgName.right(
                                      strFuncOrgName.length() - strFuncOrgName.indexOf(":") - 1);
-            m_funcNameNameMap.insert(funcName, strFuncOrg);
+            m_funcNameToName.insert(funcName, strFuncOrg);
             // qDebug() << funcName << "    " << strFuncOrg;
         }
     }
@@ -113,9 +113,9 @@ void InsertFunctionDlg::on_treeWidgetFunc_itemClicked(QTreeWidgetItem* item,
         int column)
 {
     Q_UNUSED(column)
-    if (m_funcNameDescMap.contains(item->text(0))) {
-        ui->textEditFuncDesc->setText(m_funcNameDescMap.value(item->text(0)));
-        m_strSelectedFuncName = m_funcNameNameMap.value(item->text(0));
+    if (m_funcNameToDesc.contains(item->text(0))) {
+        ui->textEditFuncDesc->setText(m_funcNameToDesc.value(item->text(0)));
+        m_selectedFuncName = m_funcNameToName.value(item->text(0));
     }
 }
 
@@ -126,11 +126,11 @@ void InsertFunctionDlg::on_btnOk_clicked()
 
 void InsertFunctionDlg::on_btnCancel_clicked()
 {
-    m_strSelectedFuncName = "";
+    m_selectedFuncName = "";
     this->reject();
 }
 
 QString InsertFunctionDlg::getSelectedFuncName(void) const
 {
-    return m_strSelectedFuncName;
+    return m_selectedFuncName;
 }

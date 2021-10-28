@@ -11,13 +11,13 @@ class QTimeProperty: public QAbstractProperty
 public:
     Q_INVOKABLE QTimeProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
-	
+    QString getValueText();
+    QIcon getValueIcon();
+
 protected:
-    void make_value();
-    void write_value();
-	
+    void makeValue();
+    void writeValue();
+
 };
 
 #endif // QTIMEPROPERTY_H

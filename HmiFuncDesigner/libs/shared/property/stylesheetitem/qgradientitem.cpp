@@ -1,9 +1,6 @@
 #include "qgradientitem.h"
-
 #include "stylesheetstruct.h"
-
 #include "../../xmlobject.h"
-
 #include <QLinearGradient>
 #include <QRadialGradient>
 #include <QConicalGradient>

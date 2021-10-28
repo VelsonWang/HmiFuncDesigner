@@ -9,8 +9,8 @@ class QScriptProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QScriptProperty(QAbstractProperty* parent = 0);
 
-    QString get_value_text();
-    QIcon get_value_icon();
+    QString getValueText();
+    QIcon getValueIcon();
 };
 
 #endif // QSCRIPTPROPERTY_H

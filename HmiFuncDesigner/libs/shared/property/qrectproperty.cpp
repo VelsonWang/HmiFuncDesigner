@@ -50,7 +50,7 @@ void QRectProperty::child_value_changed(const QVariant &, const QVariant &)
     QAbstractProperty::set_value(re);
 }
 
-QString QRectProperty::get_value_text()
+QString QRectProperty::getValueText()
 {
     if(m_x->getAttribute(ATTR_VISIBLE).toBool()) {
         return QString("[(%1,%2),%3 x %4]")
@@ -63,7 +63,7 @@ QString QRectProperty::get_value_text()
     }
 }
 
-QIcon QRectProperty::get_value_icon()
+QIcon QRectProperty::getValueIcon()
 {
     return QIcon();
 }
@@ -79,7 +79,7 @@ QVariant QRectProperty::get_value()
     return v;
 }
 
-void QRectProperty::make_value()
+void QRectProperty::makeValue()
 {
     QRect re;
     re.setX(m_x->get_value().toInt());
@@ -89,7 +89,7 @@ void QRectProperty::make_value()
     m_value.setValue<QRect>(re);
 }
 
-void QRectProperty::write_value()
+void QRectProperty::writeValue()
 {
 
 }

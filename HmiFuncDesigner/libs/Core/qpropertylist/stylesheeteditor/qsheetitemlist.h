@@ -10,11 +10,11 @@ class QSheetItemList : public QTreeWidget
     Q_OBJECT
 public:
     explicit QSheetItemList(QWidget *parent = 0);
-    
+
     void add(QAbstractStylesheetItem *item);
     void changed_item(QAbstractStylesheetItem* item);
 
-    void set_select(QAbstractStylesheetItem *item);
+    void setSelect(QAbstractStylesheetItem *item);
 
 protected slots:
     void remove();
@@ -31,9 +31,9 @@ signals:
     void select(QAbstractStylesheetItem *item);
 
 protected:
-    QMap<QAbstractStylesheetItem*, QTreeWidgetItem*> m_sheet_to_item;
-    QMap<QTreeWidgetItem*, QAbstractStylesheetItem*> m_item_to_sheet;
-    QTreeWidgetItem *m_select_item;
+    QMap<QAbstractStylesheetItem*, QTreeWidgetItem*> m_sheetToItem;
+    QMap<QTreeWidgetItem*, QAbstractStylesheetItem*> m_itemToSheet;
+    QTreeWidgetItem *m_selectItem;
 };
 
 #endif // QSHEETITEMLIST_H

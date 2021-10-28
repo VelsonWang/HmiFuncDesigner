@@ -33,17 +33,17 @@ void QPointProperty::child_value_changed(const QVariant &, const QVariant &)
     QAbstractProperty::set_value(pt);
 }
 
-QString QPointProperty::get_value_text()
+QString QPointProperty::getValueText()
 {
     return QString("%1 x %2").arg(m_x->get_value().toInt()).arg(m_y->get_value().toInt());
 }
 
-QIcon QPointProperty::get_value_icon()
+QIcon QPointProperty::getValueIcon()
 {
     return QIcon();
 }
 
-void QPointProperty::make_value()
+void QPointProperty::makeValue()
 {
     QPoint pt;
     pt.setX(m_x->get_value().toInt());
@@ -51,7 +51,7 @@ void QPointProperty::make_value()
     m_value.setValue<QPoint>(pt);
 }
 
-void QPointProperty::write_value()
+void QPointProperty::writeValue()
 {
 
 }

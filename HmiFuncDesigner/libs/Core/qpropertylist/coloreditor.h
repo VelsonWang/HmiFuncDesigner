@@ -1,4 +1,3 @@
-
 #ifndef COLOREDITOR_H
 #define COLOREDITOR_H
 
@@ -23,9 +22,9 @@ private slots:
     void onToolButtonClicked();
 
 private:
-    QColor color;
-    QToolButton* toolButton;
-    QLabel* colorLabel;
+    QColor m_color;
+    QToolButton* m_toolButton;
+    QLabel* m_colorLabel;
 };
 
 #endif
