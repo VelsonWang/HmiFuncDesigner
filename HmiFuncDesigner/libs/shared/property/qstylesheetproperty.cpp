@@ -52,7 +52,7 @@ void QStylesheetProperty::fromObject(XMLObject *xml)
     delete maker;
     QVariant v;
     v.setValue<tagStylesheetItems>(items);
-    set_value(v);
+    setValue(v);
 }
 
 void QStylesheetProperty::toObject(XMLObject *xml)

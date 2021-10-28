@@ -19,8 +19,8 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
                                      QUndoStack *stack,
                                      QWidget *parent) :
     QDialog(parent),
-    m_editView(new QScriptEditView(property, property->get_host())),
-    m_widgetView(new QWidgetView(property->get_host())),
+    m_editView(new QScriptEditView(property, property->getHost())),
+    m_widgetView(new QWidgetView(property->getHost())),
     m_functionView(new QFunctionView),
     m_widgetStyledBar(new StyledBar(this)),
     m_widgetToolBar(new QWidgetViewToolBar),
@@ -112,12 +112,12 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
     connect(m_findWidget, SIGNAL(replaceAll(QString)), m_editView, SLOT(replaceAll(QString)));
     connect(m_findWidget, SIGNAL(replaceAndNext(QString)), m_editView, SLOT(replaceNext(QString)));
 
-    QAbstractHost *host = m_property->get_host();
+    QAbstractHost *host = m_property->getHost();
     m_widgetView->setSelect(host);
     connect(m_functionView, SIGNAL(select(QMetaMethod)), this, SLOT(selectFunction(QMetaMethod)));
     connect(m_editView, SIGNAL(save()), this, SLOT(save()));
 
-    m_editView->setPlainText(m_property->get_value().toString());
+    m_editView->setPlainText(m_property->getValue().toString());
     QTextCursor c = m_editView->textCursor();
     c.movePosition(QTextCursor::End);
     m_editView->setTextCursor(c);
@@ -130,9 +130,9 @@ QScriptEditDialog::QScriptEditDialog(QAbstractProperty *property,
 
 void QScriptEditDialog::save()
 {
-    QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(m_property->get_host()->getUuid(),
+    QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(m_property->getHost()->getUuid(),
             m_property->getObjectProperty("name").toString(),
-            m_property->get_value(),
+            m_property->getValue(),
             m_editView->toPlainText());
     m_undoStack->push(cmd);
 }
@@ -156,7 +156,7 @@ void QScriptEditDialog::keyPressEvent(QKeyEvent *e)
 void QScriptEditDialog::closeEvent(QCloseEvent *e)
 {
     QString str = m_editView->toPlainText();
-    if(str != m_property->get_value().toString()) {
+    if(str != m_property->getValue().toString()) {
         int ret = QMessageBox::warning(this,
                                        tr("Save"),
                                        tr("Do you want save?"),

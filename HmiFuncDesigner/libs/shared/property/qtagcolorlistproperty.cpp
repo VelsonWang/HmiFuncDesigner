@@ -9,7 +9,7 @@ QTagColorListProperty::QTagColorListProperty(QAbstractProperty *parent) :
 
 QString QTagColorListProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QTagColorListProperty::getValueIcon()

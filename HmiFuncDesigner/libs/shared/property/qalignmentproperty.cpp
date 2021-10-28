@@ -58,25 +58,25 @@ QIcon QAlignmentProperty::getValueIcon()
     return QIcon();
 }
 
-void QAlignmentProperty::set_value(const QVariant &value)
+void QAlignmentProperty::setValue(const QVariant &value)
 {
     disconnect_children();
     int align = value.toInt();
-    m_horizonta->set_value(align & Qt::AlignHorizontal_Mask);
-    m_vertical->set_value(align & Qt::AlignVertical_Mask);
-    QAbstractProperty::set_value(value);
+    m_horizonta->setValue(align & Qt::AlignHorizontal_Mask);
+    m_vertical->setValue(align & Qt::AlignVertical_Mask);
+    QAbstractProperty::setValue(value);
     connect_children();
 }
 
 void QAlignmentProperty::child_value_changed(const QVariant &, const QVariant &)
 {
-    int align = m_horizonta->get_value().toInt() | m_vertical->get_value().toInt();
-    QAbstractProperty::set_value(align);
+    int align = m_horizonta->getValue().toInt() | m_vertical->getValue().toInt();
+    QAbstractProperty::setValue(align);
 }
 
 void QAlignmentProperty::makeValue()
 {
-    m_value = m_horizonta->get_value().toInt() | m_vertical->get_value().toInt();
+    m_value = m_horizonta->getValue().toInt() | m_vertical->getValue().toInt();
 }
 
 void QAlignmentProperty::writeValue()

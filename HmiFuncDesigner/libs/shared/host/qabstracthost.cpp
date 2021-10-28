@@ -164,7 +164,7 @@ QVariant QAbstractHost::getPropertyValue(const QString &name)
 {
     QAbstractProperty *pro = getProperty(name);
     if(pro != NULL) {
-        return pro->get_value();
+        return pro->getValue();
     } else {
         return QVariant();
     }
@@ -174,12 +174,12 @@ void QAbstractHost::setPropertyValue(const QString &name, const QVariant &value)
 {
     QAbstractProperty *pro = getProperty(name);
     if(pro != NULL) {
-        pro->set_value(value);
+        pro->setValue(value);
         QAbstractProperty *p = pro;
         while(p->getParent() != NULL) {
             p = p->getParent();
         }
-        m_object->setProperty(p->getObjectProperty("name").toByteArray(), p->get_value());
+        m_object->setProperty(p->getObjectProperty("name").toByteArray(), p->getValue());
         if(pro->getAttribute("group") == "Style Sheet") {
             makeStyleSheet();
         }
@@ -195,7 +195,7 @@ void QAbstractHost::insertProperty(QAbstractProperty *property, int index)
     if(index < 0 || index >= m_propertys.size()) {
         index = m_propertys.size();
     }
-    property->set_host(this);
+    property->setHost(this);
     m_propertys.insert(index, property);
     m_nameToProperty.insert(property->getObjectProperty("name").toString(), property);
 }
@@ -215,7 +215,7 @@ void QAbstractHost::setDefault()
     foreach(QAbstractProperty* pro, m_propertys) {
         pro->setDefault();
         if(m_object != NULL) {
-            m_object->setProperty(pro->getObjectProperty("name").toByteArray(), pro->get_value());
+            m_object->setProperty(pro->getObjectProperty("name").toByteArray(), pro->getValue());
         }
         makeStyleSheet();
     }
@@ -404,7 +404,7 @@ void QAbstractHost::init()
     if(m_object != NULL) {
         m_object->installEventFilter(this);
         foreach(QAbstractProperty* pro, m_propertys) {
-            pro->set_value(m_object->property(pro->getObjectProperty("name").toByteArray()));
+            pro->setValue(m_object->property(pro->getObjectProperty("name").toByteArray()));
         }
     }
 
@@ -515,8 +515,8 @@ void QAbstractHost::onPropertyRefresh()
     }
     foreach(QAbstractProperty* pro, m_propertys) {
         QVariant v = m_object->property(pro->getObjectProperty("name").toByteArray());
-        if(v != pro->get_value()) {
-            pro->set_value(v);
+        if(v != pro->getValue()) {
+            pro->setValue(v);
         }
     }
 }
@@ -650,7 +650,7 @@ void QAbstractHost::makeStyleSheet()
         if(pro->inherits("QStylesheetProperty")) {
             QAbstractStylesheetItem *item = QStylesheetItemFactory::createItem(pro->getObjectProperty("name").toString());
             if(item != NULL) {
-                tagStylesheetItems list = pro->get_value().value<tagStylesheetItems>();
+                tagStylesheetItems list = pro->getValue().value<tagStylesheetItems>();
                 foreach(tagStylesheetItem it, list) {
                     QVariant v;
                     v.setValue<tagStylesheetItem>(it);

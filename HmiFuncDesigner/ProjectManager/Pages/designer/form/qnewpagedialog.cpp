@@ -74,9 +74,9 @@ void QNewPageDialog::ok(QAbstractHost *host)
     new QPageAddUndoCommand(host, index, PAT_ADD, cmd);
     QAbstractProperty* pro = core->getProjectHost()->getProperty("start_page");
     if(pro != NULL) {
-        if(pro->get_value().toString() == "") {
+        if(pro->getValue().toString() == "") {
             new QPropertyChangedUndoCommand(core->getProjectHost()->getUuid(),
-                                            "start_page", pro->get_value(), host->getUuid(), cmd);
+                                            "start_page", pro->getValue(), host->getUuid(), cmd);
         }
     }
     m_undo_stack->push(cmd);

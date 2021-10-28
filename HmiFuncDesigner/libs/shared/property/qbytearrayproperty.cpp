@@ -8,7 +8,7 @@ QByteArrayProperty::QByteArrayProperty(QAbstractProperty *parent) :
 
 QString QByteArrayProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QByteArrayProperty::getValueIcon()

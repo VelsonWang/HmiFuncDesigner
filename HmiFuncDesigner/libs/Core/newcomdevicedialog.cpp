@@ -301,7 +301,7 @@ void NewComDeviceDialog::updatePropertyEditor()
                 pProObj->setAttribute(ATTR_CAN_SAME, true);
                 QVariant val;
                 val.setValue(szValue);
-                pProObj->set_value(val);
+                pProObj->setValue(val);
                 listProperties.append(pProObj);
             }
         } else if(szType == QString("bool")) {
@@ -313,7 +313,7 @@ void NewComDeviceDialog::updatePropertyEditor()
                 pProObj->setAttribute(ATTR_CAN_SAME, true);
                 QVariant val;
                 val.setValue(szValue);
-                pProObj->set_value(val);
+                pProObj->setValue(val);
                 listProperties.append(pProObj);
             }
         }
@@ -339,6 +339,6 @@ void NewComDeviceDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant &
         QString szVal = val ? "true" : "false";
         setValue2ByValue1(id, szVal, m_properties);
     }
-    pro->set_value(value);
+    pro->setValue(value);
 }
 

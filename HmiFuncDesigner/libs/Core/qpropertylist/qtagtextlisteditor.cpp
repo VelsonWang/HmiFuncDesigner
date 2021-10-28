@@ -13,7 +13,7 @@ void QTagTextListEditor::onBtnClicked()
 {
     QStringList szListTextList;
     if(m_property) {
-        szListTextList = m_property->get_value().toStringList();
+        szListTextList = m_property->getValue().toStringList();
     }
     TagTextListEditorDialog dlg;
     dlg.setValueTextList(szListTextList);

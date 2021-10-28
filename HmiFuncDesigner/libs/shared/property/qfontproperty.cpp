@@ -52,32 +52,32 @@ QFontProperty::QFontProperty(QAbstractProperty *parent):
     m_strikeout->setObjectProperty("name", "Strikeout");
 }
 
-void QFontProperty::set_value(const QVariant &value)
+void QFontProperty::setValue(const QVariant &value)
 {
     if(!value.isValid()) {
         return;
     }
     disconnect_children();
     QFont f = value.value<QFont>();
-    m_family->set_value(f.family());
-    m_bold->set_value(f.bold());
-    m_pointSize->set_value(f.pointSize());
-    m_italic->set_value(f.italic());
-    m_underline->set_value(f.underline());
-    m_strikeout->set_value(f.strikeOut());
-    QAbstractProperty::set_value(value);
+    m_family->setValue(f.family());
+    m_bold->setValue(f.bold());
+    m_pointSize->setValue(f.pointSize());
+    m_italic->setValue(f.italic());
+    m_underline->setValue(f.underline());
+    m_strikeout->setValue(f.strikeOut());
+    QAbstractProperty::setValue(value);
     connect_children();
 }
 
 QString QFontProperty::getValueText()
 {
-    QFont f = get_value().value<QFont>();
+    QFont f = getValue().value<QFont>();
     return f.family();
 }
 
 QIcon QFontProperty::getValueIcon()
 {
-    QFont f = get_value().value<QFont>();
+    QFont f = getValue().value<QFont>();
     QImage img(16, 16, QImage::Format_ARGB32_Premultiplied);
     img.fill(0);
     QPainter p(&img);
@@ -93,30 +93,30 @@ QIcon QFontProperty::getValueIcon()
 
 void QFontProperty::child_value_changed(const QVariant &, const QVariant &)
 {
-    if(m_pointSize->get_value().toInt() <= 0) {
+    if(m_pointSize->getValue().toInt() <= 0) {
         return;
     }
-    QFont f = get_value().value<QFont>();
-    f.setBold(m_bold->get_value().toBool());
-    f.setPointSize(m_pointSize->get_value().toInt());
-    f.setItalic(m_italic->get_value().toBool());
-    f.setUnderline(m_underline->get_value().toBool());
-    f.setStrikeOut(m_strikeout->get_value().toBool());
-    f.setFamily(m_family->get_value().toString());
+    QFont f = getValue().value<QFont>();
+    f.setBold(m_bold->getValue().toBool());
+    f.setPointSize(m_pointSize->getValue().toInt());
+    f.setItalic(m_italic->getValue().toBool());
+    f.setUnderline(m_underline->getValue().toBool());
+    f.setStrikeOut(m_strikeout->getValue().toBool());
+    f.setFamily(m_family->getValue().toString());
     QVariant v;
     v.setValue<QFont>(f);
-    QAbstractProperty::set_value(v);
+    QAbstractProperty::setValue(v);
 }
 
 void QFontProperty::makeValue()
 {
-    QFont f = get_value().value<QFont>();
-    f.setBold(m_bold->get_value().toBool());
-    f.setPointSize(m_pointSize->get_value().toInt());
-    f.setItalic(m_italic->get_value().toBool());
-    f.setUnderline(m_underline->get_value().toBool());
-    f.setStrikeOut(m_strikeout->get_value().toBool());
-    f.setFamily(m_family->get_value().toString());
+    QFont f = getValue().value<QFont>();
+    f.setBold(m_bold->getValue().toBool());
+    f.setPointSize(m_pointSize->getValue().toInt());
+    f.setItalic(m_italic->getValue().toBool());
+    f.setUnderline(m_underline->getValue().toBool());
+    f.setStrikeOut(m_strikeout->getValue().toBool());
+    f.setFamily(m_family->getValue().toString());
     m_value.setValue<QFont>(f);
 }
 

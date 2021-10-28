@@ -15,27 +15,27 @@ QSizeProperty::QSizeProperty(QAbstractProperty *parent):
     m_height->setObjectProperty("name", "Height");
 }
 
-void QSizeProperty::set_value(const QVariant &value)
+void QSizeProperty::setValue(const QVariant &value)
 {
     QSize sz = value.toSize();
     disconnect_children();
-    m_width->set_value(sz.width());
-    m_height->set_value(sz.height());
-    QAbstractProperty::set_value(value);
+    m_width->setValue(sz.width());
+    m_height->setValue(sz.height());
+    QAbstractProperty::setValue(value);
     connect_children();
 }
 
 void QSizeProperty::child_value_changed(const QVariant &, const QVariant &)
 {
     QSize sz;
-    sz.setWidth(m_width->get_value().toInt());
-    sz.setHeight(m_height->get_value().toInt());
-    QAbstractProperty::set_value(sz);
+    sz.setWidth(m_width->getValue().toInt());
+    sz.setHeight(m_height->getValue().toInt());
+    QAbstractProperty::setValue(sz);
 }
 
 QString QSizeProperty::getValueText()
 {
-    return QString("%1 x %2").arg(m_width->get_value().toInt()).arg(m_height->get_value().toInt());
+    return QString("%1 x %2").arg(m_width->getValue().toInt()).arg(m_height->getValue().toInt());
 }
 
 QIcon QSizeProperty::getValueIcon()
@@ -46,8 +46,8 @@ QIcon QSizeProperty::getValueIcon()
 void QSizeProperty::makeValue()
 {
     QSize sz;
-    sz.setWidth(m_width->get_value().toInt());
-    sz.setHeight(m_height->get_value().toInt());
+    sz.setWidth(m_width->getValue().toInt());
+    sz.setHeight(m_height->getValue().toInt());
     m_value.setValue<QSize>(sz);
 }
 

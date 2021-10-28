@@ -5,7 +5,7 @@ QByteArrayEditor::QByteArrayEditor(QAbstractProperty *pro, QUndoStack*, QWidget 
     QLineEdit(parent),
     m_property(pro)
 {
-    setText(pro->get_value().toString());
+    setText(pro->getValue().toString());
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(onValueChanged()));
     connect(m_property, SIGNAL(refresh()), this, SLOT(onPropertyChanged()));
 }
@@ -20,6 +20,6 @@ void QByteArrayEditor::onValueChanged()
 void QByteArrayEditor::onPropertyChanged()
 {
     if(m_property) {
-        setText(m_property->get_value().toString());
+        setText(m_property->getValue().toString());
     }
 }

@@ -19,7 +19,7 @@ void QMemeryDataProperty::toObject(XMLObject *xml)
             xml->setProperty(it.key(), it.value().toString());
         }
         xml->setProperty("name", m_attributes.value("name").toString());
-        MemeryValueItems items = get_value().value<MemeryValueItems>();
+        MemeryValueItems items = getValue().value<MemeryValueItems>();
 
         XMLObject *obj;
         foreach(tagMemeryValueInfo info, items) {
@@ -61,7 +61,7 @@ void QMemeryDataProperty::fromObject(XMLObject *xml)
 
 QString QMemeryDataProperty::getValueText()
 {
-    MemeryValueItems c = get_value().value<MemeryValueItems>();
+    MemeryValueItems c = getValue().value<MemeryValueItems>();
     if(c.size() == 0) {
         return "None";
     } else {

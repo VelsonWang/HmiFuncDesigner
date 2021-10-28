@@ -10,7 +10,7 @@ QStringProperty::QStringProperty(QAbstractProperty *parent) :
 
 QString QStringProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QStringProperty::getValueIcon()

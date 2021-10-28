@@ -8,7 +8,7 @@ QDateProperty::QDateProperty(QAbstractProperty *parent) :
 
 QString QDateProperty::getValueText()
 {
-    QDate ti = get_value().toDate();
+    QDate ti = getValue().toDate();
     return QString("%1:%2:%3").arg(ti.year(), 4).arg(ti.month(), 2).arg(ti.day(), 2);
 }
 

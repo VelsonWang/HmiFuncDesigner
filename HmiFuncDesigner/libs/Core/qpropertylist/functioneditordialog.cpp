@@ -472,7 +472,7 @@ void FunctionEditorDialog::updatePropertyEditor()
             QVariant v;
             v.setValue<ComboItems>(items);
             pProObj->setAttribute("items", v);
-            pProObj->set_value(pFuncObjItem->m_event);
+            pProObj->setValue(pFuncObjItem->m_event);
             listProperties.append(pProObj);
         }
 
@@ -484,7 +484,7 @@ void FunctionEditorDialog::updatePropertyEditor()
             pProObj->setAttribute("group", "Attributes");
             pProObj->setAttribute("type", "funcName");
             pProObj->setAttribute(ATTR_CAN_SAME, true);
-            pProObj->set_value(pFuncObjItem->m_name);
+            pProObj->setValue(pFuncObjItem->m_name);
             listProperties.append(pProObj);
         }
 
@@ -500,7 +500,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     if(pArgItem->value == "") {
                         pArgItem->value = "0";
                     }
-                    pProObj->set_value(pArgItem->value);
+                    pProObj->setValue(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "TAGLIST") {
@@ -527,7 +527,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     if(pArgItem->value == "" && m_tagNames.size() > 0) {
                         pArgItem->value = m_tagNames.at(0);
                     }
-                    pProObj->set_value(pArgItem->value);
+                    pProObj->setValue(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "GRAPHPAGELIST") {
@@ -556,7 +556,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     if(pArgItem->value == "" && m_graphPageNames.size() > 0) {
                         pArgItem->value = m_graphPageNames.at(0);
                     }
-                    pProObj->set_value(pArgItem->value);
+                    pProObj->setValue(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             } else if(pArgItem->type == "ELEMENTIDLIST") {
@@ -584,7 +584,7 @@ void FunctionEditorDialog::updatePropertyEditor()
                     if(pArgItem->value == "" && m_elementIds.size() > 0) {
                         pArgItem->value = m_elementIds.at(0);
                     }
-                    pProObj->set_value(pArgItem->value);
+                    pProObj->setValue(pArgItem->value);
                     listProperties.append(pProObj);
                 }
             }
@@ -614,5 +614,5 @@ void FunctionEditorDialog::onPropertyEdit(QAbstractProperty *pro, const QVariant
     QString szFunc = pFuncObjItem->getFuncString();
     ui->tableEventFunc->item(m_selectedCurRow, 0)->setText(szFunc);
     ui->tableEventFunc->item(m_selectedCurRow, 1)->setText(pFuncObjItem->m_event);
-    pro->set_value(value);
+    pro->setValue(value);
 }

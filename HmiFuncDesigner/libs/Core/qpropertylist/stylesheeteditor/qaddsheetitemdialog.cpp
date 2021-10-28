@@ -26,7 +26,7 @@ QAddSheetItemDialog::QAddSheetItemDialog(QAbstractProperty *property,
     ui->verticalLayout->insertWidget(2, m_checkWidget);
     connect(m_checkWidget, SIGNAL(changed()), this, SLOT(checkChanged()));
 
-    QStringList list = property->get_host()->property("children_widget").toStringList();
+    QStringList list = property->getHost()->property("children_widget").toStringList();
 
     if(list.size() > 0) {
         ui->children_list->addItems(list);
@@ -35,7 +35,7 @@ QAddSheetItemDialog::QAddSheetItemDialog(QAbstractProperty *property,
         ui->children_list->setVisible(false);
     }
 
-    list = property->get_host()->property("sub_control").toStringList();
+    list = property->getHost()->property("sub_control").toStringList();
 
     if(list.size() > 0) {
         list.insert(0, tr("None"));

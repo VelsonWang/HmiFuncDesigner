@@ -9,7 +9,7 @@ QImageProperty::QImageProperty(QAbstractProperty *parent) :
 
 QString QImageProperty::getValueText()
 {
-    QStringList szListInfo = get_value().toString().split("|");
+    QStringList szListInfo = getValue().toString().split("|");
     if(szListInfo.size() == 2) {
         return szListInfo.at(0); // 图片名称|图片BASE64数据
     }

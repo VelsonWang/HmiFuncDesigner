@@ -85,7 +85,7 @@ void QPageManager::newPage(const QString &szPageName)
             QAbstractHost *h = list.takeFirst();
             QAbstractProperty* pro = h->getProperty("objectName");
             if(pro != NULL) {
-                pro->set_value(QVariant(szPageName));
+                pro->setValue(QVariant(szPageName));
                 connect(pro, SIGNAL(value_chaged(QVariant, QVariant)), this, SLOT(host_name_changed_slot(QVariant, QVariant)));
             }
             list += h->getChildren();
@@ -292,7 +292,7 @@ void QPageManager::host_name_changed_slot(const QVariant &, const QVariant &)
 {
     QAbstractProperty *pro = (QAbstractProperty*)sender();
 
-    emit host_name_changed(pro->get_host());
+    emit host_name_changed(pro->getHost());
 }
 
 
@@ -322,7 +322,7 @@ void QPageManager::getAllPageName(QStringList &szList)
         if(szTitle == FORM_TITLE) {
             QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
             if(pProObj) {
-                QString szPageName = pProObj->get_value().toString();
+                QString szPageName = pProObj->getValue().toString();
                 //qDebug() << "page name: " << szPageName;
                 szList.append(szPageName);
             }

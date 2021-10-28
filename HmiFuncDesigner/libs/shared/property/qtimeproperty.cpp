@@ -8,7 +8,7 @@ QTimeProperty::QTimeProperty(QAbstractProperty *parent) :
 
 QString QTimeProperty::getValueText()
 {
-    QTime ti = get_value().toTime();
+    QTime ti = getValue().toTime();
     return QString("%1:%2:%3").arg(ti.hour(), 2).arg(ti.minute(), 2).arg(ti.second(), 2);
 }
 

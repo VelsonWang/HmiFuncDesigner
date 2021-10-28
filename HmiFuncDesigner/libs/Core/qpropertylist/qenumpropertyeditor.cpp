@@ -8,7 +8,7 @@ QEnumPropertyEditor::QEnumPropertyEditor(QAbstractProperty *property, QUndoStack
     m_items = m_property->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item, m_items) {
         this->addItem(QIcon(item.m_icon), item.m_text);
-        if(property->get_value() == item.m_value) {
+        if(property->getValue() == item.m_value) {
             setCurrentIndex(m_items.indexOf(item));
         }
     }
@@ -19,7 +19,7 @@ QEnumPropertyEditor::QEnumPropertyEditor(QAbstractProperty *property, QUndoStack
 void QEnumPropertyEditor::onValueChanged(int index)
 {
     tagComboItem item = m_items.value(index);
-    if(item.m_value != m_property->get_value()) {
+    if(item.m_value != m_property->getValue()) {
         m_property->notifyEditValue(item.m_value);
     }
 }
@@ -27,7 +27,7 @@ void QEnumPropertyEditor::onValueChanged(int index)
 void QEnumPropertyEditor::onPropertyChanged()
 {
     foreach(tagComboItem item, m_items) {
-        if(m_property->get_value() == item.m_value) {
+        if(m_property->getValue() == item.m_value) {
             setCurrentIndex(m_items.indexOf(item));
             return;
         }

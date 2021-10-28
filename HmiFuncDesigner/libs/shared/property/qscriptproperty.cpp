@@ -8,7 +8,7 @@ QScriptProperty::QScriptProperty(QAbstractProperty *parent) :
 
 QString QScriptProperty::getValueText()
 {
-    QString str = get_value().toString();
+    QString str = getValue().toString();
     str.replace("\r\n", " ");
     str.replace("\n", " ");
     return str;

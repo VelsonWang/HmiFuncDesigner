@@ -96,9 +96,9 @@ void QProjectCore::onFormRefresh(QAbstractHost *form)
         QVariant v;
         v.setValue<ComboItems>(items);
         pro->setAttribute("items", v);
-        if(form != NULL && pro->get_value().toString() == form->getUuid()) {
-            pro->set_value("");
-            pro->set_value(form->getUuid());
+        if(form != NULL && pro->getValue().toString() == form->getUuid()) {
+            pro->setValue("");
+            pro->setValue(form->getUuid());
         }
     }
 }

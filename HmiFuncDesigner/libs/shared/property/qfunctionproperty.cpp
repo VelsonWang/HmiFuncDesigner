@@ -9,7 +9,7 @@ QFunctionProperty::QFunctionProperty(QAbstractProperty *parent) :
 
 QString QFunctionProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QFunctionProperty::getValueIcon()

@@ -7,7 +7,7 @@ QFloatEditor::QFloatEditor(QAbstractProperty *property, QUndoStack*, QWidget *pa
 {
     setRange(-9999999, 9999999);
     if(property) {
-        setValue(property->get_value().toDouble());
+        setValue(property->getValue().toDouble());
     }
     connect(this, SIGNAL(valueChanged(double)), this, SLOT(onValueChanged(double)));
     setContextMenuPolicy(Qt::NoContextMenu);
@@ -24,6 +24,6 @@ void QFloatEditor::onValueChanged(double value)
 void QFloatEditor::onPropertyChanged()
 {
     if(m_property) {
-        setValue(m_property->get_value().toDouble());
+        setValue(m_property->getValue().toDouble());
     }
 }

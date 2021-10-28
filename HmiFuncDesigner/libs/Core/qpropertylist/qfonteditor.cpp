@@ -11,7 +11,7 @@ void QFontEditor::onBtnClicked()
 {
     QFont oldFont;
     if(m_property) {
-        oldFont = m_property->get_value().value<QFont>();
+        oldFont = m_property->getValue().value<QFont>();
     }
 
     bool ok;

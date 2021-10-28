@@ -99,7 +99,7 @@ void QPushButtonHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("文本"));
+        pObj->setValue(tr("文本"));
         insertProperty(pObj);
     }
 
@@ -129,7 +129,7 @@ void QPushButtonHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("居中对齐"));
+        pObj->setValue(tr("居中对齐"));
         insertProperty(pObj);
     }
 
@@ -151,7 +151,7 @@ void QPushButtonHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("居中对齐"));
+        pObj->setValue(tr("居中对齐"));
         insertProperty(pObj);
     }
 

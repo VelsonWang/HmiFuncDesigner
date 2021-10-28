@@ -9,7 +9,7 @@ QColorProperty::QColorProperty(QAbstractProperty *parent) :
 
 QString QColorProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QColorProperty::getValueIcon()

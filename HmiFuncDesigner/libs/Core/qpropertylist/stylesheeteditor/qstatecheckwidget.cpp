@@ -9,7 +9,7 @@
 QStateCheckWidget::QStateCheckWidget(QAbstractProperty *property, const QString &title, QWidget *parent):
     QWidget(parent)
 {
-    SheetItems items = property->get_host()->property("sheet_state").value<SheetItems>();
+    SheetItems items = property->getHost()->property("sheet_state").value<SheetItems>();
     QGridLayout *g = new QGridLayout;
 
     QStringList list = title.split(":");

@@ -13,13 +13,13 @@ QBoolProperty::QBoolProperty(QAbstractProperty *parent) :
 
 QString QBoolProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QBoolProperty::getValueIcon()
 {
     QStyleOptionButton opt;
-    opt.state |= get_value().toBool() ? QStyle::State_On : QStyle::State_Off;
+    opt.state |= getValue().toBool() ? QStyle::State_On : QStyle::State_Off;
 
     opt.state |= QStyle::State_Enabled;
 

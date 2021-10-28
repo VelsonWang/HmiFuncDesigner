@@ -11,7 +11,7 @@ QIcon QEnumProperty::getValueIcon()
 {
     ComboItems items = this->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item, items) {
-        if(item.m_value == get_value()) {
+        if(item.m_value == getValue()) {
             return QIcon(item.m_icon);
         }
     }
@@ -23,7 +23,7 @@ QString QEnumProperty::getValueText()
 {
     ComboItems items = this->getAttribute("items").value<ComboItems>();
     foreach(tagComboItem item, items) {
-        if(item.m_value == get_value()) {
+        if(item.m_value == getValue()) {
             return item.m_text;
         }
     }

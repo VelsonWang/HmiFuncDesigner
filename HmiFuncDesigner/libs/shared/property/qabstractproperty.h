@@ -29,11 +29,12 @@ public:
     explicit QAbstractProperty(QAbstractProperty *parent = 0);
     ~QAbstractProperty();
 
-    virtual void set_value(const QVariant& value);
-    virtual QVariant get_value();
+    virtual void setValue(const QVariant& value);
+    virtual QVariant getValue();
+
     void reset();
     virtual QString getValueText() = 0;
-    virtual QIcon get_value_icon() = 0;
+    virtual QIcon getValueIcon() = 0;
 
     void setDefault();
     bool modified();
@@ -55,8 +56,8 @@ public:
 
     void notifyEditValue(const QVariant& value);
 
-    void set_host(QAbstractHost* host);
-    QAbstractHost* get_host();
+    void setHost(QAbstractHost* host);
+    QAbstractHost* getHost();
 	
 protected slots:
     virtual void child_value_changed(const QVariant& old, const QVariant &now);

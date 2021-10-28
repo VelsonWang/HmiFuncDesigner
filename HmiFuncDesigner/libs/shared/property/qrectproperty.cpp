@@ -23,43 +23,43 @@ QRectProperty::QRectProperty(QAbstractProperty *parent):
     m_height->setObjectProperty("name", "Height");
 }
 
-void QRectProperty::set_value(const QVariant &value)
+void QRectProperty::setValue(const QVariant &value)
 {
     QRect re = value.toRect();
     disconnect_children();
     if(m_x->getAttribute(ATTR_VISIBLE).toBool()) {
-        m_x->set_value(re.x());
-        m_y->set_value(re.y());
+        m_x->setValue(re.x());
+        m_y->setValue(re.y());
     } else {
-        m_x->set_value(0);
-        m_y->set_value(0);
+        m_x->setValue(0);
+        m_y->setValue(0);
     }
-    m_width->set_value(re.width());
-    m_height->set_value(re.height());
-    QAbstractProperty::set_value(value);
+    m_width->setValue(re.width());
+    m_height->setValue(re.height());
+    QAbstractProperty::setValue(value);
     connect_children();
 }
 
 void QRectProperty::child_value_changed(const QVariant &, const QVariant &)
 {
     QRect re;
-    re.setX(m_x->get_value().toInt());
-    re.setY(m_y->get_value().toInt());
-    re.setWidth(m_width->get_value().toInt());
-    re.setHeight(m_height->get_value().toInt());
-    QAbstractProperty::set_value(re);
+    re.setX(m_x->getValue().toInt());
+    re.setY(m_y->getValue().toInt());
+    re.setWidth(m_width->getValue().toInt());
+    re.setHeight(m_height->getValue().toInt());
+    QAbstractProperty::setValue(re);
 }
 
 QString QRectProperty::getValueText()
 {
     if(m_x->getAttribute(ATTR_VISIBLE).toBool()) {
         return QString("[(%1,%2),%3 x %4]")
-               .arg(m_x->get_value().toInt())
-               .arg(m_y->get_value().toInt())
-               .arg(m_width->get_value().toInt())
-               .arg(m_height->get_value().toInt());
+               .arg(m_x->getValue().toInt())
+               .arg(m_y->getValue().toInt())
+               .arg(m_width->getValue().toInt())
+               .arg(m_height->getValue().toInt());
     } else {
-        return QString("%1 x %2").arg(m_width->get_value().toInt()).arg(m_height->get_value().toInt());
+        return QString("%1 x %2").arg(m_width->getValue().toInt()).arg(m_height->getValue().toInt());
     }
 }
 
@@ -68,9 +68,9 @@ QIcon QRectProperty::getValueIcon()
     return QIcon();
 }
 
-QVariant QRectProperty::get_value()
+QVariant QRectProperty::getValue()
 {
-    QVariant v = QAbstractProperty::get_value();
+    QVariant v = QAbstractProperty::getValue();
     if(!m_x->getAttribute(ATTR_VISIBLE).toBool()) {
         QRect rect = v.toRect();
         rect.setRect(0, 0, rect.width(), rect.height());
@@ -82,10 +82,10 @@ QVariant QRectProperty::get_value()
 void QRectProperty::makeValue()
 {
     QRect re;
-    re.setX(m_x->get_value().toInt());
-    re.setY(m_y->get_value().toInt());
-    re.setWidth(m_width->get_value().toInt());
-    re.setHeight(m_height->get_value().toInt());
+    re.setX(m_x->getValue().toInt());
+    re.setY(m_y->getValue().toInt());
+    re.setWidth(m_width->getValue().toInt());
+    re.setHeight(m_height->getValue().toInt());
     m_value.setValue<QRect>(re);
 }
 

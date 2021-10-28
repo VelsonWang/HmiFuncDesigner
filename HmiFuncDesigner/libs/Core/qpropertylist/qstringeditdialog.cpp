@@ -91,7 +91,7 @@ QStringEditDialog::QStringEditDialog(QAbstractProperty *property, QUndoStack* st
     //        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
     //        m_items.insert(item,l);
     //    }
-    ui->text->setText(property->get_value().toString());
+    ui->text->setText(property->getValue().toString());
 
     connect(ui->translateTree, SIGNAL(clicked(QModelIndex)), ui->translateTree, SLOT(edit(QModelIndex)));
     ui->enabled->setChecked(property->getObjectProperty("tr").toBool());
@@ -143,7 +143,7 @@ void QStringEditDialog::on_okBtn_clicked()
         //            old_translate.insert(l->getUuid(),info==NULL?"":info->m_translate);
         //        }
     } else {
-        old_text = m_property->get_value().toString();
+        old_text = m_property->getValue().toString();
     }
 
 #if 0

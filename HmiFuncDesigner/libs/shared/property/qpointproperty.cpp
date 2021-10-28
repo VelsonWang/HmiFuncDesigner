@@ -15,27 +15,27 @@ QPointProperty::QPointProperty(QAbstractProperty *parent):
     m_y->setObjectProperty("name", "y");
 }
 
-void QPointProperty::set_value(const QVariant &value)
+void QPointProperty::setValue(const QVariant &value)
 {
     QPoint pt = value.toPoint();
     disconnect_children();
-    m_x->set_value(pt.x());
-    m_y->set_value(pt.y());
-    QAbstractProperty::set_value(value);
+    m_x->setValue(pt.x());
+    m_y->setValue(pt.y());
+    QAbstractProperty::setValue(value);
     connect_children();
 }
 
 void QPointProperty::child_value_changed(const QVariant &, const QVariant &)
 {
     QPoint pt;
-    pt.setX(m_x->get_value().toInt());
-    pt.setY(m_y->get_value().toInt());
-    QAbstractProperty::set_value(pt);
+    pt.setX(m_x->getValue().toInt());
+    pt.setY(m_y->getValue().toInt());
+    QAbstractProperty::setValue(pt);
 }
 
 QString QPointProperty::getValueText()
 {
-    return QString("%1 x %2").arg(m_x->get_value().toInt()).arg(m_y->get_value().toInt());
+    return QString("%1 x %2").arg(m_x->getValue().toInt()).arg(m_y->getValue().toInt());
 }
 
 QIcon QPointProperty::getValueIcon()
@@ -46,8 +46,8 @@ QIcon QPointProperty::getValueIcon()
 void QPointProperty::makeValue()
 {
     QPoint pt;
-    pt.setX(m_x->get_value().toInt());
-    pt.setY(m_y->get_value().toInt());
+    pt.setX(m_x->getValue().toInt());
+    pt.setY(m_y->getValue().toInt());
     m_value.setValue<QPoint>(pt);
 }
 

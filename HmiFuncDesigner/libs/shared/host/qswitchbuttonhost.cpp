@@ -86,7 +86,7 @@ void QSwitchButtonHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("文本"));
+        pObj->setValue(tr("文本"));
         insertProperty(pObj);
     }
 
@@ -121,7 +121,7 @@ void QSwitchButtonHost::initProperty()
         pObj->setObjectProperty("name", "resetText");
         pObj->setAttribute("show_name", tr("关时文本")); // tr("Text")
         pObj->setAttribute("group", "Attributes");
-        pObj->set_value(QString(tr("关")));
+        pObj->setValue(QString(tr("关")));
         insertProperty(pObj);
     }
 
@@ -130,7 +130,7 @@ void QSwitchButtonHost::initProperty()
         pObj->setObjectProperty("name", "setText");
         pObj->setAttribute("show_name", tr("开时文本")); // tr("Text")
         pObj->setAttribute("group", "Attributes");
-        pObj->set_value(QString(tr("开")));
+        pObj->setValue(QString(tr("开")));
         insertProperty(pObj);
     }
 
@@ -168,7 +168,7 @@ void QSwitchButtonHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("居中对齐"));
+        pObj->setValue(tr("居中对齐"));
         insertProperty(pObj);
     }
 
@@ -190,7 +190,7 @@ void QSwitchButtonHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("居中对齐"));
+        pObj->setValue(tr("居中对齐"));
         insertProperty(pObj);
     }
 

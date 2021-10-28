@@ -392,7 +392,7 @@ void QObjectListView::button_remove()
                 new QPageAddUndoCommand(it.key(), manager->getPages().indexOf(it.key()), PAT_REMOVE, cmd);
                 QAbstractProperty* pro = QSoftCore::getCore()->getProjectCore()->getProjectHost()->getProperty("start_page");
                 if(pro != NULL) {
-                    if(pro->get_value().toString() == it.key()->getUuid()) {
+                    if(pro->getValue().toString() == it.key()->getUuid()) {
                         QList<QAbstractHost*> list = QSoftCore::getCore()->getProjectCore()->getPageManager()->getPages_by_title("form");
                         list.removeAll(it.key());
                         QString str;
@@ -402,7 +402,7 @@ void QObjectListView::button_remove()
                             str = "";
                         }
                         new QPropertyChangedUndoCommand(QSoftCore::getCore()->getProjectCore()->getProjectHost()->getUuid(),
-                                                        "start_page", pro->get_value(), str, cmd);
+                                                        "start_page", pro->getValue(), str, cmd);
                     }
                 }
 

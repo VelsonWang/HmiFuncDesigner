@@ -7,7 +7,7 @@ QNumberEditor::QNumberEditor(QAbstractProperty *property, QUndoStack*, QWidget *
 {
     setRange(-9999, 9999);
     if(property) {
-        setValue(property->get_value().toInt());
+        setValue(property->getValue().toInt());
     }
     connect(this, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
     setContextMenuPolicy(Qt::NoContextMenu);
@@ -24,6 +24,6 @@ void QNumberEditor::onValueChanged(int value)
 void QNumberEditor::onPropertyChanged()
 {
     if(m_property) {
-        setValue(m_property->get_value().toInt());
+        setValue(m_property->getValue().toInt());
     }
 }

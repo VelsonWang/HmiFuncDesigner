@@ -14,7 +14,7 @@ public:
     QString getValueText();
     QIcon getValueIcon();
 
-    void set_value(const QVariant &value);
+    void setValue(const QVariant &value);
 
 protected:
     void child_value_changed(const QVariant &old, const QVariant &now);

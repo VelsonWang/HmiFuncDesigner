@@ -119,7 +119,7 @@ void QValueStickHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("从左到右"));
+        pObj->setValue(tr("从左到右"));
         insertProperty(pObj);
     }
 
@@ -141,7 +141,7 @@ void QValueStickHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->set_value(tr("左上方"));
+        pObj->setValue(tr("左上方"));
         insertProperty(pObj);
     }
 

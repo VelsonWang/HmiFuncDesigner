@@ -13,7 +13,7 @@ void QTagColorListEditor::onBtnClicked()
 {
     QStringList szListColorList;
     if(m_property) {
-        szListColorList = m_property->get_value().toStringList();
+        szListColorList = m_property->getValue().toStringList();
     }
     TagColorListEditorDialog dlg;
     dlg.setValueColorList(szListColorList);

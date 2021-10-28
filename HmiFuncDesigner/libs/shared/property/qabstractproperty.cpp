@@ -25,7 +25,7 @@ QAbstractProperty::~QAbstractProperty()
     }
 }
 
-void QAbstractProperty::set_value(const QVariant &value)
+void QAbstractProperty::setValue(const QVariant &value)
 {
     QVariant old = m_value;
     if(old != value) {
@@ -176,11 +176,11 @@ void QAbstractProperty::setObjectProperty(const QString &key, const QVariant &va
 QAbstractProperty & QAbstractProperty::operator =(const QAbstractProperty &pro)
 {
     this->m_propertys = pro.m_propertys;
-    set_value(pro.m_value);
+    setValue(pro.m_value);
     return *this;
 }
 
-QVariant QAbstractProperty::get_value()
+QVariant QAbstractProperty::getValue()
 {
     return m_value;
 }
@@ -215,12 +215,12 @@ QAbstractProperty* QAbstractProperty::getParent()
     return m_parent;
 }
 
-void QAbstractProperty::set_host(QAbstractHost *host)
+void QAbstractProperty::setHost(QAbstractHost *host)
 {
     m_host = host;
 }
 
-QAbstractHost *QAbstractProperty::get_host()
+QAbstractHost *QAbstractProperty::getHost()
 {
     return m_host;
 }

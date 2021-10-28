@@ -87,7 +87,7 @@ void QProgressBarHost::initProperty()
         QVariant v;
         v.setValue<ComboItems>(items);
         pro->setAttribute("items", v);
-        pro->set_value(Qt::AlignLeft);
+        pro->setValue(Qt::AlignLeft);
         insertProperty(pro);
     }
 

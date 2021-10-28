@@ -8,7 +8,7 @@ QIntProperty::QIntProperty(QAbstractProperty *parent) :
 
 QString QIntProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QIntProperty::getValueIcon()

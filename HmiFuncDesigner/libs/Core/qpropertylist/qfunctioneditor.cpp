@@ -14,7 +14,7 @@ void QFunctionEditor::onBtnClicked()
     QStringList szListFunc;
     QString szSupportEvents;
     if(m_property) {
-        szListFunc = m_property->get_value().toStringList();
+        szListFunc = m_property->getValue().toStringList();
         szSupportEvents = m_property->getAttribute("supportevents").toString();
     }
     QStringList szListSupportEvents = szSupportEvents.split("|");

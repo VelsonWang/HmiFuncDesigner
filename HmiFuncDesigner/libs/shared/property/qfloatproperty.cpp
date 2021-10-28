@@ -8,7 +8,7 @@ QFloatProperty::QFloatProperty(QAbstractProperty *parent) :
 
 QString QFloatProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QFloatProperty::getValueIcon()

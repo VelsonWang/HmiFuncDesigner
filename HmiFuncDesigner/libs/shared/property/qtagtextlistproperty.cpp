@@ -9,7 +9,7 @@ QTagTextListProperty::QTagTextListProperty(QAbstractProperty *parent) :
 
 QString QTagTextListProperty::getValueText()
 {
-    return get_value().toString();
+    return getValue().toString();
 }
 
 QIcon QTagTextListProperty::getValueIcon()

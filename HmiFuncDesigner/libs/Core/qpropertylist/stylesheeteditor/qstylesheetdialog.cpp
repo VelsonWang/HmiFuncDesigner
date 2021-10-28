@@ -52,7 +52,7 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
     connect(m_item_list, SIGNAL(remove(QAbstractStylesheetItem*)), this, SLOT(remove(QAbstractStylesheetItem*)));
     connect(m_item_list, SIGNAL(changed(QAbstractStylesheetItem*)), this, SLOT(changed(QAbstractStylesheetItem*)));
 
-    QAbstractHost* host = m_property->get_host();
+    QAbstractHost* host = m_property->getHost();
 
     m_host = QHostFactory::create_host(host->getAttribute(HOST_TYPE));
 
@@ -64,13 +64,13 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
     }
     foreach(QAbstractProperty *pro, list) {
         if(pro->getAttribute("group") != "Events") {
-            m_host->setPropertyValue(pro->getObjectProperty("name").toString(), pro->get_value());
+            m_host->setPropertyValue(pro->getObjectProperty("name").toString(), pro->getValue());
         }
     }
 
     m_show_widget->setHost(m_host);
 
-    tagStylesheetItems items = m_property->get_value().value<tagStylesheetItems>();
+    tagStylesheetItems items = m_property->getValue().value<tagStylesheetItems>();
     QString name = m_property->getObjectProperty("name").toString();
     QAbstractStylesheetItem *maker;
     if(items.size() == 0) {
@@ -200,16 +200,16 @@ void QStyleSheetDialog::clearall()
 void QStyleSheetDialog::ok()
 {
     if(m_host->getObject()->property("styleSheet").toString() !=
-            m_property->get_host()->getObject()->property("styleSheet").toString()) {
+            m_property->getHost()->getObject()->property("styleSheet").toString()) {
         QUndoCommand *cmd = new QUndoCommand;
 
         QVariant v = m_host->getPropertyValue(m_property->getObjectProperty("name").toString());
         foreach(QBaseEditorWidget *e, m_editor_to_item.keys()) {
             e->addResource(cmd);
         }
-        new QPropertyChangedUndoCommand(m_property->get_host()->getUuid(),
+        new QPropertyChangedUndoCommand(m_property->getHost()->getUuid(),
                                         m_property->getObjectProperty("name").toString(),
-                                        m_property->get_value(),
+                                        m_property->getValue(),
                                         v, cmd);
         foreach(QBaseEditorWidget *e, m_editor_to_item.keys()) {
             e->takeResource(cmd);

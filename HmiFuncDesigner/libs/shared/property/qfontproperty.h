@@ -13,7 +13,7 @@ class QFontProperty : public QAbstractProperty
 public:
     Q_INVOKABLE QFontProperty(QAbstractProperty* parent = 0);
 
-    void set_value(const QVariant &value);
+    void setValue(const QVariant &value);
 
     QString getValueText();
     QIcon getValueIcon();
