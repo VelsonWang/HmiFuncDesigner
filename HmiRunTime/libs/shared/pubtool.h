@@ -33,7 +33,7 @@ public:
     static void DrawLineInRect(QPainter *painter, int sx, int sy, int dx, int dy, QColor cl, QRect rct);
     static void DrawFrameRectInRect(QPainter *painter, QRect rct, QColor cl, QRect pRct);
     static void DrawLine(QPainter *painter, QPoint ptStart, QPoint ptEnd, QColor cl);
-    static void DrawGrid(QPainter *painter,int w_grid, int h_grid, QRect rcSize);
+    static void DrawGrid(QPainter *painter, int w_grid, int h_grid, QRect rcSize);
     static QPoint GetCrossOfOuterPt(int x, int y, QRect aRct);
     static bool IsInRect(QRect rct, QPoint pt, bool bBorder = true);
     static bool IsInRect(QRect rct, int X, int Y, bool bBorder = true);
@@ -81,24 +81,18 @@ private:
 inline QRect PubTool::InflateRect(QRect &rect, int offset)
 {
     QRect tmpRect;
-    if ( rect.left() < rect.right() )
-    {
+    if ( rect.left() < rect.right() ) {
         tmpRect.setLeft(rect.left() - offset);
         tmpRect.setRight(rect.right() + offset);
-    }
-    else
-    {
+    } else {
         tmpRect.setLeft(rect.left() + offset);
-        tmpRect.setRight(rect.right()- offset);
+        tmpRect.setRight(rect.right() - offset);
     }
 
-    if ( rect.top() < rect.bottom() )
-    {
+    if ( rect.top() < rect.bottom() ) {
         tmpRect.setTop(rect.top() - offset);
         tmpRect.setBottom(rect.bottom() + offset);
-    }
-    else
-    {
+    } else {
         tmpRect.setTop(rect.top() + offset);
         tmpRect.setBottom(rect.bottom() - offset);
     }
@@ -112,24 +106,18 @@ inline QRect PubTool::InflateRect(QRect &rect, int offset)
 inline QRect PubTool::DeflateRect(QRect &rect, int offset)
 {
     QRect tmpRect;
-    if ( rect.left() < rect.right() )
-    {
+    if ( rect.left() < rect.right() ) {
         tmpRect.setLeft(rect.left()  + offset);
         tmpRect.setRight(rect.right() - offset);
-    }
-    else
-    {
+    } else {
         tmpRect.setLeft(rect.left()  - offset);
         tmpRect.setRight(rect.right() + offset);
     }
 
-    if ( rect.top() < rect.bottom() )
-    {
+    if ( rect.top() < rect.bottom() ) {
         tmpRect.setTop(rect.top() + offset);
         tmpRect.setBottom(rect.bottom() - offset);
-    }
-    else
-    {
+    } else {
         tmpRect.setTop(rect.top() - offset);
         tmpRect.setBottom(rect.bottom() + offset);
     }

@@ -10,8 +10,7 @@ class QAbstractHost;
 
 #define HOST_ADD_UNDO_COMMAND  1007
 
-enum enAddHostType
-{
+enum enAddHostType {
     AHT_ADD,
     AHT_REMOVE
 };
@@ -36,7 +35,7 @@ protected:
     void remove();
 
 protected:
-    QAbstractHost *m_parent_host;
+    QAbstractHost *m_parentHost;
     QList<QAbstractHost*> m_hosts;
     QList<int> m_indexs;
     enAddHostType m_type;

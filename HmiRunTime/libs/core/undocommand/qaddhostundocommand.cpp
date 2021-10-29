@@ -8,7 +8,7 @@ QAddHostUndoCommand::QAddHostUndoCommand(QAbstractHost *parent_host,
         enAddHostType type,
         QUndoCommand *parent):
     QBaseUndoCommand(parent),
-    m_parent_host(parent_host),
+    m_parentHost(parent_host),
     m_hosts(hosts),
     m_indexs(indexs),
     m_type(type)
@@ -49,14 +49,14 @@ void QAddHostUndoCommand::undo()
 
 void QAddHostUndoCommand::add()
 {
-    if(m_parent_host != NULL) {
-        m_parent_host->insertChildren(m_indexs, m_hosts);
+    if(m_parentHost != NULL) {
+        m_parentHost->insertChildren(m_indexs, m_hosts);
     }
 }
 
 void QAddHostUndoCommand::remove()
 {
-    if(m_parent_host != NULL) {
-        m_parent_host->removeChildren(m_hosts);
+    if(m_parentHost != NULL) {
+        m_parentHost->removeChildren(m_hosts);
     }
 }

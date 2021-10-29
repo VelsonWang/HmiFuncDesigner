@@ -1,25 +1,23 @@
 #include "DeviceInfo.h"
 #include "ulog.h"
 
-int DeviceInfo::iStartNewDeviceID_ = 0;
+int DeviceInfo::m_nextDeviceID = 0;
 
 DeviceInfo::DeviceInfo()
 {
-    listDeviceInfoObject_.clear();
+    m_deviceInfoObject.clear();
 }
 
 DeviceInfo::~DeviceInfo()
 {
-    qDeleteAll(listDeviceInfoObject_);
-    listDeviceInfoObject_.clear();
+    qDeleteAll(m_deviceInfoObject);
+    m_deviceInfoObject.clear();
 }
-
-
 
 bool DeviceInfo::openFromXml(XMLObject *pXmlObj)
 {
-    qDeleteAll(listDeviceInfoObject_);
-    listDeviceInfoObject_.clear();
+    qDeleteAll(m_deviceInfoObject);
+    m_deviceInfoObject.clear();
     XMLObject *pDevicesObj = pXmlObj->getCurrentChild("devices");
     if(pDevicesObj == NULL) {
         return false;
@@ -27,24 +25,24 @@ bool DeviceInfo::openFromXml(XMLObject *pXmlObj)
     QVector<XMLObject* > listUsersObj = pDevicesObj->getCurrentChildren("device");
     foreach(XMLObject* pDevObj, listUsersObj) {
         DeviceInfoObject *pObj = new DeviceInfoObject();
-        pObj->iID_ = pDevObj->getProperty("id").toInt();
-        if(iStartNewDeviceID_ < pObj->iID_) {
-            iStartNewDeviceID_ = pObj->iID_;
+        pObj->m_id = pDevObj->getProperty("id").toInt();
+        if(m_nextDeviceID < pObj->m_id) {
+            m_nextDeviceID = pObj->m_id;
         }
-        pObj->szDeviceType_ = pDevObj->getProperty("type");
-        pObj->szName_ = pDevObj->getProperty("name");
-        pObj->szDeviceName_ = pDevObj->getProperty("dev_name");
-        pObj->iFrameLen_ = pDevObj->getProperty("frame_len").toInt();
-        pObj->szProtocol_ = pDevObj->getProperty("protocol");
-        pObj->szLink_ = pDevObj->getProperty("link");
-        pObj->iStateVar_ = pDevObj->getProperty("state").toInt();
-        pObj->iFrameTimePeriod_ = pDevObj->getProperty("frame_period").toInt();
-        pObj->iCtrlVar_ = pDevObj->getProperty("ctrl").toInt();
-        pObj->bDynamicOptimization_ = pDevObj->getProperty("dyn") == "1";
-        pObj->iRemotePort_ = pDevObj->getProperty("remote").toInt();
-        pObj->szPortParameters_ = pDevObj->getProperty("param");
-        pObj->szProperties_ = pDevObj->getProperty("prop");
-        listDeviceInfoObject_.append(pObj);
+        pObj->m_deviceType = pDevObj->getProperty("type");
+        pObj->m_name = pDevObj->getProperty("name");
+        pObj->m_deviceName = pDevObj->getProperty("dev_name");
+        pObj->m_frameLen = pDevObj->getProperty("frame_len").toInt();
+        pObj->m_protocol = pDevObj->getProperty("protocol");
+        pObj->m_link = pDevObj->getProperty("link");
+        pObj->m_stateVar = pDevObj->getProperty("state").toInt();
+        pObj->m_frameTimePeriod = pDevObj->getProperty("frame_period").toInt();
+        pObj->m_ctrlVar = pDevObj->getProperty("ctrl").toInt();
+        pObj->m_dynamicOptimization = pDevObj->getProperty("dyn") == "1";
+        pObj->m_remotePort = pDevObj->getProperty("remote").toInt();
+        pObj->m_portParameters = pDevObj->getProperty("param");
+        pObj->m_properties = pDevObj->getProperty("prop");
+        m_deviceInfoObject.append(pObj);
     }
     return true;
 }
@@ -55,24 +53,24 @@ bool DeviceInfo::saveToXml(XMLObject *pXmlObj)
     XMLObject *pDevicesObj = new XMLObject(pXmlObj);
     pDevicesObj->setTagName("devices");
 
-    for(int i = 0; i < listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
+    for(int i = 0; i < m_deviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = m_deviceInfoObject.at(i);
         XMLObject *pDevObj = new XMLObject(pDevicesObj);
         pDevObj->setTagName("device");
-        pDevObj->setProperty("id", QString::number(pObj->iID_));
-        pDevObj->setProperty("type", pObj->szDeviceType_);
-        pDevObj->setProperty("name", pObj->szName_);
-        pDevObj->setProperty("dev_name", pObj->szDeviceName_);
-        pDevObj->setProperty("frame_len", QString::number(pObj->iFrameLen_));
-        pDevObj->setProperty("protocol", pObj->szProtocol_);
-        pDevObj->setProperty("link", pObj->szLink_);
-        pDevObj->setProperty("state", QString::number(pObj->iStateVar_));
-        pDevObj->setProperty("frame_period", QString::number(pObj->iFrameTimePeriod_));
-        pDevObj->setProperty("ctrl", QString::number(pObj->iCtrlVar_));
-        pDevObj->setProperty("dyn", pObj->bDynamicOptimization_ ? "1" : "0");
-        pDevObj->setProperty("remote", QString::number(pObj->iRemotePort_));
-        pDevObj->setProperty("param", pObj->szPortParameters_);
-        pDevObj->setProperty("prop", pObj->szProperties_);
+        pDevObj->setProperty("id", QString::number(pObj->m_id));
+        pDevObj->setProperty("type", pObj->m_deviceType);
+        pDevObj->setProperty("name", pObj->m_name);
+        pDevObj->setProperty("dev_name", pObj->m_deviceName);
+        pDevObj->setProperty("frame_len", QString::number(pObj->m_frameLen));
+        pDevObj->setProperty("protocol", pObj->m_protocol);
+        pDevObj->setProperty("link", pObj->m_link);
+        pDevObj->setProperty("state", QString::number(pObj->m_stateVar));
+        pDevObj->setProperty("frame_period", QString::number(pObj->m_frameTimePeriod));
+        pDevObj->setProperty("ctrl", QString::number(pObj->m_ctrlVar));
+        pDevObj->setProperty("dyn", pObj->m_dynamicOptimization ? "1" : "0");
+        pDevObj->setProperty("remote", QString::number(pObj->m_remotePort));
+        pDevObj->setProperty("param", pObj->m_portParameters);
+        pDevObj->setProperty("prop", pObj->m_properties);
     }
 
     return true;
@@ -82,17 +80,17 @@ DeviceInfoObject *DeviceInfo::newObject()
 {
     DeviceInfoObject *pObj = new DeviceInfoObject();
     if(pObj != NULL) {
-        pObj->iID_ = allocNewDeviceID();
-        listDeviceInfoObject_.append(pObj);
+        pObj->m_id = allocNewDeviceID();
+        m_deviceInfoObject.append(pObj);
     }
     return pObj;
 }
 
 DeviceInfoObject *DeviceInfo::getObjectByID(int id)
 {
-    for(int i = 0; i < listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
-        if(pObj->iID_ == id) {
+    for(int i = 0; i < m_deviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = m_deviceInfoObject.at(i);
+        if(pObj->m_id == id) {
             return pObj;
         }
     }
@@ -101,9 +99,9 @@ DeviceInfoObject *DeviceInfo::getObjectByID(int id)
 
 DeviceInfoObject *DeviceInfo::getObjectByName(const QString &name)
 {
-    for(int i = 0; i < listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = listDeviceInfoObject_.at(i);
-        if(pObj->szName_ == name) {
+    for(int i = 0; i < m_deviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = m_deviceInfoObject.at(i);
+        if(pObj->m_name == name) {
             return pObj;
         }
     }
@@ -118,8 +116,8 @@ DeviceInfoObject *DeviceInfo::getObjectByName(const QString &name)
  */
 int DeviceInfo::allocNewDeviceID()
 {
-    ++iStartNewDeviceID_;
-    return iStartNewDeviceID_;
+    ++m_nextDeviceID;
+    return m_nextDeviceID;
 }
 
 

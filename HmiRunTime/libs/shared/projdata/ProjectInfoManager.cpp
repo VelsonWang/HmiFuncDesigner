@@ -7,29 +7,29 @@ class ProjectInfoPrivate
 public:
     ProjectInfoPrivate() { }
 
-    QString projectName_;
-    QString projectDescription_;
-    QString projectPath_;
-    QString deviceType_;
-    int stationNumber_;
-    QString startPage_;
-    QString stationAddress_;
-    bool projectEncrypt_;
-    int pageScanPeriod_;
-    int dataScanPeriod_;
+    QString m_projectName;
+    QString m_projectDescription;
+    QString m_projectPath;
+    QString m_deviceType;
+    int m_stationNumber;
+    QString m_startPage;
+    QString m_stationAddress;
+    bool m_projectEncrypt;
+    int m_pageScanPeriod;
+    int m_dataScanPeriod;
 };
 
 
 
-ProjectInfoManager::ProjectInfoManager() : dPtr_(new ProjectInfoPrivate())
+ProjectInfoManager::ProjectInfoManager() : m_dPtr(new ProjectInfoPrivate())
 {
 
 }
 
 ProjectInfoManager::~ProjectInfoManager()
 {
-    if(dPtr_ != NULL) {
-        delete dPtr_;
+    if(m_dPtr != NULL) {
+        delete m_dPtr;
     }
 }
 
@@ -45,16 +45,16 @@ bool ProjectInfoManager::openFromXml(XMLObject *pXmlObj)
     if(projInfoObj == NULL) {
         return false;
     }
-    dPtr_->projectEncrypt_ = projInfoObj->getProperty("encrypt") == "1";
-    dPtr_->dataScanPeriod_ = projInfoObj->getProperty("data_scan").toUInt();
-    dPtr_->deviceType_ = projInfoObj->getProperty("device");
-    dPtr_->pageScanPeriod_ = projInfoObj->getProperty("page_scan").toUInt();
-    dPtr_->projectDescription_ = projInfoObj->getProperty("desc");
-    dPtr_->projectName_ = projInfoObj->getProperty("name");
-    dPtr_->projectPath_ = projInfoObj->getProperty("path");
-    dPtr_->startPage_ = projInfoObj->getProperty("start");
-    dPtr_->stationAddress_ = projInfoObj->getProperty("address");
-    dPtr_->stationNumber_ = projInfoObj->getProperty("number").toInt();
+    m_dPtr->m_projectEncrypt = projInfoObj->getProperty("encrypt") == "1";
+    m_dPtr->m_dataScanPeriod = projInfoObj->getProperty("data_scan").toUInt();
+    m_dPtr->m_deviceType = projInfoObj->getProperty("device");
+    m_dPtr->m_pageScanPeriod = projInfoObj->getProperty("page_scan").toUInt();
+    m_dPtr->m_projectDescription = projInfoObj->getProperty("desc");
+    m_dPtr->m_projectName = projInfoObj->getProperty("name");
+    m_dPtr->m_projectPath = projInfoObj->getProperty("path");
+    m_dPtr->m_startPage = projInfoObj->getProperty("start");
+    m_dPtr->m_stationAddress = projInfoObj->getProperty("address");
+    m_dPtr->m_stationNumber = projInfoObj->getProperty("number").toInt();
     return true;
 }
 
@@ -68,120 +68,120 @@ bool ProjectInfoManager::saveToXml(XMLObject *pXmlObj)
 {
     XMLObject *projInfoObj = new XMLObject(pXmlObj);
     projInfoObj->setTagName("project_info");
-    projInfoObj->setProperty("encrypt", dPtr_->projectEncrypt_ ? "1" : "0");
-    projInfoObj->setProperty("data_scan", QString::number(dPtr_->dataScanPeriod_));
-    projInfoObj->setProperty("device", dPtr_->deviceType_);
-    projInfoObj->setProperty("page_scan", QString::number(dPtr_->pageScanPeriod_));
-    projInfoObj->setProperty("desc", dPtr_->projectDescription_);
-    projInfoObj->setProperty("name", dPtr_->projectName_);
-    projInfoObj->setProperty("path", dPtr_->projectPath_);
-    projInfoObj->setProperty("start", dPtr_->startPage_);
-    projInfoObj->setProperty("address", dPtr_->stationAddress_);
-    projInfoObj->setProperty("number", QString::number(dPtr_->stationNumber_));
+    projInfoObj->setProperty("encrypt", m_dPtr->m_projectEncrypt ? "1" : "0");
+    projInfoObj->setProperty("data_scan", QString::number(m_dPtr->m_dataScanPeriod));
+    projInfoObj->setProperty("device", m_dPtr->m_deviceType);
+    projInfoObj->setProperty("page_scan", QString::number(m_dPtr->m_pageScanPeriod));
+    projInfoObj->setProperty("desc", m_dPtr->m_projectDescription);
+    projInfoObj->setProperty("name", m_dPtr->m_projectName);
+    projInfoObj->setProperty("path", m_dPtr->m_projectPath);
+    projInfoObj->setProperty("start", m_dPtr->m_startPage);
+    projInfoObj->setProperty("address", m_dPtr->m_stationAddress);
+    projInfoObj->setProperty("number", QString::number(m_dPtr->m_stationNumber));
     return true;
 }
 
 QString ProjectInfoManager::getProjectName() const
 {
-    return dPtr_->projectName_;
+    return m_dPtr->m_projectName;
 }
 
 
 void ProjectInfoManager::setProjectName(const QString &name)
 {
-    dPtr_->projectName_ = name;
+    m_dPtr->m_projectName = name;
 }
 
 QString ProjectInfoManager::getProjectDescription() const
 {
-    return dPtr_->projectDescription_;
+    return m_dPtr->m_projectDescription;
 }
 
 
 void ProjectInfoManager::setProjectDescription(const QString &desc)
 {
-    dPtr_->projectDescription_ = desc;
+    m_dPtr->m_projectDescription = desc;
 }
 
 
 QString ProjectInfoManager::getProjectPath() const
 {
-    return dPtr_->projectPath_;
+    return m_dPtr->m_projectPath;
 }
 
 void ProjectInfoManager::setProjectPath(const QString &path)
 {
-    dPtr_->projectPath_ = path;
+    m_dPtr->m_projectPath = path;
 }
 
 QString ProjectInfoManager::getDeviceType() const
 {
-    return dPtr_->deviceType_;
+    return m_dPtr->m_deviceType;
 }
 
 void ProjectInfoManager::setDeviceType(const QString &type)
 {
-    dPtr_->deviceType_ = type;
+    m_dPtr->m_deviceType = type;
 }
 
 int ProjectInfoManager::getStationNumber() const
 {
-    return dPtr_->stationNumber_;
+    return m_dPtr->m_stationNumber;
 }
 
 void ProjectInfoManager::setStationNumber(int number)
 {
-    dPtr_->stationNumber_ = number;
+    m_dPtr->m_stationNumber = number;
 }
 
 QString ProjectInfoManager::getStartPage() const
 {
-    return dPtr_->startPage_;
+    return m_dPtr->m_startPage;
 }
 
 void ProjectInfoManager::setStartPage(const QString &page)
 {
-    dPtr_->startPage_ = page;
+    m_dPtr->m_startPage = page;
 }
 
 QString ProjectInfoManager::getStationAddress() const
 {
-    return dPtr_->stationAddress_;
+    return m_dPtr->m_stationAddress;
 }
 
 void ProjectInfoManager::setStationAddress(const QString &address)
 {
-    dPtr_->stationAddress_ = address;
+    m_dPtr->m_stationAddress = address;
 }
 
 bool ProjectInfoManager::getProjectEncrypt()
 {
-    return dPtr_->projectEncrypt_;
+    return m_dPtr->m_projectEncrypt;
 }
 
 void ProjectInfoManager::setProjectEncrypt(bool encrypt)
 {
-    dPtr_->projectEncrypt_ = encrypt;
+    m_dPtr->m_projectEncrypt = encrypt;
 }
 
 int ProjectInfoManager::getPageScanPeriod() const
 {
-    return dPtr_->pageScanPeriod_;
+    return m_dPtr->m_pageScanPeriod;
 }
 
 void ProjectInfoManager::setPageScanPeriod(int period)
 {
-    dPtr_->pageScanPeriod_ = period;
+    m_dPtr->m_pageScanPeriod = period;
 }
 
 int ProjectInfoManager::getDataScanPeriod() const
 {
-    return dPtr_->dataScanPeriod_;
+    return m_dPtr->m_dataScanPeriod;
 }
 
 void ProjectInfoManager::setDataScanPeriod(int period)
 {
-    dPtr_->dataScanPeriod_ = period;
+    m_dPtr->m_dataScanPeriod = period;
 }
 
 bool getWidthHeight(const QString &input, int &width, int &height)
@@ -215,7 +215,7 @@ bool getWidthHeight(const QString &input, int &width, int &height)
  */
 int ProjectInfoManager::getGraphPageWidth()
 {
-    QString devType = dPtr_->deviceType_;
+    QString devType = m_dPtr->m_deviceType;
     int width = 0;
     int height = 0;
     if(getWidthHeight(devType, width, height)) {
@@ -230,7 +230,7 @@ int ProjectInfoManager::getGraphPageWidth()
  */
 int ProjectInfoManager::getGraphPageHeight()
 {
-    QString devType = dPtr_->deviceType_;
+    QString devType = m_dPtr->m_deviceType;
     int width = 0;
     int height = 0;
     if(getWidthHeight(devType, width, height)) {

@@ -61,7 +61,7 @@ public:
     void setPort(int port);
 
 private:
-    DatabaseSettingPrivate *const dPtr_;
+    DatabaseSettingPrivate *const m_dPtr;
 
     Q_DISABLE_COPY(DatabaseSetting)
 };

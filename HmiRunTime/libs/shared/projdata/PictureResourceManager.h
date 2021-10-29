@@ -45,8 +45,8 @@ public:
     static QImage base64ToImage(QByteArray baseByteArray, QString szFormat = "PNG");
 
 private:
-    QList<PictureInfo *> m_listPictures;
-    static int m_iStartNewID;
+    QList<PictureInfo *> m_pictures;
+    static int m_nextID;
 };
 
 #endif // PICTURERESOURCEMANAGER_H

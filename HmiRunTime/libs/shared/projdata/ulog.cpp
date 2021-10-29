@@ -8,8 +8,8 @@
 
 
 QMutex gMutex;
-ULog* ULog::log_ = NULL;
-QMutex ULog::mutex_;
+ULog* ULog::m_log = NULL;
+QMutex ULog::m_mutex;
 
 /**
  * @brief getYearMonthDateFromFileName
@@ -42,8 +42,8 @@ void getYearMonthDateFromFileName(const QString &fileName, int &year, int &month
 void ULog::delLogFile(int keepdays)
 {
     QDir file;
-    if(file.exists(logDir_)) {
-        file.setPath(logDir_);
+    if(file.exists(m_logDir)) {
+        file.setPath(m_logDir);
         QFileInfoList flist = file.entryInfoList(QDir::Files | QDir::Readable | QDir::Writable | QDir::Hidden | QDir::NoDotAndDotDot, QDir::Name);
         for(int i = 0; i < flist.size(); i++) {
             int year = 0;
@@ -100,9 +100,9 @@ ULog::ULog(QObject *parent) :
 
 ULog::~ULog()
 {
-    if(file_.isOpen()) {
-        file_.flush();
-        file_.close();
+    if(m_file.isOpen()) {
+        m_file.flush();
+        m_file.close();
     }
 }
 
@@ -125,18 +125,18 @@ int ULog::openLogFile(QString logpath)
         }
         QDateTime dt = QDateTime::currentDateTime();
         filepath = QString("%1/%2Log.txt").arg(logpath).arg(dt.toString("yyyyMMdd"));
-        file_.setFileName(filepath);
-        if(!file_.isOpen()) {
-            if(file_.open(QIODevice::ReadWrite)) {
-                curTime_ = dt;
-                logDir_ = logpath;
+        m_file.setFileName(filepath);
+        if(!m_file.isOpen()) {
+            if(m_file.open(QIODevice::ReadWrite)) {
+                m_curTime = dt;
+                m_logDir = logpath;
                 isSuccess = true;
 
                 QString title = getSystemInfo();
                 QByteArray ba = title.toUtf8();
-                file_.seek(file_.size());
-                file_.write(ba.data());
-                file_.flush();
+                m_file.seek(m_file.size());
+                m_file.write(ba.data());
+                m_file.flush();
             }
         } else {
             isSuccess = true;
@@ -166,16 +166,16 @@ int ULog::addLog(ELogLevel level, QString aValue)
 
     QMutexLocker locker(&gMutex);
 
-    if(level < logLevel_) {
+    if(level < m_logLevel) {
         return 0;
     }
 
-    if (curTime_.date() != QDateTime::currentDateTime().date()) {
-        file_.close();
-        openLogFile(logDir_);
+    if (m_curTime.date() != QDateTime::currentDateTime().date()) {
+        m_file.close();
+        openLogFile(m_logDir);
     }
 
-    if(!file_.isOpen()) {
+    if(!m_file.isOpen()) {
         return 0;
     }
 
@@ -198,9 +198,9 @@ int ULog::addLog(ELogLevel level, QString aValue)
     loginfo = QString("[%1][%2]%3\r\n").arg(datetime).arg(logtype).arg(aValue);
     QByteArray ba = loginfo.toUtf8();
     try {
-        file_.seek(file_.size());
-        file_.write(ba.data());
-        file_.flush();
+        m_file.seek(m_file.size());
+        m_file.write(ba.data());
+        m_file.flush();
     } catch (...) {
         return 0;
     }
@@ -209,7 +209,7 @@ int ULog::addLog(ELogLevel level, QString aValue)
 
 void ULog::setLogLevel(ELogLevel level)
 {
-    logLevel_ = level;
+    m_logLevel = level;
 }
 
 QString ULog::getSystemInfo()
@@ -259,13 +259,13 @@ QString ULog::getSystemInfo()
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-bool QLogHelper::bShowFileFuncLine_ = false;
+bool QLogHelper::m_showFileFuncLine = false;
 
 QLogHelper::QLogHelper(const char *fileName, int lineNumber, const char *functionName)
-    : version_(1)
-    , line_(lineNumber)
-    , file_(fileName)
-    , function_(functionName)
+    : m_version(1)
+    , m_line(lineNumber)
+    , m_file(fileName)
+    , m_func(functionName)
 {
 }
 
@@ -273,12 +273,12 @@ void QLogHelper::writelogToLocal(ELogLevel logtype, const QString &log)
 {
     QString threadText = QStringLiteral("0x%1").arg(quintptr(QThread::currentThreadId()));
     QString filter = QString("[file(%1)] [func(%2) line(%3) pid(%4)] ")
-                     .arg(file_)
-                     .arg(function_)
-                     .arg(line_)
+                     .arg(m_file)
+                     .arg(m_func)
+                     .arg(m_line)
                      .arg(threadText);
 
-    if(bShowFileFuncLine_) {
+    if(m_showFileFuncLine) {
         ULog::getInstance()->addLog(logtype, filter + log);
     } else {
         ULog::getInstance()->addLog(logtype, log);

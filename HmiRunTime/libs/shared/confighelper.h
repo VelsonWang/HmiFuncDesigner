@@ -7,8 +7,8 @@
 class SHAREDLIB_EXPORT ConfigHelper
 {
 private:
-    ConfigHelper(){}
-    ~ConfigHelper(){}
+    ConfigHelper() {}
+    ~ConfigHelper() {}
 
 public:
     // 写字符配置值

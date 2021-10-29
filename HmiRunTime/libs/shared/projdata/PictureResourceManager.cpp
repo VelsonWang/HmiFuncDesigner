@@ -45,7 +45,7 @@ bool PictureInfo::saveToXml(XMLObject *pXmlObj)
 
 ///////////////////////////////////////////////////////////
 
-int PictureResourceManager::m_iStartNewID = 0;
+int PictureResourceManager::m_nextID = 0;
 
 PictureResourceManager::PictureResourceManager()
 {
@@ -54,8 +54,8 @@ PictureResourceManager::PictureResourceManager()
 
 bool PictureResourceManager::openFromXml(XMLObject *pXmlObj)
 {
-    qDeleteAll(m_listPictures);
-    m_listPictures.clear();
+    qDeleteAll(m_pictures);
+    m_pictures.clear();
     XMLObject *pPicsObj = pXmlObj->getCurrentChild("pics");
     if(pPicsObj == NULL) {
         return false;
@@ -64,10 +64,10 @@ bool PictureResourceManager::openFromXml(XMLObject *pXmlObj)
     foreach(XMLObject* pPicObj, listPicsObj) {
         PictureInfo *pObj = new PictureInfo();
         pObj->openFromXml(pPicObj);
-        if(m_iStartNewID < pObj->m_iID) {
-            m_iStartNewID = pObj->m_iID;
+        if(m_nextID < pObj->m_iID) {
+            m_nextID = pObj->m_iID;
         }
-        m_listPictures.append(pObj);
+        m_pictures.append(pObj);
     }
     return true;
 }
@@ -76,8 +76,8 @@ bool PictureResourceManager::saveToXml(XMLObject *pXmlObj)
 {
     XMLObject *pPicsObj = new XMLObject(pXmlObj);
     pPicsObj->setTagName("pics");
-    for(int i = 0; i < m_listPictures.count(); i++) {
-        PictureInfo *pObj = m_listPictures.at(i);
+    for(int i = 0; i < m_pictures.count(); i++) {
+        PictureInfo *pObj = m_pictures.at(i);
         pObj->saveToXml(pPicsObj);
     }
     return true;
@@ -93,7 +93,7 @@ bool PictureResourceManager::add(const QString &szName)
     QString szPicName = info.fileName();
 
     bool bFound = false;
-    foreach(PictureInfo *pObj, m_listPictures) {
+    foreach(PictureInfo *pObj, m_pictures) {
         if(szPicName == pObj->m_szName) {
             bFound = true;
             pObj->m_iRefCnt++;
@@ -107,7 +107,7 @@ bool PictureResourceManager::add(const QString &szName)
         pObj->m_szFormat = info.suffix();
         QImage imageObj(szName);
         pObj->m_datas = imageToBase64(imageObj, pObj->m_szFormat);
-        m_listPictures.append(pObj);
+        m_pictures.append(pObj);
     }
 
     return true;
@@ -116,10 +116,10 @@ bool PictureResourceManager::add(const QString &szName)
 
 bool PictureResourceManager::del(const QString &szName)
 {
-    foreach(PictureInfo *pObj, m_listPictures) {
+    foreach(PictureInfo *pObj, m_pictures) {
         if(szName == pObj->m_szName) {
             if(pObj->m_iRefCnt == 1) {
-                m_listPictures.removeOne(pObj);
+                m_pictures.removeOne(pObj);
                 return true;
             } else {
                 pObj->m_iRefCnt--;
@@ -132,7 +132,7 @@ bool PictureResourceManager::del(const QString &szName)
 
 QImage PictureResourceManager::getPicture(const QString &szName)
 {
-    foreach(PictureInfo *pObj, m_listPictures) {
+    foreach(PictureInfo *pObj, m_pictures) {
         if(szName == pObj->m_szName) {
             return base64ToImage(pObj->m_datas, pObj->m_szFormat);
         }
@@ -148,8 +148,8 @@ QImage PictureResourceManager::getPicture(const QString &szName)
  */
 int PictureResourceManager::allocID()
 {
-    ++m_iStartNewID;
-    return m_iStartNewID;
+    ++m_nextID;
+    return m_nextID;
 }
 
 

@@ -7,33 +7,33 @@ class DatabaseSettingPrivate
 public:
     DatabaseSettingPrivate() { }
 
-    int iAlarmSize_;
-    bool bSpecialDB_;
-    bool bAutoDelete_;
-    QString szDBType_;
-    int iDataKeepDays_;
-    QString szIPAddress_;
-    bool bUseSD_;
-    QString szUser_;
-    int iSavePeriod_;
-    QString szPassword_;
-    int iSendPeriod_;
-    QString szDBName_;
-    int iStartTime_;
-    int iPort_;
+    int m_alarmSize;
+    bool m_specialDB;
+    bool m_autoDelete;
+    QString m_dbType;
+    int m_dataKeepDays;
+    QString m_ipAddress;
+    bool m_useSD;
+    QString m_user;
+    int m_savePeriod;
+    QString m_password;
+    int m_sendPeriod;
+    QString m_dbName;
+    int m_startTime;
+    int m_port;
 };
 
 
 
-DatabaseSetting::DatabaseSetting() : dPtr_(new DatabaseSettingPrivate())
+DatabaseSetting::DatabaseSetting() : m_dPtr(new DatabaseSettingPrivate())
 {
 
 }
 
 DatabaseSetting::~DatabaseSetting()
 {
-    if(dPtr_ != NULL) {
-        delete dPtr_;
+    if(m_dPtr != NULL) {
+        delete m_dPtr;
     }
 }
 
@@ -43,20 +43,20 @@ bool DatabaseSetting::openFromXml(XMLObject *pXmlObj)
     if(pDBSettingObj == NULL) {
         return false;
     }
-    dPtr_->iAlarmSize_ = pDBSettingObj->getProperty("alarm").toInt();
-    dPtr_->bSpecialDB_ = pDBSettingObj->getProperty("special") == "1";
-    dPtr_->bAutoDelete_ = pDBSettingObj->getProperty("aut") == "1";
-    dPtr_->szDBType_ = pDBSettingObj->getProperty("dbt");
-    dPtr_->iDataKeepDays_ = pDBSettingObj->getProperty("days").toInt();
-    dPtr_->szIPAddress_ = pDBSettingObj->getProperty("ip");
-    dPtr_->bUseSD_ = pDBSettingObj->getProperty("sd") == "1";
-    dPtr_->szUser_ = pDBSettingObj->getProperty("user");
-    dPtr_->iSavePeriod_ = pDBSettingObj->getProperty("save").toInt();
-    dPtr_->szPassword_ = pDBSettingObj->getProperty("pass");
-    dPtr_->iSendPeriod_ = pDBSettingObj->getProperty("send").toInt();
-    dPtr_->szDBName_ = pDBSettingObj->getProperty("db");
-    dPtr_->iStartTime_ = pDBSettingObj->getProperty("start").toInt();
-    dPtr_->iPort_ = pDBSettingObj->getProperty("port").toInt();
+    m_dPtr->m_alarmSize = pDBSettingObj->getProperty("alarm").toInt();
+    m_dPtr->m_specialDB = pDBSettingObj->getProperty("special") == "1";
+    m_dPtr->m_autoDelete = pDBSettingObj->getProperty("aut") == "1";
+    m_dPtr->m_dbType = pDBSettingObj->getProperty("dbt");
+    m_dPtr->m_dataKeepDays = pDBSettingObj->getProperty("days").toInt();
+    m_dPtr->m_ipAddress = pDBSettingObj->getProperty("ip");
+    m_dPtr->m_useSD = pDBSettingObj->getProperty("sd") == "1";
+    m_dPtr->m_user = pDBSettingObj->getProperty("user");
+    m_dPtr->m_savePeriod = pDBSettingObj->getProperty("save").toInt();
+    m_dPtr->m_password = pDBSettingObj->getProperty("pass");
+    m_dPtr->m_sendPeriod = pDBSettingObj->getProperty("send").toInt();
+    m_dPtr->m_dbName = pDBSettingObj->getProperty("db");
+    m_dPtr->m_startTime = pDBSettingObj->getProperty("start").toInt();
+    m_dPtr->m_port = pDBSettingObj->getProperty("port").toInt();
     return true;
 }
 
@@ -65,173 +65,173 @@ bool DatabaseSetting::saveToXml(XMLObject *pXmlObj)
 {
     XMLObject *pDBSettingObj = new XMLObject(pXmlObj);
     pDBSettingObj->setTagName("database_setting");
-    pDBSettingObj->setProperty("alarm", QString::number(dPtr_->iAlarmSize_));
-    pDBSettingObj->setProperty("special", dPtr_->bSpecialDB_ ? "1" : "0");
-    pDBSettingObj->setProperty("aut", dPtr_->bAutoDelete_ ? "1" : "0");
-    pDBSettingObj->setProperty("dbt", dPtr_->szDBType_);
-    pDBSettingObj->setProperty("days", QString::number(dPtr_->iDataKeepDays_));
-    pDBSettingObj->setProperty("ip", dPtr_->szIPAddress_);
-    pDBSettingObj->setProperty("sd", dPtr_->bUseSD_ ? "1" : "0");
-    pDBSettingObj->setProperty("user", dPtr_->szUser_);
-    pDBSettingObj->setProperty("save", QString::number(dPtr_->iSavePeriod_));
-    pDBSettingObj->setProperty("pass", dPtr_->szPassword_);
-    pDBSettingObj->setProperty("send", QString::number(dPtr_->iSendPeriod_));
-    pDBSettingObj->setProperty("db", dPtr_->szDBName_);
-    pDBSettingObj->setProperty("start", QString::number(dPtr_->iStartTime_));
-    pDBSettingObj->setProperty("port", QString::number(dPtr_->iPort_));
+    pDBSettingObj->setProperty("alarm", QString::number(m_dPtr->m_alarmSize));
+    pDBSettingObj->setProperty("special", m_dPtr->m_specialDB ? "1" : "0");
+    pDBSettingObj->setProperty("aut", m_dPtr->m_autoDelete ? "1" : "0");
+    pDBSettingObj->setProperty("dbt", m_dPtr->m_dbType);
+    pDBSettingObj->setProperty("days", QString::number(m_dPtr->m_dataKeepDays));
+    pDBSettingObj->setProperty("ip", m_dPtr->m_ipAddress);
+    pDBSettingObj->setProperty("sd", m_dPtr->m_useSD ? "1" : "0");
+    pDBSettingObj->setProperty("user", m_dPtr->m_user);
+    pDBSettingObj->setProperty("save", QString::number(m_dPtr->m_savePeriod));
+    pDBSettingObj->setProperty("pass", m_dPtr->m_password);
+    pDBSettingObj->setProperty("send", QString::number(m_dPtr->m_sendPeriod));
+    pDBSettingObj->setProperty("db", m_dPtr->m_dbName);
+    pDBSettingObj->setProperty("start", QString::number(m_dPtr->m_startTime));
+    pDBSettingObj->setProperty("port", QString::number(m_dPtr->m_port));
     return true;
 }
 
 int DatabaseSetting::getAlarmSize()
 {
-    return dPtr_->iAlarmSize_;
+    return m_dPtr->m_alarmSize;
 }
 
 void DatabaseSetting::setAlarmSize(int size)
 {
-    dPtr_->iAlarmSize_ = size;
+    m_dPtr->m_alarmSize = size;
 }
 
 bool DatabaseSetting::isSpecialDB()
 {
-    return dPtr_->bSpecialDB_;
+    return m_dPtr->m_specialDB;
 }
 
 void DatabaseSetting::setSpecialDB(bool special)
 {
-    dPtr_->bSpecialDB_ = special;
+    m_dPtr->m_specialDB = special;
 }
 
 
 bool DatabaseSetting::isAutoDelete()
 {
-    return dPtr_->bAutoDelete_;
+    return m_dPtr->m_autoDelete;
 }
 
 void DatabaseSetting::setAutoDelete(bool aut)
 {
-    dPtr_->bAutoDelete_ = aut;
+    m_dPtr->m_autoDelete = aut;
 }
 
 
 QString DatabaseSetting::getDBType() const
 {
-    return dPtr_->szDBType_;
+    return m_dPtr->m_dbType;
 }
 
 void DatabaseSetting::setDBType(const QString &type)
 {
-    dPtr_->szDBType_ = type;
+    m_dPtr->m_dbType = type;
 }
 
 
 int DatabaseSetting::getDataKeepDays()
 {
-    return dPtr_->iDataKeepDays_;
+    return m_dPtr->m_dataKeepDays;
 }
 
 void DatabaseSetting::setDataKeepDays(int days)
 {
-    dPtr_->iDataKeepDays_ = days;
+    m_dPtr->m_dataKeepDays = days;
 }
 
 
 QString DatabaseSetting::getIPAddress() const
 {
-    return dPtr_->szIPAddress_;
+    return m_dPtr->m_ipAddress;
 }
 
 void DatabaseSetting::setIPAddress(const QString &ip)
 {
-    dPtr_->szIPAddress_ = ip;
+    m_dPtr->m_ipAddress = ip;
 }
 
 
 bool DatabaseSetting::isUseSD()
 {
-    return dPtr_->bUseSD_;
+    return m_dPtr->m_useSD;
 }
 
 void DatabaseSetting::setUseSD(bool sd)
 {
-    dPtr_->bUseSD_ = sd;
+    m_dPtr->m_useSD = sd;
 }
 
 
 QString DatabaseSetting::getUserName() const
 {
-    return dPtr_->szUser_;
+    return m_dPtr->m_user;
 }
 
 void DatabaseSetting::setUserName(const QString &name)
 {
-    dPtr_->szUser_ = name;
+    m_dPtr->m_user = name;
 }
 
 
 int DatabaseSetting::getSavePeriod()
 {
-    return dPtr_->iSavePeriod_;
+    return m_dPtr->m_savePeriod;
 }
 
 void DatabaseSetting::setSavePeriod(int period)
 {
-    dPtr_->iSavePeriod_ = period;
+    m_dPtr->m_savePeriod = period;
 }
 
 
 QString DatabaseSetting::getPassword() const
 {
-    return dPtr_->szPassword_;
+    return m_dPtr->m_password;
 }
 
 void DatabaseSetting::setPassword(const QString &password)
 {
-    dPtr_->szPassword_ = password;
+    m_dPtr->m_password = password;
 }
 
 
 int DatabaseSetting::getSendPeriod()
 {
-    return dPtr_->iSendPeriod_;
+    return m_dPtr->m_sendPeriod;
 }
 
 void DatabaseSetting::setSendPeriod(int period)
 {
-    dPtr_->iSendPeriod_ = period;
+    m_dPtr->m_sendPeriod = period;
 }
 
 
 QString DatabaseSetting::getDBName() const
 {
-    return dPtr_->szDBName_;
+    return m_dPtr->m_dbName;
 }
 
 void DatabaseSetting::setDBName(const QString &name)
 {
-    dPtr_->szDBName_ = name;
+    m_dPtr->m_dbName = name;
 }
 
 
 int DatabaseSetting::getStartTime()
 {
-    return dPtr_->iStartTime_;
+    return m_dPtr->m_startTime;
 }
 
 void DatabaseSetting::setStartTime(int time)
 {
-    dPtr_->iStartTime_ = time;
+    m_dPtr->m_startTime = time;
 }
 
 
 int DatabaseSetting::getPort()
 {
-    return dPtr_->iPort_;
+    return m_dPtr->m_port;
 }
 
 void DatabaseSetting::setPort(int port)
 {
-    dPtr_->iPort_ = port;
+    m_dPtr->m_port = port;
 }
 
 

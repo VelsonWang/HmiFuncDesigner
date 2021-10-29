@@ -2,7 +2,6 @@
 
 PubTool::PubTool()
 {
-
 }
 
 /*
@@ -110,8 +109,9 @@ void PubTool::FillFullRect(QPainter *painter, QRect rct, QColor cl)
 void PubTool::DrawLineInRect(QPainter *painter, int sx, int sy, int dx, int dy, QColor cl, QRect rct)
 {
     //只能处理垂直线和水平线
-    if((sx != dx) && (sy != dy))
+    if((sx != dx) && (sy != dy)) {
         return;
+    }
     painter->save();
     QPen pen;
     pen.setColor(cl);
@@ -119,38 +119,30 @@ void PubTool::DrawLineInRect(QPainter *painter, int sx, int sy, int dx, int dy, 
 
     QPoint tempPt;
 
-    if(IsInRect(rct, sx, sy, true) && IsInRect(rct, dx, dy, true))
-    {
+    if(IsInRect(rct, sx, sy, true) && IsInRect(rct, dx, dy, true)) {
         painter->drawLine(sx, sy, dx, dy);
-    }
-    else if(IsInRect(rct, sx, sy, true))
-    {
+    } else if(IsInRect(rct, sx, sy, true)) {
         tempPt = GetCrossOfOuterPt(dx, dy, rct);
         painter->drawLine(tempPt.x(), tempPt.y(), sx, sy);
-    }
-    else if(IsInRect(rct, dx, dy, true))
-    {
+    } else if(IsInRect(rct, dx, dy, true)) {
         tempPt = GetCrossOfOuterPt(sx, sy, rct);
         painter->drawLine(tempPt.x(), tempPt.y(), dx, dy);
-    }
-    else
-    {
+    } else {
         bool bCrossed = false;
 
-        if((sx >= rct.left()) && (sx <= rct.right()))
-        {
-            if(((sy < rct.top()) && (dy > rct.bottom())) || ((dy < rct.top()) && (sy > rct.bottom())))
+        if((sx >= rct.left()) && (sx <= rct.right())) {
+            if(((sy < rct.top()) && (dy > rct.bottom())) || ((dy < rct.top()) && (sy > rct.bottom()))) {
                 bCrossed = true;
+            }
         }
 
-        if((sy >= rct.top()) && (sy <= rct.bottom()))
-        {
-            if(((sx < rct.left()) && (dx > rct.right())) || ((dx < rct.left()) && (sx > rct.right())))
+        if((sy >= rct.top()) && (sy <= rct.bottom())) {
+            if(((sx < rct.left()) && (dx > rct.right())) || ((dx < rct.left()) && (sx > rct.right()))) {
                 bCrossed = true;
+            }
         }
 
-        if(bCrossed)
-        {
+        if(bCrossed) {
             tempPt = GetCrossOfOuterPt(sx, sy, rct);
             QPoint dPt = GetCrossOfOuterPt(dx, dy, rct);
 
@@ -181,20 +173,18 @@ void PubTool::DrawLine(QPainter *painter, QPoint ptStart, QPoint ptEnd, QColor c
     painter->restore();
 }
 
-void PubTool::DrawGrid(QPainter *painter,int w_grid,int h_grid, QRect rcSize)
+void PubTool::DrawGrid(QPainter *painter, int w_grid, int h_grid, QRect rcSize)
 {
     painter->save();
-    int iWGridCount,iHGridCount;
+    int iWGridCount, iHGridCount;
     painter->setPen(QColor(64, 64, 64));
 
-    iWGridCount = (rcSize.right() - rcSize.left())/ w_grid + 1;
-    iHGridCount = (rcSize.bottom() - rcSize.top())/ h_grid + 1;
+    iWGridCount = (rcSize.right() - rcSize.left()) / w_grid + 1;
+    iHGridCount = (rcSize.bottom() - rcSize.top()) / h_grid + 1;
 
-    for(int i=1; i<iHGridCount; i++)
-    {
-        for(int j=1; j<iWGridCount; j++)
-        {
-            painter->drawLine(j*w_grid, i*h_grid, j*w_grid+1, i*h_grid);
+    for(int i = 1; i < iHGridCount; i++) {
+        for(int j = 1; j < iWGridCount; j++) {
+            painter->drawLine(j * w_grid, i * h_grid, j * w_grid + 1, i * h_grid);
         }
     }
     painter->restore();
@@ -207,24 +197,24 @@ QPoint PubTool::GetCrossOfOuterPt(int x, int y, QRect aRct)
 {
     QPoint pt;
 
-    if((x >= aRct.left()) && (x <= aRct.right()) && ((y <= aRct.top()) || (y >= aRct.bottom())))
-    {
+    if((x >= aRct.left()) && (x <= aRct.right()) && ((y <= aRct.top()) || (y >= aRct.bottom()))) {
         pt.setX(x);
 
-        if(y <= aRct.top())
+        if(y <= aRct.top()) {
             pt.setY(aRct.top());
-        else
+        } else {
             pt.setY(aRct.bottom());
+        }
     }
 
-    if((y >= aRct.top()) && (y <= aRct.bottom()) && ((x <= aRct.left()) || (x >= aRct.right())))
-    {
+    if((y >= aRct.top()) && (y <= aRct.bottom()) && ((x <= aRct.left()) || (x >= aRct.right()))) {
         pt.setY(y);
 
-        if(x <= aRct.left())
+        if(x <= aRct.left()) {
             pt.setX(aRct.left());
-        else
+        } else {
             pt.setX(aRct.right());
+        }
     }
 
     return pt;
@@ -242,10 +232,10 @@ bool PubTool::IsInRect(QRect rct, int X, int Y, bool bBorder)
 
     if(bBorder)
         bRet = ((X >= rct.left()) && (X <= rct.right())
-            && (Y >= rct.top()) && (Y <= rct.bottom()));
+                && (Y >= rct.top()) && (Y <= rct.bottom()));
     else
         bRet = ((X > rct.left()) && (X < rct.right())
-            && (Y > rct.top()) && (Y < rct.bottom()));
+                && (Y > rct.top()) && (Y < rct.bottom()));
 
     return bRet;
 }
@@ -256,10 +246,10 @@ bool PubTool::IsInRect(QRect rct, QRect subRct, bool bBorder)
 
     if(bBorder)
         bRet = ((subRct.left() >= rct.left()) && (subRct.right() <= rct.right())
-            && (subRct.top() >= rct.top()) && (subRct.bottom() <= rct.bottom()));
+                && (subRct.top() >= rct.top()) && (subRct.bottom() <= rct.bottom()));
     else
         bRet = ((subRct.left() > rct.left()) && (subRct.right() < rct.right())
-            && (subRct.top() > rct.top()) && (subRct.bottom() < rct.bottom()));
+                && (subRct.top() > rct.top()) && (subRct.bottom() < rct.bottom()));
 
     return bRet;
 }
@@ -275,30 +265,38 @@ bool PubTool::IsCrossRect(QRect aRct, QRect bRct, bool bBorder)
     //			    *               *
     //              *****************
     //////////////////////////////////////////////////
-    if(IsInRect(bRct, aRct.left(), aRct.top(), bBorder))
+    if(IsInRect(bRct, aRct.left(), aRct.top(), bBorder)) {
         return true;
+    }
 
-    if(IsInRect(bRct, aRct.right(), aRct.top(), bBorder))
+    if(IsInRect(bRct, aRct.right(), aRct.top(), bBorder)) {
         return true;
+    }
 
-    if(IsInRect(bRct, aRct.right(), aRct.bottom(), bBorder))
+    if(IsInRect(bRct, aRct.right(), aRct.bottom(), bBorder)) {
         return true;
+    }
 
-    if(IsInRect(bRct, aRct.left(), aRct.bottom(), bBorder))
+    if(IsInRect(bRct, aRct.left(), aRct.bottom(), bBorder)) {
         return true;
+    }
 
     //////////////////////////////////////////////////
-    if(IsInRect(aRct, bRct.left(), bRct.top(), bBorder))
+    if(IsInRect(aRct, bRct.left(), bRct.top(), bBorder)) {
         return true;
+    }
 
-    if(IsInRect(aRct, bRct.right(), bRct.top(), bBorder))
+    if(IsInRect(aRct, bRct.right(), bRct.top(), bBorder)) {
         return true;
+    }
 
-    if(IsInRect(aRct, bRct.right(), bRct.bottom(), bBorder))
+    if(IsInRect(aRct, bRct.right(), bRct.bottom(), bBorder)) {
         return true;
+    }
 
-    if(IsInRect(aRct, bRct.left(), bRct.bottom(), bBorder))
+    if(IsInRect(aRct, bRct.left(), bRct.bottom(), bBorder)) {
         return true;
+    }
     //////////////////////////////////////////////////
 
 
@@ -312,25 +310,26 @@ bool PubTool::IsCrossRect(QRect aRct, QRect bRct, bool bBorder)
     //			*			*
     //			*************
     //////////////////////////////////////////////////
-    if(!bBorder)
-    {
+    if(!bBorder) {
         if((aRct.left() > bRct.left()) && (aRct.right() < bRct.right())
-                && (aRct.top() < bRct.top()) && (aRct.bottom() > bRct.bottom()))
+                && (aRct.top() < bRct.top()) && (aRct.bottom() > bRct.bottom())) {
             return true;
+        }
 
         if((aRct.left() < bRct.left()) && (aRct.right() > bRct.right())
-                && (aRct.top() > bRct.top()) && (aRct.bottom() < bRct.bottom()))
+                && (aRct.top() > bRct.top()) && (aRct.bottom() < bRct.bottom())) {
             return true;
-    }
-    else
-    {
+        }
+    } else {
         if((aRct.left() >= bRct.left()) && (aRct.right() <= bRct.right())
-                && (aRct.top() <= bRct.top()) && (aRct.bottom() >= bRct.bottom()))
+                && (aRct.top() <= bRct.top()) && (aRct.bottom() >= bRct.bottom())) {
             return true;
+        }
 
         if((aRct.left() <= bRct.left()) && (aRct.right() >= bRct.right())
-                && (aRct.top() >= bRct.top()) && (aRct.bottom() <= bRct.bottom()))
+                && (aRct.top() >= bRct.top()) && (aRct.bottom() <= bRct.bottom())) {
             return true;
+        }
     }
     //////////////////////////////////////////////////
 
@@ -347,12 +346,12 @@ bool PubTool::Draw3DFrame(QPainter *painter, QRect rect, QColor leftTopColor,
     painter->fillRect(rect, brush);
 
     QRect tmpRect;
-    const int iWidthFrame =1;
+    const int iWidthFrame = 1;
 
     // draw left top corner
     QPen pen = QPen(QBrush(leftTopColor), iWidthFrame, Qt::SolidLine);
     painter->setPen(pen);
-    tmpRect = PubTool::DeflateRect(rect, iWidthFrame/2);
+    tmpRect = PubTool::DeflateRect(rect, iWidthFrame / 2);
 
     painter->drawLine(tmpRect.left(), tmpRect.bottom(), tmpRect.left(), tmpRect.top());
     painter->drawLine(tmpRect.left(), tmpRect.top(), tmpRect.right(), tmpRect.top());
@@ -429,14 +428,14 @@ void PubTool::draw3DRect(QPainter& pnt, QColor& col, int x, int y, int w, int h,
     QColor light = col.lighter(135);
     QColor dark = col.darker(140);
     pnt.setPen(up ? light : dark);
-    pnt.drawLine(x, y, x+w, y);
-    pnt.drawLine(x, y, x, y+h);
+    pnt.drawLine(x, y, x + w, y);
+    pnt.drawLine(x, y, x, y + h);
     pnt.setPen(up ? dark : light);
-    pnt.drawLine(x, y+h, x+w, y+h);
-    pnt.drawLine(x+w, y, x+w, y+h);
+    pnt.drawLine(x, y + h, x + w, y + h);
+    pnt.drawLine(x + w, y, x + w, y + h);
     pnt.setPen(col);
-    pnt.drawPoint(x+w, y);
-    pnt.drawPoint(x, y+h);
+    pnt.drawPoint(x + w, y);
+    pnt.drawPoint(x, y + h);
 }
 
 void PubTool::draw3DRect(QPainter& pnt, const QColor& colLight, const QColor& colDark, int x, int y, int w, int h, bool up)
@@ -452,22 +451,24 @@ void PubTool::draw3DRect(QPainter& pnt, const QColor& colLight, const QColor& co
     pnt.drawLine(x + w, y, x + w, y + h);
 
     pnt.setPen(colLight);
-    pnt.drawPoint(x+w, y);
-    pnt.drawPoint(x, y+h);
+    pnt.drawPoint(x + w, y);
+    pnt.drawPoint(x, y + h);
 }
 
 void PubTool::drawRectangle(QPainter& pnt, const QRect& rect, const QColor& pen, const QColor& brush)
 {
-    if (brush.isValid())
+    if (brush.isValid()) {
         pnt.fillRect(rect, QBrush(brush));
+    }
 
-    if (pen != brush && pen.isValid())
+    if (pen != brush && pen.isValid()) {
         draw3DRect(pnt, pen, pen, rect.x(), rect.y(), rect.width(), rect.height(), true);
+    }
 }
 
 void PubTool::drawTriangle(QPainter& pnt, const QPoint& pt0, const QPoint& pt1, const QPoint& pt2, const QColor& color)
 {
-//    pnt.setRenderHint(QPainter::Antialiasing);
+    //    pnt.setRenderHint(QPainter::Antialiasing);
     QPen oldPen = pnt.pen();
     QBrush oldBrush = pnt.brush();
 
@@ -513,34 +514,37 @@ QRgb PubTool::darkColor(QRgb clr, int nShade)
 
 void PubTool::RGBtoHSL(QRgb clr, double& h, double& s, double& l)
 {
-    double r = (double)qRed(clr)/255.0;
-    double g = (double)qGreen(clr)/255.0;
-    double b = (double)qBlue(clr)/255.0;
+    double r = (double)qRed(clr) / 255.0;
+    double g = (double)qGreen(clr) / 255.0;
+    double b = (double)qBlue(clr) / 255.0;
 
     double maxcolor = qMax(r, qMax(g, b));
     double mincolor = qMin(r, qMin(g, b));
 
-    l = (maxcolor + mincolor)/2;
+    l = (maxcolor + mincolor) / 2;
 
     if (maxcolor == mincolor) {
         h = 0;
         s = 0;
     } else {
-        if (l < 0.5)
-            s = (maxcolor-mincolor)/(maxcolor + mincolor);
-        else
-            s = (maxcolor-mincolor)/(2.0-maxcolor-mincolor);
+        if (l < 0.5) {
+            s = (maxcolor - mincolor) / (maxcolor + mincolor);
+        } else {
+            s = (maxcolor - mincolor) / (2.0 - maxcolor - mincolor);
+        }
 
-        if (r == maxcolor)
-            h = (g-b)/(maxcolor-mincolor);
-        else if (g == maxcolor)
-            h = 2.0+(b-r)/(maxcolor-mincolor);
-        else
-            h = 4.0+(r-g)/(maxcolor-mincolor);
+        if (r == maxcolor) {
+            h = (g - b) / (maxcolor - mincolor);
+        } else if (g == maxcolor) {
+            h = 2.0 + (b - r) / (maxcolor - mincolor);
+        } else {
+            h = 4.0 + (r - g) / (maxcolor - mincolor);
+        }
 
         h /= 6.0;
-        if (h < 0.0)
+        if (h < 0.0) {
             h += 1;
+        }
     }
 }
 
@@ -552,16 +556,17 @@ QRgb PubTool::HSLtoRGB(double h, double s, double l)
     if (s == 0) {
         r = g = b = l;
     } else {
-        if (l < 0.5)
-            temp2 = l*(1.0 + s);
-        else
-            temp2 = l + s-l*s;
+        if (l < 0.5) {
+            temp2 = l * (1.0 + s);
+        } else {
+            temp2 = l + s - l * s;
+        }
 
-        temp1 = 2.0 * l-temp2;
+        temp1 = 2.0 * l - temp2;
 
-        r = HueToRGB(temp1, temp2, h + 1.0/3.0);
+        r = HueToRGB(temp1, temp2, h + 1.0 / 3.0);
         g = HueToRGB(temp1, temp2, h);
-        b = HueToRGB(temp1, temp2, h - 1.0/3.0);
+        b = HueToRGB(temp1, temp2, h - 1.0 / 3.0);
     }
 
     return qRgb((int)(r * 255.0), (int)(g * 255.0), (int)(b * 255.0));
@@ -579,19 +584,24 @@ QRgb PubTool::blendColors(QRgb crA, QRgb crB, double fAmountA)
 
 double PubTool::HueToRGB(double temp1, double temp2, double temp3)
 {
-    if (temp3 < 0)
+    if (temp3 < 0) {
         temp3 = temp3 + 1.0;
-    if (temp3 > 1)
-        temp3 = temp3-1.0;
+    }
+    if (temp3 > 1) {
+        temp3 = temp3 - 1.0;
+    }
 
-    if (6.0*temp3 < 1)
-        return (temp1+(temp2-temp1)*temp3 * 6.0);
+    if (6.0 * temp3 < 1) {
+        return (temp1 + (temp2 - temp1) * temp3 * 6.0);
+    }
 
-    else if (2.0*temp3 < 1)
+    else if (2.0 * temp3 < 1) {
         return temp2;
+    }
 
-    else if (3.0*temp3 < 2.0)
-        return (temp1+(temp2-temp1)*((2.0/3.0)-temp3)*6.0);
+    else if (3.0 * temp3 < 2.0) {
+        return (temp1 + (temp2 - temp1) * ((2.0 / 3.0) - temp3) * 6.0);
+    }
 
     return temp1;
 }
@@ -599,20 +609,25 @@ double PubTool::HueToRGB(double temp1, double temp2, double temp3)
 
 int PubTool::HueToRGB(int m1, int m2, int h)
 {
-    if (h < 0)
+    if (h < 0) {
         h += 255;
+    }
 
-    if (h > 255)
+    if (h > 255) {
         h -= 255;
+    }
 
-    if ((6 * h) < 255)
+    if ((6 * h) < 255) {
         return ((m1 + ((m2 - m1) / 255 * h * 6)) / 255);
+    }
 
-    if ((2 * h) < 255)
+    if ((2 * h) < 255) {
         return m2 / 255;
+    }
 
-    if ((3 * h) < (2 * 255))
+    if ((3 * h) < (2 * 255)) {
         return ((m1 + (m2 - m1) / 255 * ((255 * 2 / 3) - h) * 6) / 255);
+    }
 
     return (m1 / 255);
 }

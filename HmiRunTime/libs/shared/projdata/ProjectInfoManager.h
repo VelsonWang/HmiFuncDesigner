@@ -53,7 +53,7 @@ public:
     int getGraphPageHeight();
 
 private:
-    ProjectInfoPrivate *const dPtr_;
+    ProjectInfoPrivate *const m_dPtr;
 };
 
 #endif // PROJECTINFOMANAGER_H

@@ -41,30 +41,30 @@ bool ComDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 {
     DeviceInfoObject *pObj = coreObj->deviceInfo_.getObjectByName(devName);
 
-    m_sDeviceName = pObj->szDeviceName_;
-    m_iFrameLen = pObj->iFrameLen_;
-    m_sProtocol = pObj->szProtocol_;
-    m_sLink = pObj->szLink_;
-    m_iStateVar = pObj->iStateVar_;
-    m_iFrameTimePeriod = pObj->iFrameTimePeriod_;
-    m_iCtrlVar = pObj->iCtrlVar_;
-    m_bDynamicOptimization = pObj->bDynamicOptimization_;
-    m_iRemotePort = pObj->iRemotePort_;
-    parsePropertiesFromString(pObj->szProperties_, m_mapProperties);
+    m_sDeviceName = pObj->m_deviceName;
+    m_iFrameLen = pObj->m_frameLen;
+    m_sProtocol = pObj->m_protocol;
+    m_sLink = pObj->m_link;
+    m_iStateVar = pObj->m_stateVar;
+    m_iFrameTimePeriod = pObj->m_frameTimePeriod;
+    m_iCtrlVar = pObj->m_ctrlVar;
+    m_bDynamicOptimization = pObj->m_dynamicOptimization;
+    m_iRemotePort = pObj->m_remotePort;
+    parsePropertiesFromString(pObj->m_properties, m_mapProperties);
     m_iRetryTimes = m_mapProperties.value("retryTimes").toInt();
     m_iCommTimeout = m_mapProperties.value("commTimeout").toInt();
     m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt();
     m_sDeviceType = "COM";
 
     ComDevice comDev;
-    comDev.fromString(pObj->szPortParameters_);
+    comDev.fromString(pObj->m_portParameters);
 
-    m_sPortNumber = comDev.szPortNumber_;
-    m_iBaudrate = comDev.iBaudrate_;
-    m_iDatabit = comDev.iDatabit_;
-    m_fStopbit = comDev.fStopbit_;
-    m_sVerifybit = comDev.szVerifybit_;
-    m_iTimeout = comDev.iTimeout_;
+    m_sPortNumber = comDev.m_portNumber;
+    m_iBaudrate = comDev.m_baudrate;
+    m_iDatabit = comDev.m_databit;
+    m_fStopbit = comDev.m_stopbit;
+    m_sVerifybit = comDev.m_verifybit;
+    m_iTimeout = comDev.m_timeout;
 
     return true;
 }
@@ -78,27 +78,27 @@ bool NetDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 {
     DeviceInfoObject *pObj = coreObj->deviceInfo_.getObjectByName(devName);
 
-    m_sDeviceName = pObj->szDeviceName_;
-    m_iFrameLen = pObj->iFrameLen_;
-    m_sProtocol = pObj->szProtocol_;
-    m_sLink = pObj->szLink_;
-    m_iStateVar = pObj->iStateVar_;
-    m_iFrameTimePeriod = pObj->iFrameTimePeriod_;
-    m_iCtrlVar = pObj->iCtrlVar_;
-    m_bDynamicOptimization = pObj->bDynamicOptimization_;
-    m_iRemotePort = pObj->iRemotePort_;
-    parsePropertiesFromString(pObj->szProperties_, m_mapProperties);
+    m_sDeviceName = pObj->m_deviceName;
+    m_iFrameLen = pObj->m_frameLen;
+    m_sProtocol = pObj->m_protocol;
+    m_sLink = pObj->m_link;
+    m_iStateVar = pObj->m_stateVar;
+    m_iFrameTimePeriod = pObj->m_frameTimePeriod;
+    m_iCtrlVar = pObj->m_ctrlVar;
+    m_bDynamicOptimization = pObj->m_dynamicOptimization;
+    m_iRemotePort = pObj->m_remotePort;
+    parsePropertiesFromString(pObj->m_properties, m_mapProperties);
     m_iRetryTimes = m_mapProperties.value("retryTimes").toInt();
     m_iCommTimeout = m_mapProperties.value("commTimeout").toInt();
     m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt();
     m_sDeviceType = "NET";
 
     NetDevice netDev;
-    netDev.fromString(pObj->szPortParameters_);
-    m_sIpAddress = netDev.szIpAddress_;
-    m_iPort = netDev.iPort_;
-    m_sIpAddress1 = netDev.szIpAddress1_;
-    m_iPort1 = netDev.iPort1_;
+    netDev.fromString(pObj->m_portParameters);
+    m_sIpAddress = netDev.m_ipAddress;
+    m_iPort = netDev.m_port;
+    m_sIpAddress1 = netDev.m_ipAddress1;
+    m_iPort1 = netDev.m_port1;
 
     return true;
 }

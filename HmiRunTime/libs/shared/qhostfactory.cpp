@@ -3,27 +3,27 @@
 #include "host/qformhost.h"
 #include "xmlobject.h"
 
-QMap<QString, tagHostInfo*> QHostFactory::m_meta_map;
+QMap<QString, tagHostInfo*> QHostFactory::m_metaMap;
 
 QHostFactory::QHostFactory()
 {
 }
 
-void QHostFactory::register_host(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *host)
+void QHostFactory::registerHost(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *host)
 {
-    tagHostInfo *info = m_meta_map.value(name);
+    tagHostInfo *info = m_metaMap.value(name);
     if(info == NULL) {
         info = new tagHostInfo;
     }
-    info->m_host_object = host;
+    info->m_hostObject = host;
     info->m_name = name;
     info->getShowIcon = icon;
     info->getShowName = get_name;
     info->getShowGroup = get_group;
-    m_meta_map.insert(name, info);
+    m_metaMap.insert(name, info);
 }
 
-QAbstractHost* QHostFactory::create_host(const QString &name)
+QAbstractHost* QHostFactory::createHost(const QString &name)
 {
     QAbstractHost* host = NULL;
     if(name == FORM_TITLE) {
@@ -31,11 +31,11 @@ QAbstractHost* QHostFactory::create_host(const QString &name)
         host->init();
         host->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
-        tagHostInfo *info = m_meta_map.value(name);
+        tagHostInfo *info = m_metaMap.value(name);
         if(info == NULL) {
             return NULL;
         }
-        const QMetaObject* obj = info->m_host_object;
+        const QMetaObject* obj = info->m_hostObject;
 
         if(obj != NULL) {
             host = (QAbstractHost*)obj->newInstance();
@@ -47,12 +47,12 @@ QAbstractHost* QHostFactory::create_host(const QString &name)
     return host;
 }
 
-QMap<QString, tagHostInfo*> QHostFactory::get_host_info()
+QMap<QString, tagHostInfo*> QHostFactory::getHostInfo()
 {
-    return m_meta_map;
+    return m_metaMap;
 }
 
-QAbstractHost* QHostFactory::create_host(XMLObject *xml)
+QAbstractHost* QHostFactory::createHost(XMLObject *xml)
 {
     if(xml == NULL) {
         return NULL;
@@ -66,7 +66,7 @@ QAbstractHost* QHostFactory::create_host(XMLObject *xml)
         ret->fromObject(xml);
         ret->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
-        ret = create_host(xml->getProperty(HOST_TYPE));
+        ret = createHost(xml->getProperty(HOST_TYPE));
         if(ret != NULL) {
             ret->fromObject(xml);
         }
@@ -74,7 +74,7 @@ QAbstractHost* QHostFactory::create_host(XMLObject *xml)
     return ret;
 }
 
-tagHostInfo* QHostFactory::get_host_info(const QString &name)
+tagHostInfo* QHostFactory::getHostInfo(const QString &name)
 {
-    return m_meta_map.value(name);
+    return m_metaMap.value(name);
 }

@@ -29,19 +29,19 @@ public:
 
     static ULog* getInstance(QObject *parent = 0)
     {
-        QMutexLocker locker(&mutex_);
-        if(log_ == NULL) {
-            log_ = new ULog(parent);
+        QMutexLocker locker(&m_mutex);
+        if(m_log == NULL) {
+            m_log = new ULog(parent);
             ::atexit(deleteInstance);
         }
-        return log_;
+        return m_log;
     }
 
     static void deleteInstance()
     {
-        if(log_ != NULL) {
-            delete log_;
-            log_ = NULL;
+        if(m_log != NULL) {
+            delete m_log;
+            m_log = NULL;
         }
     }
 
@@ -58,12 +58,12 @@ signals:
 public slots:
 
 private:
-    QString logDir_;
-    QDateTime curTime_;
-    ELogLevel logLevel_;
-    QFile file_;
-    static ULog* log_;
-    static QMutex mutex_;
+    QString m_logDir;
+    QDateTime m_curTime;
+    ELogLevel m_logLevel;
+    QFile m_file;
+    static ULog* m_log;
+    static QMutex m_mutex;
 };
 
 
@@ -74,10 +74,10 @@ class SHAREDLIB_EXPORT QLogHelper
 
 public:
     Q_DECL_CONSTEXPR QLogHelper() :
-        version_(1),
-        line_(0),
-        file_(0),
-        function_(0)
+        m_version(1),
+        m_line(0),
+        m_file(0),
+        m_func(0)
     {
 
     }
@@ -148,13 +148,13 @@ private:
 public:
     // 日志是否记录文件名，函数名称，代码行信息
     // true-记录, false-不记录
-    static bool bShowFileFuncLine_;
+    static bool m_showFileFuncLine;
 
 private:
-    int version_;
-    int line_;
-    const char *file_;
-    const char *function_;
+    int m_version;
+    int m_line;
+    const char *m_file;
+    const char *m_func;
 
     Q_DISABLE_COPY(QLogHelper)
 };

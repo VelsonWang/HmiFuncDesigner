@@ -7,7 +7,6 @@
 #include <QObject>
 #include <QMutex>
 
-
 class DatabaseWrapper : public QObject
 {
     Q_OBJECT

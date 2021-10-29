@@ -59,11 +59,11 @@ bool HmiRunTime::Load()
     m_VendorList.clear();
     DeviceInfo &deviceInfo = projCore->deviceInfo_;
 
-    for(int i = 0; i < deviceInfo.listDeviceInfoObject_.count(); i++) {
-        DeviceInfoObject *pObj = deviceInfo.listDeviceInfoObject_.at(i);
-        QString sProtocol = pObj->szProtocol_;
-        QString sPortType = pObj->szDeviceType_;
-        QString sDeviceName = pObj->szDeviceName_;
+    for(int i = 0; i < deviceInfo.m_deviceInfoObject.count(); i++) {
+        DeviceInfoObject *pObj = deviceInfo.m_deviceInfoObject.at(i);
+        QString sProtocol = pObj->m_protocol;
+        QString sPortType = pObj->m_deviceType;
+        QString sDeviceName = pObj->m_deviceName;
         qDebug() << "Protocol: " << sProtocol
                  << " PortType:" << sPortType
                  << " DeviceName:" << sDeviceName;

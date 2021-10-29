@@ -7,28 +7,28 @@ class NetSettingPrivate
 public:
     NetSettingPrivate() { }
 
-    bool bHotStandbyMode_;
-    bool bClientMode_;
-    bool bServerStation_;
-    bool bClientStation_;
-    QString szClientAddress_;
-    QString szServerAddress_;
-    int iHeartbeatTime_;
-    int iDatabaseSyncTime_;
+    bool m_hotStandbyMode;
+    bool m_clientMode;
+    bool m_serverStation;
+    bool m_clientStation;
+    QString m_clientAddress;
+    QString m_serverAddress;
+    int m_heartbeatTime;
+    int m_databaseSyncTime;
 };
 
 
 
 NetSetting::NetSetting()
-    : dPtr_(new NetSettingPrivate())
+    : m_dPtr(new NetSettingPrivate())
 {
 
 }
 
 NetSetting::~NetSetting()
 {
-    if(dPtr_ != NULL) {
-        delete dPtr_;
+    if(m_dPtr != NULL) {
+        delete m_dPtr;
     }
 }
 
@@ -39,14 +39,14 @@ bool NetSetting::openFromXml(XMLObject *pXmlObj)
     if(pNetSettingObj == NULL) {
         return false;
     }
-    dPtr_->bHotStandbyMode_ = pNetSettingObj->getProperty("hot") == "1";
-    dPtr_->bClientMode_ = pNetSettingObj->getProperty("clientMode") == "1";
-    dPtr_->bServerStation_ = pNetSettingObj->getProperty("sStation") == "1";
-    dPtr_->bClientStation_ = pNetSettingObj->getProperty("cStation") == "1";
-    dPtr_->szClientAddress_ = pNetSettingObj->getProperty("cAddress");
-    dPtr_->szServerAddress_ = pNetSettingObj->getProperty("sAddress");
-    dPtr_->iHeartbeatTime_ = pNetSettingObj->getProperty("heartbeat").toInt();
-    dPtr_->iDatabaseSyncTime_ = pNetSettingObj->getProperty("dbSync").toInt();
+    m_dPtr->m_hotStandbyMode = pNetSettingObj->getProperty("hot") == "1";
+    m_dPtr->m_clientMode = pNetSettingObj->getProperty("clientMode") == "1";
+    m_dPtr->m_serverStation = pNetSettingObj->getProperty("sStation") == "1";
+    m_dPtr->m_clientStation = pNetSettingObj->getProperty("cStation") == "1";
+    m_dPtr->m_clientAddress = pNetSettingObj->getProperty("cAddress");
+    m_dPtr->m_serverAddress = pNetSettingObj->getProperty("sAddress");
+    m_dPtr->m_heartbeatTime = pNetSettingObj->getProperty("heartbeat").toInt();
+    m_dPtr->m_databaseSyncTime = pNetSettingObj->getProperty("dbSync").toInt();
     return true;
 }
 
@@ -55,95 +55,95 @@ bool NetSetting::saveToXml(XMLObject *pXmlObj)
 {
     XMLObject *pNetSettingObj = new XMLObject(pXmlObj);
     pNetSettingObj->setTagName("net_setting");
-    pNetSettingObj->setProperty("hot", dPtr_->bHotStandbyMode_ ? "1" : "0");
-    pNetSettingObj->setProperty("clientMode", dPtr_->bClientMode_ ? "1" : "0");
-    pNetSettingObj->setProperty("sStation", dPtr_->bServerStation_ ? "1" : "0");
-    pNetSettingObj->setProperty("cStation", dPtr_->bClientStation_ ? "1" : "0");
-    pNetSettingObj->setProperty("cAddress", dPtr_->szClientAddress_);
-    pNetSettingObj->setProperty("sAddress", dPtr_->szServerAddress_);
-    pNetSettingObj->setProperty("heartbeat", QString::number(dPtr_->iHeartbeatTime_));
-    pNetSettingObj->setProperty("dbSync", QString::number(dPtr_->iDatabaseSyncTime_));
+    pNetSettingObj->setProperty("hot", m_dPtr->m_hotStandbyMode ? "1" : "0");
+    pNetSettingObj->setProperty("clientMode", m_dPtr->m_clientMode ? "1" : "0");
+    pNetSettingObj->setProperty("sStation", m_dPtr->m_serverStation ? "1" : "0");
+    pNetSettingObj->setProperty("cStation", m_dPtr->m_clientStation ? "1" : "0");
+    pNetSettingObj->setProperty("cAddress", m_dPtr->m_clientAddress);
+    pNetSettingObj->setProperty("sAddress", m_dPtr->m_serverAddress);
+    pNetSettingObj->setProperty("heartbeat", QString::number(m_dPtr->m_heartbeatTime));
+    pNetSettingObj->setProperty("dbSync", QString::number(m_dPtr->m_databaseSyncTime));
     return true;
 }
 
 bool NetSetting::isHotStandbyMode()
 {
-    return dPtr_->bHotStandbyMode_;
+    return m_dPtr->m_hotStandbyMode;
 }
 
 void NetSetting::setHotStandbyMode(bool mode)
 {
-    dPtr_->bHotStandbyMode_ = mode;
+    m_dPtr->m_hotStandbyMode = mode;
 }
 
 bool NetSetting::isClientMode()
 {
-    return dPtr_->bClientMode_;
+    return m_dPtr->m_clientMode;
 }
 
 void NetSetting::setClientMode(bool mode)
 {
-    dPtr_->bClientMode_ = mode;
+    m_dPtr->m_clientMode = mode;
 }
 
 bool NetSetting::isServerStation()
 {
-    return dPtr_->bServerStation_;
+    return m_dPtr->m_serverStation;
 }
 
 void NetSetting::setServerStation(bool server)
 {
-    dPtr_->bServerStation_ = server;
+    m_dPtr->m_serverStation = server;
 }
 
 bool NetSetting::isClientStation()
 {
-    return dPtr_->bClientStation_;
+    return m_dPtr->m_clientStation;
 }
 
 void NetSetting::setClientStation(bool client)
 {
-    dPtr_->bClientStation_ = client;
+    m_dPtr->m_clientStation = client;
 }
 
 QString NetSetting::getClientAddress() const
 {
-    return dPtr_->szClientAddress_;
+    return m_dPtr->m_clientAddress;
 }
 
 void NetSetting::setClientAddress(const QString &addr)
 {
-    dPtr_->szClientAddress_ = addr;
+    m_dPtr->m_clientAddress = addr;
 }
 
 QString NetSetting::getServerAddress() const
 {
-    return dPtr_->szServerAddress_;
+    return m_dPtr->m_serverAddress;
 }
 
 void NetSetting::setServerAddress(const QString &addr)
 {
-    dPtr_->szServerAddress_ = addr;
+    m_dPtr->m_serverAddress = addr;
 }
 
 int NetSetting::getHeartbeatTime()
 {
-    return dPtr_->iHeartbeatTime_;
+    return m_dPtr->m_heartbeatTime;
 }
 
 void NetSetting::setHeartbeatTime(int time)
 {
-    dPtr_->iHeartbeatTime_ = time;
+    m_dPtr->m_heartbeatTime = time;
 }
 
 int NetSetting::getDatabaseSyncTime()
 {
-    return dPtr_->iDatabaseSyncTime_;
+    return m_dPtr->m_databaseSyncTime;
 }
 
 void NetSetting::setDatabaseSyncTime(int time)
 {
-    dPtr_->iDatabaseSyncTime_ = time;
+    m_dPtr->m_databaseSyncTime = time;
 }
 
 

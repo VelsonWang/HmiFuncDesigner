@@ -74,9 +74,9 @@ public:
 protected:
     QActionArray m_actions; // 全局action
     QMap<QString, QToolBar*> m_mapToolBar; // 全局工具条
-    static  QSoftCore* m_core; // 单实例
-    QProjectCore* m_project_core;
-    QUndoGroup* m_undo_group;
+    static QSoftCore* m_core; // 单实例
+    QProjectCore* m_projectCore;
+    QUndoGroup* m_undoGroup;
 };
 
 #endif // QSOFTCORE_H

@@ -12,6 +12,7 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
+
 public slots:
     void   setVisible(bool visible);
     bool   visible();

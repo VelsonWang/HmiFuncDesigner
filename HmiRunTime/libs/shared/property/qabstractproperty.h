@@ -2,7 +2,6 @@
 #define QABSTRACTPROPERTY_H
 
 #include "../sharedlibglobal.h"
-
 #include <QObject>
 #include <QMap>
 #include <QVariant>
@@ -10,9 +9,6 @@
 
 
 #define PROPERTY_TITLE "Property"
-
-
-
 #define ATTR_EDITABLE "Editable"
 #define ATTR_NEEDSAVE "Need_Save"
 #define ATTR_VISIBLE  "Visible"
@@ -57,23 +53,23 @@ public:
 
     void set_host(QAbstractHost* host);
     QAbstractHost* get_host();
-	
+
 protected slots:
     virtual void child_value_changed(const QVariant& old, const QVariant &now);
-	
+
 protected:
     void connect_children();
     void disconnect_children();
     virtual void make_value();
     virtual void write_value();
-	
+
 signals:
     void value_chaged(const QVariant& old, const QVariant &now);
     void refresh();
     void edit_value(const QVariant &value);
-	
+
 public slots:
-	
+
 protected:
     QAbstractProperty *m_parent;
     QList<QAbstractProperty *> m_children;

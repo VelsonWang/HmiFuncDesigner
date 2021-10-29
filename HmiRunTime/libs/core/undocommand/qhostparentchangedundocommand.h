@@ -15,7 +15,7 @@ public:
                                   int old_index,
                                   QAbstractHost* new_parent,
                                   int new_index,
-                                  QUndoCommand *parent=0);
+                                  QUndoCommand *parent = 0);
     void redo();
     void undo();
 
@@ -23,10 +23,10 @@ public:
 
 protected:
     QAbstractHost* m_host;
-    QAbstractHost* m_old_parent;
-    int m_old_parent_index;
-    QAbstractHost* m_new_parent;
-    int m_new_parent_index;
+    QAbstractHost* m_oldParent;
+    int m_oldParentIndex;
+    QAbstractHost* m_newParent;
+    int m_newParentIndex;
 };
 
 #endif // QHOSTPARENTCHANGEDUNDOCOMMAND_H

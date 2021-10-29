@@ -1,8 +1,6 @@
 #include "pluginloader.h"
-
 #include "qabstractplugin.h"
 #include "xmlobject.h"
-
 #include <QApplication>
 #include <QPluginLoader>
 #include <QDir>

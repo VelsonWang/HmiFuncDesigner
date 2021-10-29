@@ -34,7 +34,7 @@ public:
     bool saveToXml(XMLObject *pXmlObj);
 
 public:
-    QList<ScriptObject *> m_listScriptObjects;
+    QList<ScriptObject *> m_scriptObjects;
 };
 
 

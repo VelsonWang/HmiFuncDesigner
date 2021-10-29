@@ -43,7 +43,7 @@ public:
     void setDatabaseSyncTime(int time);
 
 private:
-    NetSettingPrivate *const dPtr_;
+    NetSettingPrivate *const m_dPtr;
 
     Q_DISABLE_COPY(NetSetting)
 };

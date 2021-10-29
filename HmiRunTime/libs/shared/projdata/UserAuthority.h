@@ -32,32 +32,32 @@ public:
 
     void copyObject(const UserAuthorityPrivate &obj)
     {
-        iID_ = obj.iID_;
-        szIndex_ = obj.szIndex_;
-        szName_ = obj.szName_;
-        szPassword_ = obj.szPassword_;
-        szAuthority_ = obj.szAuthority_;
-        szComments_ = obj.szComments_;
-        szName2_ = obj.szName2_;
-        szName3_ = obj.szName3_;
-        szName4_ = obj.szName4_;
-        szName5_ = obj.szName5_;
-        bLogin_ = obj.bLogin_;
-        bLogout_ = obj.bLogout_;
+        m_id = obj.m_id;
+        m_index = obj.m_index;
+        m_name = obj.m_name;
+        m_password = obj.m_password;
+        m_authority = obj.m_authority;
+        m_comments = obj.m_comments;
+        m_name2 = obj.m_name2;
+        m_name3 = obj.m_name3;
+        m_name4 = obj.m_name4;
+        m_name5 = obj.m_name5;
+        m_login = obj.m_login;
+        m_logout = obj.m_logout;
     }
 
-    int iID_;
-    QString szIndex_;
-    QString szName_;
-    QString szPassword_;
-    QString szAuthority_;
-    QString szComments_;
-    QString szName2_;
-    QString szName3_;
-    QString szName4_;
-    QString szName5_;
-    bool bLogin_;
-    bool bLogout_;
+    int m_id;
+    QString m_index;
+    QString m_name;
+    QString m_password;
+    QString m_authority;
+    QString m_comments;
+    QString m_name2;
+    QString m_name3;
+    QString m_name4;
+    QString m_name5;
+    bool m_login;
+    bool m_logout;
 };
 
 
@@ -108,7 +108,7 @@ public:
     void setLogout(int index, bool logout);
 
 public:
-    QList<UserAuthorityPrivate *> listUserAuthority_;
+    QList<UserAuthorityPrivate *> m_userAuthority;
 
     Q_DISABLE_COPY(UserAuthority)
 };

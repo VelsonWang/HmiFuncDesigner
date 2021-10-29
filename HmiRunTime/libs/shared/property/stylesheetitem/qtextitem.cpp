@@ -1,5 +1,4 @@
 #include "qtextitem.h"
-
 #include "stylesheetstruct.h"
 #include "qgradientmaker.h"
 
@@ -35,7 +34,7 @@ QString QTextItem::makeStylesheet()
 {
     QString str;
 
-    str="{\n";
+    str = "{\n";
 
     if(m_color->isUsed()) {
         QGradient g = m_color->value().value<QGradient>();

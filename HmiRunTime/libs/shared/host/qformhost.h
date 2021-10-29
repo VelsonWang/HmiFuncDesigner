@@ -2,7 +2,6 @@
 #define QFORMHOST_H
 
 #include "../sharedlibglobal.h"
-
 #include "qabstractwidgethost.h"
 
 #define FORM_TITLE "form"
