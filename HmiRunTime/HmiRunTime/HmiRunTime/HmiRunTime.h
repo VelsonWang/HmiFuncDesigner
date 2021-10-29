@@ -56,7 +56,7 @@ private:
 
 private:
     QStringList m_listPortName;
-    QList<Vendor *> m_VendorList;
+    QList<Vendor *> m_vendors;
     QList<PortThread *> m_listPortThread;
 };
 

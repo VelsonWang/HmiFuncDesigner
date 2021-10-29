@@ -6,68 +6,8 @@
 #define HOLDING_REGISTER    tr("保持寄存器")
 
 
-
 ModbusRTU::ModbusRTU() {
 
-}
-
-///
-/// \brief ModbusRTU::getBitMaxRegPacket
-/// \details 位组包最大寄存器个数
-/// \return 寄存器个数
-///
-int ModbusRTU::getBitMaxRegPacket() {
-    return 100;
-}
-
-
-///
-/// \brief ModbusRTU::getWordMaxRegPacket
-/// \details 字组包最大寄存器个数
-/// \return 寄存器个数
-///
-int ModbusRTU::getWordMaxRegPacket() {
-    return 20;
-}
-
-
-///
-/// \brief ModbusRTU::getCommFailRetryCount
-/// \details 通信失败重试次数
-/// \return 次数
-///
-int ModbusRTU::getCommFailRetryTimes() {
-    return 2;
-}
-
-
-///
-/// \brief ModbusRTU::getCommTimeout
-/// \details 通信超时时间
-/// \return 时间值
-///
-int ModbusRTU::getCommTimeout() {
-    return 1;
-}
-
-
-///
-/// \brief ModbusRTU::getCommIntervalTime
-/// \details 通信间隔时间
-/// \return 时间值
-///
-int ModbusRTU::getCommIntervalTime() {
-    return 200;
-}
-
-
-///
-/// \brief ModbusRTU::getCommResumeTime
-/// \details 尝试恢复通讯间隔时间
-/// \return 时间值
-///
-int ModbusRTU::getCommResumeTime() {
-    return 2;
 }
 
 ///
@@ -78,6 +18,12 @@ int ModbusRTU::getCommResumeTime() {
 void ModbusRTU::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties) {
     properties.clear();
     properties.append(qMakePair(tr("设备ID"), QString("1")));
+    properties.append(qMakePair(tr("位组包最大寄存器个数"), QString("100")));
+    properties.append(qMakePair(tr("字组包最大寄存器个数"), QString("20")));
+    properties.append(qMakePair(tr("失败重试次数"), QString("2")));
+    properties.append(qMakePair(tr("通讯超时时间(s)"), QString("1")));
+    properties.append(qMakePair(tr("通讯间隔时间(ms)"), QString("200")));
+    properties.append(qMakePair(tr("尝试恢复间隔(s)"), QString("2")));
     properties.append(qMakePair(tr("内存地址起始位为0"), QString("true")));
     properties.append(qMakePair(tr("写线圈功能码为15"), QString("false")));
     properties.append(qMakePair(tr("写寄存器功能码为16"), QString("false")));
@@ -96,6 +42,12 @@ void ModbusRTU::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& prope
 void ModbusRTU::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type) {
     properties_type.clear();
     properties_type.append(qMakePair(tr("设备ID"), QString("int")));
+    properties_type.append(qMakePair(tr("位组包最大寄存器个数"), QString("int")));
+    properties_type.append(qMakePair(tr("字组包最大寄存器个数"), QString("int")));
+    properties_type.append(qMakePair(tr("失败重试次数"), QString("int")));
+    properties_type.append(qMakePair(tr("通讯超时时间(s)"), QString("int")));
+    properties_type.append(qMakePair(tr("通讯间隔时间(ms)"), QString("int")));
+    properties_type.append(qMakePair(tr("尝试恢复间隔(s)"), QString("int")));
     properties_type.append(qMakePair(tr("内存地址起始位为0"), QString("bool")));
     properties_type.append(qMakePair(tr("写线圈功能码为15"), QString("bool")));
     properties_type.append(qMakePair(tr("写寄存器功能码为16"), QString("bool")));
@@ -113,7 +65,13 @@ void ModbusRTU::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>
 ///
 void ModbusRTU::writeProperties(QString &szProperties, QVector<QPair<QString, QString>>& properties) {
     QStringList szListProperties;
-    szListProperties << QString("%1=%2").arg("id").arg(getValue2ByValue1(tr("设备ID"), properties));
+    szListProperties << QString("%1=%2").arg("id").arg(getValue2ByValue1(tr("设备ID"), properties)); 
+    szListProperties << QString("%1=%2").arg("bitMaxRegPacket").arg(getValue2ByValue1(tr("位组包最大寄存器个数"), properties));
+    szListProperties << QString("%1=%2").arg("wordMaxRegPacket").arg(getValue2ByValue1(tr("字组包最大寄存器个数"), properties));
+    szListProperties << QString("%1=%2").arg("commFailRetryTimes").arg(getValue2ByValue1(tr("失败重试次数"), properties));
+    szListProperties << QString("%1=%2").arg("commTimeout").arg(getValue2ByValue1(tr("通讯超时时间(s)"), properties));
+    szListProperties << QString("%1=%2").arg("commIntervalTime").arg(getValue2ByValue1(tr("通讯间隔时间(ms)"), properties));
+    szListProperties << QString("%1=%2").arg("commResumeTime").arg(getValue2ByValue1(tr("尝试恢复间隔(s)"), properties));
     szListProperties << QString("%1=%2").arg("startAddrBit").arg(getValue2ByValue1(tr("内存地址起始位为0"), properties));
     szListProperties << QString("%1=%2").arg("writeCoilFn").arg(getValue2ByValue1(tr("写线圈功能码为15"), properties));
     szListProperties << QString("%1=%2").arg("writeRegFn").arg(getValue2ByValue1(tr("写寄存器功能码为16"), properties));
@@ -135,28 +93,74 @@ void ModbusRTU::readProperties(QString &szProperties, QVector<QPair<QString, QSt
     QStringList szListProperties = szProperties.split("|");
     foreach(QString szKeyValue, szListProperties) {
         if (szKeyValue.startsWith("id=")) {
-            properties.append(qMakePair(tr("设备ID"), szKeyValue.replace("id=", "")));
+            QString val = szKeyValue.replace("id=", "");
+            if(val == "") val = "1";
+            properties.append(qMakePair(tr("设备ID"), val));
+        }
+        if (szKeyValue.startsWith("bitMaxRegPacket=")) {
+            QString val = szKeyValue.replace("bitMaxRegPacket=", "");
+            if(val == "") val = "100";
+            properties.append(qMakePair(tr("位组包最大寄存器个数"), val));
+        }
+        if (szKeyValue.startsWith("wordMaxRegPacket=")) {
+            QString val = szKeyValue.replace("wordMaxRegPacket=", "");
+            if(val == "") val = "20";
+            properties.append(qMakePair(tr("字组包最大寄存器个数"), val));
+        }
+        if (szKeyValue.startsWith("commFailRetryTimes=")) {
+            QString val = szKeyValue.replace("commFailRetryTimes=", "");
+            if(val == "") val = "2";
+            properties.append(qMakePair(tr("失败重试次数"), val));
+        }
+        if (szKeyValue.startsWith("commTimeout=")) {
+            QString val = szKeyValue.replace("commTimeout=", "");
+            if(val == "") val = "1";
+            properties.append(qMakePair(tr("通讯超时时间(s)"), val));
+        }
+        if (szKeyValue.startsWith("commIntervalTime=")) {
+            QString val = szKeyValue.replace("commIntervalTime=", "");
+            if(val == "") val = "200";
+            properties.append(qMakePair(tr("通讯间隔时间(ms)"), val));
+        }
+        if (szKeyValue.startsWith("commResumeTime=")) {
+            QString val = szKeyValue.replace("commResumeTime=", "");
+            if(val == "") val = "2";
+            properties.append(qMakePair(tr("尝试恢复间隔(s)"), val));
         }
         if (szKeyValue.startsWith("startAddrBit=")) {
-            properties.append(qMakePair(tr("内存地址起始位为0"), szKeyValue.replace("startAddrBit=", "")));
+            QString val = szKeyValue.replace("startAddrBit=", "");
+            if(val == "") val = "true";
+            properties.append(qMakePair(tr("内存地址起始位为0"), val));
         }
         if (szKeyValue.startsWith("writeCoilFn=")) {
-            properties.append(qMakePair(tr("写线圈功能码为15"), szKeyValue.replace("writeCoilFn=", "")));
+            QString val = szKeyValue.replace("writeCoilFn=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("写线圈功能码为15"), val));
         }
         if (szKeyValue.startsWith("writeRegFn=")) {
-            properties.append(qMakePair(tr("写寄存器功能码为16"), szKeyValue.replace("writeRegFn=", "")));
+            QString val = szKeyValue.replace("writeRegFn=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("写寄存器功能码为16"), val));
         }
         if (szKeyValue.startsWith("addr8=")) {
-            properties.append(qMakePair(tr("8位逆序"), szKeyValue.replace("addr8=", "")));
+            QString val = szKeyValue.replace("addr8=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("8位逆序"), val));
         }
         if (szKeyValue.startsWith("addr16=")) {
-            properties.append(qMakePair(tr("16位低字节在前高字节在后"), szKeyValue.replace("addr16=", "")));
+            QString val = szKeyValue.replace("addr16=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("16位低字节在前高字节在后"), val));
         }
         if (szKeyValue.startsWith("addr32=")) {
-            properties.append(qMakePair(tr("32位低字节在前高字节在后"), szKeyValue.replace("addr32=", "")));
+            QString val = szKeyValue.replace("addr32=", "");
+            if(val == "") val == "false";
+            properties.append(qMakePair(tr("32位低字节在前高字节在后"), val));
         }
         if (szKeyValue.startsWith("addr64=")) {
-            properties.append(qMakePair(tr("64位低字节在前高字节在后"), szKeyValue.replace("addr64=", "")));
+            QString val = szKeyValue.replace("addr64=", "");
+            if(val == "") val == "false";
+            properties.append(qMakePair(tr("64位低字节在前高字节在后"), val));
         }
     }
 }

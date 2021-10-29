@@ -18,13 +18,13 @@ QProjectCore::QProjectCore(QObject *parent)
     : QObject(parent),
       m_pProjectHostObj(new QProjectHost),
       m_bOpen(false),
-      m_pPageManagerObj(new QPageManager)
+      m_pPageMgrObj(new QPageManager)
 {
-    m_szProjVersion = "V1.0.0";
-    m_szProjPath = "";
-    m_szProjName = "";
-    m_pProjectHostObj->setPageManager(m_pPageManagerObj);
-    connect(m_pPageManagerObj, SIGNAL(host_name_changed(QAbstractHost*)),
+    m_version = "V1.0.0";
+    m_path = "";
+    m_name = "";
+    m_pProjectHostObj->setPageManager(m_pPageMgrObj);
+    connect(m_pPageMgrObj, SIGNAL(host_name_changed(QAbstractHost*)),
             this, SLOT(onFormRefresh(QAbstractHost*)));
 }
 
@@ -32,7 +32,7 @@ QProjectCore::QProjectCore(QObject *parent)
 QProjectCore::~QProjectCore()
 {
     close();
-    delete m_pPageManagerObj;
+    delete m_pPageMgrObj;
 }
 
 void QProjectCore::close()
@@ -43,15 +43,15 @@ void QProjectCore::close()
             delete m_pProjectHostObj;
             m_pProjectHostObj = NULL;
         }
-        m_szProjPath = "";
-        m_pPageManagerObj->clear();
+        m_path = "";
+        m_pPageMgrObj->clear();
         m_bOpen = false;
     }
 }
 
 QPageManager* QProjectCore::getPageManager()
 {
-    return m_pPageManagerObj;
+    return m_pPageMgrObj;
 }
 
 QAbstractHost* QProjectCore::getProjectHost()
@@ -63,10 +63,10 @@ bool QProjectCore::createNewProj(const QString &szfile)
 {
     close();
     int index = szfile.lastIndexOf("/");
-    m_szProjPath = szfile.left(index);
-    index = m_szProjPath.lastIndexOf("/");
-    m_szProjName = m_szProjPath.mid(index + 1);
-    m_pPageManagerObj->load(NULL);
+    m_path = szfile.left(index);
+    index = m_path.lastIndexOf("/");
+    m_name = m_path.mid(index + 1);
+    m_pPageMgrObj->load(NULL);
     m_bOpen = true;
     emit notifyOpened();
     return true;
@@ -85,7 +85,7 @@ void QProjectCore::onFormRefresh(QAbstractHost *form)
     }
     QAbstractProperty* pro = m_pProjectHostObj->getProperty("start_page");
     if(pro != NULL) {
-        QList<QAbstractHost*> list = m_pPageManagerObj->getPages_by_title("form");
+        QList<QAbstractHost*> list = m_pPageMgrObj->getPages_by_title("form");
         tagComboItem item;
         ComboItems items;
         foreach(QAbstractHost* host, list) {
@@ -105,7 +105,7 @@ void QProjectCore::onFormRefresh(QAbstractHost *form)
 
 QAbstractHost* QProjectCore::getHostByUuid(const QString &uuid)
 {
-    QList<QAbstractHost*> list = m_pPageManagerObj->getPages();
+    QList<QAbstractHost*> list = m_pPageMgrObj->getPages();
     list.append(m_pProjectHostObj);
 
     while(list.size() > 0) {
@@ -123,7 +123,7 @@ QAbstractHost* QProjectCore::getHostByUuid(const QString &uuid)
 void QProjectCore::initScriptEngine()
 {
     initScriptEngine(m_pProjectHostObj);
-    foreach(QAbstractHost* h, m_pPageManagerObj->getPages()) {
+    foreach(QAbstractHost* h, m_pPageMgrObj->getPages()) {
         initScriptEngine(h);
     }
 }
@@ -140,7 +140,7 @@ void QProjectCore::initScriptEngine(QAbstractHost *host)
     bool project = host->property("title").toString() == "Project";
 
     if(!keyboard || project) {
-        foreach(QAbstractHost* h, m_pPageManagerObj->getPages()) {
+        foreach(QAbstractHost* h, m_pPageMgrObj->getPages()) {
             if(project || h->property("title").toString() == "keyboard") {
                 temp = getScriptObject(host, engine);
                 global.setProperty(h->getPropertyValue("objectName").toString(), temp);
@@ -203,19 +203,19 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
         return false;
     }
 
-    memcpy((void *)&headerObj_, (void *)buf, sizeof(TFileHeader));
+    memcpy((void *)&m_headerObj, (void *)buf, sizeof(TFileHeader));
 
     // 读取工程数据
     QByteArray baTmpProjData;
-    baTmpProjData.resize(headerObj_.dwProjSize);
-    if(fileProj.read((char *)baTmpProjData.data(), headerObj_.dwProjSize) != headerObj_.dwProjSize) {
+    baTmpProjData.resize(m_headerObj.dwProjSize);
+    if(fileProj.read((char *)baTmpProjData.data(), m_headerObj.dwProjSize) != m_headerObj.dwProjSize) {
         fileProj.close();
         return false;
     }
     fileProj.close();
 
     QByteArray baProjData;
-    if(headerObj_.byEncrypt) {
+    if(m_headerObj.byEncrypt) {
         if(DataAES::Decrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) {
             return false;
         }
@@ -233,31 +233,31 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
     QList<XMLObject*> projObjs = xml.getChildren();
     foreach(XMLObject* pProjObj, projObjs) {
         // 工程信息管理
-        projInfoMgr_.openFromXml(pProjObj);
+        m_projInfoMgr.openFromXml(pProjObj);
         // 网络配置
-        netSetting_.openFromXml(pProjObj);
+        m_netSetting.openFromXml(pProjObj);
         // 数据库配置
-        dbSetting_.openFromXml(pProjObj);
+        m_dbSetting.openFromXml(pProjObj);
         // 用户权限
-        userAuthority_.openFromXml(pProjObj);
+        m_userAuthority.openFromXml(pProjObj);
         // 设备配置信息
-        deviceInfo_.openFromXml(pProjObj);
+        m_deviceInfo.openFromXml(pProjObj);
 
         XMLObject *pTagsObj = pProjObj->getCurrentChild("tags");
         if(pTagsObj != NULL) {
             // 标签变量组
-            tagMgr_.openFromXml(pTagsObj);
+            m_tagMgr.openFromXml(pTagsObj);
         }
 
         // 脚本
-        script_.openFromXml(pProjObj);
+        m_script.openFromXml(pProjObj);
         // 图片资源管理
-        pictureResourceMgr_.openFromXml(pProjObj);
+        m_picResMgr.openFromXml(pProjObj);
 
         // 加载画面
         XMLObject *pPagesObj = pProjObj->getCurrentChild("forms");
         if(pPagesObj != NULL) {
-            m_pPageManagerObj->load(pPagesObj);
+            m_pPageMgrObj->load(pPagesObj);
         }
     }
 
@@ -279,37 +279,37 @@ bool QProjectCore::saveToXml(const QString &szProjFile)
 
     XMLObject *pProjObj = new XMLObject(&projObjs);
     pProjObj->setTagName("project");
-    pProjObj->setProperty("application_version", m_szProjVersion);
+    pProjObj->setProperty("application_version", m_version);
 
     // 工程信息管理
-    projInfoMgr_.saveToXml(pProjObj);
+    m_projInfoMgr.saveToXml(pProjObj);
     // 网络配置
-    netSetting_.saveToXml(pProjObj);
+    m_netSetting.saveToXml(pProjObj);
     // 数据库配置
-    dbSetting_.saveToXml(pProjObj);
+    m_dbSetting.saveToXml(pProjObj);
     // 用户权限
-    userAuthority_.saveToXml(pProjObj);
+    m_userAuthority.saveToXml(pProjObj);
     // 设备配置信息
-    deviceInfo_.saveToXml(pProjObj);
+    m_deviceInfo.saveToXml(pProjObj);
 
     XMLObject *pTagsObj = new XMLObject(pProjObj);
     pTagsObj->setTagName("tags");
     // 标签变量组
-    tagMgr_.saveToXml(pTagsObj);
+    m_tagMgr.saveToXml(pTagsObj);
 
     // 脚本
-    script_.saveToXml(pProjObj);
+    m_script.saveToXml(pProjObj);
     // 图片资源管理
-    pictureResourceMgr_.saveToXml(pProjObj);
+    m_picResMgr.saveToXml(pProjObj);
 
     // 保存画面
     XMLObject *pPagesObj = new XMLObject(pProjObj);
     pPagesObj->setTagName("forms");
-    m_pPageManagerObj->save(pPagesObj);
+    m_pPageMgrObj->save(pPagesObj);
 
     QByteArray baProjData;
     QByteArray baTmpProjData = projObjs.write().toUtf8();
-    if(headerObj_.byEncrypt) {
+    if(m_headerObj.byEncrypt) {
         if(DataAES::Encrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) {
             return false;
         }
@@ -325,11 +325,11 @@ bool QProjectCore::saveToXml(const QString &szProjFile)
 
     // 写文件头
     quint8 buf[1024] = {0};
-    headerObj_.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
-    headerObj_.wVersion = 0x0001;
-    headerObj_.dwProjSize = baProjData.length();
-    memcpy((void *)buf, (void *)&headerObj_, sizeof(TFileHeader));
-    if(fileProj.write((const char *)buf, headerObj_.wSize) != headerObj_.wSize) {
+    m_headerObj.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+    m_headerObj.wVersion = 0x0001;
+    m_headerObj.dwProjSize = baProjData.length();
+    memcpy((void *)buf, (void *)&m_headerObj, sizeof(TFileHeader));
+    if(fileProj.write((const char *)buf, m_headerObj.wSize) != m_headerObj.wSize) {
         fileProj.close();
         return false;
     }
@@ -356,7 +356,7 @@ void QProjectCore::getAllTagName(QStringList &varList, const QString &type)
     varList.clear();
     QString szType = type.toUpper();
 
-    foreach(Tag *pTagObj, tagMgr_.m_vecTags) {
+    foreach(Tag *pTagObj, m_tagMgr.m_vecTags) {
         //-------------设备变量------------------//
         if(szType == "ALL" || szType == "IO") {
             if(pTagObj->m_szDevType != "MEMORY" && pTagObj->m_szDevType != "SYSTEM") {
@@ -427,7 +427,7 @@ QString QProjectCore::getProjectNameWithOutSuffix(const QString &projectName)
  */
 void QProjectCore::getAllElementIDName(QStringList &szIDList)
 {
-    m_pPageManagerObj->getAllElementIDName(szIDList);
+    m_pPageMgrObj->getAllElementIDName(szIDList);
 }
 
 /**
@@ -437,7 +437,7 @@ void QProjectCore::getAllElementIDName(QStringList &szIDList)
  */
 void QProjectCore::getAllGraphPageName(QStringList &szList)
 {
-    m_pPageManagerObj->getAllPageName(szList);
+    m_pPageMgrObj->getAllPageName(szList);
 }
 
 

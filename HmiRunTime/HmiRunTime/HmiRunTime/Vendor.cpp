@@ -31,7 +31,7 @@ void VendorPrivate::parsePropertiesFromString(const QString &szProperty, QMap<QS
             mapProperties.insert(szListKeyVal.at(0), szListKeyVal.at(1));
         }
     }
-    //qDebug() << mapProperties;
+    qDebug() << mapProperties;
 }
 
 /*
@@ -39,7 +39,7 @@ void VendorPrivate::parsePropertiesFromString(const QString &szProperty, QMap<QS
 */
 bool ComDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 {
-    DeviceInfoObject *pObj = coreObj->deviceInfo_.getObjectByName(devName);
+    DeviceInfoObject *pObj = coreObj->m_deviceInfo.getObjectByName(devName);
 
     m_sDeviceName = pObj->m_deviceName;
     m_iFrameLen = pObj->m_frameLen;
@@ -76,7 +76,7 @@ bool ComDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 */
 bool NetDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 {
-    DeviceInfoObject *pObj = coreObj->deviceInfo_.getObjectByName(devName);
+    DeviceInfoObject *pObj = coreObj->m_deviceInfo.getObjectByName(devName);
 
     m_sDeviceName = pObj->m_deviceName;
     m_iFrameLen = pObj->m_frameLen;

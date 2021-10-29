@@ -147,14 +147,14 @@ bool QRunningManager::eventFilter(QObject *o, QEvent *e)
 void QRunningManager::start()
 {
     QProjectHost* host = (QProjectHost*)m_pProjCoreObj->getProjectHost();
-    QString szStartPage = m_pProjCoreObj->projInfoMgr_.getStartPage();
+    QString szStartPage = m_pProjCoreObj->m_projInfoMgr.getStartPage();
     QPageManager *manager = m_pProjCoreObj->getPageManager();
     QList<QAbstractHost*> list = manager->getPages();
     foreach(QAbstractHost* page, list) {
         ((QWidget*)page->getObject())->setVisible(false);
     }
-    int width = m_pProjCoreObj->projInfoMgr_.getGraphPageWidth();
-    int height = m_pProjCoreObj->projInfoMgr_.getGraphPageHeight();
+    int width = m_pProjCoreObj->m_projInfoMgr.getGraphPageWidth();
+    int height = m_pProjCoreObj->m_projInfoMgr.getGraphPageHeight();
     m_pMainWindowObj->setFixedSize(QSize(width, height));
     m_pMainWindowObj->setWindowTitle(host->getPropertyValue("objectName").toString());
     QDesktopWidget *pDeskObj = qApp->desktop();

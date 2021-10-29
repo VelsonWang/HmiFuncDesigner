@@ -14,20 +14,6 @@ class IDevicePlugin
 public:
     virtual ~IDevicePlugin() {}
 
-    // 位组包最大寄存器个数
-    virtual int getBitMaxRegPacket() = 0;
-    // 字组包最大寄存器个数
-    virtual int getWordMaxRegPacket() = 0;
-    // 通信失败重试次数
-    virtual int getCommFailRetryTimes() = 0;
-    // 通信超时时间
-    virtual int getCommTimeout() = 0;
-    // 通信间隔时间
-    virtual int getCommIntervalTime() = 0;
-    // 尝试恢复通讯间隔时间
-    virtual int getCommResumeTime() = 0;
-
-
     // 获取设备默认属性
     virtual void getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties) = 0;
     // 获取设备默认属性数据类型
@@ -45,6 +31,14 @@ public:
     QString getValue2ByValue1(const QString &szVal1, QVector<QPair<QString, QString>>& properties) {
         for (int i = 0; i < properties.size(); ++i) {
             QPair<QString, QString> pair = properties[i];
+            if (pair.first == szVal1 && pair.second != "")
+                return pair.second;
+        }
+        // 获取默认属性值
+        QVector<QPair<QString, QString>> defaultProperties;
+        this->getDefaultDeviceProperty(defaultProperties);
+        for (int i = 0; i < defaultProperties.size(); ++i) {
+            QPair<QString, QString> pair = defaultProperties[i];
             if (pair.first == szVal1)
                 return pair.second;
         }

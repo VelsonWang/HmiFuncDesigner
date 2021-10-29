@@ -56,8 +56,8 @@ bool HmiRunTime::Load()
 {
     qDebug() << "load devices!";
     // load devices
-    m_VendorList.clear();
-    DeviceInfo &deviceInfo = projCore->deviceInfo_;
+    m_vendors.clear();
+    DeviceInfo &deviceInfo = projCore->m_deviceInfo;
 
     for(int i = 0; i < deviceInfo.m_deviceInfoObject.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.m_deviceInfoObject.at(i);
@@ -74,7 +74,7 @@ bool HmiRunTime::Load()
             pVendorObj->m_pVendorPluginObj = pVendorPluginObj;
         }
 
-        m_VendorList.append(pVendorObj);
+        m_vendors.append(pVendorObj);
 
         if(sPortType == "COM") {
             ComPort* pComPortObj = new ComPort();
@@ -116,14 +116,14 @@ bool HmiRunTime::Load()
     /////////////////////////////////////////////
 
     // 查找已使用的端口名称并添加至列表
-    foreach(Vendor *pVendor, m_VendorList) {
+    foreach(Vendor *pVendor, m_vendors) {
         AddPortName(pVendor->getPortName());
     }
 
     /////////////////////////////////////////////
 
     // load tags and create rtdb
-    foreach(Tag *pTagObj, projCore->tagMgr_.m_vecTags) {
+    foreach(Tag *pTagObj, projCore->m_tagMgr.m_vecTags) {
         RunTimeTag *pRtTagObj = new RunTimeTag(NULL);
         pRtTagObj->id = pTagObj->m_iID;
         pRtTagObj->name = pTagObj->m_szName;
@@ -211,8 +211,8 @@ bool HmiRunTime::Load()
 
 bool HmiRunTime::Unload()
 {
-    qDeleteAll(m_VendorList);
-    m_VendorList.clear();
+    qDeleteAll(m_vendors);
+    m_vendors.clear();
     RealTimeDB::instance()->rtdb.clear();
     qDeleteAll(m_listPortThread);
     m_listPortThread.clear();
@@ -224,7 +224,7 @@ void HmiRunTime::Start()
     foreach(QString name, m_listPortName) {
         PortThread *pPortThread = new PortThread(name);
 
-        foreach(Vendor *pVendor, m_VendorList) {
+        foreach(Vendor *pVendor, m_vendors) {
             if(name == pVendor->getPortName()) {
                 pPortThread->AddVendor(pVendor);
             }
@@ -263,8 +263,8 @@ void HmiRunTime::Stop()
 
 Vendor *HmiRunTime::FindVendor(const QString name)
 {
-    for(int i = 0; i < m_VendorList.size(); ++i) {
-        Vendor *pObj = m_VendorList.at(i);
+    for(int i = 0; i < m_vendors.size(); ++i) {
+        Vendor *pObj = m_vendors.at(i);
 
         if(pObj->getDeviceName() == name) {
             return pObj;

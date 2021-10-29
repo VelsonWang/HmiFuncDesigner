@@ -14,19 +14,6 @@ class ModbusRTU : public QObject, IDevicePlugin
 public:
     ModbusRTU();
 
-    // 位组包最大寄存器个数
-    int getBitMaxRegPacket() Q_DECL_OVERRIDE;
-    // 字组包最大寄存器个数
-    int getWordMaxRegPacket() Q_DECL_OVERRIDE;
-    // 通信失败重试次数
-    int getCommFailRetryTimes() Q_DECL_OVERRIDE;
-    // 通信超时时间
-    int getCommTimeout() Q_DECL_OVERRIDE;
-    // 通信间隔时间
-    int getCommIntervalTime() Q_DECL_OVERRIDE;
-    // 尝试恢复通讯间隔时间
-    int getCommResumeTime() Q_DECL_OVERRIDE;
-
     // 获取设备默认属性
     void getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
     // 获取设备默认属性数据类型

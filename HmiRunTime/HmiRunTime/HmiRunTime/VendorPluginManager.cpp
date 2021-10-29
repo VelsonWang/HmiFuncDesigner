@@ -72,14 +72,11 @@ IVendorPlugin* VendorPluginManager::loadPlugin(const QString &name)
 #endif
         QFileInfo fileInfo(szFileName);
         if(fileInfo.baseName().toLower() == szPluginName.toLower()) {
-            qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
             QPluginLoader pluginLoader(pluginsDir.absoluteFilePath(szFileName));
             QObject *pluginObj = pluginLoader.instance();
             if (pluginObj) {
-                qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
                 IVendorPlugin *plugin = qobject_cast<IVendorPlugin *>(pluginObj);
                 if (plugin) {
-                    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
                     return plugin;
                 }
             }
@@ -96,13 +93,10 @@ IVendorPlugin* VendorPluginManager::getPlugin(const QString &name)
         return NULL;
     }
     if(m_plugins.contains(name)) {
-        qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
         pDevPlugin = m_plugins.value(name);
     } else {
-        qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
         pDevPlugin = loadPlugin(name);
         if (pDevPlugin) {
-            qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
             m_plugins.insert(name, pDevPlugin);
         }
     }
