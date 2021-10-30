@@ -31,7 +31,7 @@ void VendorPrivate::parsePropertiesFromString(const QString &szProperty, QMap<QS
             mapProperties.insert(szListKeyVal.at(0), szListKeyVal.at(1));
         }
     }
-    qDebug() << mapProperties;
+    //qDebug() << mapProperties;
 }
 
 /*
@@ -51,14 +51,13 @@ bool ComDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
     m_bDynamicOptimization = pObj->m_dynamicOptimization;
     m_iRemotePort = pObj->m_remotePort;
     parsePropertiesFromString(pObj->m_properties, m_mapProperties);
-    m_iRetryTimes = m_mapProperties.value("retryTimes").toInt();
-    m_iCommTimeout = m_mapProperties.value("commTimeout").toInt();
-    m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt();
+    m_iRetryTimes = m_mapProperties.value("commFailRetryTimes").toInt();
+    m_iCommTimeout = m_mapProperties.value("commTimeout").toInt() * 1000;
+    m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt() * 1000;
     m_sDeviceType = "COM";
 
     ComDevice comDev;
     comDev.fromString(pObj->m_portParameters);
-
     m_sPortNumber = comDev.m_portNumber;
     m_iBaudrate = comDev.m_baudrate;
     m_iDatabit = comDev.m_databit;
@@ -88,9 +87,9 @@ bool NetDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
     m_bDynamicOptimization = pObj->m_dynamicOptimization;
     m_iRemotePort = pObj->m_remotePort;
     parsePropertiesFromString(pObj->m_properties, m_mapProperties);
-    m_iRetryTimes = m_mapProperties.value("retryTimes").toInt();
-    m_iCommTimeout = m_mapProperties.value("commTimeout").toInt();
-    m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt();
+    m_iRetryTimes = m_mapProperties.value("commFailRetryTimes").toInt();
+    m_iCommTimeout = m_mapProperties.value("commTimeout").toInt() * 1000;
+    m_iCommResumeTime = m_mapProperties.value("commResumeTime").toInt() * 1000;
     m_sDeviceType = "NET";
 
     NetDevice netDev;
@@ -159,7 +158,6 @@ QString Vendor::getDeviceName()
 {
     if(m_pVendorPrivateObj != NULL) {
         return m_pVendorPrivateObj->m_sDeviceName;
-        //ComDevicePrivate *pComDevicePrivateObj = dynamic_cast<ComDevicePrivate *>(this->m_pVendorPrivateObj);
     }
     return "";
 }
@@ -437,6 +435,8 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
                     return false;
                 }
             }
+
+            RealTimeDB::instance()->setTagData(pTag->id, pTag->dataFromVendor);
 #endif
             m_pVendorPluginObj->afterReadIOTag(this, pTag);
         }
@@ -513,9 +513,15 @@ bool Vendor::readIOTags()
             }
         }
 #else
-
+        if(m_pVendorPrivateObj != NULL) {
+            if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
+                QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
+            }
+        }
 #endif
     }
+
+    //RealTimeDB::instance()->debug();
     return true;
 }
 

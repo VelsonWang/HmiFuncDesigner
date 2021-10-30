@@ -23,6 +23,8 @@ public:
 
     quint64 tagId(const QString &name);
 
+    void debug();
+
 private:
     explicit RealTimeDB(QObject *parent = nullptr);
     ~RealTimeDB();

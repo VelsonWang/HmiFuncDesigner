@@ -265,8 +265,14 @@ inline QByteArray int16ToBytes(qint16 val)
 inline qint16 bytesToInt16(QByteArray val)
 {
     if(val.size() >= 2) {
-        qint16 v = val.at(1) * 2 ^ 8 + val.at(0);
-        return v;
+        union data {
+            qint16 val;
+            quint8 byte[2];
+        };
+        union data dat;
+        dat.byte[0] = (quint8)val.at(0);
+        dat.byte[1] = (quint8)val.at(1);
+        return dat.val;
     }
     return 0;
 }
@@ -291,8 +297,14 @@ inline QByteArray uint16ToBytes(quint16 val)
 inline quint16 bytesToUint16(QByteArray val)
 {
     if(val.size() >= 2) {
-        quint16 v = val.at(1) * 2 ^ 8 + val.at(0);
-        return v;
+        union data {
+            quint16 val;
+            quint8 byte[2];
+        };
+        union data dat;
+        dat.byte[0] = (quint8)val.at(0);
+        dat.byte[1] = (quint8)val.at(1);
+        return dat.val;
     }
     return 0;
 }
@@ -319,8 +331,16 @@ inline QByteArray int32ToBytes(qint32 val)
 inline qint32 bytesToInt32(QByteArray val)
 {
     if(val.size() >= 4) {
-        qint32 v = val.at(3) * 2 ^ 24 + val.at(2) * 2 ^ 16 + val.at(1) * 2 ^ 8 + val.at(0);
-        return v;
+        union data {
+            qint32 val;
+            quint8 byte[4];
+        };
+        union data dat;
+        dat.byte[0] = (quint8)val.at(0);
+        dat.byte[1] = (quint8)val.at(1);
+        dat.byte[2] = (quint8)val.at(2);
+        dat.byte[3] = (quint8)val.at(3);
+        return dat.val;
     }
     return 0;
 }
@@ -347,8 +367,16 @@ inline QByteArray uint32ToBytes(quint32 val)
 inline quint32 bytesToUint32(QByteArray val)
 {
     if(val.size() >= 4) {
-        quint32 v = val.at(3) * 2 ^ 24 + val.at(2) * 2 ^ 16 + val.at(1) * 2 ^ 8 + val.at(0);
-        return v;
+        union data {
+            quint32 val;
+            quint8 byte[4];
+        };
+        union data dat;
+        dat.byte[0] = (quint8)val.at(0);
+        dat.byte[1] = (quint8)val.at(1);
+        dat.byte[2] = (quint8)val.at(2);
+        dat.byte[3] = (quint8)val.at(3);
+        return dat.val;
     }
     return 0;
 }
@@ -379,9 +407,20 @@ inline QByteArray int64ToBytes(qint64 val)
 inline qint64 bytesToInt64(QByteArray val)
 {
     if(val.size() >= 8) {
-        qint64 v = val.at(7) * 2 ^ 56 + val.at(6) * 2 ^ 48 + val.at(5) * 2 ^ 40 + val.at(4) * 2 ^ 32 +
-                   val.at(3) * 2 ^ 24 + val.at(2) * 2 ^ 16 + val.at(1) * 2 ^ 8 + val.at(0);
-        return v;
+        union data {
+            qint64 val;
+            quint8 byte[8];
+        };
+        union data dat;
+        dat.byte[0] = (quint8)val.at(0);
+        dat.byte[1] = (quint8)val.at(1);
+        dat.byte[2] = (quint8)val.at(2);
+        dat.byte[3] = (quint8)val.at(3);
+        dat.byte[4] = (quint8)val.at(4);
+        dat.byte[5] = (quint8)val.at(5);
+        dat.byte[6] = (quint8)val.at(6);
+        dat.byte[7] = (quint8)val.at(7);
+        return dat.val;
     }
     return 0;
 }
@@ -412,9 +451,20 @@ inline QByteArray uint64ToBytes(quint64 val)
 inline quint64 bytesToUint64(QByteArray val)
 {
     if(val.size() >= 8) {
-        quint64 v = val.at(7) * 2 ^ 56 + val.at(6) * 2 ^ 48 + val.at(5) * 2 ^ 40 + val.at(4) * 2 ^ 32 +
-                    val.at(3) * 2 ^ 24 + val.at(2) * 2 ^ 16 + val.at(1) * 2 ^ 8 + val.at(0);
-        return v;
+        union data {
+            quint64 val;
+            quint8 byte[8];
+        };
+        union data dat;
+        dat.byte[0] = (quint8)val.at(0);
+        dat.byte[1] = (quint8)val.at(1);
+        dat.byte[2] = (quint8)val.at(2);
+        dat.byte[3] = (quint8)val.at(3);
+        dat.byte[4] = (quint8)val.at(4);
+        dat.byte[5] = (quint8)val.at(5);
+        dat.byte[6] = (quint8)val.at(6);
+        dat.byte[7] = (quint8)val.at(7);
+        return dat.val;
     }
     return 0;
 }

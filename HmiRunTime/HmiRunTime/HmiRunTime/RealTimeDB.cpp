@@ -60,3 +60,18 @@ quint64 RealTimeDB::tagId(const QString &name)
     }
     return 0;
 }
+
+
+void RealTimeDB::debug()
+{
+    qDebug() << "RealTimeDB:----------------------------------------";
+    QHashIterator<quint64, RunTimeTag * > iter(rtdb);
+    while (iter.hasNext()) {
+        iter.next();
+        RunTimeTag *pObj = iter.value();
+        if(pObj) {
+            qDebug() << pObj->id << "=" << pObj->toString();
+        }
+    }
+    qDebug() << "---------------------------------------------------";
+}

@@ -5,8 +5,7 @@
 #include <QDebug>
 
 
-TimerTask::TimerTask(QObject *parent) :
-    QObject(parent)
+TimerTask::TimerTask(QObject *parent) : QObject(parent)
 {
     timer = new QTimer();
     connect(timer, SIGNAL(timeout()), this, SLOT(timerUpdate()));
@@ -43,26 +42,26 @@ void TimerTask::timerUpdate()
     quint64 id = 0;
 
     // 系统变量--年
-    id = RealTimeDB::instance()->tagId("$year");
+    id = RealTimeDB::instance()->tagId("year");
     RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.year()));
 
     // 系统变量--月
-    id = RealTimeDB::instance()->tagId("$month");
+    id = RealTimeDB::instance()->tagId("month");
     RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.month()));
 
     // 系统变量--日
-    id = RealTimeDB::instance()->tagId("$day");
+    id = RealTimeDB::instance()->tagId("day");
     RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.day()));
 
     // 系统变量--时
-    id = RealTimeDB::instance()->tagId("$hour");
+    id = RealTimeDB::instance()->tagId("hour");
     RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.hour()));
 
     // 系统变量--分
-    id = RealTimeDB::instance()->tagId("$minute");
+    id = RealTimeDB::instance()->tagId("minute");
     RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.minute()));
 
     // 系统变量--秒
-    id = RealTimeDB::instance()->tagId("$second");
+    id = RealTimeDB::instance()->tagId("second");
     RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.second()));
 }

@@ -269,12 +269,12 @@ int ModbusRTUImpl::writeData(void* pObj, RunTimeTag* pTag)
 
     msgLen = makeMessagePackage(pVendorObj->writeBuf, pObj, pTag, FLAG_WRITE, &revLen);
 
-    if(getPort() != nullptr) {
+    if(getPort() != NULL) {
         getPort()->write(pVendorObj->writeBuf, msgLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
     }
 
     int resultlen = 0;
-    if(getPort() != nullptr) {
+    if(getPort() != NULL) {
         resultlen = getPort()->read(pVendorObj->readBuf, revLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
     }
 
@@ -323,16 +323,16 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
 
     msgLen = makeMessagePackage(pVendorObj->writeBuf, pObj, pTag, FLAG_READ, &revLen);
 
-    qDebug() << hexToString((char *)pVendorObj->writeBuf, 16);
+    qDebug() << "Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, msgLen);
 
-    if(getPort() != nullptr) {
+    if(getPort() != NULL) {
         getPort()->write(pVendorObj->writeBuf, msgLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
     }
 
     int resultlen = 0;
 
     if(cm == CM_0x || cm == CM_1x) {
-        if(getPort() != nullptr) {
+        if(getPort() != NULL) {
             resultlen = getPort()->read(pVendorObj->readBuf, 3, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
         }
 
@@ -340,7 +340,7 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
             return -2;
         }
 
-        if(getPort() != nullptr) {
+        if(getPort() != NULL) {
             resultlen = getPort()->read(&pVendorObj->readBuf[3], pVendorObj->readBuf[2] + 2, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
         }
 
@@ -355,9 +355,11 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
         }
     } else {
 
-        if(getPort() != nullptr) {
+        if(getPort() != NULL) {
             resultlen = getPort()->read(pVendorObj->readBuf, revLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
         }
+
+        qDebug() << "Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, revLen);
 
         if(resultlen != revLen) {
             return -2;

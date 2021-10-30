@@ -173,6 +173,7 @@ bool NewProjectDialog::save()
     projInfoMgr.setStationAddress(ui->editStationAddress->text());
     projInfoMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
     QSoftCore::getCore()->getProjectCore()->headerObj_.byEncrypt = ui->chkProjectEncrypt->isChecked() ? 1 : 0;
+    QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = 0;
     projInfoMgr.setPageScanPeriod(ui->editPageScanPeriod->text().toInt());
     projInfoMgr.setDataScanPeriod(ui->editDataScanPeriod->text().toInt());
     return true;

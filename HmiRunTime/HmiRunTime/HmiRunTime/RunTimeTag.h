@@ -17,6 +17,7 @@ public:
     void copyObject(const RunTimeTag &obj);
     void copyFromTag(RunTimeTag obj);
     ~RunTimeTag();
+    QString toString();
 
 public:
     ////////////////////<基本信息>//////////////////////////

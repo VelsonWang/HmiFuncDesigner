@@ -24,6 +24,7 @@
 #include "../../libs/shared/qbaseinit.h"
 #include "RealTimeDB.h"
 #include "httpserver.h"
+#include "TimerTask.h"
 
 #ifdef USE_SOAP_SERVICE
     #include "gSOAPServer.h"
@@ -104,6 +105,10 @@ int main(int argc, char *argv[])
         QRunningManager runningMgr;
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
 
+        ///////////////////////////////////////////////////////////////////////////
+        /// 启动定时任务
+        TimerTask *pTimerTask = new TimerTask();
+
         if(runningMgr.load(szProjFile)) {
             HmiRunTime runTime(runningMgr.projCore());
             runTime.Load();
@@ -112,10 +117,14 @@ int main(int argc, char *argv[])
             //addFuncToScriptEngine(HmiRunTime::scriptEngine_);
             runTime.Start();
             g_pHmiRunTime = &runTime;
-            //            runningMgr.start();
+            runningMgr.start();
         }
 
-        return app.exec();
+        int ret = app.exec();
+
+        delete pTimerTask;
+
+        return ret;
     }
 
 #if 0
@@ -153,14 +162,11 @@ int main(int argc, char *argv[])
 #ifdef USE_SOAP_SERVICE
     SOAPServer gSOAPServer("0.0.0.0", 60002);
 #endif
-    ///////////////////////////////////////////////////////////////////////////
-    /// 启动定时任务
-    TimerTask *pTimerTask = new TimerTask();
-    int ret = app.exec();
+
 #ifdef USE_SOAP_SERVICE
     gSOAPServer.exitService();
 #endif
-    delete pTimerTask;
+
     // 释放插件对象
     VendorPluginManager::getInstance()->releasePlugin();
 #endif
