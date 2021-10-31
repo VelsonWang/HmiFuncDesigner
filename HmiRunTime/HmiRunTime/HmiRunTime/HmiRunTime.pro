@@ -87,72 +87,38 @@ include(../../HttpServer/HttpServer.pri)
 #include(../../SOAP/server/SOAPServer.pri)
 
 SOURCES += \
-#    ../Public/Element.cpp \
-#    ../Public/ElementGroup.cpp \
-#    ../Public/PubTool.cpp \
-#    GraphPage.cpp \
-#    GraphPageManager.cpp \
-#    MainWindow.cpp \
-#    ViewElementPluginManager.cpp \
     Function.cpp \
     Public/Global.cpp \
-    RunTimeTag.cpp \
     qextserial/qextserialport.cpp \
-    RealTimeDB.cpp \
     Event/Event.cpp \
     HmiRunTime.cpp \
     Port/ComPort.cpp \
     Port/NetPort.cpp \
     PortThread.cpp \
-#    Script/JavaScript.cpp \
-#    Script/RunScript.cpp \
     SerialPortReMapping.cpp \
     TimerTask.cpp \
     Vendor.cpp \
     VendorPluginManager.cpp \
     log/ulog.cpp \
     main.cpp \
-#    MessageTransfer.cpp \
-#    HmiRunTime.cpp \
-#    Event/Event.cpp \
-#    SysRuntimeEvent.cpp \
-#    Public/Global.cpp
+
 
 
 HEADERS  += \
-#    ../Public/Element.h \
-#    ../Public/ElementGroup.h \
-#    ../Public/PubTool.h \
-#    ../Public/PublicDefine.h \
-#    GraphPage.h \
-#    GraphPageManager.h \
-#    IVendor.h \
-#    MainWindow.h \
-#    MessageTransfer.h \
-#    Public/public.h \
-#    HmiRunTime.h \
-#    Public/PublicFunction.h \
-#    Event/Event.h \
-#    FileTansfer.h \
-#    SysRuntimeEvent.h \
     ../Vendors/IVendorPlugin/IVendorPlugin.h \
     Public/Global.h \
     Public/PublicFunction.h \
     Public/public.h \
     Socket/xsocket.hpp \
     Function.h \
-    RunTimeTag.h \
     qextserial/qextserialport_global.h \
     qextserial/qextserialport.h \
-    RealTimeDB.h \
     Event/Event.h \
     HmiRunTime.h \
     Port/ComPort.h \
     Port/IPort.h \
     Port/NetPort.h \
     PortThread.h \
-#    Script/JavaScript.h \
-#    Script/RunScript.h \
     SerialPortReMapping.h \
     Singleton.h \
     TimerTask.h \

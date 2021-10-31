@@ -22,7 +22,7 @@
 #include "qprojectcore.h"
 #include "qrunningmanager.h"
 #include "../../libs/shared/qbaseinit.h"
-#include "RealTimeDB.h"
+#include "realtimedb.h"
 #include "httpserver.h"
 #include "TimerTask.h"
 
@@ -72,6 +72,7 @@ void LogInit()
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+
     // 日志记录初始化
     LogInit();
     qDebug() << "start hmiruntime.";

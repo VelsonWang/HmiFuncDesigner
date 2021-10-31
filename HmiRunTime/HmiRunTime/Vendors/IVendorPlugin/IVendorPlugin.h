@@ -2,7 +2,7 @@
 #define IDEVICEPLUGIN_H
 
 #include "../../HmiRunTime/Port/IPort.h"
-#include "../../HmiRunTime/RunTimeTag.h"
+#include "../../../libs/shared/realtimedb.h"
 #include <QStringList>
 
 

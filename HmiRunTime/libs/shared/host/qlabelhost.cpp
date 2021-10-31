@@ -2,7 +2,7 @@
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../qcommonstruct.h"
-#include <QLabel>
+#include "../widgets/qlabelex.h"
 
 QLabelHost::QLabelHost(QAbstractHost *parent):
     QFrameHost(parent)
@@ -28,7 +28,7 @@ QString QLabelHost::getShowIcon()
 
 void QLabelHost::createObject()
 {
-    m_object = new QLabel();
+    m_object = new QLabelEx();
     m_object->setObjectName("label");
 }
 

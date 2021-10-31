@@ -102,18 +102,6 @@ inline void MakeAsiiToCode(unsigned char * psrc, unsigned char * pdst, int len)
     }
 }
 
-inline void ShowBufferHex(QString msg, unsigned char * pbuf, int len)
-{
-    QString strBuf;
-    for(int i = 0; i < len; i++) {
-        QString s;
-        s.sprintf("0x%02x ", pbuf[i]);
-        strBuf += s;
-    }
-    msg += strBuf;
-    qDebug() << msg;
-}
-
 inline QString hexToString(char *buf, int size)
 {
     QString ret = "";
@@ -132,9 +120,11 @@ inline void delayMs(unsigned int msec)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 50);
     }
 #else
-    QEventLoop eventloop;
-    QTimer::singleShot(msec, &eventloop, SLOT(quit()));
-    eventloop.exec();
+    if(msec > 0) {
+        QEventLoop eventloop;
+        QTimer::singleShot(msec, &eventloop, SLOT(quit()));
+        eventloop.exec();
+    }
 #endif
 }
 

@@ -36,8 +36,8 @@ QString printSystemInfo()
     out << "isReadOnly:" << storage.isReadOnly()                          << endl;
     out << "name:" << storage.name()                                      << endl;
     out << "fileSystemType:" << storage.fileSystemType()                  << endl;
-    out << "size:" << storage.bytesTotal()/1000/1000 << "MB"              << endl;
-    out << "availableSize:" << storage.bytesAvailable()/1000/1000 << "MB" << endl;
+    out << "size:" << storage.bytesTotal() / 1000 / 1000 << "MB"              << endl;
+    out << "availableSize:" << storage.bytesAvailable() / 1000 / 1000 << "MB" << endl;
 
     // current volumn
     QStorageInfo storageCurrent(qApp->applicationDirPath());
@@ -46,8 +46,8 @@ QString printSystemInfo()
     out << "isReadOnly:" << storageCurrent.isReadOnly()                          << endl;
     out << "name:" << storageCurrent.name()                                      << endl;
     out << "fileSystemType:" << storageCurrent.fileSystemType()                  << endl;
-    out << "size:" << storageCurrent.bytesTotal()/1000/1000 << "MB"              << endl;
-    out << "availableSize:" << storageCurrent.bytesAvailable()/1000/1000 << "MB" << endl;
+    out << "size:" << storageCurrent.bytesTotal() / 1000 / 1000 << "MB"              << endl;
+    out << "availableSize:" << storageCurrent.bytesAvailable() / 1000 / 1000 << "MB" << endl;
 
     return s;
 }
@@ -61,8 +61,8 @@ QString printSystemInfo()
 QString hexToString(char *buf, int size)
 {
     QString ret = "";
-    for(int i=0; i<size; i++){
-        ret = ret + QString("%1").arg(buf[i]&0xff, 2, 16, QChar('0')) + " ";
+    for(int i = 0; i < size; i++) {
+        ret = ret + QString("%1").arg(buf[i] & 0xff, 2, 16, QChar('0')) + " ";
     }
     ret.chop(1);
     return ret.toUpper();
@@ -91,9 +91,11 @@ void getIp(QStringList &ipList)
  */
 void delayMs(unsigned int msec)
 {
-    QEventLoop eventloop;
-    QTimer::singleShot(msec, &eventloop, SLOT(quit()));
-    eventloop.exec();
+    if(msec > 0) {
+        QEventLoop eventloop;
+        QTimer::singleShot(msec, &eventloop, SLOT(quit()));
+        eventloop.exec();
+    }
 }
 
 

@@ -22,6 +22,7 @@ QRunningManager::QRunningManager(QObject *parent) :
 {
     m_pDlgBaseWidgetObj->setVisible(false);
     m_pMainWindowObj->installEventFilter(this);
+    connect(&m_timer, SIGNAL(timeout()), m_pMainWindowObj, SLOT(update()));
 }
 
 QRunningManager::~QRunningManager()
@@ -166,6 +167,14 @@ void QRunningManager::start()
     }
 
     m_pMainWindowObj->setVisible(true);
+
+    // 开启定时画面刷新
+    int pageScanPeriod = m_pProjCoreObj->m_projInfoMgr.getDataScanPeriod();
+    if(pageScanPeriod < 100) {
+        pageScanPeriod = 100;
+    }
+    m_timer.start(pageScanPeriod);
+
     emit notifyStart();
 }
 

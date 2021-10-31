@@ -347,6 +347,9 @@ void QAbstractHost::fromObject(XMLObject *xml)
                 if(pro != NULL) {
                     pro->fromObject(obj);
                     pro->setAttribute(ATTR_NEEDSAVE, true);
+                    // TODO FIXME
+                    // 设置对象的属性
+                    m_object->setProperty(pro->getObjectProperty("name").toByteArray(), pro->get_value());
                 }
             } else {
                 QString name = obj->getProperty(HOST_TYPE);

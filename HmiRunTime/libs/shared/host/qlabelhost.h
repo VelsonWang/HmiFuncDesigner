@@ -12,6 +12,7 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
+
 public slots:
     void    setText(const QString & text);
     QString text();
@@ -21,8 +22,10 @@ public slots:
 
     void    setAlignment(int alignment);
     int     alignment();
+
 protected:
     void    initProperty();
+
 protected:
     void    createObject();
 };

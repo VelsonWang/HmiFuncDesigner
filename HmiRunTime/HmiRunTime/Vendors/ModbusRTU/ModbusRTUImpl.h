@@ -3,8 +3,8 @@
 
 #include <QString>
 #include <QObject>
-
-#include "../../HmiRunTime/Public/public.h"
+#include "../../../libs/shared/realtimedb.h"
+#include "../../../libs/shared/public.h"
 #include "../Public/Modbus.h"
 #include "../../HmiRunTime/Port/IPort.h"
 

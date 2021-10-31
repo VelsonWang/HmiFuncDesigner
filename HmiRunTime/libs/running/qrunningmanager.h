@@ -4,6 +4,7 @@
 #include "runninglibglobal.h"
 #include <QObject>
 #include <QMainWindow>
+#include <QTimer>
 
 class QAbstractHost;
 class QProjectCore;
@@ -42,6 +43,9 @@ protected:
     QMainWindow *m_pMainWindowObj;
     QBaseDialogWidget *m_pDlgBaseWidgetObj;
     QWidget *m_pLastWidgetObj;
+
+private:
+    QTimer m_timer;
 };
 
 #endif // QRUNNINGMANAGER_H

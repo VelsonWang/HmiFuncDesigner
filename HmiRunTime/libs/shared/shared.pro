@@ -33,11 +33,16 @@ HEADERS += \
     property/qtagcolorlistproperty.h \
     property/qtagproperty.h \
     property/qtagtextlistproperty.h \
+    public.h \
+    publicfunction.h \
     pubtool.h \
+    realtimedb.h \
     sharedlibglobal.h \
     widgets/qimagebox.h \
     widgets/qindicationlamp.h \
     widgets/qjarshape.h \
+    widgets/qlabelex.h \
+    widgets/qlineeditex.h \
     widgets/qpushbuttonex.h \
     widgets/qswitchbutton.h \
     widgets/qvaluestick.h \
@@ -120,9 +125,12 @@ SOURCES += \
     property/qtagproperty.cpp \
     property/qtagtextlistproperty.cpp \
     pubtool.cpp \
+    realtimedb.cpp \
     widgets/qimagebox.cpp \
     widgets/qindicationlamp.cpp \
     widgets/qjarshape.cpp \
+    widgets/qlabelex.cpp \
+    widgets/qlineeditex.cpp \
     widgets/qpushbuttonex.cpp \
     widgets/qswitchbutton.cpp \
     widgets/qvaluestick.cpp \

@@ -48,7 +48,6 @@ void VendorPluginManager::loadAllPlugin()
 
 IVendorPlugin* VendorPluginManager::loadPlugin(const QString &name)
 {
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
     QDir pluginsDir(Helper::AppDir());
     pluginsDir.cd(QLatin1String("Vendors"));
     QString szPluginName = name;

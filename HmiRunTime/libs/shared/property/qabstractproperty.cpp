@@ -1,6 +1,7 @@
 #include "qabstractproperty.h"
 #include "../xmlobject.h"
 #include <QTimer>
+#include <QDebug>
 
 QAbstractProperty::QAbstractProperty(QAbstractProperty *parent) :
     m_parent(parent)

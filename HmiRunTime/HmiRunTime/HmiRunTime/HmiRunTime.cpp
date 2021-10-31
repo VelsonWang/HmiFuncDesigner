@@ -1,7 +1,6 @@
 ﻿#include "HmiRunTime.h"
 #include "public.h"
-#include "RealTimeDB.h"
-#include "RunTimeTag.h"
+#include "realtimedb.h"
 #include "SysRuntimeEvent.h"
 #include "VendorPluginManager.h"
 #include "ComPort.h"
@@ -138,6 +137,7 @@ bool HmiRunTime::Load()
         pRtTagObj->ownGroup = pTagObj->m_szOwnGroup;
         pRtTagObj->devType = pTagObj->m_szDevType;
         pRtTagObj->dataType = TYPE_VARIANT;
+        pRtTagObj->bufLength = 1;
         if(szDataType == "bool") {
             pRtTagObj->dataType = TYPE_BOOL;
             pRtTagObj->bufLength = 1;
@@ -190,6 +190,8 @@ bool HmiRunTime::Load()
             pRtTagObj->dataType = TYPE_BYTES;
             pRtTagObj->bufLength = 256;
         }
+        pRtTagObj->dataFromVendor.resize(pRtTagObj->bufLength);
+        pRtTagObj->dataToVendor.resize(pRtTagObj->bufLength);
 
         RealTimeDB::instance()->rtdb.insert(pRtTagObj->id, pRtTagObj);
 

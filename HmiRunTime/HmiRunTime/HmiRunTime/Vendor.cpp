@@ -2,8 +2,8 @@
 #include <cstdlib>
 #include <cstring>
 #include <QFile>
-#include "Public/PublicFunction.h"
-#include "RealTimeDB.h"
+#include "publicfunction.h"
+#include "realtimedb.h"
 #include "qprojectcore.h"
 #include <QDateTime>
 #include <QDebug>
@@ -327,7 +327,6 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
     QMutexLocker locker(&m_mutexWrite);
     if(pTag) {
         clearReadBuffer();
-        pTag->dataFromVendor.clear();
         if(m_pVendorPluginObj && m_pPortObj) {
             m_pVendorPluginObj->beforeReadIOTag(this, pTag);
 #if 0

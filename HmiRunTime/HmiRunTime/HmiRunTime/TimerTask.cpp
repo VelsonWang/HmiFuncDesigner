@@ -1,7 +1,7 @@
 ﻿#include "TimerTask.h"
 #include <QTime>
-#include "RealTimeDB.h"
-#include "Public/PublicFunction.h"
+#include "realtimedb.h"
+#include "publicfunction.h"
 #include <QDebug>
 
 

@@ -2,7 +2,7 @@
 #include <QDebug>
 #include <QThread>
 #include "ComPort.h"
-#include "Public/PublicFunction.h"
+#include "publicfunction.h"
 #include "SerialPortReMapping.h"
 
 #define TIME_OUT 10

@@ -2,7 +2,7 @@
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../qcommonstruct.h"
-#include <QLineEdit>
+#include "../widgets/qlineeditex.h"
 
 QLineEditHost::QLineEditHost(QAbstractHost *parent):
     QWidgetHost(parent)
@@ -28,7 +28,7 @@ QString QLineEditHost::getShowIcon()
 
 void QLineEditHost::createObject()
 {
-    m_object = new QLineEdit();
+    m_object = new QLineEditEx();
     m_object->setObjectName("lineedit");
 }
 
@@ -101,7 +101,7 @@ void QLineEditHost::initProperty()
 
     setPropertyValue("geometry", QRect(0, 0, 80, 20));
 
-    QLineEdit* e = (QLineEdit*)m_object;
+    QLineEditEx* e = (QLineEditEx*)m_object;
     connect(e, SIGNAL(textChanged(QString)), this, SLOT(textChanged(QString)));
     connect(e, SIGNAL(editingFinished()), this, SLOT(editFinish()));
 }
