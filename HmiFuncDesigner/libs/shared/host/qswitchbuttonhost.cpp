@@ -52,9 +52,7 @@ void QSwitchButtonHost::initProperty()
         pObj->setObjectProperty("name", "funcs");
         pObj->setAttribute("show_name", tr("功能操作"));
         pObj->setAttribute("group", "HMI");
-        QStringList listEvents;
-        getSupportEvents(listEvents);
-        pObj->setAttribute("supportevents", listEvents.join("|"));
+        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
         insertProperty(pObj);
     }
 
@@ -254,47 +252,15 @@ void QSwitchButtonHost::initProperty()
     setPropertyValue("geometry", QRect(0, 0, 120, 60));
 }
 
-void QSwitchButtonHost::getSupportEvents(QStringList &listValue)
+/**
+ * @brief QSwitchButtonHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QSwitchButtonHost::supportFuncEvents()
 {
-    QString xmlFileName = QCoreApplication::applicationDirPath() + "/Config/ElementSupportEvents.xml";
-
-    QFile fileCfg(xmlFileName);
-    if(!fileCfg.exists()) {
-        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
-        return;
-    }
-    if(!fileCfg.open(QFile::ReadOnly)) {
-        return;
-    }
-    QString buffer = fileCfg.readAll();
-    fileCfg.close();
-    XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, nullptr)) {
-        return;
-    }
-
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
-
-    foreach(XMLObject* eventGroup, childrenFuncSupport) {
-        QString szEventGroupName = eventGroup->getProperty("name");
-        if(szEventGroupName == "SwitchButton") {
-
-            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
-            if(childrenGroup.size() < 1) {
-                continue;
-            }
-
-            foreach(XMLObject* event, childrenGroup) {
-                QString eventName = event->getProperty("name");
-                QString eventShowName = event->getProperty("ShowName");
-                listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
-
-                QList<XMLObject*> funcDesc = event->getChildren();
-                if(funcDesc.size() < 1) {
-                    continue;
-                }
-                QString strDesc = event->getCurrentChild("desc")->getText();
-            }
-        }
-    }
+    QStringList supportFuncEvents;
+    supportFuncEvents << QString("%1-%2").arg("OffToOn").arg(tr("切换到开事件"));
+    supportFuncEvents << QString("%1-%2").arg("OnToOff").arg(tr("切换到关事件"));
+    return supportFuncEvents;
 }

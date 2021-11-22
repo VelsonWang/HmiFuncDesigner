@@ -3,7 +3,7 @@
 
 #include "qwidgethost.h"
 
-class QAbstractSliderHost :public QWidgetHost
+class QAbstractSliderHost : public QWidgetHost
 {
     Q_OBJECT
 public:
@@ -23,7 +23,9 @@ public slots:
 protected slots:
     void    valueChanged(int value);
 protected:
-    void initProperty();
+    void initProperty() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QABSTRACTSLIDERHOST_H

@@ -164,3 +164,14 @@ void QLineEditHost::editFinish()
         exec(code, param);
     }
 }
+
+/**
+ * @brief QLineEditHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QLineEditHost::supportFuncEvents()
+{
+    return QStringList();
+}
+

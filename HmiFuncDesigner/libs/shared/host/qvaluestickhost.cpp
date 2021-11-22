@@ -179,3 +179,13 @@ void QValueStickHost::initProperty()
 
     setPropertyValue("geometry", QRect(0, 0, 120, 45));
 }
+
+/**
+ * @brief QValueStickHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QValueStickHost::supportFuncEvents()
+{
+    return QStringList();
+}

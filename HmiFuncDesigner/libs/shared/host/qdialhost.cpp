@@ -5,8 +5,8 @@
 QDialHost::QDialHost(QAbstractHost *parent):
     QAbstractSliderHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QDialHost::getShowName()
@@ -26,19 +26,19 @@ QString QDialHost::getShowIcon()
 
 void QDialHost::createObject()
 {
-    m_object=new QDial();
+    m_object = new QDial();
     m_object->setObjectName("dial");
 }
 
 void QDialHost::initProperty()
 {
     QAbstractSliderHost::initProperty();
-    setPropertyValue("geometry",QRect(0,0,60,60));
+    setPropertyValue("geometry", QRect(0, 0, 60, 60));
 }
 
 void QDialHost::setWrapping(bool wrapping)
 {
-    setPropertyValue("wrapping",wrapping);
+    setPropertyValue("wrapping", wrapping);
 }
 
 bool QDialHost::wrapping()
@@ -48,7 +48,7 @@ bool QDialHost::wrapping()
 
 void QDialHost::setNotchesVisible(bool notchesVisible)
 {
-    setPropertyValue("notchesVisible",notchesVisible);
+    setPropertyValue("notchesVisible", notchesVisible);
 }
 
 bool QDialHost::notchesVisible()
@@ -58,10 +58,20 @@ bool QDialHost::notchesVisible()
 
 void QDialHost::setNotchTarget(float notchTarget)
 {
-    setPropertyValue("notchTarget",notchTarget);
+    setPropertyValue("notchTarget", notchTarget);
 }
 
 float QDialHost::notchTarget()
 {
     return getPropertyValue("notchTarget").toBool();
+}
+
+/**
+ * @brief QDialHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QDialHost::supportFuncEvents()
+{
+    return QStringList();
 }

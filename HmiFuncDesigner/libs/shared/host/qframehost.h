@@ -12,16 +12,21 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
-public slots:
-    void    setFrameShape(int frameShape);
-    int     frameShape();
 
-    void    setFrameShadow(int frameShadow);
-    int     frameShadow();
+public slots:
+    void setFrameShape(int frameShape);
+    int frameShape();
+
+    void setFrameShadow(int frameShadow);
+    int frameShadow();
+
 protected:
-    void    initProperty();
+    void initProperty() override;
+
 protected:
-    void    createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QFRAMEHOST_H

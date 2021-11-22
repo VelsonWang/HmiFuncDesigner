@@ -13,14 +13,19 @@ public:
     static QString getShowIcon();
     static QString getShowGroup();
 public slots:
-    void    setTristate(bool tristate);
-    bool    tristate();
+    void setTristate(bool tristate);
+    bool tristate();
+
 protected slots:
-    void    stateChanged(int state);
+    void stateChanged(int state);
+
 protected:
-    void    initProperty();
+    void initProperty() override;
+
 protected:
-    void    createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QCHECKBOXHOST_H

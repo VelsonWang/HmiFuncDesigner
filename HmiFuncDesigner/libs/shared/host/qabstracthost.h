@@ -10,8 +10,8 @@
 #include <QTimer>
 #include <QUndoStack>
 
-#define OBJECT_TITLE   "Object"
-#define  HOST_TYPE      "type"
+#define OBJECT_TITLE "Object"
+#define HOST_TYPE "type"
 
 class QAbstractProperty;
 class XMLObject;
@@ -85,9 +85,11 @@ protected:
     void removeAction(const QString& name);
 
     virtual void initProperty();
-    bool eventFilter(QObject *, QEvent *);
+    bool eventFilter(QObject *, QEvent *) override;
 
     void exec(const QString &code, const QMap<QString, QString> &param);
+    // 控件支持的功能事件
+    virtual QStringList supportFuncEvents();
 
 protected:
     virtual bool handlePaintEvent(QPaintEvent* event);
@@ -98,6 +100,7 @@ protected:
     virtual bool handleMouseMoveEvent(QMouseEvent* event);
     virtual bool handleDoubleClickedEvent(QMouseEvent* event);
     virtual bool handleContextMenuEvent(QContextMenuEvent *event);
+
 
 protected slots:
     void onPropertyRefresh();
@@ -110,8 +113,6 @@ signals:
     void notifyInsertChildren(const QList<QAbstractHost*> &host, const QList<int> &index);
     void notifyRemoveChildren(const QList<QAbstractHost*> &host);
     void notifyParentChanged();
-
-public slots:
 
 protected:
     QList<QAbstractHost*> m_children;

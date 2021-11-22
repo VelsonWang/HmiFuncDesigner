@@ -35,10 +35,7 @@ void QFormHost::initProperty()
         pObj->setObjectProperty("name", "function");
         pObj->setAttribute("show_name", tr("功能操作"));
         pObj->setAttribute("group", "HMI");
-
-        QStringList listEvents;
-        getSupportEvents(listEvents);
-        pObj->setAttribute("supportevents", listEvents.join("|"));
+        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
         insertProperty(pObj);
     }
 
@@ -53,48 +50,16 @@ void QFormHost::initProperty()
     setPropertyValue("geometry", QRect(0, 0, 800, 600));
 }
 
-
-
-void QFormHost::getSupportEvents(QStringList &szListValue)
+/**
+ * @brief QFormHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QFormHost::supportFuncEvents()
 {
-    QString xmlFileName = QCoreApplication::applicationDirPath() + "/Config/ElementSupportEvents.xml";
-
-    QFile fileCfg(xmlFileName);
-    if(!fileCfg.exists()) {
-        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
-        return;
-    }
-    if(!fileCfg.open(QFile::ReadOnly)) {
-        return;
-    }
-    QString buffer = fileCfg.readAll();
-    fileCfg.close();
-    XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, nullptr)) {
-        return;
-    }
-
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
-
-    foreach(XMLObject* eventGroup, childrenFuncSupport) {
-        QString szEventGroupName = eventGroup->getProperty("name");
-        if(szEventGroupName == "GraphPage") {
-
-            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
-            if(childrenGroup.size() < 1) {
-                continue;
-            }
-
-            foreach(XMLObject* event, childrenGroup) {
-                QString eventName = event->getProperty("name");
-                QString eventShowName = event->getProperty("ShowName");
-                szListValue << QString("%1-%2").arg(eventName).arg(eventShowName);
-                QList<XMLObject*> funcDesc = event->getChildren();
-                if(funcDesc.size() < 1) {
-                    continue;
-                }
-                QString strDesc = event->getCurrentChild("desc")->getText();
-            }
-        }
-    }
+    QStringList supportFuncEvents;
+    supportFuncEvents << QString("%1-%2").arg("OpenGraphPage").arg(tr("打开画面"));
+    supportFuncEvents << QString("%1-%2").arg("CloseGraphPage").arg(tr("关闭画面"));
+    return supportFuncEvents;
 }
+

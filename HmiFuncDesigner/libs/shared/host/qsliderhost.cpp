@@ -79,3 +79,14 @@ void QSliderHost::initProperty()
 
     setPropertyValue("geometry", QRect(0, 0, 100, 20));
 }
+
+/**
+ * @brief QSliderHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QSliderHost::supportFuncEvents()
+{
+    return QStringList();
+}
+

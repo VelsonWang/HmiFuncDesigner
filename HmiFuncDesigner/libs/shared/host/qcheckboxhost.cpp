@@ -102,3 +102,13 @@ void QCheckBoxHost::stateChanged(int state)
         exec(code, param);
     }
 }
+
+/**
+ * @brief QCheckBoxHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QCheckBoxHost::supportFuncEvents()
+{
+    return QStringList();
+}

@@ -14,13 +14,12 @@ public:
     static QString getShowGroup();
 
 protected:
-    void initProperty();
+    void initProperty() override;
 
 protected:
-    void createObject();
-
-private:
-    void getSupportEvents(QStringList &listValue);
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QSWITCHBUTTONHOST_H

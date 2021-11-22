@@ -146,3 +146,13 @@ int QAbstractSpinBoxHost::alignment()
 {
     return getPropertyValue("alignment").toInt();
 }
+
+/**
+ * @brief QAbstractSpinBoxHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QAbstractSpinBoxHost::supportFuncEvents()
+{
+    return QStringList();
+}

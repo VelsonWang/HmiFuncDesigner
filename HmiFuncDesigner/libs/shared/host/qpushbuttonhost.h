@@ -14,11 +14,12 @@ public:
     static QString getShowGroup();
 
 protected:
-    void initProperty();
+    void initProperty() override;
 
 protected:
-    void createObject();
-    void getSupportEvents(QStringList &listValue);
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QPUSHBUTTONHOST_H

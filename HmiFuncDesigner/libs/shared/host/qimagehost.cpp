@@ -74,3 +74,14 @@ void QImageHost::initProperty()
     removeProperty("frameShape");
     removeProperty("frameShadow");
 }
+
+/**
+ * @brief QImageHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QImageHost::supportFuncEvents()
+{
+    return QStringList();
+}
+

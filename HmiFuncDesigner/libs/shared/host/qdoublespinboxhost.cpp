@@ -139,3 +139,13 @@ void QDoubleSpinBoxHost::valueChanged(const QString &value)
         exec(code, param);
     }
 }
+
+/**
+ * @brief QDoubleSpinBoxHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QDoubleSpinBoxHost::supportFuncEvents()
+{
+    return QStringList();
+}

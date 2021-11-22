@@ -96,3 +96,13 @@ void QAbstractButtonHost::clicked_slot()
         exec(code, param);
     }
 }
+
+/**
+ * @brief QAbstractButtonHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QAbstractButtonHost::supportFuncEvents()
+{
+    return QStringList();
+}

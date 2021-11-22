@@ -13,14 +13,16 @@ public:
     virtual void    show_form_by_uuid(const QString &uuid);
 
 protected:
-    void initProperty();
+    void initProperty() override;
 
 public slots:
-    virtual void    show_form(const QString &name);
-    virtual void    show_dialog(const QString &name);
+    virtual void show_form(const QString &name);
+    virtual void show_dialog(const QString &name);
 
 protected:
-    void createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QPROJECTHOST_H

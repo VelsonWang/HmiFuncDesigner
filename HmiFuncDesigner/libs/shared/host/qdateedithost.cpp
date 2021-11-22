@@ -154,3 +154,13 @@ void QDateEditHost::dateChanged(const QDate &date)
         exec(code, param);
     }
 }
+
+/**
+ * @brief QDateEditHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QDateEditHost::supportFuncEvents()
+{
+    return QStringList();
+}

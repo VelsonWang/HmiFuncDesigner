@@ -10,8 +10,8 @@
 QRadioButtonHost::QRadioButtonHost(QAbstractHost *parent):
     QAbstractButtonHost(parent)
 {
-    setProperty("need_frame",false);
-    setProperty("accept_drop",false);
+    setProperty("need_frame", false);
+    setProperty("accept_drop", false);
 }
 
 QString QRadioButtonHost::getShowName()
@@ -31,7 +31,7 @@ QString QRadioButtonHost::getShowIcon()
 
 void QRadioButtonHost::createObject()
 {
-    m_object=new QRadioButton();
+    m_object = new QRadioButton();
     m_object->setObjectName("radiobutton");
 }
 
@@ -39,20 +39,32 @@ void QRadioButtonHost::initProperty()
 {
     QAbstractButtonHost::initProperty();
 
-    SheetItems items=property("sheet_state").value<SheetItems>();
+    SheetItems items = property("sheet_state").value<SheetItems>();
 
     tagSheetItem item;
 
-    item.m_item_id=SSID_On;
-    items.insert(item.m_item_id,item);
-    item.m_item_id=SSID_Off;
-    items.insert(item.m_item_id,item);
+    item.m_item_id = SSID_On;
+    items.insert(item.m_item_id, item);
+    item.m_item_id = SSID_Off;
+    items.insert(item.m_item_id, item);
 
     QVariant v;
     v.setValue<SheetItems>(items);
-    setProperty("sheet_state",v);
+    setProperty("sheet_state", v);
 
-    setPropertyValue("geometry",QRect(0,0,100,20));
-    setPropertyValue("text","radio button");
+    setPropertyValue("geometry", QRect(0, 0, 100, 20));
+    setPropertyValue("text", "radio button");
     removeProperty("checkable");
 }
+
+/**
+ * @brief QRadioButtonHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QRadioButtonHost::supportFuncEvents()
+{
+    return QStringList();
+}
+
+

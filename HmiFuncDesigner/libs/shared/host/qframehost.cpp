@@ -127,3 +127,14 @@ int QFrameHost::frameShadow()
 {
     return getPropertyValue("frameShape").toInt();
 }
+
+/**
+ * @brief QFrameHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QFrameHost::supportFuncEvents()
+{
+    return QStringList();
+}
+

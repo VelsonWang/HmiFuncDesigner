@@ -12,20 +12,27 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
+
 public slots:
-    void    setValue(float value);
-    float   value();
+    void setValue(float value);
+    float value();
 
-    void    setSingleStep(float singleStep);
-    float   singleStep();
+    void setSingleStep(float singleStep);
+    float singleStep();
 
-    void    setDecimals(int decimals);
-    int     decimals();
+    void setDecimals(int decimals);
+    int decimals();
+
 protected slots:
-    void    valueChanged(const QString& value);
+    void valueChanged(const QString& value);
+
 protected:
-    void initProperty();
+    void initProperty() override;
+
 protected:
-    void    createObject();
+    void createObject() override;
+
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 #endif // QDOUBLESPINBOXHOST_H

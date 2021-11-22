@@ -12,18 +12,24 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
-public slots:
-    void    setValue(int value);
-    int     value();
 
-    void    setSingleStep(int singleStep);
-    int     singleStep();
+public slots:
+    void setValue(int value);
+    int value();
+
+    void setSingleStep(int singleStep);
+    int singleStep();
+
 protected slots:
-    void    valueChanged(const QString &value);
+    void valueChanged(const QString &value);
+
 protected:
-    void initProperty();
+    void initProperty() override;
+
 protected:
-    void    createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QSPINBOXHOST_H

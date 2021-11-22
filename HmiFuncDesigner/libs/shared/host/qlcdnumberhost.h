@@ -12,28 +12,33 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
+
 public slots:
-    void    setIntValue(int intValue);
-    int     intValue();
+    void setIntValue(int intValue);
+    int intValue();
 
-    void    setValue(float value);
-    float   value();
+    void setValue(float value);
+    float value();
 
-    void    setMode(int mode);
-    int     mode();
+    void setMode(int mode);
+    int mode();
 
-    void    setSegmentStyle(int segmentStyle);
-    int     segmentStyle();
+    void setSegmentStyle(int segmentStyle);
+    int segmentStyle();
 
-    void    setDigitCount(int digitCount);
-    int     digitCount();
+    void setDigitCount(int digitCount);
+    int digitCount();
 
-    void    setNumDigits(int numDigits);
-    int     numDigits();
+    void setNumDigits(int numDigits);
+    int numDigits();
+
 protected:
-    void    initProperty();
+    void initProperty() override;
+
 protected:
-    void    createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QLCDNUMBERHOST_H

@@ -148,3 +148,13 @@ void QAbstractSliderHost::valueChanged(int value)
         exec(code, param);
     }
 }
+
+/**
+ * @brief QAbstractSliderHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QAbstractSliderHost::supportFuncEvents()
+{
+    return QStringList();
+}

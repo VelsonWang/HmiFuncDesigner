@@ -12,20 +12,26 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
-public slots:
-    void    setDate(int year,int month,int day);
-    int     year();
-    int     month();
-    int     day();
 
-    void    setCurrentSection(int currentSection);
-    int     currentSection();
+public slots:
+    void setDate(int year, int month, int day);
+    int year();
+    int month();
+    int day();
+
+    void setCurrentSection(int currentSection);
+    int currentSection();
+
 protected slots:
-    void    dateChanged(const QDate &date);
+    void dateChanged(const QDate &date);
+
 protected:
-    void initProperty();
+    void initProperty() override;
+
 protected:
-    void    createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QDATEEDITHOST_H

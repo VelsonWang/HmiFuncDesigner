@@ -12,20 +12,24 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
+
 public slots:
+    void setNotchTarget(float notchTarget);
+    float notchTarget();
 
-    void    setNotchTarget(float notchTarget);
-    float   notchTarget();
+    void setWrapping(bool wrapping);
+    bool wrapping();
 
-    void    setWrapping(bool wrapping);
-    bool    wrapping();
+    void setNotchesVisible(bool notchesVisible);
+    bool notchesVisible();
 
-    void    setNotchesVisible(bool notchesVisible);
-    bool    notchesVisible();
 protected:
-    void    initProperty();
+    void initProperty() override;
+
 protected:
-    void    createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 #endif // QDIALHOST_H

@@ -15,22 +15,24 @@ public:
     static QString getShowGroup();
 
 public slots:
-    void    setTime(int hour,int minute,int second);
-    int     hour();
-    int     minute();
-    int     second();
+    void setTime(int hour, int minute, int second);
+    int hour();
+    int minute();
+    int second();
 
-    void    setCurrentSection(int currentSection);
-    int     currentSection();
+    void setCurrentSection(int currentSection);
+    int currentSection();
 
 protected slots:
     void timeChanged(const QTime &time);
 
 protected:
-    void initProperty();
+    void initProperty() override;
 
 protected:
-    void createObject();
+    void createObject() override;
+    // 控件支持的功能事件
+    QStringList supportFuncEvents() override;
 };
 
 

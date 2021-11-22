@@ -12,14 +12,16 @@ public:
     static QString getShowName();
     static QString getShowIcon();
     static QString getShowGroup();
-public slots:
-    void   setVisible(bool visible);
-    bool   visible();
 
-    void    set_focus();
-    void    kill_focus();
+public slots:
+    void setVisible(bool visible);
+    bool visible();
+
+    void set_focus();
+    void kill_focus();
+
 protected:
-    void    createObject();
+    void createObject();
 };
 
 #endif // QWIDGETHOST_H

@@ -45,9 +45,7 @@ void QPushButtonHost::initProperty()
         pObj->setObjectProperty("name", "funcs");
         pObj->setAttribute("show_name", tr("功能操作"));
         pObj->setAttribute("group", "HMI");
-        QStringList listEvents;
-        getSupportEvents(listEvents);
-        pObj->setAttribute("supportevents", listEvents.join("|"));
+        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
         insertProperty(pObj);
     }
 
@@ -56,9 +54,7 @@ void QPushButtonHost::initProperty()
         pObj->setObjectProperty("name", "script");
         pObj->setAttribute("show_name", tr("执行脚本"));
         pObj->setAttribute("group", "HMI");
-        QStringList listEvents;
-        getSupportEvents(listEvents);
-        pObj->setAttribute("supportevents", listEvents.join("|"));
+        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
         insertProperty(pObj);
     }
 
@@ -232,47 +228,16 @@ void QPushButtonHost::initProperty()
     setPropertyValue("text", "button");
 }
 
-void QPushButtonHost::getSupportEvents(QStringList &listValue)
+/**
+ * @brief QPushButtonHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QPushButtonHost::supportFuncEvents()
 {
-    QString xmlFileName = QCoreApplication::applicationDirPath() + "/Config/ElementSupportEvents.xml";
-
-    QFile fileCfg(xmlFileName);
-    if(!fileCfg.exists()) {
-        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
-        return;
-    }
-    if(!fileCfg.open(QFile::ReadOnly)) {
-        return;
-    }
-    QString buffer = fileCfg.readAll();
-    fileCfg.close();
-    XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, nullptr)) {
-        return;
-    }
-
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
-
-    foreach(XMLObject* eventGroup, childrenFuncSupport) {
-        QString szEventGroupName = eventGroup->getProperty("name");
-        if(szEventGroupName == "PushButton") {
-
-            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
-            if(childrenGroup.size() < 1) {
-                continue;
-            }
-
-            foreach(XMLObject* event, childrenGroup) {
-                QString eventName = event->getProperty("name");
-                QString eventShowName = event->getProperty("ShowName");
-                listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
-
-                QList<XMLObject*> funcDesc = event->getChildren();
-                if(funcDesc.size() < 1) {
-                    continue;
-                }
-                QString strDesc = event->getCurrentChild("desc")->getText();
-            }
-        }
-    }
+    QStringList supportFuncEvents;
+    supportFuncEvents << QString("%1-%2").arg("PressDown").arg(tr("按下事件"));
+    supportFuncEvents << QString("%1-%2").arg("ReleaseUp").arg(tr("抬起事件"));
+    return supportFuncEvents;
 }
+

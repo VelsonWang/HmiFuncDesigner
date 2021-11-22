@@ -186,3 +186,13 @@ void QDateTimeEditHost::dateTimeChanged(const QDateTime &datetime)
         exec(code, param);
     }
 }
+
+/**
+ * @brief QDateTimeEditHost::supportFuncEvents
+ * @details 控件支持的功能事件
+ * @return
+ */
+QStringList QDateTimeEditHost::supportFuncEvents()
+{
+    return QStringList();
+}
