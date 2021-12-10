@@ -1,5 +1,5 @@
 ﻿#include "httpserver.h"
-#include "RealTimeDB.h"
+#include "realtimedb.h"
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonArray>
@@ -76,7 +76,7 @@ void HttpServer::on_new_request(QHttpRequest * req, QHttpResponse * rep)
 
     request_body_.clear();
     connect(req, SIGNAL(data(const QByteArray&)),
-        this, SLOT(on_request_accumulate(const QByteArray&)));
+            this, SLOT(on_request_accumulate(const QByteArray&)));
     connect(req, SIGNAL(end()), this, SLOT(on_request_end()));
 }
 
@@ -123,11 +123,11 @@ void HttpServer::on_request_end()
         szTmp = szTagIDTmp.right(szTagIDTmp.length() - iPos - 1);
         int id = szTmp.toInt();
 
-        for(int i=0; i<number; i++) {
+        for(int i = 0; i < number; i++) {
             QJsonObject jsonObj;
             //qDebug() << szTagID << RealTimeDB::GetDataString(szTagID);
             QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
-            jsonObj[szTagID] = RealTimeDB::instance()->GetDataString(szTagID);
+            //jsonObj[szTagID] = RealTimeDB::instance()->GetDataString(szTagID);
             tagArray.append(jsonObj);
             id++;
         }
@@ -150,7 +150,7 @@ void HttpServer::on_request_end()
         for (int i = 0; i < tagArray.size(); ++i) {
             QJsonObject jsonObj = tagArray[i].toObject();
             QString szTagID =  QString("%1%2").arg(szStartID.left(iPos + 1)).arg(QString::number(id));
-            RealTimeDB::instance()->SetDataString(szTagID, jsonObj[szTagID].toString());
+            //RealTimeDB::instance()->SetDataString(szTagID, jsonObj[szTagID].toString());
             id++;
         }
         retJsonObj["StartID"] = szStartID;

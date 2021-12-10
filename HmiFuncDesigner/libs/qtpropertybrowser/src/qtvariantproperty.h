@@ -47,7 +47,7 @@
 #include <QIcon>
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 typedef QMap<int, QIcon> QtIconMap;
@@ -103,11 +103,11 @@ public:
 public Q_SLOTS:
     virtual void setValue(QtProperty *property, const QVariant &val);
     virtual void setAttribute(QtProperty *property,
-                const QString &attribute, const QVariant &value);
+                              const QString &attribute, const QVariant &value);
 Q_SIGNALS:
     void valueChanged(QtProperty *property, const QVariant &val);
     void attributeChanged(QtProperty *property,
-                const QString &attribute, const QVariant &val);
+                          const QString &attribute, const QVariant &val);
 protected:
     virtual bool hasValue(const QtProperty *property) const;
     QString valueText(const QtProperty *property) const;
@@ -166,12 +166,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtVariantEditorFactory : public QtAbstractEdit
 {
     Q_OBJECT
 public:
-    QtVariantEditorFactory(QObject *parent = Q_NULLPTR);
+    QtVariantEditorFactory(QObject *parent = NULL);
     ~QtVariantEditorFactory();
 protected:
     void connectPropertyManager(QtVariantPropertyManager *manager);
     QWidget *createEditor(QtVariantPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtVariantPropertyManager *manager);
 private:
     QtVariantEditorFactoryPrivate *d_ptr;
@@ -180,7 +180,7 @@ private:
 };
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
 
 Q_DECLARE_METATYPE(QIcon)

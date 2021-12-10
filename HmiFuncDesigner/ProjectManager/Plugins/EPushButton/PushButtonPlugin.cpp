@@ -1,5 +1,4 @@
-﻿
-#include "PushButtonPlugin.h"
+﻿#include "PushButtonPlugin.h"
 #include "ElementPushButton.h"
 
 
@@ -89,9 +88,7 @@ QString PushButtonPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* PushButtonPlugin::createElement(const QString &szProjPath,
-                                         const QString &szProjName,
-                                         QtVariantPropertyManager *propertyMgr)
+Element* PushButtonPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementPushButton(szProjPath, szProjName, propertyMgr);
+    return new ElementPushButton(pProjDataObj, propertyMgr);
 }

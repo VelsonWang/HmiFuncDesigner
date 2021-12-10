@@ -2,8 +2,6 @@
 #include "Helper.h"
 #include "XMLObject.h"
 #include "ProjectData.h"
-#include "DrawListUtils.h"
-#include "ElementIDHelper.h"
 #include "variantmanager.h"
 #include <QMessageBox>
 #include <QDateTime>
@@ -12,10 +10,8 @@
 
 int ElementClock::iLastIndex_ = 1;
 
-ElementClock::ElementClock(const QString &szProjPath,
-                           const QString &szProjName,
-                           QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementClock::ElementClock(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("Clock_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -32,12 +28,6 @@ ElementClock::ElementClock(const QString &szProjPath,
     showDate_ = false;
     showWeek_ = false;
     showOnInitial_ = true;
-
-    DrawListUtils::setProjectPath(szProjectPath_);
-    ElementIDHelper::setProjectPath(szProjectPath_);
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
-
     init();
     createPropertyList();
     updatePropertyModel();
@@ -56,7 +46,6 @@ void ElementClock::regenerateElementId()
  */
 void ElementClock::release()
 {
-    ProjectData::releaseInstance();
 }
 
 
@@ -417,138 +406,92 @@ void ElementClock::drawClock(QPainter *painter)
 }
 
 
-void ElementClock::writeAsXml(QXmlStreamWriter &writer)
+bool ElementClock::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-    writer.writeAttribute("period", QString::number(period_));
-    writer.writeAttribute("functions", funcs_.join("|"));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("halign", getHAlignString(szHAlign_));
-    writer.writeAttribute("valign", getVAlignString(szVAlign_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("showDate", showDate_?"true":"false");
-    writer.writeAttribute("showWeek", showWeek_?"true":"false");
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeEndElement();
-}
+    XMLObject *pObj = pXmlObj;
 
-void ElementClock::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("period")) {
-        period_ = attributes.value("period").toString().toDouble();
-    }
+    period_ = pObj->getProperty("period").toDouble();
 
-    if (attributes.hasAttribute("functions")) {
-        QString listString = attributes.value("functions").toString();
-        funcs_ = listString.split('|');
-    }
+    QString listString = pObj->getProperty("functions");
+    funcs_ = listString.split('|');
 
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
-    }
+    backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
 
-    if (attributes.hasAttribute("transparentBackground")) {
-        QString value = attributes.value("transparentBackground").toString();
-        transparentBackground_ = false;
-        if(value == "true") {
-            transparentBackground_ = true;
-        }
-    }
+    QString value = pObj->getProperty("transparentBackground");
+    transparentBackground_ = false;
+    if(value == "true") transparentBackground_ = true;
 
-    if (attributes.hasAttribute("textcolor")) {
-        textColor = QColor(attributes.value("textcolor").toString());
-    }
+    textColor = QColor(pObj->getProperty("textcolor"));
 
-    if (attributes.hasAttribute("font")) {
-        QString szFont = attributes.value("font").toString();
-        font_.fromString(szFont);
-    }
+    QString szFont = pObj->getProperty("font");
+    font_.fromString(szFont);
 
-    if (attributes.hasAttribute("halign")) {
-        QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
-    }
+    QString align = pObj->getProperty("halign");
+    this->setHAlignString(align, szHAlign_);
 
-    if (attributes.hasAttribute("valign")) {
-        QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
-    }
+    align = pObj->getProperty("valign");
+    this->setVAlignString(align, szVAlign_);
 
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
 
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
+    value = pObj->getProperty("showDate");
+    showDate_ = false;
+    if(value == "true") showDate_ = true;
 
-    if (attributes.hasAttribute("showDate")) {
-        QString value = attributes.value("showDate").toString();
-        showDate_ = false;
-        if(value == "true") {
-            showDate_ = true;
-        }
-    }
+    value = pObj->getProperty("showWeek");
+    showWeek_ = false;
+    if(value == "true") showWeek_ = true;
 
-    if (attributes.hasAttribute("showWeek")) {
-        QString value = attributes.value("showWeek").toString();
-        showWeek_ = false;
-        if(value == "true") {
-            showWeek_ = true;
-        }
-    }
+    value = pObj->getProperty("showOnInitial");
+    showOnInitial_ = false;
+    if(value == "true") showOnInitial_ = true;
 
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+bool ElementClock::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("period", QString::number(period_));
+    pObj->setProperty("functions", funcs_.join("|"));
+    pObj->setProperty("backgroundColor", backgroundColor_.name());
+    pObj->setProperty("transparentBackground", transparentBackground_?"true":"false");
+    pObj->setProperty("textcolor", textColor.name());
+    pObj->setProperty("font", font_.toString());
+    pObj->setProperty("halign", getHAlignString(szHAlign_));
+    pObj->setProperty("valign", getVAlignString(szVAlign_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("showDate", showDate_?"true":"false");
+    pObj->setProperty("showWeek", showWeek_?"true":"false");
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    return true;
+}
+
+
 
 void ElementClock::writeData(QDataStream &out)
 {
@@ -649,7 +592,7 @@ void ElementClock::getSupportEvents(QStringList &listValue)
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists()) {
-        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
+        QMessageBox::critical(Q_NULLPTR, tr("提示"), tr("事件配置列表文件不存在！"));
         return;
     }
     if(!fileCfg.open(QFile::ReadOnly)) {
@@ -658,17 +601,17 @@ void ElementClock::getSupportEvents(QStringList &listValue)
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, nullptr)) {
+    if(!xmlFuncSupportList.load(buffer, Q_NULLPTR)) {
         return;
     }
 
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+    QVector<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
     foreach(XMLObject* eventGroup, childrenFuncSupport) {
         QString szEventGroupName = eventGroup->getProperty("name");
         if(szEventGroupName == "Clock") {
 
-            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
+            QVector<XMLObject*> childrenGroup = eventGroup->getChildren();
             if(childrenGroup.size() < 1)
                 continue;
 
@@ -677,7 +620,7 @@ void ElementClock::getSupportEvents(QStringList &listValue)
                 QString eventShowName = event->getProperty("ShowName");
                 listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
 
-                QList<XMLObject*> funcDesc = event->getChildren();
+                QVector<XMLObject*> funcDesc = event->getChildren();
                 if(funcDesc.size() < 1)
                     continue;
                 QString strDesc = event->getCurrentChild("desc")->getText();
@@ -686,100 +629,4 @@ void ElementClock::getSupportEvents(QStringList &listValue)
     }
 }
 
-
-QDataStream &operator<<(QDataStream &out,const ElementClock &clock)
-{
-    out << clock.elementId
-        << clock.period_
-        << clock.funcs_
-        << clock.backgroundColor_
-        << clock.transparentBackground_
-        << clock.textColor
-        << clock.font_.toString()
-        << clock.getHAlignString(clock.szHAlign_)
-        << clock.getVAlignString(clock.szVAlign_)
-        << clock.borderColor_
-        << clock.borderWidth_
-        << clock.showDate_
-        << clock.showWeek_
-        << clock.showOnInitial_
-        << clock.x()
-        << clock.y()
-        << clock.zValue()
-        << clock.elementWidth
-        << clock.elementHeight;
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementClock &clock)
-{
-    QString id;
-    double period;
-    QStringList funcs;
-    QColor backgroundColor;
-    bool transparentBackground;
-    QColor textColor;
-    QString font;
-    QString hAlign;
-    QString vAlign;
-    QColor borderColor;
-    int borderWidth;
-    bool showDate;
-    bool showWeek;
-    bool showOnInitial;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-
-    in >> id
-       >> period
-       >> funcs
-       >> backgroundColor
-       >> transparentBackground
-       >> textColor
-       >> font
-       >> hAlign
-       >> vAlign
-       >> borderColor
-       >> borderWidth
-       >> showDate
-       >> showWeek
-       >> showOnInitial
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height;
-
-    clock.setElementId(id);
-    int index = clock.getIndexFromIDString(id);
-    if(clock.iLastIndex_ < index) {
-        clock.iLastIndex_ = index;
-    }
-    clock.period_ = period;
-    clock.funcs_ = funcs;
-    clock.backgroundColor_ = backgroundColor;
-    clock.transparentBackground_ = transparentBackground;
-    clock.textColor = textColor;
-    clock.font_ = font;
-    clock.setHAlignString(hAlign, clock.szHAlign_);
-    clock.setVAlignString(vAlign, clock.szVAlign_);
-    clock.borderColor_ = borderColor;
-    clock.borderWidth_ = borderWidth;
-    clock.showDate_ = showDate;
-    clock.showWeek_ = showWeek;
-    clock.showOnInitial_ = showOnInitial;
-    clock.setElementXPos(static_cast<int>(xpos));
-    clock.setElementYPos(static_cast<int>(ypos));
-    clock.setElementZValue(static_cast<int>(zvalue));
-    clock.setElementWidth(width);
-    clock.setElementHeight(height);
-    clock.updateBoundingElement();
-    clock.updatePropertyModel();
-
-    return in;
-}
 

@@ -1,52 +1,9 @@
-{
-    "SysVarArray": [
-        {
-            "sComments": "",
-            "sDescription": "年",
-            "sID": "sys.1",
-            "sName": "sys1",
-            "sProjectConverter": "",
-            "sUnit": ""
-        },
-        {
-            "sComments": "",
-            "sDescription": "月",
-            "sID": "sys.2",
-            "sName": "sys2",
-            "sProjectConverter": "",
-            "sUnit": ""
-        },
-        {
-            "sComments": "",
-            "sDescription": "日",
-            "sID": "sys.3",
-            "sName": "sys3",
-            "sProjectConverter": "",
-            "sUnit": ""
-        },
-        {
-            "sComments": "",
-            "sDescription": "时",
-            "sID": "sys.4",
-            "sName": "sys4",
-            "sProjectConverter": "",
-            "sUnit": ""
-        },
-        {
-            "sComments": "",
-            "sDescription": "分",
-            "sID": "sys.5",
-            "sName": "sys5",
-            "sProjectConverter": "",
-            "sUnit": ""
-        },
-        {
-            "sComments": "",
-            "sDescription": "秒",
-            "sID": "sys.6",
-            "sName": "sys6",
-            "sProjectConverter": "",
-            "sUnit": ""
-        }
-    ]
-}
+<?xml version="1.0"?>
+<tags application_version="V1.0.0">
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="1" name="year" remark="年" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="2" name="month" remark="月" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="3" name="day" remark="日" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="4" name="hour" remark="时" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="5" name="minute" remark="分" unit="" writeable="0"/>
+    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="6" name="second" remark="秒" unit="" writeable="0"/>
+</tags>

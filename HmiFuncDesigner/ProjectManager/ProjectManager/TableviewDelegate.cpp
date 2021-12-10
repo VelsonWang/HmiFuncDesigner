@@ -1,4 +1,4 @@
-﻿#include "tableviewdelegate.h"
+﻿#include "TableviewDelegate.h"
 #include <QRegExp>
 #include <QRegExpValidator>
 #include <QPainter>

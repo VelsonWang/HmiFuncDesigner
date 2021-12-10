@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding="UTF-8"?>
+
+<FuncSupportList>
+	<FuncSupport name="ScriptObj" funcName="脚本函数">
+		<Func name="SetRealValue">
+			<name>函数原型:void SetRealValue(string sVar, double dvalue)</name>
+			<desc>函数描述:设置变量值</desc>
+			<args name="参数:">
+				<arg>string	sVar  // 变量名</arg>
+				<arg>double	dValue  // 赋的值</arg>
+			</args>
+			<demo>示例:_N_TSetRealValue("var0", 123.12)  // 设置变量var0的值为123.12</demo>
+		</Func>
+		<Func name="GetRealValue">
+			<name>函数原型:double GetRealValue(string sVar)</name>
+			<desc>函数描述:获取变量的值</desc>
+			<args name="参数:">
+				<arg>string	sVar  // 变量名</arg>
+			</args>
+			<demo>示例:_N_TGetRealValue("var0")  // 获取变量var0的值</demo>
+		</Func>
+		<Func name="StateChange">
+			<name>函数原型:void StateChange(string sVar)</name>
+			<desc>函数描述:变量0,1切换</desc>
+			<args name="参数:">
+				<arg>string	sVar  // 变量名</arg>
+			</args>
+			<demo>示例:_N_TStateChange("var0")  // 切换变量var0的状态</demo>
+		</Func>
+		<Func name="SetSysValue">
+			<name>函数原型:void SetSysValue(string sSys, double dValue)</name>
+			<desc>函数描述:设置系统变量值</desc>
+			<args name="参数:">
+				<arg>string	sSys  // 系统变量名</arg>
+				<arg>double	dValue  // 赋的值</arg>
+			</args>
+			<demo>示例:_N_TSetSysValue("sys0", 123.12)  // 设置系统变量sys0的值为123.12</demo>
+		</Func>
+		<Func name="GetSysValue">
+			<name>函数原型:double GetSysValue(string sSys)</name>
+			<desc>函数描述:设置系统变量值</desc>
+			<args name="参数:">
+				<arg>string	sSys  // 系统变量名</arg>
+			</args>
+			<demo>示例:_N_TGetSysValue("sys0")  // 获取系统变量sys0的值</demo>
+		</Func>
+		<Func name="AddAIValue">
+			<name>函数原型:void AddAIValue(string sVar, double dValue)</name>
+			<desc>函数描述:变量值自增</desc>
+			<args name="参数:">
+				<arg>string	sVar  // 变量名</arg>
+				<arg>double	dValue  // 自增值</arg>
+			</args>
+			<demo>示例:_N_TAddAIValue("var0", 123.12)  // 变量var0的值增加123.12</demo>
+		</Func>
+		<Func name="SubAIValue">
+			<name>函数原型:void SubAIValue(string sVar, double dValue)</name>
+			<desc>函数描述:变量值自减</desc>
+			<args name="参数:">
+				<arg>string	sVar  // 变量名</arg>
+				<arg>double	dValue  // 自减值</arg>
+				<arg></arg>
+				<arg></arg>
+				<arg></arg>
+				<arg></arg>
+			</args>
+			<demo>示例:_N_TSubAIValue("var0", 123.12)  // 变量var0的值减少123.12</demo>
+		</Func>
+	</FuncSupport>
+	<FuncSupport name="SysOptFun" funcName="系统操作函数">
+		<Func name="Sleep">
+			<name>函数原型:void Sleep(int nSec)</name>
+			<desc>函数描述:控制延时</desc>
+			<args name="参数:">
+				<arg>int nSec  // 延时时间</arg>
+			</args>
+			<demo>示例:_N_TSleep(1)  // 延时1s钟</demo>
+		</Func>
+		<Func name="SetDateTime">
+			<name>函数原型:void SetDateTime(int ny, int nm, int nd, int nh, int nf, int ns)</name>
+			<desc>函数描述:设置系统时间</desc>
+			<args name="参数:">
+				<arg>int ny  // 年</arg>
+				<arg>int nm  // 月</arg>
+				<arg>int nd  // 日</arg>
+				<arg>int nh  // 时</arg>
+				<arg>int nf  // 分</arg>
+				<arg>int ns  // 秒</arg>
+			</args>
+			<demo>示例:_N_TSetDateTime(2013,10,1,0,0,0)  // 设置系统时间为2013-10-01 00:00:00</demo>
+		</Func>
+		<Func name="WaitForMillisec">
+			<name>函数原型:void WaitForMillisec(int millisec)</name>
+			<desc>函数描述:延时</desc>
+			<args name="参数:">
+				<arg>int millisec  // 延时的毫秒数</arg>
+			</args>
+			<demo>示例:_N_TWaitForMillisec(1)  // 延时1毫秒</demo>
+		</Func>
+	</FuncSupport>
+</FuncSupportList>

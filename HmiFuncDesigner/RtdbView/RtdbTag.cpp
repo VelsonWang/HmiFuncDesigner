@@ -179,7 +179,7 @@ TagItem *TagTableModel::GetRow(int i)
 {
     if(i < m_tagItems.size())
         return m_tagItems.at(i);
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 

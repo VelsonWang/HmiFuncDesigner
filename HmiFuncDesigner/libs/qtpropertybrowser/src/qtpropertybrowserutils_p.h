@@ -59,7 +59,7 @@
 #include <QStringList>
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 class QMouseEvent;
@@ -99,12 +99,16 @@ public:
     static QString fontValueText(const QFont &f);
 };
 
-class QtBoolEdit : public QWidget {
+class QtBoolEdit : public QWidget
+{
     Q_OBJECT
 public:
-    QtBoolEdit(QWidget *parent = Q_NULLPTR);
+    QtBoolEdit(QWidget *parent = NULL);
 
-    bool textVisible() const { return m_textVisible; }
+    bool textVisible() const
+    {
+        return m_textVisible;
+    }
     void setTextVisible(bool textVisible);
 
     Qt::CheckState checkState() const;
@@ -131,7 +135,7 @@ class QtKeySequenceEdit : public QWidget
 {
     Q_OBJECT
 public:
-    QtKeySequenceEdit(QWidget *parent = Q_NULLPTR);
+    QtKeySequenceEdit(QWidget *parent = NULL);
 
     QKeySequence keySequence() const;
     bool eventFilter(QObject *o, QEvent *e);
@@ -158,7 +162,7 @@ private:
 };
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
 
 #endif

@@ -46,7 +46,7 @@ public:
     enum Column {TagID, Name, Description, DeviceInfo, LogicValue, Status};
 
 public:
-    explicit TagTableModel(QObject *parent=nullptr)
+    explicit TagTableModel(QObject *parent=Q_NULLPTR)
         : QAbstractTableModel(parent) {}
 
     Qt::ItemFlags flags(const QModelIndex &index) const;

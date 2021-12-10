@@ -16,7 +16,7 @@ class HttpServer : public QObject
     Q_OBJECT
 
 public:
-    HttpServer(QObject *parent = Q_NULLPTR);
+    HttpServer(QObject *parent = NULL);
     ~HttpServer();
     void init(int port);
 

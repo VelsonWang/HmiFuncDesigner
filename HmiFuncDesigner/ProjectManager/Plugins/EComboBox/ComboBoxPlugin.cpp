@@ -1,5 +1,4 @@
-﻿
-#include "ComboBoxPlugin.h"
+﻿#include "ComboBoxPlugin.h"
 #include "ElementComboBox.h"
 
 
@@ -91,9 +90,7 @@ QString ComboBoxPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ComboBoxPlugin::createElement(const QString &szProjPath,
-                                          const QString &szProjName,
-                                          QtVariantPropertyManager *propertyMgr)
+Element* ComboBoxPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementComboBox(szProjPath, szProjName, propertyMgr);
+    return new ElementComboBox(pProjDataObj, propertyMgr);
 }

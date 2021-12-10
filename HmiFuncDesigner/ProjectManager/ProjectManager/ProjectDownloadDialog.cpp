@@ -6,8 +6,8 @@
 #include "../Public/Public.h"
 #include "ProjectDownloadDialog.h"
 #include "ui_ProjectDownloadDialog.h"
-#include "ProjectData.h"
-
+#include "qsoftcore.h"
+#include "qprojectcore.h"
 #include <QDebug>
 
 
@@ -57,8 +57,7 @@ ProjectDownloadDialog::~ProjectDownloadDialog()
 QString ProjectDownloadDialog::getRuntimeIp()
 {
     QString sIp = "127.0.0.1";
-    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    projInfoMgr.load(ProjectData::getInstance()->dbData_);
+    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
     sIp = projInfoMgr.getStationAddress();
     return sIp;
 }

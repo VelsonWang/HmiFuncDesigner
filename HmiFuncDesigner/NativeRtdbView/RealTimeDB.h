@@ -97,7 +97,7 @@ public:
     }
 
 private:
-    explicit RealTimeDB(QObject *parent = nullptr);
+    explicit RealTimeDB(QObject *parent = Q_NULLPTR);
     ~RealTimeDB();
 
 signals:

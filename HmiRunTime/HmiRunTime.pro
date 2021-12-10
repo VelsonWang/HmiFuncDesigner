@@ -1,8 +1,9 @@
 TEMPLATE = subdirs
-
+CONFIG += ordered
 SUBDIRS += \
-    AppLauncher \
-    FileTransferTool \
-    HmiRunTimeData \
-    HmiRunTimeView
+    libs \
+#    AppLauncher \
+#    FileTransferTool \
+#    HmiRunTimeData \
+    HmiRunTime
 

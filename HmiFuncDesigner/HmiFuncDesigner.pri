@@ -8,6 +8,11 @@ BINARY_ARTIFACTS_BRANCH = 0.0
 # turn off qDebug messages
 CONFIG(release, debug|release) { #release
 #    DEFINES += QT_NO_DEBUG_OUTPUT
+    DEFINES += BUILD_RELEASE
+}
+
+CONFIG(debug, debug|release) { #debug
+    DEFINES += BUILD_DEBUG
 }
 
 
@@ -96,10 +101,7 @@ osx {
     IDE_DOC_PATH     = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/doc
     IDE_BIN_PATH     = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
     IDE_TOOL_PATH    = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/tools
-    win32: \
-        IDE_LIBEXEC_PATH = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
-    else: \
-        IDE_LIBEXEC_PATH = $$IDE_OUTPUT_PATH/../QHmiFuncDesignerBin/libexec
+    IDE_LIBEXEC_PATH = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
     !isEqual(IDE_SOURCE_TREE, $$IDE_OUTPUT_PATH):copydata = 1
 
     LINK_LIBRARY_PATH = $$IDE_LIBRARY_PATH
@@ -124,9 +126,7 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/Public \
     $$IDE_SOURCE_TREE/libs/Utils \
     $$IDE_SOURCE_TREE/libs/edncrypt \
-    $$IDE_SOURCE_TREE/libs/DrawUtils \
     $$IDE_SOURCE_TREE/libs/Csv \
-    $$IDE_SOURCE_TREE/libs/XmlUtils \
     $$IDE_SOURCE_TREE/libs/Lua \
     $$IDE_SOURCE_TREE/libs/qtsingleapplication \
     $$IDE_SOURCE_TREE/libs/qscintilla \
@@ -135,15 +135,18 @@ INCLUDEPATH += \
     $$IDE_SOURCE_TREE/libs/qscintilla/include \
     $$IDE_SOURCE_TREE/libs/qscintilla/lexlib \
     $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
-    $$IDE_SOURCE_TREE/libs/TagManager \
-    $$IDE_SOURCE_TREE/libs/ProjectDataUtils \
+    $$IDE_SOURCE_TREE/libs/core \
+    $$IDE_SOURCE_TREE/libs/shared \
+    $$IDE_SOURCE_TREE/libs/shared/projdata \
+    $$IDE_SOURCE_TREE/libs/gradienteditor \
+    $$IDE_SOURCE_TREE/libs/running \
     $$IDE_SOURCE_TREE/Devices/IDevicePlugin \
     $$IDE_SOURCE_TREE/ProjectManager/IDrawApplicationPlugin \
-    $$IDE_SOURCE_TREE/ProjectManager/DrawApplication \
     $$IDE_SOURCE_TREE/ProjectManager/QtPropertyBrowserEx \
     $$IDE_SOURCE_TREE/ProjectManager/Public \
     $$IDE_SOURCE_TREE/ProjectManager
 	
+DEPENDPATH += $$clean_path($$LINK_LIBRARY_PATH)
 
 QTC_PLUGIN_DIRS_FROM_ENVIRONMENT = $$(QTC_PLUGIN_DIRS)
 QTC_PLUGIN_DIRS += $$split(QTC_PLUGIN_DIRS_FROM_ENVIRONMENT, $$QMAKE_DIRLIST_SEP)

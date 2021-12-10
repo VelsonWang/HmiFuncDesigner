@@ -1,10 +1,8 @@
-
 include(../../HmiFuncDesigner.pri)
 
 QT += core gui xml
 QT += network
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-QT += script
 QT += sql
 
 TARGET = ProjectManager
@@ -13,15 +11,18 @@ TEMPLATE = app
 DESTDIR = $$IDE_BIN_PATH
 
 INCLUDEPATH += .
-INCLUDEPATH += ./widget
+INCLUDEPATH += $$PWD/widget
+INCLUDEPATH += $$PWD/ProjData
 INCLUDEPATH += $$PWD/../../common/qtsingleapplication
 #INCLUDEPATH += $$PWD/../../common/register
-INCLUDEPATH += $$PWD/../../libs/qscintilla
 INCLUDEPATH += $$PWD/../QtPropertyBrowserEx
+INCLUDEPATH += $$PWD/../../libs/core
+INCLUDEPATH += $$PWD/../../libs/shared
+INCLUDEPATH += $$PWD/../../libs/shared/projdata
+INCLUDEPATH += $$PWD/../../libs/gradienteditor
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
-include($$PWD/../QtPropertyBrowserEx/QtPropertyBrowserEx.pri)
 
 #DEFINES += QT_NO_DEBUG_OUTPUT
 
@@ -32,115 +33,47 @@ CONFIG(debug, debug|release) { #debug
     }
 }
 
-LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lQtPropertyBrowser$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lcore
+LIBS += -L$$LINK_LIBRARY_PATH -lshared
+LIBS += -L$$LINK_LIBRARY_PATH -lgradientEditor
 
 SOURCES += main.cpp\
-    DevicePluginLoader.cpp \
+    ../Public/userevent.cpp \
     MainWindow.cpp \
-    NewProjectDialog.cpp \
-    SystemParametersWin.cpp \
-    NetSettingDialog.cpp \
-    DatabaseSettingDialog.cpp \
+    ProjectTreeView.cpp \
     TableviewDelegate.cpp \
-    TagIOEditDialog.cpp \
-    TagManagerWin.cpp \
-    TagTmpEditDialog.cpp \
-    UserAuthorityDialog.cpp \
-    CommunicationDeviceWin.cpp \
-    NewComDeviceDialog.cpp \
-    ChildBase.cpp \
-    NewVariableGroupDialog.cpp \
-    DeviceListDialog.cpp \
-    SelectProtocolDialog.cpp \
-    DrawPageWin.cpp \
     ProjectDownloadDialog.cpp \
     ProjectUploadDialog.cpp \
     AboutDialog.cpp \
-    RealTimeDatabaseWin.cpp \
-    NewNetDeviceDialog.cpp \
-    ScriptManageWin.cpp \
-    ScriptConditionConfigForm.cpp \
-    ScriptEditorDlg.cpp \
-    TagFuncEditDialog.cpp \
-    SplitterForm.cpp \
-    InsertFunctionDialog.cpp \
-    InsertTagDialog.cpp \
-    ScriptRunConditionEditorDlg.cpp \
-    ChildForm.cpp \
-    ProjectMgrUtils.cpp \
+#    TagFuncEditDialog.cpp \
+    VerifyPasswordDialog.cpp \
     widget/QFramelessDockWidget.cpp \
     widget/QIPAddressEdit.cpp \
     widget/QQuickInputLineEdit.cpp \
-#    DrawMainWindow.cpp \
-    GetWidthHeightDialog.cpp \
-    GraphPage.cpp \
-    GraphPageManager.cpp \
-    UndoCommand.cpp \
-    ElementLibraryWidget.cpp \
-    ElementLibraryListWidget.cpp \
-    ElementLibraryListWidgetItem.cpp \
-    ElementSimpleListWidget.cpp \
-    GraphPageTreeView.cpp \
-    ../Public/PubTool.cpp \
+#    ../Public/PubTool.cpp \
     ../Public/Element.cpp \
     ../Public/ElementGroup.cpp \
     PluginManager.cpp
 
 HEADERS  += MainWindow.h \
-    DevicePluginLoader.h \
-    NewProjectDialog.h \
+    ../Public/userevent.h \
     ../Public/Public.h \
-    SystemParametersWin.h \
-    NetSettingDialog.h \
-    DatabaseSettingDialog.h \
+    ProjectTreeView.h \
     TableviewDelegate.h \
-    TagIOEditDialog.h \
-    TagManagerWin.h \
-    TagTmpEditDialog.h \
-    UserAuthorityDialog.h \
-    CommunicationDeviceWin.h \
-    NewComDeviceDialog.h \
-    ChildBase.h \
-    NewVariableGroupDialog.h \
-    DeviceListDialog.h \
-    SelectProtocolDialog.h \
-    DrawPageWin.h \
     ProjectDownloadDialog.h \
     ProjectUploadDialog.h \
     AboutDialog.h \
-    RealTimeDatabaseWin.h \
-    NewNetDeviceDialog.h \
-    ScriptManageWin.h \
-    ScriptConditionConfigForm.h \
-    ScriptEditorDlg.h \
-    TagFuncEditDialog.h \
-    SplitterForm.h \
-    InsertFunctionDialog.h \
-    InsertTagDialog.h \
-    ScriptRunConditionEditorDlg.h \
+#    TagFuncEditDialog.h \
     FileTansfer.h \
-    ChildForm.h \
-    ProjectMgrUtils.h \
+    VerifyPasswordDialog.h \
     widget/QFramelessDockWidget.h \
     widget/QIPAddressEdit.h \
     widget/QQuickInputLineEdit.h \
-#    DrawMainWindow.h \
-    GetWidthHeightDialog.h \
-    GraphPage.h \
-    GraphPageManager.h \
-    UndoCommand.h \
-    ElementLibraryWidget.h \
-    ElementLibraryListWidget.h \
-    ElementLibraryListWidgetItem.h \
-    ElementSimpleListWidget.h \
-    GraphPageTreeView.h \
     ../Public/PublicDefine.h \
-    ../Public/PubTool.h \
+#    ../Public/PubTool.h \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../Public/Element.h \
     ../Public/ElementGroup.h \
@@ -148,35 +81,10 @@ HEADERS  += MainWindow.h \
 
 
 FORMS    += \
-    NewProjectDialog.ui \
-    SystemParametersWin.ui \
-    NetSettingDialog.ui \
-    DatabaseSettingDialog.ui \
-    TagIOEditDialog.ui \
-    TagManagerWin.ui \
-    TagTmpEditDialog.ui \
-    UserAuthorityDialog.ui \
-    CommunicationDeviceWin.ui \
-    NewComDeviceDialog.ui \
-    NewVariableGroupDialog.ui \
-    DeviceListDialog.ui \
-    SelectProtocolDialog.ui \
-    DrawPageWin.ui \
     ProjectDownloadDialog.ui \
     ProjectUploadDialog.ui \
     AboutDialog.ui \
-    RealTimeDatabaseWin.ui \
-    NewNetDeviceDialog.ui \
-    ScriptConditionConfigForm.ui \
-    ScriptEditorDlg.ui \
-    InsertFunctionDialog.ui \
-    InsertTagDialog.ui \
-    ScriptRunConditionEditorDlg.ui \
-    ChildForm.ui \
-    widget/QIPAddressEdit.ui \
-#    DrawMainWindow.ui \
-    ElementLibraryWidget.ui \
-    GetWidthHeightDialog.ui
+    widget/QIPAddressEdit.ui
 
 RESOURCES += \
     images.qrc \
@@ -195,3 +103,7 @@ RC_FILE = ProjectManager.rc
 DISTFILES += \
     $$IDE_BIN_PATH/Config/DrawAppJScriptFun.xml \
     $$IDE_BIN_PATH/Config/ElementSupportEvents.xml
+
+CODECFORTR = UTF-8
+TRANSLATIONS += chinese.ts
+

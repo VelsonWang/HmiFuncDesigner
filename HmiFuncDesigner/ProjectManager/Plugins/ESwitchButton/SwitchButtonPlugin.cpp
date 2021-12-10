@@ -1,5 +1,4 @@
-﻿
-#include "SwitchButtonPlugin.h"
+﻿#include "SwitchButtonPlugin.h"
 #include "ElementSwitchButton.h"
 
 
@@ -89,9 +88,7 @@ QString SwitchButtonPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* SwitchButtonPlugin::createElement(const QString &szProjPath,
-                                           const QString &szProjName,
-                                           QtVariantPropertyManager *propertyMgr)
+Element* SwitchButtonPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementSwitchButton(szProjPath, szProjName, propertyMgr);
+    return new ElementSwitchButton(pProjDataObj, propertyMgr);
 }

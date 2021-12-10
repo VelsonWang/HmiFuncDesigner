@@ -1,8 +1,6 @@
 ﻿#include "ElementPushButton.h"
 #include "PubTool.h"
 #include "ProjectData.h"
-#include "DrawListUtils.h"
-#include "ElementIDHelper.h"
 #include "Helper.h"
 #include "XMLObject.h"
 #include "ProjectData.h"
@@ -15,10 +13,8 @@
 
 int ElementPushButton::iLastIndex_ = 1;
 
-ElementPushButton::ElementPushButton(const QString &szProjPath,
-                                     const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementPushButton::ElementPushButton(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("PushButton_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -41,12 +37,6 @@ ElementPushButton::ElementPushButton(const QString &szProjPath,
     showOnInitial_ = true;
     transparent_ = false;
     script_ = "";
-    DrawListUtils::setProjectPath(szProjectPath_);
-    ElementIDHelper::setProjectPath(szProjectPath_);
-
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
-
     createPropertyList();
     updatePropertyModel();  
 }
@@ -65,10 +55,8 @@ void ElementPushButton::release()
 {
     if(filePicture_ != "") {
         PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-        picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
+        picResMgr_.del(filePicture_);
     }
-
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementPushButton::boundingRect() const
@@ -227,21 +215,12 @@ void ElementPushButton::updateElementProperty(QtProperty *property, const QVaria
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
-            QString picturePath = getProjectPath() + "/Pictures";
-            QDir dir(picturePath);
-            if(!dir.exists())
-                dir.mkpath(picturePath);
-            QString fileDes = picturePath + "/" + infoSrc.fileName();
-            QFileInfo infoDes(fileDes);
             PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
             if(filePicture_ != "" && filePicture_ != infoSrc.fileName()) {
-                picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
-            }
-            if(!infoDes.exists()) {
-                QFile::copy(szTmpName, fileDes);
+                picResMgr_.del(filePicture_);
             }
             filePicture_ = infoSrc.fileName();
-            picResMgr_.add(ProjectData::getInstance()->dbData_, filePicture_);
+            picResMgr_.add(szTmpName);
             updatePropertyModel();
         }
     } else if (id == QLatin1String("background")) {
@@ -622,15 +601,13 @@ void ElementPushButton::drawPushButton(QPainter *painter)
 
         } else { // 图片按钮
             if(filePicture_ != QString()) {
-                QString picture = getProjectPath() + "/Pictures/" + filePicture_;
-                if(QFile::exists(picture)) {
-                    QImage image(getProjectPath() + "/Pictures/" + filePicture_);
-                    QImage scaleImage = image.scaled(static_cast<int>(elementRect.width()),
-                                                     static_cast<int>(elementRect.height()),
-                                                     Qt::IgnoreAspectRatio);
-                    painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-                    painter->drawImage(elementRect, scaleImage);
-                }
+                PictureResourceManager &picResMgr_ = m_pProjDataObj->pictureResourceMgr_;
+                QImage image = picResMgr_.getPicture(filePicture_);
+                QImage scaleImage = image.scaled(static_cast<int>(elementRect.width()),
+                                                 static_cast<int>(elementRect.height()),
+                                                 Qt::IgnoreAspectRatio);
+                painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+                painter->drawImage(elementRect, scaleImage);
             }
         }
     }
@@ -672,158 +649,82 @@ void ElementPushButton::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsObject::mouseDoubleClickEvent(event);
 }
 
-void ElementPushButton::writeAsXml(QXmlStreamWriter &writer)
+
+bool ElementPushButton::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeAttribute("showContent", showContent_);
-    writer.writeAttribute("picture", filePicture_);
-    writer.writeAttribute("elementtext", elementText);
-    writer.writeAttribute("halign", getHAlignString(szHAlign_));
-    writer.writeAttribute("valign", getVAlignString(szVAlign_));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("transparent", transparent_?"true":"false");
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("fontsize", QString::number(fontSize));
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeAttribute("enableOnInitial", enableOnInitial_?"true":"false");
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("functions", funcs_.join("|"));
+    XMLObject *pObj = pXmlObj;
+
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
+
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
+    showContent_ = pObj->getProperty("showContent");
+    bShowContentText_ = showContent_ == tr("图片");
+    filePicture_ = pObj->getProperty("picture");
+    elementText = pObj->getProperty("elementtext");
+    this->setHAlignString(pObj->getProperty("halign"), szHAlign_);
+    this->setVAlignString(pObj->getProperty("valign"), szVAlign_);
+    backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
+    transparent_ = pObj->getProperty("transparent") == "true";
+    font_.fromString(pObj->getProperty("font"));
+    textColor = QColor(pObj->getProperty("textcolor"));
+    fontSize = pObj->getProperty("fontsize").toInt();
+    setAngle(pObj->getProperty("elemAngle").toInt());
+    enableOnInitial_ = pObj->getProperty("enableOnInitial") == "true";
+    showOnInitial_ = pObj->getProperty("showOnInitial") == "true";
+    funcs_ = pObj->getProperty("functions").split('|');
+
+    QString szScriptTmp = pObj->getProperty("script");
+    szScriptTmp = szScriptTmp.replace("\r", "_R");
+    szScriptTmp = szScriptTmp.replace("\n", "_N");
+    script_ = szScriptTmp;
+
+    updateBoundingElement();
+    updatePropertyModel();
+    reloadPropertyList();
+
+    return true;
+}
+
+
+bool ElementPushButton::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    pObj->setProperty("showContent", showContent_);
+    pObj->setProperty("picture", filePicture_);
+    pObj->setProperty("elementtext", elementText);
+    pObj->setProperty("halign", getHAlignString(szHAlign_));
+    pObj->setProperty("valign", getVAlignString(szVAlign_));
+    pObj->setProperty("backgroundColor", backgroundColor_.name());
+    pObj->setProperty("transparent", transparent_?"true":"false");
+    pObj->setProperty("font", font_.toString());
+    pObj->setProperty("textcolor", textColor.name());
+    pObj->setProperty("fontsize", QString::number(fontSize));
+    pObj->setProperty("elemAngle", QString::number(elemAngle));
+    pObj->setProperty("enableOnInitial", enableOnInitial_?"true":"false");
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("functions", funcs_.join("|"));
 
     QString szScriptTmp = script_;
     szScriptTmp = szScriptTmp.replace("_R", "\r");
     szScriptTmp = szScriptTmp.replace("_N", "\n");
-    writer.writeAttribute("script", szScriptTmp);
-
-    writer.writeEndElement();
+    pObj->setProperty("script", szScriptTmp);
+    return true;
 }
 
-void ElementPushButton::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
-
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("showContent")) {
-        showContent_ = attributes.value("showContent").toString();
-        bShowContentText_ = true;
-        if(showContent_ == tr("图片")) {
-            bShowContentText_ = false;
-        }
-    }
-
-    if (attributes.hasAttribute("picture")) {
-        filePicture_ = attributes.value("picture").toString();
-    }
-
-    if (attributes.hasAttribute("elementtext")) {
-        elementText = attributes.value("elementtext").toString();
-    }
-
-    if (attributes.hasAttribute("halign")) {
-        QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
-    }
-
-    if (attributes.hasAttribute("valign")) {
-        QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
-    }
-
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
-    }
-
-    if (attributes.hasAttribute("transparent")) {
-        QString value = attributes.value("transparent").toString();
-        transparent_ = false;
-        if(value == "true") {
-            transparent_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("font")) {
-        QString szFont = attributes.value("font").toString();
-        font_.fromString(szFont);
-    }
-
-    if (attributes.hasAttribute("textcolor")) {
-        textColor = QColor(attributes.value("textcolor").toString());
-    }
-
-    if (attributes.hasAttribute("fontsize")) {
-        fontSize = attributes.value("fontsize").toString().toInt();
-    }
-
-    if (attributes.hasAttribute("elemAngle")) {
-        setAngle(attributes.value("elemAngle").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("enableOnInitial")) {
-        QString value = attributes.value("enableOnInitial").toString();
-        enableOnInitial_ = false;
-        if(value == "true") {
-            enableOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("functions")) {
-        QString listString = attributes.value("functions").toString();
-        funcs_ = listString.split('|');
-    }
-
-    if (attributes.hasAttribute("script")) {
-        QString szScriptTmp = attributes.value("script").toString();
-        szScriptTmp = szScriptTmp.replace("\r", "_R");
-        szScriptTmp = szScriptTmp.replace("\n", "_N");
-        script_ = szScriptTmp;
-    }
-
-    updateBoundingElement();
-    updatePropertyModel();
-
-    reloadPropertyList();
-}
 
 void ElementPushButton::writeData(QDataStream &out)
 {
@@ -939,7 +840,7 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
 
     QFile fileCfg(xmlFileName);
     if(!fileCfg.exists()) {
-        QMessageBox::critical(nullptr, tr("提示"), tr("事件配置列表文件不存在！"));
+        QMessageBox::critical(Q_NULLPTR, tr("提示"), tr("事件配置列表文件不存在！"));
         return;
     }
     if(!fileCfg.open(QFile::ReadOnly)) {
@@ -948,17 +849,17 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
     QString buffer = fileCfg.readAll();
     fileCfg.close();
     XMLObject xmlFuncSupportList;
-    if(!xmlFuncSupportList.load(buffer, nullptr)) {
+    if(!xmlFuncSupportList.load(buffer, Q_NULLPTR)) {
         return;
     }
 
-    QList<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
+    QVector<XMLObject*> childrenFuncSupport = xmlFuncSupportList.getChildren();
 
     foreach(XMLObject* eventGroup, childrenFuncSupport) {
         QString szEventGroupName = eventGroup->getProperty("name");
         if(szEventGroupName == "PushButton") {
 
-            QList<XMLObject*> childrenGroup = eventGroup->getChildren();
+            QVector<XMLObject*> childrenGroup = eventGroup->getChildren();
             if(childrenGroup.size() < 1)
                 continue;
 
@@ -967,7 +868,7 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
                 QString eventShowName = event->getProperty("ShowName");
                 listValue << QString("%1-%2").arg(eventName).arg(eventShowName);
 
-                QList<XMLObject*> funcDesc = event->getChildren();
+                QVector<XMLObject*> funcDesc = event->getChildren();
                 if(funcDesc.size() < 1)
                     continue;
                 QString strDesc = event->getCurrentChild("desc")->getText();
@@ -976,115 +877,5 @@ void ElementPushButton::getSupportEvents(QStringList &listValue)
     }
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementPushButton &ele)
-{
-    QString szScriptTmp = ele.script_;
-    szScriptTmp = szScriptTmp.replace("_R", "\r");
-    szScriptTmp = szScriptTmp.replace("_N", "\n");
 
-    out << ele.elementId
-        << ele.x()
-        << ele.y()
-        << ele.zValue()
-        << ele.elementWidth
-        << ele.elementHeight
-        << ele.showContent_
-        << ele.filePicture_
-        << ele.elementText
-        << ele.getHAlignString(ele.szHAlign_)
-        << ele.getVAlignString(ele.szVAlign_)
-        << ele.backgroundColor_
-        << ele.transparent_
-        << ele.font_
-        << ele.textColor
-        << ele.fontSize
-        << ele.elemAngle
-        << ele.enableOnInitial_
-        << ele.showOnInitial_
-        << ele.funcs_
-        << szScriptTmp;
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in,ElementPushButton &ele)
-{
-    QString id;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-    QString showContent;
-    QString pic;
-    QColor backgroundColor;
-    bool transparent;
-    QString text;
-    QString hAlign;
-    QString vAlign;
-    QString font;
-    QColor textColor;
-    int fontSize;
-    qreal angle;
-    bool enableOnInitial;
-    bool showOnInitial;
-    QStringList funcs;
-    QString script;
-
-    in >> id
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> showContent
-       >> pic
-       >> text
-       >> hAlign
-       >> vAlign
-       >> backgroundColor
-       >> transparent
-       >> font
-       >> textColor
-       >> fontSize
-       >> angle
-       >> enableOnInitial
-       >> showOnInitial
-       >> funcs
-       >> script;
-
-    ele.setElementId(id);
-    int index = ele.getIndexFromIDString(id);
-    if(ele.iLastIndex_ < index) {
-        ele.iLastIndex_ = index;
-    }
-    ele.setElementXPos(static_cast<int>(xpos));
-    ele.setElementYPos(static_cast<int>(ypos));
-    ele.setElementZValue(static_cast<int>(zvalue));
-    ele.setElementWidth(width);
-    ele.setElementHeight(height);
-    ele.showContent_ = showContent;
-    ele.filePicture_ = pic;
-    ele.elementText = text;
-    ele.setHAlignString(hAlign, ele.szHAlign_);
-    ele.setVAlignString(vAlign, ele.szVAlign_);
-    ele.backgroundColor_ = backgroundColor;
-    ele.transparent_ = transparent;
-    ele.font_ = font;
-    ele.textColor = textColor;
-    ele.fontSize = fontSize;
-    ele.setAngle(angle);
-    ele.enableOnInitial_ = enableOnInitial;
-    ele.showOnInitial_ = showOnInitial;
-    ele.funcs_ = funcs;
-
-    QString szScriptTmp = script;
-    szScriptTmp = szScriptTmp.replace("\r", "_R");
-    szScriptTmp = szScriptTmp.replace("\n", "_N");
-    ele.script_ = szScriptTmp;
-
-    ele.updateBoundingElement();
-    ele.updatePropertyModel();
-
-    return in;
-}
 

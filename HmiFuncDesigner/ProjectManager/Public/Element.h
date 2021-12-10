@@ -11,14 +11,14 @@
 #include "qtpropertymanager.h"
 #include "qtvariantproperty.h"
 #include "qttreepropertybrowser.h"
+#include "xmlobject.h"
+#include "qsoftcore.h"
 
 class Element : public QGraphicsObject
 {
     Q_OBJECT
 public:
-    Element(const QString &szProjPath,
-            const QString &szProjName,
-            QtVariantPropertyManager *propertyMgr);
+    Element(QSoftCore* pSoftCoreObj, QtVariantPropertyManager *propertyMgr);
     virtual ~Element();
 
     void init();
@@ -32,8 +32,8 @@ public:
     QList<QtProperty*> getPropertyList() const;
     virtual void updatePropertyModel() = 0;
     virtual void createPropertyList() = 0;
-    virtual void writeAsXml(QXmlStreamWriter &) = 0;
-    virtual void readFromXml(const QXmlStreamAttributes &) = 0;
+    virtual bool openFromXml(XMLObject *pXmlObj) = 0;
+    virtual bool saveToXml(XMLObject *pXmlObj) = 0;
     virtual void setBlocked(bool);
     virtual void writeData(QDataStream &out) = 0;
     virtual void readData(QDataStream &in) = 0;
@@ -63,16 +63,6 @@ public:
     QString getInternalElementType() const;
 
     void moveTo(int x,int y);
-
-    // 设置工程路径
-    void setProjectPath(const QString &path);
-    // 获取工程路径
-    QString getProjectPath() const;
-
-    // 设置工程名称
-    void setProjectName(const QString &name);
-    // 获取工程名称
-    QString getProjectName() const;
 
     // 获取分配的索引值
     int getIndexFromIDString(const QString &szID);
@@ -139,10 +129,10 @@ protected:
 
     quint32 rd;
 
-    QString szProjectPath_; // 工程路径
-    QString szProjectName_; // 工程名称
     int iGraphPageWidth_; // 画面宽度
     int iGraphPageHeight_; // 画面高度
+
+    QSoftCore* m_pSoftCoreObj;
 
 signals:
     void elementMoved(QPointF);

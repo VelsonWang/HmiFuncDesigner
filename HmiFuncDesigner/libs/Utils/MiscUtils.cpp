@@ -91,9 +91,11 @@ void getIp(QStringList &ipList)
  */
 void delayMs(unsigned int msec)
 {
-    QEventLoop eventloop;
-    QTimer::singleShot(msec, &eventloop, SLOT(quit()));
-    eventloop.exec();
+    if(msec > 0) {
+        QEventLoop eventloop;
+        QTimer::singleShot(msec, &eventloop, SLOT(quit()));
+        eventloop.exec();
+    }
 }
 
 

@@ -10,16 +10,14 @@ class ElementRect : public Element
 {
     Q_OBJECT
 public:
-    ElementRect(const QString &szProjPath,
-                const QString &szProjName,
-                QtVariantPropertyManager *propertyMgr);
+    ElementRect(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &writer) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -28,9 +26,6 @@ public:
     int type() const override {
         return RectItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out,const ElementRect &rect);
-    friend QDataStream &operator>>(QDataStream &in,ElementRect &rect);
 
 protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

@@ -32,7 +32,7 @@ MainWindow::MainWindow(QString projPath, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     mProjectPath(projPath),
-    timer_(nullptr)
+    timer_(Q_NULLPTR)
 {
     ui->setupUi(this);
     ReadSettings();
@@ -88,10 +88,10 @@ MainWindow::~MainWindow()
     qDeleteAll(mSysTagList);
     mSysTagList.clear();
 
-    if(timer_ != nullptr) {
+    if(timer_ != Q_NULLPTR) {
         if(timer_->isActive()) timer_->stop();
         delete timer_;
-        timer_ = nullptr;
+        timer_ = Q_NULLPTR;
     }
 }
 
@@ -353,7 +353,7 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
     mCurTagList = tagList;
     setTableView(tagList, winTittle);
 
-    if(timer_ != nullptr && !timer_->isActive())
+    if(timer_ != Q_NULLPTR && !timer_->isActive())
         timer_->start(PERIOD);
 }
 
@@ -387,7 +387,7 @@ void MainWindow::ShowFirstPage()
         }
         ++iter;
     }
-    if(timer_ != nullptr && !timer_->isActive())
+    if(timer_ != Q_NULLPTR && !timer_->isActive())
         timer_->start(PERIOD);
 }
 
@@ -401,7 +401,7 @@ void MainWindow::timeout()
         }
     } else {
         QMessageBox::information(this, QObject::tr("提示"), QObject::tr("打开共享内存失败！"));
-        if(timer_ != nullptr) {
+        if(timer_ != Q_NULLPTR) {
             if(timer_->isActive()) timer_->stop();
         }
     }
