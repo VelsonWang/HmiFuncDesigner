@@ -1,6 +1,9 @@
 docs
 lib
+lib_rt
+tmp
 build-*
+HmiFuncDesignerBin/bin/pages/*.dll
 HmiFuncDesignerBin/bin/bearer/
 HmiFuncDesignerBin/bin/iconengines/
 HmiFuncDesignerBin/bin/imageformats/
@@ -56,6 +59,7 @@ HmiRunTimeBin/HmiRunTimeData
 HmiRunTimeBin/HmiRunTimeView
 
 third/
+
 
 delobj.bat
 

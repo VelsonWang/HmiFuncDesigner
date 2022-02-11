@@ -12,7 +12,7 @@ class EditBasicPropertyDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit EditBasicPropertyDialog(QWidget *parent = nullptr);
+    explicit EditBasicPropertyDialog(QWidget *parent = Q_NULLPTR);
     ~EditBasicPropertyDialog();
 
 

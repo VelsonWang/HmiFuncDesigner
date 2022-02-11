@@ -20,7 +20,7 @@ SOURCES += \
     ShareMemory.cpp \
     StyleSheetHelper.cpp \
     TimeElapsed.cpp \
-    XMLObject.cpp
+    XMLNodeObject.cpp
 
 HEADERS += \
     ConfigUtils.h \
@@ -31,6 +31,6 @@ HEADERS += \
     Singleton.h \
     StyleSheetHelper.h \
     TimeElapsed.h \
-    XMLObject.h
+    XMLNodeObject.h
 
 

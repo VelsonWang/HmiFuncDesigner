@@ -1,5 +1,4 @@
-﻿
-#include "ValueStickPlugin.h"
+﻿#include "ValueStickPlugin.h"
 #include "ElementValueStick.h"
 
 
@@ -89,9 +88,7 @@ QString ValueStickPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* ValueStickPlugin::createElement(const QString &szProjPath,
-                                         const QString &szProjName,
-                                         QtVariantPropertyManager *propertyMgr)
+Element* ValueStickPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementValueStick(szProjPath, szProjName, propertyMgr);
+    return new ElementValueStick(pProjDataObj, propertyMgr);
 }

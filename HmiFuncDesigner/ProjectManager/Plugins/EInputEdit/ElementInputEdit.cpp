@@ -5,10 +5,8 @@
 
 int ElementInputEdit::iLastIndex_ = 1;
 
-ElementInputEdit::ElementInputEdit(const QString &szProjPath,
-                                   const QString &szProjName,
-                                   QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementInputEdit::ElementInputEdit(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("InputEdit_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -25,8 +23,6 @@ ElementInputEdit::ElementInputEdit(const QString &szProjPath,
     inputPassword_ = false;
     showOnInitial_ = true;
     init();
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     elementWidth = 80;
     elementHeight = 26;
     elementText = tr("输入编辑框");
@@ -46,7 +42,6 @@ void ElementInputEdit::regenerateElementId()
  */
 void ElementInputEdit::release()
 {
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementInputEdit::boundingRect() const
@@ -76,7 +71,7 @@ void ElementInputEdit::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
+    m_pProjDataObj->getAllTagName(tagNames_);
     if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
@@ -462,151 +457,72 @@ void ElementInputEdit::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-void ElementInputEdit::writeAsXml(QXmlStreamWriter &writer)
+
+bool ElementInputEdit::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("enableEdit", enableEdit_?"true":"false");
-    writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("elementtext",elementText);
-    writer.writeAttribute("halign", getHAlignString(szHAlign_));
-    writer.writeAttribute("valign", getVAlignString(szVAlign_));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("transparentBackground", transparentBackground_?"true":"false");
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("inputPassword", inputPassword_?"true":"false");
-    writer.writeAttribute("enableOnInitial", enableOnInitial_?"true":"false");
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeEndElement();
-}
+    XMLObject *pObj = pXmlObj;
 
-void ElementInputEdit::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("enableEdit")) {
-        QString value = attributes.value("enableEdit").toString();
-        enableEdit_ = false;
-        if(value == "true") {
-            enableEdit_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("tag")) {
-        szTagSelected_ = attributes.value("tag").toString();
-    }
-
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("elementtext")) {
-        elementText = attributes.value("elementtext").toString();
-    }
-
-    if (attributes.hasAttribute("halign")) {
-        QString align = attributes.value("halign").toString();
-        this->setHAlignString(align, szHAlign_);
-    }
-
-    if (attributes.hasAttribute("valign")) {
-        QString align = attributes.value("valign").toString();
-        this->setVAlignString(align, szVAlign_);
-    }
-
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
-    }
-
-    if (attributes.hasAttribute("transparentBackground")) {
-        QString value = attributes.value("transparentBackground").toString();
-        transparentBackground_ = false;
-        if(value == "true") {
-            transparentBackground_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("textcolor")) {
-        textColor = QColor(attributes.value("textcolor").toString());
-    }
-
-    if (attributes.hasAttribute("font")) {
-        QString szFont = attributes.value("font").toString();
-        font_.fromString(szFont);
-    }
-
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
-
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
-
-    if (attributes.hasAttribute("inputPassword")) {
-        QString value = attributes.value("inputPassword").toString();
-        inputPassword_ = false;
-        if(value == "true") {
-            inputPassword_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("enableOnInitial")) {
-        QString value = attributes.value("enableOnInitial").toString();
-        enableOnInitial_ = false;
-        if(value == "true") {
-            enableOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("elemAngle")) {
-        setAngle(attributes.value("elemAngle").toString().toInt());
-    }
+    enableEdit_ = pObj->getProperty("enableEdit") == "true";
+    szTagSelected_ = pObj->getProperty("tag");
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
+    elementText = pObj->getProperty("elementtext");
+    this->setHAlignString(pObj->getProperty("halign"), szHAlign_);
+    this->setVAlignString(pObj->getProperty("valign"), szVAlign_);
+    backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
+    transparentBackground_ = pObj->getProperty("transparentBackground") == "true";
+    textColor = QColor(pObj->getProperty("textcolor"));
+    font_.fromString(pObj->getProperty("font"));
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    inputPassword_ = pObj->getProperty("inputPassword") == "true";
+    enableOnInitial_ = pObj->getProperty("enableOnInitial") == "true";
+    showOnInitial_ = pObj->getProperty("showOnInitial") == "true";
+    setAngle(pObj->getProperty("elemAngle").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+bool ElementInputEdit::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("enableEdit", enableEdit_?"true":"false");
+    pObj->setProperty("tag", szTagSelected_);
+    pObj->setProperty("x",QString::number(x()));
+    pObj->setProperty("y",QString::number(y()));
+    pObj->setProperty("z",QString::number(zValue()));
+    pObj->setProperty("width",QString::number(elementWidth));
+    pObj->setProperty("height",QString::number(elementHeight));
+    pObj->setProperty("elementtext",elementText);
+    pObj->setProperty("halign", getHAlignString(szHAlign_));
+    pObj->setProperty("valign", getVAlignString(szVAlign_));
+    pObj->setProperty("backgroundColor", backgroundColor_.name());
+    pObj->setProperty("transparentBackground", transparentBackground_?"true":"false");
+    pObj->setProperty("textcolor", textColor.name());
+    pObj->setProperty("font", font_.toString());
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("inputPassword", inputPassword_?"true":"false");
+    pObj->setProperty("enableOnInitial", enableOnInitial_?"true":"false");
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("elemAngle", QString::number(elemAngle));
+    return true;
+}
+
 
 void ElementInputEdit::writeData(QDataStream &out)
 {
@@ -706,108 +622,5 @@ void ElementInputEdit::readData(QDataStream &in)
     this->setAngle(angle);
     this->updateBoundingElement();
     this->updatePropertyModel();
-}
-
-QDataStream &operator<<(QDataStream &out, const ElementInputEdit &edit)
-{
-    out << edit.elementId
-        << edit.enableEdit_
-        << edit.szTagSelected_
-        << edit.x()
-        << edit.y()
-        << edit.zValue()
-        << edit.elementWidth
-        << edit.elementHeight
-        << edit.elementText
-        << edit.getHAlignString(edit.szHAlign_)
-        << edit.getVAlignString(edit.szVAlign_)
-        << edit.backgroundColor_
-        << edit.transparentBackground_
-        << edit.textColor
-        << edit.font_.toString()
-        << edit.borderWidth_
-        << edit.borderColor_
-        << edit.inputPassword_
-        << edit.enableOnInitial_
-        << edit.showOnInitial_
-        << edit.elemAngle;
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementInputEdit &edit)
-{
-    QString id;
-    bool enableEdit;
-    QString szTagSelected;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-    QString text;
-    QString hAlign;
-    QString vAlign;
-    QColor backgroundColor;
-    bool transparentBackground;
-    QColor textColor;
-    QString font;
-    int borderWidth;
-    QColor borderColor;
-    bool inputPassword;
-    bool enableOnInitial;
-    bool showOnInitial;
-    qreal angle;
-
-    in >> id
-       >> enableEdit
-       >> szTagSelected
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> text
-       >> hAlign
-       >> vAlign
-       >> backgroundColor
-       >> transparentBackground
-       >> textColor
-       >> font
-       >> borderWidth
-       >> borderColor
-       >> inputPassword
-       >> enableOnInitial
-       >> showOnInitial
-       >> angle;
-
-    edit.setElementId(id);
-    int index = edit.getIndexFromIDString(id);
-    if(edit.iLastIndex_ < index) {
-        edit.iLastIndex_ = index;
-    }
-    edit.enableEdit_ = enableEdit;
-    edit.szTagSelected_ = szTagSelected;
-    edit.setElementXPos(static_cast<int>(xpos));
-    edit.setElementYPos(static_cast<int>(ypos));
-    edit.setElementZValue(static_cast<int>(zvalue));
-    edit.setElementWidth(width);
-    edit.setElementHeight(height);
-    edit.elementText = text;
-    edit.setHAlignString(hAlign, edit.szHAlign_);
-    edit.setVAlignString(vAlign, edit.szVAlign_);
-    edit.backgroundColor_ = backgroundColor;
-    edit.transparentBackground_ = transparentBackground;
-    edit.textColor = textColor;
-    edit.font_ = font;
-    edit.borderWidth_ = borderWidth;
-    edit.borderColor_ = borderColor;
-    edit.inputPassword_ = inputPassword;
-    edit.enableOnInitial_ = enableOnInitial;
-    edit.showOnInitial_ = showOnInitial;
-    edit.setAngle(angle);
-    edit.updateBoundingElement();
-    edit.updatePropertyModel();
-
-    return in;
 }
 

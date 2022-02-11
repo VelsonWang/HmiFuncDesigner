@@ -45,7 +45,7 @@
 #include "qtpropertybrowser.h"
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 class QtButtonPropertyBrowserPrivate;
@@ -55,7 +55,7 @@ class QT_QTPROPERTYBROWSER_EXPORT QtButtonPropertyBrowser : public QtAbstractPro
     Q_OBJECT
 public:
 
-    QtButtonPropertyBrowser(QWidget *parent = Q_NULLPTR);
+    QtButtonPropertyBrowser(QWidget *parent = NULL);
     ~QtButtonPropertyBrowser();
 
     void setExpanded(QtBrowserItem *item, bool expanded);
@@ -83,7 +83,7 @@ private:
 };
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
 
 #endif

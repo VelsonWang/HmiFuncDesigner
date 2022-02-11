@@ -1,14 +1,14 @@
 ﻿#include "MainWindow.h"
 #include <QApplication>
 #include <QCloseEvent>
-#include <QDebug>
-#include <QDesktopWidget>
+#include <QGuiApplication>
+#include <QCoreApplication>
+#include <QScreen>
 #include <QDialog>
 #include <QDir>
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QIcon>
-#include <QMdiSubWindow>
 #include <QMessageBox>
 #include <QPluginLoader>
 #include <QProcess>
@@ -17,365 +17,394 @@
 #include <QStringList>
 #include <QTime>
 #include <QDir>
+#include <QJsonObject>
+#include <QJsonValue>
 #include "AboutDialog.h"
-#include "CommunicationDeviceWin.h"
 #include "ConfigUtils.h"
-#include "DrawPageWin.h"
 #include "Helper.h"
-#include "NewProjectDialog.h"
-#include "NewVariableGroupDialog.h"
-#include "ProjectData.h"
 #include "ProjectDownloadDialog.h"
-#include "ProjectMgrUtils.h"
 #include "ProjectUploadDialog.h"
-#include "RealTimeDatabaseWin.h"
-#include "ScriptManageWin.h"
-#include "ProjectData.h"
-#include "TagManagerWin.h"
-#include "ui_MainWindow.h"
+#include "MainWindow.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
+#include "qsoftcore.h"
+#include "VerifyPasswordDialog.h"
+#include "../../libs/core/manhattanstyle.h"
+#include "../../libs/core/newprojectdialog.h"
+#include "../../libs/shared/pluginloader.h"
+#include "../../libs/core/qabstractpage.h"
+#include "../../libs/core/qsoftcore.h"
+#include "../../libs/shared/qprojectcore.h"
+#include "../../libs/shared/host/qabstracthost.h"
+#include "../Public/userevent.h"
+#include <QDesktopWidget>
+#include <QApplication>
+#include <QFileInfo>
+#include <QRect>
+#include <QGraphicsView>
+#include <QFileDialog>
+#include <QScrollArea>
+#include <QToolBar>
+#include <QInputDialog>
+#include <QCryptographicHash>
+#include <QStackedWidget>
+#include <QDebug>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent),
-      ui(new Ui::MainWindow),
-      m_strProjectPath(""),
-      m_CurItem(""),
-      m_CurTreeViewItem("")
+      m_szCurItem(""),
+      m_szCurTreeViewItem("")
 {
-    ui->setupUi(this);
-    enableToolBar("");                             // 工具条使能
-    setContextMenuPolicy(Qt::DefaultContextMenu);  // 右键菜单生效
+    qApp->installEventFilter(this);
+
+    m_pCentralWidgetObj = new QStackedWidget(this);
+
+    QMapIterator<QString, QAbstractPlugin*> it(PluginLoader::getPluginByType(PAGE_PLUGIN_NAME));
+    while(it.hasNext()) {
+        it.next();
+        QAbstractPage* pPageObj = dynamic_cast<QAbstractPage*>(it.value());
+        if(pPageObj) {
+            QWidget *pWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
+            if(pWidgetObj) {
+                m_pCentralWidgetObj->addWidget(pWidgetObj);
+            }
+            //qDebug() << "page name: "<< pPageObj->getPageName();
+            m_mapNameToPage.insert(pPageObj->getPageName().toUpper(), pPageObj);
+        }
+    }
+
+    this->setCentralWidget(m_pCentralWidgetObj);
+
+    // 工程管理器停靠控件
+    m_pDockProjectMgrObj = new QDockWidget(this);
+    m_pDockProjectMgrObj->setWindowTitle(tr("工程管理器"));
+    this->addDockWidget(Qt::LeftDockWidgetArea, m_pDockProjectMgrObj);
+    QWidget *dockWidgetContents = new QWidget();
+    QVBoxLayout *dockWidgetContentsLayout = new QVBoxLayout(dockWidgetContents);
+    dockWidgetContentsLayout->setSpacing(0);
+    dockWidgetContentsLayout->setContentsMargins(0, 0, 0, 0);
+    m_pTabProjectMgrObj = new QTabWidget(dockWidgetContents);
+
+    QWidget *projectTabWidget = new QWidget();
+    QVBoxLayout *projectTabWidgetLayout = new QVBoxLayout(projectTabWidget);
+    projectTabWidgetLayout->setSpacing(0);
+    projectTabWidgetLayout->setContentsMargins(0, 0, 0, 0);
+    m_pProjectTreeViewObj = new ProjectTreeView(projectTabWidget);
+    m_pProjectTreeViewObj->updateUI();
+    connect(m_pProjectTreeViewObj, &ProjectTreeView::sigNotifyClicked, this, &MainWindow::onSlotTreeProjectViewClicked);
+    projectTabWidgetLayout->addWidget(m_pProjectTreeViewObj);
+
+    m_pTabProjectMgrObj->addTab(projectTabWidget, QString(tr("工程")));
+    QWidget *pWidgetCtrlObj = new QWidget();
+    QVBoxLayout *pWidgetsLayoutObj = new QVBoxLayout(pWidgetCtrlObj);
+    pWidgetsLayoutObj->setSpacing(0);
+    pWidgetsLayoutObj->setContentsMargins(0, 0, 0, 0);
+    pWidgetCtrlObj->setLayout(pWidgetsLayoutObj);
+
+    // 图形元素控件
+    QAbstractPage* pPageObj = m_mapNameToPage.value(QString("Designer").toUpper());
+    if(pPageObj) {
+        m_pDesignerWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
+        if(m_pDesignerWidgetObj) {
+            QVariant variant = m_pDesignerWidgetObj->property("DesignerWidget");
+            QWidget *pWidgetObj = variant.value<QWidget *>();
+            pWidgetsLayoutObj->addWidget(pWidgetObj);
+        }
+    }
+    m_pTabProjectMgrObj->addTab(pWidgetCtrlObj, QString(tr("画面")));
+    dockWidgetContentsLayout->addWidget(m_pTabProjectMgrObj);
+    m_pTabProjectMgrObj->setCurrentIndex(0);
+    m_pDockProjectMgrObj->setWidget(dockWidgetContents);
+
+    // 创建状态栏
+    createStatusBar();
+    // 创建动作
+    createActions();
+    // 创建菜单
+    createMenus();
+    // 创建工具条
+    createToolbars();
+
+    m_bGraphPageGridVisible = true;
+    m_iCurrentGraphPageIndex = 0;
+
+    setContextMenuPolicy(Qt::DefaultContextMenu); // 右键菜单生效
     readSettings();  // 初始窗口时读取窗口设置信息
-    initWindow();    // 初始化窗口
-    setUpProjectTreeView();
     loadRecentProjectList();
-    on_actionBigIcon_triggered();  // 大图标显示
+    QRect rect = QGuiApplication::primaryScreen()->geometry();
+    int screenWidth = rect.width();
+    int screenHeight = rect.height();
+    this->resize(screenWidth * 3 / 4, screenHeight * 3 / 4);
+    Helper::WidgetMoveCenter(this);
+    setWindowTitle(tr("HmiFuncDesigner组态软件"));
+    this->m_pStatusBarObj->showMessage(tr("欢迎使用HmiFuncDesigner组态软件"));
+    connect(m_pTabProjectMgrObj, SIGNAL(currentChanged(int)), SLOT(onSlotTabProjectMgrCurChanged(int)));
+    onSlotTabProjectMgrCurChanged(0);
 }
 
 MainWindow::~MainWindow()
 {
-    delete pTreeViewProjectModel;
-    pTreeViewProjectModel = Q_NULLPTR;
-    delete ui;
 }
 
-// 工程管理器ui初始化
-void MainWindow::setUpProjectTreeView()
-{
-    ui->treeViewProject->setHeaderHidden(true);
-
-    pTreeViewProjectModel = new QStandardItemModel();
-    pProjectItem = new QStandardItem(QIcon(":/images/pj_pro.png"), tr("未创建工程"));
-    pProjectItem->setEditable(false);
-    pSystemParameters = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("系统参数"));
-    pSystemParameters->setEditable(false);
-    pProjectItem->appendRow(pSystemParameters);
-
-    //////////////////////////////////////////////////////
-
-    pCommunicationDevice = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("通讯设备"));
-    pCommunicationDevice->setEditable(false);
-    pComDevice = new QStandardItem(QIcon(":/images/pj_com.png"), tr("串口设备"));
-    pComDevice->setEditable(false);
-    pCommunicationDevice->appendRow(pComDevice);
-    pNetDevice = new QStandardItem(QIcon(":/images/pj_net.png"), tr("网络设备"));
-    pNetDevice->setEditable(false);
-    pCommunicationDevice->appendRow(pNetDevice);
-    /*
-  pBusDevice = new QStandardItem(QIcon(":/images/pj_bus.png"), tr("总线设备"));
-  pBusDevice->setEditable(false);
-  pCommunicationDevice->appendRow(pBusDevice);
-  pOPCDevice = new QStandardItem(QIcon(":/images/pj_opc.png"), tr("OPC设备"));
-  pOPCDevice->setEditable(false);
-  pCommunicationDevice->appendRow(pOPCDevice);
-  */
-    pProjectItem->appendRow(pCommunicationDevice);
-
-    pDataBaseConfig = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("变量管理"));
-    pDataBaseConfig->setEditable(false);
-    pDevVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("设备变量"));
-    pDevVariable->setEditable(false);
-
-    pDataBaseConfig->appendRow(pDevVariable);
-    pTmpVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("中间变量"));
-    pTmpVariable->setEditable(false);
-    pDataBaseConfig->appendRow(pTmpVariable);
-    pSysVariable = new QStandardItem(QIcon(":/images/pj_zone.png"), tr("系统变量"));
-    pSysVariable->setEditable(false);
-    pDataBaseConfig->appendRow(pSysVariable);
-    pProjectItem->appendRow(pDataBaseConfig);
-
-    pDataBaseManager = new QStandardItem(QIcon(":/images/pj_sys.png"), tr("数据库管理"));
-    pDataBaseManager->setEditable(false);
-    pRealTimeDatabase = new QStandardItem(QIcon(":/images/db_rtdbview.png"), tr("实时数据库"));
-    pRealTimeDatabase->setEditable(false);
-    pDataBaseManager->appendRow(pRealTimeDatabase);
-    pHistoryDatabase = new QStandardItem(QIcon(":/images/db_hisdbview.png"), tr("历史数据库"));
-    pHistoryDatabase->setEditable(false);
-    pDataBaseManager->appendRow(pHistoryDatabase);
-    pProjectItem->appendRow(pDataBaseManager);
-
-    pDrawPage = new QStandardItem(QIcon(":/images/pm_draw.png"), tr("画面"));
-    pDrawPage->setEditable(false);
-    pProjectItem->appendRow(pDrawPage);
-
-    pLogicProgram = new QStandardItem(QIcon(":/images/pm_script.png"), tr("逻辑编程"));
-    pLogicProgram->setEditable(false);
-
-    pScriptEditor = new QStandardItem(QIcon(":/images/pj_script.png"), tr("脚本编辑器"));
-    pScriptEditor->setEditable(false);
-    pLogicProgram->appendRow(pScriptEditor);
-    pProjectItem->appendRow(pLogicProgram);
-
-    pTreeViewProjectModel->appendRow(pProjectItem);
-    ui->treeViewProject->setModel(pTreeViewProjectModel);
-    ui->treeViewProject->expandAll();
-}
-
-ChildForm *MainWindow::activeMdiChild()
-{
-    if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow()) {
-        return qobject_cast<ChildForm *>(activeSubWindow->widget());
-    }
-    return nullptr;
-}
-
-void MainWindow::setActiveSubWindow(ChildForm *window)
-{
-    if (!window) return;
-    window->showMaximized();
-    m_CurItem = window->windowTitle();
-    ui->mdiArea->setActiveSubWindow(Q_NULLPTR);  // Activates the subwindow window. If
-    // window is 0, any current active window
-    // is deactivated.
-    ui->mdiArea->setActiveSubWindow(qobject_cast<QMdiSubWindow *>(window));
-}
-
-ChildForm *MainWindow::getActiveSubWindow()
-{
-    return qobject_cast<ChildForm *>(ui->mdiArea->activeSubWindow()->widget());
-}
-
-ChildForm *MainWindow::findMdiChild(const QString &windowTitle)
-{
-    foreach (QMdiSubWindow *window, ui->mdiArea->subWindowList()) {
-        ChildForm *pChildWin = qobject_cast<ChildForm *>(window->widget());
-        if (pChildWin->windowTitle() == windowTitle) return pChildWin;
-    }
-    return nullptr;
-}
-
-QMdiSubWindow *MainWindow::findMdiSubWindow(const QString &windowTitle)
-{
-    foreach (QMdiSubWindow *window, ui->mdiArea->subWindowList()) {
-        ChildBase *pChildWin = qobject_cast<ChildBase *>(window->widget());
-        if (pChildWin->windowTitle() == windowTitle) return window;
-    }
-    return nullptr;
-}
-
-/*
-* 新建工程时，创建缺省IO变量组
-*/
-void MainWindow::CreateDefaultIOTagGroup()
-{
-    if (pDevVariable->rowCount() == 0) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-        pObj->m_id = 1;
-        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-        pObj->m_szShowName = QString(tr("IO设备"));
-        tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-        if(pObj != Q_NULLPTR) {
-            delete pObj;
-            pObj = Q_NULLPTR;
-        }
-        UpdateDeviceVariableTableGroup();
-    }
-}
-
-/*
-* 增加组
-*/
-void MainWindow::tagIOGroupAdd()
-{
-    NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
-    pDlg->SetDialogName("新建数据组");
-    pDlg->SetLabelName("数据组名：");
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if (pDlg->exec() == QDialog::Accepted) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-        pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
-        pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-        pObj->m_szShowName = pDlg->GetGroupName();
-        tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-        UpdateDeviceVariableTableGroup();
-        if(window != nullptr) {
-            QString titleNew = QString("%1%2%3").arg("设备变量").arg("-").arg(pDlg->GetGroupName());
-            window->SetTitle(titleNew);
-        }
-        if(pObj != Q_NULLPTR) {
-            delete pObj;
-            pObj = Q_NULLPTR;
-        }
-    }
-}
-
-/*
-* 重命名组
-*/
-void MainWindow::tagIOGroupRename()
-{
-    QModelIndex index = ui->treeViewProject->currentIndex();
-    QString text = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-    ChildForm *window = findMdiChild(this->m_CurItem);
-
-    NewVariableGroupDialog *pDlg = new NewVariableGroupDialog();
-    pDlg->SetDialogName("新建数据组");
-    pDlg->SetLabelName("数据组名：");
-    pDlg->SetGroupName(text);
-    if (pDlg->exec() == QDialog::Accepted) {
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(ProjectData::getInstance()->dbData_, text);
-
-        if(window != Q_NULLPTR) {
-            QString titleNew = QString("%1%2%3")
-                    .arg("设备变量")
-                    .arg("-")
-                    .arg(pDlg->GetGroupName());
-            window->SetTitle(titleNew);
-        }
-        pObj->m_szShowName = pDlg->GetGroupName();
-        tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-        if(pObj != Q_NULLPTR) {
-            delete pObj;
-            pObj = Q_NULLPTR;
-        }
-        UpdateDeviceVariableTableGroup();
-    }
-}
-
-/*
-* 删除组
-*/
-void MainWindow::tagIODeleteGroup()
-{
-    QModelIndex ModelIndex = ui->treeViewProject->selectionModel()->currentIndex();
-    QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    TagIOGroupDBItem *pObj = tagIOGroup.getGroupObjByShowName(ProjectData::getInstance()->dbData_, qTiem->text());
-    tagIOGroup.del(ProjectData::getInstance()->dbData_, pObj);
-    if(pObj != Q_NULLPTR) {
-        delete pObj;
-        pObj = Q_NULLPTR;
-    }
-    UpdateDeviceVariableTableGroup();
-}
-
-/*
-* 复制组
-*/
-void MainWindow::tagIOGroupCopy()
-{
-    QModelIndex ModelIndex = ui->treeViewProject->selectionModel()->currentIndex();
-    QStandardItem *qTiem = pTreeViewProjectModel->itemFromIndex(ModelIndex);
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    // check the same name first
-    QString szName = QString("复制_%1").arg(qTiem->text());
-    int iCnt = tagIOGroup.getGroupCountByShowName(ProjectData::getInstance()->dbData_, szName);
-    if(iCnt > 0) {
-        QMessageBox::information(this, "系统提示", "同名文件存在，请先修改名称！");
-        return;
-    }
-
-    TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-    pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
-    pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-    pObj->m_szShowName = szName;
-    tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-    UpdateDeviceVariableTableGroup();
-    if(pObj != Q_NULLPTR) {
-        delete pObj;
-        pObj = Q_NULLPTR;
-    }
-}
-
-
-/*
-* 右键菜单
-*/
-void MainWindow::contextMenuEvent(QContextMenuEvent * /*event*/)
-{
-    bool found = false;
-
-    QModelIndex index = ui->treeViewProject->currentIndex();
-    m_CurTreeViewItem = this->pTreeViewProjectModel->itemFromIndex(index)->text();
-
-    if (m_CurTreeViewItem == "设备变量")
-        found = true;
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-        if (m_CurTreeViewItem == pObj->m_szShowName)
-            found = true;
-    }
-
-    qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-    tagIOGroup.listTagIOGroupDBItem_.clear();
-
-    if (!found)
-        return;
-
-    QMenu *pMenu = new QMenu(this);
-
-    QAction *pAddGroupAct = new QAction(tr("增加组"), this);
-    pAddGroupAct->setStatusTip(tr("增加组"));
-    connect(pAddGroupAct, SIGNAL(triggered()), this, SLOT(tagIOGroupAdd()));
-    pMenu->addAction(pAddGroupAct);
-
-    QAction *pRenameGroupAct = new QAction(tr("重命名"), this);
-    pRenameGroupAct->setStatusTip(tr("重命名"));
-    connect(pRenameGroupAct, SIGNAL(triggered()), this, SLOT(tagIOGroupRename()));
-    pMenu->addAction(pRenameGroupAct);
-
-    QAction *pDeleteGroupAct = new QAction(tr("删除组"), this);
-    pDeleteGroupAct->setStatusTip(tr("删除组"));
-    connect(pDeleteGroupAct, SIGNAL(triggered()), this, SLOT(tagIODeleteGroup()));
-    pMenu->addAction(pDeleteGroupAct);
-
-    QAction *pCopyGroupAct = new QAction(tr("复制组"), this);
-    pCopyGroupAct->setStatusTip(tr("复制组"));
-    connect(pCopyGroupAct, SIGNAL(triggered()), this, SLOT(tagIOGroupCopy()));
-    pMenu->addAction(pCopyGroupAct);
-
-    pMenu->move(cursor().pos());
-    pMenu->show();
-}
 
 /**
- * @brief MainWindow::closeEvent  关闭事件
- * @param event
+ * @brief MainWindow::createStatusBar
+ * @details 创建状态栏
  */
-void MainWindow::closeEvent(QCloseEvent *event) {
+void MainWindow::createStatusBar()
+{
+    m_pStatusBarObj = new QStatusBar(this);
+    this->setStatusBar(m_pStatusBarObj);
+}
+
+
+/**
+ * @brief MainWindow::createActions
+ * @details 创建动作
+ */
+void MainWindow::createActions()
+{
+    QAction *pActObj = NULL;
+
+    // 新建工程
+    pActObj = new QAction(QIcon(":/images/newproject.png"), tr("新建"), NULL);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+N"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onNewPoject);
+        QSoftCore::getCore()->insertAction("Project.New", pActObj);
+    }
+
+    //  打开工程
+    pActObj = new QAction(QIcon(":/images/openproject.png"), tr("打开"), NULL);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+O"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onOpenProject);
+        QSoftCore::getCore()->insertAction("Project.Open", pActObj);
+    }
+
+    // 关闭工程
+    pActObj = new QAction(QIcon(":/images/projectexit.png"), tr("关闭"), NULL);
+    if(pActObj) {
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onCloseProject);
+        QSoftCore::getCore()->insertAction("Project.Close", pActObj);
+    }
+
+    // 保存工程
+    pActObj = new QAction(QIcon(":/images/saveproject.png"), tr("保存"), NULL);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+S"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onSaveProject);
+        QSoftCore::getCore()->insertAction("Project.Save", pActObj);
+    }
+
+    // 设置打开工程的密码
+    pActObj = new QAction(tr("设置打开工程的密码"), NULL);
+    if(pActObj) {
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onSetOpenProjPassword);
+        QSoftCore::getCore()->insertAction("Project.OpenPassword", pActObj);
+        pActObj->setEnabled(false);
+    }
+
+    // 最近打开的工程
+    pActObj = new QAction(tr("最近打开的工程"), NULL);
+    if(pActObj) {
+        QSoftCore::getCore()->insertAction("Project.LastOpen", pActObj);
+        QJsonObject datJson;
+        datJson.insert("which", QJsonValue("LastOpen"));
+        QVariant datUser = QVariant(datJson);
+        pActObj->setData(datUser);
+    }
+
+    // 退出
+    pActObj = new QAction(QIcon(":/images/programexit.png"), tr("退出"), NULL);
+    if(pActObj) {
+        pActObj->setShortcut(QString("Ctrl+Q"));
+        connect(pActObj, &QAction::triggered, this, &MainWindow::onExit);
+        QSoftCore::getCore()->insertAction("Project.Exit", pActObj);
+    }
+
+    //-----------------------------<视图>---------------------------------------
+
+    // 视图工具栏
+    pActObj = new QAction(tr("视图"), NULL);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        QSoftCore::getCore()->insertAction("Widget.Toolbar", pActObj);
+    }
+
+    // 状态栏
+    pActObj = new QAction(tr("状态栏"), NULL);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        QSoftCore::getCore()->insertAction("Widget.StatusBar", pActObj);
+    }
+
+    // 工作区
+    pActObj = new QAction(tr("工作区"), NULL);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        QSoftCore::getCore()->insertAction("Widget.WorkSpace", pActObj);
+    }
+
+    // 显示区
+    pActObj = new QAction(tr("显示区"), NULL);
+    if(pActObj) {
+        pActObj->setCheckable(true);
+        QSoftCore::getCore()->insertAction("Widget.DisplayArea", pActObj);
+    }
+
+    //-----------------------------<工具菜单>----------------------------------
+    // 模拟仿真
+    pActObj = new QAction(QIcon(":/images/offline.png"), tr("模拟仿真"));
+    if(pActObj) {
+        pActObj->setEnabled(false);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotSimulate()));
+        QSoftCore::getCore()->insertAction("Tools.Simulate", pActObj);
+    }
+
+    // 运行工程
+    pActObj = new QAction(QIcon(":/images/online.png"), tr("运行"));
+    if(pActObj) {
+        pActObj->setEnabled(true);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
+        QSoftCore::getCore()->insertAction("Tools.Run", pActObj);
+    }
+
+    // 停止运行工程
+    pActObj = new QAction(QIcon(":/images/offline.png"), tr("停止"));
+    if(pActObj) {
+        pActObj->setEnabled(false);
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotStopRunProject()));
+        QSoftCore::getCore()->insertAction("Tools.StopRun", pActObj);
+    }
+
+    // 下载工程
+    pActObj = new QAction(QIcon(":/images/download.png"), tr("下载"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotDownloadProject()));
+        QSoftCore::getCore()->insertAction("Tools.Download", pActObj);
+    }
+
+    // 上载工程
+    pActObj = new QAction(QIcon(":/images/upload.png"), tr("上载"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotUpLoadProject()));
+        QSoftCore::getCore()->insertAction("Tools.UpLoad", pActObj);
+    }
+
+    //-----------------------------<帮助菜单>----------------------------------
+    // 帮助
+    pActObj = new QAction(tr("帮助"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotHelp()));
+        QSoftCore::getCore()->insertAction("Help.Help", pActObj);
+    }
+
+    // 关于
+    pActObj = new QAction(tr("关于"));
+    if(pActObj) {
+        connect(pActObj, SIGNAL(triggered()), SLOT(onSlotAbout()));
+        QSoftCore::getCore()->insertAction("Help.About", pActObj);
+    }
+
+}
+
+
+/**
+ * @brief MainWindow::createMenus
+ * @details 创建菜单
+ */
+void MainWindow::createMenus()
+{
+    // 工程菜单
+    m_pMenuProjectObj = this->menuBar()->addMenu(tr("工程"));
+    m_pMenuProjectObj->addAction(QSoftCore::getCore()->getAction("Project.New"));
+    m_pMenuProjectObj->addAction(QSoftCore::getCore()->getAction("Project.Open"));
+    m_pMenuProjectObj->addAction(QSoftCore::getCore()->getAction("Project.Close"));
+    m_pMenuProjectObj->addAction(QSoftCore::getCore()->getAction("Project.Save"));
+    m_pMenuProjectObj->addAction(QSoftCore::getCore()->getAction("Project.OpenPassword"));
+    m_pMenuProjectObj->addSeparator();
+    m_pMenuProjectObj->addAction(QSoftCore::getCore()->getAction("Project.LastOpen"));
+    m_pMenuProjectObj->addSeparator();
+    m_pMenuProjectObj->addAction(QSoftCore::getCore()->getAction("Project.Exit"));
+
+    // 视图菜单
+    m_pMenuViewObj = this->menuBar()->addMenu(tr("视图"));
+    m_pMenuViewObj->addAction(QSoftCore::getCore()->getAction("Widget.Toolbar"));
+    m_pMenuViewObj->addAction(QSoftCore::getCore()->getAction("Widget.StatusBar"));
+    m_pMenuViewObj->addAction(QSoftCore::getCore()->getAction("Widget.WorkSpace"));
+    m_pMenuViewObj->addAction(QSoftCore::getCore()->getAction("Widget.DisplayArea"));
+
+    //-----------------------------<工具菜单>----------------------------------
+    m_pMenuToolsObj = this->menuBar()->addMenu(tr("工具"));
+    m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.Simulate")); // 模拟仿真
+    m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.Run")); // 运行工程
+    m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.StopRun")); // 停止运行工程
+    m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.Download")); // 下载工程
+    m_pMenuToolsObj->addAction(QSoftCore::getCore()->getAction("Tools.UpLoad")); // 上传工程
+
+    //-----------------------------<帮助菜单>----------------------------------
+    m_pMenuHelpObj = this->menuBar()->addMenu(tr("帮助"));
+    m_pMenuHelpObj->addAction(QSoftCore::getCore()->getAction("Help.Help")); // 帮助
+    m_pMenuHelpObj->addAction(QSoftCore::getCore()->getAction("Help.About")); // 关于
+}
+
+
+/**
+    * @brief MainWindow::createToolbars
+    * @details 创建工具条
+    */
+void MainWindow::createToolbars()
+{
+    QToolBar *pToolBarObj = new QToolBar();
+    //-----------------------------<工程工具栏>-----------------------------------
+    pToolBarObj = new QToolBar(this);
+    QSoftCore::getCore()->insertToolBar("ToolBar.Project", pToolBarObj);
+    pToolBarObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Project.New"));
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Project.Open"));
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Project.Close"));
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Project.Save"));
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Project.Exit"));
+
+    pToolBarObj->addSeparator();
+
+    //-----------------------------<工具>----------------------------------
+    pToolBarObj = new QToolBar(this);
+    QSoftCore::getCore()->insertToolBar("ToolBar.Tools", pToolBarObj);
+    pToolBarObj->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.Simulate")); // 模拟仿真
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.Run")); // 运行工程
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.StopRun")); // 停止运行工程
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.Download")); // 下载工程
+    pToolBarObj->addAction(QSoftCore::getCore()->getAction("Tools.UpLoad")); // 上传工程
+
+    //--------------------------------------------------------------------------
+
+    this->addToolBar(Qt::TopToolBarArea, QSoftCore::getCore()->getToolBar("ToolBar.Project"));
+    this->addToolBar(Qt::TopToolBarArea, QSoftCore::getCore()->getToolBar("ToolBar.Tools"));
+    //addToolBarBreak();
+}
+
+
+/**
+    * @brief MainWindow::closeEvent  关闭事件
+    * @param event
+    */
+void MainWindow::closeEvent(QCloseEvent *event)
+{
     QString strFile = Helper::AppDir() + "/lastpath.ini";
-    if (pProjectItem->text() != tr("未创建工程"))
-        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
-    ui->mdiArea->closeAllSubWindows();
-    writeSettings();
-    if (ui->mdiArea->currentSubWindow()) {
-        event->ignore();
-    } else {
-        event->accept();
+    if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程")) {
+        ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", QSoftCore::getCore()->getProjectCore()->m_szProjPath);
     }
+
+    writeSettings();
+    event->accept();
 }
 
 /**
- * @brief MainWindow::writeSettings 写入窗口设置
- */
+    * @brief MainWindow::writeSettings 写入窗口设置
+    */
 void MainWindow::writeSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -383,8 +412,8 @@ void MainWindow::writeSettings()
 }
 
 /**
- * @brief MainWindow::readSettings 读取窗口设置
- */
+    * @brief MainWindow::readSettings 读取窗口设置
+    */
 void MainWindow::readSettings()
 {
     QSettings settings(QCoreApplication::organizationName(), QCoreApplication::applicationName());
@@ -399,45 +428,47 @@ void MainWindow::readSettings()
 }
 
 /**
- * @brief MainWindow::initWindow 初始化窗口
+ * @brief MainWindow::copySystemTags
+ * @dettails 拷贝系统变量
  */
-void MainWindow::initWindow() {
-    setCentralWidget(ui->mdiArea);
-    //    setWindowState(Qt::WindowMaximized);
-    setWindowTitle(tr("HmiFuncDesigner跨平台自动化软件"));
-
-    // 当多文档区域的内容超出可视区域后，出现滚动条
-    ui->mdiArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    ui->mdiArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-
-//    ui->mdiArea->setLineWidth(3);
-//    ui->mdiArea->setFrameShape(QFrame::Panel);
-//    ui->mdiArea->setFrameShadow(QFrame::Sunken);
-//    ui->mdiArea->setViewMode(QMdiArea::TabbedView);
-
-    ui->statusBar->showMessage(tr("欢迎使用HmiFuncDesigner组态系统"));
+void MainWindow::copySystemTags()
+{
+    QString szTagFile = QCoreApplication::applicationDirPath() + "/SysVarList.odb";
+    QString szTags = "";
+    QFile readFile(szTagFile);
+    if (readFile.open(QIODevice::ReadOnly)) {
+        QTextStream in(&readFile);
+        in.setCodec("utf-8");
+        szTags = in.readAll();
+        readFile.close();
+        XMLObject xml;
+        if(xml.load(szTags, NULL)) {
+            QSoftCore::getCore()->getProjectCore()->tagMgr_.openFromXml(&xml);
+        }
+    }
 }
 
-void MainWindow::on_actionNewPoject_triggered() {
-    if (pProjectItem->text() != tr("未创建工程")) {
-        QMessageBox::information(
-                    this, tr("系统提示"),
-                    tr("工程文件已建立，请手动关闭当前工程文件后重新建立！"));
+/**
+    * @brief MainWindow::onNewPoject
+    * @details 新建工程
+    */
+void MainWindow::onNewPoject()
+{
+    if (this->m_pProjectTreeViewObj->getProjectName() != tr("未创建工程")) {
+        QMessageBox::information(this,
+                                 tr("系统提示"),
+                                 tr("工程文件已建立，请手动关闭当前工程文件后重新建立！"));
         return;
     }
 
     NewProjectDialog *pNewProjectDlg = new NewProjectDialog(this);
     if (pNewProjectDlg->exec() == QDialog::Accepted) {
-        UpdateProjectName(pNewProjectDlg->GetProjectName());
-
-        QString szPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
-        QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
-        ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
+        UpdateProjectName(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
         pNewProjectDlg->save();
-
-        updateRecentProjectList(pNewProjectDlg->GetProjectName());
-        CreateDefaultIOTagGroup();
-        UpdateDeviceVariableTableGroup();
+        updateRecentProjectList(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
+        // 拷贝系统变量
+        copySystemTags();
+        QSoftCore::getCore()->getProjectCore()->createNewProj(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     }
 }
 
@@ -449,268 +480,318 @@ void MainWindow::doOpenProject(QString proj)
         return;
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+
+    QFileInfo fileInfoSrc(proj);
+    if(fileInfoSrc.size() <= 512) {
+        QMessageBox::information(this, tr("系统提示"), tr("读取工程数据出错，文件头数据有误！"));
+        return;
+    }
+
+    // 读取文件头信息
+    if(!fileProj.open(QIODevice::ReadOnly)) {
+        QMessageBox::information(this, tr("系统提示"), tr("打开工程：") + proj + tr("失败！"));
+        return;
+    }
+
+    quint8 buf[1024] = {0};
+    quint16 wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+
+    if(fileProj.read((char *)buf, wSize) != wSize) {
+        fileProj.close();
+        QMessageBox::information(this, tr("系统提示"), tr("读取文件头数据出错！"));
+        return;
+    }
+    fileProj.close();
+
+    TFileHeader headerObj;
+    memcpy((void *)&headerObj, (void *)buf, sizeof(TFileHeader));
+
+    if(headerObj.byOpenVerifyPassword != 0) {
+        QByteArray baPwd;
+        baPwd.append((const char *)headerObj.szPassword, headerObj.byOpenVerifyPassword);
+        VerifyPasswordDialog dlg;
+        dlg.setTargetPassword(baPwd.toHex());
+        if(dlg.exec() == QDialog::Rejected) {
+            return;
+        }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+
+    QSoftCore::getCore()->getProjectCore()->m_szProjFile = proj;
     UpdateProjectName(proj);
     QString strFile = Helper::AppDir() + "/lastpath.ini";
-    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", m_strProjectPath);
-    QString szPath = ProjectMgrUtils::getProjectPath(m_strProjectName);
-    QString szName = ProjectMgrUtils::getProjectNameWithOutSuffix(m_strProjectName);
-    ProjectData::getInstance()->createOrOpenProjectData(szPath, szName);
+    ConfigUtils::setCfgStr(strFile, "PathInfo", "Path", QSoftCore::getCore()->getProjectCore()->m_szProjPath);
 
-    // 更新工程名称和工程目录(目录和名称可能人为修改)
-    ProjectInfoManager &projInfoMgr = ProjectData::getInstance()->projInfoMgr_;
-    projInfoMgr.load(ProjectData::getInstance()->dbData_);
-    projInfoMgr.setProjectPath(szPath);
-    projInfoMgr.setProjectName(szName);
-    projInfoMgr.save(ProjectData::getInstance()->dbData_);
+    QSoftCore::getCore()->getProjectCore()->m_szProjPath = QSoftCore::getCore()->getProjectCore()->getProjectPath(proj);
+    QSoftCore::getCore()->getProjectCore()->m_szProjName = QSoftCore::getCore()->getProjectCore()->getProjectNameWithOutSuffix(proj);
+    QSoftCore::getCore()->getProjectCore()->openFromXml(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
 
-    // 加载设备变量组信息
-    UpdateDeviceVariableTableGroup();
     updateRecentProjectList(proj);
+
+    QAction *pActObj = QSoftCore::getCore()->getAction("Project.OpenPassword");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
 }
 
-void MainWindow::on_actionOpenProject_triggered() {
+/**
+    * @brief MainWindow::onOpenProject
+    * @details 打开工程
+    */
+void MainWindow::onOpenProject()
+{
     QString strFile = QCoreApplication::applicationDirPath() + "/lastpath.ini";
     QString path = ConfigUtils::getCfgStr(strFile, "PathInfo", "Path", "C:/");
-    QString fileName = QFileDialog::getOpenFileName(
-                this, tr("选择工程文件"), path, tr("project file (*.pdt)"));
-    if(fileName != nullptr) {
+    QString fileName = QFileDialog::getOpenFileName(this,
+                       tr("选择工程文件"),
+                       path,
+                       tr("project file (*.pdt)"));
+    if(fileName != NULL) {
         doOpenProject(fileName);
     }
 }
 
-void MainWindow::on_actionWorkSpace_triggered(bool checked) {
-    if (checked)
-        ui->dockProjectManager->show();
-    else
-        ui->dockProjectManager->hide();
-}
-
-/*
-* 工具条使能
-*/
-void MainWindow::enableToolBar(QString text) {
-    bool bTagIOOrTmp = (text == tr("中间变量")) | (text.startsWith(tr("设备变量")));
-    ui->TagOperateToolBar->setEnabled(bTagIOOrTmp);
-
-    bool bdevice = (text == tr("串口设备")) | (text == tr("网络设备")) |
-            (text == tr("总线设备")) | (text == tr("OPC设备"));
-    ui->DeviceOperateToolBar->setEnabled(bdevice);
-}
-
-void MainWindow::onTreeViewProjectClicked(const QString &szItemText)
+void MainWindow::on_actionWorkSpace_triggered(bool checked)
 {
-    QString winTittle = szItemText;
+    this->m_pDockProjectMgrObj->setVisible(checked);
+}
 
-    ChildForm *findForm = findMdiChild(m_strProjectName);
-    if(findForm == Q_NULLPTR) {
-        findForm = new ChildForm(this, m_strProjectName);
-        findForm->setWindowTitle(m_strProjectName);
-        ui->mdiArea->addSubWindow(findForm);
-        connect(this, SIGNAL(treeItemClicked(const QString &)),
-                findForm, SLOT(treeItemClicked(const QString &)), Qt::DirectConnection);
-    }
 
-    ////////////////////////////////////////////////////////////////////////
-
-    if(szItemText == tr("变量管理") || szItemText == tr("设备变量")) {
-        if (findForm) findForm->hide();
+/**
+    * @brief MainWindow::onSlotProjectTreeViewClicked
+    * @details 工程树节点被单击
+    * @param index
+    */
+void MainWindow::onSlotTreeProjectViewClicked(const QString &szItemText)
+{
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") {
         return;
     }
 
-    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
-        winTittle = szItemText;
-    } else {
-        // 设备变量
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if (szItemText == pObj->m_szShowName)
-                winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
-        }
-
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
+    QStringList szListUserData = szItemText.split("|");
+    //qDebug() <<__FILE__ << __LINE__ <<__FUNCTION__ << "szListUserData:" << szListUserData;
+    if(szListUserData.size() < 3) {
+        return;
     }
 
-    // 工具条使能
-    enableToolBar(winTittle);
-
-    ////////////////////////////////////////////////////////////////////////
-
-    bool VarFound = false;
-    if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
-        VarFound = true;
-    } else {
-        // 设备变量
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if (szItemText == pObj->m_szShowName)
-                VarFound = true;
+    QAbstractPage* pPageObj = m_mapNameToPage.value(szListUserData.at(0).toUpper());
+    if(pPageObj) {
+        QWidget *pCurWidgetObj = m_pCentralWidgetObj->currentWidget();
+        if(pCurWidgetObj) {
+            UserEvent evHide(UserEvent::EVT_USER_HIDE_UPDATE, szListUserData.at(2).toUpper());
+            QCoreApplication::sendEvent(pCurWidgetObj, &evHide);
         }
-
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
+        QWidget *pWidgetObj = dynamic_cast<QWidget *>(pPageObj->getWidget());
+        if(pWidgetObj) {
+            UserEvent evShow(UserEvent::EVT_USER_SHOW_UPDATE, szListUserData.at(2).toUpper());
+            QCoreApplication::sendEvent(pWidgetObj, &evShow);
+            m_pCentralWidgetObj->setCurrentWidget(pWidgetObj);
+        }
     }
+}
 
-    ////////////////////////////////////////////////////////////////////////
 
-    if(szItemText == tr("系统参数")) {
-        findForm->switchPage(PAGE_SYSTEM_PARAMETER);
-    } else if(szItemText == tr("通讯设备") || szItemText == tr("串口设备") || szItemText == tr("网络设备")) {
-        findForm->switchPage(PAGE_COMMUNICATE_DEVICE);
-    } else if(VarFound) { // 变量
-        if(szItemText == tr("中间变量") || szItemText == tr("系统变量")) {
-            winTittle = szItemText;
+/**
+ * @brief MainWindow::UpdateProjectName
+ * @details 更新工程名称
+ * @param szName 工程名称
+ */
+void MainWindow::UpdateProjectName(const QString &szName)
+{
+    QAction *pActObj = NULL;
+    pActObj = QSoftCore::getCore()->getAction("Tools.Run");
+    if(!szName.isEmpty()) {
+        QString szNameTmp = szName.mid(szName.lastIndexOf("/") + 1, szName.indexOf(".") - szName.lastIndexOf("/") - 1);
+        this->m_pProjectTreeViewObj->setProjectName(szNameTmp);
+        if(pActObj) {
+            pActObj->setEnabled(true);
+        }
+    } else {
+        QSoftCore::getCore()->getProjectCore()->m_szProjFile = "";
+        QSoftCore::getCore()->getProjectCore()->m_szProjPath = "";
+        if(pActObj) {
+            pActObj->setEnabled(false);
+        }
+        this->m_pProjectTreeViewObj->updateUI();
+    }
+}
+
+
+/**
+    * @brief MainWindow::onSaveProject
+    * @details 保存工程
+    */
+void MainWindow::onSaveProject()
+{
+    QSoftCore::getCore()->getProjectCore()->saveToXml(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
+}
+
+///
+/// \brief MainWindow::onSetOpenProjPassword
+/// \details 设置打开工程的密码
+///
+void MainWindow::onSetOpenProjPassword()
+{
+    VerifyPasswordDialog dlg(false, this);
+    if(dlg.exec() == QDialog::Accepted) {
+        QString szPwd = dlg.getSetPassword();
+        if(szPwd.isEmpty()) {
+            QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = 0;
+            memset(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 0, 32);
         } else {
-            winTittle = QString("%1%2%3").arg(tr("设备变量")).arg("-").arg(szItemText);
+            memset(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 0, 32);
+            QCryptographicHash crypt(QCryptographicHash::Md5);
+            crypt.reset();
+            crypt.addData(szPwd.toStdString().c_str(), szPwd.toStdString().length());
+            QByteArray baPwd = crypt.result();
+            QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = baPwd.length();
+            memcpy_s(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 32, baPwd.data(), baPwd.length());
         }
-        findForm->switchPage(PAGE_VARIABLE_MANAGER);
-        if(szItemText == tr("设备变量"))
-            findForm->switchPage(PAGE_NONE);
-    } else if(szItemText == tr("画面")) {
-        findForm->switchPage(PAGE_DRAW_PAGE);
-    } else if(szItemText == tr("实时数据库")) {
-        findForm->switchPage(PAGE_RTDB);
-    } else if(szItemText == tr("历史数据库")) {
-        findForm->switchPage(PAGE_NONE);
-        findForm->hide();
-    } else if(szItemText == tr("脚本编辑器")) {
-        findForm->switchPage(PAGE_SCRIPT_MANAGER);
     }
-
-    setActiveSubWindow(findForm);
-    emit treeItemClicked(winTittle);
 }
 
-
-
-void MainWindow::on_treeViewProject_clicked(const QModelIndex &index)
+/**
+    * @brief MainWindow::onCloseProject
+    * @details 关闭工程
+    */
+void MainWindow::onCloseProject()
 {
-    if(m_strProjectName == "")
+    if(this->m_pProjectTreeViewObj->getProjectName() == tr("未创建工程")) {
         return;
-
-    QStandardItem *item = pTreeViewProjectModel->itemFromIndex(index);
-    onTreeViewProjectClicked(item->text());
-}
-
-void MainWindow::UpdateProjectName(QString name)
-{
-    if(!name.isEmpty()) {
-        m_strProjectName = name;
-        m_strProjectPath = ProjectMgrUtils::getProjectPath(name);
-        QString strName = name.mid(name.lastIndexOf("/") + 1, name.indexOf(".") - name.lastIndexOf("/") - 1);
-        pProjectItem->setText(strName);
-        ui->actionRun->setEnabled(true);
-    } else {
-        m_strProjectName = "";
-        m_strProjectPath = "";
-        ui->actionRun->setEnabled(false);
-        pTreeViewProjectModel->clear();
-        ui->treeViewProject->reset();
-        delete pTreeViewProjectModel;
-        pTreeViewProjectModel = nullptr;
-        setUpProjectTreeView();
     }
-}
 
-/*
- * 更新设备变量组
- */
-void MainWindow::UpdateDeviceVariableTableGroup()
-{
-    while(!pDevVariableTabList.empty())
-        pDevVariableTabList.takeFirst();
-    pDevVariable->removeRows(0, pDevVariable->rowCount());
-
-    TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-    tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-    foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-        QStandardItem *pDevVarTab = new QStandardItem(QIcon(":/images/pj_zone.png"), pObj->m_szShowName);
-        pDevVarTab->setEditable(false);
-        pDevVariableTabList.append(pDevVarTab);
-        pDevVariable->appendRow(pDevVarTab);
-    }
-    QApplication::processEvents();
-
-    qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-    tagIOGroup.listTagIOGroupDBItem_.clear();
-}
-
-/*
- * 所有活动窗口执行保存
- */
-void MainWindow::on_actionSaveProject_triggered()
-{
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
-        ChildForm *findForm = qobject_cast<ChildForm *>(window->widget());
-        if(findForm != nullptr)
-            findForm->save();
-    }
-}
-
-/*
-* 插槽：关闭
-*/
-void MainWindow::on_actionCloseProject_triggered()
-{
-    if(pProjectItem->text() == "未创建工程")
-        return;
-    foreach (QMdiSubWindow* window, ui->mdiArea->subWindowList()) {
-        ChildForm * findForm = qobject_cast<ChildForm *>(window->widget());
-        if(findForm != nullptr)
-            findForm->save();
-        window->close();
-    }
     UpdateProjectName(QString());
+    onSlotTabProjectMgrCurChanged(0);
+    m_pTabProjectMgrObj->setCurrentIndex(0);
+
+    QAction *pActObj = QSoftCore::getCore()->getAction("Project.OpenPassword");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
 }
 
-/*
-* 插槽：退出
-*/
-void MainWindow::on_actionExit_triggered() {
-    on_actionSaveProject_triggered();
+
+/**
+    * @brief MainWindow::onExit
+    * @details 退出
+    */
+void MainWindow::onExit()
+{
+    onSaveProject();
     qApp->exit();
 }
 
-void MainWindow::on_treeViewProject_activated(const QModelIndex & /*index*/) {}
 
-/*
- * 插槽：模拟
- */
-void MainWindow::on_actionSimulate_triggered() {}
-
-/*
- * 插槽：运行
- */
-void MainWindow::on_actionRun_triggered()
+/**
+    * @brief MainWindow::onSlotSimulate
+    * @details 模拟仿真
+    */
+void MainWindow::onSlotSimulate()
 {
-    QString fileRuntimeApplication = "";
+
+}
+
+/**
+    * @brief MainWindow::onSlotRunProject
+    * @details 运行工程
+    */
+void MainWindow::onSlotRunProject()
+{
+    QString szFileRuntimeApp = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime");
 #ifdef Q_OS_WIN
-    fileRuntimeApplication = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime.exe");
+    szFileRuntimeApp += ".exe";
 #endif
-
-#ifdef Q_OS_LINUX
-    fileRuntimeApplication = QDir::cleanPath(Helper::AppDir() + "/../../HmiRunTimeBin/HmiRunTime");
-#endif
-
-    QFile file(fileRuntimeApplication);
+    QFile file(szFileRuntimeApp);
     if (file.exists()) {
         QProcess *process = new QProcess();
         process->setWorkingDirectory(Helper::AppDir() + "/");
         QStringList argv;
-        argv << m_strProjectPath;
-        process->startDetached(fileRuntimeApplication, argv);
+        argv << QSoftCore::getCore()->getProjectCore()->m_szProjPath;
+        process->startDetached(szFileRuntimeApp, argv);
     }
 }
 
-/*
- * 插槽：上载
+void MainWindow::onSlotStart()
+{
+    QAction *pActObj = QSoftCore::getCore()->getAction("Tools.Run");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Tools.StopRun");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.New");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Close");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Save");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Open");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+}
+
+void MainWindow::onSlotStop()
+{
+    QAction *pActObj = QSoftCore::getCore()->getAction("Tools.StopRun");
+    if(pActObj) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Tools.Run");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.New");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Close");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Save");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = QSoftCore::getCore()->getAction("Project.Open");
+    if(pActObj) {
+        pActObj->setEnabled(true);
+    }
+}
+
+/**
+ * @brief MainWindow::onSlotStopRunProject
+ * @details 停止运行工程
  */
-void MainWindow::on_actionUpLoad_triggered()
+void MainWindow::onSlotStopRunProject()
+{
+}
+
+/**
+    * @brief MainWindow::onSlotUpLoadProject
+    * @details 上载工程
+    */
+void MainWindow::onSlotUpLoadProject()
 {
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/UploadProjects/tmp";
@@ -719,7 +800,7 @@ void MainWindow::on_actionUpLoad_triggered()
         dir.mkpath(tmpDir);
     }
 
-    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, m_strProjectName);
+    ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     if (pDlg->exec() == QDialog::Accepted) {
         QString desDir = pDlg->getProjectPath();
 #ifdef Q_OS_WIN
@@ -744,13 +825,13 @@ void MainWindow::on_actionUpLoad_triggered()
         if (tarProc->waitForStarted()) {
             if (tarProc->waitForFinished()) {
                 QString strSrc = QCoreApplication::applicationDirPath() +
-                        "/UploadProjects/tmp/RunProject";
+                                 "/UploadProjects/tmp/RunProject";
 
                 Helper::CopyDir(strSrc, desDir, true);
                 Helper::DeleteDir(tmpDir);
 
                 QString tarProj = QCoreApplication::applicationDirPath() +
-                        "/UploadProjects/RunProject.tar";
+                                  "/UploadProjects/RunProject.tar";
                 QFile tarProjFile(tarProj);
                 if (tarProjFile.exists()) {
                     tarProjFile.remove();
@@ -765,18 +846,16 @@ void MainWindow::on_actionUpLoad_triggered()
     delete pDlg;
 }
 
-/*
- * 插槽：U盘
- */
-void MainWindow::on_actionUDisk_triggered() {}
 
-/*
- * 插槽：下载
- */
-void MainWindow::on_actionDownload_triggered()
+/**
+    * @brief MainWindow::onSlotDownloadProject
+    * @details 下载工程
+    */
+void MainWindow::onSlotDownloadProject()
 {
-    if(m_strProjectName == nullptr)
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile.isEmpty()) {
         return;
+    }
 
     // 创建tmp目录
     QString tmpDir = QCoreApplication::applicationDirPath() + "/tmp";
@@ -787,7 +866,7 @@ void MainWindow::on_actionDownload_triggered()
 
     // 拷贝工程到tmp目录
     QString desDir = QCoreApplication::applicationDirPath() + "/tmp/RunProject";
-    Helper::CopyRecursively(m_strProjectPath, desDir);
+    Helper::CopyRecursively(QSoftCore::getCore()->getProjectCore()->m_szProjPath, desDir);
 
     // 打包工程到tmp目录
 #ifdef Q_OS_WIN
@@ -832,206 +911,29 @@ void MainWindow::on_actionDownload_triggered()
 
     delete tarProc;
 
-    ProjectDownloadDialog *pDlg =
-            new ProjectDownloadDialog(this, m_strProjectName);
+    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
     if (pDlg->exec() == QDialog::Accepted) {
     }
     delete pDlg;
 }
 
-/*
- * 插槽：增加
- */
-void MainWindow::on_actionAddTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->addVariableTag();
-    }
-}
-
-/*
- * 插槽：追加
- */
-void MainWindow::on_actionAppendTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->appendVariableTag();
-    }
-}
-
-/*
- * 插槽：行拷贝
- */
-void MainWindow::on_actionRowCopyTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->rowCopyVariableTag();
-    }
-}
-
-/*
- * 插槽：列拷贝
- */
-void MainWindow::on_actionColumnCopyTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->columnCopyVariableTag();
-    }
-}
-
-/*
- * 插槽：修改
- */
-void MainWindow::on_actionModifyTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->modifyVariableTag();
-    }
-}
-
-/*
- * 插槽：删除
- */
-void MainWindow::on_actionDeleteTag_triggered() {
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->deleteVariableTag();
-    }
-}
-
-/*
- * 插槽：导出
- */
-void MainWindow::on_actionExportTag_triggered() {
-    QString dirUploadProjects = QCoreApplication::applicationDirPath();
-    QString strSaveCsvPath = QFileDialog::getExistingDirectory(
-                this, tr("选择导出csv路径"), dirUploadProjects,
-                QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
-    if (strSaveCsvPath == "") return;
-
-    ChildForm *window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->variableTagExportToCsv(strSaveCsvPath);
-    }
-}
-
-/*
- * 插槽：导入
- */
-void MainWindow::on_actionImportTag_triggered()
-{
-    QString path = QCoreApplication::applicationDirPath();
-    QString strSaveCsvFile = QFileDialog::getOpenFileName(this, tr("选择csv文件"),
-                                                          path,
-                                                          tr("csv file (*.csv)"));
-
-    if(strSaveCsvFile == "")
-        return;
-
-    QString strCsvName= strSaveCsvFile.mid(strSaveCsvFile.lastIndexOf("/") + 1, strSaveCsvFile.indexOf(".") - strSaveCsvFile.lastIndexOf("/") - 1);
-    QString strGroupName = strCsvName.right(strCsvName.length() - strCsvName.lastIndexOf("-") - 1);
-
-    if(strCsvName.startsWith(tr("中间变量"))) {
-        ChildForm* pFindForm = findMdiChild(this->m_CurItem);
-        if(pFindForm != nullptr) {
-            QString titleNew = tr("中间变量");
-            pFindForm->SetTitle(titleNew);
-            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-        }
-    } else if(strCsvName.startsWith(tr("设备变量"))) {
-        bool found = false;
-
-        TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-        tagIOGroup.load(ProjectData::getInstance()->dbData_);
-
-        foreach (TagIOGroupDBItem *pObj, tagIOGroup.listTagIOGroupDBItem_) {
-            if(strGroupName == pObj->m_szShowName) {
-                found = true;
-                break;
-            }
-        }
-
-        qDeleteAll(tagIOGroup.listTagIOGroupDBItem_);
-        tagIOGroup.listTagIOGroupDBItem_.clear();
-
-        if(!found) {
-            TagIOGroup &tagIOGroup = ProjectData::getInstance()->tagIOGroup_;
-            TagIOGroupDBItem *pObj = new TagIOGroupDBItem();
-            pObj->m_id = tagIOGroup.getGroupCount(ProjectData::getInstance()->dbData_) + 1;
-            pObj->m_szGroupName = QString("group%1").arg(pObj->m_id);
-            pObj->m_szShowName = strGroupName;
-            tagIOGroup.saveTagTmpDBItem(ProjectData::getInstance()->dbData_, pObj);
-            if(pObj != Q_NULLPTR) {
-                delete pObj;
-                pObj = Q_NULLPTR;
-            }
-            UpdateDeviceVariableTableGroup();
-            enableToolBar(strCsvName);
-
-            onTreeViewProjectClicked(tr("设备变量"));
-            QApplication::processEvents();
-            onTreeViewProjectClicked(strGroupName);
-            QApplication::processEvents();
-
-            ChildForm* pFindForm = findMdiChild(this->m_CurItem);
-            if(pFindForm != nullptr) {
-                pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-            }
-            return;
-        }
-
-        ChildForm* pFindForm = findMdiChild(this->m_CurItem);
-        if(pFindForm != nullptr) {
-            QString szWinTittle = QString("%1%2%3").arg("设备变量").arg("-").arg(strGroupName);
-            pFindForm->SetTitle(szWinTittle);
-            pFindForm->variableTagImportFromCsv(strSaveCsvFile);
-        }
-    }
-}
 
 /**
- * @brief MainWindow::on_actionDeviceNew_triggered 新建设备
- */
-void MainWindow::on_actionDeviceNew_triggered()
+    * @brief MainWindow::onSlotHelp
+    * @details 帮助
+    */
+void MainWindow::onSlotHelp()
 {
-    ChildForm* window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->newDevice();
-    }
+
 }
 
-/*
- * 插槽：修改设备
- */
-void MainWindow::on_actionDeviceModify_triggered()
-{
-    ChildForm* window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->modifyDevice();
-    }
-}
 
-/*
- * 插槽：删除设备
- */
-void MainWindow::on_actionDeviceDelete_triggered()
-{
-    ChildForm* window = findMdiChild(this->m_CurItem);
-    if(window != nullptr) {
-        window->deleteDevice();
-    }
-}
-
-/*
- * 插槽：帮助
- */
-void MainWindow::on_actionHelp_triggered() {}
-
-/*
- * 插槽：关于
- */
-void MainWindow::on_actionAbout_triggered()
+/**
+    * @brief MainWindow::onSlotAbout
+    * @details 关于
+    */
+void MainWindow::onSlotAbout()
 {
     AboutDialog *pDlg = new AboutDialog(this);
     if(pDlg->exec() == QDialog::Accepted) {
@@ -1041,8 +943,8 @@ void MainWindow::on_actionAbout_triggered()
 }
 
 /*
- * 加载最近打开的工程列表
- */
+    * 加载最近打开的工程列表
+    */
 void MainWindow::loadRecentProjectList()
 {
     QString iniRecentProjectFileName = Helper::AppDir() + "/RecentProjectList.ini";
@@ -1051,34 +953,42 @@ void MainWindow::loadRecentProjectList()
         QStringList slist;
         ConfigUtils::getCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
-        for (int i=0; i<slist.count(); i++) {
-            QAction *pAct = new QAction(slist.at(i), this);
+        for (int i = 0; i < slist.count(); i++) {
+            QAction *pAct = new QAction(slist.at(i));
             pAct->setStatusTip(tr(""));
-            connect(pAct, &QAction::triggered, this, [=]{
+            connect(pAct, &QAction::triggered, this, [ = ] {
                 this->doOpenProject(pAct->text());
             });
-            ui->menuProject->insertAction(ui->actionRecentProjectList, pAct);
+            this->m_pMenuProjectObj->insertAction(QSoftCore::getCore()->getAction("Project.LastOpen"), pAct);
         }
-        ui->menuProject->removeAction(ui->actionRecentProjectList);
+        this->m_pMenuProjectObj->removeAction(QSoftCore::getCore()->getAction("Project.LastOpen"));
         return;
     }
 
     QList<QAction *> listActRemove;
-    QList<QAction *> listAct = ui->menuProject->actions();
-    for (int i = 0; i<listAct.size(); ++i) {
-        QAction *pAct = listAct.at(i);
-        if(pAct->isSeparator())
-            listActRemove.append(pAct);
-        if(pAct->text() == tr("最近文件列表"))
-            listActRemove.append(pAct);
+    QList<QAction *> listAct = this->m_pMenuProjectObj->actions();
+    for (int i = 0; i < listAct.size(); ++i) {
+        QAction *pActObj = listAct.at(i);
+        if(pActObj->isSeparator()) {
+            listActRemove.append(pActObj);
+        }
+        QVariant datUser = pActObj->data();
+        if(datUser.isValid()) {
+            QJsonObject datJson = datUser.toJsonObject();
+            if(datJson["which"].toString() == "LastOpen") {
+                listActRemove.append(pActObj);
+            }
+        }
     }
-    for (int j = 0; j<listActRemove.size(); ++j) {
-        ui->menuProject->removeAction(listActRemove.at(j));
+    for (int j = 0; j < listActRemove.size(); ++j) {
+        this->m_pMenuProjectObj->removeAction(listActRemove.at(j));
     }
 }
 
-/*
- * 更新最近打开的工程列表
+/**
+ * @brief MainWindow::updateRecentProjectList
+ * @details 更新最近打开的工程列表
+ * @param newProj
  */
 void MainWindow::updateRecentProjectList(QString newProj)
 {
@@ -1097,13 +1007,15 @@ void MainWindow::updateRecentProjectList(QString newProj)
             }
         }
 
-        if (slist.count() >= 5) slist.removeLast();
+        if (slist.count() >= 5) {
+            slist.removeLast();
+        }
 
         slist.push_front(newProj);
         ConfigUtils::writeCfgList(iniRecentProjectFileName, "RecentProjects", "project", slist);
 
         QList<QAction *> listActRemove;
-        QList<QAction *> listAct = ui->menuProject->actions();
+        QList<QAction *> listAct = this->m_pMenuProjectObj->actions();
         for (int i = 0; i < listAct.size(); ++i) {
             QAction *pAct = listAct.at(i);
             if(pAct->isSeparator() && bStart == false && bEnd == false) {
@@ -1118,19 +1030,20 @@ void MainWindow::updateRecentProjectList(QString newProj)
             if(bStart && bEnd == false) {
                 listActRemove.append(pAct);
             }
-            if(pAct->text() == tr("最近文件列表"))
+            if(pAct->text() == tr("最近文件列表")) {
                 listActRemove.append(pAct);
+            }
         }
-        for (int j = 0; j<listActRemove.size(); ++j) {
-            ui->menuProject->removeAction(listActRemove.at(j));
+        for (int j = 0; j < listActRemove.size(); ++j) {
+            this->m_pMenuProjectObj->removeAction(listActRemove.at(j));
         }
 
         /////////////////////////////////////////////////////
 
         bStart = bEnd = false;
-        QAction *pActPos = Q_NULLPTR;
+        QAction *pActPos = NULL;
         listAct.clear();
-        listAct = ui->menuProject->actions();
+        listAct = this->m_pMenuProjectObj->actions();
         for (int i = 0; i < listAct.size(); ++i) {
             QAction *pAct = listAct.at(i);
             if(pAct->isSeparator() && bStart == false && bEnd == false) {
@@ -1145,13 +1058,13 @@ void MainWindow::updateRecentProjectList(QString newProj)
             }
         }
 
-        for (int i=0; i<slist.count(); i++) {
+        for (int i = 0; i < slist.count(); i++) {
             QAction *pAct = new QAction(slist.at(i), this);
             pAct->setStatusTip(tr(""));
-            connect(pAct, &QAction::triggered, this, [=]{
+            connect(pAct, &QAction::triggered, this, [ = ] {
                 this->doOpenProject(pAct->text());
             });
-            ui->menuProject->insertAction(pActPos, pAct);
+            this->m_pMenuProjectObj->insertAction(pActPos, pAct);
         }
     } else {
         QStringList slist;
@@ -1161,27 +1074,46 @@ void MainWindow::updateRecentProjectList(QString newProj)
 
 
 /**
- * @brief MainWindow::on_actionBigIcon_triggered 显示大图标
- */
-void MainWindow::on_actionBigIcon_triggered()
+    * @brief MainWindow::onSlotTabProjectMgrCurChanged
+    * @details 工程管理器标签改变
+    * @param index 0：工程标签页, 1：画面标签页
+    */
+void MainWindow::onSlotTabProjectMgrCurChanged(int index)
 {
-    ui->actionBigIcon->setChecked(true);
-    ui->actionSmallIcon->setChecked(false);
-    ChildForm *findForm = findMdiChild(this->m_CurItem);
-    if(findForm != nullptr) {
-        findForm->showLargeIcon();
+    QToolBar *pToolBarObj = QSoftCore::getCore()->getToolBar("ToolBar.GraphPage");
+    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile == "") {
+        if(m_pDesignerWidgetObj) {
+            m_pDesignerWidgetObj->setVisible(false);
+            UserEvent evShow(UserEvent::EVT_USER_HIDE_UPDATE, QStringList());
+            QCoreApplication::sendEvent(m_pDesignerWidgetObj, &evShow);
+        }
+        if(pToolBarObj) {
+            pToolBarObj->setVisible(false);    // 画面编辑工具条
+        }
+    } else {
+        if(pToolBarObj) {
+            pToolBarObj->setVisible(index == 1);
+        }
+        switch (index) {
+            case 0: {
+
+            } break;
+            case 1: {
+                if(m_pDesignerWidgetObj) {
+                    UserEvent evShow(UserEvent::EVT_USER_SHOW_UPDATE, QStringList());
+                    QCoreApplication::sendEvent(m_pDesignerWidgetObj, &evShow);
+                    m_pCentralWidgetObj->setCurrentWidget(m_pDesignerWidgetObj);
+                    QAbstractPage* pPageObj = m_mapNameToPage.value("Designer");
+                    if(pPageObj) {
+                        QSoftCore::getCore()->setActivityStack(pPageObj->getUndoStack());
+                    }
+                }
+            }
+            break;
+            default:
+                break;
+        }
     }
 }
 
-/**
- * @brief MainWindow::on_actionSmallIcon_triggered 显示小图标
- */
-void MainWindow::on_actionSmallIcon_triggered()
-{
-    ui->actionBigIcon->setChecked(false);
-    ui->actionSmallIcon->setChecked(true);
-    ChildForm *findForm = findMdiChild(this->m_CurItem);
-    if(findForm != nullptr) {
-        findForm->showSmallIcon();
-    }
-}
+

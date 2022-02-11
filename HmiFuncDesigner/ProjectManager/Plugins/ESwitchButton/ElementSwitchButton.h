@@ -13,16 +13,14 @@ class ElementSwitchButton : public Element
     Q_OBJECT
 
 public:
-    explicit ElementSwitchButton(const QString &szProjPath,
-                                 const QString &szProjName,
-                                 QtVariantPropertyManager *propertyMgr);
+    explicit ElementSwitchButton(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -31,9 +29,6 @@ public:
     int type() const override {
         return SwitchButtonItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out, const ElementSwitchButton &textItem);
-    friend QDataStream &operator>>(QDataStream &in, ElementSwitchButton &textItem);
 
 protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

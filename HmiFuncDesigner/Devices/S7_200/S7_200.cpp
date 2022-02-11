@@ -2,119 +2,74 @@
 
 
 
-S7_200::S7_200()
-{
+S7_200::S7_200() {
 
 }
 
 
-/**
- * @brief S7_200::GetDeviceTypeName
- * @details 获取设备类型名称
- * @return
- */
-QString S7_200::GetDeviceTypeName()
+///
+/// \brief S7_200::getBitMaxRegPacket
+/// \details 位组包最大寄存器个数
+/// \return 寄存器个数
+///
+int S7_200::getBitMaxRegPacket()
 {
-    return QString(tr("串口设备"));
+    return 100;
 }
 
 
-/**
- * @brief S7_200::GetDeviceSupportProtocol
- * @details 获取设备支持的所有协议
- * @return
- */
-QStringList S7_200::GetDeviceSupportProtocol()
+///
+/// \brief S7_200::getWordMaxRegPacket
+/// \details 字组包最大寄存器个数
+/// \return 寄存器个数
+///
+int S7_200::getWordMaxRegPacket()
 {
-    QStringList list;
-    list << "S7_200_PPI";
-    return list;
+    return 100;
 }
 
-/**
- * @brief S7_200::GetDeviceSupportRegisterArea
- * @details 获取设备支持的所有寄存器区
- * @return
- */
-QStringList S7_200::GetDeviceSupportRegisterArea()
+
+///
+/// \brief S7_200::getCommFailRetryCount
+/// \details 通信失败重试次数
+/// \return 次数
+///
+int S7_200::getCommFailRetryTimes()
 {
-    QStringList list;
-    list << tr("V")
-         << tr("I")
-         << tr("Q")
-         << tr("M")
-         << tr("T")
-         << tr("C")
-         << tr("HC")
-         << tr("AI")
-         << tr("AQ");
-    return list;
+    return 2;
 }
 
-/**
- * @brief S7_200::GetDeviceSupportDataType
- * @details 获取设备支持的所有数据类型
- * @return
- */
-QStringList S7_200::GetDeviceSupportDataType()
+
+///
+/// \brief S7_200::getCommTimeout
+/// \details 通信超时时间
+/// \return 时间值
+///
+int S7_200::getCommTimeout()
 {
-    QStringList list;
-    list << tr("Bit1开关量")
-         << tr("Char8位有符号数")
-         << tr("Byte8位无符号数")
-         << tr("Short16位有符号数")
-         << tr("Word16位无符号数")
-         << tr("ASCII2个字符")
-         << tr("Long32位有符号数")
-         << tr("Dword32位无符号数")
-         << tr("Float单精度浮点数")
-         << tr("String字符串")
-         << tr("Double双精度浮点数")
-         << tr("BCD");
-    return list;
+    return 1;
 }
 
-/**
- * @brief S7_200::GetRegisterAreaLimit
- * @details 获取寄存器区地址的下限和上限
- * @param areaName 寄存器区名称
- * @param lowerLimit 寄存器区地址下限
- * @param upperLimit 寄存器区地址上限
- */
-void S7_200::GetRegisterAreaLimit(const QString &areaName,
-                                     quint32 &lowerLimit,
-                                     quint32 &upperLimit)
+
+///
+/// \brief S7_200::getCommIntervalTime
+/// \details 通信间隔时间
+/// \return 时间值
+///
+int S7_200::getCommIntervalTime()
 {
-    lowerLimit = 0;
-    upperLimit = 0;
-    if(areaName == tr("V")) {
-        lowerLimit = 0;
-        upperLimit = 10239;
-    } else if(areaName == tr("I")) {
-        lowerLimit = 0;
-        upperLimit = 15;
-    } else if(areaName == tr("Q")) {
-        lowerLimit = 0;
-        upperLimit = 15;
-    } else if(areaName == tr("M")) {
-        lowerLimit = 0;
-        upperLimit = 31;
-    } else if(areaName == tr("T")) {
-        lowerLimit = 0;
-        upperLimit = 255;
-    } else if(areaName == tr("C")) {
-        lowerLimit = 0;
-        upperLimit = 255;
-    } else if(areaName == tr("HC")) {
-        lowerLimit = 0;
-        upperLimit = 5;
-    } else if(areaName == tr("AI")) {
-        lowerLimit = 0;
-        upperLimit = 62;
-    } else if(areaName == tr("AQ")) {
-        lowerLimit = 0;
-        upperLimit = 62;
-    }
+    return 200;
+}
+
+
+///
+/// \brief S7_200::getCommResumeTime
+/// \details 尝试恢复通讯间隔时间
+/// \return 时间值
+///
+int S7_200::getCommResumeTime()
+{
+    return 2;
 }
 
 ///
@@ -125,9 +80,7 @@ void S7_200::GetRegisterAreaLimit(const QString &areaName,
 void S7_200::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
-    properties.append(qMakePair(tr("通信失败重试次数n次"), QString("3")));
-    properties.append(qMakePair(tr("通信超时时间n毫秒"), QString("1000")));
-    properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("15000")));
+    properties.append(qMakePair(tr("从站ID"), QString("2")));
 }
 
 
@@ -139,50 +92,35 @@ void S7_200::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properti
 void S7_200::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
 {
     properties_type.clear();
-    properties_type.append(qMakePair(tr("通信失败重试次数n次"), QString("int")));
-    properties_type.append(qMakePair(tr("通信超时时间n毫秒"), QString("int")));
-    properties_type.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("int")));
+    properties_type.append(qMakePair(tr("从站ID"), QString("int")));
 }
 
-
 ///
-/// \brief S7_200::devicePropertiesToString
-/// \details 保存属性为字符串
+/// \brief S7_200::writeAsXml
+/// \details 保存属性至xml节点
+/// \param xml xml节点
 /// \param properties 属性
-/// \return 属性字符串
 ///
-QString S7_200::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
+void S7_200::writeAsXml(QXmlStreamWriter &xml, QVector<QPair<QString, QString>>& properties)
 {
-    QStringList szListProperties;
-    szListProperties << QString(tr("retryTimes=%1")).arg(getValue2ByValue1(tr("通信失败重试次数n次"), properties));
-    szListProperties << QString(tr("commTimeout=%1")).arg(getValue2ByValue1(tr("通信超时时间n毫秒"), properties));
-    szListProperties << QString(tr("commResumeTime=%1")).arg(getValue2ByValue1(tr("尝试恢复通讯间隔时间n毫秒"), properties));
-    return szListProperties.join("|");
+    xml.writeStartElement("property");
+    xml.writeAttribute("id", getValue2ByValue1(tr("从站ID"), properties));
+    xml.writeEndElement();
 }
 
 
 ///
-/// \brief S7_200::devicePropertiesFromString
-/// \details 从字符串加载属性
-/// \param szProperty 属性字符串
+/// \brief S7_200::readFromXml
+/// \details 从xml节点加载属性
+/// \param xml xml节点
 /// \param properties 属性
 ///
-void S7_200::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
+void S7_200::readFromXml(QXmlStreamReader &xml, QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
-
-    QStringList szListProperties = szProperty.split('|');
-    foreach(QString szProp, szListProperties) {
-        QStringList szListKeyVal = szProp.split('=');
-        if(szListKeyVal.size() == 2) {
-            if(szListKeyVal.at(0) == "retryTimes") {
-                properties.append(qMakePair(tr("通信失败重试次数n次"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "commTimeout") {
-                properties.append(qMakePair(tr("通信超时时间n毫秒"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "commResumeTime") {
-                properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), szListKeyVal.at(1)));
-            }
-        }
+    QXmlStreamAttributes attributes = xml.attributes();
+    if (attributes.hasAttribute("id")) {
+        properties.append(qMakePair(tr("从站ID"), attributes.value("id").toString()));
     }
 }
 
@@ -198,5 +136,232 @@ void S7_200::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
     m_properties.append(properties);
 }
 
+
+///
+/// \brief S7_200::GetDeviceSupportProtocol
+/// \details 获取设备支持的所有协议
+/// \return
+///
+QStringList S7_200::getDeviceSupportProtocol()
+{
+    QStringList list;
+    list<<"PPI";
+    return list;
+}
+
+///
+/// \brief S7_200::getDeviceSupportRegisterArea
+/// \details 获取设备支持的所有寄存器区
+/// \return
+///
+QStringList S7_200::getDeviceSupportRegisterArea()
+{
+    QStringList list;
+    list << tr("I")
+         << tr("Q")
+         << tr("M")
+         << tr("MB")
+         << tr("MW")
+         << tr("MD")
+         << tr("SMB")
+         << tr("SMW")
+         << tr("SMD")
+         << tr("V")
+         << tr("VB")
+         << tr("VW")
+         << tr("VD")
+         << tr("T")
+         << tr("C");
+    return list;
+}
+
+
+///
+/// \brief S7_200::getDeviceSupportRegisterArea
+/// \details 获取指定数据类型和读写属性设备支持的寄存器区
+/// \param szDataType 数据类型
+/// \param bWriteable 读写属性
+/// \return 寄存器区
+///
+QStringList S7_200::getDeviceSupportRegisterArea(const QString &szDataType, bool bWriteable)
+{
+    Q_UNUSED(szDataType)
+    Q_UNUSED(bWriteable)
+    return QStringList();
+}
+
+
+///
+/// \brief S7_200::GetDeviceSupportDataType
+/// \details 获取设备支持的所有数据类型
+/// \param szAreaName 寄存器区
+/// \return
+///
+QStringList S7_200::getDeviceSupportDataType(const QString &szAreaName)
+{
+    QStringList list;
+
+    if(szAreaName == tr("I") || szAreaName == tr("Q") || szAreaName == tr("M") ||
+            szAreaName == tr("V")) {
+        list << tr("bool");
+    }
+    else if(szAreaName == tr("MB") || szAreaName == tr("SMB") || szAreaName == tr("VB")) {
+        list << tr("int8")
+             << tr("uint8")
+             << tr("bcd8");
+    }
+    else if(szAreaName == tr("MW") || szAreaName == tr("SMW") || szAreaName == tr("VW")) {
+        list << tr("int16")
+             << tr("uint16")
+             << tr("bcd16");
+    }
+    else if(szAreaName == tr("MD") || szAreaName == tr("SMD") || szAreaName == tr("VD")) {
+        list << tr("int32")
+             << tr("uint32")
+             << tr("float32")
+             << tr("bcd32");
+    }
+    else if(szAreaName == tr("T")) {
+        list << tr("bool")
+             << tr("uint16")
+             << tr("bcd16");
+    }
+    else if(szAreaName == tr("C")) {
+        list << tr("bool")
+             << tr("int16")
+             << tr("uint16")
+             << tr("bcd16");
+    }
+
+    return list;
+}
+
+
+/**
+ * @brief S7_200::getRegisterAreaLimit
+ * @details 获取寄存器区地址的下限和上限
+ * @param szAreaName 寄存器区名称
+ * @param iLowerLimit 寄存器区地址下限
+ * @param iUpperLimit 寄存器区地址上限
+ */
+void S7_200::getRegisterAreaLimit(const QString &szAreaName,
+                                  quint32 &iLowerLimit,
+                                  quint32 &iUpperLimit)
+{
+    iLowerLimit = 0;
+    iUpperLimit = 0;
+    if(szAreaName == tr("V") || szAreaName == tr("VB")) {
+        iLowerLimit = 0;
+        iUpperLimit = 10239;
+    } else if(szAreaName == tr("VW")) {
+        iLowerLimit = 0;
+        iUpperLimit = 10238;
+    } else if(szAreaName == tr("VD")) {
+        iLowerLimit = 0;
+        iUpperLimit = 10236;
+    } else if(szAreaName == tr("I")) {
+        iLowerLimit = 0;
+        iUpperLimit = 15;
+    } else if(szAreaName == tr("Q")) {
+        iLowerLimit = 0;
+        iUpperLimit = 15;
+    } else if(szAreaName == tr("M") || szAreaName == tr("MB")) {
+        iLowerLimit = 0;
+        iUpperLimit = 31;
+    } else if(szAreaName == tr("MW")) {
+        iLowerLimit = 0;
+        iUpperLimit = 30;
+    } else if(szAreaName == tr("MD")) {
+        iLowerLimit = 0;
+        iUpperLimit = 28;
+    } else if(szAreaName == tr("T")) {
+        iLowerLimit = 0;
+        iUpperLimit = 255;
+    } else if(szAreaName == tr("C")) {
+        iLowerLimit = 0;
+        iUpperLimit = 255;
+    }else if(szAreaName == tr("SMB")) {
+        iLowerLimit = 0;
+        iUpperLimit = 299;
+    } else if(szAreaName == tr("SMW")) {
+        iLowerLimit = 0;
+        iUpperLimit = 297;
+    } else if(szAreaName == tr("SMD")) {
+        iLowerLimit = 0;
+        iUpperLimit = 295;
+    }
+}
+
+
+///
+/// \brief S7_200::getAddressTypeAlias
+/// \details 获取地址类型别名
+/// \param szAreaName 寄存器区名称
+/// \param szDataType 数据类型
+/// \param szAddrOffset 地址偏移量
+/// \return 地址类型别名
+///
+QString S7_200::getAddressTypeAlias(const QString &szDataType,
+                                    const QString &szAreaName,
+                                    const QString &szAddrOffset,
+                                    const QString &szAreaName2,
+                                    const QString &szAddrOffset2)
+{
+    Q_UNUSED(szDataType)
+    Q_UNUSED(szAreaName2)
+    Q_UNUSED(szAddrOffset2)
+    QString szAddrTypeAlias = szAreaName;
+    szAddrTypeAlias += szAddrOffset;
+    return szAddrTypeAlias;
+}
+
+
+///
+/// \brief S7_200::getAddressTypeAlias
+/// \details 获取地址类型别名
+/// \param szAreaName 寄存器区名称
+/// \return 地址类型别名
+///
+QString S7_200::getAddressTypeAlias(const QString &szAreaName)
+{
+    return szAreaName;
+}
+
+
+///
+/// \brief FX2N::getAddressType
+/// \details 获取指定地址类型别名的地址类型
+/// \param szAddressTypeAlias 地址类型别名
+/// \return 寄存器区名称
+///
+QString S7_200::getAddressType(const QString &szAddressTypeAlias)
+{
+    return szAddressTypeAlias;
+}
+
+
+///
+/// \brief S7_200::getAutoAddrMapItemList
+/// \details 获取寄存器地址映射列表
+/// \param listAutoAddrMapItem
+///
+void S7_200::getAutoAddrMapItemList(QList<PAutoAddrMapItem> &listAutoAddrMapItem)
+{
+    Q_UNUSED(listAutoAddrMapItem)
+}
+
+
+
+///
+/// \brief S7_200::getDeviceSupportRegisterAreaSubArea
+/// \details 获取设备支持的地址类型所有子寄存器区名称
+/// \param szAreaName 寄存器区名称
+/// \return 地址类型所有子寄存器区名称
+///
+QStringList S7_200::getDeviceSupportRegisterAreaSubArea(const QString &szAreaName)
+{
+    Q_UNUSED(szAreaName)
+    return QStringList();
+}
 
 

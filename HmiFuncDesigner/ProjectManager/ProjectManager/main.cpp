@@ -3,13 +3,20 @@
 #include "qtsingleapplication.h"
 #include "ConfigUtils.h"
 #include "PluginManager.h"
+#include "../../libs/shared/pluginloader.h"
+#include "../../libs/shared/qbaseinit.h"
+#include "../../libs/core/qbaseinit.h"
+#include "../../libs/core/qsoftcore.h"
 #include <QApplication>
 #include <QTextCodec>
 #include <QFont>
-
+#include <QTranslator>
 
 int main(int argc, char *argv[])
 {
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 6, 0))
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
     QtSingleApplication app(argc, argv);
 
     if (app.isRunning())
@@ -19,14 +26,24 @@ int main(int argc, char *argv[])
     app.setApplicationName("ProjectManager");
     app.setApplicationDisplayName("ProjectManager");
     app.setApplicationVersion(QString("V%1").arg(VER_FILE));
+    app.setWindowIcon(QIcon(":/images/appicon.png"));
 
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("UTF-8"));
+
+    QTranslator translator;
+    if(translator.load("chinese.qm", QApplication::applicationDirPath()))
+        qApp->installTranslator(&translator);
 
     QFont font;
     font.setFamily("宋体");
     font.setPointSize(10);
     app.setFont(font);
 
+    qRegisterBaseProperty();
+    qRegisterBasePropertyEditor();
+    qRegisterBaseHost();
+
+    PluginLoader::loadPlugin(app.applicationDirPath() + "/plugins.xml");
     // 加载元素插件
     PluginManager::getInstance()->loadPlugin();
 

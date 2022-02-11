@@ -1,4 +1,3 @@
-
 #message("variable _PRO_FILE_ is: $$_PRO_FILE_")
 #message("variable _PRO_FILE_PWD_ is:$$_PRO_FILE_PWD_")
 
@@ -22,9 +21,9 @@ SUBDIRS += \
     libs \
     Devices \
     ProjectManager \
-    SysTagManager \
-    RtdbView \
-    NativeRtdbView #\
+    SysTagManager #\
+#    RtdbView \
+#    NativeRtdbView #\
 #    RegisterTool \    # 通用授权工具
 #    EDncryptTool      # 加密解密工具
 

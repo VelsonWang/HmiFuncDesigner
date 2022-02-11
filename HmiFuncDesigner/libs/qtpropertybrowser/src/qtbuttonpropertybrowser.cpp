@@ -49,7 +49,7 @@
 #include <QStyle>
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 class QtButtonPropertyBrowserPrivate
@@ -64,16 +64,17 @@ public:
     void propertyRemoved(QtBrowserItem *index);
     void propertyChanged(QtBrowserItem *index);
     QWidget *createEditor(QtProperty *property, QWidget *parent) const
-        { return q_ptr->createEditor(property, parent); }
+    {
+        return q_ptr->createEditor(property, parent);
+    }
 
     void slotEditorDestroyed();
     void slotUpdate();
     void slotToggled(bool checked);
 
-    struct WidgetItem
-    {
-        WidgetItem() : widget(Q_NULLPTR), label(Q_NULLPTR), widgetLabel(Q_NULLPTR),
-                button(Q_NULLPTR), container(Q_NULLPTR), layout(Q_NULLPTR), /*line(0), */parent(Q_NULLPTR), expanded(false) { }
+    struct WidgetItem {
+        WidgetItem() : widget(NULL), label(NULL), widgetLabel(NULL),
+            button(NULL), container(NULL), layout(NULL), /*line(0), */parent(NULL), expanded(false) { }
         QWidget *widget; // can be null
         QLabel *label; // main label with property name
         QLabel *widgetLabel; // label substitute showing the current value if there is no widget
@@ -92,7 +93,7 @@ private:
     int gridRow(WidgetItem *item) const;
     int gridSpan(WidgetItem *item) const;
     void setExpanded(WidgetItem *item, bool expanded);
-    QToolButton *createButton(QWidget *panret = Q_NULLPTR) const;
+    QToolButton *createButton(QWidget *panret = NULL) const;
 
     QMap<QtBrowserItem *, WidgetItem *> m_indexToItem;
     QMap<WidgetItem *, QtBrowserItem *> m_itemToIndex;
@@ -123,17 +124,19 @@ QToolButton *QtButtonPropertyBrowserPrivate::createButton(QWidget *parent) const
 int QtButtonPropertyBrowserPrivate::gridRow(WidgetItem *item) const
 {
     QList<WidgetItem *> siblings;
-    if (item->parent)
+    if (item->parent) {
         siblings = item->parent->children;
-    else
+    } else {
         siblings = m_children;
+    }
 
     int row = 0;
     QListIterator<WidgetItem *> it(siblings);
     while (it.hasNext()) {
         WidgetItem *sibling = it.next();
-        if (sibling == item)
+        if (sibling == item) {
             return row;
+        }
         row += gridSpan(sibling);
     }
     return -1;
@@ -141,8 +144,9 @@ int QtButtonPropertyBrowserPrivate::gridRow(WidgetItem *item) const
 
 int QtButtonPropertyBrowserPrivate::gridSpan(WidgetItem *item) const
 {
-    if (item->container && item->expanded)
+    if (item->container && item->expanded) {
         return 2;
+    }
     return 1;
 }
 
@@ -151,18 +155,20 @@ void QtButtonPropertyBrowserPrivate::init(QWidget *parent)
     m_mainLayout = new QGridLayout();
     parent->setLayout(m_mainLayout);
     QLayoutItem *item = new QSpacerItem(0, 0,
-                QSizePolicy::Fixed, QSizePolicy::Expanding);
+                                        QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_mainLayout->addItem(item, 0, 0);
 }
 
 void QtButtonPropertyBrowserPrivate::slotEditorDestroyed()
 {
     QWidget *editor = qobject_cast<QWidget *>(q_ptr->sender());
-    if (!editor)
+    if (!editor) {
         return;
-    if (!m_widgetToItem.contains(editor))
+    }
+    if (!m_widgetToItem.contains(editor)) {
         return;
-    m_widgetToItem[editor]->widget = Q_NULLPTR;
+    }
+    m_widgetToItem[editor]->widget = NULL;
     m_widgetToItem.remove(editor);
 }
 
@@ -173,8 +179,8 @@ void QtButtonPropertyBrowserPrivate::slotUpdate()
         WidgetItem *item = itItem.next();
 
         WidgetItem *parent = item->parent;
-        QWidget *w = Q_NULLPTR;
-        QGridLayout *l = Q_NULLPTR;
+        QWidget *w = NULL;
+        QGridLayout *l = NULL;
         const int oldRow = gridRow(item);
         if (parent) {
             w = parent->container;
@@ -185,8 +191,9 @@ void QtButtonPropertyBrowserPrivate::slotUpdate()
         }
 
         int span = 1;
-        if (!item->widget && !item->widgetLabel)
+        if (!item->widget && !item->widgetLabel) {
             span = 2;
+        }
         item->label = new QLabel(w);
         item->label->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
         l->addWidget(item->label, oldRow, 0, 1, span);
@@ -198,20 +205,23 @@ void QtButtonPropertyBrowserPrivate::slotUpdate()
 
 void QtButtonPropertyBrowserPrivate::setExpanded(WidgetItem *item, bool expanded)
 {
-    if (item->expanded == expanded)
+    if (item->expanded == expanded) {
         return;
+    }
 
-    if (!item->container)
+    if (!item->container) {
         return;
+    }
 
     item->expanded = expanded;
     const int row = gridRow(item);
     WidgetItem *parent = item->parent;
-    QGridLayout *l = Q_NULLPTR;
-    if (parent)
+    QGridLayout *l = NULL;
+    if (parent) {
         l = parent->layout;
-    else
+    } else {
         l = m_mainLayout;
+    }
 
     if (expanded) {
         insertRow(l, row + 1);
@@ -230,15 +240,17 @@ void QtButtonPropertyBrowserPrivate::setExpanded(WidgetItem *item, bool expanded
 void QtButtonPropertyBrowserPrivate::slotToggled(bool checked)
 {
     WidgetItem *item = m_buttonToItem.value(q_ptr->sender());
-    if (!item)
+    if (!item) {
         return;
+    }
 
     setExpanded(item, checked);
 
-    if (checked)
+    if (checked) {
         emit q_ptr->expanded(m_itemToIndex.value(item));
-    else
+    } else {
         emit q_ptr->collapsed(m_itemToIndex.value(item));
+    }
 }
 
 void QtButtonPropertyBrowserPrivate::updateLater()
@@ -254,21 +266,23 @@ void QtButtonPropertyBrowserPrivate::propertyInserted(QtBrowserItem *index, QtBr
     WidgetItem *newItem = new WidgetItem();
     newItem->parent = parentItem;
 
-    QGridLayout *layout = Q_NULLPTR;
-    QWidget *parentWidget = Q_NULLPTR;
+    QGridLayout *layout = NULL;
+    QWidget *parentWidget = NULL;
     int row = -1;
     if (!afterItem) {
         row = 0;
-        if (parentItem)
+        if (parentItem) {
             parentItem->children.insert(0, newItem);
-        else
+        } else {
             m_children.insert(0, newItem);
+        }
     } else {
         row = gridRow(afterItem) + gridSpan(afterItem);
-        if (parentItem)
+        if (parentItem) {
             parentItem->children.insert(parentItem->children.indexOf(afterItem) + 1, newItem);
-        else
+        } else {
             m_children.insert(m_children.indexOf(afterItem) + 1, newItem);
+        }
     }
 
     if (!parentItem) {
@@ -278,7 +292,7 @@ void QtButtonPropertyBrowserPrivate::propertyInserted(QtBrowserItem *index, QtBr
         if (!parentItem->container) {
             m_recreateQueue.removeAll(parentItem);
             WidgetItem *grandParent = parentItem->parent;
-            QGridLayout *l = Q_NULLPTR;
+            QGridLayout *l = NULL;
             const int oldRow = gridRow(parentItem);
             if (grandParent) {
                 l = grandParent->layout;
@@ -297,11 +311,12 @@ void QtButtonPropertyBrowserPrivate::propertyInserted(QtBrowserItem *index, QtBr
             if (parentItem->label) {
                 l->removeWidget(parentItem->label);
                 delete parentItem->label;
-                parentItem->label = Q_NULLPTR;
+                parentItem->label = NULL;
             }
             int span = 1;
-            if (!parentItem->widget && !parentItem->widgetLabel)
+            if (!parentItem->widget && !parentItem->widgetLabel) {
                 span = 2;
+            }
             l->addWidget(parentItem->button, oldRow, 0, 1, span);
             updateItem(parentItem);
         }
@@ -322,12 +337,13 @@ void QtButtonPropertyBrowserPrivate::propertyInserted(QtBrowserItem *index, QtBr
 
     insertRow(layout, row);
     int span = 1;
-    if (newItem->widget)
+    if (newItem->widget) {
         layout->addWidget(newItem->widget, row, 1);
-    else if (newItem->widgetLabel)
+    } else if (newItem->widgetLabel) {
         layout->addWidget(newItem->widgetLabel, row, 1);
-    else
+    } else {
         span = 2;
+    }
     layout->addWidget(newItem->label, row, 0, span, 1);
 
     m_itemToIndex[newItem] = index;
@@ -347,37 +363,45 @@ void QtButtonPropertyBrowserPrivate::propertyRemoved(QtBrowserItem *index)
 
     const int row = gridRow(item);
 
-    if (parentItem)
+    if (parentItem) {
         parentItem->children.removeAt(parentItem->children.indexOf(item));
-    else
+    } else {
         m_children.removeAt(m_children.indexOf(item));
+    }
 
     const int colSpan = gridSpan(item);
 
     m_buttonToItem.remove(item->button);
 
-    if (item->widget)
+    if (item->widget) {
         delete item->widget;
-    if (item->label)
+    }
+    if (item->label) {
         delete item->label;
-    if (item->widgetLabel)
+    }
+    if (item->widgetLabel) {
         delete item->widgetLabel;
-    if (item->button)
+    }
+    if (item->button) {
         delete item->button;
-    if (item->container)
+    }
+    if (item->container) {
         delete item->container;
+    }
 
     if (!parentItem) {
         removeRow(m_mainLayout, row);
-        if (colSpan > 1)
+        if (colSpan > 1) {
             removeRow(m_mainLayout, row);
+        }
     } else if (parentItem->children.count() != 0) {
         removeRow(parentItem->layout, row);
-        if (colSpan > 1)
+        if (colSpan > 1) {
             removeRow(parentItem->layout, row);
+        }
     } else {
         const WidgetItem *grandParent = parentItem->parent;
-        QGridLayout *l = Q_NULLPTR;
+        QGridLayout *l = NULL;
         if (grandParent) {
             l = grandParent->layout;
         } else {
@@ -391,13 +415,15 @@ void QtButtonPropertyBrowserPrivate::propertyRemoved(QtBrowserItem *index)
         l->removeWidget(parentItem->container);
         delete parentItem->button;
         delete parentItem->container;
-        parentItem->button = Q_NULLPTR;
-        parentItem->container = Q_NULLPTR;
-        parentItem->layout = Q_NULLPTR;
-        if (!m_recreateQueue.contains(parentItem))
+        parentItem->button = NULL;
+        parentItem->container = NULL;
+        parentItem->layout = NULL;
+        if (!m_recreateQueue.contains(parentItem)) {
             m_recreateQueue.append(parentItem);
-        if (parentSpan > 1)
+        }
+        if (parentSpan > 1) {
             removeRow(l, parentRow + 1);
+        }
 
         updateLater();
     }
@@ -564,8 +590,9 @@ QtButtonPropertyBrowser::QtButtonPropertyBrowser(QWidget *parent)
 QtButtonPropertyBrowser::~QtButtonPropertyBrowser()
 {
     const QMap<QtButtonPropertyBrowserPrivate::WidgetItem *, QtBrowserItem *>::ConstIterator icend = d_ptr->m_itemToIndex.constEnd();
-    for (QMap<QtButtonPropertyBrowserPrivate::WidgetItem *, QtBrowserItem *>::ConstIterator  it =  d_ptr->m_itemToIndex.constBegin(); it != icend; ++it)
+    for (QMap<QtButtonPropertyBrowserPrivate::WidgetItem *, QtBrowserItem *>::ConstIterator  it =  d_ptr->m_itemToIndex.constBegin(); it != icend; ++it) {
         delete it.key();
+    }
     delete d_ptr;
 }
 
@@ -602,8 +629,9 @@ void QtButtonPropertyBrowser::itemChanged(QtBrowserItem *item)
 void QtButtonPropertyBrowser::setExpanded(QtBrowserItem *item, bool expanded)
 {
     QtButtonPropertyBrowserPrivate::WidgetItem *itm = d_ptr->m_indexToItem.value(item);
-    if (itm)
+    if (itm) {
         d_ptr->setExpanded(itm, expanded);
+    }
 }
 
 /*!
@@ -615,13 +643,14 @@ void QtButtonPropertyBrowser::setExpanded(QtBrowserItem *item, bool expanded)
 bool QtButtonPropertyBrowser::isExpanded(QtBrowserItem *item) const
 {
     QtButtonPropertyBrowserPrivate::WidgetItem *itm = d_ptr->m_indexToItem.value(item);
-    if (itm)
+    if (itm) {
         return itm->expanded;
+    }
     return false;
 }
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
 
 #include "moc_qtbuttonpropertybrowser.cpp"

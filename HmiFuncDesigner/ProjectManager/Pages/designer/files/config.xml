@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project type="projectCore" plugin="">
+    <Property type="ByteArray" name="objectName" value="temp"/>
+</Project>

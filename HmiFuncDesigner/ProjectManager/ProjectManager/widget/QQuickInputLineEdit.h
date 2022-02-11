@@ -10,7 +10,7 @@ class QQuickInputLineEdit : public QLineEdit
 {
     Q_OBJECT
 public:
-    explicit QQuickInputLineEdit(QWidget *parent = nullptr);
+    explicit QQuickInputLineEdit(QWidget *parent = NULL);
     // 设置支持快捷输入的字符串集合
     void setQuickInputWordMap(const QMap<QString, QString> &wordMap);
 

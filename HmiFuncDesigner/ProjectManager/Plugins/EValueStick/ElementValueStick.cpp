@@ -14,10 +14,8 @@
 
 int ElementValueStick::iLastIndex_ = 1;
 
-ElementValueStick::ElementValueStick(const QString &szProjPath,
-                                     const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementValueStick::ElementValueStick(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("ValueStick_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -36,8 +34,6 @@ ElementValueStick::ElementValueStick(const QString &szProjPath,
     maxValue_ = 100;
     minValue_ = 0;
     init();
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
     createPropertyList();
     updatePropertyModel();
 }
@@ -55,7 +51,6 @@ void ElementValueStick::regenerateElementId()
  */
 void ElementValueStick::release()
 {
-    ProjectData::releaseInstance();
 }
 
 
@@ -82,7 +77,7 @@ void ElementValueStick::createPropertyList()
     // 选择变量
     property = variantPropertyManager_->addProperty(QtVariantPropertyManager::enumTypeId(), tr("选择变量"));
     tagNames_.clear();
-    ProjectData::getInstance()->getAllTagName(tagNames_);
+    m_pProjDataObj->getAllTagName(tagNames_);
     if(tagNames_.size() > 0) szTagSelected_ = tagNames_.at(0);
     property->setAttribute(QLatin1String("enumNames"), tagNames_);
     addProperty(property, QLatin1String("tag"));
@@ -875,138 +870,69 @@ void ElementValueStick::setPosString(const QString& szPos, QString& szPosSet)
 }
 
 
-void ElementValueStick::writeAsXml(QXmlStreamWriter &writer)
+bool ElementValueStick::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-	writer.writeAttribute("tag", szTagSelected_);
-    writer.writeAttribute("maxValue", QString::number(maxValue_));
-    writer.writeAttribute("minValue", QString::number(minValue_));
-    writer.writeAttribute("scaleNum", QString::number(scaleNum_));
-    writer.writeAttribute("backgroundColor", backgroundColor_.name());
-    writer.writeAttribute("foregroundColor", foregroundColor_.name());
-    writer.writeAttribute("scaleColor", scaleColor_.name());
-    writer.writeAttribute("scaleDir", getDirString(scaleDir_));
-    writer.writeAttribute("scalePos", getPosString(scalePos_));
-    writer.writeAttribute("font", font_.toString());
-    writer.writeAttribute("textcolor", textColor.name());
-    writer.writeAttribute("showRuler", showRuler_?"true":"false");
-    writer.writeAttribute("showScale", showScale_?"true":"false");
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeEndElement();
-}
+    XMLObject *pObj = pXmlObj;
 
-void ElementValueStick::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-	if (attributes.hasAttribute("tag")) {
-		szTagSelected_ = attributes.value("tag").toString();
-	}
-
-    if (attributes.hasAttribute("maxValue")) {
-        maxValue_ = attributes.value("maxValue").toDouble();
-    }
-
-    if (attributes.hasAttribute("minValue")) {
-        minValue_ = attributes.value("minValue").toDouble();
-    }
-
-    if (attributes.hasAttribute("scaleNum")) {
-        scaleNum_ = attributes.value("scaleNum").toInt();
-    }
-
-    if (attributes.hasAttribute("backgroundColor")) {
-        backgroundColor_ = QColor(attributes.value("backgroundColor").toString());
-    }
-
-    if (attributes.hasAttribute("foregroundColor")) {
-        foregroundColor_ = QColor(attributes.value("foregroundColor").toString());
-    }
-
-    if (attributes.hasAttribute("scaleColor")) {
-        scaleColor_ = QColor(attributes.value("scaleColor").toString());
-    }
-
-    if (attributes.hasAttribute("scaleDir")) {
-        QString szDir = attributes.value("scaleDir").toString();
-        this->setDirString(szDir, scaleDir_);
-    }
-
-    if (attributes.hasAttribute("scalePos")) {
-        QString szPos = attributes.value("scalePos").toString();
-        this->setPosString(szPos, scalePos_);
-    }
-
-    if (attributes.hasAttribute("font")) {
-        QString szFont = attributes.value("font").toString();
-        font_.fromString(szFont);
-    }
-
-    if (attributes.hasAttribute("textcolor")) {
-        textColor = QColor(attributes.value("textcolor").toString());
-    }
-
-    if (attributes.hasAttribute("showRuler")) {
-        QString value = attributes.value("showRuler").toString();
-        showRuler_ = false;
-        if(value == "true") {
-            showRuler_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("showScale")) {
-        QString value = attributes.value("showScale").toString();
-        showScale_ = false;
-        if(value == "true") {
-            showScale_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
+    szTagSelected_ = pObj->getProperty("tag");
+    maxValue_ = pObj->getProperty("maxValue").toDouble();
+    minValue_ = pObj->getProperty("minValue").toDouble();
+    scaleNum_ = pObj->getProperty("scaleNum").toInt();
+    backgroundColor_ = QColor(pObj->getProperty("backgroundColor"));
+    foregroundColor_ = QColor(pObj->getProperty("foregroundColor"));
+    scaleColor_ = QColor(pObj->getProperty("scaleColor"));
+    this->setDirString(pObj->getProperty("scaleDir"), scaleDir_);
+    this->setPosString(pObj->getProperty("scalePos"), scalePos_);
+    font_.fromString(pObj->getProperty("font"));
+    textColor = QColor(pObj->getProperty("textcolor"));
+    showRuler_ = pObj->getProperty("showRuler") == "true";
+    showScale_ = pObj->getProperty("showScale") == "true";
+    showOnInitial_ = pObj->getProperty("showOnInitial") == "true";
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+bool ElementValueStick::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("tag", szTagSelected_);
+    pObj->setProperty("maxValue", QString::number(maxValue_));
+    pObj->setProperty("minValue", QString::number(minValue_));
+    pObj->setProperty("scaleNum", QString::number(scaleNum_));
+    pObj->setProperty("backgroundColor", backgroundColor_.name());
+    pObj->setProperty("foregroundColor", foregroundColor_.name());
+    pObj->setProperty("scaleColor", scaleColor_.name());
+    pObj->setProperty("scaleDir", getDirString(scaleDir_));
+    pObj->setProperty("scalePos", getPosString(scalePos_));
+    pObj->setProperty("font", font_.toString());
+    pObj->setProperty("textcolor", textColor.name());
+    pObj->setProperty("showRuler", showRuler_?"true":"false");
+    pObj->setProperty("showScale", showScale_?"true":"false");
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    return true;
+}
+
 
 void ElementValueStick::writeData(QDataStream &out)
 {
@@ -1102,104 +1028,5 @@ void ElementValueStick::readData(QDataStream &in)
     this->setElementHeight(height);
     this->updateBoundingElement();
     this->updatePropertyModel();
-}
-
-QDataStream &operator<<(QDataStream &out,const ElementValueStick &ele)
-{
-    out << ele.elementId
-        << ele.szTagSelected_
-        << ele.maxValue_
-        << ele.minValue_
-        << ele.scaleNum_
-        << ele.backgroundColor_
-        << ele.foregroundColor_
-        << ele.scaleColor_
-        << ele.getDirString(ele.scaleDir_)
-        << ele.getPosString(ele.scalePos_)
-        << ele.font_
-        << ele.textColor
-        << ele.showRuler_
-        << ele.showScale_
-        << ele.showOnInitial_
-        << ele.x()
-        << ele.y()
-        << ele.zValue()
-        << ele.elementWidth
-        << ele.elementHeight;
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in, ElementValueStick &ele)
-{
-    QString id;
-	QString szTagSelected;
-    double maxValue;
-    double minValue;
-    int scaleNum;
-    QColor backgroundColor;
-    QColor foregroundColor;
-    QColor scaleColor;
-    QString scaleDir;
-    QString scalePos;
-    QString font;
-    QColor textColor;
-    bool showRuler;
-    bool showScale;
-    bool showOnInitial;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-
-    in >> id
-	   >> szTagSelected
-       >> maxValue
-       >> minValue
-       >> scaleNum
-       >> backgroundColor
-       >> foregroundColor
-       >> scaleColor
-       >> scaleDir
-       >> scalePos
-       >> font
-       >> textColor
-       >> showRuler
-       >> showScale
-       >> showOnInitial
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height;
-
-    ele.setElementId(id);
-    int index = ele.getIndexFromIDString(id);
-    if(ele.iLastIndex_ < index) {
-        ele.iLastIndex_ = index;
-    }
-    ele.szTagSelected_ = szTagSelected;
-    ele.maxValue_ = maxValue;
-    ele.minValue_ = minValue;
-    ele.scaleNum_ = scaleNum;
-    ele.backgroundColor_ = backgroundColor;
-    ele.foregroundColor_ = foregroundColor;
-    ele.scaleColor_ = scaleColor;
-    ele.setDirString(scaleDir, ele.scaleDir_);
-    ele.setPosString(scalePos, ele.scalePos_);
-    ele.font_ = font;
-    ele.textColor = textColor;
-    ele.showRuler_ = showRuler;
-    ele.showScale_ = showScale;
-    ele.showOnInitial_ = showOnInitial;
-    ele.setElementXPos(static_cast<int>(xpos));
-    ele.setElementYPos(static_cast<int>(ypos));
-    ele.setElementZValue(static_cast<int>(zvalue));
-    ele.setElementWidth(width);
-    ele.setElementHeight(height);
-    ele.updateBoundingElement();
-    ele.updatePropertyModel();
-
-    return in;
 }
 

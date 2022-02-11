@@ -1,8 +1,8 @@
-﻿
-#include "IndicationLampPlugin.h"
+﻿#include "IndicationLampPlugin.h"
 #include "ElementIndicationLamp.h"
 #include <QDebug>
 #include "ProjectData.h"
+
 IndicationLampPlugin::IndicationLampPlugin()
 {
 
@@ -89,9 +89,7 @@ QString IndicationLampPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* IndicationLampPlugin::createElement(const QString &szProjPath,
-                                             const QString &szProjName,
-                                             QtVariantPropertyManager *propertyMgr)
+Element* IndicationLampPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementIndicationLamp(szProjPath, szProjName, propertyMgr);
+    return new ElementIndicationLamp(pProjDataObj, propertyMgr);
 }

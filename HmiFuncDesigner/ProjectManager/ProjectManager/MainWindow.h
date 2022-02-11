@@ -2,116 +2,134 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QMdiSubWindow>
 #include <QStandardItemModel>
 #include <QMap>
-#include "SystemParametersWin.h"
-#include "ChildBase.h"
-#include "ChildForm.h"
+#include <QUndoView>
+#include <QUndoGroup>
+#include <QUndoStack>
+#include "qtpropertymanager.h"
+#include "qtvariantproperty.h"
+#include "qttreepropertybrowser.h"
+#include "ProjectTreeView.h"
+#include <QVariant>
+#include <QIcon>
+#include <QAction>
+#include <QApplication>
+#include <QDockWidget>
+#include <QHeaderView>
+#include <QListWidget>
+#include <QMainWindow>
+#include <QMenu>
+#include <QMenuBar>
+#include <QScrollArea>
+#include <QStatusBar>
+#include <QTabWidget>
+#include <QToolBar>
+#include <QVBoxLayout>
+#include <QWidget>
 
-namespace Ui {
-class MainWindow;
-}
+class QAbstractPage;
+class QStackedWidget;
+class QRunningManager;
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    explicit MainWindow(QWidget *parent = NULL);
+    ~MainWindow() Q_DECL_OVERRIDE;
 
-signals:
-    void treeItemClicked(const QString &itemText);
-
-private slots:   
-    void setActiveSubWindow(ChildForm *window);
-    ChildForm* getActiveSubWindow();
-    void on_actionNewPoject_triggered();
+public slots:
     void on_actionWorkSpace_triggered(bool checked);
-    void on_treeViewProject_clicked(const QModelIndex &index);
-    void on_actionOpenProject_triggered();
-    void on_actionSaveProject_triggered();
-    void on_treeViewProject_activated(const QModelIndex &index);
-    void tagIOGroupAdd(); // 增加组
-    void tagIOGroupRename(); // 重命名组
-    void tagIODeleteGroup(); // 删除组
-    void tagIOGroupCopy(); // 复制组
-    void on_actionSimulate_triggered();
-    void on_actionRun_triggered();
-    void on_actionUpLoad_triggered();
-    void on_actionUDisk_triggered();
-    void on_actionDownload_triggered();
-    void on_actionCloseProject_triggered();
-    void on_actionExit_triggered();
-    void on_actionAddTag_triggered();
-    void on_actionAppendTag_triggered();
-    void on_actionRowCopyTag_triggered();
-    void on_actionColumnCopyTag_triggered();
-    void on_actionModifyTag_triggered();
-    void on_actionDeleteTag_triggered();
-    void on_actionExportTag_triggered();
-    void on_actionImportTag_triggered();
-    void on_actionDeviceNew_triggered();
-    void on_actionDeviceModify_triggered();
-    void on_actionDeviceDelete_triggered();
-    void on_actionHelp_triggered();
-    void on_actionAbout_triggered();
-    void on_actionBigIcon_triggered();
-    void on_actionSmallIcon_triggered();
-
-private:
-    QStandardItemModel *pTreeViewProjectModel;
-
-    QStandardItem *pProjectItem;
-    QStandardItem *pSystemParameters;
-    QStandardItem *pCommunicationDevice;
-    QStandardItem *pComDevice;
-    QStandardItem *pNetDevice;
-    QStandardItem *pBusDevice;
-    QStandardItem *pOPCDevice;
-    QStandardItem *pDataBaseConfig;
-    QStandardItem *pDevVariable;
-    QList<QStandardItem *> pDevVariableTabList;
-    QStandardItem *pTmpVariable;
-    QStandardItem *pSysVariable;
-    QStandardItem *pDataBaseManager;
-    QStandardItem *pRealTimeDatabase;
-    QStandardItem *pHistoryDatabase;
-    QStandardItem *pDrawPage;
-    QStandardItem *pLogicProgram;
-    QStandardItem *pScriptEditor;
-    QStandardItem *pSystemTool;
+    // 工程树节点被单击
+    void onSlotTreeProjectViewClicked(const QString &szItemText);
 
 
 private:
-    ChildForm* activeMdiChild();
     void CreateItemWindows();
-    ChildForm* findMdiChild(const QString &windowTitle);
-    QMdiSubWindow* findMdiSubWindow(const QString &windowTitle);
     void readSettings();  // 读取窗口设置
     void writeSettings(); // 写入窗口设置
-    void initWindow(); // 初始化窗口
-    void setUpProjectTreeView();
-    void UpdateProjectName(QString name);
-    void UpdateDeviceVariableTableGroup();
-    void enableToolBar(QString text);
+    void UpdateProjectName(const QString &szName);
     void loadRecentProjectList();
     void updateRecentProjectList(QString newProj);
     void doOpenProject(QString proj);
-    void CreateDefaultIOTagGroup();
-    void onTreeViewProjectClicked(const QString &szItemText);
 
 protected:
-    void contextMenuEvent(QContextMenuEvent * event);
-    void closeEvent(QCloseEvent *event);  // 关闭事件
+    void closeEvent(QCloseEvent *event) override;  // 关闭事件
+
+public:
+    bool isGridVisible() const;
 
 private:
-    Ui::MainWindow *ui;
-    QString m_strProjectPath;
-    QString m_strProjectName;
-    QString m_CurItem;
-    QString m_CurTreeViewItem;
+    void createUndoView();
+
+private slots:
+    // 新建工程
+    void onNewPoject();
+    // 打开工程
+    void onOpenProject();
+    // 关闭工程
+    void onCloseProject();
+    // 保存工程
+    void onSaveProject();
+    // 设置打开工程的密码
+    void onSetOpenProjPassword();
+    // 退出
+    void onExit();
+
+    // 模拟仿真
+    void onSlotSimulate();
+
+    // 运行工程
+    void onSlotRunProject();
+    void onSlotStart();
+    void onSlotStop();
+
+    // 停止运行工程
+    void onSlotStopRunProject();
+    // 下载工程
+    void onSlotDownloadProject();
+    // 上载工程
+    void onSlotUpLoadProject();
+
+    // 帮助
+    void onSlotHelp();
+    // 关于
+    void onSlotAbout();
+
+    // 工程管理器标签改变
+    void onSlotTabProjectMgrCurChanged(int index);
+
+private:
+    // 创建状态栏
+    void createStatusBar();
+    // 创建动作
+    void createActions();
+    // 创建菜单
+    void createMenus();
+    // 创建工具条
+    void createToolbars();
+    // 拷贝系统变量
+    void copySystemTags();
+
+private:
+    QString m_szCurItem;
+    QString m_szCurTreeViewItem;
+    QWidget *m_pDesignerWidgetObj = NULL;
+    bool m_bGraphPageGridVisible;
+    int m_iCurrentGraphPageIndex;
+    QString m_szCopyGraphPageFileName;
+    QStackedWidget *m_pCentralWidgetObj = NULL;
+    ProjectTreeView *m_pProjectTreeViewObj = NULL;
+    QStatusBar *m_pStatusBarObj = NULL; // 状态栏
+    QDockWidget *m_pDockProjectMgrObj = NULL; // 工程管理器停靠控件
+    QTabWidget *m_pTabProjectMgrObj = NULL; // 工程管理器TabWidget控件
+    QMenu *m_pMenuProjectObj = NULL; // 工程菜单
+    QMenu *m_pMenuViewObj = NULL; // 视图
+    QMenu *m_pMenuToolsObj = NULL; // 工具菜单
+    QMenu *m_pMenuHelpObj = NULL; // 帮助菜单
+    QMap<QString, QAbstractPage*> m_mapNameToPage;
 };
 
 #endif // MAINWINDOW_H

@@ -10,16 +10,14 @@ class ElementIndicationLamp : public Element
 {
     Q_OBJECT
 public:
-    ElementIndicationLamp(const QString &szProjPath,
-                          const QString &szProjName,
-                          QtVariantPropertyManager *propertyMgr);
+    ElementIndicationLamp(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &writer) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -28,9 +26,6 @@ public:
     int type() const override {
         return IndicationLampItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out,const ElementIndicationLamp &IndicationLamp);
-    friend QDataStream &operator>>(QDataStream &in,ElementIndicationLamp &IndicationLamp);
 
 protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

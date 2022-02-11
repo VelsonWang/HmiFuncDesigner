@@ -50,7 +50,7 @@
 #include <QStyleOption>
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 QtCursorDatabase::QtCursorDatabase()
@@ -105,8 +105,9 @@ void QtCursorDatabase::clear()
 
 void QtCursorDatabase::appendCursor(Qt::CursorShape shape, const QString &name, const QIcon &icon)
 {
-    if (m_cursorShapeToValue.contains(shape))
+    if (m_cursorShapeToValue.contains(shape)) {
         return;
+    }
     const int value = m_cursorNames.count();
     m_cursorNames.append(name);
     m_cursorIcons.insert(value, icon);
@@ -127,8 +128,9 @@ QMap<int, QIcon> QtCursorDatabase::cursorShapeIcons() const
 QString QtCursorDatabase::cursorToShapeName(const QCursor &cursor) const
 {
     int val = cursorToValue(cursor);
-    if (val >= 0)
+    if (val >= 0) {
         return m_cursorNames.at(val);
+    }
     return QString();
 }
 
@@ -142,8 +144,9 @@ int QtCursorDatabase::cursorToValue(const QCursor &cursor) const
 {
 #ifndef QT_NO_CURSOR
     Qt::CursorShape shape = cursor.shape();
-    if (m_cursorShapeToValue.contains(shape))
+    if (m_cursorShapeToValue.contains(shape)) {
         return m_cursorShapeToValue[shape];
+    }
 #endif
     return -1;
 }
@@ -151,8 +154,9 @@ int QtCursorDatabase::cursorToValue(const QCursor &cursor) const
 #ifndef QT_NO_CURSOR
 QCursor QtCursorDatabase::valueToCursor(int value) const
 {
-    if (m_valueToCursorShape.contains(value))
+    if (m_valueToCursorShape.contains(value)) {
         return QCursor(m_valueToCursorShape[value]);
+    }
     return QCursor();
 }
 #endif
@@ -222,10 +226,11 @@ QtBoolEdit::QtBoolEdit(QWidget *parent) :
     m_textVisible(true)
 {
     QHBoxLayout *lt = new QHBoxLayout;
-    if (QApplication::layoutDirection() == Qt::LeftToRight)
+    if (QApplication::layoutDirection() == Qt::LeftToRight) {
         lt->setContentsMargins(4, 0, 0, 0);
-    else
+    } else {
         lt->setContentsMargins(0, 0, 4, 0);
+    }
     lt->addWidget(m_checkBox);
     setLayout(lt);
     connect(m_checkBox, SIGNAL(toggled(bool)), this, SIGNAL(toggled(bool)));
@@ -235,14 +240,16 @@ QtBoolEdit::QtBoolEdit(QWidget *parent) :
 
 void QtBoolEdit::setTextVisible(bool textVisible)
 {
-    if (m_textVisible == textVisible)
+    if (m_textVisible == textVisible) {
         return;
+    }
 
     m_textVisible = textVisible;
-    if (m_textVisible)
+    if (m_textVisible) {
         m_checkBox->setText(isChecked() ? tr("True") : tr("False"));
-    else
+    } else {
         m_checkBox->setText(QString());
+    }
 }
 
 Qt::CheckState QtBoolEdit::checkState() const
@@ -263,8 +270,9 @@ bool QtBoolEdit::isChecked() const
 void QtBoolEdit::setChecked(bool c)
 {
     m_checkBox->setChecked(c);
-    if (!m_textVisible)
+    if (!m_textVisible) {
         return;
+    }
     m_checkBox->setText(isChecked() ? tr("True") : tr("False"));
 }
 
@@ -318,13 +326,15 @@ bool QtKeySequenceEdit::eventFilter(QObject *o, QEvent *e)
             action->setShortcut(QKeySequence());
             QString actionString = action->text();
             const int pos = actionString.lastIndexOf(QLatin1Char('\t'));
-            if (pos > 0)
+            if (pos > 0) {
                 actionString.remove(pos, actionString.length() - pos);
+            }
             action->setText(actionString);
         }
-        QAction *actionBefore = Q_NULLPTR;
-        if (actions.count() > 0)
+        QAction *actionBefore = NULL;
+        if (actions.count() > 0) {
             actionBefore = actions[0];
+        }
         QAction *clearAction = new QAction(tr("Clear Shortcut"), menu);
         menu->insertAction(actionBefore, clearAction);
         menu->insertSeparator(actionBefore);
@@ -341,8 +351,9 @@ bool QtKeySequenceEdit::eventFilter(QObject *o, QEvent *e)
 
 void QtKeySequenceEdit::slotClearShortcut()
 {
-    if (m_keySequence.isEmpty())
+    if (m_keySequence.isEmpty()) {
         return;
+    }
     setKeySequence(QKeySequence());
     emit keySequenceChanged(m_keySequence);
 }
@@ -352,8 +363,9 @@ void QtKeySequenceEdit::handleKeyEvent(QKeyEvent *e)
     int nextKey = e->key();
     if (nextKey == Qt::Key_Control || nextKey == Qt::Key_Shift ||
             nextKey == Qt::Key_Meta || nextKey == Qt::Key_Alt ||
-            nextKey == Qt::Key_Super_L || nextKey == Qt::Key_AltGr)
+            nextKey == Qt::Key_Super_L || nextKey == Qt::Key_AltGr) {
         return;
+    }
 
     nextKey |= translateModifiers(e->modifiers(), e->text());
     int k0 = m_keySequence[0];
@@ -361,15 +373,31 @@ void QtKeySequenceEdit::handleKeyEvent(QKeyEvent *e)
     int k2 = m_keySequence[2];
     int k3 = m_keySequence[3];
     switch (m_num) {
-        case 0: k0 = nextKey; k1 = 0; k2 = 0; k3 = 0; break;
-        case 1: k1 = nextKey; k2 = 0; k3 = 0; break;
-        case 2: k2 = nextKey; k3 = 0; break;
-        case 3: k3 = nextKey; break;
-        default: break;
+        case 0:
+            k0 = nextKey;
+            k1 = 0;
+            k2 = 0;
+            k3 = 0;
+            break;
+        case 1:
+            k1 = nextKey;
+            k2 = 0;
+            k3 = 0;
+            break;
+        case 2:
+            k2 = nextKey;
+            k3 = 0;
+            break;
+        case 3:
+            k3 = nextKey;
+            break;
+        default:
+            break;
     }
     ++m_num;
-    if (m_num > 3)
+    if (m_num > 3) {
         m_num = 0;
+    }
     m_keySequence = QKeySequence(k0, k1, k2, k3);
     m_lineEdit->setText(m_keySequence.toString(QKeySequence::NativeText));
     e->accept();
@@ -378,8 +406,9 @@ void QtKeySequenceEdit::handleKeyEvent(QKeyEvent *e)
 
 void QtKeySequenceEdit::setKeySequence(const QKeySequence &sequence)
 {
-    if (sequence == m_keySequence)
+    if (sequence == m_keySequence) {
         return;
+    }
     m_num = 0;
     m_keySequence = sequence;
     m_lineEdit->setText(m_keySequence.toString(QKeySequence::NativeText));
@@ -393,14 +422,18 @@ QKeySequence QtKeySequenceEdit::keySequence() const
 int QtKeySequenceEdit::translateModifiers(Qt::KeyboardModifiers state, const QString &text) const
 {
     int result = 0;
-    if ((state & Qt::ShiftModifier) && (text.size() == 0 || !text.at(0).isPrint() || text.at(0).isLetter() || text.at(0).isSpace()))
+    if ((state & Qt::ShiftModifier) && (text.size() == 0 || !text.at(0).isPrint() || text.at(0).isLetter() || text.at(0).isSpace())) {
         result |= Qt::SHIFT;
-    if (state & Qt::ControlModifier)
+    }
+    if (state & Qt::ControlModifier) {
         result |= Qt::CTRL;
-    if (state & Qt::MetaModifier)
+    }
+    if (state & Qt::MetaModifier) {
         result |= Qt::META;
-    if (state & Qt::AltModifier)
+    }
+    if (state & Qt::AltModifier) {
         result |= Qt::ALT;
+    }
     return result;
 }
 
@@ -452,5 +485,5 @@ bool QtKeySequenceEdit::event(QEvent *e)
 
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
