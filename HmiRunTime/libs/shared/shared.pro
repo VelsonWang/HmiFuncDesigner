@@ -1,4 +1,4 @@
-QT += core gui widgets xml script
+QT += core gui widgets xml script sql
 
 TARGET = shared
 TEMPLATE = lib
@@ -38,6 +38,7 @@ HEADERS += \
     pubtool.h \
     realtimedb.h \
     sharedlibglobal.h \
+    widgets/keyboard/inputmethodnumber.h \
     widgets/qimagebox.h \
     widgets/qindicationlamp.h \
     widgets/qjarshape.h \
@@ -126,6 +127,7 @@ SOURCES += \
     property/qtagtextlistproperty.cpp \
     pubtool.cpp \
     realtimedb.cpp \
+    widgets/keyboard/inputmethodnumber.cpp \
     widgets/qimagebox.cpp \
     widgets/qindicationlamp.cpp \
     widgets/qjarshape.cpp \
@@ -196,7 +198,8 @@ SOURCES += \
     property/qstylesheetproperty.cpp \
     qstylesheetinfo.cpp
 
-FORMS +=
+FORMS += \
+    widgets/keyboard/inputmethodnumber.ui
 
 RESOURCES += \
     shared.qrc

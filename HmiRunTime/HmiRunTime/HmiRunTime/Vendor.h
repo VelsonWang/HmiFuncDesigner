@@ -111,8 +111,6 @@ public:
     void initialize();
     // 添加设备变量至变量列表
     void addIOTagToDeviceTagList(RunTimeTag* pTag);
-    // 添加设备变量至变量写队列
-    void addIOTagToDeviceTagWriteQueue(RunTimeTag* pTag);
     // 查找设备变量
     RunTimeTag* findIOTagByID(int id);
     // 写变量
@@ -152,10 +150,8 @@ public:
 
 public:
     IPort *m_pPortObj;
-    QQueue<RunTimeTag *> m_writeQueue;
     QList<RunTimeTag *> m_readList;
     bool m_bIsRunning = false;
-    QMutex m_mutexWrite;
     IVendorPlugin *m_pVendorPluginObj = NULL;
     VendorPrivate *m_pVendorPrivateObj = NULL;
     bool m_bOnlineStatus = false; // true-在线, false-离线

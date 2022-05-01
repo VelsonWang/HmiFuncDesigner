@@ -16,12 +16,18 @@ public:
 
 signals:
 
+private slots:
+    void enterPressed();
+
 protected:
-    void paintEvent(QPaintEvent *event);
+    void paintEvent(QPaintEvent *event) override;
+    void mousePressEvent(QMouseEvent *event) override;
+    void focusInEvent(QFocusEvent *event) override;
 
 private:
     QString m_tagId;
     RunTimeTag *m_tag;
+    bool m_editing; //处于编辑模式
 };
 
 #endif // QLINEEDITEX_H
