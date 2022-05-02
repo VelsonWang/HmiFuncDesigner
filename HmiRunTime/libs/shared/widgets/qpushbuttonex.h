@@ -3,8 +3,9 @@
 
 #include <QPushButton>
 #include <QPaintEvent>
+#include "iloader.h"
 
-class QPushButtonEx : public QPushButton
+class QPushButtonEx : public QPushButton, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QStringList funcs READ getFuncs WRITE setFuncs)
@@ -24,7 +25,7 @@ class QPushButtonEx : public QPushButton
     Q_PROPERTY(bool showOnInitial READ getShowOnInitial WRITE setShowOnInitial )
 
 public:
-    explicit QPushButtonEx(QWidget *parent = nullptr);
+    Q_INVOKABLE QPushButtonEx(QWidget *parent = nullptr);
 
     QStringList getFuncs() const;
     void setFuncs(const QStringList &value);
@@ -70,6 +71,9 @@ public:
 
     QColor getBorderColor() const;
     void setBorderColor(const QColor &value);
+
+public:
+    void fromObject(XMLObject* xml) override;
 
 private:
     void setPropertyInner();

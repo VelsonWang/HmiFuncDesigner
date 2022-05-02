@@ -1,9 +1,15 @@
 #include "qlabelex.h"
+#include <QDebug>
 
 QLabelEx::QLabelEx(QWidget *parent) : QLabel(parent)
 {
     m_tagId = "";
     m_tag = NULL;
+}
+
+void QLabelEx::fromObject(XMLObject* xml)
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
 }
 
 void QLabelEx::paintEvent(QPaintEvent *event)

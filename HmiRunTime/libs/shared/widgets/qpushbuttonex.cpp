@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QFont>
+#include <QDebug>
 
 QPushButtonEx::QPushButtonEx(QWidget *parent) : QPushButton(parent)
 {
@@ -27,6 +28,12 @@ QPushButtonEx::QPushButtonEx(QWidget *parent) : QPushButton(parent)
     transparent = false;
 
     setPropertyInner();
+}
+
+
+void QPushButtonEx::fromObject(XMLObject* xml)
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
 }
 
 void QPushButtonEx::setPropertyInner()

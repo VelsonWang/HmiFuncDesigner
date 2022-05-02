@@ -3,16 +3,20 @@
 
 #include <QLineEdit>
 #include "realtimedb.h"
+#include "iloader.h"
 
-class QLineEditEx : public QLineEdit
+class QLineEditEx : public QLineEdit, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QString tag READ tag WRITE setTag)
 public:
-    explicit QLineEditEx(QWidget *parent = nullptr);
+    Q_INVOKABLE QLineEditEx(QWidget *parent = nullptr);
 
     QString tag();
     void setTag(const QString &szName);
+
+public:
+    void fromObject(XMLObject* xml) override;
 
 signals:
 

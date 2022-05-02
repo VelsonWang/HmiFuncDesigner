@@ -10,6 +10,11 @@ QLineEditEx::QLineEditEx(QWidget *parent) : QLineEdit(parent)
     m_editing = false;
 }
 
+void QLineEditEx::fromObject(XMLObject* xml)
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+}
+
 void QLineEditEx::paintEvent(QPaintEvent *event)
 {
     if(!m_editing) {

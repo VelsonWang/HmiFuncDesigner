@@ -101,8 +101,7 @@ int main(int argc, char *argv[])
         qCritical() << "project config file not found!";
         return -1;
     } else {
-        qRegisterBaseProperty();
-        qRegisterBaseHost();
+        qRegisterWidgets();
         QRunningManager runningMgr;
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
 

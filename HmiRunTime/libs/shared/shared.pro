@@ -36,9 +36,12 @@ HEADERS += \
     public.h \
     publicfunction.h \
     pubtool.h \
+    qwidgetfactory.h \
     realtimedb.h \
     sharedlibglobal.h \
+    widgets/iloader.h \
     widgets/keyboard/inputmethodnumber.h \
+    widgets/qformwidget.h \
     widgets/qimagebox.h \
     widgets/qindicationlamp.h \
     widgets/qjarshape.h \
@@ -69,7 +72,6 @@ HEADERS += \
     property/qmemerydataproperty.h \
     property/qalignmentproperty.h \
     host/qabstracthost.h \
-    qhostfactory.h \
     qabstractplugin.h \
     pluginloader.h \
     host/qabstractwidgethost.h \
@@ -78,7 +80,6 @@ HEADERS += \
     host/qwidgethost.h \
     qbaseinit.h \
     host/qframehost.h \
-    host/qformhost.h \
     qpagemanager.h \
     host/qlabelhost.h \
     host/qlcdnumberhost.h \
@@ -126,8 +127,11 @@ SOURCES += \
     property/qtagproperty.cpp \
     property/qtagtextlistproperty.cpp \
     pubtool.cpp \
+    qwidgetfactory.cpp \
     realtimedb.cpp \
+    widgets/iloader.cpp \
     widgets/keyboard/inputmethodnumber.cpp \
+    widgets/qformwidget.cpp \
     widgets/qimagebox.cpp \
     widgets/qindicationlamp.cpp \
     widgets/qjarshape.cpp \
@@ -157,7 +161,6 @@ SOURCES += \
     property/qmemerydataproperty.cpp \
     property/qalignmentproperty.cpp \
     host/qabstracthost.cpp \
-    qhostfactory.cpp \
     qabstractplugin.cpp \
     pluginloader.cpp \
     host/qabstractwidgethost.cpp \
@@ -166,7 +169,6 @@ SOURCES += \
     host/qwidgethost.cpp \
     qbaseinit.cpp \
     host/qframehost.cpp \
-    host/qformhost.cpp \
     qpagemanager.cpp \
     host/qlabelhost.cpp \
     host/qlcdnumberhost.cpp \

@@ -15,6 +15,11 @@ QImageBox::QImageBox(QWidget *parent) : QLabel(parent)
     setPropertyInner();
 }
 
+void QImageBox::fromObject(XMLObject* xml)
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+}
+
 QString QImageBox::getImageFile()
 {
     return m_szImageFile;
@@ -28,7 +33,7 @@ void QImageBox::setImageFile(const QString szName)
         m_imageObj = PictureResourceManager::base64ToImage(szListInfo.at(1).toLocal8Bit(), info.suffix());
         setPropertyInner();
     }
-    m_szImageFile = szName; 
+    m_szImageFile = szName;
 }
 
 bool QImageBox::isNoScale()
@@ -75,9 +80,9 @@ void QImageBox::setPropertyInner()
         QString szStyleSheet = "";
         szStyleSheet += QString("border-width: %1px; border-style: solid;").arg(QString::number(m_iBoardWidth));
         szStyleSheet += QString("border-color: rgb(%1, %2, %3);")
-                .arg(QString::number(m_boardColorObj.red()))
-                .arg(QString::number(m_boardColorObj.green()))
-                .arg(QString::number(m_boardColorObj.blue()));
+                        .arg(QString::number(m_boardColorObj.red()))
+                        .arg(QString::number(m_boardColorObj.green()))
+                        .arg(QString::number(m_boardColorObj.blue()));
         this->setStyleSheet(szStyleSheet);
     } else {
         this->setStyleSheet("");
