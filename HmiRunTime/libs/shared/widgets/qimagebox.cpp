@@ -1,5 +1,6 @@
 #include "qimagebox.h"
 #include "../qprojectcore.h"
+#include "../xmlobject.h"
 #include <QFileInfo>
 #include <QPainter>
 #include <QPixmap>
@@ -17,7 +18,43 @@ QImageBox::QImageBox(QWidget *parent) : QLabel(parent)
 
 void QImageBox::fromObject(XMLObject* xml)
 {
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+    if(xml != NULL) {
+        if(xml->getTagName() == "Object") {
+            QList<XMLObject*> properties = xml->getChildren();
+            foreach(XMLObject* pObj, properties) {
+                if(pObj->getTagName() == PROPERTY_TITLE) {
+                    QString propertyName = pObj->getProperty("name");
+                    if(propertyName == "objectName") {
+                        this->setProperty("objectName", pObj->getProperty("value"));
+                    } else if(propertyName == "geometry") {
+                        int x, y, width, height;
+                        QList<XMLObject*> tmpProps = pObj->getChildren();
+                        foreach(XMLObject* propObj, tmpProps) {
+                            QString propertyName = propObj->getProperty("name");
+                            if(propertyName == "x") {
+                                x = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "y") {
+                                y = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Width") {
+                                width = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Height") {
+                                height = propObj->getProperty("value").toInt();
+                            }
+                        }
+                        this->setProperty("geometry", QRect(x, y, width, height));
+                    } else if(propertyName == "ImageFile") {
+                        this->setProperty("ImageFile", pObj->getProperty("value"));
+                    } else if(propertyName == "NoScale") {
+                        this->setProperty("NoScale", pObj->getProperty("value"));
+                    } else if(propertyName == "BoardWidth") {
+                        this->setProperty("BoardWidth", pObj->getProperty("value"));
+                    } else if(propertyName == "BoardColor") {
+                        this->setProperty("BoardColor", pObj->getProperty("value"));
+                    }
+                }
+            }
+        }
+    }
 }
 
 QString QImageBox::getImageFile()

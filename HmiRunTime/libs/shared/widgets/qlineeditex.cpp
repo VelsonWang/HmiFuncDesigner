@@ -1,5 +1,6 @@
 #include "qlineeditex.h"
 #include "keyboard/inputmethodnumber.h"
+#include "../xmlobject.h"
 #include <QFocusEvent>
 #include <QDebug>
 
@@ -12,7 +13,49 @@ QLineEditEx::QLineEditEx(QWidget *parent) : QLineEdit(parent)
 
 void QLineEditEx::fromObject(XMLObject* xml)
 {
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+    if(xml != NULL) {
+        if(xml->getTagName() == "Object") {
+            QList<XMLObject*> properties = xml->getChildren();
+            foreach(XMLObject* pObj, properties) {
+                if(pObj->getTagName() == PROPERTY_TITLE) {
+                    QString propertyName = pObj->getProperty("name");
+                    if(propertyName == "tag") {
+                        this->setProperty("tag", pObj->getProperty("value"));
+                    } else if(propertyName == "objectName") {
+                        this->setProperty("objectName", pObj->getProperty("value"));
+                    } else if(propertyName == "text") {
+                        this->setProperty("text", pObj->getProperty("value"));
+                    } else if(propertyName == "geometry") {
+                        int x, y, width, height;
+                        QList<XMLObject*> tmpProps = pObj->getChildren();
+                        foreach(XMLObject* propObj, tmpProps) {
+                            QString propertyName = propObj->getProperty("name");
+                            if(propertyName == "x") {
+                                x = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "y") {
+                                y = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Width") {
+                                width = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Height") {
+                                height = propObj->getProperty("value").toInt();
+                            }
+                        }
+                        this->setProperty("geometry", QRect(x, y, width, height));
+                    } else if(propertyName == "alignment") {
+                        this->setProperty("alignment", pObj->getProperty("value"));
+                    } else if(propertyName == "readOnly") {
+                        this->setProperty("readOnly", pObj->getProperty("value"));
+                    } else if(propertyName == "frame") {
+                        this->setProperty("frame", pObj->getProperty("value"));
+                    } else if(propertyName == "textChanged") {
+                        this->setProperty("textChanged", pObj->getProperty("value"));
+                    } else if(propertyName == "editFinish") {
+                        this->setProperty("editFinish", pObj->getProperty("value"));
+                    }
+                }
+            }
+        }
+    }
 }
 
 void QLineEditEx::paintEvent(QPaintEvent *event)
@@ -39,11 +82,6 @@ void QLineEditEx::setTag(const QString &szTag)
         m_tagId = szTag;
         m_tag = RealTimeDB::instance()->tag(tagId(szTag));
     }
-}
-
-void QLineEditEx::focusInEvent(QFocusEvent *event)
-{
-
 }
 
 void QLineEditEx::mousePressEvent(QMouseEvent *)

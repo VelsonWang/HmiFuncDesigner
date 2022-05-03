@@ -26,7 +26,6 @@ private slots:
 protected:
     void paintEvent(QPaintEvent *event) override;
     void mousePressEvent(QMouseEvent *event) override;
-    void focusInEvent(QFocusEvent *event) override;
 
 private:
     QString m_tagId;

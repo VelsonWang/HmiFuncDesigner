@@ -2,7 +2,6 @@
 #include "xmlobject.h"
 #include "qpagemanager.h"
 #include "host/qprojecthost.h"
-#include "host/qformhost.h"
 #include "property/qabstractproperty.h"
 #include "qcommonstruct.h"
 #include "Helper.h"

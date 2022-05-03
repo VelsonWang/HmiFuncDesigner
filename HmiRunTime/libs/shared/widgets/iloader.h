@@ -11,6 +11,8 @@ class XMLObject;
 #define ATTR_VISIBLE  "Visible"
 #define ATTR_CAN_SAME "Can_Same"
 #define ATTR_RESET_ABLEABLE "Can_Reset"
+#define OBJECT_TITLE "Object"
+
 
 class ILoader
 {

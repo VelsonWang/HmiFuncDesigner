@@ -1,6 +1,5 @@
 #include "qwidgetfactory.h"
 #include "host/qabstracthost.h"
-#include "host/qformhost.h"
 #include "widgets/qformwidget.h"
 #include "xmlobject.h"
 
@@ -24,7 +23,7 @@ void QWidgetFactory::registerWidget(const QString name, const QMetaObject *host)
 QWidget* QWidgetFactory::createWidget(const QString &name)
 {
     QWidget* pWidgetObj = NULL;
-    if(name == FORM_TITLE) {
+    if(name == "form") {
         pWidgetObj = new QFormWidget;
     } else {
         tagWidgetInfo *info = m_metaMap.value(name);
@@ -53,12 +52,28 @@ QWidget* QWidgetFactory::createWidget(XMLObject *xml)
 
     QWidget* pWidgetObj = NULL;
 
-    if(xml->getTagName() == FORM_TITLE) {
+    if(xml->getTagName() == "form") {
+        //解析画面控件
         pWidgetObj = new QFormWidget;
         pWidgetObj->setProperty("uuid", xml->getProperty("uuid"));
         ILoader *pLoaderObj = dynamic_cast<ILoader *>(pWidgetObj);
         if(pLoaderObj) {
             pLoaderObj->fromObject(xml);
+        }
+        //解析画面子控件
+        QList<XMLObject*> objects = xml->getChildren();
+        foreach(XMLObject* obj, objects) {
+            if(obj->getTagName() == OBJECT_TITLE) {
+                QWidget* pChildWidgetObj = createWidget(obj->getProperty(HOST_TYPE));
+                if(pChildWidgetObj) {
+                    pChildWidgetObj->setProperty("uuid", obj->getProperty("uuid"));
+                    ILoader *pLoaderObj = dynamic_cast<ILoader *>(pChildWidgetObj);
+                    if(pLoaderObj) {
+                        pLoaderObj->fromObject(obj);
+                    }
+                    pChildWidgetObj->setParent(pWidgetObj);
+                }
+            }
         }
     } else {
         pWidgetObj = createWidget(xml->getProperty(HOST_TYPE));

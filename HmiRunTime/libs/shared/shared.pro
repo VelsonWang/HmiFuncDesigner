@@ -21,7 +21,6 @@ INCLUDEPATH += $$PWD/projdata
 
 HEADERS += \
     confighelper.h \
-    host/qimagehost.h \
     host/qindicationlamphost.h \
     host/qjarshapehost.h \
     host/qswitchbuttonhost.h \
@@ -29,7 +28,6 @@ HEADERS += \
     property/qcolorproperty.h \
     property/qfileproperty.h \
     property/qfunctionproperty.h \
-    property/qimageproperty.h \
     property/qtagcolorlistproperty.h \
     property/qtagproperty.h \
     property/qtagtextlistproperty.h \
@@ -81,13 +79,10 @@ HEADERS += \
     qbaseinit.h \
     host/qframehost.h \
     qpagemanager.h \
-    host/qlabelhost.h \
     host/qlcdnumberhost.h \
     host/qabstractbuttonhost.h \
-    host/qpushbuttonhost.h \
     host/qcheckboxhost.h \
     host/qradiobuttonhost.h \
-    host/qlineedithost.h \
     host/qabstractsliderhost.h \
     host/qdialhost.h \
     host/qsliderhost.h \
@@ -114,7 +109,6 @@ HEADERS += \
 
 SOURCES += \
     confighelper.cpp \
-    host/qimagehost.cpp \
     host/qindicationlamphost.cpp \
     host/qjarshapehost.cpp \
     host/qswitchbuttonhost.cpp \
@@ -122,7 +116,6 @@ SOURCES += \
     property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
     property/qfunctionproperty.cpp \
-    property/qimageproperty.cpp \
     property/qtagcolorlistproperty.cpp \
     property/qtagproperty.cpp \
     property/qtagtextlistproperty.cpp \
@@ -170,13 +163,10 @@ SOURCES += \
     qbaseinit.cpp \
     host/qframehost.cpp \
     qpagemanager.cpp \
-    host/qlabelhost.cpp \
     host/qlcdnumberhost.cpp \
     host/qabstractbuttonhost.cpp \
-    host/qpushbuttonhost.cpp \
     host/qcheckboxhost.cpp \
     host/qradiobuttonhost.cpp \
-    host/qlineedithost.cpp \
     host/qabstractsliderhost.cpp \
     host/qdialhost.cpp \
     host/qsliderhost.cpp \

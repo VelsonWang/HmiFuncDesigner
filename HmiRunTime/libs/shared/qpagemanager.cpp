@@ -1,7 +1,6 @@
 #include "qpagemanager.h"
 #include "xmlobject.h"
 #include "host/qabstracthost.h"
-#include "host/qformhost.h"
 #include "qwidgetfactory.h"
 #include "property/qabstractproperty.h"
 #include <QFile>
