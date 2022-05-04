@@ -73,7 +73,7 @@
               </sizepolicy>
              </property>
              <property name="text">
-              <string>时间功能函数列表：</string>
+              <string>功能函数列表：</string>
              </property>
             </widget>
            </item>
@@ -118,6 +118,9 @@
                <string>设置参数属性：</string>
               </property>
              </widget>
+            </item>
+            <item>
+             <widget class="QStackedWidget" name="stackedWidget"/>
             </item>
            </layout>
           </widget>

@@ -61,7 +61,7 @@ void NewNetDeviceDialog::on_btnDeviceSelect_clicked()
         m_szPluginName = devName;
         // 查找相同的设备名称
         int findCnt = 0;
-        DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
+        DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->m_deviceInfo;
 continueFind:
         for(int i = 0; i < deviceInfo.m_listDeviceInfoObject.count(); i++) {
             DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
@@ -147,7 +147,7 @@ void NewNetDeviceDialog::load(const QString &szName)
     if(szName == "") {
         return;
     }
-    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->m_deviceInfo;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
     if(pObj == NULL) {
         return;
@@ -185,7 +185,7 @@ void NewNetDeviceDialog::load(const QString &szName)
 
 void NewNetDeviceDialog::save(const QString &szName)
 {
-    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->deviceInfo_;
+    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->m_deviceInfo;
     DeviceInfoObject *pObj = deviceInfo.getObjectByName(szName);
 
     if(pObj == NULL) {

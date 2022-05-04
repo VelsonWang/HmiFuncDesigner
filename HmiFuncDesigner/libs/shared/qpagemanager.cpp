@@ -318,13 +318,14 @@ void QPageManager::getAllPageName(QStringList &szList)
     szList.clear();
     foreach(QAbstractHost* pHostObj, m_page_list) {
         QString szTitle = pHostObj->property("title").toString();
+        QString uuid = pHostObj->getAttribute("uuid");
         //qDebug() << "title: " << szTitle;
         if(szTitle == FORM_TITLE) {
             QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
             if(pProObj) {
                 QString szPageName = pProObj->getValue().toString();
                 //qDebug() << "page name: " << szPageName;
-                szList.append(szPageName);
+                szList.append(QString("%1:%2").arg(uuid).arg(szPageName));
             }
         }
     }

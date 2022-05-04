@@ -66,7 +66,7 @@ void NetSettingDialog::on_btnExit_clicked()
 
 void NetSettingDialog::load()
 {
-    NetSetting &netSetting = QSoftCore::getCore()->getProjectCore()->netSetting_;
+    NetSetting &netSetting = QSoftCore::getCore()->getProjectCore()->m_netSetting;
     ui->checkHotStandbyMode->setChecked(netSetting.isHotStandbyMode());
     ui->checkClientMode->setChecked(netSetting.isClientMode());
     ui->rtbnServerStation->setChecked(netSetting.isServerStation());
@@ -79,7 +79,7 @@ void NetSettingDialog::load()
 
 void NetSettingDialog::save()
 {
-    NetSetting &netSetting = QSoftCore::getCore()->getProjectCore()->netSetting_;
+    NetSetting &netSetting = QSoftCore::getCore()->getProjectCore()->m_netSetting;
     netSetting.setHotStandbyMode(ui->checkHotStandbyMode->isChecked());
     netSetting.setClientMode(ui->checkClientMode->isChecked());
     netSetting.setServerStation(ui->rtbnServerStation->isChecked());

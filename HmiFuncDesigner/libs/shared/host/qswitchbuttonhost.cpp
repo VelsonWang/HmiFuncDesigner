@@ -52,7 +52,6 @@ void QSwitchButtonHost::initProperty()
         pObj->setObjectProperty("name", "funcs");
         pObj->setAttribute("show_name", tr("功能操作"));
         pObj->setAttribute("group", "HMI");
-        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
         insertProperty(pObj);
     }
 

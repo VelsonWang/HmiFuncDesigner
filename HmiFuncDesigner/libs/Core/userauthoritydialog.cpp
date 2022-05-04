@@ -293,7 +293,7 @@ bool UserAuthorityDialog::check_data()
 
 void UserAuthorityDialog::load()
 {
-    UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->userAuthority_;
+    UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->m_userAuthority;
     pUserModel->m_tagUserItems.clear();
     for (int i = 0; i < userAuthority.getCount(); ++i) {
         TagUserItem item;
@@ -319,7 +319,7 @@ void UserAuthorityDialog::load()
 
 void UserAuthorityDialog::save()
 {
-    UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->userAuthority_;
+    UserAuthority &userAuthority = QSoftCore::getCore()->getProjectCore()->m_userAuthority;
     userAuthority.m_userAuthority.clear();
     TagUserItem item;
 

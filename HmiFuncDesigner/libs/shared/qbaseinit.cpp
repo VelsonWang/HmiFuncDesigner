@@ -82,29 +82,28 @@ void qRegisterBaseProperty()
 
 void qRegisterBaseHost()
 {
-    qRegisterHost("containners.widget", QWidgetHost);
+    //    qRegisterHost("containners.widget", QWidgetHost);
     qRegisterHost("containners.frame", QFrameHost);
     qRegisterHost("display_widgets.label", QLabelHost);
     qRegisterHost("display_widgets.image", QImageHost);
     qRegisterHost("display_widgets.indicationlamp", QIndicationLampHost);
     qRegisterHost("display_widgets.qjarshape", QJarShapeHost);
     qRegisterHost("display_widgets.qvaluestick", QValueStickHost);
-    qRegisterHost("display_widgets.lcdnumber", QLCDNumberHost);
+    //    qRegisterHost("display_widgets.lcdnumber", QLCDNumberHost);
     qRegisterHost("buttons.pushbutton", QPushButtonHost);
     qRegisterHost("buttons.switchbutton", QSwitchButtonHost);
-    qRegisterHost("buttons.checkbox", QCheckBoxHost);
-    qRegisterHost("buttons.radiobutton", QRadioButtonHost);
+    //    qRegisterHost("buttons.checkbox", QCheckBoxHost);
+    //    qRegisterHost("buttons.radiobutton", QRadioButtonHost);
     qRegisterHost("inputwidgets.lineedit", QLineEditHost);
-    qRegisterHost("inputwidgets.dial", QDialHost);
-    qRegisterHost("inputwidgets.slider", QSliderHost);
-    qRegisterHost("inputwidgets.spinbox", QSpinBoxHost);
-    qRegisterHost("inputwidgets.doublespinbox", QDoubleSpinBoxHost);
-    qRegisterHost("inputwidgets.datetimeedit", QDateTimeEditHost);
-    qRegisterHost("inputwidgets.dateedit", QDateEditHost);
-    qRegisterHost("inputwidgets.timeedit", QTimeEditHost);
-    qRegisterHost("inputwidgets.scrollbar", QScrollBarHost);
-    qRegisterHost("inputwidgets.combobox", QComboBoxHost);
-    qRegisterHost("displaywidgets.progressbar", QProgressBarHost);
+    //    qRegisterHost("inputwidgets.dial", QDialHost);
+    //    qRegisterHost("inputwidgets.slider", QSliderHost);
+    //    qRegisterHost("inputwidgets.spinbox", QSpinBoxHost);
+    //    qRegisterHost("inputwidgets.doublespinbox", QDoubleSpinBoxHost);
+    //    qRegisterHost("inputwidgets.datetimeedit", QDateTimeEditHost);
+    //    qRegisterHost("inputwidgets.dateedit", QDateEditHost);
+    //    qRegisterHost("inputwidgets.timeedit", QTimeEditHost);
+    //    qRegisterHost("inputwidgets.scrollbar", QScrollBarHost);
+    //    qRegisterHost("inputwidgets.combobox", QComboBoxHost);
+    //   qRegisterHost("displaywidgets.progressbar", QProgressBarHost);
 }
-
 

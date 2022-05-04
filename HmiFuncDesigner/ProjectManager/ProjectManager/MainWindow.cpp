@@ -443,7 +443,7 @@ void MainWindow::copySystemTags()
         readFile.close();
         XMLObject xml;
         if(xml.load(szTags, NULL)) {
-            QSoftCore::getCore()->getProjectCore()->tagMgr_.openFromXml(&xml);
+            QSoftCore::getCore()->getProjectCore()->m_tagMgr.openFromXml(&xml);
         }
     }
 }
@@ -638,16 +638,16 @@ void MainWindow::onSetOpenProjPassword()
     if(dlg.exec() == QDialog::Accepted) {
         QString szPwd = dlg.getSetPassword();
         if(szPwd.isEmpty()) {
-            QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = 0;
-            memset(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 0, 32);
+            QSoftCore::getCore()->getProjectCore()->m_headerObj.byOpenVerifyPassword = 0;
+            memset(QSoftCore::getCore()->getProjectCore()->m_headerObj.szPassword, 0, 32);
         } else {
-            memset(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 0, 32);
+            memset(QSoftCore::getCore()->getProjectCore()->m_headerObj.szPassword, 0, 32);
             QCryptographicHash crypt(QCryptographicHash::Md5);
             crypt.reset();
             crypt.addData(szPwd.toStdString().c_str(), szPwd.toStdString().length());
             QByteArray baPwd = crypt.result();
-            QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = baPwd.length();
-            memcpy_s(QSoftCore::getCore()->getProjectCore()->headerObj_.szPassword, 32, baPwd.data(), baPwd.length());
+            QSoftCore::getCore()->getProjectCore()->m_headerObj.byOpenVerifyPassword = baPwd.length();
+            memcpy_s(QSoftCore::getCore()->getProjectCore()->m_headerObj.szPassword, 32, baPwd.data(), baPwd.length());
         }
     }
 }

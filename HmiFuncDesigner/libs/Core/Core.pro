@@ -41,9 +41,10 @@ HEADERS += \
     newcomdevicedialog.h \
     newnetdevicedialog.h \
     qpropertylist/coloreditor.h \
-#    qpropertylist/functioneditordialog.h \
-    qpropertylist/functioneditordialog.h \
-    qpropertylist/insertfunctiondlg.h \
+    qpropertylist/function/functioneditordialog.h \
+    qpropertylist/function/insertfunctiondlg.h \
+    qpropertylist/function/qabstractfunction.h \
+    qpropertylist/function/switchgraphpageform.h \
     qpropertylist/inserttagdlg.h \
     qpropertylist/qcoloreditor.h \
     qpropertylist/qfileeditor.h \
@@ -137,9 +138,10 @@ SOURCES += \
     newcomdevicedialog.cpp \
     newnetdevicedialog.cpp \
     qpropertylist/coloreditor.cpp \
-#    qpropertylist/functioneditordialog.cpp \
-    qpropertylist/functioneditordialog.cpp \
-    qpropertylist/insertfunctiondlg.cpp \
+    qpropertylist/function/functioneditordialog.cpp \
+    qpropertylist/function/insertfunctiondlg.cpp \
+    qpropertylist/function/qabstractfunction.cpp \
+    qpropertylist/function/switchgraphpageform.cpp \
     qpropertylist/inserttagdlg.cpp \
     qpropertylist/qcoloreditor.cpp \
     qpropertylist/qfileeditor.cpp \
@@ -229,9 +231,9 @@ FORMS += \
     devicelistdialog.ui \
     newcomdevicedialog.ui \
     newnetdevicedialog.ui \
-#    qpropertylist/functioneditordialog.ui \
-    qpropertylist/functioneditordialog.ui \
-    qpropertylist/insertfunctiondlg.ui \
+    qpropertylist/function/functioneditordialog.ui \
+    qpropertylist/function/insertfunctiondlg.ui \
+    qpropertylist/function/switchgraphpageform.ui \
     qpropertylist/inserttagdlg.ui \
     qpropertylist/scriptpropertyeditordlg.ui \
     qpropertylist/tagcolorlisteditordialog.ui \

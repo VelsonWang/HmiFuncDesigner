@@ -203,19 +203,19 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
         return false;
     }
 
-    memcpy((void *)&headerObj_, (void *)buf, sizeof(TFileHeader));
+    memcpy((void *)&m_headerObj, (void *)buf, sizeof(TFileHeader));
 
     // 读取工程数据
     QByteArray baTmpProjData;
-    baTmpProjData.resize(headerObj_.dwProjSize);
-    if(fileProj.read((char *)baTmpProjData.data(), headerObj_.dwProjSize) != headerObj_.dwProjSize) {
+    baTmpProjData.resize(m_headerObj.dwProjSize);
+    if(fileProj.read((char *)baTmpProjData.data(), m_headerObj.dwProjSize) != m_headerObj.dwProjSize) {
         fileProj.close();
         return false;
     }
     fileProj.close();
 
     QByteArray baProjData;
-    if(headerObj_.byEncrypt) {
+    if(m_headerObj.byEncrypt) {
         if(DataAES::Decrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) {
             return false;
         }
@@ -233,26 +233,26 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
     QList<XMLObject*> projObjs = xml.getChildren();
     foreach(XMLObject* pProjObj, projObjs) {
         // 工程信息管理
-        projInfoMgr_.openFromXml(pProjObj);
+        m_projInfoMgr.openFromXml(pProjObj);
         // 网络配置
-        netSetting_.openFromXml(pProjObj);
+        m_netSetting.openFromXml(pProjObj);
         // 数据库配置
-        dbSetting_.openFromXml(pProjObj);
+        m_dbSetting.openFromXml(pProjObj);
         // 用户权限
-        userAuthority_.openFromXml(pProjObj);
+        m_userAuthority.openFromXml(pProjObj);
         // 设备配置信息
-        deviceInfo_.openFromXml(pProjObj);
+        m_deviceInfo.openFromXml(pProjObj);
 
         XMLObject *pTagsObj = pProjObj->getCurrentChild("tags");
         if(pTagsObj != NULL) {
             // 标签变量组
-            tagMgr_.openFromXml(pTagsObj);
+            m_tagMgr.openFromXml(pTagsObj);
         }
 
         // 脚本
-        script_.openFromXml(pProjObj);
+        m_script.openFromXml(pProjObj);
         // 图片资源管理
-        pictureResourceMgr_.openFromXml(pProjObj);
+        m_pictureResourceMgr.openFromXml(pProjObj);
 
         // 加载画面
         XMLObject *pPagesObj = pProjObj->getCurrentChild("forms");
@@ -282,25 +282,25 @@ bool QProjectCore::saveToXml(const QString &szProjFile)
     pProjObj->setProperty("application_version", m_szProjVersion);
 
     // 工程信息管理
-    projInfoMgr_.saveToXml(pProjObj);
+    m_projInfoMgr.saveToXml(pProjObj);
     // 网络配置
-    netSetting_.saveToXml(pProjObj);
+    m_netSetting.saveToXml(pProjObj);
     // 数据库配置
-    dbSetting_.saveToXml(pProjObj);
+    m_dbSetting.saveToXml(pProjObj);
     // 用户权限
-    userAuthority_.saveToXml(pProjObj);
+    m_userAuthority.saveToXml(pProjObj);
     // 设备配置信息
-    deviceInfo_.saveToXml(pProjObj);
+    m_deviceInfo.saveToXml(pProjObj);
 
     XMLObject *pTagsObj = new XMLObject(pProjObj);
     pTagsObj->setTagName("tags");
     // 标签变量组
-    tagMgr_.saveToXml(pTagsObj);
+    m_tagMgr.saveToXml(pTagsObj);
 
     // 脚本
-    script_.saveToXml(pProjObj);
+    m_script.saveToXml(pProjObj);
     // 图片资源管理
-    pictureResourceMgr_.saveToXml(pProjObj);
+    m_pictureResourceMgr.saveToXml(pProjObj);
 
     // 保存画面
     XMLObject *pPagesObj = new XMLObject(pProjObj);
@@ -309,7 +309,7 @@ bool QProjectCore::saveToXml(const QString &szProjFile)
 
     QByteArray baProjData;
     QByteArray baTmpProjData = projObjs.write().toUtf8();
-    if(headerObj_.byEncrypt) {
+    if(m_headerObj.byEncrypt) {
         if(DataAES::Encrypt(baTmpProjData, baProjData, AES_DEFAULT_KEY) != 0) {
             return false;
         }
@@ -325,11 +325,11 @@ bool QProjectCore::saveToXml(const QString &szProjFile)
 
     // 写文件头
     quint8 buf[1024] = {0};
-    headerObj_.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
-    headerObj_.wVersion = 0x0001;
-    headerObj_.dwProjSize = baProjData.length();
-    memcpy((void *)buf, (void *)&headerObj_, sizeof(TFileHeader));
-    if(fileProj.write((const char *)buf, headerObj_.wSize) != headerObj_.wSize) {
+    m_headerObj.wSize = (sizeof(TFileHeader) < 512) ? 512 : sizeof(TFileHeader);
+    m_headerObj.wVersion = 0x0001;
+    m_headerObj.dwProjSize = baProjData.length();
+    memcpy((void *)buf, (void *)&m_headerObj, sizeof(TFileHeader));
+    if(fileProj.write((const char *)buf, m_headerObj.wSize) != m_headerObj.wSize) {
         fileProj.close();
         return false;
     }
@@ -356,7 +356,7 @@ void QProjectCore::getAllTagName(QStringList &varList, const QString &type)
     varList.clear();
     QString szType = type.toUpper();
 
-    foreach(Tag *pTagObj, tagMgr_.m_vecTags) {
+    foreach(Tag *pTagObj, m_tagMgr.m_vecTags) {
         //-------------设备变量------------------//
         if(szType == "ALL" || szType == "IO") {
             if(pTagObj->m_devType != "MEMORY" && pTagObj->m_devType != "SYSTEM") {

@@ -92,15 +92,15 @@ public:
     QString m_szProjPath; // 工程文件所在的路径
     QString m_szProjName; // 工程文件名称
     QString m_szProjVersion; // 工程管理器版本
-    ProjectInfoManager projInfoMgr_; // 工程信息管理
-    NetSetting netSetting_; // 网络配置
-    DatabaseSetting dbSetting_; // 数据库配置
-    UserAuthority userAuthority_; // 用户权限
-    DeviceInfo deviceInfo_; // 设备配置信息
-    PictureResourceManager pictureResourceMgr_; // 图片资源管理
-    TagManager tagMgr_; // 标签变量
-    Script script_; // 脚本
-    TFileHeader headerObj_;
+    ProjectInfoManager m_projInfoMgr; // 工程信息管理
+    NetSetting m_netSetting; // 网络配置
+    DatabaseSetting m_dbSetting; // 数据库配置
+    UserAuthority m_userAuthority; // 用户权限
+    DeviceInfo m_deviceInfo; // 设备配置信息
+    PictureResourceManager m_pictureResourceMgr; // 图片资源管理
+    TagManager m_tagMgr; // 标签变量
+    Script m_script; // 脚本
+    TFileHeader m_headerObj;
 
 protected:
     QProjectHost* m_pProjectHostObj;

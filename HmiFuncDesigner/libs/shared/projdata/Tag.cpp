@@ -1,5 +1,5 @@
 #include "tag.h"
-
+#include "limits.h"
 
 Tag::Tag() : m_id(0)
 {
@@ -201,6 +201,19 @@ bool TagManager::saveToXml(XMLObject *pXmlObj)
  */
 int TagManager::allocID()
 {
+    int notUseID = 1;
+    while(notUseID < INT_MAX) {
+        for(int i = 0; i < m_vecTags.count(); i++) {
+            Tag *pObj = m_vecTags.at(i);
+            if(pObj->m_id == notUseID) {
+                notUseID++;
+                break;
+            } else {
+                return notUseID;
+            }
+        }
+    }
+
     ++m_startNewID;
     return m_startNewID;
 }

@@ -1,6 +1,6 @@
 #include "qfunctioneditor.h"
 #include "../../shared/property/qabstractproperty.h"
-#include "functioneditordialog.h"
+#include "function/functioneditordialog.h"
 #include <QDialog>
 
 
@@ -12,13 +12,10 @@ QFunctionEditor::QFunctionEditor(QAbstractProperty *property, QUndoStack* stack,
 void QFunctionEditor::onBtnClicked()
 {
     QStringList szListFunc;
-    QString szSupportEvents;
     if(m_property) {
         szListFunc = m_property->getValue().toStringList();
-        szSupportEvents = m_property->getAttribute("supportevents").toString();
     }
-    QStringList szListSupportEvents = szSupportEvents.split("|");
-    FunctionEditorDialog dlg(this, szListSupportEvents);
+    FunctionEditorDialog dlg(this);
     dlg.setFunctions(szListFunc);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList szListFuncNew = dlg.getFunctions();
