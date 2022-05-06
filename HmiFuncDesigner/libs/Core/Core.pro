@@ -44,6 +44,7 @@ HEADERS += \
     qpropertylist/function/functioneditordialog.h \
     qpropertylist/function/insertfunctiondlg.h \
     qpropertylist/function/qabstractfunction.h \
+    qpropertylist/function/returngraphpageform.h \
     qpropertylist/function/switchgraphpageform.h \
     qpropertylist/inserttagdlg.h \
     qpropertylist/qcoloreditor.h \
@@ -141,6 +142,7 @@ SOURCES += \
     qpropertylist/function/functioneditordialog.cpp \
     qpropertylist/function/insertfunctiondlg.cpp \
     qpropertylist/function/qabstractfunction.cpp \
+    qpropertylist/function/returngraphpageform.cpp \
     qpropertylist/function/switchgraphpageform.cpp \
     qpropertylist/inserttagdlg.cpp \
     qpropertylist/qcoloreditor.cpp \
@@ -233,6 +235,7 @@ FORMS += \
     newnetdevicedialog.ui \
     qpropertylist/function/functioneditordialog.ui \
     qpropertylist/function/insertfunctiondlg.ui \
+    qpropertylist/function/returngraphpageform.ui \
     qpropertylist/function/switchgraphpageform.ui \
     qpropertylist/inserttagdlg.ui \
     qpropertylist/scriptpropertyeditordlg.ui \

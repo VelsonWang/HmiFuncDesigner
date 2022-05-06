@@ -20,6 +20,10 @@ public:
     virtual QString toString();
     virtual QString toShowString();
     virtual bool fromString(const QString func);
+
+protected:
+    QString m_arg;
+    QString m_showArg;
 };
 
 #endif // QABSTRACTFUNCTION_H

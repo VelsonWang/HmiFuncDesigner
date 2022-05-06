@@ -120,7 +120,14 @@
              </widget>
             </item>
             <item>
-             <widget class="QStackedWidget" name="stackedWidget"/>
+             <widget class="QStackedWidget" name="stackedWidget">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Plain</enum>
+              </property>
+             </widget>
             </item>
            </layout>
           </widget>

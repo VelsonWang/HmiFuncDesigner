@@ -4,6 +4,7 @@
 #include <QTableWidgetItem>
 #include <QStringList>
 #include "switchgraphpageform.h"
+#include "returngraphpageform.h"
 
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent)
     : QDialog(parent),
@@ -36,13 +37,20 @@ FunctionEditorDialog::~FunctionEditorDialog()
  */
 void FunctionEditorDialog::initUI()
 {
+    QAbstractFunction *pObj = NULL;
     m_nameToFuncsUi.clear();
     //空白
     ui->stackedWidget->addWidget(new QWidget);
     //切换画面
-    QAbstractFunction *pObj = new SwitchGraphPageForm;
+    pObj = new SwitchGraphPageForm;
     m_nameToFuncsUi.insert(pObj->name(), pObj);
     ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+    //返回画面
+    pObj = new ReturnGraphPage;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+
 
     initListWidget();
     initTableWidget();
@@ -65,6 +73,7 @@ void FunctionEditorDialog::initListWidget()
         for(int i = 0; i < ui->tabFuncSelect->count(); i++) {
             if(pFuncObj->group() == ui->tabFuncSelect->tabText(i)) {
                 found = true;
+                pListWidget = dynamic_cast<QListWidget*>(ui->tabFuncSelect->widget(i));
                 break;
             }
         }
@@ -210,33 +219,40 @@ void FunctionEditorDialog::on_btnMoveUp_clicked()
 
     if(iRowCount > 1 && iCurRow > 0) {
         QTableWidgetItem *pItemCurFuncObj = ui->tableEventFunc->item(iCurRow, 0);
-        QString szCurFuncNameOrg = pItemCurFuncObj->data(Qt::UserRole).toString();
-        QAbstractFunction * pCurFuncObj = m_nameToFuncsUi[szCurFuncNameOrg];
+        QString szCurFuncName = pItemCurFuncObj->data(Qt::UserRole).toString();
+        QAbstractFunction * pCurFuncObj = m_nameToFuncsUi[szCurFuncName];
+        QStringList values;
+        values << pCurFuncObj->name()
+               << pCurFuncObj->showName()
+               << pCurFuncObj->args()
+               << pCurFuncObj->showArgs()
+               << pCurFuncObj->description()
+               << pCurFuncObj->toString()
+               << pCurFuncObj->toShowString();
 
         QTableWidgetItem *pItemUpFuncObj = ui->tableEventFunc->item(iCurRow - 1, 0);
-        QString szUpFuncNameOrg = pItemUpFuncObj->text();
-        QAbstractFunction * pUpFuncObj = m_nameToFuncsUi[szUpFuncNameOrg];
+        QString szUpFuncName = pItemUpFuncObj->data(Qt::UserRole).toString();
+        QAbstractFunction * pUpFuncObj = m_nameToFuncsUi[szUpFuncName];
+        QStringList values2;
+        values2 << pUpFuncObj->name()
+                << pUpFuncObj->showName()
+                << pUpFuncObj->args()
+                << pUpFuncObj->showArgs()
+                << pUpFuncObj->description()
+                << pUpFuncObj->toString()
+                << pUpFuncObj->toShowString();
 
         if(pItemCurFuncObj && pUpFuncObj) {
-            pItemCurFuncObj->setData(Qt::UserRole, pUpFuncObj->name()); //name
-            pItemCurFuncObj->setData(Qt::UserRole + 1, pUpFuncObj->showName()); //showName
-            pItemCurFuncObj->setData(Qt::UserRole + 2, pUpFuncObj->args()); //args
-            pItemCurFuncObj->setData(Qt::UserRole + 3, pUpFuncObj->showArgs()); //showArgs
-            pItemCurFuncObj->setData(Qt::UserRole + 4, pUpFuncObj->description()); //description
-            pItemCurFuncObj->setData(Qt::UserRole + 5, pUpFuncObj->toString()); //toString
-            pItemCurFuncObj->setData(Qt::UserRole + 6, pUpFuncObj->toShowString()); //toShowString
-            pItemCurFuncObj->setText(pUpFuncObj->toShowString());
+            for(int i = 0; i < values2.size(); i++) {
+                pItemCurFuncObj->setData(Qt::UserRole + i, values2[i]);
+            }
+            pItemCurFuncObj->setText(values2.last());
         }
-
         if(pItemUpFuncObj && pCurFuncObj) {
-            pItemUpFuncObj->setData(Qt::UserRole, pCurFuncObj->name()); //name
-            pItemUpFuncObj->setData(Qt::UserRole + 1, pCurFuncObj->showName()); //showName
-            pItemUpFuncObj->setData(Qt::UserRole + 2, pCurFuncObj->args()); //args
-            pItemUpFuncObj->setData(Qt::UserRole + 3, pCurFuncObj->showArgs()); //showArgs
-            pItemUpFuncObj->setData(Qt::UserRole + 4, pCurFuncObj->description()); //description
-            pItemUpFuncObj->setData(Qt::UserRole + 5, pCurFuncObj->toString()); //toString
-            pItemUpFuncObj->setData(Qt::UserRole + 6, pCurFuncObj->toShowString()); //toShowString
-            pItemUpFuncObj->setText(pCurFuncObj->toShowString());
+            for(int i = 0; i < values.size(); i++) {
+                pItemUpFuncObj->setData(Qt::UserRole + i, values[i]);
+            }
+            pItemUpFuncObj->setText(values.last());
         }
         ui->tableEventFunc->selectRow(iCurRow - 1);
     }
@@ -253,33 +269,40 @@ void FunctionEditorDialog::on_btnMoveDown_clicked()
 
     if(iRowCount > 1 && iCurRow < (iRowCount - 1)) {
         QTableWidgetItem *pItemCurFuncObj = ui->tableEventFunc->item(iCurRow, 0);
-        QString szCurFuncNameOrg = pItemCurFuncObj->text();
-        QAbstractFunction * pCurFuncObj = m_nameToFuncsUi[szCurFuncNameOrg];
+        QString szCurFuncName = pItemCurFuncObj->data(Qt::UserRole).toString();
+        QAbstractFunction * pCurFuncObj = m_nameToFuncsUi[szCurFuncName];
+        QStringList values;
+        values << pCurFuncObj->name()
+               << pCurFuncObj->showName()
+               << pCurFuncObj->args()
+               << pCurFuncObj->showArgs()
+               << pCurFuncObj->description()
+               << pCurFuncObj->toString()
+               << pCurFuncObj->toShowString();
 
         QTableWidgetItem *pItemDownFuncObj = ui->tableEventFunc->item(iCurRow + 1, 0);
-        QString szDownFuncNameOrg = pItemDownFuncObj->text();
-        QAbstractFunction * pDownFuncObj = m_nameToFuncsUi[szDownFuncNameOrg];
+        QString szDownFuncName = pItemDownFuncObj->data(Qt::UserRole).toString();
+        QAbstractFunction * pDownFuncObj = m_nameToFuncsUi[szDownFuncName];
+        QStringList values2;
+        values2 << pDownFuncObj->name()
+                << pDownFuncObj->showName()
+                << pDownFuncObj->args()
+                << pDownFuncObj->showArgs()
+                << pDownFuncObj->description()
+                << pDownFuncObj->toString()
+                << pDownFuncObj->toShowString();
 
         if(pItemCurFuncObj && pDownFuncObj) {
-            pItemCurFuncObj->setData(Qt::UserRole, pDownFuncObj->name()); //name
-            pItemCurFuncObj->setData(Qt::UserRole + 1, pDownFuncObj->showName()); //showName
-            pItemCurFuncObj->setData(Qt::UserRole + 2, pDownFuncObj->args()); //args
-            pItemCurFuncObj->setData(Qt::UserRole + 3, pDownFuncObj->showArgs()); //showArgs
-            pItemCurFuncObj->setData(Qt::UserRole + 4, pDownFuncObj->description()); //description
-            pItemCurFuncObj->setData(Qt::UserRole + 5, pDownFuncObj->toString()); //toString
-            pItemCurFuncObj->setData(Qt::UserRole + 6, pDownFuncObj->toShowString()); //toShowString
-            pItemCurFuncObj->setText(pDownFuncObj->toShowString());
+            for(int i = 0; i < values2.size(); i++) {
+                pItemCurFuncObj->setData(Qt::UserRole + i, values2[i]);
+            }
+            pItemCurFuncObj->setText(values2.last());
         }
-
         if(pItemDownFuncObj && pCurFuncObj) {
-            pItemDownFuncObj->setData(Qt::UserRole, pCurFuncObj->name()); //name
-            pItemDownFuncObj->setData(Qt::UserRole + 1, pCurFuncObj->showName()); //showName
-            pItemDownFuncObj->setData(Qt::UserRole + 2, pCurFuncObj->args()); //args
-            pItemDownFuncObj->setData(Qt::UserRole + 3, pCurFuncObj->showArgs()); //showArgs
-            pItemDownFuncObj->setData(Qt::UserRole + 4, pCurFuncObj->description()); //description
-            pItemDownFuncObj->setData(Qt::UserRole + 5, pCurFuncObj->toString()); //toString
-            pItemDownFuncObj->setData(Qt::UserRole + 6, pCurFuncObj->toShowString()); //toShowString
-            pItemDownFuncObj->setText(pCurFuncObj->toShowString());
+            for(int i = 0; i < values.size(); i++) {
+                pItemDownFuncObj->setData(Qt::UserRole + i, values[i]);
+            }
+            pItemDownFuncObj->setText(values.last());
         }
         ui->tableEventFunc->selectRow(iCurRow + 1);
     }
@@ -353,6 +376,8 @@ void FunctionEditorDialog::on_tableEventFunc_clicked(const QModelIndex &index)
     QTableWidgetItem *pItemObj = ui->tableEventFunc->currentItem();
     if(pItemObj) {
         QString name = pItemObj->data(Qt::UserRole).toString();
+        QString desc = pItemObj->data(Qt::UserRole + 4).toString();
+        ui->plainTextFuncDesc->setPlainText(desc);
         QAbstractFunction * pFuncObj = m_nameToFuncsUi[name];
         if(pFuncObj) {
             if(pFuncObj->fromString(pItemObj->data(Qt::UserRole + 5).toString())) {

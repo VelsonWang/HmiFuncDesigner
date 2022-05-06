@@ -13,13 +13,13 @@ void QFunctionEditor::onBtnClicked()
 {
     QStringList szListFunc;
     if(m_property) {
-        szListFunc = m_property->getValue().toStringList();
+        szListFunc = m_property->getValue().toString().split("|");
     }
     FunctionEditorDialog dlg(this);
     dlg.setFunctions(szListFunc);
     if(dlg.exec() == QDialog::Accepted) {
         QStringList szListFuncNew = dlg.getFunctions();
-        QVariant v(szListFuncNew);
+        QVariant v(szListFuncNew.join("|"));
         if(m_property) {
             m_property->notifyEditValue(v);
         }

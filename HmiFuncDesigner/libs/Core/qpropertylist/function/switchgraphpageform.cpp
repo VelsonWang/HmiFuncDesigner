@@ -11,10 +11,10 @@ SwitchGraphPageForm::SwitchGraphPageForm(QWidget *parent) :
     this->setVisible(false);
     m_arg = "";
     m_showArg = "";
-    QStringList graphs; // FIXME ID:画面名称
+    QStringList graphs;
     QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(graphs);
     foreach(QString graph, graphs) {
-        QStringList uuidName = graph.split(":");
+        QStringList uuidName = graph.split(":");//uuid:画面名称
         if(uuidName.size() == 2) {
             ui->cboSelectPage->addItem(uuidName.at(1), uuidName.at(0));
         }
@@ -85,9 +85,9 @@ QString SwitchGraphPageForm::toString()
 {
     updateFromUi();
     QString func;
-    func = name() + "(\"" + args().join("") + "\")";
-    func += "|";
-    func += showName() + "(\"" + showArgs().join("") + "\")";
+    func = name() + "(\"" + args().join("") + "\");";
+    func += ":";
+    func += showName() + "(\"" + showArgs().join("") + "\");";
     return func;
 }
 
@@ -95,24 +95,24 @@ QString SwitchGraphPageForm::toShowString()
 {
     updateFromUi();
     QString func;
-    func += showName() + "(\"" + showArgs().join("") + "\")";
+    func += showName() + "(\"" + showArgs().join("") + "\");";
     return func;
 }
 
 bool SwitchGraphPageForm::fromString(const QString func)
 {
-    QStringList funcs = func.split("|");
+    QStringList funcs = func.split(":");
     if(funcs.size() == 2) {
         //解析参数
         QString arg = funcs.at(0);
-        arg = arg.replace(name() + "(\"", ""); //移除"SwitchGraphPage("
-        arg = arg.replace("\")", ""); //移除")"
+        arg = arg.replace(name() + "(\"", ""); //移除"SwitchGraphPage(""
+        arg = arg.replace("\");", ""); //移除"");"
         m_arg = arg;
 
         //解析显示参数
         QString showArg = funcs.at(1);
-        showArg = showArg.replace(showName() + "(\"", ""); //移除"切换画面("
-        showArg = showArg.replace("\")", ""); //移除")"
+        showArg = showArg.replace(showName() + "(\"", ""); //移除"切换画面(""
+        showArg = showArg.replace("\");", ""); //移除"")"
         m_showArg = arg;
 
         return true;
