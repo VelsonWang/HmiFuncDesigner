@@ -123,13 +123,3 @@ void QSpinBoxHost::valueChanged(const QString &value)
     }
 }
 
-/**
- * @brief QSpinBoxHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QSpinBoxHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

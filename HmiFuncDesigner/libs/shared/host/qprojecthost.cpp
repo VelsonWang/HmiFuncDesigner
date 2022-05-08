@@ -107,13 +107,3 @@ void QProjectHost::show_form_by_uuid(const QString &uuid)
     }
 }
 
-/**
- * @brief QProjectHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QProjectHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

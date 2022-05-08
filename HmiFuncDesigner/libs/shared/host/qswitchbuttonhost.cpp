@@ -49,8 +49,16 @@ void QSwitchButtonHost::initProperty()
 
     pObj = QPropertyFactory::create_property("Function");
     if(pObj != NULL) {
-        pObj->setObjectProperty("name", "funcs");
-        pObj->setAttribute("show_name", tr("功能操作"));
+        pObj->setObjectProperty("name", "onFuncs");
+        pObj->setAttribute("show_name", tr("切换到开时执行功能"));
+        pObj->setAttribute("group", "HMI");
+        insertProperty(pObj);
+    }
+
+    pObj = QPropertyFactory::create_property("Function");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "offFuncs");
+        pObj->setAttribute("show_name", tr("切换到关时执行功能"));
         pObj->setAttribute("group", "HMI");
         insertProperty(pObj);
     }
@@ -249,17 +257,4 @@ void QSwitchButtonHost::initProperty()
     }
 
     setPropertyValue("geometry", QRect(0, 0, 120, 60));
-}
-
-/**
- * @brief QSwitchButtonHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QSwitchButtonHost::supportFuncEvents()
-{
-    QStringList supportFuncEvents;
-    supportFuncEvents << QString("%1-%2").arg("OffToOn").arg(tr("切换到开事件"));
-    supportFuncEvents << QString("%1-%2").arg("OnToOff").arg(tr("切换到关事件"));
-    return supportFuncEvents;
 }

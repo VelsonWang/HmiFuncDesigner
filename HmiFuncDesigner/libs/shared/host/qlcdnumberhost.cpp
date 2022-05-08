@@ -199,13 +199,3 @@ int QLCDNumberHost::numDigits()
     return getPropertyValue("numDigits").toInt();
 }
 
-/**
- * @brief QLCDNumberHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QLCDNumberHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

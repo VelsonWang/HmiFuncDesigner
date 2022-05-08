@@ -1,20 +1,20 @@
-#ifndef RETURNGRAPHPAGEFORM_H
-#define RETURNGRAPHPAGEFORM_H
+#ifndef WAITFORMILLISECFORM_H
+#define WAITFORMILLISECFORM_H
 
 #include <QWidget>
 #include "qabstractfunction.h"
 
 namespace Ui
 {
-class ReturnGraphPage;
+class WaitForMillisecForm;
 }
 
-class ReturnGraphPage : public QWidget, public QAbstractFunction
+class WaitForMillisecForm : public QWidget, public QAbstractFunction
 {
     Q_OBJECT
 public:
-    explicit ReturnGraphPage(QWidget *parent = nullptr);
-    ~ReturnGraphPage();
+    explicit WaitForMillisecForm(QWidget *parent = nullptr);
+    ~WaitForMillisecForm();
 
 public:
     virtual QString group();
@@ -27,10 +27,16 @@ public:
     virtual QString toShowString();
     virtual bool fromString(const QString func);
 
+private slots:
+    void on_cboSelectPage_currentTextChanged(const QString &page);
+
 private:
-    Ui::ReturnGraphPage *ui;
+    void updateFromUi();
+
+private:
+    Ui::WaitForMillisecForm *ui;
     QString m_arg;
     QString m_showArg;
 };
 
-#endif // RETURNGRAPHPAGEFORM_H
+#endif // WAITFORMILLISECFORM_H

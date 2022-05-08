@@ -8,10 +8,9 @@ class QAbstractSpinBoxHost : public QWidgetHost
     Q_OBJECT
 public:
     QAbstractSpinBoxHost(QAbstractHost *parent = 0);
+
 protected:
     void initProperty() override;
-    // 控件支持的功能事件
-    QStringList supportFuncEvents() override;
 
 public slots:
     void setFrame(bool frame);

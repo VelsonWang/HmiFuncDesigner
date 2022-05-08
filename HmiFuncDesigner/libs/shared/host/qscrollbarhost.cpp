@@ -36,14 +36,3 @@ void QScrollBarHost::initProperty()
     setPropertyValue("geometry", QRect(0, 0, 100, 20));
 }
 
-/**
- * @brief QScrollBarHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QScrollBarHost::supportFuncEvents()
-{
-    return QStringList();
-}
-
-

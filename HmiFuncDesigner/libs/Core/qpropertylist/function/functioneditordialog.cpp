@@ -5,6 +5,10 @@
 #include <QStringList>
 #include "switchgraphpageform.h"
 #include "returngraphpageform.h"
+#include "sleepform.h"
+#include "setdatetimeform.h"
+
+
 
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent)
     : QDialog(parent),
@@ -49,6 +53,16 @@ void FunctionEditorDialog::initUI()
     pObj = new ReturnGraphPage;
     m_nameToFuncsUi.insert(pObj->name(), pObj);
     ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+    //控制延时
+    pObj = new SleepForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+    //设置系统时间
+    pObj = new SetDateTimeForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+
 
 
 

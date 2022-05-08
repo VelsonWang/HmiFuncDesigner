@@ -35,6 +35,8 @@ private:
 
 private:
     Ui::SwitchGraphPageForm *ui;
+    QString m_arg;
+    QString m_showArg;
 };
 
 #endif // SWITCHGRAPHPAGEFORM_H

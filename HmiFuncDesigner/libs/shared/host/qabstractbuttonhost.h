@@ -24,7 +24,6 @@ protected slots:
 
 protected:
     void initProperty() override;
-    // 控件支持的功能事件
-    QStringList supportFuncEvents() override;
+
 };
 #endif // QABSTRACTBUTTONHOST_H

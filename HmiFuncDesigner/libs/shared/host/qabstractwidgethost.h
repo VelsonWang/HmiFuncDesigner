@@ -13,8 +13,6 @@ public:
 
 protected:
     void initProperty() override;
-    // 控件支持的功能事件
-    QStringList supportFuncEvents() override;
 
 public slots:
     void setGeometry(int x, int y, int width, int height);

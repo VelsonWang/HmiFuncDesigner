@@ -154,13 +154,3 @@ void QTimeEditHost::timeChanged(const QTime &time)
         exec(code, param);
     }
 }
-
-/**
- * @brief QTimeEditHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QTimeEditHost::supportFuncEvents()
-{
-    return QStringList();
-}

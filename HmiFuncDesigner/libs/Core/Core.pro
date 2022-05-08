@@ -45,7 +45,10 @@ HEADERS += \
     qpropertylist/function/insertfunctiondlg.h \
     qpropertylist/function/qabstractfunction.h \
     qpropertylist/function/returngraphpageform.h \
+    qpropertylist/function/setdatetimeform.h \
+    qpropertylist/function/sleepform.h \
     qpropertylist/function/switchgraphpageform.h \
+    qpropertylist/function/waitformillisecform.h \
     qpropertylist/inserttagdlg.h \
     qpropertylist/qcoloreditor.h \
     qpropertylist/qfileeditor.h \
@@ -143,7 +146,10 @@ SOURCES += \
     qpropertylist/function/insertfunctiondlg.cpp \
     qpropertylist/function/qabstractfunction.cpp \
     qpropertylist/function/returngraphpageform.cpp \
+    qpropertylist/function/setdatetimeform.cpp \
+    qpropertylist/function/sleepform.cpp \
     qpropertylist/function/switchgraphpageform.cpp \
+    qpropertylist/function/waitformillisecform.cpp \
     qpropertylist/inserttagdlg.cpp \
     qpropertylist/qcoloreditor.cpp \
     qpropertylist/qfileeditor.cpp \
@@ -236,7 +242,10 @@ FORMS += \
     qpropertylist/function/functioneditordialog.ui \
     qpropertylist/function/insertfunctiondlg.ui \
     qpropertylist/function/returngraphpageform.ui \
+    qpropertylist/function/setdatetimeform.ui \
+    qpropertylist/function/sleepform.ui \
     qpropertylist/function/switchgraphpageform.ui \
+    qpropertylist/function/waitformillisecform.ui \
     qpropertylist/inserttagdlg.ui \
     qpropertylist/scriptpropertyeditordlg.ui \
     qpropertylist/tagcolorlisteditordialog.ui \

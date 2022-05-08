@@ -57,14 +57,3 @@ void QRadioButtonHost::initProperty()
     removeProperty("checkable");
 }
 
-/**
- * @brief QRadioButtonHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QRadioButtonHost::supportFuncEvents()
-{
-    return QStringList();
-}
-
-

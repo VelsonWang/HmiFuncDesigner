@@ -101,14 +101,3 @@ void QIndicationLampHost::initProperty()
     removeProperty("frameShape");
     removeProperty("frameShadow");
 }
-
-/**
- * @brief QIndicationLampHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QIndicationLampHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

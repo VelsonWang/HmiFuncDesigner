@@ -7,7 +7,8 @@
 class QPushButtonEx : public QPushButton
 {
     Q_OBJECT
-    Q_PROPERTY(QStringList funcs READ getFuncs WRITE setFuncs)
+    Q_PROPERTY(QStringList clickedDownFuncs READ getClickedDownFuncs WRITE setClickedDownFuncs)
+    Q_PROPERTY(QStringList clickedUpFuncs READ getClickedUpFuncs WRITE setClickedUpFuncs)
     Q_PROPERTY(QString script READ getScript WRITE setScript)
     Q_PROPERTY(QString showContent READ getShowContent WRITE setShowContent)
     Q_PROPERTY(QString picture READ getFilePicture WRITE setFilePicture)
@@ -26,8 +27,11 @@ class QPushButtonEx : public QPushButton
 public:
     explicit QPushButtonEx(QWidget *parent = nullptr);
 
-    QStringList getFuncs() const;
-    void setFuncs(const QStringList &value);
+    QStringList getClickedDownFuncs() const;
+    void setClickedDownFuncs(const QStringList &value);
+
+    QStringList getClickedUpFuncs() const;
+    void setClickedUpFuncs(const QStringList &value);
 
     QString getScript() const;
     void setScript(const QString &value);
@@ -80,8 +84,10 @@ protected:
     void resizeEvent(QResizeEvent *event);
 
 private:
-    // 功能操作
-    QStringList funcs;
+    // 按下时执行功能操作
+    QStringList clickedDownFuncs;
+    // 抬起时执行功能操作
+    QStringList clickedUpFuncs;
     // JavaScript脚本
     QString script;
     // 显示内容

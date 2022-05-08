@@ -78,7 +78,10 @@ QStringList SwitchGraphPageForm::showArgs()
 
 QString SwitchGraphPageForm::description()
 {
-    return tr("切换至指定ID的画面");
+    QString desc = tr("切换至指定ID的画面");
+    desc += "\r\n";
+    desc += "示例:切换画面(\"参数设置\")  // 切换至参数设置画面";
+    return desc;
 }
 
 QString SwitchGraphPageForm::toString()
@@ -114,6 +117,10 @@ bool SwitchGraphPageForm::fromString(const QString func)
         showArg = showArg.replace(showName() + "(\"", ""); //移除"切换画面(""
         showArg = showArg.replace("\");", ""); //移除"")"
         m_showArg = arg;
+
+        ui->cboSelectPage->setCurrentText(m_showArg);
+        int index = ui->cboSelectPage->currentIndex();
+        ui->cboSelectPage->setItemData(index, m_arg);
 
         return true;
     }

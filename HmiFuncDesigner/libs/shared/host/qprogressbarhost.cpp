@@ -227,14 +227,3 @@ void QProgressBarHost::valueChanged(int value)
         exec(code, param);
     }
 }
-
-/**
- * @brief QProgressBarHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QProgressBarHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

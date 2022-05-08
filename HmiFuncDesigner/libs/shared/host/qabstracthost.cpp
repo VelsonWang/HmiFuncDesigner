@@ -716,13 +716,3 @@ QString QAbstractHost::getHostType()
         return property("title").toString();
     }
 }
-
-/**
- * @brief QAbstractHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QAbstractHost::supportFuncEvents()
-{
-    return QStringList();
-}

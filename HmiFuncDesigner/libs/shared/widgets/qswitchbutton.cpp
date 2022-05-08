@@ -27,7 +27,8 @@ QSwitchButton::QSwitchButton(QWidget *parent) : QWidget(parent)
     setPictureFile = "";
     resetText = tr("关");
     setText = tr("开");
-
+    onFuncs.clear();
+    offFuncs.clear();
     setPropertyInner();
 }
 
@@ -367,15 +368,28 @@ void QSwitchButton::setStateOnInitial(bool value)
     }
 }
 
-QStringList QSwitchButton::getFuncs() const
+QStringList QSwitchButton::getOnFuncs() const
 {
-    return funcs;
+    return onFuncs;
 }
 
-void QSwitchButton::setFuncs(const QStringList &value)
+void QSwitchButton::setOnFuncs(const QStringList &value)
 {
-    if(value != funcs) {
-        funcs = value;
+    if(value != onFuncs) {
+        onFuncs = value;
+        this->update();
+    }
+}
+
+QStringList QSwitchButton::getOffFuncs() const
+{
+    return offFuncs;
+}
+
+void QSwitchButton::setOffFuncs(const QStringList &value)
+{
+    if(value != offFuncs) {
+        offFuncs = value;
         this->update();
     }
 }

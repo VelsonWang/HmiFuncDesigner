@@ -112,14 +112,3 @@ int QLabelHost::alignment()
 {
     return getPropertyValue("alignment").toInt();
 }
-
-/**
- * @brief QLabelHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QLabelHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

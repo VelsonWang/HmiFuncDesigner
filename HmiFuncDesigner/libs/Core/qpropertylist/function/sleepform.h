@@ -1,20 +1,20 @@
-#ifndef RETURNGRAPHPAGEFORM_H
-#define RETURNGRAPHPAGEFORM_H
+#ifndef SLEEPFORM_H
+#define SLEEPFORM_H
 
 #include <QWidget>
 #include "qabstractfunction.h"
 
 namespace Ui
 {
-class ReturnGraphPage;
+class SleepForm;
 }
 
-class ReturnGraphPage : public QWidget, public QAbstractFunction
+class SleepForm : public QWidget, public QAbstractFunction
 {
     Q_OBJECT
 public:
-    explicit ReturnGraphPage(QWidget *parent = nullptr);
-    ~ReturnGraphPage();
+    explicit SleepForm(QWidget *parent = nullptr);
+    ~SleepForm();
 
 public:
     virtual QString group();
@@ -27,10 +27,16 @@ public:
     virtual QString toShowString();
     virtual bool fromString(const QString func);
 
+private slots:
+    void on_cboSelectPage_currentTextChanged(const QString &page);
+
 private:
-    Ui::ReturnGraphPage *ui;
+    void updateFromUi();
+
+private:
+    Ui::SleepForm *ui;
     QString m_arg;
     QString m_showArg;
 };
 
-#endif // RETURNGRAPHPAGEFORM_H
+#endif // SLEEPFORM_H

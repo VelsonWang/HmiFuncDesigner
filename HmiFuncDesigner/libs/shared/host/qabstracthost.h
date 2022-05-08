@@ -88,8 +88,6 @@ protected:
     bool eventFilter(QObject *, QEvent *) override;
 
     void exec(const QString &code, const QMap<QString, QString> &param);
-    // 控件支持的功能事件
-    virtual QStringList supportFuncEvents();
 
 protected:
     virtual bool handlePaintEvent(QPaintEvent* event);

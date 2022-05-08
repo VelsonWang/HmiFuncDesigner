@@ -1,20 +1,20 @@
-#ifndef RETURNGRAPHPAGEFORM_H
-#define RETURNGRAPHPAGEFORM_H
+#ifndef SETDATETIMEFORM_H
+#define SETDATETIMEFORM_H
 
 #include <QWidget>
 #include "qabstractfunction.h"
 
 namespace Ui
 {
-class ReturnGraphPage;
+class SetDateTimeForm;
 }
 
-class ReturnGraphPage : public QWidget, public QAbstractFunction
+class SetDateTimeForm : public QWidget, public QAbstractFunction
 {
     Q_OBJECT
 public:
-    explicit ReturnGraphPage(QWidget *parent = nullptr);
-    ~ReturnGraphPage();
+    explicit SetDateTimeForm(QWidget *parent = nullptr);
+    ~SetDateTimeForm();
 
 public:
     virtual QString group();
@@ -28,9 +28,12 @@ public:
     virtual bool fromString(const QString func);
 
 private:
-    Ui::ReturnGraphPage *ui;
-    QString m_arg;
-    QString m_showArg;
+    void updateFromUi();
+
+private:
+    Ui::SetDateTimeForm *ui;
+    QStringList m_args;
+    QStringList m_showArgs;
 };
 
-#endif // RETURNGRAPHPAGEFORM_H
+#endif // SETDATETIMEFORM_H
