@@ -41,12 +41,17 @@ HEADERS += \
     newcomdevicedialog.h \
     newnetdevicedialog.h \
     qpropertylist/coloreditor.h \
+    qpropertylist/function/addtagvalueform.h \
     qpropertylist/function/functioneditordialog.h \
+    qpropertylist/function/gettagvalueform.h \
     qpropertylist/function/insertfunctiondlg.h \
     qpropertylist/function/qabstractfunction.h \
     qpropertylist/function/returngraphpageform.h \
     qpropertylist/function/setdatetimeform.h \
+    qpropertylist/function/settagvalueform.h \
     qpropertylist/function/sleepform.h \
+    qpropertylist/function/statechangeform.h \
+    qpropertylist/function/subtagvalueform.h \
     qpropertylist/function/switchgraphpageform.h \
     qpropertylist/function/waitformillisecform.h \
     qpropertylist/inserttagdlg.h \
@@ -142,12 +147,17 @@ SOURCES += \
     newcomdevicedialog.cpp \
     newnetdevicedialog.cpp \
     qpropertylist/coloreditor.cpp \
+    qpropertylist/function/addtagvalueform.cpp \
     qpropertylist/function/functioneditordialog.cpp \
+    qpropertylist/function/gettagvalueform.cpp \
     qpropertylist/function/insertfunctiondlg.cpp \
     qpropertylist/function/qabstractfunction.cpp \
     qpropertylist/function/returngraphpageform.cpp \
     qpropertylist/function/setdatetimeform.cpp \
+    qpropertylist/function/settagvalueform.cpp \
     qpropertylist/function/sleepform.cpp \
+    qpropertylist/function/statechangeform.cpp \
+    qpropertylist/function/subtagvalueform.cpp \
     qpropertylist/function/switchgraphpageform.cpp \
     qpropertylist/function/waitformillisecform.cpp \
     qpropertylist/inserttagdlg.cpp \
@@ -239,11 +249,16 @@ FORMS += \
     devicelistdialog.ui \
     newcomdevicedialog.ui \
     newnetdevicedialog.ui \
+    qpropertylist/function/addtagvalueform.ui \
     qpropertylist/function/functioneditordialog.ui \
+    qpropertylist/function/gettagvalueform.ui \
     qpropertylist/function/insertfunctiondlg.ui \
     qpropertylist/function/returngraphpageform.ui \
     qpropertylist/function/setdatetimeform.ui \
+    qpropertylist/function/settagvalueform.ui \
     qpropertylist/function/sleepform.ui \
+    qpropertylist/function/statechangeform.ui \
+    qpropertylist/function/subtagvalueform.ui \
     qpropertylist/function/switchgraphpageform.ui \
     qpropertylist/function/waitformillisecform.ui \
     qpropertylist/inserttagdlg.ui \

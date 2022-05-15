@@ -110,7 +110,7 @@ bool SleepForm::fromString(const QString func)
         QString showArg = funcs.at(1);
         showArg = showArg.replace(showName() + "(", ""); //移除"Sleep("
         showArg = showArg.replace(");", ""); //移除")"
-        m_showArg = arg;
+        m_showArg = showArg;
 
         ui->spinBoxSecond->setValue(m_arg.toUInt());
 

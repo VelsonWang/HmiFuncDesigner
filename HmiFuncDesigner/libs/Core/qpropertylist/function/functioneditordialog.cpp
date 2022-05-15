@@ -7,8 +7,11 @@
 #include "returngraphpageform.h"
 #include "sleepform.h"
 #include "setdatetimeform.h"
-
-
+#include "settagvalueform.h"
+#include "gettagvalueform.h"
+#include "statechangeform.h"
+#include "addtagvalueform.h"
+#include "subtagvalueform.h"
 
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent)
     : QDialog(parent),
@@ -62,9 +65,27 @@ void FunctionEditorDialog::initUI()
     m_nameToFuncsUi.insert(pObj->name(), pObj);
     ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
 
+    //设置变量值
+    pObj = new SetTagValueForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+    //获取变量的值
+    pObj = new GetTagValueForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+    //变量0,1切换
+    pObj = new StateChangeForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
 
-
-
+    //变量值自增
+    pObj = new AddTagValueForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+    //变量值自减
+    pObj = new SubTagValueForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
 
     initListWidget();
     initTableWidget();
@@ -324,6 +345,7 @@ void FunctionEditorDialog::on_btnMoveDown_clicked()
 
 void FunctionEditorDialog::on_btnOk_clicked()
 {
+    on_tableEventFunc_clicked(QModelIndex());
     this->accept();
 }
 

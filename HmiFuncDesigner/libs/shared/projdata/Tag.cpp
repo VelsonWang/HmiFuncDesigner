@@ -229,4 +229,13 @@ Tag *TagManager::getTag(int id)
     return NULL;
 }
 
+void TagManager::getAllTagName(QStringList &szList)
+{
+    szList.clear();
+    for(int i = 0; i < m_vecTags.count(); i++) {
+        Tag *pObj = m_vecTags[i];
+        szList.append(QString("%1:%2").arg(pObj->m_id).arg(pObj->m_name));
+    }
+}
+
 

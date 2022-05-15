@@ -63,6 +63,8 @@ public:
 
     Tag *getTag(int id);
 
+    void getAllTagName(QStringList &szList);
+
 public:
     QVector<Tag *> m_vecTags;
     static int m_startNewID;
