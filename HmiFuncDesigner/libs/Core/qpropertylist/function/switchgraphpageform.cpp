@@ -14,9 +14,9 @@ SwitchGraphPageForm::SwitchGraphPageForm(QWidget *parent) :
     QStringList graphs;
     QSoftCore::getCore()->getProjectCore()->getAllGraphPageName(graphs);
     foreach(QString graph, graphs) {
-        QStringList uuidName = graph.split(":");//uuid:画面名称
-        if(uuidName.size() == 2) {
-            ui->cboSelectPage->addItem(uuidName.at(1), uuidName.at(0));
+        QStringList idName = graph.split(":");//id:画面名称
+        if(idName.size() == 2) {
+            ui->cboSelectPage->addItem(idName.at(1), idName.at(0));
         }
     }
 }

@@ -16,6 +16,8 @@
 #include <QMetaMethod>
 #include <QScriptEngine>
 
+quint64 QAbstractHost::m_nextAllocID = 1;
+
 QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     QObject(parent),
     m_parent(parent),
@@ -24,7 +26,7 @@ QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     m_engine(new QScriptEngine)
 {
     setProperty("title", OBJECT_TITLE);
-    setAttribute("uuid", QUuid::createUuid().toString());
+    setAttribute("id", "-1");
 
     setProperty("function_list",
                 QStringList()
@@ -290,6 +292,20 @@ void QAbstractHost::initProperty()
     }
 }
 
+
+/**
+ * @brief QAbstractHost::allocID
+ * @details 分配一个
+ * @return ID
+ */
+quint64 QAbstractHost::allocID()
+{
+    int id = m_nextAllocID;
+    m_nextAllocID++;
+    return id;
+}
+
+
 void QAbstractHost::toObject(XMLObject *xml)
 {
     if(xml != NULL) {
@@ -335,11 +351,17 @@ void QAbstractHost::fromObject(XMLObject *xml)
             m_attributes.insert(it.key(), xml->getProperty(it.key()));
         }
 
-        if(getUuid() == "") {
-            setUuid(QUuid::createUuid().toString());
+        bool ok;
+        int id = getID().toInt(&ok);
+        if(ok) {
+            if(m_nextAllocID < id) {
+                m_nextAllocID = id;
+            }
+        } else {
+            setID(QString::number(this->allocID()));
         }
 
-        QList<XMLObject*>   children = xml->getChildren();
+        QList<XMLObject*> children = xml->getChildren();
         foreach(XMLObject* obj, children) {
             if(obj->getTagName() == PROPERTY_TITLE) {
                 QString name = obj->getProperty("name");
@@ -351,18 +373,18 @@ void QAbstractHost::fromObject(XMLObject *xml)
             } else {
                 QString name = obj->getProperty(HOST_TYPE);
 
-                QAbstractHost *h = QHostFactory::create_host(name);
-                if(h != NULL) {
-                    h->fromObject(obj);
-                    h->m_parent = this;
-                    if(h->getObject()->isWidgetType()) {
-                        QWidget* w = (QWidget*)h->getObject();
+                QAbstractHost *pHostObj = QHostFactory::create_host(name);
+                if(pHostObj != NULL) {
+                    pHostObj->fromObject(obj);
+                    pHostObj->m_parent = this;
+                    if(pHostObj->getObject()->isWidgetType()) {
+                        QWidget* w = (QWidget*)pHostObj->getObject();
                         w->setParent((QWidget*)m_object);
                         w->setVisible(true);
                     } else {
-                        h->getObject()->setParent(m_object);
+                        pHostObj->getObject()->setParent(m_object);
                     }
-                    m_children.append(h);
+                    m_children.append(pHostObj);
                 }
             }
         }
@@ -521,26 +543,26 @@ void QAbstractHost::onPropertyRefresh()
     }
 }
 
-QString QAbstractHost::getUuid()
+QString QAbstractHost::getID()
 {
-    return m_attributes.value("uuid");
+    return m_attributes.value("id");
 }
 
-void QAbstractHost::setUuid(const QString &uuid)
+void QAbstractHost::setID(const QString &id)
 {
-    m_attributes.insert("uuid", uuid);
+    m_attributes.insert("id", id);
 }
 
 
-void QAbstractHost::onCurTextChanged(const QString &uuid)
+void QAbstractHost::onCurTextChanged(const QString &id)
 {
     //    QLanguage* l=m_language_manager->get_current_language();
     //    foreach(QAbstractProperty* pro,m_propertys)
     //    {
-    //        if(pro->getProperty("uuid").toString()==uuid)
+    //        if(pro->getProperty("id").toString()==id)
     //        {
     //            tagTranslateInfo *info=NULL;
-    //            if(l!=NULL)info=l->get_translate(uuid);
+    //            if(l!=NULL)info=l->get_translate(id);
     //            if(info==NULL)
     //            {
     //                pro->get_host()->setObjectPropertyValue(pro->getProperty("name").toString(),"");

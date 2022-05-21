@@ -4,9 +4,9 @@
 #include "../../shared/property/qabstractproperty.h"
 #include "../../shared/host/qabstracthost.h"
 
-QStringChangedUndoCommand::QStringChangedUndoCommand(const QString &host_uuid,
+QStringChangedUndoCommand::QStringChangedUndoCommand(const QString &host_id,
         const QString &property_name,
-        const QString &uuid,
+        const QString &id,
         bool old_tr,
         bool new_tr,
         const QString &old_text,
@@ -15,9 +15,9 @@ QStringChangedUndoCommand::QStringChangedUndoCommand(const QString &host_uuid,
         const QMap<QString, QString> &new_translate,
         QUndoCommand *parent):
     QBaseUndoCommand(parent),
-    m_host_uuid(host_uuid),
+    m_host_id(host_id),
     m_property_name(property_name),
-    m_uuid(uuid),
+    m_id(id),
     m_old_tr(old_tr),
     m_new_tr(new_tr),
     m_old_text(old_text),
@@ -34,12 +34,12 @@ int QStringChangedUndoCommand::id() const
 
 void QStringChangedUndoCommand::redo()
 {
-    QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByID(m_host_id);
     if(h != NULL) {
         QAbstractProperty* pro = h->getProperty(m_property_name);
         if(pro != NULL) {
             pro->setObjectProperty("tr", m_new_tr);
-            pro->setObjectProperty("uuid", m_new_tr ? m_uuid : QVariant());
+            pro->setObjectProperty("id", m_new_tr ? m_id : QVariant());
         }
         if(m_old_tr) {
             if(!m_new_tr) {
@@ -65,12 +65,12 @@ void QStringChangedUndoCommand::redo()
 
 void QStringChangedUndoCommand::undo()
 {
-    QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByUuid(m_host_uuid);
+    QAbstractHost *h = QSoftCore::getCore()->getProjectCore()->getHostByID(m_host_id);
     if(h != NULL) {
         QAbstractProperty* pro = h->getProperty(m_property_name);
         if(pro != NULL) {
             pro->setObjectProperty("tr", m_old_tr);
-            pro->setObjectProperty("uuid", m_old_tr ? m_uuid : QVariant());
+            pro->setObjectProperty("id", m_old_tr ? m_id : QVariant());
         }
         if(m_new_tr) {
             if(!m_old_tr) {

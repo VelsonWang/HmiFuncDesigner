@@ -15,8 +15,7 @@ typedef QString (*GET_SHOW_ICON)();
 typedef QString (*GET_NAME)();
 typedef QString (*GET_SHOW_GROUP)();
 
-struct tagHostInfo
-{
+struct tagHostInfo {
     const QMetaObject *m_host_object;
     QString         m_name;
     GET_SHOW_ICON getShowIcon;
@@ -32,11 +31,12 @@ protected:
 public:
     static void register_host(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject* host);
     static QAbstractHost* create_host(const QString& name);
-    static QMap<QString,tagHostInfo*> get_host_info();
+    static QMap<QString, tagHostInfo*> get_host_info();
     static QAbstractHost* create_host(XMLObject* xml);
-    static tagHostInfo *  get_host_info(const QString &name);
+    static tagHostInfo* get_host_info(const QString &name);
+
 protected:
-    static QMap<QString,tagHostInfo*>        m_meta_map;
+    static QMap<QString, tagHostInfo*> m_meta_map;
 };
 
 

@@ -10,7 +10,6 @@
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>
-#include <QUuid>
 #include <QScriptEngine>
 
 
@@ -90,27 +89,27 @@ void QProjectCore::onFormRefresh(QAbstractHost *form)
         ComboItems items;
         foreach(QAbstractHost* host, list) {
             item.m_text = host->getPropertyValue("objectName").toString();
-            item.m_value = host->getUuid();
+            item.m_value = host->getID();
             items.append(item);
         }
         QVariant v;
         v.setValue<ComboItems>(items);
         pro->setAttribute("items", v);
-        if(form != NULL && pro->getValue().toString() == form->getUuid()) {
+        if(form != NULL && pro->getValue().toString() == form->getID()) {
             pro->setValue("");
-            pro->setValue(form->getUuid());
+            pro->setValue(form->getID());
         }
     }
 }
 
-QAbstractHost* QProjectCore::getHostByUuid(const QString &uuid)
+QAbstractHost* QProjectCore::getHostByID(const QString &id)
 {
     QList<QAbstractHost*> list = m_pPageManagerObj->getPages();
     list.append(m_pProjectHostObj);
 
     while(list.size() > 0) {
         QAbstractHost* h = list.takeFirst();
-        if(h->getUuid() == uuid) {
+        if(h->getID() == id) {
             return h;
         }
         list += h->getChildren();

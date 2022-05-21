@@ -55,6 +55,7 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
     QAbstractHost* host = m_property->getHost();
 
     m_host = QHostFactory::create_host(host->getAttribute(HOST_TYPE));
+    m_host->setID(QString::number(m_host->allocID()));
 
     QList<QAbstractProperty*> list = host->getPropertys();
     if(host->getAttribute(HOST_TYPE) == "form") {
@@ -207,7 +208,7 @@ void QStyleSheetDialog::ok()
         foreach(QBaseEditorWidget *e, m_editor_to_item.keys()) {
             e->addResource(cmd);
         }
-        new QPropertyChangedUndoCommand(m_property->getHost()->getUuid(),
+        new QPropertyChangedUndoCommand(m_property->getHost()->getID(),
                                         m_property->getObjectProperty("name").toString(),
                                         m_property->getValue(),
                                         v, cmd);

@@ -28,26 +28,26 @@ void QHostFactory::register_host(const QString name, GET_SHOW_ICON icon, GET_SHO
 
 QAbstractHost* QHostFactory::create_host(const QString &name)
 {
-    QAbstractHost* host = NULL;
+    QAbstractHost* pHostObj = NULL;
     if(name == FORM_TITLE) {
-        host = new QFormHost;
-        host->init();
-        host->setAttribute(HOST_TYPE, FORM_TITLE);
+        pHostObj = new QFormHost;
+        pHostObj->init();
+        pHostObj->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
         tagHostInfo *info = m_meta_map.value(name);
         if(info == NULL) {
             return NULL;
         }
-        const QMetaObject* obj = info->m_host_object;
+        const QMetaObject* pObj = info->m_host_object;
 
-        if(obj != NULL) {
-            host = (QAbstractHost*)obj->newInstance();
-            host->init();
-            host->setAttribute(HOST_TYPE, name);
+        if(pObj != NULL) {
+            pHostObj = (QAbstractHost*)pObj->newInstance();
+            pHostObj->init();
+            pHostObj->setAttribute(HOST_TYPE, name);
         }
     }
 
-    return host;
+    return pHostObj;
 }
 
 QMap<QString, tagHostInfo*> QHostFactory::get_host_info()
@@ -61,20 +61,20 @@ QAbstractHost* QHostFactory::create_host(XMLObject *xml)
         return NULL;
     }
 
-    QAbstractHost* ret = NULL;
+    QAbstractHost* pHostObj = NULL;
 
     if(xml->getTagName() == FORM_TITLE) {
-        ret = new QFormHost;
-        ret->init();
-        ret->fromObject(xml);
-        ret->setAttribute(HOST_TYPE, FORM_TITLE);
+        pHostObj = new QFormHost;
+        pHostObj->init();
+        pHostObj->fromObject(xml);
+        pHostObj->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
-        ret = create_host(xml->getProperty(HOST_TYPE));
-        if(ret != NULL) {
-            ret->fromObject(xml);
+        pHostObj = create_host(xml->getProperty(HOST_TYPE));
+        if(pHostObj != NULL) {
+            pHostObj->fromObject(xml);
         }
     }
-    return ret;
+    return pHostObj;
 }
 
 tagHostInfo* QHostFactory::get_host_info(const QString &name)

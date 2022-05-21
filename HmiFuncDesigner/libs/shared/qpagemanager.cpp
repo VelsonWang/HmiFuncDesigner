@@ -75,12 +75,13 @@ void QPageManager::save(const QString &project_path)
 
 void QPageManager::newPage(const QString &szPageName)
 {
-    QAbstractHost* host = QHostFactory::create_host(FORM_TITLE);
-    if(host != NULL) {
-        m_page_list.insert(m_page_list.size(), host);
-        m_uuid_to_page.insert(host->getUuid(), host);
+    QAbstractHost* pHostObj = QHostFactory::create_host(FORM_TITLE);
+    if(pHostObj != NULL) {
+        pHostObj->setID(QString::number(pHostObj->allocID()));
+        m_page_list.insert(m_page_list.size(), pHostObj);
+        m_id_to_page.insert(pHostObj->getID(), pHostObj);
         QList<QAbstractHost*> list;
-        list.append(host);
+        list.append(pHostObj);
         while(list.size() > 0) {
             QAbstractHost *h = list.takeFirst();
             QAbstractProperty* pro = h->getProperty("objectName");
@@ -90,8 +91,8 @@ void QPageManager::newPage(const QString &szPageName)
             }
             list += h->getChildren();
         }
-        emit insert_page_signal(host);
-        emit host_name_changed(host);
+        emit insert_page_signal(pHostObj);
+        emit host_name_changed(pHostObj);
     }
 }
 
@@ -108,7 +109,7 @@ void QPageManager::load(XMLObject *pXmlObj)
             QAbstractHost* host = QHostFactory::create_host(pObj);
             if(host != NULL) {
                 m_page_list.append(host);
-                m_uuid_to_page.insert(host->getUuid(), host);
+                m_id_to_page.insert(host->getID(), host);
                 host->setProperty("old_file_name", "");
                 host->setDefault();
                 QList<QAbstractHost*> list;
@@ -142,7 +143,7 @@ void QPageManager::load(XMLObject *pXmlObj)
         QAbstractHost* host = QHostFactory::create_host(&xml);
         if(host != NULL) {
             m_page_list.append(host);
-            m_uuid_to_page.insert(host->getUuid(), host);
+            m_id_to_page.insert(host->getID(), host);
             host->setProperty("old_file_name", "");
             host->setDefault();
             QList<QAbstractHost*> list;
@@ -203,7 +204,7 @@ void QPageManager::load_page(const QString &fileName)
     QAbstractHost* host = QHostFactory::create_host(&xml);
     if(host != NULL) {
         m_page_list.append(host);
-        m_uuid_to_page.insert(host->getUuid(), host);
+        m_id_to_page.insert(host->getID(), host);
         host->setProperty("old_file_name", fileName);
         host->setDefault();
         QList<QAbstractHost*> list;
@@ -233,9 +234,9 @@ QAbstractHost* QPageManager::get_page(int index)
     }
 }
 
-QAbstractHost* QPageManager::get_page(const QString &uuid)
+QAbstractHost* QPageManager::get_page(const QString &id)
 {
-    return m_uuid_to_page.value(uuid);
+    return m_id_to_page.value(id);
 }
 
 void QPageManager::insert_page(QAbstractHost *host, int index)
@@ -244,7 +245,7 @@ void QPageManager::insert_page(QAbstractHost *host, int index)
         index = m_page_list.size();
     }
     m_page_list.insert(index, host);
-    m_uuid_to_page.insert(host->getUuid(), host);
+    m_id_to_page.insert(host->getID(), host);
     QList<QAbstractHost*> list;
     list.append(host);
     while(list.size() > 0) {
@@ -274,7 +275,7 @@ void QPageManager::remove_page(QAbstractHost *host)
     emit remove_page_signal(host);
     emit host_name_changed(host);
     m_page_list.removeAll(host);
-    m_uuid_to_page.remove(host->getUuid());
+    m_id_to_page.remove(host->getID());
 }
 
 QList<QAbstractHost*> QPageManager::getPages_by_title(const QString &title)
@@ -318,14 +319,14 @@ void QPageManager::getAllPageName(QStringList &szList)
     szList.clear();
     foreach(QAbstractHost* pHostObj, m_page_list) {
         QString szTitle = pHostObj->property("title").toString();
-        QString uuid = pHostObj->getAttribute("uuid");
+        QString id = pHostObj->getAttribute("id");
         //qDebug() << "title: " << szTitle;
         if(szTitle == FORM_TITLE) {
             QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
             if(pProObj) {
                 QString szPageName = pProObj->getValue().toString();
                 //qDebug() << "page name: " << szPageName;
-                szList.append(QString("%1:%2").arg(uuid).arg(szPageName));
+                szList.append(QString("%1:%2").arg(id).arg(szPageName));
             }
         }
     }

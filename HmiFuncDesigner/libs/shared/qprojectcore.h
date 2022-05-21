@@ -72,7 +72,7 @@ public:
 
     QPageManager* getPageManager();
     QAbstractHost* getProjectHost();
-    QAbstractHost* getHostByUuid(const QString& uuid);
+    QAbstractHost* getHostByID(const QString& id);
 
     void initScriptEngine();
 

@@ -84,7 +84,7 @@ QStringEditDialog::QStringEditDialog(QAbstractProperty *property, QUndoStack* st
     //    {
     //        QTreeWidgetItem* item=new QTreeWidgetItem(ui->translateTree);
     //        item->setText(0,l->get_language_name());
-    //        tagTranslateInfo *info=l->get_translate(m_property->getProperty("uuid").toString());
+    //        tagTranslateInfo *info=l->get_translate(m_property->getProperty("id").toString());
     //        QString trs=(info!=NULL?info->m_translate:"");
     //        item->setText(1,trs);
     //        item->setToolTip(1,trs);
@@ -123,9 +123,9 @@ void QStringEditDialog::on_okBtn_clicked()
     QMap<QString, QString> new_translate;
     QString old_text;
     QString new_text;
-    QString uuid = m_property->getObjectProperty("uuid").toString();
-    if(uuid == "") {
-        uuid = QUuid::createUuid().toString();
+    QString id = m_property->getObjectProperty("id").toString();
+    if(id == "") {
+        id = QUuid::createUuid().toString();
     }
     if(new_tr) {
         QMapIterator<QTreeWidgetItem*, QLanguage*> it(m_items);
@@ -139,17 +139,17 @@ void QStringEditDialog::on_okBtn_clicked()
         //        QList<QLanguage*>   lan=QSoftCore::getCore()->getProjectCore()->getLanguageManager()->get_all_languages();
         //        foreach(QLanguage* l,lan)
         //        {
-        //            tagTranslateInfo *info=l->get_translate(uuid);
-        //            old_translate.insert(l->getUuid(),info==NULL?"":info->m_translate);
+        //            tagTranslateInfo *info=l->get_translate(id);
+        //            old_translate.insert(l->getID(),info==NULL?"":info->m_translate);
         //        }
     } else {
         old_text = m_property->getValue().toString();
     }
 
 #if 0
-    QStringChangedUndoCommand *cmd = new QStringChangedUndoCommand(m_property->get_host()->getUuid(),
+    QStringChangedUndoCommand *cmd = new QStringChangedUndoCommand(m_property->get_host()->getID(),
             m_property->getObjectProperty("name").toString(),
-            uuid,
+            id,
             old_tr,
             new_tr,
             old_text,

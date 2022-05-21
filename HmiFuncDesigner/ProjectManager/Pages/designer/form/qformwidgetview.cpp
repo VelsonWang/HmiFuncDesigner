@@ -213,8 +213,7 @@ void QFormWidgetView::project_opened()
 
 void QFormWidgetView::project_closed()
 {
-    //emit select(NULL);
-    m_language_uuid.clear();
+    m_language_id.clear();
     m_formWidget->clear();
     m_undo_stack->clear();
 

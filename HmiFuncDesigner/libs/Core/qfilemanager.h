@@ -10,18 +10,18 @@
 
 struct tagFileInfo {
     QString m_file_name;
-    QString m_uuid;
+    QString m_id;
     QString m_type;
     QByteArray m_file_data;
-    QString m_group_uuid;
+    QString m_group_id;
     QString m_exp;
 };
 
 struct tagFileGroupInfo {
     QString m_group_name;
-    QString m_uuid;
+    QString m_id;
     QList<tagFileInfo*> m_files;
-    QMap<QString, tagFileInfo*> m_uuid_to_file;
+    QMap<QString, tagFileInfo*> m_id_to_file;
 };
 
 class CORELIB_EXPORT QFileManager : public QObject
@@ -32,20 +32,20 @@ public:
     ~QFileManager();
 
     void load();
-    void save(const QString &uuid);
+    void save(const QString &id);
     void clear();
-    void rename(const QString &uuid, const QString &new_group_name);
+    void rename(const QString &id, const QString &new_group_name);
 
     void insertGroup(tagFileGroupInfo *group, int index = -1);
-    void removeGroup(const QString &uuid);
+    void removeGroup(const QString &id);
 
-    void insertFile(const QString &group_uuid, tagFileInfo *info, int index = -1);
-    void removeFile(const QString &group_uuid, const QString &file_uuid);
+    void insertFile(const QString &group_id, tagFileInfo *info, int index = -1);
+    void removeFile(const QString &group_id, const QString &file_id);
 
-    void changedFile(const QString &group_uuid, tagFileInfo *info);
+    void changedFile(const QString &group_id, tagFileInfo *info);
 
-    tagFileGroupInfo *getGroup(const QString &group_uuid);
-    tagFileInfo *getFile(const QString &file_uuid);
+    tagFileGroupInfo *getGroup(const QString &group_id);
+    tagFileInfo *getFile(const QString &file_id);
     QList<tagFileGroupInfo*> getAllGroup();
 
 protected:
@@ -61,7 +61,7 @@ signals:
 
 protected:
     QList<tagFileGroupInfo*> m_groups;
-    QMap<QString, tagFileGroupInfo*> m_uuidToGroup;
+    QMap<QString, tagFileGroupInfo*> m_idToGroup;
 };
 
 #endif // QFILEMANAGER_H

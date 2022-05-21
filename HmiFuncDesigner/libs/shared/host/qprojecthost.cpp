@@ -86,7 +86,7 @@ void QProjectHost::show_form(const QString &name)
     foreach(QAbstractHost* p, pages) {
         qDebug(p->getPropertyValue("objectName").toByteArray());
         if(p->getPropertyValue("objectName").toString() == name) {
-            show_form_by_uuid(p->getUuid());
+            show_form_by_id(p->getID());
             return;
         }
     }
@@ -97,9 +97,9 @@ void QProjectHost::show_dialog(const QString &name)
 
 }
 
-void QProjectHost::show_form_by_uuid(const QString &uuid)
+void QProjectHost::show_form_by_id(const QString &id)
 {
-    QAbstractHost* host = m_page_manager->get_page(uuid);
+    QAbstractHost* host = m_page_manager->get_page(id);
 
     if(host != NULL) {
         QWidget* wid = (QWidget*)host->getObject();

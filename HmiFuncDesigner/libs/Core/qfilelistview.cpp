@@ -200,8 +200,8 @@ void QFileListView::removeGroup(tagFileGroupInfo *g)
         m_itemToGroup.remove(item);
         delete item;
     }
-    tagFileInfo *select = QSoftCore::getCore()->getFileManager()->getFile(m_selectUuid);
-    if(select == NULL || select->m_group_uuid == g->m_uuid) {
+    tagFileInfo *select = QSoftCore::getCore()->getFileManager()->getFile(m_selectId);
+    if(select == NULL || select->m_group_id == g->m_id) {
         selectFirst(g, NULL);
     }
 }
@@ -233,7 +233,7 @@ void QFileListView::removeFile(tagFileGroupInfo *g, tagFileInfo *f)
         m_fileToItem.remove(f);
         delete item;
 
-        if(f->m_uuid == m_selectUuid) {
+        if(f->m_id == m_selectId) {
             m_current = NULL;
             selectFirst(g, f);
         }
@@ -283,7 +283,7 @@ void QFileListView::doubleClicked(QTreeWidgetItem *item)
 {
     tagFileInfo *file = m_itemToFile.value(item);
     if(file != NULL) {
-        if(m_selectUuid != file->m_uuid) {
+        if(m_selectId != file->m_id) {
             select(file);
         }
     }
@@ -319,9 +319,9 @@ void QFileListView::selectFirst(tagFileGroupInfo *g, tagFileInfo *f)
 void QFileListView::select(tagFileInfo *f)
 {
     if(f != NULL) {
-        m_selectUuid = f->m_uuid;
+        m_selectId = f->m_id;
     } else {
-        m_selectUuid = "";
+        m_selectId = "";
     }
     if(m_current != NULL) {
         QFileListItemWidget *wid = (QFileListItemWidget*)itemWidget(m_current, 0);
