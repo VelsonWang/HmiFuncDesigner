@@ -393,7 +393,7 @@ void QObjectListView::button_remove()
                 QAbstractProperty* pro = QSoftCore::getCore()->getProjectCore()->getProjectHost()->getProperty("start_page");
                 if(pro != NULL) {
                     if(pro->getValue().toString() == it.key()->getID()) {
-                        QList<QAbstractHost*> list = QSoftCore::getCore()->getProjectCore()->getPageManager()->getPages_by_title("form");
+                        QList<QAbstractHost*> list = QSoftCore::getCore()->getProjectCore()->getPageManager()->getPagesByTitle("form");
                         list.removeAll(it.key());
                         QString str;
                         if(list.size() > 0) {
@@ -434,7 +434,7 @@ void QObjectListView::insert_page_slot(QAbstractHost *page)
     QString type = page->getHostType();
     QPageManager *manager = QSoftCore::getCore()->getProjectCore()->getPageManager();
 
-    int index = manager->getPages_by_title(type).indexOf(page);
+    int index = manager->getPagesByTitle(type).indexOf(page);
 
     QTreeWidgetItem *par;
     if(type == "form") {

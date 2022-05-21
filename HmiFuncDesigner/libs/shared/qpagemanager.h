@@ -29,7 +29,7 @@ public:
     QAbstractHost* get_page(const QString& id);
     void insert_page(QAbstractHost* host, int index);
     void remove_page(QAbstractHost* host);
-    QList<QAbstractHost*> getPages_by_title(const QString& title);
+    QList<QAbstractHost*> getPagesByTitle(const QString& title);
     void getAllElementIDName(QStringList &szIDList);
     void getAllPageName(QStringList &szList);
 

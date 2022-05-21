@@ -84,7 +84,7 @@ void QProjectCore::onFormRefresh(QAbstractHost *form)
     }
     QAbstractProperty* pro = m_pProjectHostObj->getProperty("start_page");
     if(pro != NULL) {
-        QList<QAbstractHost*> list = m_pPageManagerObj->getPages_by_title("form");
+        QList<QAbstractHost*> list = m_pPageManagerObj->getPagesByTitle("form");
         tagComboItem item;
         ComboItems items;
         foreach(QAbstractHost* host, list) {

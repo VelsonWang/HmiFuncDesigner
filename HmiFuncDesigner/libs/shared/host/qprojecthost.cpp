@@ -82,7 +82,7 @@ void QProjectHost::initProperty()
 
 void QProjectHost::show_form(const QString &name)
 {
-    QList<QAbstractHost*> pages = m_page_manager->getPages_by_title("form");
+    QList<QAbstractHost*> pages = m_page_manager->getPagesByTitle("form");
     foreach(QAbstractHost* p, pages) {
         qDebug(p->getPropertyValue("objectName").toByteArray());
         if(p->getPropertyValue("objectName").toString() == name) {

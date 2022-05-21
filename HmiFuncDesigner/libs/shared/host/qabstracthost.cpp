@@ -300,9 +300,8 @@ void QAbstractHost::initProperty()
  */
 quint64 QAbstractHost::allocID()
 {
-    int id = m_nextAllocID;
-    m_nextAllocID++;
-    return id;
+    ++m_nextAllocID;
+    return m_nextAllocID;
 }
 
 

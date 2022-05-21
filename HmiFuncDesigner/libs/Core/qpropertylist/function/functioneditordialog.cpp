@@ -12,6 +12,14 @@
 #include "statechangeform.h"
 #include "addtagvalueform.h"
 #include "subtagvalueform.h"
+#include "hidecontrolelementform.h"
+#include "showcontrolelementform.h"
+#include "disablecontrolelementform.h"
+#include "enablecontrolelementform.h"
+#include "blinkcontrolelementform.h"
+#include "stopblinkcontrolelementform.h"
+#include "movecontrolelementform.h"
+
 
 FunctionEditorDialog::FunctionEditorDialog(QWidget *parent)
     : QDialog(parent),
@@ -84,6 +92,41 @@ void FunctionEditorDialog::initUI()
     ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
     //变量值自减
     pObj = new SubTagValueForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+    //隐藏控件元素
+    pObj = new HideControlElementForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+    //显示控件元素
+    pObj = new ShowControlElementForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+    //失效控件元素
+    pObj = new DisableControlElementForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+    //生效控件元素
+    pObj = new EnableControlElementForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+    //控件闪烁显示
+    pObj = new BlinkControlElementForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+    //控件停止闪烁显示
+    pObj = new StopBlinkControlElementForm;
+    m_nameToFuncsUi.insert(pObj->name(), pObj);
+    ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
+
+    //移动控件
+    pObj = new MoveControlElementForm;
     m_nameToFuncsUi.insert(pObj->name(), pObj);
     ui->stackedWidget->addWidget(dynamic_cast<QWidget*>(pObj));
 

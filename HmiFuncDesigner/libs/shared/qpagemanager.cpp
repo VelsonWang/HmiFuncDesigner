@@ -176,7 +176,6 @@ void QPageManager::clear()
     //qDeleteAll(m_page_list);
     //m_page_list.clear();
 
-
     foreach(QAbstractHost* h, m_page_list) {
         h->deleteLater();
     }
@@ -278,7 +277,7 @@ void QPageManager::remove_page(QAbstractHost *host)
     m_id_to_page.remove(host->getID());
 }
 
-QList<QAbstractHost*> QPageManager::getPages_by_title(const QString &title)
+QList<QAbstractHost*> QPageManager::getPagesByTitle(const QString &title)
 {
     QList<QAbstractHost*> list;
     foreach(QAbstractHost* host, m_page_list) {
@@ -292,41 +291,58 @@ QList<QAbstractHost*> QPageManager::getPages_by_title(const QString &title)
 void QPageManager::host_name_changed_slot(const QVariant &, const QVariant &)
 {
     QAbstractProperty *pro = (QAbstractProperty*)sender();
-
     emit host_name_changed(pro->getHost());
 }
-
 
 /**
  * @brief QPageManager::getAllElementIDName
  * @details 获取工程所有控件的ID名称
- * @param szIDList 所有控件的ID名称
+ * @param szIDList 所有控件的ID名称 [画面id.控件id:画面名称.控件名称, ... , 画面id.控件id:画面名称.控件名称]
  */
-void QPageManager::getAllElementIDName(QStringList &szIDList)
+void QPageManager::getAllElementIDName(QStringList &szList)
 {
-    //    if(pImplGraphPageSaveLoadObj_) {
-    //        pImplGraphPageSaveLoadObj_->getAllElementIDName(szIDList);
-    //    }
+    szList.clear();
+    foreach(QAbstractHost* pHostObj, m_page_list) {
+        QString pageTitle = pHostObj->property("title").toString();
+        QString pageID = pHostObj->getAttribute("id");
+        if(pageTitle == FORM_TITLE) {
+            QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
+            if(pProObj) {
+                QString pageName = pProObj->getValue().toString();
+                foreach(QAbstractHost* pChildHostObj, pHostObj->getChildren()) {
+                    QString elementTitle = pChildHostObj->property("title").toString();
+                    QString elementID = pChildHostObj->getAttribute("id");
+                    if(elementTitle == "Object") {
+                        pProObj = pChildHostObj->getProperty("objectName");
+                        if(pProObj) {
+                            QString elementName = pProObj->getValue().toString();
+                            //画面id.控件id:画面名称.控件名称
+                            QString idName = QString("%1.%2:%3.%4").arg(pageID).arg(elementID).arg(pageName).arg(elementName);
+                            szList.append(idName);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
  * @brief QProjectCore::getAllPageName
  * @details 获取工程所有画面名称
- * @param szList 所有画面名称
+ * @param szList 所有画面名称 [画面id:画面名称, ... , 画面id:画面名称]
  */
 void QPageManager::getAllPageName(QStringList &szList)
 {
     szList.clear();
     foreach(QAbstractHost* pHostObj, m_page_list) {
         QString szTitle = pHostObj->property("title").toString();
-        QString id = pHostObj->getAttribute("id");
-        //qDebug() << "title: " << szTitle;
+        QString pageID = pHostObj->getAttribute("id");
         if(szTitle == FORM_TITLE) {
             QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
             if(pProObj) {
-                QString szPageName = pProObj->getValue().toString();
-                //qDebug() << "page name: " << szPageName;
-                szList.append(QString("%1:%2").arg(id).arg(szPageName));
+                QString pageName = pProObj->getValue().toString();
+                szList.append(QString("%1:%2").arg(pageID).arg(pageName));
             }
         }
     }

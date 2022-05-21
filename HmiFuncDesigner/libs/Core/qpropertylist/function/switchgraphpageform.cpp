@@ -116,7 +116,7 @@ bool SwitchGraphPageForm::fromString(const QString func)
         QString showArg = funcs.at(1);
         showArg = showArg.replace(showName() + "(\"", ""); //移除"切换画面(""
         showArg = showArg.replace("\");", ""); //移除"")"
-        m_showArg = arg;
+        m_showArg = showArg;
 
         ui->cboSelectPage->setCurrentText(m_showArg);
         int index = ui->cboSelectPage->currentIndex();
