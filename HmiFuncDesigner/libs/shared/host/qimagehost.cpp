@@ -13,12 +13,12 @@ QImageHost::QImageHost(QAbstractHost *parent) : QFrameHost(parent)
 
 QString QImageHost::getShowName()
 {
-    return tr("Image");
+    return tr("图片");//tr("Image");
 }
 
 QString QImageHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件");//tr("Display Widgets");
 }
 
 QString QImageHost::getShowIcon()

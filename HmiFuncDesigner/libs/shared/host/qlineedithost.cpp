@@ -13,12 +13,12 @@ QLineEditHost::QLineEditHost(QAbstractHost *parent):
 
 QString QLineEditHost::getShowName()
 {
-    return tr("Line Edit");
+    return tr("编辑框");//tr("Line Edit")
 }
 
 QString QLineEditHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets")
 }
 
 QString QLineEditHost::getShowIcon()

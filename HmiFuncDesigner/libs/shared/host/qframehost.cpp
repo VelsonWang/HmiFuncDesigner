@@ -13,12 +13,12 @@ QFrameHost::QFrameHost(QAbstractHost *parent):
 
 QString QFrameHost::getShowName()
 {
-    return tr("Frame");
+    return tr("边框");//tr("Frame")
 }
 
 QString QFrameHost::getShowGroup()
 {
-    return tr("Containners");
+    return tr("容器");//tr("Containners");
 }
 
 

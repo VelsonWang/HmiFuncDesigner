@@ -15,12 +15,12 @@ QDateTimeEditHost::QDateTimeEditHost(QAbstractHost *parent):
 
 QString QDateTimeEditHost::getShowName()
 {
-    return tr("DateTime Edit");
+    return tr("日期时间编辑");//tr("DateTime Edit");
 }
 
 QString QDateTimeEditHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets");
 }
 
 QString QDateTimeEditHost::getShowIcon()

@@ -13,12 +13,12 @@ QLabelHost::QLabelHost(QAbstractHost *parent):
 
 QString QLabelHost::getShowName()
 {
-    return tr("Label");
+    return tr("标签");//tr("Label")
 }
 
 QString QLabelHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件");//tr("Display Widgets");
 }
 
 QString QLabelHost::getShowIcon()

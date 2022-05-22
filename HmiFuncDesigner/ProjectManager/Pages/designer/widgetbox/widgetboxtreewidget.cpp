@@ -1,12 +1,8 @@
 #include "widgetboxtreewidget.h"
-
 #include "../qdesignermimedata.h"
-
 #include "../../../libs/shared/qhostfactory.h"
 #include "../../../libs/core/stylehelper.h"
-
 #include <QHeaderView>
-
 #include <QItemDelegate>
 #include <QPainter>
 #include <QApplication>
@@ -27,17 +23,14 @@ void QWidgetDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
 {
     QStyleOptionViewItem opt = option;
     QColor c;
-    QTreeWidgetItem *item = m_view->itemFromIndex(index);
-    if(m_view->m_item_to_info.keys().contains(item)) {
-        c = QColor(255, 240, 191);
+    if(m_view->m_item_to_info.keys().contains(m_view->itemFromIndex(index))) {
+        c = QColor(242, 242, 242);
         if(opt.features & QStyleOptionViewItem::Alternate) {
             c = c.lighter(112);
         }
     } else {
-
         c = opt.palette.color(QPalette::Dark);
     }
-
     painter->fillRect(option.rect, c);
     opt.state &= ~ QStyle::State_HasFocus;
     QItemDelegate::paint(painter, opt, index);
@@ -49,8 +42,6 @@ QSize QWidgetDelegate::sizeHint(const QStyleOptionViewItem &option, const QModel
     sz.setHeight(25);
     return sz;
 }
-
-
 
 WidgetBoxTreeWidget::WidgetBoxTreeWidget(QWidget *parent) :
     QTreeWidget(parent)
@@ -69,7 +60,7 @@ WidgetBoxTreeWidget::WidgetBoxTreeWidget(QWidget *parent) :
     setIconSize(QSize(24, 24));
     setItemDelegate(new QWidgetDelegate(this));
     m_expandIcon = StyleHelper::drawIndicatorIcon(this->palette(), this->style());
-    init_widgetbox();
+    initWidgetBox();
 }
 
 WidgetBoxTreeWidget::~WidgetBoxTreeWidget()
@@ -79,34 +70,29 @@ WidgetBoxTreeWidget::~WidgetBoxTreeWidget()
 
 void WidgetBoxTreeWidget::drawRow(QPainter *painter, const QStyleOptionViewItem &options, const QModelIndex &index) const
 {
-    QTreeWidgetItem *item = itemFromIndex(index);
-
     QColor c;
     QStyleOptionViewItem opt = options;
-    if(m_name_to_group.values().contains(item)) {
+    if(m_name_to_group.values().contains(itemFromIndex(index))) {
         c = opt.palette.color(QPalette::Dark);
     } else {
         c = QColor(255, 240, 191);
     }
-
-
     painter->fillRect(options.rect, c);
     opt.palette.setColor(QPalette::AlternateBase, c.lighter(112));
     QTreeWidget::drawRow(painter, opt, index);
 }
 
-void WidgetBoxTreeWidget::init_widgetbox()
+void WidgetBoxTreeWidget::initWidgetBox()
 {
-    QMapIterator<QString, tagHostInfo*> it(QHostFactory::get_host_info());
-
+    QMapIterator<QString, tagHostInfo*> it(QHostFactory::getHostInfo());
     while(it.hasNext()) {
         it.next();
-        add_widget(it.value());
+        addWidget(it.value());
     }
     this->expandAll();
 }
 
-void WidgetBoxTreeWidget::add_widget(tagHostInfo *info)
+void WidgetBoxTreeWidget::addWidget(tagHostInfo *info)
 {
     QString group = info->getShowGroup();
     QString name = info->getShowName();

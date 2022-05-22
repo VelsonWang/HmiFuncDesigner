@@ -56,7 +56,7 @@ WidgetBoxDnDItem::WidgetBoxDnDItem(const QString &name, const QPoint &global_mou
     QDesignerDnDItem(CopyDrop)
 {
     QAbstractHost *pHostObj = NULL;
-    pHostObj = QHostFactory::create_host(name);
+    pHostObj = QHostFactory::createHost(name);
     if(pHostObj) {
         m_name = name;
         QWidget* wid = (QWidget*)pHostObj->getObject();

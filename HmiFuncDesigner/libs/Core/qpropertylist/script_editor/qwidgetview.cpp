@@ -169,7 +169,7 @@ QAbstractHost *QWidgetView::currentHost()
 
 QIcon QWidgetView::get_host_icon(QAbstractHost *host)
 {
-    tagHostInfo *info = QHostFactory::get_host_info(host->getAttribute(HOST_TYPE));
+    tagHostInfo *info = QHostFactory::getHostInfo(host->getAttribute(HOST_TYPE));
     if(info != NULL) {
         return QIcon(info->getShowIcon());
     } else {

@@ -17,12 +17,12 @@ QPushButtonHost::QPushButtonHost(QAbstractHost *parent):
 
 QString QPushButtonHost::getShowName()
 {
-    return tr("Push Button");
+    return tr("弹出按钮");//tr("Push Button")
 }
 
 QString QPushButtonHost::getShowGroup()
 {
-    return tr("Buttons");
+    return tr("按钮");//tr("Buttons")
 }
 
 QString QPushButtonHost::getShowIcon()

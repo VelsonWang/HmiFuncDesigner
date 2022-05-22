@@ -15,12 +15,12 @@ QDoubleSpinBoxHost::QDoubleSpinBoxHost(QAbstractHost *parent):
 
 QString QDoubleSpinBoxHost::getShowName()
 {
-    return tr("Double Spin Box");
+    return tr("双精度选值框");//tr("Double Spin Box");
 }
 
 QString QDoubleSpinBoxHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets")
 }
 
 QString QDoubleSpinBoxHost::getShowIcon()

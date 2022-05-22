@@ -15,12 +15,12 @@ QCheckBoxHost::QCheckBoxHost(QAbstractHost *parent):
 
 QString QCheckBoxHost::getShowName()
 {
-    return tr("Check Box");
+    return tr("复选框");//tr("Check Box");
 }
 
 QString QCheckBoxHost::getShowGroup()
 {
-    return tr("Buttons");
+    return tr("按钮");//tr("Buttons");
 }
 
 

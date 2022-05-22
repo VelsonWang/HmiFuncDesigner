@@ -372,7 +372,7 @@ void QAbstractHost::fromObject(XMLObject *xml)
             } else {
                 QString name = obj->getProperty(HOST_TYPE);
 
-                QAbstractHost *pHostObj = QHostFactory::create_host(name);
+                QAbstractHost *pHostObj = QHostFactory::createHost(name);
                 if(pHostObj != NULL) {
                     pHostObj->fromObject(obj);
                     pHostObj->m_parent = this;

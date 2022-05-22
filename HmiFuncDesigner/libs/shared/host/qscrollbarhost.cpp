@@ -11,12 +11,12 @@ QScrollBarHost::QScrollBarHost(QAbstractHost *parent):
 
 QString QScrollBarHost::getShowName()
 {
-    return tr("Scroll Bar");
+    return tr("滚动条");//tr("Scroll Bar")
 }
 
 QString QScrollBarHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件");//tr("Input Widgets")
 }
 
 QString QScrollBarHost::getShowIcon()

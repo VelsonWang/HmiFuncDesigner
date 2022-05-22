@@ -13,12 +13,12 @@ QValueStickHost::QValueStickHost(QAbstractHost *parent) : QWidgetHost(parent)
 
 QString QValueStickHost::getShowName()
 {
-    return tr("ValueStick");
+    return tr("数值棒图"); //tr("ValueStick")
 }
 
 QString QValueStickHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件"); //tr("Display Widgets")
 }
 
 QString QValueStickHost::getShowIcon()

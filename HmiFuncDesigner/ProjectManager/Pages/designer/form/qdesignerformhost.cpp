@@ -338,7 +338,7 @@ bool QDesignerFormHost::handle_drop_event(QAbstractHost *host, QDropEvent *e)
 
     foreach(QDesignerDnDItemInterface *item, list) {
         if(item->type() == QDesignerDnDItemInterface::CopyDrop) {
-            QAbstractHost *pHostObj = QHostFactory::create_host(item->name());
+            QAbstractHost *pHostObj = QHostFactory::createHost(item->name());
             if(pHostObj != NULL) {
                 pHostObj->setID(QString::number(pHostObj->allocID()));
                 QRect re = pHostObj->getPropertyValue("geometry").toRect();

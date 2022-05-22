@@ -15,12 +15,12 @@ QSliderHost::QSliderHost(QAbstractHost *parent):
 
 QString QSliderHost::getShowName()
 {
-    return tr("Slider");
+    return tr("滑块");//tr("Slider")
 }
 
 QString QSliderHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件");//tr("Input Widgets")
 }
 
 QString QSliderHost::getShowIcon()

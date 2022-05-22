@@ -54,7 +54,7 @@ QStyleSheetDialog::QStyleSheetDialog(QAbstractProperty *property, QUndoStack *st
 
     QAbstractHost* host = m_property->getHost();
 
-    m_host = QHostFactory::create_host(host->getAttribute(HOST_TYPE));
+    m_host = QHostFactory::createHost(host->getAttribute(HOST_TYPE));
     m_host->setID(QString::number(m_host->allocID()));
 
     QList<QAbstractProperty*> list = host->getPropertys();

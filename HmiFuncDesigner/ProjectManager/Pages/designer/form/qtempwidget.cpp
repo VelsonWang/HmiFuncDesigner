@@ -42,7 +42,7 @@ void QTempWidget::set_current(tagTemplateInfo *info)
         if(!xml.load(s, 0)) {
             return;
         }
-        pHostObj = QHostFactory::create_host(&xml);
+        pHostObj = QHostFactory::createHost(&xml);
         if(pHostObj == NULL) {
             return;
         }

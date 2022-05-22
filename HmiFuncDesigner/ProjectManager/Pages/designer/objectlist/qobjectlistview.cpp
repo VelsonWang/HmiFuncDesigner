@@ -1,7 +1,5 @@
 #include "qobjectlistview.h"
-
 #include "qlistviewwidget.h"
-
 #include "../../../libs/shared/qprojectcore.h"
 #include "../../../libs/shared/qpagemanager.h"
 #include "../../../libs/core/qsoftcore.h"
@@ -11,7 +9,6 @@
 #include "../../../libs/core/undocommand/qaddhostundocommand.h"
 #include "../../../libs/core/undocommand/qpageaddundocommand.h"
 #include "../../../libs/core/undocommand/qpropertychangedundocommand.h"
-
 #include <QVariant>
 #include <QItemDelegate>
 #include <QPainter>
@@ -36,7 +33,7 @@ void QObjectDelegate::paint(QPainter *painter, const QStyleOptionViewItem &optio
     QColor c;
     QTreeWidgetItem *item = m_view->itemFromIndex(index);
     if(item != m_view->m_form_item && item != m_view->m_keyboard_item && item != m_view->m_dialog_item) {
-        c = QColor(255, 191, 239);
+        c = QColor(242, 242, 242);//QColor(255, 191, 239);
         if(opt.features & QStyleOptionViewItem::Alternate) {
             c = c.lighter(112);
         }
@@ -62,7 +59,6 @@ QObjectListView::QObjectListView(QWidget *parent) :
     m_keyboard_item(NULL),
     m_dialog_item(NULL)
 {
-
     setFrameStyle(QFrame::NoFrame);
     setColumnCount(1);
     header()->hide();
@@ -201,7 +197,7 @@ void QObjectListView::drawRow(QPainter *painter,
     if(m_form_item == item || m_dialog_item == item || m_keyboard_item == item) {
         c = opt.palette.color(QPalette::Dark);
     } else {
-        c = QColor(255, 191, 239);
+        c = QColor(242, 242, 242);//QColor(255, 191, 239);
     }
 
     painter->fillRect(options.rect, c);
@@ -227,7 +223,7 @@ QItemSelectionModel::SelectionFlags QObjectListView::selectionCommand(const QMod
 
 QString QObjectListView::get_host_icon(QAbstractHost *host)
 {
-    tagHostInfo *info = QHostFactory::get_host_info(host->getAttribute(HOST_TYPE));
+    tagHostInfo *info = QHostFactory::getHostInfo(host->getAttribute(HOST_TYPE));
     if(info != NULL) {
         return info->getShowIcon();
     } else {

@@ -6,6 +6,7 @@
 #include "../../libs/core/minisplitter.h"
 #include "../../Public/userevent.h"
 #include <QVBoxLayout>
+#include <QList>
 
 QDesignerWidget::QDesignerWidget(QWidget *parent)
     : QAbstractPageWidget(parent),
@@ -19,6 +20,10 @@ QDesignerWidget::QDesignerWidget(QWidget *parent)
     MiniSplitter *pSplitterObj = new MiniSplitter(Qt::Vertical);
     pSplitterObj->addWidget(m_objectListWidget);
     pSplitterObj->addWidget(m_widgetBox);
+
+    //把m_objectListWidget、m_widgetBox以1：3的比例分割
+    pSplitterObj->setStretchFactor(0, 1);
+    pSplitterObj->setStretchFactor(1, 3);
 
     QVBoxLayout *pTopWidgetVLayoutObj = new QVBoxLayout;
     pTopWidgetVLayoutObj->setMargin(0);
@@ -45,7 +50,7 @@ QDesignerWidget::QDesignerWidget(QWidget *parent)
     s->addWidget(m_propertyView);
     //s->addWidget(m_objectListWidget);
     splitter->addWidget(s);
-    splitter->setStretchFactor(0,1);
+    splitter->setStretchFactor(0, 1);
     //splitter->setStretchFactor(1,0);
 
     connect(m_formWidgetView, SIGNAL(select(QAbstractHost*)),
@@ -53,7 +58,7 @@ QDesignerWidget::QDesignerWidget(QWidget *parent)
     connect(m_formWidgetView, SIGNAL(select(QAbstractHost*)),
             m_objectListWidget, SLOT(set_select(QAbstractHost*)));
     connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
-            m_formWidgetView,SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
+            m_formWidgetView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
     connect(m_objectListWidget, SIGNAL(select(QAbstractHost*)),
             m_formWidgetView, SLOT(set_select(QAbstractHost*)));
     this->setLayout(pVLayoutObj);

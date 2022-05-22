@@ -15,12 +15,12 @@ QSpinBoxHost::QSpinBoxHost(QAbstractHost *parent):
 
 QString QSpinBoxHost::getShowName()
 {
-    return tr("Spin Box");
+    return tr("选值框");//tr("Spin Box")
 }
 
 QString QSpinBoxHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets")
 }
 
 

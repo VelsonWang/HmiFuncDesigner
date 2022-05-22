@@ -16,12 +16,12 @@ QRadioButtonHost::QRadioButtonHost(QAbstractHost *parent):
 
 QString QRadioButtonHost::getShowName()
 {
-    return tr("Radio Button");
+    return tr("单选按钮");//tr("Radio Button")
 }
 
 QString QRadioButtonHost::getShowGroup()
 {
-    return tr("Buttons");
+    return tr("按钮");//tr("Buttons")
 }
 
 QString QRadioButtonHost::getShowIcon()

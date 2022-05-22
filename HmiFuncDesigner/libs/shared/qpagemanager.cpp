@@ -75,7 +75,7 @@ void QPageManager::save(const QString &project_path)
 
 void QPageManager::newPage(const QString &szPageName)
 {
-    QAbstractHost* pHostObj = QHostFactory::create_host(FORM_TITLE);
+    QAbstractHost* pHostObj = QHostFactory::createHost(FORM_TITLE);
     if(pHostObj != NULL) {
         pHostObj->setID(QString::number(pHostObj->allocID()));
         m_page_list.insert(m_page_list.size(), pHostObj);
@@ -106,7 +106,7 @@ void QPageManager::load(XMLObject *pXmlObj)
         }
         QList<XMLObject*> listForms = pXmlObj->getChildren();
         foreach(XMLObject* pObj, listForms) {
-            QAbstractHost* host = QHostFactory::create_host(pObj);
+            QAbstractHost* host = QHostFactory::createHost(pObj);
             if(host != NULL) {
                 m_page_list.append(host);
                 m_id_to_page.insert(host->getID(), host);
@@ -140,7 +140,7 @@ void QPageManager::load(XMLObject *pXmlObj)
             return;
         }
 
-        QAbstractHost* host = QHostFactory::create_host(&xml);
+        QAbstractHost* host = QHostFactory::createHost(&xml);
         if(host != NULL) {
             m_page_list.append(host);
             m_id_to_page.insert(host->getID(), host);
@@ -200,7 +200,7 @@ void QPageManager::load_page(const QString &fileName)
         return;
     }
 
-    QAbstractHost* host = QHostFactory::create_host(&xml);
+    QAbstractHost* host = QHostFactory::createHost(&xml);
     if(host != NULL) {
         m_page_list.append(host);
         m_id_to_page.insert(host->getID(), host);

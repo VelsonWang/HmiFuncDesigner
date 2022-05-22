@@ -534,6 +534,10 @@ void MainWindow::doOpenProject(QString proj)
     if(pActObj) {
         pActObj->setEnabled(true);
     }
+
+    if(m_pTabProjectMgrObj) {
+        m_pTabProjectMgrObj->setCurrentIndex(0);
+    }
 }
 
 /**

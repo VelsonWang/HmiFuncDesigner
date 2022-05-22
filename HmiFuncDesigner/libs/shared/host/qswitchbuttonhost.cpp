@@ -17,12 +17,12 @@ QSwitchButtonHost::QSwitchButtonHost(QAbstractHost *parent) : QWidgetHost(parent
 
 QString QSwitchButtonHost::getShowName()
 {
-    return tr("SwitchButton");
+    return tr("切换按钮");//tr("SwitchButton")
 }
 
 QString QSwitchButtonHost::getShowGroup()
 {
-    return tr("Buttons");
+    return tr("按钮"); //tr("Buttons")
 }
 
 QString QSwitchButtonHost::getShowIcon()
