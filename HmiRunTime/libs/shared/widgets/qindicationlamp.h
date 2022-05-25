@@ -3,8 +3,9 @@
 
 #include <QLabel>
 #include <QPaintEvent>
+#include "iloader.h"
 
-class QIndicationLamp : public QLabel
+class QIndicationLamp : public QLabel, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QString Tag READ getTag WRITE setTag)
@@ -16,7 +17,7 @@ class QIndicationLamp : public QLabel
     Q_PROPERTY(QColor BoardColor READ getBoardColor WRITE setBoardColor)
 
 public:
-    explicit QIndicationLamp(QWidget *parent = nullptr);
+    Q_INVOKABLE QIndicationLamp(QWidget *parent = nullptr);
 
     QString getTag();
     void setTag(const QString szName);
@@ -39,12 +40,15 @@ public:
     QColor getBoardColor();
     void setBoardColor(QColor color);
 
+public:
+    void fromObject(XMLObject* xml) override;
+
 private:
     void setPropertyInner();
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QString m_szTag;

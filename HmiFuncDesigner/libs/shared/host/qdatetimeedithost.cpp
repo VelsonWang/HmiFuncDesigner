@@ -15,12 +15,12 @@ QDateTimeEditHost::QDateTimeEditHost(QAbstractHost *parent):
 
 QString QDateTimeEditHost::getShowName()
 {
-    return tr("DateTime Edit");
+    return tr("日期时间编辑");//tr("DateTime Edit");
 }
 
 QString QDateTimeEditHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets");
 }
 
 QString QDateTimeEditHost::getShowIcon()
@@ -185,14 +185,4 @@ void QDateTimeEditHost::dateTimeChanged(const QDateTime &datetime)
         param.insert("_second", QString::number(datetime.time().second()));
         exec(code, param);
     }
-}
-
-/**
- * @brief QDateTimeEditHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QDateTimeEditHost::supportFuncEvents()
-{
-    return QStringList();
 }

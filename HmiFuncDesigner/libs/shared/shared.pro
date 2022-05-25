@@ -43,6 +43,7 @@ HEADERS += \
     widgets/qpushbuttonex.h \
     widgets/qswitchbutton.h \
     widgets/qvaluestick.h \
+    widgets/qform.h \
     xmlobject.h \
     qpropertyfactory.h \
     property/qabstractproperty.h \
@@ -128,6 +129,7 @@ SOURCES += \
     widgets/qpushbuttonex.cpp \
     widgets/qswitchbutton.cpp \
     widgets/qvaluestick.cpp \
+    widgets/qform.cpp \
     xmlobject.cpp \
     qpropertyfactory.cpp \
     property/qabstractproperty.cpp \

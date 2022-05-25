@@ -268,6 +268,7 @@ int ModbusRTUImpl::writeData(void* pObj, RunTimeTag* pTag)
     memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf) / sizeof(quint8));
 
     msgLen = makeMessagePackage(pVendorObj->writeBuf, pObj, pTag, FLAG_WRITE, &revLen);
+    qDebug() << "Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, msgLen);
 
     if(getPort() != NULL) {
         getPort()->write(pVendorObj->writeBuf, msgLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
@@ -276,6 +277,7 @@ int ModbusRTUImpl::writeData(void* pObj, RunTimeTag* pTag)
     int resultlen = 0;
     if(getPort() != NULL) {
         resultlen = getPort()->read(pVendorObj->readBuf, revLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
+        qDebug() << "Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, revLen);
     }
 
     if(resultlen == revLen && messageCheck(pVendorObj->readBuf, resultlen)) {

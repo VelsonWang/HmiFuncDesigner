@@ -17,8 +17,6 @@ protected:
 
 protected:
     void createObject() override;
-    // 控件支持的功能事件
-    QStringList supportFuncEvents() override;
 
 };
 #endif // QSCROLLBARHOST_H

@@ -99,7 +99,7 @@ bool DatabaseSettingDialog::check_data()
 
 void DatabaseSettingDialog::load()
 {
-    DatabaseSetting &dbSetting = QSoftCore::getCore()->getProjectCore()->dbSetting_;
+    DatabaseSetting &dbSetting = QSoftCore::getCore()->getProjectCore()->m_dbSetting;
     ui->editAlarmSize->setText(QString::number(dbSetting.getAlarmSize()));
     ui->checkSpecialDB->setChecked(dbSetting.isSpecialDB());
     ui->checkAutoDelete->setChecked(dbSetting.isAutoDelete());
@@ -118,7 +118,7 @@ void DatabaseSettingDialog::load()
 
 void DatabaseSettingDialog::save()
 {
-    DatabaseSetting &dbSetting = QSoftCore::getCore()->getProjectCore()->dbSetting_;
+    DatabaseSetting &dbSetting = QSoftCore::getCore()->getProjectCore()->m_dbSetting;
     dbSetting.setAlarmSize(ui->editAlarmSize->text().toInt());
     dbSetting.setSpecialDB(ui->checkSpecialDB->isChecked());
     dbSetting.setAutoDelete(ui->checkAutoDelete->isChecked());

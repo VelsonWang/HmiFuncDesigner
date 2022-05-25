@@ -1,4 +1,4 @@
-QT += core gui widgets xml script
+QT += core gui widgets xml script sql
 
 TARGET = shared
 TEMPLATE = lib
@@ -21,7 +21,6 @@ INCLUDEPATH += $$PWD/projdata
 
 HEADERS += \
     confighelper.h \
-    host/qimagehost.h \
     host/qindicationlamphost.h \
     host/qjarshapehost.h \
     host/qswitchbuttonhost.h \
@@ -29,15 +28,18 @@ HEADERS += \
     property/qcolorproperty.h \
     property/qfileproperty.h \
     property/qfunctionproperty.h \
-    property/qimageproperty.h \
     property/qtagcolorlistproperty.h \
     property/qtagproperty.h \
     property/qtagtextlistproperty.h \
     public.h \
     publicfunction.h \
     pubtool.h \
+    qwidgetfactory.h \
     realtimedb.h \
     sharedlibglobal.h \
+    widgets/iloader.h \
+    widgets/keyboard/inputmethodnumber.h \
+    widgets/qformwidget.h \
     widgets/qimagebox.h \
     widgets/qindicationlamp.h \
     widgets/qjarshape.h \
@@ -68,7 +70,6 @@ HEADERS += \
     property/qmemerydataproperty.h \
     property/qalignmentproperty.h \
     host/qabstracthost.h \
-    qhostfactory.h \
     qabstractplugin.h \
     pluginloader.h \
     host/qabstractwidgethost.h \
@@ -77,15 +78,11 @@ HEADERS += \
     host/qwidgethost.h \
     qbaseinit.h \
     host/qframehost.h \
-    host/qformhost.h \
     qpagemanager.h \
-    host/qlabelhost.h \
     host/qlcdnumberhost.h \
     host/qabstractbuttonhost.h \
-    host/qpushbuttonhost.h \
     host/qcheckboxhost.h \
     host/qradiobuttonhost.h \
-    host/qlineedithost.h \
     host/qabstractsliderhost.h \
     host/qdialhost.h \
     host/qsliderhost.h \
@@ -112,7 +109,6 @@ HEADERS += \
 
 SOURCES += \
     confighelper.cpp \
-    host/qimagehost.cpp \
     host/qindicationlamphost.cpp \
     host/qjarshapehost.cpp \
     host/qswitchbuttonhost.cpp \
@@ -120,12 +116,15 @@ SOURCES += \
     property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
     property/qfunctionproperty.cpp \
-    property/qimageproperty.cpp \
     property/qtagcolorlistproperty.cpp \
     property/qtagproperty.cpp \
     property/qtagtextlistproperty.cpp \
     pubtool.cpp \
+    qwidgetfactory.cpp \
     realtimedb.cpp \
+    widgets/iloader.cpp \
+    widgets/keyboard/inputmethodnumber.cpp \
+    widgets/qformwidget.cpp \
     widgets/qimagebox.cpp \
     widgets/qindicationlamp.cpp \
     widgets/qjarshape.cpp \
@@ -155,7 +154,6 @@ SOURCES += \
     property/qmemerydataproperty.cpp \
     property/qalignmentproperty.cpp \
     host/qabstracthost.cpp \
-    qhostfactory.cpp \
     qabstractplugin.cpp \
     pluginloader.cpp \
     host/qabstractwidgethost.cpp \
@@ -164,15 +162,11 @@ SOURCES += \
     host/qwidgethost.cpp \
     qbaseinit.cpp \
     host/qframehost.cpp \
-    host/qformhost.cpp \
     qpagemanager.cpp \
-    host/qlabelhost.cpp \
     host/qlcdnumberhost.cpp \
     host/qabstractbuttonhost.cpp \
-    host/qpushbuttonhost.cpp \
     host/qcheckboxhost.cpp \
     host/qradiobuttonhost.cpp \
-    host/qlineedithost.cpp \
     host/qabstractsliderhost.cpp \
     host/qdialhost.cpp \
     host/qsliderhost.cpp \
@@ -196,7 +190,8 @@ SOURCES += \
     property/qstylesheetproperty.cpp \
     qstylesheetinfo.cpp
 
-FORMS +=
+FORMS += \
+    widgets/keyboard/inputmethodnumber.ui
 
 RESOURCES += \
     shared.qrc

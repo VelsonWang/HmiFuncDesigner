@@ -13,12 +13,12 @@ QImageHost::QImageHost(QAbstractHost *parent) : QFrameHost(parent)
 
 QString QImageHost::getShowName()
 {
-    return tr("Image");
+    return tr("图片");//tr("Image");
 }
 
 QString QImageHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件");//tr("Display Widgets");
 }
 
 QString QImageHost::getShowIcon()
@@ -74,14 +74,3 @@ void QImageHost::initProperty()
     removeProperty("frameShape");
     removeProperty("frameShadow");
 }
-
-/**
- * @brief QImageHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QImageHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

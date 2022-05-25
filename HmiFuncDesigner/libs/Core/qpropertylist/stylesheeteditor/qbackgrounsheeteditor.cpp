@@ -84,7 +84,7 @@ void QBackgrounSheetEditor::on_imageBtn_clicked()
     if(dlg.getRet() == 1) {
         tagFileInfo *info = dlg.getFile();
         if(info != NULL) {
-            tagFileGroupInfo *g = QSoftCore::getCore()->getFileManager()->getGroup(info->m_group_uuid);
+            tagFileGroupInfo *g = QSoftCore::getCore()->getFileManager()->getGroup(info->m_group_id);
             QString s = g->m_group_name + "/" + info->m_file_name;
             if(s != name) {
                 m_item.m_attributes.insert("image", s);

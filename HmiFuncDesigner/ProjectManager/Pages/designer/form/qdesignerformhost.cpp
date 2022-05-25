@@ -338,16 +338,16 @@ bool QDesignerFormHost::handle_drop_event(QAbstractHost *host, QDropEvent *e)
 
     foreach(QDesignerDnDItemInterface *item, list) {
         if(item->type() == QDesignerDnDItemInterface::CopyDrop) {
-            QAbstractHost *h = QHostFactory::create_host(item->name());
-            if(h != NULL) {
-                h->setUuid(QUuid::createUuid().toString());
-                QRect re = h->getPropertyValue("geometry").toRect();
+            QAbstractHost *pHostObj = QHostFactory::createHost(item->name());
+            if(pHostObj != NULL) {
+                pHostObj->setID(QString::number(pHostObj->allocID()));
+                QRect re = pHostObj->getPropertyValue("geometry").toRect();
                 re.moveTo(e->pos() - item->hotSpot());
-                h->setPropertyValue("geometry", re);
-                h->setDefault();
+                pHostObj->setPropertyValue("geometry", re);
+                pHostObj->setDefault();
                 QList<QAbstractHost*> list;
                 QList<int> index;
-                list.append(h);
+                list.append(pHostObj);
                 index.append(host->getChildCount());
                 new QAddHostUndoCommand(host, list, index, AHT_ADD, cmd);
             }
@@ -356,7 +356,7 @@ bool QDesignerFormHost::handle_drop_event(QAbstractHost *host, QDropEvent *e)
             QRect re = h->getPropertyValue("geometry").toRect();
             QRect new_re = re;
             new_re.moveTo(e->pos() - item->hotSpot());
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", re, new_re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", re, new_re, cmd);
             if(h->getParent() != host) {
                 new QHostParentChangedUndoCommand(h, h->getParent(),
                                                   h->getParent()->getChildren().indexOf(h),
@@ -455,15 +455,15 @@ void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &
         if(list.size() > 0) {
             QPropertyChangedUndoCommand *p = new QPropertyChangedUndoCommand("", name, QVariant(), QVariant());
             foreach(QAbstractHost* host, list) {
-                new QPropertyChangedUndoCommand(host->getUuid(), name, host->getPropertyValue(name), value, p);
+                new QPropertyChangedUndoCommand(host->getID(), name, host->getPropertyValue(name), value, p);
             }
             m_undo_stack->push(p);
         } else {
-            QPropertyChangedUndoCommand *p = new QPropertyChangedUndoCommand(h->getUuid(), name, h->getPropertyValue(name), value);
+            QPropertyChangedUndoCommand *p = new QPropertyChangedUndoCommand(h->getID(), name, h->getPropertyValue(name), value);
             m_undo_stack->push(p);
         }
     } else {
-        QPropertyChangedUndoCommand *p = new QPropertyChangedUndoCommand(h->getUuid(), name, h->getPropertyValue(name), value);
+        QPropertyChangedUndoCommand *p = new QPropertyChangedUndoCommand(h->getID(), name, h->getPropertyValue(name), value);
         m_undo_stack->push(p);
     }
 }
@@ -486,7 +486,7 @@ void QDesignerFormHost::same_left()
         QRect re = wid->geometry();
         re.moveTo(base_rect.left(), re.top());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -509,7 +509,7 @@ void QDesignerFormHost::same_top()
         QRect re = wid->geometry();
         re.moveTo(re.left(), base_rect.top());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -532,7 +532,7 @@ void QDesignerFormHost::same_right()
         QRect re = wid->geometry();
         re.moveTo(base_rect.left() + base_rect.width() - re.width(), re.top());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -555,7 +555,7 @@ void QDesignerFormHost::same_bottom()
         QRect re = wid->geometry();
         re.moveTo(re.left(), base_rect.top() + base_rect.height() - re.height());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -578,7 +578,7 @@ void QDesignerFormHost::same_width()
         QRect re = wid->geometry();
         re.setWidth(base_rect.width());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -602,7 +602,7 @@ void QDesignerFormHost::same_height()
         QRect re = wid->geometry();
         re.setHeight(base_rect.height());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -627,7 +627,7 @@ void QDesignerFormHost::same_geometry()
         re.setWidth(base_rect.width());
         re.setHeight(base_rect.height());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -650,7 +650,7 @@ void QDesignerFormHost::same_v_centre()
         QRect re = wid->geometry();
         re.moveTo(base_rect.left() + (base_rect.width() - re.width()) / 2, re.top());
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -673,7 +673,7 @@ void QDesignerFormHost::same_h_centre()
         QRect re = wid->geometry();
         re.moveTo(re.left(), base_rect.top() + (base_rect.height() - re.height()) / 2);
         if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getUuid(), "geometry", wid->geometry(), re, cmd);
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -686,7 +686,7 @@ void QDesignerFormHost::same_h_centre()
 void QDesignerFormHost::form_size_changed(const QRect &old, const QRect &now)
 {
     if(old != now) {
-        QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(m_root_host->getUuid(), "geometry", old, now);
+        QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(m_root_host->getID(), "geometry", old, now);
         m_undo_stack->push(cmd);
     }
 }
@@ -696,7 +696,7 @@ void QDesignerFormHost::widget_size_changed(QWidget* wid, const QRect &old, cons
     if(old != now) {
         QAbstractHost *h = m_widget_to_host.value(wid);
         if(h != NULL) {
-            QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(h->getUuid(), "geometry", old, now);
+            QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(h->getID(), "geometry", old, now);
             m_undo_stack->push(cmd);
             qDebug() << "+++++++++++++++" <<  old << now;
         }

@@ -41,9 +41,26 @@ HEADERS += \
     newcomdevicedialog.h \
     newnetdevicedialog.h \
     qpropertylist/coloreditor.h \
-#    qpropertylist/functioneditordialog.h \
-    qpropertylist/functioneditordialog.h \
-    qpropertylist/insertfunctiondlg.h \
+    qpropertylist/function/addtagvalueform.h \
+    qpropertylist/function/blinkcontrolelementform.h \
+    qpropertylist/function/disablecontrolelementform.h \
+    qpropertylist/function/enablecontrolelementform.h \
+    qpropertylist/function/functioneditordialog.h \
+    qpropertylist/function/gettagvalueform.h \
+    qpropertylist/function/hidecontrolelementform.h \
+    qpropertylist/function/insertfunctiondlg.h \
+    qpropertylist/function/movecontrolelementform.h \
+    qpropertylist/function/qabstractfunction.h \
+    qpropertylist/function/returngraphpageform.h \
+    qpropertylist/function/setdatetimeform.h \
+    qpropertylist/function/settagvalueform.h \
+    qpropertylist/function/showcontrolelementform.h \
+    qpropertylist/function/sleepform.h \
+    qpropertylist/function/statechangeform.h \
+    qpropertylist/function/stopblinkcontrolelementform.h \
+    qpropertylist/function/subtagvalueform.h \
+    qpropertylist/function/switchgraphpageform.h \
+    qpropertylist/function/waitformillisecform.h \
     qpropertylist/inserttagdlg.h \
     qpropertylist/qcoloreditor.h \
     qpropertylist/qfileeditor.h \
@@ -137,9 +154,26 @@ SOURCES += \
     newcomdevicedialog.cpp \
     newnetdevicedialog.cpp \
     qpropertylist/coloreditor.cpp \
-#    qpropertylist/functioneditordialog.cpp \
-    qpropertylist/functioneditordialog.cpp \
-    qpropertylist/insertfunctiondlg.cpp \
+    qpropertylist/function/addtagvalueform.cpp \
+    qpropertylist/function/blinkcontrolelementform.cpp \
+    qpropertylist/function/disablecontrolelementform.cpp \
+    qpropertylist/function/enablecontrolelementform.cpp \
+    qpropertylist/function/functioneditordialog.cpp \
+    qpropertylist/function/gettagvalueform.cpp \
+    qpropertylist/function/hidecontrolelementform.cpp \
+    qpropertylist/function/insertfunctiondlg.cpp \
+    qpropertylist/function/movecontrolelementform.cpp \
+    qpropertylist/function/qabstractfunction.cpp \
+    qpropertylist/function/returngraphpageform.cpp \
+    qpropertylist/function/setdatetimeform.cpp \
+    qpropertylist/function/settagvalueform.cpp \
+    qpropertylist/function/showcontrolelementform.cpp \
+    qpropertylist/function/sleepform.cpp \
+    qpropertylist/function/statechangeform.cpp \
+    qpropertylist/function/stopblinkcontrolelementform.cpp \
+    qpropertylist/function/subtagvalueform.cpp \
+    qpropertylist/function/switchgraphpageform.cpp \
+    qpropertylist/function/waitformillisecform.cpp \
     qpropertylist/inserttagdlg.cpp \
     qpropertylist/qcoloreditor.cpp \
     qpropertylist/qfileeditor.cpp \
@@ -229,9 +263,25 @@ FORMS += \
     devicelistdialog.ui \
     newcomdevicedialog.ui \
     newnetdevicedialog.ui \
-#    qpropertylist/functioneditordialog.ui \
-    qpropertylist/functioneditordialog.ui \
-    qpropertylist/insertfunctiondlg.ui \
+    qpropertylist/function/addtagvalueform.ui \
+    qpropertylist/function/blinkcontrolelementform.ui \
+    qpropertylist/function/disablecontrolelementform.ui \
+    qpropertylist/function/enablecontrolelementform.ui \
+    qpropertylist/function/functioneditordialog.ui \
+    qpropertylist/function/gettagvalueform.ui \
+    qpropertylist/function/hidecontrolelementform.ui \
+    qpropertylist/function/insertfunctiondlg.ui \
+    qpropertylist/function/movecontrolelementform.ui \
+    qpropertylist/function/returngraphpageform.ui \
+    qpropertylist/function/setdatetimeform.ui \
+    qpropertylist/function/settagvalueform.ui \
+    qpropertylist/function/showcontrolelementform.ui \
+    qpropertylist/function/sleepform.ui \
+    qpropertylist/function/statechangeform.ui \
+    qpropertylist/function/stopblinkcontrolelementform.ui \
+    qpropertylist/function/subtagvalueform.ui \
+    qpropertylist/function/switchgraphpageform.ui \
+    qpropertylist/function/waitformillisecform.ui \
     qpropertylist/inserttagdlg.ui \
     qpropertylist/scriptpropertyeditordlg.ui \
     qpropertylist/tagcolorlisteditordialog.ui \

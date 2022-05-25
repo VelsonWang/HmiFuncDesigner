@@ -2,7 +2,7 @@
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../xmlobject.h"
-#include "../qhostfactory.h"
+#include "../qwidgetfactory.h"
 #include "../qcommonstruct.h"
 #include "../property/stylesheetitem/qabstractstylesheetitem.h"
 #include "../property/stylesheetitem/qstylesheetitemfactory.h"
@@ -354,7 +354,7 @@ void QAbstractHost::fromObject(XMLObject *xml)
             } else {
                 QString name = obj->getProperty(HOST_TYPE);
 
-                QAbstractHost *h = QHostFactory::createHost(name);
+                QAbstractHost *h = NULL;//QWidgetFactory::createWidget(name);
                 if(h != NULL) {
                     h->fromObject(obj);
                     h->m_parent = this;
@@ -405,7 +405,7 @@ void QAbstractHost::init()
     initProperty();
 
     if(m_object != NULL) {
-        m_object->installEventFilter(this);
+        //m_object->installEventFilter(this);
         foreach(QAbstractProperty* pro, m_propertys) {
             pro->set_value(m_object->property(pro->getObjectProperty("name").toByteArray()));
         }

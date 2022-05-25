@@ -244,13 +244,3 @@ int QAbstractWidgetHost::cursor()
     QCursor c = getPropertyValue("cursor").value<QCursor>();
     return c.shape();
 }
-
-/**
- * @brief QAbstractWidgetHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QAbstractWidgetHost::supportFuncEvents()
-{
-    return QStringList();
-}

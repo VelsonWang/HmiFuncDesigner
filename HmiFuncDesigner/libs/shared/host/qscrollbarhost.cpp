@@ -11,12 +11,12 @@ QScrollBarHost::QScrollBarHost(QAbstractHost *parent):
 
 QString QScrollBarHost::getShowName()
 {
-    return tr("Scroll Bar");
+    return tr("滚动条");//tr("Scroll Bar")
 }
 
 QString QScrollBarHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件");//tr("Input Widgets")
 }
 
 QString QScrollBarHost::getShowIcon()
@@ -35,15 +35,4 @@ void QScrollBarHost::initProperty()
     QAbstractSliderHost::initProperty();
     setPropertyValue("geometry", QRect(0, 0, 100, 20));
 }
-
-/**
- * @brief QScrollBarHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QScrollBarHost::supportFuncEvents()
-{
-    return QStringList();
-}
-
 

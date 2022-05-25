@@ -113,12 +113,21 @@ QPropertyListView::QPropertyListView(QWidget *parent) : QTreeWidget(parent)
 
     QVector<QColor> vectColors;
     vectColors.reserve(6);
+#if 0
     vectColors.push_back(QColor(255, 230, 191));
     vectColors.push_back(QColor(255, 255, 191));
     vectColors.push_back(QColor(191, 255, 191));
     vectColors.push_back(QColor(199, 255, 255));
     vectColors.push_back(QColor(234, 191, 255));
     vectColors.push_back(QColor(255, 191, 239));
+#else
+    vectColors.push_back(QColor(242, 242, 242));
+    vectColors.push_back(QColor(242, 242, 242));
+    vectColors.push_back(QColor(242, 242, 242));
+    vectColors.push_back(QColor(242, 242, 242));
+    vectColors.push_back(QColor(242, 242, 242));
+    vectColors.push_back(QColor(242, 242, 242));
+#endif
     colors.reserve(vectColors.count());
     const int darknessFactor = 250;
     for(int i = 0; i < vectColors.count(); i++) {

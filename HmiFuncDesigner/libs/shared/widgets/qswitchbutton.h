@@ -8,7 +8,8 @@ class QSwitchButton : public QWidget
 {
     Q_OBJECT
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
-    Q_PROPERTY(QStringList funcs READ getFuncs WRITE setFuncs)
+    Q_PROPERTY(QStringList onFuncs READ getOnFuncs WRITE setOnFuncs)
+    Q_PROPERTY(QStringList offFuncs READ getOffFuncs WRITE setOffFuncs)
     Q_PROPERTY(bool stateOnInitial READ getStateOnInitial WRITE setStateOnInitial)
     Q_PROPERTY(QString showContent READ getShowContent WRITE setShowContent)
     Q_PROPERTY(QString resetPictureFile READ getResetPictureFile WRITE setResetPictureFile)
@@ -34,8 +35,11 @@ public:
     QString getTagSelected() const;
     void setTagSelected(const QString &value);
 
-    QStringList getFuncs() const;
-    void setFuncs(const QStringList &value);
+    QStringList getOnFuncs() const;
+    void setOnFuncs(const QStringList &value);
+
+    QStringList getOffFuncs() const;
+    void setOffFuncs(const QStringList &value);
 
     bool getStateOnInitial() const;
     void setStateOnInitial(bool value);
@@ -102,8 +106,10 @@ protected:
 private:
     // 关联的变量
     QString tagSelected;
-    // 功能操作
-    QStringList funcs;
+    // 切换到开功能操作
+    QStringList onFuncs;
+    // 切换到关功能操作
+    QStringList offFuncs;
     // 初始状态
     bool stateOnInitial;
     // 显示内容

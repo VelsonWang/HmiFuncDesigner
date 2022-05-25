@@ -30,8 +30,8 @@ void QTempWidget::set_current(tagTemplateInfo *info)
     if(m_current == info) {
         return;
     }
-    QAbstractHost* h = m_info_to_host.value(info);
-    if(h == NULL) {
+    QAbstractHost* pHostObj = m_info_to_host.value(info);
+    if(pHostObj == NULL) {
         QFile f(info->m_file_name);
         if(!f.open(QFile::ReadOnly)) {
             return;
@@ -42,18 +42,19 @@ void QTempWidget::set_current(tagTemplateInfo *info)
         if(!xml.load(s, 0)) {
             return;
         }
-        h = QHostFactory::create_host(&xml);
-        if(h == NULL) {
+        pHostObj = QHostFactory::createHost(&xml);
+        if(pHostObj == NULL) {
             return;
         }
-        h->setDefault();
-        m_info_to_host.insert(info, h);
-        h->getObject()->installEventFilter(this);
+        pHostObj->setDefault();
+        pHostObj->setID(QString::number(pHostObj->allocID()));
+        m_info_to_host.insert(info, pHostObj);
+        pHostObj->getObject()->installEventFilter(this);
     }
 
     m_current = info;
 
-    QWidget* wid = (QWidget*)h->getObject();
+    QWidget* wid = (QWidget*)pHostObj->getObject();
 
     QPixmap widgetPixmap = QPixmap::grabWidget(wid);
     QSize sz = widgetPixmap.size();

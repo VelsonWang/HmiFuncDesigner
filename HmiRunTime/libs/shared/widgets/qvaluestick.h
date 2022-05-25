@@ -3,8 +3,9 @@
 
 #include <QWidget>
 #include <QPaintEvent>
+#include "iloader.h"
 
-class QValueStick : public QWidget
+class QValueStick : public QWidget, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
@@ -23,7 +24,7 @@ class QValueStick : public QWidget
     Q_PROPERTY(bool showOnInitial READ getShowOnInitial WRITE setShowOnInitial)
 
 public:
-    explicit QValueStick(QWidget *parent = nullptr);
+    Q_INVOKABLE QValueStick(QWidget *parent = nullptr);
 
     QString getTagSelected() const;
     void setTagSelected(const QString &value);
@@ -66,6 +67,9 @@ public:
 
     QColor getTextColor() const;
     void setTextColor(const QColor &value);
+
+public:
+    void fromObject(XMLObject* xml) override;
 
 private:
     void setPropertyInner();

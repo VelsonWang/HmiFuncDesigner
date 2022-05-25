@@ -9,7 +9,12 @@ QFunctionProperty::QFunctionProperty(QAbstractProperty *parent) :
 
 QString QFunctionProperty::getValueText()
 {
-    return getValue().toString();
+    QString text = getValue().toString();
+    if(text.isEmpty()) {
+        return text;
+    }
+    QStringList szListInfo = text.split("|");
+    return QString(tr("已编辑%1个功能")).arg(szListInfo.size());
 }
 
 QIcon QFunctionProperty::getValueIcon()

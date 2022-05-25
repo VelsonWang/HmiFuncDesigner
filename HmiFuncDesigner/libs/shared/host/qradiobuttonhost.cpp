@@ -16,12 +16,12 @@ QRadioButtonHost::QRadioButtonHost(QAbstractHost *parent):
 
 QString QRadioButtonHost::getShowName()
 {
-    return tr("Radio Button");
+    return tr("单选按钮");//tr("Radio Button")
 }
 
 QString QRadioButtonHost::getShowGroup()
 {
-    return tr("Buttons");
+    return tr("按钮");//tr("Buttons")
 }
 
 QString QRadioButtonHost::getShowIcon()
@@ -56,15 +56,4 @@ void QRadioButtonHost::initProperty()
     setPropertyValue("text", "radio button");
     removeProperty("checkable");
 }
-
-/**
- * @brief QRadioButtonHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QRadioButtonHost::supportFuncEvents()
-{
-    return QStringList();
-}
-
 

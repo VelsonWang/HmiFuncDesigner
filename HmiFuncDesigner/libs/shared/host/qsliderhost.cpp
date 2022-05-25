@@ -15,12 +15,12 @@ QSliderHost::QSliderHost(QAbstractHost *parent):
 
 QString QSliderHost::getShowName()
 {
-    return tr("Slider");
+    return tr("滑块");//tr("Slider")
 }
 
 QString QSliderHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件");//tr("Input Widgets")
 }
 
 QString QSliderHost::getShowIcon()
@@ -79,14 +79,3 @@ void QSliderHost::initProperty()
 
     setPropertyValue("geometry", QRect(0, 0, 100, 20));
 }
-
-/**
- * @brief QSliderHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QSliderHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

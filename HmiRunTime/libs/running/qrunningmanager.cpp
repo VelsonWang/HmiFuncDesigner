@@ -150,9 +150,9 @@ void QRunningManager::start()
     QProjectHost* host = (QProjectHost*)m_pProjCoreObj->getProjectHost();
     QString szStartPage = m_pProjCoreObj->m_projInfoMgr.getStartPage();
     QPageManager *manager = m_pProjCoreObj->getPageManager();
-    QList<QAbstractHost*> list = manager->getPages();
-    foreach(QAbstractHost* page, list) {
-        ((QWidget*)page->getObject())->setVisible(false);
+    QList<QWidget*> list = manager->getPages();
+    foreach(QWidget* pObj, list) {
+        pObj->setVisible(false);
     }
     int width = m_pProjCoreObj->m_projInfoMgr.getGraphPageWidth();
     int height = m_pProjCoreObj->m_projInfoMgr.getGraphPageHeight();

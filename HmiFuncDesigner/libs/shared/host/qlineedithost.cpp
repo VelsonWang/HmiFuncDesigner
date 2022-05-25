@@ -13,12 +13,12 @@ QLineEditHost::QLineEditHost(QAbstractHost *parent):
 
 QString QLineEditHost::getShowName()
 {
-    return tr("Line Edit");
+    return tr("编辑框");//tr("Line Edit")
 }
 
 QString QLineEditHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets")
 }
 
 QString QLineEditHost::getShowIcon()
@@ -163,15 +163,5 @@ void QLineEditHost::editFinish()
         QMap<QString, QString> param;
         exec(code, param);
     }
-}
-
-/**
- * @brief QLineEditHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QLineEditHost::supportFuncEvents()
-{
-    return QStringList();
 }
 

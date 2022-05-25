@@ -11,12 +11,12 @@ QDialHost::QDialHost(QAbstractHost *parent):
 
 QString QDialHost::getShowName()
 {
-    return tr("Dial");
+    return tr("调节器");//tr("Dial");
 }
 
 QString QDialHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets");
 }
 
 QString QDialHost::getShowIcon()
@@ -64,14 +64,4 @@ void QDialHost::setNotchTarget(float notchTarget)
 float QDialHost::notchTarget()
 {
     return getPropertyValue("notchTarget").toBool();
-}
-
-/**
- * @brief QDialHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QDialHost::supportFuncEvents()
-{
-    return QStringList();
 }

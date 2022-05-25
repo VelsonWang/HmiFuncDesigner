@@ -14,7 +14,8 @@ include(HmiFuncDesigner.pri)
 
 TEMPLATE = subdirs
 
-CONFIG += ordered
+CONFIG += ordered \
+    qt
 
 
 SUBDIRS += \
@@ -26,6 +27,7 @@ SUBDIRS += \
 #    NativeRtdbView #\
 #    RegisterTool \    # 通用授权工具
 #    EDncryptTool      # 加密解密工具
+
 
 
 

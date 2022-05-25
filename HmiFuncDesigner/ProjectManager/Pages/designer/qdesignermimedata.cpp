@@ -55,16 +55,15 @@ QString QDesignerDnDItem::name()const
 WidgetBoxDnDItem::WidgetBoxDnDItem(const QString &name, const QPoint &global_mouse_pos) :
     QDesignerDnDItem(CopyDrop)
 {
-    QAbstractHost *host = NULL;
-    host = QHostFactory::create_host(name);
-    if(host == NULL) {
-        return;
+    QAbstractHost *pHostObj = NULL;
+    pHostObj = QHostFactory::createHost(name);
+    if(pHostObj) {
+        m_name = name;
+        QWidget* wid = (QWidget*)pHostObj->getObject();
+        wid->move(global_mouse_pos - QPoint(5, 5));
+        wid->setWindowOpacity(0.5);
+        init(pHostObj, global_mouse_pos);
     }
-    m_name = name;
-    QWidget* wid = (QWidget*)host->getObject();
-    wid->move(global_mouse_pos - QPoint(5, 5));
-    wid->setWindowOpacity(0.5);
-    init(host, global_mouse_pos);
 }
 
 WidgetBoxDnDItem::~WidgetBoxDnDItem()

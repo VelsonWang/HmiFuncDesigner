@@ -2,7 +2,7 @@
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../qpagemanager.h"
-
+#include <QDebug>
 
 QProjectHost::QProjectHost(QAbstractHost *parent):
     QAbstractHost(parent)
@@ -22,50 +22,50 @@ void QProjectHost::initProperty()
 
     pro = m_nameToProperty.value("objectName");
 
-    pro->setAttribute(ATTR_EDITABLE,false);
+    pro->setAttribute(ATTR_EDITABLE, false);
 
     pro = QPropertyFactory::create_property("ByteArray");
     if(pro != NULL) {
-        pro->setObjectProperty("name","projectPath");
-        pro->setAttribute("show_name",tr("Project Path"));
-        pro->setAttribute(ATTR_EDITABLE,false);
-        pro->setAttribute("group","Attributes");
+        pro->setObjectProperty("name", "projectPath");
+        pro->setAttribute("show_name", tr("Project Path"));
+        pro->setAttribute(ATTR_EDITABLE, false);
+        pro->setAttribute("group", "Attributes");
         insertProperty(pro);
     }
 
     pro = QPropertyFactory::create_property("Enum");
     if(pro != NULL) {
-        pro->setObjectProperty("name","start_user");
-        pro->setAttribute("show_name",tr("User"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_NEEDSAVE,true);
+        pro->setObjectProperty("name", "start_user");
+        pro->setAttribute("show_name", tr("User"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE, true);
         insertProperty(pro);
     }
 
     pro = QPropertyFactory::create_property("Enum");
     if(pro != NULL) {
-        pro->setObjectProperty("name","start_language");
-        pro->setAttribute("show_name",tr("Language"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_NEEDSAVE,true);
+        pro->setObjectProperty("name", "start_language");
+        pro->setAttribute("show_name", tr("Language"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE, true);
         insertProperty(pro);
     }
 
     pro = QPropertyFactory::create_property("Enum");
     if(pro != NULL) {
-        pro->setObjectProperty("name","start_page");
-        pro->setAttribute("show_name",tr("Page"));
-        pro->setAttribute("group","Attributes");
-        pro->setAttribute(ATTR_NEEDSAVE,true);
+        pro->setObjectProperty("name", "start_page");
+        pro->setAttribute("show_name", tr("Page"));
+        pro->setAttribute("group", "Attributes");
+        pro->setAttribute(ATTR_NEEDSAVE, true);
         insertProperty(pro);
     }
 
     pro = QPropertyFactory::create_property("Size");
     if(pro != NULL) {
-        pro->setObjectProperty("name","designer_size");
-        pro->setAttribute("show_name",tr("Design Size"));
-        pro->setAttribute("group","Attributes");
-        m_object->setProperty("designer_size",QSize(800,600));
+        pro->setObjectProperty("name", "designer_size");
+        pro->setAttribute("show_name", tr("Design Size"));
+        pro->setAttribute("group", "Attributes");
+        m_object->setProperty("designer_size", QSize(800, 600));
         insertProperty(pro);
     }
 
@@ -82,11 +82,11 @@ void QProjectHost::initProperty()
 
 void QProjectHost::show_form(const QString &name)
 {
-    QList<QAbstractHost*> pages = m_page_manager->getPages_by_title("form");
-    foreach(QAbstractHost* p, pages) {
-        qDebug(p->getPropertyValue("objectName").toByteArray());
-        if(p->getPropertyValue("objectName").toString() == name) {
-            show_form_by_uuid(p->getUuid());
+    QList<QWidget*> pages = m_page_manager->getPagesByTitle("form");
+    foreach(QWidget* pObj, pages) {
+        qDebug() << pObj->property("objectName").toString();
+        if(pObj->property("objectName").toString() == name) {
+            emit notifyShowWidget(pObj);
             return;
         }
     }
@@ -99,18 +99,19 @@ void QProjectHost::show_dialog(const QString &name)
 
 void QProjectHost::show_form_by_uuid(const QString &uuid)
 {
-    QAbstractHost* host = m_page_manager->get_page(uuid);
-    if(host != NULL) {
-        QWidget* wid = (QWidget*)host->getObject();
-        emit notifyShowWidget(wid);
+    QWidget* pObj = m_page_manager->getPage(uuid);
+    if(pObj) {
+        emit notifyShowWidget(pObj);
     }
 }
 
 void QProjectHost::showFirstForm()
 {
-    QList<QAbstractHost*> pages = m_page_manager->getPages_by_title("form");
+    QList<QWidget*> pages = m_page_manager->getPagesByTitle("form");
     if(pages.size() > 0) {
-        QAbstractHost* pHostObj = pages.first();
-        show_form_by_uuid(pHostObj->getUuid());
+        QWidget* pObj = pages.first();
+        if(pObj) {
+            emit notifyShowWidget(pObj);
+        }
     }
 }

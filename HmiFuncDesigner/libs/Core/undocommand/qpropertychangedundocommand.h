@@ -8,7 +8,7 @@
 class CORELIB_EXPORT QPropertyChangedUndoCommand : public QBaseUndoCommand
 {
 public:
-    QPropertyChangedUndoCommand(const QString &host_uuid,
+    QPropertyChangedUndoCommand(const QString &host_id,
                                 const QString &property_name,
                                 const QVariant &old_value,
                                 const QVariant& new_value,
@@ -20,7 +20,7 @@ public:
     void undo();
 
 protected:
-    QString m_host_uuid;
+    QString m_host_id;
     QString m_property_name;
     QVariant m_old_value;
     QVariant m_new_value;

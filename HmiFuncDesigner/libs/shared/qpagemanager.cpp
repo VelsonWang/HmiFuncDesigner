@@ -75,12 +75,13 @@ void QPageManager::save(const QString &project_path)
 
 void QPageManager::newPage(const QString &szPageName)
 {
-    QAbstractHost* host = QHostFactory::create_host(FORM_TITLE);
-    if(host != NULL) {
-        m_page_list.insert(m_page_list.size(), host);
-        m_uuid_to_page.insert(host->getUuid(), host);
+    QAbstractHost* pHostObj = QHostFactory::createHost(FORM_TITLE);
+    if(pHostObj != NULL) {
+        pHostObj->setID(QString::number(pHostObj->allocID()));
+        m_page_list.insert(m_page_list.size(), pHostObj);
+        m_id_to_page.insert(pHostObj->getID(), pHostObj);
         QList<QAbstractHost*> list;
-        list.append(host);
+        list.append(pHostObj);
         while(list.size() > 0) {
             QAbstractHost *h = list.takeFirst();
             QAbstractProperty* pro = h->getProperty("objectName");
@@ -90,8 +91,8 @@ void QPageManager::newPage(const QString &szPageName)
             }
             list += h->getChildren();
         }
-        emit insert_page_signal(host);
-        emit host_name_changed(host);
+        emit insert_page_signal(pHostObj);
+        emit host_name_changed(pHostObj);
     }
 }
 
@@ -105,10 +106,10 @@ void QPageManager::load(XMLObject *pXmlObj)
         }
         QList<XMLObject*> listForms = pXmlObj->getChildren();
         foreach(XMLObject* pObj, listForms) {
-            QAbstractHost* host = QHostFactory::create_host(pObj);
+            QAbstractHost* host = QHostFactory::createHost(pObj);
             if(host != NULL) {
                 m_page_list.append(host);
-                m_uuid_to_page.insert(host->getUuid(), host);
+                m_id_to_page.insert(host->getID(), host);
                 host->setProperty("old_file_name", "");
                 host->setDefault();
                 QList<QAbstractHost*> list;
@@ -139,10 +140,10 @@ void QPageManager::load(XMLObject *pXmlObj)
             return;
         }
 
-        QAbstractHost* host = QHostFactory::create_host(&xml);
+        QAbstractHost* host = QHostFactory::createHost(&xml);
         if(host != NULL) {
             m_page_list.append(host);
-            m_uuid_to_page.insert(host->getUuid(), host);
+            m_id_to_page.insert(host->getID(), host);
             host->setProperty("old_file_name", "");
             host->setDefault();
             QList<QAbstractHost*> list;
@@ -175,7 +176,6 @@ void QPageManager::clear()
     //qDeleteAll(m_page_list);
     //m_page_list.clear();
 
-
     foreach(QAbstractHost* h, m_page_list) {
         h->deleteLater();
     }
@@ -200,10 +200,10 @@ void QPageManager::load_page(const QString &fileName)
         return;
     }
 
-    QAbstractHost* host = QHostFactory::create_host(&xml);
+    QAbstractHost* host = QHostFactory::createHost(&xml);
     if(host != NULL) {
         m_page_list.append(host);
-        m_uuid_to_page.insert(host->getUuid(), host);
+        m_id_to_page.insert(host->getID(), host);
         host->setProperty("old_file_name", fileName);
         host->setDefault();
         QList<QAbstractHost*> list;
@@ -233,9 +233,9 @@ QAbstractHost* QPageManager::get_page(int index)
     }
 }
 
-QAbstractHost* QPageManager::get_page(const QString &uuid)
+QAbstractHost* QPageManager::get_page(const QString &id)
 {
-    return m_uuid_to_page.value(uuid);
+    return m_id_to_page.value(id);
 }
 
 void QPageManager::insert_page(QAbstractHost *host, int index)
@@ -244,7 +244,7 @@ void QPageManager::insert_page(QAbstractHost *host, int index)
         index = m_page_list.size();
     }
     m_page_list.insert(index, host);
-    m_uuid_to_page.insert(host->getUuid(), host);
+    m_id_to_page.insert(host->getID(), host);
     QList<QAbstractHost*> list;
     list.append(host);
     while(list.size() > 0) {
@@ -274,10 +274,10 @@ void QPageManager::remove_page(QAbstractHost *host)
     emit remove_page_signal(host);
     emit host_name_changed(host);
     m_page_list.removeAll(host);
-    m_uuid_to_page.remove(host->getUuid());
+    m_id_to_page.remove(host->getID());
 }
 
-QList<QAbstractHost*> QPageManager::getPages_by_title(const QString &title)
+QList<QAbstractHost*> QPageManager::getPagesByTitle(const QString &title)
 {
     QList<QAbstractHost*> list;
     foreach(QAbstractHost* host, m_page_list) {
@@ -291,40 +291,58 @@ QList<QAbstractHost*> QPageManager::getPages_by_title(const QString &title)
 void QPageManager::host_name_changed_slot(const QVariant &, const QVariant &)
 {
     QAbstractProperty *pro = (QAbstractProperty*)sender();
-
     emit host_name_changed(pro->getHost());
 }
-
 
 /**
  * @brief QPageManager::getAllElementIDName
  * @details 获取工程所有控件的ID名称
- * @param szIDList 所有控件的ID名称
+ * @param szIDList 所有控件的ID名称 [画面id.控件id:画面名称.控件名称, ... , 画面id.控件id:画面名称.控件名称]
  */
-void QPageManager::getAllElementIDName(QStringList &szIDList)
+void QPageManager::getAllElementIDName(QStringList &szList)
 {
-    //    if(pImplGraphPageSaveLoadObj_) {
-    //        pImplGraphPageSaveLoadObj_->getAllElementIDName(szIDList);
-    //    }
+    szList.clear();
+    foreach(QAbstractHost* pHostObj, m_page_list) {
+        QString pageTitle = pHostObj->property("title").toString();
+        QString pageID = pHostObj->getAttribute("id");
+        if(pageTitle == FORM_TITLE) {
+            QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
+            if(pProObj) {
+                QString pageName = pProObj->getValue().toString();
+                foreach(QAbstractHost* pChildHostObj, pHostObj->getChildren()) {
+                    QString elementTitle = pChildHostObj->property("title").toString();
+                    QString elementID = pChildHostObj->getAttribute("id");
+                    if(elementTitle == "Object") {
+                        pProObj = pChildHostObj->getProperty("objectName");
+                        if(pProObj) {
+                            QString elementName = pProObj->getValue().toString();
+                            //画面id.控件id:画面名称.控件名称
+                            QString idName = QString("%1.%2:%3.%4").arg(pageID).arg(elementID).arg(pageName).arg(elementName);
+                            szList.append(idName);
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 /**
  * @brief QProjectCore::getAllPageName
  * @details 获取工程所有画面名称
- * @param szList 所有画面名称
+ * @param szList 所有画面名称 [画面id:画面名称, ... , 画面id:画面名称]
  */
 void QPageManager::getAllPageName(QStringList &szList)
 {
     szList.clear();
     foreach(QAbstractHost* pHostObj, m_page_list) {
         QString szTitle = pHostObj->property("title").toString();
-        //qDebug() << "title: " << szTitle;
+        QString pageID = pHostObj->getAttribute("id");
         if(szTitle == FORM_TITLE) {
             QAbstractProperty* pProObj = pHostObj->getProperty("objectName");
             if(pProObj) {
-                QString szPageName = pProObj->getValue().toString();
-                //qDebug() << "page name: " << szPageName;
-                szList.append(szPageName);
+                QString pageName = pProObj->getValue().toString();
+                szList.append(QString("%1:%2").arg(pageID).arg(pageName));
             }
         }
     }
