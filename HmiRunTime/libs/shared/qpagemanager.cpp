@@ -1,8 +1,6 @@
 #include "qpagemanager.h"
 #include "xmlobject.h"
-#include "host/qabstracthost.h"
 #include "qwidgetfactory.h"
-#include "property/qabstractproperty.h"
 #include <QFile>
 #include <QDebug>
 
@@ -23,7 +21,7 @@ void QPageManager::load(XMLObject *pXmlObj)
             QWidget* pWidgetObj = QWidgetFactory::createWidget(pObj);
             if(pWidgetObj != NULL) {
                 m_pages.append(pWidgetObj);
-                m_uuidToPage.insert(pWidgetObj->property("uuid").toString(), pWidgetObj);
+                m_idToPage.insert(pWidgetObj->property("id").toString(), pWidgetObj);
             }
         }
     }
@@ -51,9 +49,9 @@ QWidget* QPageManager::getPage(int index)
     }
 }
 
-QWidget* QPageManager::getPage(const QString &uuid)
+QWidget* QPageManager::getPage(const QString &id)
 {
-    return m_uuidToPage.value(uuid);
+    return m_idToPage.value(id);
 }
 
 QList<QWidget*> QPageManager::getPagesByTitle(const QString &title)
@@ -67,3 +65,7 @@ QList<QWidget*> QPageManager::getPagesByTitle(const QString &title)
     return list;
 }
 
+int QPageManager::pageCount()
+{
+    return m_pages.size();
+}

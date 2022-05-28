@@ -2,8 +2,6 @@
 #include "qbasedialogwidget.h"
 #include "qbasedialog.h"
 #include "../shared/qprojectcore.h"
-#include "../shared/host/qabstracthost.h"
-#include "../shared/host/qprojecthost.h"
 #include "../shared/qpagemanager.h"
 #include <QEvent>
 #include <QDesktopWidget>
@@ -87,10 +85,10 @@ bool QRunningManager::load(QString proj)
     }
 
     m_pProjCoreObj->initScriptEngine();
-    connect(m_pProjCoreObj->getProjectHost(), SIGNAL(notifyShowWidget(QWidget*)),
-            this, SLOT(onShowWidget(QWidget*)));
-    connect(m_pProjCoreObj->getProjectHost(), SIGNAL(notifyShowDialog(QAbstractHost*)),
-            this, SLOT(onShowDialog(QAbstractHost*)));
+    //    connect(m_pProjCoreObj->getProjectHost(), SIGNAL(notifyShowWidget(QWidget*)),
+    //            this, SLOT(onShowWidget(QWidget*)));
+    //    connect(m_pProjCoreObj->getProjectHost(), SIGNAL(notifyShowDialog(QAbstractHost*)),
+    //            this, SLOT(onShowDialog(QAbstractHost*)));
 
     return true;
 }
@@ -129,7 +127,7 @@ void QRunningManager::onShowDialog(QAbstractHost *host)
 {
     m_pDlgBaseWidgetObj->setVisible(true);
     m_pDlgBaseWidgetObj->raise();
-    QWidget* pWidgetObj = (QWidget*)host->getObject();
+    QWidget* pWidgetObj = NULL;//(QWidget*)host->getObject();
     QBaseDialog dlg(m_pMainWindowObj);
     dlg.set_widget(pWidgetObj);
     dlg.exec();
@@ -147,7 +145,6 @@ bool QRunningManager::eventFilter(QObject *o, QEvent *e)
 
 void QRunningManager::start()
 {
-    QProjectHost* host = (QProjectHost*)m_pProjCoreObj->getProjectHost();
     QString szStartPage = m_pProjCoreObj->m_projInfoMgr.getStartPage();
     QPageManager *manager = m_pProjCoreObj->getPageManager();
     QList<QWidget*> list = manager->getPages();
@@ -157,13 +154,17 @@ void QRunningManager::start()
     int width = m_pProjCoreObj->m_projInfoMgr.getGraphPageWidth();
     int height = m_pProjCoreObj->m_projInfoMgr.getGraphPageHeight();
     m_pMainWindowObj->setFixedSize(QSize(width, height));
-    m_pMainWindowObj->setWindowTitle(host->getPropertyValue("objectName").toString());
     QDesktopWidget *pDeskObj = qApp->desktop();
     m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
     if(szStartPage == "None") {
-        host->showFirstForm();
+        if(manager->pageCount() > 0) {
+            onShowWidget(manager->getPage(0));
+        }
     } else {
-        host->show_form_by_uuid(szStartPage);
+        QWidget* pWidgetObj = manager->getPage(szStartPage);
+        if(pWidgetObj) {
+            onShowWidget(pWidgetObj);
+        }
     }
 
     m_pMainWindowObj->setVisible(true);

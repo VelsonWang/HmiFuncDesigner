@@ -21,12 +21,13 @@ public:
 
     QList<QWidget*> getPages();
     QWidget* getPage(int index);
-    QWidget* getPage(const QString& uuid);
+    QWidget* getPage(const QString& id);
     QList<QWidget*> getPagesByTitle(const QString& title);
+    int pageCount();
 
 protected:
     QList<QWidget *> m_pages;
-    QMap<QString, QWidget *> m_uuidToPage;
+    QMap<QString, QWidget *> m_idToPage;
 };
 
 #endif // QPAGEMANAGER_H

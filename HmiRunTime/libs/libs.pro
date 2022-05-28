@@ -6,8 +6,7 @@ SUBDIRS   = \
     Utils \
     edncrypt \
     shared \
-    gradienteditor \
-    core \
+#    gradienteditor \
     running
 
 for(l, SUBDIRS) {
