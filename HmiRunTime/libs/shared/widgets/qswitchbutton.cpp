@@ -34,15 +34,15 @@ QSwitchButton::QSwitchButton(QWidget *parent) : QWidget(parent)
 
 void QSwitchButton::fromObject(XMLObject* xml)
 {
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "\r\n\r\n\r\n******************\r\n\r\n****************\r\n";
-
     if(xml != NULL) {
         if(xml->getTagName() == "Object") {
             QList<XMLObject*> properties = xml->getChildren();
             foreach(XMLObject* pObj, properties) {
                 if(pObj->getTagName() == PROPERTY_TITLE) {
                     QString propertyName = pObj->getProperty("name");
-                    if(propertyName == "objectName") {
+                    if(propertyName == "tag") {
+                        this->setProperty("tag", pObj->getProperty("value"));
+                    } else if(propertyName == "objectName") {
                         this->setProperty("objectName", pObj->getProperty("value"));
                     } else if(propertyName == "geometry") {
                         int x, y, width, height;
@@ -60,269 +60,51 @@ void QSwitchButton::fromObject(XMLObject* xml)
                             }
                         }
                         this->setProperty("geometry", QRect(x, y, width, height));
-                    } /* else if(propertyName == "funcs") {
-                        this->setProperty("funcs", pObj->getProperty("value"));
-                    } else if(propertyName == "script") {
-                        this->setProperty("script", pObj->getProperty("value"));
+                    } else if(propertyName == "onFuncs") {
+                        this->setProperty("onFuncs", pObj->getProperty("value"));
+                    } else if(propertyName == "offFuncs") {
+                        this->setProperty("offFuncs", pObj->getProperty("value"));
+                    } else if(propertyName == "stateOnInitial") {
+                        this->setProperty("stateOnInitial", pObj->getProperty("value"));
                     } else if(propertyName == "showContent") {
                         this->setProperty("showContent", pObj->getProperty("value"));
-                    } else if(propertyName == "picture") {
-                        this->setProperty("picture", pObj->getProperty("value"));
-                    } else if(propertyName == "text") {
-                        this->setProperty("text", pObj->getProperty("value"));
+                    } else if(propertyName == "resetPictureFile") {
+                        this->setProperty("resetPictureFile", pObj->getProperty("value"));
+                    } else if(propertyName == "setPictureFile") {
+                        this->setProperty("setPictureFile", pObj->getProperty("value"));
+                    } else if(propertyName == "showNoScale") {
+                        this->setProperty("showNoScale", pObj->getProperty("value"));
+                    } else if(propertyName == "resetText") {
+                        this->setProperty("resetText", pObj->getProperty("value"));
+                    } else if(propertyName == "setText") {
+                        this->setProperty("setText", pObj->getProperty("value"));
+                    } else if(propertyName == "font") {
+                        this->setProperty("font", pObj->getProperty("value"));
                     } else if(propertyName == "textColor") {
                         this->setProperty("textColor", pObj->getProperty("value"));
-                    } else if(propertyName == "hAlign") {
-                        this->setProperty("hAlign", pObj->getProperty("value"));
-                    } else if(propertyName == "vAlign") {
-                        this->setProperty("vAlign", pObj->getProperty("value"));
-                    } else if(propertyName == "backgroundColor") {
-                        this->setProperty("backgroundColor", pObj->getProperty("value"));
-                    } else if(propertyName == "transparent") {
-                        this->setProperty("transparent", pObj->getProperty("value"));
+                    } else if(propertyName == "szHAlign") {
+                        this->setProperty("szHAlign", pObj->getProperty("value"));
+                    } else if(propertyName == "szVAlign") {
+                        this->setProperty("szVAlign", pObj->getProperty("value"));
+                    } else if(propertyName == "resetBackgroundColor") {
+                        this->setProperty("resetBackgroundColor", pObj->getProperty("value"));
+                    } else if(propertyName == "setBackgroundColor") {
+                        this->setProperty("setBackgroundColor", pObj->getProperty("value"));
                     } else if(propertyName == "borderWidth") {
                         this->setProperty("borderWidth", pObj->getProperty("value"));
                     } else if(propertyName == "borderColor") {
                         this->setProperty("borderColor", pObj->getProperty("value"));
-                    } else if(propertyName == "font") {
-                        this->setProperty("font", pObj->getProperty("value"));
+                    } else if(propertyName == "transparent") {
+                        this->setProperty("transparent", pObj->getProperty("value"));
                     } else if(propertyName == "enableOnInitial") {
                         this->setProperty("enableOnInitial", pObj->getProperty("value"));
                     } else if(propertyName == "showOnInitial") {
                         this->setProperty("showOnInitial", pObj->getProperty("value"));
-                    }*/
+                    }
                 }
             }
         }
     }
-
-
-#if 0
-    QAbstractProperty* pObj = QPropertyFactory::create_property("Tag");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "tag");
-        pObj->setAttribute("show_name", tr("选择变量"));
-        pObj->setAttribute("group", "HMI");
-        pObj->setAttribute(ATTR_CAN_SAME, true);
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Function");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "onFuncs");
-        pObj->setAttribute("show_name", tr("切换到开时执行功能"));
-        pObj->setAttribute("group", "HMI");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Function");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "offFuncs");
-        pObj->setAttribute("show_name", tr("切换到关时执行功能"));
-        pObj->setAttribute("group", "HMI");
-        insertProperty(pObj);
-    }
-
-    QWidgetHost::initProperty();
-
-    pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "stateOnInitial");
-        pObj->setAttribute("show_name", tr("初始状态"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "showContent");
-        pObj->setAttribute("show_name", tr("显示内容"));
-        pObj->setAttribute("group", "Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME, true);
-        ComboItems items;
-        QStringList contents;
-        contents << tr("文本") << tr("图片");
-        foreach(QString szEv, contents) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pObj->setAttribute("items", v);
-        pObj->setValue(tr("文本"));
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Image");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "resetPictureFile");
-        pObj->setAttribute("show_name", tr("选择关时图片"));
-        pObj->setAttribute("filters", "Images (*.png *.xpm *.jpg)");
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Image");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "setPictureFile");
-        pObj->setAttribute("show_name", tr("选择开时图片"));
-        pObj->setAttribute("filters", "Images (*.png *.xpm *.jpg)");
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "showNoScale");
-        pObj->setAttribute("show_name", tr("原尺寸显示"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("String");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "resetText");
-        pObj->setAttribute("show_name", tr("关时文本")); // tr("Text")
-        pObj->setAttribute("group", "Attributes");
-        pObj->setValue(QString(tr("关")));
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("String");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "setText");
-        pObj->setAttribute("show_name", tr("开时文本")); // tr("Text")
-        pObj->setAttribute("group", "Attributes");
-        pObj->setValue(QString(tr("开")));
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Font");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "font");
-        pObj->setAttribute("show_name", tr("字体"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Color");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "textColor");
-        pObj->setAttribute("show_name", tr("文本颜色"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "szHAlign");
-        pObj->setAttribute("show_name", tr("水平对齐"));
-        pObj->setAttribute("group", "Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME, true);
-        ComboItems items;
-        QStringList alignList;
-        alignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
-        foreach(QString szEv, alignList) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pObj->setAttribute("items", v);
-        pObj->setValue(tr("居中对齐"));
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Enum");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "szVAlign");
-        pObj->setAttribute("show_name", tr("垂直对齐"));
-        pObj->setAttribute("group", "Attributes");
-        pObj->setAttribute(ATTR_CAN_SAME, true);
-        ComboItems items;
-        QStringList alignList;
-        alignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
-        foreach(QString szEv, alignList) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pObj->setAttribute("items", v);
-        pObj->setValue(tr("居中对齐"));
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Color");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "resetBackgroundColor");
-        pObj->setAttribute("show_name", tr("关时背景颜色"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Color");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "setBackgroundColor");
-        pObj->setAttribute("show_name", tr("开时背景颜色"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Number");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "borderWidth");
-        pObj->setAttribute("show_name", tr("边框宽度"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Color");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "borderColor");
-        pObj->setAttribute("show_name", tr("边框颜色"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-
-    pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "transparent");
-        pObj->setAttribute("show_name", tr("透明"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "enableOnInitial");
-        pObj->setAttribute("show_name", tr("初始有效"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    pObj = QPropertyFactory::create_property("Bool");
-    if(pObj != NULL) {
-        pObj->setObjectProperty("name", "showOnInitial");
-        pObj->setAttribute("show_name", tr("初始可见"));
-        pObj->setAttribute("group", "Attributes");
-        insertProperty(pObj);
-    }
-
-    setPropertyValue("geometry", QRect(0, 0, 120, 60));
-
-    <Object id = "19" type = "buttons.switchbutton">
-                             < Property name = "onFuncs" type = "Function" value = "MoveControlElement(&quot;1.3,1,2&quot;);:移动控件(&quot;main.label,1,2&quot;);" / >
-
-                                     < / Object >
-#endif
 }
 
 void QSwitchButton::setPropertyInner()
@@ -697,15 +479,28 @@ void QSwitchButton::setStateOnInitial(bool value)
     }
 }
 
-QStringList QSwitchButton::getFuncs() const
+QStringList QSwitchButton::getOnFuncs() const
 {
-    return funcs;
+    return onFuncs;
 }
 
-void QSwitchButton::setFuncs(const QStringList &value)
+void QSwitchButton::setOnFuncs(const QStringList &value)
 {
-    if(value != funcs) {
-        funcs = value;
+    if(value != onFuncs) {
+        onFuncs = value;
+        this->update();
+    }
+}
+
+QStringList QSwitchButton::getOffFuncs() const
+{
+    return offFuncs;
+}
+
+void QSwitchButton::setOffFuncs(const QStringList &value)
+{
+    if(value != offFuncs) {
+        offFuncs = value;
         this->update();
     }
 }

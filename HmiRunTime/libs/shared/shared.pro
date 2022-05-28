@@ -16,6 +16,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 INCLUDEPATH += $$PWD
 INCLUDEPATH += $$PWD/projdata
 
+include(picoc/picoc.pri)
+
 HEADERS += \
     confighelper.h \
     public.h \
@@ -109,3 +111,15 @@ HEADERS += \
     projdata/pictureresourcemanager.h \
     projdata/script.h \
     projdata/helper.h
+
+################################################################################
+
+HEADERS += \
+    qrunningmanager.h \
+    qbasedialogwidget.h \
+    qbasedialog.h
+
+SOURCES += \
+    qrunningmanager.cpp \
+    qbasedialogwidget.cpp \
+    qbasedialog.cpp
