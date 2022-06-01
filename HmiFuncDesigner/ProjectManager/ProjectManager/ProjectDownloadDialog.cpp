@@ -57,7 +57,7 @@ ProjectDownloadDialog::~ProjectDownloadDialog()
 QString ProjectDownloadDialog::getRuntimeIp()
 {
     QString sIp = "127.0.0.1";
-    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->m_projInfoMgr;
     sIp = projInfoMgr.getStationAddress();
     return sIp;
 }

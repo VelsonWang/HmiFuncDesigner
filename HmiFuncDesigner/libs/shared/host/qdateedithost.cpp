@@ -15,12 +15,12 @@ QDateEditHost::QDateEditHost(QAbstractHost *parent):
 
 QString QDateEditHost::getShowName()
 {
-    return tr("Date Edit");
+    return tr("日期编辑");//tr("Date Edit");
 }
 
 QString QDateEditHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets");
 }
 
 QString QDateEditHost::getShowIcon()
@@ -153,14 +153,4 @@ void QDateEditHost::dateChanged(const QDate &date)
         param.insert("_day", QString::number(date.day()));
         exec(code, param);
     }
-}
-
-/**
- * @brief QDateEditHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QDateEditHost::supportFuncEvents()
-{
-    return QStringList();
 }

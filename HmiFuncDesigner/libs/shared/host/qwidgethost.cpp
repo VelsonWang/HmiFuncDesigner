@@ -5,18 +5,18 @@
 QWidgetHost::QWidgetHost(QAbstractHost *parent):
     QAbstractWidgetHost(parent)
 {
-    this->setProperty("need_frame",true);
-    setProperty("accept_drop",true);
+    this->setProperty("need_frame", true);
+    setProperty("accept_drop", true);
 }
 
 QString QWidgetHost::getShowName()
 {
-    return tr("Widget");
+    return tr("部件");//tr("Widget")
 }
 
 QString QWidgetHost::getShowGroup()
 {
-    return tr("Containners");
+    return tr("容器"); //tr("Containners")
 }
 
 QString QWidgetHost::getShowIcon()
@@ -26,13 +26,13 @@ QString QWidgetHost::getShowIcon()
 
 void QWidgetHost::createObject()
 {
-    m_object=new QWidget();
+    m_object = new QWidget();
     m_object->setObjectName("widget");
 }
 
 void QWidgetHost::setVisible(bool visible)
 {
-    m_object->setProperty("visible",visible);
+    m_object->setProperty("visible", visible);
 }
 
 bool QWidgetHost::visible()
@@ -42,12 +42,12 @@ bool QWidgetHost::visible()
 
 void QWidgetHost::set_focus()
 {
-    QWidget* wid=(QWidget*)m_object;
+    QWidget* wid = (QWidget*)m_object;
     wid->setFocus();
 }
 
 void QWidgetHost::kill_focus()
 {
-    QWidget* wid=(QWidget*)m_object;
+    QWidget* wid = (QWidget*)m_object;
     wid->clearFocus();
 }

@@ -10,7 +10,7 @@ class SHAREDLIB_EXPORT QProjectHost : public QAbstractHost
     Q_OBJECT
 public:
     QProjectHost(QAbstractHost *parent = 0);
-    virtual void    show_form_by_uuid(const QString &uuid);
+    virtual void    show_form_by_id(const QString &id);
 
 protected:
     void initProperty() override;
@@ -21,8 +21,7 @@ public slots:
 
 protected:
     void createObject() override;
-    // 控件支持的功能事件
-    QStringList supportFuncEvents() override;
+
 };
 
 #endif // QPROJECTHOST_H

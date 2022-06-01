@@ -3,8 +3,9 @@
 
 #include <QWidget>
 #include <QPaintEvent>
+#include "iloader.h"
 
-class QSwitchButton : public QWidget
+class QSwitchButton : public QWidget, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
@@ -29,7 +30,7 @@ class QSwitchButton : public QWidget
     Q_PROPERTY(bool showOnInitial READ getShowOnInitial WRITE setShowOnInitial)
 
 public:
-    explicit QSwitchButton(QWidget *parent = nullptr);
+    Q_INVOKABLE QSwitchButton(QWidget *parent = nullptr);
 
     QString getTagSelected() const;
     void setTagSelected(const QString &value);
@@ -90,6 +91,9 @@ public:
 
     QColor getTextColor() const;
     void setTextColor(const QColor &value);
+
+public:
+    void fromObject(XMLObject* xml) override;
 
 private:
     void setPropertyInner();

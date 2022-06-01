@@ -11,7 +11,7 @@
 #include <QDir>
 #include <QMutex>
 #include "Vendor.h"
-#include "RealTimeDB.h"
+#include "realtimedb.h"
 #include "PortThread.h"
 //#include "RunScript.h"
 #include "qprojectcore.h"

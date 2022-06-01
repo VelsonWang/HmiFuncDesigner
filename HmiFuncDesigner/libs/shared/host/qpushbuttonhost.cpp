@@ -17,12 +17,12 @@ QPushButtonHost::QPushButtonHost(QAbstractHost *parent):
 
 QString QPushButtonHost::getShowName()
 {
-    return tr("Push Button");
+    return tr("弹出按钮");//tr("Push Button")
 }
 
 QString QPushButtonHost::getShowGroup()
 {
-    return tr("Buttons");
+    return tr("按钮");//tr("Buttons")
 }
 
 QString QPushButtonHost::getShowIcon()
@@ -42,41 +42,32 @@ void QPushButtonHost::initProperty()
 
     pObj = QPropertyFactory::create_property("Function");
     if(pObj != NULL) {
-        pObj->setObjectProperty("name", "funcs");
-        pObj->setAttribute("show_name", tr("功能操作"));
+        pObj->setObjectProperty("name", "clickedDownFuncs");
+        pObj->setAttribute("show_name", tr("按下时执行功能"));
         pObj->setAttribute("group", "HMI");
-        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
         insertProperty(pObj);
     }
 
+    pObj = QPropertyFactory::create_property("Function");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "clickedUpFuncs");
+        pObj->setAttribute("show_name", tr("抬起时执行功能"));
+        pObj->setAttribute("group", "HMI");
+        insertProperty(pObj);
+    }
+
+    /*
     pObj = QPropertyFactory::create_property("Script");
     if(pObj != NULL) {
         pObj->setObjectProperty("name", "script");
         pObj->setAttribute("show_name", tr("执行脚本"));
         pObj->setAttribute("group", "HMI");
-        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
         insertProperty(pObj);
     }
-
-    //QAbstractButtonHost::initProperty();
-    QWidgetHost::initProperty();
-    /*
-        pObj = QPropertyFactory::create_property("Script");
-        if(pObj != NULL) {
-            pObj->setObjectProperty("name", "clicked_down");
-            pObj->setAttribute("show_name", tr("按下"));
-            pObj->setAttribute("group", "Events");
-            insertProperty(pObj);
-        }
-
-        pObj = QPropertyFactory::create_property("Script");
-        if(pObj != NULL) {
-            pObj->setObjectProperty("name", "clicked_up");
-            pObj->setAttribute("show_name", tr("抬起"));
-            pObj->setAttribute("group", "Events");
-            insertProperty(pObj);
-        }
     */
+
+    QWidgetHost::initProperty();
+
     pObj = QPropertyFactory::create_property("Enum");
     if(pObj != NULL) {
         pObj->setObjectProperty("name", "showContent");
@@ -227,17 +218,3 @@ void QPushButtonHost::initProperty()
     setPropertyValue("geometry", QRect(0, 0, 100, 30));
     setPropertyValue("text", "button");
 }
-
-/**
- * @brief QPushButtonHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QPushButtonHost::supportFuncEvents()
-{
-    QStringList supportFuncEvents;
-    supportFuncEvents << QString("%1-%2").arg("PressDown").arg(tr("按下事件"));
-    supportFuncEvents << QString("%1-%2").arg("ReleaseUp").arg(tr("抬起事件"));
-    return supportFuncEvents;
-}
-

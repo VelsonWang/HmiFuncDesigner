@@ -13,12 +13,12 @@ QJarShapeHost::QJarShapeHost(QAbstractHost *parent) : QWidgetHost(parent)
 
 QString QJarShapeHost::getShowName()
 {
-    return tr("JarShape");
+    return tr("罐");//tr("JarShape")
 }
 
 QString QJarShapeHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件");//tr("Display Widgets")
 }
 
 QString QJarShapeHost::getShowIcon()
@@ -134,15 +134,5 @@ void QJarShapeHost::initProperty()
     }
 
     setPropertyValue("geometry", QRect(0, 0, 80, 120));
-}
-
-/**
- * @brief QJarShapeHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QJarShapeHost::supportFuncEvents()
-{
-    return QStringList();
 }
 

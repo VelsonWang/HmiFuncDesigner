@@ -109,7 +109,6 @@ Vendor::Vendor(QProjectCore *coreObj)
 {
     m_pPortObj = NULL;
     m_readList.clear();
-    m_writeQueue.clear();
     m_bIsRunning = false;
     projCore = coreObj;
 }
@@ -118,15 +117,8 @@ Vendor::Vendor(QProjectCore *coreObj)
 Vendor::~Vendor()
 {
     stop();
-
     qDeleteAll(m_readList);
     m_readList.clear();
-
-    if(!m_writeQueue.isEmpty()) {
-        qDeleteAll(m_writeQueue);
-        m_writeQueue.clear();
-    }
-
     if(m_pPortObj != NULL) {
         delete m_pPortObj;
         m_pPortObj = NULL;
@@ -197,21 +189,6 @@ void Vendor::addIOTagToDeviceTagList(RunTimeTag* pTag)
     m_readList.append(pTag);
 }
 
-
-/**
- * @brief Vendor::addIOTagToDeviceTagWriteQueue
- * @details 添加设备变量至变量写队列
- * @param pTag 变量描述对象
- */
-void Vendor::addIOTagToDeviceTagWriteQueue(RunTimeTag* pTag)
-{
-    QMutexLocker locker(&m_mutexWrite);
-    if(!m_writeQueue.contains(pTag)) {
-        m_writeQueue.enqueue(pTag);
-    }
-}
-
-
 /**
  * @brief Vendor::findIOTagByID
  * @details 查找设备变量
@@ -238,9 +215,8 @@ RunTimeTag* Vendor::findIOTagByID(int id)
  */
 bool Vendor::writeIOTag(RunTimeTag* pTag)
 {
-    if(pTag && pTag->writeable == CAN_WRITE && pTag->dataToVendor.size() > 0) {
+    if(pTag && pTag->writeable == CAN_WRITE) {
         clearWriteBuffer();
-        pTag->dataToVendor.clear();
         if(m_pVendorPluginObj && m_pPortObj) {
             m_pVendorPluginObj->beforeWriteIOTag(this, pTag);
             if(m_pVendorPluginObj->writeIOTag(this, m_pPortObj, pTag) != 1) {
@@ -262,6 +238,7 @@ bool Vendor::writeIOTag(RunTimeTag* pTag)
             }
             m_pVendorPluginObj->afterWriteIOTag(this, pTag);
         }
+        pTag->dataToVendor.clear();
     }
     return true;
 }
@@ -291,27 +268,30 @@ bool Vendor::writeIOTags()
         }
     }
 
-    while (!m_writeQueue.isEmpty()) {
+    for (int i = 0; i < m_readList.size(); ++i) {
         if(!m_bIsRunning) {
             return false;
         }
-        RunTimeTag* pTag = m_writeQueue.dequeue();
-        if(writeIOTag(pTag)) {
-            this->m_bOffLine = false;
-            this->m_iStartOffLineTime = 0;
-            this->m_bOnlineStatus = true;
-        } else {
-            if(!this->m_bOffLine) {
-                qDebug() << QString("device[%1] start off line! time: %2 ms")
-                         .arg(this->getDeviceName())
-                         .arg(QString::number(QDateTime::currentMSecsSinceEpoch()));
-                this->m_bOffLine = true;
-                this->m_iStartOffLineTime = QDateTime::currentMSecsSinceEpoch();
-                this->m_bOnlineStatus = false;
-                return false;
+        RunTimeTag* pTag = m_readList[i];
+        if(pTag->dataToVendor.size() > 0) {
+            if(writeIOTag(pTag)) {
+                this->m_bOffLine = false;
+                this->m_iStartOffLineTime = 0;
+                this->m_bOnlineStatus = true;
+            } else {
+                if(!this->m_bOffLine) {
+                    qDebug() << QString("device[%1] start off line! time: %2 ms")
+                             .arg(this->getDeviceName())
+                             .arg(QString::number(QDateTime::currentMSecsSinceEpoch()));
+                    this->m_bOffLine = true;
+                    this->m_iStartOffLineTime = QDateTime::currentMSecsSinceEpoch();
+                    this->m_bOnlineStatus = false;
+                    return false;
+                }
             }
         }
     }
+
     return true;
 }
 
@@ -324,7 +304,6 @@ bool Vendor::writeIOTags()
  */
 bool Vendor::readIOTag(RunTimeTag* pTag)
 {
-    QMutexLocker locker(&m_mutexWrite);
     if(pTag) {
         clearReadBuffer();
         if(m_pVendorPluginObj && m_pPortObj) {
@@ -469,9 +448,6 @@ bool Vendor::readIOTags()
     }
 
     for (int i = 0; i < m_readList.size(); ++i) {
-        if(!m_writeQueue.isEmpty()) {
-            break;
-        }
         if(!m_bIsRunning) {
             return false;
         }

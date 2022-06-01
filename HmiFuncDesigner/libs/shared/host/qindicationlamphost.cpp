@@ -13,12 +13,12 @@ QIndicationLampHost::QIndicationLampHost(QAbstractHost *parent) : QFrameHost(par
 
 QString QIndicationLampHost::getShowName()
 {
-    return tr("IndicationLamp");
+    return tr("指示灯");//tr("IndicationLamp");
 }
 
 QString QIndicationLampHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件");//tr("Display Widgets");
 }
 
 QString QIndicationLampHost::getShowIcon()
@@ -101,14 +101,3 @@ void QIndicationLampHost::initProperty()
     removeProperty("frameShape");
     removeProperty("frameShadow");
 }
-
-/**
- * @brief QIndicationLampHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QIndicationLampHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

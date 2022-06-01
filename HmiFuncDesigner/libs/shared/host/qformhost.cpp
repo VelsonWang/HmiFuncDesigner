@@ -2,6 +2,7 @@
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../xmlobject.h"
+#include "../widgets/qform.h"
 #include <QWidget>
 #include <QCoreApplication>
 #include <QFile>
@@ -15,7 +16,7 @@ QFormHost::QFormHost(QAbstractHost *parent):
 
 void QFormHost::createObject()
 {
-    m_object = new QWidget();
+    m_object = new QForm();
 }
 
 void QFormHost::initProperty()
@@ -32,10 +33,17 @@ void QFormHost::initProperty()
 
     pObj = QPropertyFactory::create_property("Function");
     if(pObj != NULL) {
-        pObj->setObjectProperty("name", "function");
-        pObj->setAttribute("show_name", tr("功能操作"));
+        pObj->setObjectProperty("name", "openFuncs");
+        pObj->setAttribute("show_name", tr("画面打开时执行功能"));
         pObj->setAttribute("group", "HMI");
-        pObj->setAttribute("supportevents", supportFuncEvents().join("|"));
+        insertProperty(pObj);
+    }
+
+    pObj = QPropertyFactory::create_property("Function");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "closeFuncs");
+        pObj->setAttribute("show_name", tr("画面关闭时执行功能"));
+        pObj->setAttribute("group", "HMI");
         insertProperty(pObj);
     }
 
@@ -48,18 +56,5 @@ void QFormHost::initProperty()
     pObj->setAttribute("editabled", false);
 
     setPropertyValue("geometry", QRect(0, 0, 800, 600));
-}
-
-/**
- * @brief QFormHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QFormHost::supportFuncEvents()
-{
-    QStringList supportFuncEvents;
-    supportFuncEvents << QString("%1-%2").arg("OpenGraphPage").arg(tr("打开画面"));
-    supportFuncEvents << QString("%1-%2").arg("CloseGraphPage").arg(tr("关闭画面"));
-    return supportFuncEvents;
 }
 

@@ -15,12 +15,12 @@ QSpinBoxHost::QSpinBoxHost(QAbstractHost *parent):
 
 QString QSpinBoxHost::getShowName()
 {
-    return tr("Spin Box");
+    return tr("选值框");//tr("Spin Box")
 }
 
 QString QSpinBoxHost::getShowGroup()
 {
-    return tr("Input Widgets");
+    return tr("输入部件"); //tr("Input Widgets")
 }
 
 
@@ -121,15 +121,5 @@ void QSpinBoxHost::valueChanged(const QString &value)
         param.insert("_value", value);
         exec(code, param);
     }
-}
-
-/**
- * @brief QSpinBoxHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QSpinBoxHost::supportFuncEvents()
-{
-    return QStringList();
 }
 

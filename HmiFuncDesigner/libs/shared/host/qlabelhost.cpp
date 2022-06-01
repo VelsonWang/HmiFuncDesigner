@@ -13,12 +13,12 @@ QLabelHost::QLabelHost(QAbstractHost *parent):
 
 QString QLabelHost::getShowName()
 {
-    return tr("Label");
+    return tr("标签");//tr("Label")
 }
 
 QString QLabelHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件");//tr("Display Widgets");
 }
 
 QString QLabelHost::getShowIcon()
@@ -112,14 +112,3 @@ int QLabelHost::alignment()
 {
     return getPropertyValue("alignment").toInt();
 }
-
-/**
- * @brief QLabelHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QLabelHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

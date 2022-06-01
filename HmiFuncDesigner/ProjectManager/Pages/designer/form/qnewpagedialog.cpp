@@ -65,7 +65,7 @@ void QNewPageDialog::ok(QAbstractHost *host)
     list.append(host);
     while(list.size() > 0) {
         QAbstractHost* h = list.takeFirst();
-        h->setUuid(QUuid::createUuid().toString());
+        h->setID(QUuid::createUuid().toString());
         list += h->getChildren();
     }
     host->setDefault();
@@ -75,8 +75,8 @@ void QNewPageDialog::ok(QAbstractHost *host)
     QAbstractProperty* pro = core->getProjectHost()->getProperty("start_page");
     if(pro != NULL) {
         if(pro->getValue().toString() == "") {
-            new QPropertyChangedUndoCommand(core->getProjectHost()->getUuid(),
-                                            "start_page", pro->getValue(), host->getUuid(), cmd);
+            new QPropertyChangedUndoCommand(core->getProjectHost()->getID(),
+                                            "start_page", pro->getValue(), host->getID(), cmd);
         }
     }
     m_undo_stack->push(cmd);

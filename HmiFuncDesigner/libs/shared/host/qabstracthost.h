@@ -59,8 +59,9 @@ public:
 
     virtual void createObject();
 
-    QString getUuid();
-    void setUuid(const QString& uuid);
+    quint64 allocID();
+    QString getID();
+    void setID(const QString &id);
 
     void setPageManager(QPageManager* page);
     void setDataManager(QDataManager* data);
@@ -88,8 +89,6 @@ protected:
     bool eventFilter(QObject *, QEvent *) override;
 
     void exec(const QString &code, const QMap<QString, QString> &param);
-    // 控件支持的功能事件
-    virtual QStringList supportFuncEvents();
 
 protected:
     virtual bool handlePaintEvent(QPaintEvent* event);
@@ -104,7 +103,7 @@ protected:
 
 protected slots:
     void onPropertyRefresh();
-    void onCurTextChanged(const QString &uuid);
+    void onCurTextChanged(const QString &id);
 
 signals:
     void notifyShowWidget(QWidget* wid);
@@ -113,6 +112,8 @@ signals:
     void notifyInsertChildren(const QList<QAbstractHost*> &host, const QList<int> &index);
     void notifyRemoveChildren(const QList<QAbstractHost*> &host);
     void notifyParentChanged();
+
+
 
 protected:
     QList<QAbstractHost*> m_children;
@@ -128,6 +129,9 @@ protected:
     QDataManager* m_data_manager;
     QScriptEngine* m_engine;
     QResourceManager* m_resource_manager;
+
+public:
+    static quint64 m_nextAllocID;
 };
 
 #endif // QABSTRACTHOST_H

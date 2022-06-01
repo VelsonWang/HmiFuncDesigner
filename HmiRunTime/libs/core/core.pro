@@ -36,19 +36,13 @@ HEADERS += \
     corelibglobal.h \
     qsoftcore.h \
     undocommand/qbaseundocommand.h \
-    undocommand/qpropertychangedundocommand.h \
     undocommand/qhostparentchangedundocommand.h \
-    undocommand/qstringchangedundocommand.h \
-    undocommand/qaddhostundocommand.h \
-    undocommand/qpageaddundocommand.h
+    undocommand/qaddhostundocommand.h
 
 SOURCES += \
     qsoftcore.cpp \
     undocommand/qbaseundocommand.cpp \
-    undocommand/qpropertychangedundocommand.cpp \
     undocommand/qhostparentchangedundocommand.cpp \
-    undocommand/qstringchangedundocommand.cpp \
-    undocommand/qaddhostundocommand.cpp \
-    undocommand/qpageaddundocommand.cpp
+    undocommand/qaddhostundocommand.cpp
 
 

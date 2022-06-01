@@ -21,6 +21,11 @@ QJarShape::QJarShape(QWidget *parent) : QWidget(parent)
     setPropertyInner();
 }
 
+void QJarShape::fromObject(XMLObject* xml)
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+}
+
 void QJarShape::setPropertyInner()
 {
 
@@ -41,7 +46,7 @@ void QJarShape::drawJarShape(QPainter *painter)
     int iLowPosition = 0, iUpperPosition = 0;
     float fTmp;
     QString szTmp = "";
-    int iRadius,i,x1,y1,x2,y2;
+    int iRadius, i, x1, y1, x2, y2;
     QPen newPen;
     bool bFirstInto1 = false, bFirstInto2 = false;
 
@@ -94,16 +99,16 @@ void QJarShape::drawJarShape(QPainter *painter)
         scalerRect.setTop(textRect.bottom());
     }
 
-    scalerRect.setRight(eleRect.left() + iTmp3 * iTextWidth+3*SCALE_WIDTH);
+    scalerRect.setRight(eleRect.left() + iTmp3 * iTextWidth + 3 * SCALE_WIDTH);
     scalerRect.setBottom(eleRect.bottom());
 
     painter->drawLine(scalerRect.right(), scalerRect.bottom(), scalerRect.right(), scalerRect.top());
 
-    iTmp2= 0;
+    iTmp2 = 0;
     iTmp3 = static_cast<int>(maxValue / scaleNum);
 
     fTmp = std::max(scalerRect.bottom() - scalerRect.top() - 6, 0);
-    fTmp = (float)((double)(scaleNum*fTmp)/(double)maxValue);
+    fTmp = (float)((double)(scaleNum * fTmp) / (double)maxValue);
     iLowPosition = fTmp * ((double)lowerLimitValue / (double)scaleNum);
     iUpperPosition = fTmp * ((double)upperLimitValue / (double)scaleNum);
 
@@ -195,17 +200,17 @@ void QJarShape::drawJarShape(QPainter *painter)
     bFirstInto1 = true;
     bFirstInto2 = true;
 
-    for(i = 0; ;i++) {
+    for(i = 0; ; i++) {
         // lower
         if(i < iLowPosition) {
-            if( i< iRadius) {
-                x1=  jarRect.left();
+            if( i < iRadius) {
+                x1 =  jarRect.left();
                 y1 = jarRect.bottom() - i;
                 x2 = jarRect.left() + iRadius;
-                y2 = jarRect.bottom()- iRadius;
+                y2 = jarRect.bottom() - iRadius;
 
                 while(1) {
-                    if( iRadius*iRadius >= ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)) ){
+                    if( iRadius * iRadius >= ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ) {
                         break;
                     } else {
                         x1++;
@@ -218,7 +223,7 @@ void QJarShape::drawJarShape(QPainter *painter)
                 x2 =  jarRect.right() - iRadius;
                 y2 =  jarRect.bottom() - iRadius;
                 while(1) {
-                    if( iRadius* iRadius >= ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)) ) {
+                    if( iRadius * iRadius >= ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ) {
                         break;
                     } else {
                         x1--;
@@ -237,13 +242,13 @@ void QJarShape::drawJarShape(QPainter *painter)
                 painter->setPen(newPen);
             }
 
-            if(i<iRadius) {
-                x1= jarRect.left();
+            if(i < iRadius) {
+                x1 = jarRect.left();
                 y1 = jarRect.bottom() - i;
                 x2 = jarRect.left() + iRadius;
                 y2 = jarRect.bottom() - iRadius;
                 while(1) {
-                    if( iRadius*iRadius >= ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)) ) {
+                    if( iRadius * iRadius >= ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ) {
                         break;
                     } else {
                         x1++;
@@ -256,7 +261,7 @@ void QJarShape::drawJarShape(QPainter *painter)
                 x2 =  jarRect.right() - iRadius;
                 y2 =  jarRect.bottom() - iRadius;
                 while(1) {
-                    if( iRadius* iRadius >= ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)) ) {
+                    if( iRadius * iRadius >= ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ) {
                         break;
                     } else {
                         x1--;
@@ -265,12 +270,11 @@ void QJarShape::drawJarShape(QPainter *painter)
                 QPoint pointEnd(x1, y1);
                 painter->drawLine(pointStart, pointEnd);
             } else {
-                painter->drawLine(jarRect.left(), jarRect.bottom()-i,
-                                  jarRect.right(), jarRect.bottom()-i);
+                painter->drawLine(jarRect.left(), jarRect.bottom() - i,
+                                  jarRect.right(), jarRect.bottom() - i);
             }
-        }
-        else if( (i>=iUpperPosition) &&
-                 (i<= (iUpperPosition + (jarRect.bottom() - jarRect.top() - iUpperPosition)/2 )) ) { // upper
+        } else if( (i >= iUpperPosition) &&
+                   (i <= (iUpperPosition + (jarRect.bottom() - jarRect.top() - iUpperPosition) / 2 )) ) { // upper
             if(bFirstInto2) {
                 bFirstInto2 = false;
                 newPen = QPen(greaterThanUpperLimitColor, 2, Qt::SolidLine);
@@ -278,13 +282,13 @@ void QJarShape::drawJarShape(QPainter *painter)
             }
 
             if ( i < iRadius ) {
-                x1= jarRect.left();
+                x1 = jarRect.left();
                 y1 = jarRect.bottom() - i;
                 x2 = jarRect.left() + iRadius;
                 y2 = jarRect.bottom() - iRadius;
 
                 while(1) {
-                    if( iRadius*iRadius >= ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)) ) {
+                    if( iRadius * iRadius >= ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ) {
                         break;
                     } else {
                         x1++;
@@ -297,7 +301,7 @@ void QJarShape::drawJarShape(QPainter *painter)
                 x2 =  jarRect.right() - iRadius;
                 y2 =  jarRect.bottom() - iRadius;
                 while(1) {
-                    if( iRadius* iRadius >= ((x2-x1)*(x2-x1)+(y2-y1)*(y2-y1)) ) {
+                    if( iRadius * iRadius >= ((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)) ) {
                         break;
                     } else {
                         x1--;
@@ -321,7 +325,7 @@ void QJarShape::drawJarShape(QPainter *painter)
     newPen = QPen(borderColor);
     painter->setPen(newPen);
     painter->drawLine(jarRect.left() - iTmp1, jarRect.top() - iTmp1,
-                        jarRect.right() + iTmp1, jarRect.top() - iTmp1);
+                      jarRect.right() + iTmp1, jarRect.top() - iTmp1);
 
     ////////////////////////////////////////////////////////////////////////////
 
@@ -329,14 +333,14 @@ void QJarShape::drawJarShape(QPainter *painter)
     painter->setPen(newPen);
     // because of the width of pen is more than one ,so adjust the jarRect
     jarRect.adjust(-1, -1, 1, 1);
-    for(iTmp1 =0; iTmp1<JAR_THICKNESS; iTmp1++) {
+    for(iTmp1 = 0; iTmp1 < JAR_THICKNESS; iTmp1++) {
         // draw left side of jar
         painter->drawLine(jarRect.left() + iTmp1, jarRect.top(),
                           jarRect.left() + iTmp1, jarRect.bottom() - iRadius);
 
         dispRect.setLeft(jarRect.left() + iTmp1);
-        dispRect.setTop(jarRect.bottom() - 2 * iRadius+iTmp1);
-        dispRect.setRight(dispRect.left() + 2 * iRadius-iTmp1);
+        dispRect.setTop(jarRect.bottom() - 2 * iRadius + iTmp1);
+        dispRect.setRight(dispRect.left() + 2 * iRadius - iTmp1);
         dispRect.setBottom(jarRect.bottom() - iTmp1 - 1);
 
         int startAngle = 180 * 16;
@@ -344,13 +348,13 @@ void QJarShape::drawJarShape(QPainter *painter)
         painter->drawArc(dispRect, startAngle, spanAngle);
     }
 
-    for(iTmp1=0; iTmp1<JAR_THICKNESS; iTmp1++) {
+    for(iTmp1 = 0; iTmp1 < JAR_THICKNESS; iTmp1++) {
         // draw right side of jar
-        painter->drawLine(jarRect.right() - iTmp1,jarRect.top(),
-                          jarRect.right() - iTmp1,jarRect.bottom() - iRadius);
+        painter->drawLine(jarRect.right() - iTmp1, jarRect.top(),
+                          jarRect.right() - iTmp1, jarRect.bottom() - iRadius);
 
-        dispRect.setLeft(jarRect.right() - 2 * iRadius+iTmp1);
-        dispRect.setTop(jarRect.bottom() - 2 * iRadius+iTmp1);
+        dispRect.setLeft(jarRect.right() - 2 * iRadius + iTmp1);
+        dispRect.setTop(jarRect.bottom() - 2 * iRadius + iTmp1);
         dispRect.setRight(jarRect.right() - iTmp1 - 1);
         dispRect.setBottom(jarRect.bottom() - iTmp1 - 1);
 

@@ -15,12 +15,12 @@ QLCDNumberHost::QLCDNumberHost(QAbstractHost *parent):
 
 QString QLCDNumberHost::getShowName()
 {
-    return tr("LCD Number");
+    return tr("液晶数字显示"); //tr("LCD Number")
 }
 
 QString QLCDNumberHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件"); //tr("Display Widgets")
 }
 
 QString QLCDNumberHost::getShowIcon()
@@ -197,15 +197,5 @@ void QLCDNumberHost::setNumDigits(int numDigits)
 int QLCDNumberHost::numDigits()
 {
     return getPropertyValue("numDigits").toInt();
-}
-
-/**
- * @brief QLCDNumberHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QLCDNumberHost::supportFuncEvents()
-{
-    return QStringList();
 }
 

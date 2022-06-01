@@ -51,7 +51,7 @@ protected:
     QMap<QTreeWidgetItem*, tagFileGroupInfo*> m_itemToGroup;
     QIcon m_icon;
     bool m_canRemove;
-    QString m_selectUuid;
+    QString m_selectId;
     QTreeWidgetItem *m_current;
     bool m_showPicture;
     bool m_doubleClicked;

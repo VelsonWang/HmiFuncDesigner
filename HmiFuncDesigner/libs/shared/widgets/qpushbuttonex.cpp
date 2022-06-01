@@ -21,7 +21,8 @@ QPushButtonEx::QPushButtonEx(QWidget *parent) : QPushButton(parent)
     showOnInitial = true;
     transparent = false;
     script = "";
-    funcs.clear();
+    clickedDownFuncs.clear();
+    clickedUpFuncs.clear();
     enableOnInitial = true;
     showOnInitial = true;
     transparent = false;
@@ -285,15 +286,28 @@ void QPushButtonEx::setText(const QString &value)
     }
 }
 
-QStringList QPushButtonEx::getFuncs() const
+QStringList QPushButtonEx::getClickedDownFuncs() const
 {
-    return funcs;
+    return clickedDownFuncs;
 }
 
-void QPushButtonEx::setFuncs(const QStringList &value)
+void QPushButtonEx::setClickedDownFuncs(const QStringList &value)
 {
-    if(value != funcs) {
-        funcs = value;
+    if(value != clickedDownFuncs) {
+        clickedDownFuncs = value;
+        this->update();
+    }
+}
+
+QStringList QPushButtonEx::getClickedUpFuncs() const
+{
+    return clickedUpFuncs;
+}
+
+void QPushButtonEx::setClickedUpFuncs(const QStringList &value)
+{
+    if(value != clickedUpFuncs) {
+        clickedUpFuncs = value;
         this->update();
     }
 }

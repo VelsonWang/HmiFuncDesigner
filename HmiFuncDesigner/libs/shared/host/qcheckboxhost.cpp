@@ -15,12 +15,12 @@ QCheckBoxHost::QCheckBoxHost(QAbstractHost *parent):
 
 QString QCheckBoxHost::getShowName()
 {
-    return tr("Check Box");
+    return tr("复选框");//tr("Check Box");
 }
 
 QString QCheckBoxHost::getShowGroup()
 {
-    return tr("Buttons");
+    return tr("按钮");//tr("Buttons");
 }
 
 
@@ -101,14 +101,4 @@ void QCheckBoxHost::stateChanged(int state)
         param.insert("_state", QString::number(state));
         exec(code, param);
     }
-}
-
-/**
- * @brief QCheckBoxHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QCheckBoxHost::supportFuncEvents()
-{
-    return QStringList();
 }

@@ -5,6 +5,7 @@
 #include <QPainter>
 #include <QPixmap>
 #include <QFont>
+#include <QDebug>
 
 QSwitchButton::QSwitchButton(QWidget *parent) : QWidget(parent)
 {
@@ -29,6 +30,11 @@ QSwitchButton::QSwitchButton(QWidget *parent) : QWidget(parent)
     setText = tr("开");
 
     setPropertyInner();
+}
+
+void QSwitchButton::fromObject(XMLObject* xml)
+{
+    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
 }
 
 void QSwitchButton::setPropertyInner()

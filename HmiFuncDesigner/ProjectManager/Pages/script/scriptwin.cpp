@@ -105,7 +105,7 @@ void ScriptWin::NewScript()
         pObj->m_desc = pDlg->GetDescription();
         pObj->m_runMode = pDlg->GetRunMode();
         pObj->m_runModeArgs = pDlg->GetRunModeArgs();
-        QSoftCore::getCore()->getProjectCore()->script_.AddScriptObject(pObj);
+        QSoftCore::getCore()->getProjectCore()->m_script.AddScriptObject(pObj);
         updateUI();
     }
     delete pDlg;
@@ -119,7 +119,7 @@ void ScriptWin::ModifyScript()
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
     ScriptConditionConfigForm *pDlg = new ScriptConditionConfigForm(this);
     pDlg->setWindowTitle(tr("脚本属性"));
-    ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.GetScriptObject(pCurItem->text());
+    ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->m_script.GetScriptObject(pCurItem->text());
     pDlg->SetName(pObj->m_name);
     pDlg->SetInUse(pObj->m_inUse);
     pDlg->SetDescription(pObj->m_desc);
@@ -152,8 +152,8 @@ void ScriptWin::ModifyScript()
 void ScriptWin::DeleteScript()
 {
     QListWidgetItem *pCurItem = m_pListWidgetObj->currentItem();
-    ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.GetScriptObject(pCurItem->text());
-    QSoftCore::getCore()->getProjectCore()->script_.DeleteScriptObject(pObj);
+    ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->m_script.GetScriptObject(pCurItem->text());
+    QSoftCore::getCore()->getProjectCore()->m_script.DeleteScriptObject(pObj);
     m_pListWidgetObj->removeItemWidget(pCurItem);
 
     updateUI();
@@ -165,8 +165,8 @@ void ScriptWin::updateUI()
     m_pListWidgetObj->clear();
     QListWidgetItem *pNewItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), tr("新建脚本"));
     m_pListWidgetObj->addItem(pNewItemObj);
-    for (int i = 0; i < QSoftCore::getCore()->getProjectCore()->script_.m_scriptObjects.count(); i++) {
-        ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->script_.m_scriptObjects.at(i);
+    for (int i = 0; i < QSoftCore::getCore()->getProjectCore()->m_script.m_scriptObjects.count(); i++) {
+        ScriptObject *pObj = QSoftCore::getCore()->getProjectCore()->m_script.m_scriptObjects.at(i);
         QListWidgetItem *pItemObj = new QListWidgetItem(QIcon(":/images/pm_script.png"), pObj->m_name);
         m_pListWidgetObj->addItem(pItemObj);
     }

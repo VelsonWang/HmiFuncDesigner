@@ -8,24 +8,24 @@
 class CORELIB_EXPORT QStringChangedUndoCommand : public QBaseUndoCommand
 {
 public:
-    QStringChangedUndoCommand(const QString &host_uuid,
+    QStringChangedUndoCommand(const QString &host_id,
                               const QString &property_name,
-                              const QString &uuid,
+                              const QString &id,
                               bool old_tr,
                               bool new_tr,
                               const QString &old_text = "",
                               const QString &new_text = "",
-                              const QMap<QString, QString> &old_translate=QMap<QString,QString>(),
-                              const QMap<QString, QString> &new_translate=QMap<QString,QString>(),
+                              const QMap<QString, QString> &old_translate = QMap<QString, QString>(),
+                              const QMap<QString, QString> &new_translate = QMap<QString, QString>(),
                               QUndoCommand* parent = 0);
     int id() const;
     void redo();
     void undo();
 
 protected:
-    QString m_host_uuid;
+    QString m_host_id;
     QString m_property_name;
-    QString m_uuid;
+    QString m_id;
     bool m_old_tr;
     bool m_new_tr;
     QString m_old_text;

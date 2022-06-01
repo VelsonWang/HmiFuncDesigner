@@ -15,12 +15,12 @@ QProgressBarHost::QProgressBarHost(QAbstractHost *parent):
 
 QString QProgressBarHost::getShowName()
 {
-    return tr("Progress Bar");
+    return tr("进度条");//tr("Progress Bar")
 }
 
 QString QProgressBarHost::getShowGroup()
 {
-    return tr("Display Widgets");
+    return tr("显示部件");//tr("Display Widgets")
 }
 
 QString QProgressBarHost::getShowIcon()
@@ -227,14 +227,3 @@ void QProgressBarHost::valueChanged(int value)
         exec(code, param);
     }
 }
-
-/**
- * @brief QProgressBarHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QProgressBarHost::supportFuncEvents()
-{
-    return QStringList();
-}
-

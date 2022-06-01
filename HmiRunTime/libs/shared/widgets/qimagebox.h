@@ -3,8 +3,9 @@
 
 #include <QLabel>
 #include <QPaintEvent>
+#include "iloader.h"
 
-class QImageBox : public QLabel
+class QImageBox : public QLabel, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QString ImageFile READ getImageFile WRITE setImageFile)
@@ -13,7 +14,7 @@ class QImageBox : public QLabel
     Q_PROPERTY(QColor BoardColor READ getBoardColor WRITE setBoardColor)
 
 public:
-    explicit QImageBox(QWidget *parent = nullptr);
+    Q_INVOKABLE QImageBox(QWidget *parent = nullptr);
 
     QString getImageFile();
     void setImageFile(const QString szName);
@@ -27,11 +28,14 @@ public:
     QColor getBoardColor();
     void setBoardColor(QColor color);
 
+public:
+    void fromObject(XMLObject* xml) override;
+
 private:
     void setPropertyInner();
 
 protected:
-    void resizeEvent(QResizeEvent *event);
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     QString m_szImageFile;

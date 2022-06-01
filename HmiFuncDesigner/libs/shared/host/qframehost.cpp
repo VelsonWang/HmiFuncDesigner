@@ -13,12 +13,12 @@ QFrameHost::QFrameHost(QAbstractHost *parent):
 
 QString QFrameHost::getShowName()
 {
-    return tr("Frame");
+    return tr("边框");//tr("Frame")
 }
 
 QString QFrameHost::getShowGroup()
 {
-    return tr("Containners");
+    return tr("容器");//tr("Containners");
 }
 
 
@@ -126,15 +126,5 @@ void QFrameHost::setFrameShadow(int frameShadow)
 int QFrameHost::frameShadow()
 {
     return getPropertyValue("frameShape").toInt();
-}
-
-/**
- * @brief QFrameHost::supportFuncEvents
- * @details 控件支持的功能事件
- * @return
- */
-QStringList QFrameHost::supportFuncEvents()
-{
-    return QStringList();
 }
 

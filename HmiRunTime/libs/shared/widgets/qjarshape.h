@@ -3,8 +3,9 @@
 
 #include <QWidget>
 #include <QPaintEvent>
+#include "iloader.h"
 
-class QJarShape : public QWidget
+class QJarShape : public QWidget, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
@@ -21,7 +22,7 @@ class QJarShape : public QWidget
     Q_PROPERTY(bool showOnInitial READ getShowOnInitial WRITE setShowOnInitial)
 
 public:
-    explicit QJarShape(QWidget *parent = nullptr);
+    Q_INVOKABLE QJarShape(QWidget *parent = nullptr);
 
     QString getTagSelected() const;
     void setTagSelected(const QString &value);
@@ -59,13 +60,16 @@ public:
     bool getShowOnInitial() const;
     void setShowOnInitial(bool value);
 
+public:
+    void fromObject(XMLObject* xml) override;
+
 private:
     void setPropertyInner();
     void drawJarShape(QPainter *painter);
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event) override;
+    void resizeEvent(QResizeEvent *event) override;
 
 private:
     // 关联的变量

@@ -19,7 +19,10 @@ public:
     void copyObject(const RunTimeTag &obj);
     void copyFromTag(RunTimeTag obj);
     ~RunTimeTag();
+    bool fromString(const QString &val, bool syncToVendor = false);
     QString toString();
+    QString minString();
+    QString maxString();
 
     inline void updateVendorData(const QByteArray &dat)
     {
@@ -71,6 +74,7 @@ public:
     static RealTimeDB *instance();
 
     void setTagData(quint64 id, QByteArray val, bool syncToVendor = false);
+    void setTagData(quint64 id, const QString &dat, bool syncToVendor = false);
     QByteArray tagData(quint64 id);
 
     RunTimeTag* tag(quint64 id);

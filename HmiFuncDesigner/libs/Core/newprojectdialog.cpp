@@ -145,7 +145,7 @@ void NewProjectDialog::on_btnExit_clicked()
 
 bool NewProjectDialog::load()
 {
-    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->m_projInfoMgr;
     projInfoMgr.setProjectName(QSoftCore::getCore()->getProjectCore()->m_szProjName);
     ui->editProjectName->setText(projInfoMgr.getProjectName());
     ui->editProjectDescription->setPlainText(projInfoMgr.getProjectDescription());
@@ -163,7 +163,7 @@ bool NewProjectDialog::load()
 
 bool NewProjectDialog::save()
 {
-    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->projInfoMgr_;
+    ProjectInfoManager &projInfoMgr = QSoftCore::getCore()->getProjectCore()->m_projInfoMgr;
     projInfoMgr.setProjectName(ui->editProjectName->text());
     projInfoMgr.setProjectDescription(ui->editProjectDescription->toPlainText());
     projInfoMgr.setProjectPath(ui->editProjectPath->text());
@@ -172,8 +172,8 @@ bool NewProjectDialog::save()
     projInfoMgr.setStartPage(ui->cboStartPage->currentText());
     projInfoMgr.setStationAddress(ui->editStationAddress->text());
     projInfoMgr.setProjectEncrypt(ui->chkProjectEncrypt->isChecked());
-    QSoftCore::getCore()->getProjectCore()->headerObj_.byEncrypt = ui->chkProjectEncrypt->isChecked() ? 1 : 0;
-    QSoftCore::getCore()->getProjectCore()->headerObj_.byOpenVerifyPassword = 0;
+    QSoftCore::getCore()->getProjectCore()->m_headerObj.byEncrypt = ui->chkProjectEncrypt->isChecked() ? 1 : 0;
+    QSoftCore::getCore()->getProjectCore()->m_headerObj.byOpenVerifyPassword = 0;
     projInfoMgr.setPageScanPeriod(ui->editPageScanPeriod->text().toInt());
     projInfoMgr.setDataScanPeriod(ui->editDataScanPeriod->text().toInt());
     return true;

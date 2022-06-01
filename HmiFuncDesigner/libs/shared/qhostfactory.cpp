@@ -12,7 +12,7 @@ QHostFactory::QHostFactory()
 {
 }
 
-void QHostFactory::register_host(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *host)
+void QHostFactory::registerHost(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *host)
 {
     tagHostInfo *info = m_meta_map.value(name);
     if(info == NULL) {
@@ -26,58 +26,58 @@ void QHostFactory::register_host(const QString name, GET_SHOW_ICON icon, GET_SHO
     m_meta_map.insert(name, info);
 }
 
-QAbstractHost* QHostFactory::create_host(const QString &name)
+QAbstractHost* QHostFactory::createHost(const QString &name)
 {
-    QAbstractHost* host = NULL;
+    QAbstractHost* pHostObj = NULL;
     if(name == FORM_TITLE) {
-        host = new QFormHost;
-        host->init();
-        host->setAttribute(HOST_TYPE, FORM_TITLE);
+        pHostObj = new QFormHost;
+        pHostObj->init();
+        pHostObj->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
         tagHostInfo *info = m_meta_map.value(name);
         if(info == NULL) {
             return NULL;
         }
-        const QMetaObject* obj = info->m_host_object;
+        const QMetaObject* pObj = info->m_host_object;
 
-        if(obj != NULL) {
-            host = (QAbstractHost*)obj->newInstance();
-            host->init();
-            host->setAttribute(HOST_TYPE, name);
+        if(pObj != NULL) {
+            pHostObj = (QAbstractHost*)pObj->newInstance();
+            pHostObj->init();
+            pHostObj->setAttribute(HOST_TYPE, name);
         }
     }
 
-    return host;
+    return pHostObj;
 }
 
-QMap<QString, tagHostInfo*> QHostFactory::get_host_info()
+QMap<QString, tagHostInfo*> QHostFactory::getHostInfo()
 {
     return m_meta_map;
 }
 
-QAbstractHost* QHostFactory::create_host(XMLObject *xml)
+QAbstractHost* QHostFactory::createHost(XMLObject *xml)
 {
     if(xml == NULL) {
         return NULL;
     }
 
-    QAbstractHost* ret = NULL;
+    QAbstractHost* pHostObj = NULL;
 
     if(xml->getTagName() == FORM_TITLE) {
-        ret = new QFormHost;
-        ret->init();
-        ret->fromObject(xml);
-        ret->setAttribute(HOST_TYPE, FORM_TITLE);
+        pHostObj = new QFormHost;
+        pHostObj->init();
+        pHostObj->fromObject(xml);
+        pHostObj->setAttribute(HOST_TYPE, FORM_TITLE);
     } else {
-        ret = create_host(xml->getProperty(HOST_TYPE));
-        if(ret != NULL) {
-            ret->fromObject(xml);
+        pHostObj = createHost(xml->getProperty(HOST_TYPE));
+        if(pHostObj != NULL) {
+            pHostObj->fromObject(xml);
         }
     }
-    return ret;
+    return pHostObj;
 }
 
-tagHostInfo* QHostFactory::get_host_info(const QString &name)
+tagHostInfo* QHostFactory::getHostInfo(const QString &name)
 {
     return m_meta_map.value(name);
 }
