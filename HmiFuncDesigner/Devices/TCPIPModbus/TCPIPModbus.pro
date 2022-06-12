@@ -1,5 +1,5 @@
 
-include(../../HmiFuncDesignerDevicePlugin.pri)
+include(../../ConfigurationDevicePlugin.pri)
 
 SOURCES += TCPIPModbus.cpp
 

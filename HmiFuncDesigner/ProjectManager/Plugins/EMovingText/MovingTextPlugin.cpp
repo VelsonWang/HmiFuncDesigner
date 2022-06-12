@@ -1,5 +1,4 @@
-﻿
-#include "MovingTextPlugin.h"
+﻿#include "MovingTextPlugin.h"
 #include "ElementMovingText.h"
 
 
@@ -89,9 +88,7 @@ QString MovingTextPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* MovingTextPlugin::createElement(const QString &szProjPath,
-                                         const QString &szProjName,
-                                         QtVariantPropertyManager *propertyMgr)
+Element* MovingTextPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementMovingText(szProjPath, szProjName, propertyMgr);
+    return new ElementMovingText(pProjDataObj, propertyMgr);
 }

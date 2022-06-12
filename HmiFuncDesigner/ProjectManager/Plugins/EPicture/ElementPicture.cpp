@@ -8,10 +8,8 @@
 
 int ElementPicture::iLastIndex_ = 1;
 
-ElementPicture::ElementPicture(const QString &szProjPath,
-                               const QString &szProjName,
-                               QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementPicture::ElementPicture(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("Picture_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -25,10 +23,6 @@ ElementPicture::ElementPicture(const QString &szProjPath,
     init();
     elementWidth = 80;
     elementHeight = 80;
-
-    if(ProjectData::getInstance()->getDBPath() == "")
-        ProjectData::getInstance()->createOrOpenProjectData(szProjectPath_, szProjectName_);
-
     createPropertyList();
     updatePropertyModel();
 }
@@ -46,11 +40,9 @@ void ElementPicture::regenerateElementId()
 void ElementPicture::release()
 {
     if(filePicture_ != "") {
-        PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
-        picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
+        PictureResourceManager &picResMgr_ = m_pProjDataObj->pictureResourceMgr_;
+        picResMgr_.del(filePicture_);
     }
-
-    ProjectData::releaseInstance();
 }
 
 QRectF ElementPicture::boundingRect() const
@@ -142,21 +134,12 @@ void ElementPicture::updateElementProperty(QtProperty *property, const QVariant 
         QString szTmpName = value.toString();
         QFileInfo infoSrc(szTmpName);
         if(infoSrc.exists()) {
-            QString picturePath = getProjectPath() + "/Pictures";
-            QDir dir(picturePath);
-            if(!dir.exists())
-                dir.mkpath(picturePath);
-            QString fileDes = picturePath + "/" + infoSrc.fileName();
-            QFileInfo infoDes(fileDes);
-            PictureResourceManager &picResMgr_ = ProjectData::getInstance()->pictureResourceMgr_;
+            PictureResourceManager &picResMgr_ = m_pProjDataObj->pictureResourceMgr_;
             if(filePicture_ != "" && filePicture_ != infoSrc.fileName()) {
-                picResMgr_.del(ProjectData::getInstance()->dbData_, filePicture_);
-            }
-            if(!infoDes.exists()) {
-                QFile::copy(szTmpName, fileDes);
+                picResMgr_.del(filePicture_);
             }
             filePicture_ = infoSrc.fileName();
-            picResMgr_.add(ProjectData::getInstance()->dbData_, filePicture_);
+            picResMgr_.add(szTmpName);
             updatePropertyModel();
         }
     } else if (id == QLatin1String("showNoScale")) {
@@ -280,20 +263,18 @@ void ElementPicture::paint(QPainter *painter,
     Q_UNUSED(widget)
 
     if(filePicture_ != QString()) {
-        QString picture = getProjectPath() + "/Pictures/" + filePicture_;
-        if(QFile::exists(picture)) {
-            QImage image(getProjectPath() + "/Pictures/" + filePicture_);
-            QImage scaleImage;
-            if(showNoScale_) {
-                scaleImage = image;
-            } else {
-                scaleImage = image.scaled(static_cast<int>(elementRect.width()),
-                                          static_cast<int>(elementRect.height()),
-                                          Qt::IgnoreAspectRatio);
-            }
-            painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-            painter->drawImage(elementRect, scaleImage);
+        PictureResourceManager &picResMgr_ = m_pProjDataObj->pictureResourceMgr_;
+        QImage image = picResMgr_.getPicture(filePicture_);
+        QImage scaleImage;
+        if(showNoScale_) {
+            scaleImage = image;
+        } else {
+            scaleImage = image.scaled(static_cast<int>(elementRect.width()),
+                                      static_cast<int>(elementRect.height()),
+                                      Qt::IgnoreAspectRatio);
         }
+        painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+        painter->drawImage(elementRect, scaleImage);
     }
 
     if(borderWidth_ < 1) {
@@ -346,91 +327,54 @@ void ElementPicture::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 }
 
 
-void ElementPicture::writeAsXml(QXmlStreamWriter &writer)
+
+bool ElementPicture::openFromXml(XMLObject *pXmlObj)
 {
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType", internalElementType);
-    writer.writeAttribute("elementId", elementId);
-    writer.writeAttribute("x", QString::number(x()));
-    writer.writeAttribute("y", QString::number(y()));
-    writer.writeAttribute("z", QString::number(zValue()));
-    writer.writeAttribute("width", QString::number(elementWidth));
-    writer.writeAttribute("height", QString::number(elementHeight));
-    writer.writeAttribute("picture", filePicture_);
-    writer.writeAttribute("showNoScale", showNoScale_?"true":"false");
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("showOnInitial", showOnInitial_?"true":"false");
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeEndElement();
-}
+    XMLObject *pObj = pXmlObj;
 
-void ElementPicture::readFromXml(const QXmlStreamAttributes &attributes)
-{
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("picture")) {
-        filePicture_ = attributes.value("picture").toString();
-    }
-
-    if (attributes.hasAttribute("showNoScale")) {
-        QString value = attributes.value("showNoScale").toString();
-        showNoScale_ = false;
-        if(value == "true") {
-            showNoScale_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
-
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
-
-    if (attributes.hasAttribute("showOnInitial")) {
-        QString value = attributes.value("showOnInitial").toString();
-        showOnInitial_ = false;
-        if(value == "true") {
-            showOnInitial_ = true;
-        }
-    }
-
-    if (attributes.hasAttribute("elemAngle")) {
-        setAngle(attributes.value("elemAngle").toString().toInt());
-    }
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
+    filePicture_ = pObj->getProperty("picture");
+    showNoScale_ = pObj->getProperty("showNoScale") == "true";
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    showOnInitial_ = pObj->getProperty("showOnInitial") == "true";
+    setAngle(pObj->getProperty("elemAngle").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
+
+bool ElementPicture::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    pObj->setProperty("picture", filePicture_);
+    pObj->setProperty("showNoScale", showNoScale_?"true":"false");
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("showOnInitial", showOnInitial_?"true":"false");
+    pObj->setProperty("elemAngle", QString::number(elemAngle));
+    return true;
+}
+
 
 void ElementPicture::writeData(QDataStream &out)
 {
@@ -495,71 +439,3 @@ void ElementPicture::readData(QDataStream &in)
     this->updatePropertyModel();
 }
 
-
-QDataStream &operator<<(QDataStream &out,const ElementPicture &picture)
-{
-    out << picture.elementId
-        << picture.x()
-        << picture.y()
-        << picture.zValue()
-        << picture.elementWidth
-        << picture.elementHeight
-        << picture.filePicture_
-        << picture.showNoScale_
-        << picture.borderWidth_
-        << picture.borderColor_
-        << picture.showOnInitial_
-        << picture.elemAngle;
-
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in,ElementPicture &picture)
-{
-    QString id;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-    QString pic;
-    bool showNoScale;
-    int borderWidth;
-    QColor borderColor;
-    bool showOnInitial;
-    qreal angle;
-
-    in >> id
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> pic
-       >> showNoScale
-       >> borderWidth
-       >> borderColor
-       >> showOnInitial
-       >> angle;
-
-    picture.setElementId(id);
-    int index = picture.getIndexFromIDString(id);
-    if(picture.iLastIndex_ < index) {
-        picture.iLastIndex_ = index;
-    }
-    picture.setElementXPos(static_cast<int>(xpos));
-    picture.setElementYPos(static_cast<int>(ypos));
-    picture.setElementZValue(static_cast<int>(zvalue));
-    picture.setElementWidth(width);
-    picture.setElementHeight(height);
-    picture.filePicture_ = pic;
-    picture.showNoScale_ = showNoScale;
-    picture.borderWidth_ = borderWidth;
-    picture.borderColor_ = borderColor;
-    picture.showOnInitial_ = showOnInitial;
-    picture.setAngle(angle);
-    picture.updateBoundingElement();
-    picture.updatePropertyModel();
-
-    return in;
-}

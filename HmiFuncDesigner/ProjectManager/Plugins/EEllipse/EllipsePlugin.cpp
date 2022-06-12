@@ -1,5 +1,4 @@
-﻿
-#include "EllipsePlugin.h"
+﻿#include "EllipsePlugin.h"
 #include "ElementEllipse.h"
 
 
@@ -89,9 +88,7 @@ QString EllipsePlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EllipsePlugin::createElement(const QString &szProjPath,
-                                      const QString &szProjName,
-                                      QtVariantPropertyManager *propertyMgr)
+Element* EllipsePlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementEllipse(szProjPath, szProjName, propertyMgr);
+    return new ElementEllipse(pProjDataObj, propertyMgr);
 }

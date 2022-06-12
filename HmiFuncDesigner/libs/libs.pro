@@ -1,19 +1,18 @@
-
 include(../HmiFuncDesigner.pri)
 
 TEMPLATE  = subdirs
-
+CONFIG += ordered
 SUBDIRS   = \
     Utils \
     edncrypt \
     Csv \
-    DrawUtils \
     qtpropertybrowser \
     qscintilla \
 #    Lua \
 #    Ftp \
-    ProjectDataUtils
-
+    shared \
+    gradienteditor \
+    core
 
 
 for(l, SUBDIRS) {

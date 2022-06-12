@@ -3,10 +3,8 @@
 
 int ElementLine::iLastIndex_ = 1;
 
-ElementLine::ElementLine(const QString &szProjPath,
-                         const QString &szProjName,
-                         QtVariantPropertyManager *propertyMgr)
-    : Element(szProjPath, szProjName, propertyMgr)
+ElementLine::ElementLine(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
+    : Element(pProjDataObj, propertyMgr)
 {
     elementId = QString(tr("Line_%1").arg(iLastIndex_, 4, 10, QChar('0')));
     iLastIndex_++;
@@ -222,68 +220,47 @@ void ElementLine::paint(QPainter *painter,
 }
 
 
-void ElementLine::writeAsXml(QXmlStreamWriter &writer)
-{
-    writer.writeStartElement("element");
-    writer.writeAttribute("internalType",internalElementType);
-    writer.writeAttribute("elementId",elementId);
-    writer.writeAttribute("x",QString::number(x()));
-    writer.writeAttribute("y",QString::number(y()));
-    writer.writeAttribute("z",QString::number(zValue()));
-    writer.writeAttribute("width",QString::number(elementWidth));
-    writer.writeAttribute("height",QString::number(elementHeight));
-    writer.writeAttribute("borderWidth", QString::number(borderWidth_));
-    writer.writeAttribute("borderColor", borderColor_.name());
-    writer.writeAttribute("elemAngle", QString::number(elemAngle));
-    writer.writeEndElement();
+bool ElementLine::saveToXml(XMLObject *pXmlObj) {
+    XMLObject *pObj = new XMLObject(pXmlObj);
+    pObj->setTagName("element");
+    pObj->setProperty("internalType", internalElementType);
+    pObj->setProperty("id", elementId);
+    pObj->setProperty("x", QString::number(x()));
+    pObj->setProperty("y", QString::number(y()));
+    pObj->setProperty("z", QString::number(zValue()));
+    pObj->setProperty("width", QString::number(elementWidth));
+    pObj->setProperty("height", QString::number(elementHeight));
+    pObj->setProperty("borderWidth", QString::number(borderWidth_));
+    pObj->setProperty("borderColor", borderColor_.name());
+    pObj->setProperty("elemAngle", QString::number(elemAngle));
+    return true;
 }
 
-void ElementLine::readFromXml(const QXmlStreamAttributes &attributes)
+
+bool ElementLine::openFromXml(XMLObject *pXmlObj)
 {
-    if (attributes.hasAttribute("elementId")) {
-        QString szID = attributes.value("elementId").toString();
-        setElementId(szID);
-        int index = getIndexFromIDString(szID);
-        if(iLastIndex_ < index) {
-            iLastIndex_ = index;
-        }
-    }
+    XMLObject *pObj = pXmlObj;
 
-    if (attributes.hasAttribute("x")) {
-        setElementXPos(attributes.value("x").toString().toInt());
-    }
+    QString szID = pObj->getProperty("id");
+    setElementId(szID);
+    int index = getIndexFromIDString(szID);
+    if(iLastIndex_ < index) iLastIndex_ = index;
 
-    if (attributes.hasAttribute("y")) {
-        setElementYPos(attributes.value("y").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("z")) {
-        setZValue(attributes.value("z").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("width")) {
-        setElementWidth(attributes.value("width").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("height")) {
-        setElementHeight(attributes.value("height").toString().toInt());
-    }
-
-    if (attributes.hasAttribute("borderWidth")) {
-        borderWidth_ = attributes.value("borderWidth").toInt();
-    }
-
-    if (attributes.hasAttribute("borderColor")) {
-        borderColor_ = QColor(attributes.value("borderColor").toString());
-    }
-
-    if (attributes.hasAttribute("elemAngle")) {
-        setAngle(attributes.value("elemAngle").toString().toInt());
-    }
+    setElementXPos(pObj->getProperty("x").toInt());
+    setElementYPos(pObj->getProperty("y").toInt());
+    setZValue(pObj->getProperty("z").toInt());
+    setElementWidth(pObj->getProperty("width").toInt());
+    setElementHeight(pObj->getProperty("height").toInt());
+    borderWidth_ = pObj->getProperty("borderWidth").toInt();
+    borderColor_ = QColor(pObj->getProperty("borderColor"));
+    setAngle(pObj->getProperty("elemAngle").toInt());
 
     updateBoundingElement();
     updatePropertyModel();
+
+    return true;
 }
+
 
 void ElementLine::writeData(QDataStream &out)
 {
@@ -337,58 +314,4 @@ void ElementLine::readData(QDataStream &in)
     this->updatePropertyModel();
 }
 
-QDataStream &operator<<(QDataStream &out,const ElementLine &line)
-{
-    out << line.elementId
-        << line.x()
-        << line.y()
-        << line.zValue()
-        << line.elementWidth
-        << line.elementHeight
-        << line.borderWidth_
-        << line.borderColor_
-        << line.elemAngle;
 
-    return out;
-}
-
-QDataStream &operator>>(QDataStream &in,ElementLine &line)
-{
-    QString id;
-    qreal xpos;
-    qreal ypos;
-    qreal zvalue;
-    int width;
-    int height;
-    int borderWidth;
-    QColor borderColor;
-    qreal angle;
-
-    in >> id
-       >> xpos
-       >> ypos
-       >> zvalue
-       >> width
-       >> height
-       >> borderWidth
-       >> borderColor
-       >> angle;
-
-    line.setElementId(id);
-    int index = line.getIndexFromIDString(id);
-    if(line.iLastIndex_ < index) {
-        line.iLastIndex_ = index;
-    }
-    line.setElementXPos(static_cast<int>(xpos));
-    line.setElementYPos(static_cast<int>(ypos));
-    line.setElementZValue(static_cast<int>(zvalue));
-    line.setElementWidth(width);
-    line.setElementHeight(height);
-    line.borderWidth_ = borderWidth;
-    line.borderColor_ = borderColor;
-    line.setAngle(angle);
-    line.updateBoundingElement();
-    line.updatePropertyModel();
-
-    return in;
-}

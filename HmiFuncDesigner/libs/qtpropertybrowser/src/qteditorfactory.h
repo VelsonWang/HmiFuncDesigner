@@ -45,7 +45,7 @@
 #include "qtpropertymanager.h"
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 class QtSpinBoxFactoryPrivate;
@@ -54,12 +54,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtSpinBoxFactory : public QtAbstractEditorFact
 {
     Q_OBJECT
 public:
-    QtSpinBoxFactory(QObject *parent = Q_NULLPTR);
+    QtSpinBoxFactory(QObject *parent = NULL);
     ~QtSpinBoxFactory();
 protected:
     void connectPropertyManager(QtIntPropertyManager *manager);
     QWidget *createEditor(QtIntPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtIntPropertyManager *manager);
 private:
     QtSpinBoxFactoryPrivate *d_ptr;
@@ -79,12 +79,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtSliderFactory : public QtAbstractEditorFacto
 {
     Q_OBJECT
 public:
-    QtSliderFactory(QObject *parent = Q_NULLPTR);
+    QtSliderFactory(QObject *parent = NULL);
     ~QtSliderFactory();
 protected:
     void connectPropertyManager(QtIntPropertyManager *manager);
     QWidget *createEditor(QtIntPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtIntPropertyManager *manager);
 private:
     QtSliderFactoryPrivate *d_ptr;
@@ -103,12 +103,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtScrollBarFactory : public QtAbstractEditorFa
 {
     Q_OBJECT
 public:
-    QtScrollBarFactory(QObject *parent = Q_NULLPTR);
+    QtScrollBarFactory(QObject *parent = NULL);
     ~QtScrollBarFactory();
 protected:
     void connectPropertyManager(QtIntPropertyManager *manager);
     QWidget *createEditor(QtIntPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtIntPropertyManager *manager);
 private:
     QtScrollBarFactoryPrivate *d_ptr;
@@ -127,12 +127,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtCheckBoxFactory : public QtAbstractEditorFac
 {
     Q_OBJECT
 public:
-    QtCheckBoxFactory(QObject *parent = Q_NULLPTR);
+    QtCheckBoxFactory(QObject *parent = NULL);
     ~QtCheckBoxFactory();
 protected:
     void connectPropertyManager(QtBoolPropertyManager *manager);
     QWidget *createEditor(QtBoolPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtBoolPropertyManager *manager);
 private:
     QtCheckBoxFactoryPrivate *d_ptr;
@@ -150,12 +150,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtDoubleSpinBoxFactory : public QtAbstractEdit
 {
     Q_OBJECT
 public:
-    QtDoubleSpinBoxFactory(QObject *parent = Q_NULLPTR);
+    QtDoubleSpinBoxFactory(QObject *parent = NULL);
     ~QtDoubleSpinBoxFactory();
 protected:
     void connectPropertyManager(QtDoublePropertyManager *manager);
     QWidget *createEditor(QtDoublePropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtDoublePropertyManager *manager);
 private:
     QtDoubleSpinBoxFactoryPrivate *d_ptr;
@@ -176,12 +176,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtLineEditFactory : public QtAbstractEditorFac
 {
     Q_OBJECT
 public:
-    QtLineEditFactory(QObject *parent = Q_NULLPTR);
+    QtLineEditFactory(QObject *parent = NULL);
     ~QtLineEditFactory();
 protected:
     void connectPropertyManager(QtStringPropertyManager *manager);
     QWidget *createEditor(QtStringPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtStringPropertyManager *manager);
 private:
     QtLineEditFactoryPrivate *d_ptr;
@@ -201,12 +201,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtDateEditFactory : public QtAbstractEditorFac
 {
     Q_OBJECT
 public:
-    QtDateEditFactory(QObject *parent = Q_NULLPTR);
+    QtDateEditFactory(QObject *parent = NULL);
     ~QtDateEditFactory();
 protected:
     void connectPropertyManager(QtDatePropertyManager *manager);
     QWidget *createEditor(QtDatePropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtDatePropertyManager *manager);
 private:
     QtDateEditFactoryPrivate *d_ptr;
@@ -214,7 +214,7 @@ private:
     Q_DISABLE_COPY(QtDateEditFactory)
     Q_PRIVATE_SLOT(d_func(), void slotPropertyChanged(QtProperty *, const QDate &))
     Q_PRIVATE_SLOT(d_func(), void slotRangeChanged(QtProperty *,
-                        const QDate &, const QDate &))
+                   const QDate &, const QDate &))
     Q_PRIVATE_SLOT(d_func(), void slotSetValue(const QDate &))
     Q_PRIVATE_SLOT(d_func(), void slotEditorDestroyed(QObject *))
 };
@@ -225,12 +225,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtTimeEditFactory : public QtAbstractEditorFac
 {
     Q_OBJECT
 public:
-    QtTimeEditFactory(QObject *parent = Q_NULLPTR);
+    QtTimeEditFactory(QObject *parent = NULL);
     ~QtTimeEditFactory();
 protected:
     void connectPropertyManager(QtTimePropertyManager *manager);
     QWidget *createEditor(QtTimePropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtTimePropertyManager *manager);
 private:
     QtTimeEditFactoryPrivate *d_ptr;
@@ -247,12 +247,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtDateTimeEditFactory : public QtAbstractEdito
 {
     Q_OBJECT
 public:
-    QtDateTimeEditFactory(QObject *parent = Q_NULLPTR);
+    QtDateTimeEditFactory(QObject *parent = NULL);
     ~QtDateTimeEditFactory();
 protected:
     void connectPropertyManager(QtDateTimePropertyManager *manager);
     QWidget *createEditor(QtDateTimePropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtDateTimePropertyManager *manager);
 private:
     QtDateTimeEditFactoryPrivate *d_ptr;
@@ -269,12 +269,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtKeySequenceEditorFactory : public QtAbstract
 {
     Q_OBJECT
 public:
-    QtKeySequenceEditorFactory(QObject *parent = Q_NULLPTR);
+    QtKeySequenceEditorFactory(QObject *parent = NULL);
     ~QtKeySequenceEditorFactory();
 protected:
     void connectPropertyManager(QtKeySequencePropertyManager *manager);
     QWidget *createEditor(QtKeySequencePropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtKeySequencePropertyManager *manager);
 private:
     QtKeySequenceEditorFactoryPrivate *d_ptr;
@@ -291,12 +291,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtCharEditorFactory : public QtAbstractEditorF
 {
     Q_OBJECT
 public:
-    QtCharEditorFactory(QObject *parent = Q_NULLPTR);
+    QtCharEditorFactory(QObject *parent = NULL);
     ~QtCharEditorFactory();
 protected:
     void connectPropertyManager(QtCharPropertyManager *manager);
     QWidget *createEditor(QtCharPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtCharPropertyManager *manager);
 private:
     QtCharEditorFactoryPrivate *d_ptr;
@@ -313,12 +313,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtEnumEditorFactory : public QtAbstractEditorF
 {
     Q_OBJECT
 public:
-    QtEnumEditorFactory(QObject *parent = Q_NULLPTR);
+    QtEnumEditorFactory(QObject *parent = NULL);
     ~QtEnumEditorFactory();
 protected:
     void connectPropertyManager(QtEnumPropertyManager *manager);
     QWidget *createEditor(QtEnumPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtEnumPropertyManager *manager);
 private:
     QtEnumEditorFactoryPrivate *d_ptr;
@@ -326,9 +326,9 @@ private:
     Q_DISABLE_COPY(QtEnumEditorFactory)
     Q_PRIVATE_SLOT(d_func(), void slotPropertyChanged(QtProperty *, int))
     Q_PRIVATE_SLOT(d_func(), void slotEnumNamesChanged(QtProperty *,
-                        const QStringList &))
+                   const QStringList &))
     Q_PRIVATE_SLOT(d_func(), void slotEnumIconsChanged(QtProperty *,
-                        const QMap<int, QIcon> &))
+                   const QMap<int, QIcon> &))
     Q_PRIVATE_SLOT(d_func(), void slotSetValue(int))
     Q_PRIVATE_SLOT(d_func(), void slotEditorDestroyed(QObject *))
 };
@@ -339,12 +339,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtCursorEditorFactory : public QtAbstractEdito
 {
     Q_OBJECT
 public:
-    QtCursorEditorFactory(QObject *parent = Q_NULLPTR);
+    QtCursorEditorFactory(QObject *parent = NULL);
     ~QtCursorEditorFactory();
 protected:
     void connectPropertyManager(QtCursorPropertyManager *manager);
     QWidget *createEditor(QtCursorPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtCursorPropertyManager *manager);
 private:
     QtCursorEditorFactoryPrivate *d_ptr;
@@ -361,12 +361,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtColorEditorFactory : public QtAbstractEditor
 {
     Q_OBJECT
 public:
-    QtColorEditorFactory(QObject *parent = Q_NULLPTR);
+    QtColorEditorFactory(QObject *parent = NULL);
     ~QtColorEditorFactory();
 protected:
     void connectPropertyManager(QtColorPropertyManager *manager);
     QWidget *createEditor(QtColorPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtColorPropertyManager *manager);
 private:
     QtColorEditorFactoryPrivate *d_ptr;
@@ -383,12 +383,12 @@ class QT_QTPROPERTYBROWSER_EXPORT QtFontEditorFactory : public QtAbstractEditorF
 {
     Q_OBJECT
 public:
-    QtFontEditorFactory(QObject *parent = Q_NULLPTR);
+    QtFontEditorFactory(QObject *parent = NULL);
     ~QtFontEditorFactory();
 protected:
     void connectPropertyManager(QtFontPropertyManager *manager);
     QWidget *createEditor(QtFontPropertyManager *manager, QtProperty *property,
-                QWidget *parent);
+                          QWidget *parent);
     void disconnectPropertyManager(QtFontPropertyManager *manager);
 private:
     QtFontEditorFactoryPrivate *d_ptr;
@@ -400,7 +400,7 @@ private:
 };
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
 
 #endif

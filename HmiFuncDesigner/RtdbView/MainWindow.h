@@ -27,7 +27,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(QString projPath, QWidget *parent = nullptr);
+    explicit MainWindow(QString projPath, QWidget *parent = Q_NULLPTR);
     ~MainWindow();
     void ShowFirstPage();
 

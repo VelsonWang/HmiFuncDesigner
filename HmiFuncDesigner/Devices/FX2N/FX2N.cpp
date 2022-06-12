@@ -2,113 +2,76 @@
 
 
 
-FX2N::FX2N() {
-
-}
-
-
-/**
- * @brief FX2N::GetDeviceTypeName
- * @details 获取设备类型名称
- * @return
- */
-QString FX2N::GetDeviceTypeName() {
-    return QString(tr("串口设备"));
-}
-
-
-/**
- * @brief FX2N::GetDeviceSupportProtocol
- * @details 获取设备支持的所有协议
- * @return
- */
-QStringList FX2N::GetDeviceSupportProtocol() {
-    QStringList list;
-    list << "FxProtocol";
-    return list;
-}
-
-/**
- * @brief FX2N::GetDeviceSupportRegisterArea
- * @details 获取设备支持的所有寄存器区
- * @return
- */
-QStringList FX2N::GetDeviceSupportRegisterArea() {
-    QStringList list;
-    list << tr("X")
-         << tr("Y")
-         << tr("M")
-         << tr("S")
-         << tr("D")
-         << tr("T")
-         << tr("C16")
-         << tr("C32");
-    return list;
-}
-
-/**
- * @brief FX2N::GetDeviceSupportDataType
- * @details 获取设备支持的所有数据类型
- * @return
- */
-QStringList FX2N::GetDeviceSupportDataType()
+FX2N::FX2N()
 {
-    QStringList list;
-    list << tr("Bit1开关量")
-         << tr("Char8位有符号数")
-         << tr("Byte8位无符号数")
-         << tr("Short16位有符号数")
-         << tr("Word16位无符号数")
-         << tr("ASCII2个字符")
-         << tr("Long32位有符号数")
-         << tr("Dword32位无符号数")
-         << tr("Float单精度浮点数")
-         << tr("String字符串")
-         << tr("Double双精度浮点数")
-         << tr("BCD");
-    return list;
-}
 
-/**
- * @brief FX2N::GetRegisterAreaLimit
- * @details 获取寄存器区地址的下限和上限
- * @param areaName 寄存器区名称
- * @param lowerLimit 寄存器区地址下限
- * @param upperLimit 寄存器区地址上限
- */
-void FX2N::GetRegisterAreaLimit(const QString &areaName,
-                                     quint32 &lowerLimit,
-                                     quint32 &upperLimit) {
-    lowerLimit = 0;
-    upperLimit = 0;
-    if(areaName == tr("X")) {
-        lowerLimit = 0;
-        upperLimit = 177;
-    } else if(areaName == tr("Y")) {
-        lowerLimit = 0;
-        upperLimit = 177;
-    } else if(areaName == tr("M")) {
-        lowerLimit = 0;
-        upperLimit = 1023;
-    } else if(areaName == tr("S")) {
-        lowerLimit = 9;
-        upperLimit = 999;
-    } else if(areaName == tr("D")) {
-        lowerLimit = 0;
-        upperLimit = 0xFFFF;
-    } else if(areaName == tr("T")) {
-        lowerLimit = 0;
-        upperLimit = 511;
-    } else if(areaName == tr("C16")) {
-        lowerLimit = 0;
-        upperLimit = 199;
-    } else if(areaName == tr("C32")) {
-        lowerLimit = 200;
-        upperLimit = 255;
-    }
 }
 
 
+///
+/// \brief FX2N::getBitMaxRegPacket
+/// \details 位组包最大寄存器个数
+/// \return 寄存器个数
+///
+int FX2N::getBitMaxRegPacket()
+{
+    return 40;
+}
+
+
+///
+/// \brief FX2N::getWordMaxRegPacket
+/// \details 字组包最大寄存器个数
+/// \return 寄存器个数
+///
+int FX2N::getWordMaxRegPacket()
+{
+    return 20;
+}
+
+
+///
+/// \brief FX2N::getCommFailRetryCount
+/// \details 通信失败重试次数
+/// \return 次数
+///
+int FX2N::getCommFailRetryTimes()
+{
+    return 2;
+}
+
+
+///
+/// \brief FX2N::getCommTimeout
+/// \details 通信超时时间
+/// \return 时间值
+///
+int FX2N::getCommTimeout()
+{
+    return 3;
+}
+
+
+///
+/// \brief FX2N::getCommIntervalTime
+/// \details 通信间隔时间
+/// \return 时间值
+///
+int FX2N::getCommIntervalTime()
+{
+    return 200;
+}
+
+
+///
+/// \brief FX2N::getCommResumeTime
+/// \details 尝试恢复通讯间隔时间
+/// \return 时间值
+///
+int FX2N::getCommResumeTime()
+{
+    return 2;
+}
 
 ///
 /// \brief FX2N::getDefaultDeviceProperty
@@ -118,9 +81,7 @@ void FX2N::GetRegisterAreaLimit(const QString &areaName,
 void FX2N::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
-    properties.append(qMakePair(tr("通信失败重试次数n次"), QString("3")));
-    properties.append(qMakePair(tr("通信超时时间n毫秒"), QString("1000")));
-    properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("15000")));
+    //properties.append(qMakePair(tr("从站ID"), QString("5")));
 }
 
 
@@ -132,51 +93,38 @@ void FX2N::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties
 void FX2N::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
 {
     properties_type.clear();
-    properties_type.append(qMakePair(tr("通信失败重试次数n次"), QString("int")));
-    properties_type.append(qMakePair(tr("通信超时时间n毫秒"), QString("int")));
-    properties_type.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), QString("int")));
+    //properties_type.append(qMakePair(tr("从站ID"), QString("int")));
 }
 
-
 ///
-/// \brief FX2N::devicePropertiesToString
-/// \details 保存属性为字符串
+/// \brief FX2N::writeAsXml
+/// \details 保存属性至xml节点
+/// \param xml xml节点
 /// \param properties 属性
-/// \return 属性字符串
 ///
-QString FX2N::devicePropertiesToString(QVector<QPair<QString, QString>>& properties)
+void FX2N::writeAsXml(QXmlStreamWriter &xml, QVector<QPair<QString, QString>>& properties)
 {
-    QStringList szListProperties;
-    szListProperties << QString(tr("retryTimes=%1")).arg(getValue2ByValue1(tr("通信失败重试次数n次"), properties));
-    szListProperties << QString(tr("commTimeout=%1")).arg(getValue2ByValue1(tr("通信超时时间n毫秒"), properties));
-    szListProperties << QString(tr("commResumeTime=%1")).arg(getValue2ByValue1(tr("尝试恢复通讯间隔时间n毫秒"), properties));
-    return szListProperties.join("|");
+    xml.writeStartElement("property");
+    xml.writeAttribute("id", getValue2ByValue1(tr("从站ID"), properties));
+    xml.writeEndElement();
 }
 
+
 ///
-/// \brief FX2N::devicePropertiesFromString
-/// \details 从字符串加载属性
-/// \param szProperty 属性字符串
+/// \brief FX2N::readFromXml
+/// \details 从xml节点加载属性
+/// \param xml xml节点
 /// \param properties 属性
 ///
-void FX2N::devicePropertiesFromString(const QString &szProperty, QVector<QPair<QString, QString>>& properties)
+void FX2N::readFromXml(QXmlStreamReader &xml, QVector<QPair<QString, QString>>& properties)
 {
     properties.clear();
-
-    QStringList szListProperties = szProperty.split('|');
-    foreach(QString szProp, szListProperties) {
-        QStringList szListKeyVal = szProp.split('=');
-        if(szListKeyVal.size() == 2) {
-            if(szListKeyVal.at(0) == "retryTimes") {
-                properties.append(qMakePair(tr("通信失败重试次数n次"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "commTimeout") {
-                properties.append(qMakePair(tr("通信超时时间n毫秒"), szListKeyVal.at(1)));
-            } else if(szListKeyVal.at(0) == "commResumeTime") {
-                properties.append(qMakePair(tr("尝试恢复通讯间隔时间n毫秒"), szListKeyVal.at(1)));
-            }
-        }
+    QXmlStreamAttributes attributes = xml.attributes();
+    if (attributes.hasAttribute("id")) {
+        properties.append(qMakePair(tr("从站ID"), attributes.value("id").toString()));
     }
 }
+
 
 ///
 /// \brief FX2N::setDeviceProperty
@@ -190,16 +138,200 @@ void FX2N::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
 }
 
 
+///
+/// \brief FX2N::GetDeviceSupportProtocol
+/// \details 获取设备支持的所有协议
+/// \return
+///
+QStringList FX2N::getDeviceSupportProtocol()
+{
+    QStringList list;
+    list<<"FxProtocol";
+    return list;
+}
+
+///
+/// \brief FX2N::getDeviceSupportRegisterArea
+/// \details 获取设备支持的所有寄存器区
+/// \return 寄存器区
+///
+QStringList FX2N::getDeviceSupportRegisterArea()
+{
+    QStringList list;
+    list << tr("X")
+         << tr("Y")
+         << tr("M")
+         << tr("S")
+         << tr("T")
+         << tr("C")
+         << tr("D")
+         << tr("TN")
+         << tr("CN");
+    return list;
+}
+
+///
+/// \brief FX2N::getDeviceSupportRegisterArea
+/// \details 获取指定数据类型和读写属性设备支持的寄存器区
+/// \param szDataType 数据类型
+/// \param bWriteable 读写属性
+/// \return 寄存器区
+///
+QStringList FX2N::getDeviceSupportRegisterArea(const QString &szDataType, bool bWriteable)
+{
+    Q_UNUSED(szDataType)
+    Q_UNUSED(bWriteable)
+    return QStringList();
+}
+
+///
+/// \brief FX2N::GetDeviceSupportDataType
+/// \details 获取设备支持的所有数据类型
+/// \param szAreaName 寄存器区
+/// \return
+///
+QStringList FX2N::getDeviceSupportDataType(const QString &szAreaName)
+{
+    QStringList list;
+
+    if(szAreaName == tr("X") || szAreaName == tr("Y") || szAreaName == tr("M") ||
+            szAreaName == tr("S") || szAreaName == tr("T") || szAreaName == tr("C")) {
+        list << tr("bool");
+    }
+    else if(szAreaName == tr("D")) {
+        //list << tr("bool")
+        list << tr("int16")
+             << tr("uint16")
+             << tr("int32")
+             << tr("uint32")
+             << tr("float32");
+    }
+    else if(szAreaName == tr("TN")) {
+        list << tr("int16")
+             << tr("uint16");
+    }
+    else if(szAreaName == tr("CN")) {
+        list << tr("int16")
+             << tr("uint16")
+             << tr("int32")
+             << tr("uint32")
+             << tr("float32");
+    }
+    return list;
+}
 
 
+/**
+ * @brief FX2N::getRegisterAreaLimit
+ * @details 获取寄存器区地址的下限和上限
+ * @param szAreaName 寄存器区名称
+ * @param iLowerLimit 寄存器区地址下限
+ * @param iUpperLimit 寄存器区地址上限
+ */
+void FX2N::getRegisterAreaLimit(const QString &szAreaName,
+                                quint32 &iLowerLimit,
+                                quint32 &iUpperLimit)
+{
+    iLowerLimit = 0;
+    iUpperLimit = 0;
+    if(szAreaName == tr("X")) {
+        iLowerLimit = 0;
+        iUpperLimit = 177;
+    } else if(szAreaName == tr("Y")) {
+        iLowerLimit = 0;
+        iUpperLimit = 177;
+    } else if(szAreaName == tr("M")) {
+        iLowerLimit = 0;
+        iUpperLimit = 1023;
+    } else if(szAreaName == tr("S")) {
+        iLowerLimit = 0;
+        iUpperLimit = 999;
+    } else if(szAreaName == tr("D")) {
+        iLowerLimit = 0;
+        iUpperLimit = 0xFFFF;
+    } else if(szAreaName == tr("T")) {
+        iLowerLimit = 0;
+        iUpperLimit = 511;
+    }  else if(szAreaName == tr("TN")) {
+        iLowerLimit = 0;
+        iUpperLimit = 511;
+    } else if(szAreaName == tr("C")) {
+        iLowerLimit = 0;
+        iUpperLimit = 255;
+    } else if(szAreaName == tr("CN")) {
+        iLowerLimit = 0;
+        iUpperLimit = 255;
+    }
+}
+
+///
+/// \brief FX2N::getAddressTypeAlias
+/// \details 获取地址类型别名
+/// \param szAreaName 寄存器区名称
+/// \param szDataType 数据类型
+/// \param szAddrOffset 地址偏移量
+/// \return 地址类型别名
+///
+QString FX2N::getAddressTypeAlias(const QString &szDataType,
+                                  const QString &szAreaName,
+                                  const QString &szAddrOffset,
+                                  const QString &szAreaName2,
+                                  const QString &szAddrOffset2)
+{
+    Q_UNUSED(szDataType)
+    Q_UNUSED(szAreaName2)
+    Q_UNUSED(szAddrOffset2)
+    QString szAddrTypeAlias = szAreaName;
+    szAddrTypeAlias += szAddrOffset;
+    return szAddrTypeAlias;
+}
 
 
+///
+/// \brief FX2N::getAddressTypeAlias
+/// \details 获取地址类型别名
+/// \param szAreaName 寄存器区名称
+/// \return 地址类型别名
+///
+QString FX2N::getAddressTypeAlias(const QString &szAreaName)
+{
+    return szAreaName;
+}
 
 
+///
+/// \brief FX2N::getAddressType
+/// \details 获取指定地址类型别名的地址类型
+/// \param szAddressTypeAlias 地址类型别名
+/// \return 寄存器区名称
+///
+QString FX2N::getAddressType(const QString &szAddressTypeAlias)
+{
+    return szAddressTypeAlias;
+}
+
+///
+/// \brief FX2N::getAutoAddrMapItemList
+/// \details 获取寄存器地址映射列表
+/// \param listAutoAddrMapItem
+///
+void FX2N::getAutoAddrMapItemList(QList<PAutoAddrMapItem> &listAutoAddrMapItem)
+{
+    Q_UNUSED(listAutoAddrMapItem)
+}
 
 
-
-
+///
+/// \brief FX2N::getDeviceSupportRegisterAreaSubArea
+/// \details 获取设备支持的地址类型所有子寄存器区名称
+/// \param szAreaName 寄存器区名称
+/// \return 地址类型所有子寄存器区名称
+///
+QStringList FX2N::getDeviceSupportRegisterAreaSubArea(const QString &szAreaName)
+{
+    Q_UNUSED(szAreaName)
+    return QStringList();
+}
 
 
 

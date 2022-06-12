@@ -45,7 +45,7 @@
 #include "qtpropertybrowser.h"
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 class QtGroupBoxPropertyBrowserPrivate;
@@ -55,7 +55,7 @@ class QT_QTPROPERTYBROWSER_EXPORT QtGroupBoxPropertyBrowser : public QtAbstractP
     Q_OBJECT
 public:
 
-    QtGroupBoxPropertyBrowser(QWidget *parent = Q_NULLPTR);
+    QtGroupBoxPropertyBrowser(QWidget *parent = NULL);
     ~QtGroupBoxPropertyBrowser();
 
 protected:
@@ -74,7 +74,7 @@ private:
 };
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
 
 #endif

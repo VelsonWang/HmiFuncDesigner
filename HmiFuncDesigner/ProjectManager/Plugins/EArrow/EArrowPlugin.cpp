@@ -1,5 +1,4 @@
-﻿
-#include "EArrowPlugin.h"
+﻿#include "EArrowPlugin.h"
 #include "ElementArrow.h"
 
 
@@ -89,9 +88,7 @@ QString EArrowPlugin::getElementIDString()
  * @details 创建元素
  * @return 元素对象
  */
-Element* EArrowPlugin::createElement(const QString &szProjPath,
-                                     const QString &szProjName,
-                                     QtVariantPropertyManager *propertyMgr)
+Element* EArrowPlugin::createElement(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr)
 {
-    return new ElementArrow(szProjPath, szProjName, propertyMgr);
+    return new ElementArrow(pProjDataObj, propertyMgr);
 }

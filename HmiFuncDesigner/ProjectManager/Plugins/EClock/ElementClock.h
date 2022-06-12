@@ -12,16 +12,14 @@ class ElementClock : public Element
     Q_OBJECT
 
 public:
-    explicit ElementClock(const QString &szProjPath,
-                          const QString &szProjName,
-                          QtVariantPropertyManager *propertyMgr);
+    explicit ElementClock(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -30,9 +28,6 @@ public:
     int type() const override {
         return ClockItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out, const ElementClock &textItem);
-    friend QDataStream &operator>>(QDataStream &in, ElementClock &textItem);
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;

@@ -12,16 +12,14 @@ class ElementText : public Element
     Q_OBJECT
 
 public:
-    explicit ElementText(const QString &szProjPath,
-                         const QString &szProjName,
-                         QtVariantPropertyManager *propertyMgr);
+    explicit ElementText(ProjectData* pProjDataObj, QtVariantPropertyManager *propertyMgr);
     void setClickPosition(QPointF) override;
     void updateBoundingElement() override;
     void updateElementProperty(QtProperty *property, const QVariant &value) override;
     void updatePropertyModel() override;
     void createPropertyList() override;
-    void writeAsXml(QXmlStreamWriter &) override;
-    void readFromXml(const QXmlStreamAttributes &) override;
+    bool openFromXml(XMLObject *pXmlObj) override;
+    bool saveToXml(XMLObject *pXmlObj) override;
     void writeData(QDataStream &out) override;
     void readData(QDataStream &in) override;
     void regenerateElementId() override;
@@ -30,9 +28,6 @@ public:
     int type() const override {
         return TextItemType;
     }
-
-    friend QDataStream &operator<<(QDataStream &out, const ElementText &textItem);
-    friend QDataStream &operator>>(QDataStream &in, ElementText &textItem);
 
 protected:
     void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;

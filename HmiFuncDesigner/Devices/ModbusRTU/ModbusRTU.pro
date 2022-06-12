@@ -1,4 +1,3 @@
-
 include(../../HmiFuncDesignerDevicePlugin.pri)
 
 SOURCES += ModbusRTU.cpp

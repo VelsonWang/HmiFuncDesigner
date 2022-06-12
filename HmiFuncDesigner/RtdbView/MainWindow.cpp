@@ -29,7 +29,7 @@ MainWindow::MainWindow(QString projPath, QWidget *parent) :
     ip_("127.0.0.1"),
     port_(60000),
     url_(""),
-    timer_(nullptr)
+    timer_(Q_NULLPTR)
 {
     ui->setupUi(this);
     ReadSettings();
@@ -56,10 +56,10 @@ MainWindow::~MainWindow()
     qDeleteAll(mSysTagList);
     mSysTagList.clear();
 
-    if(timer_ != nullptr) {
+    if(timer_ != Q_NULLPTR) {
         if(timer_->isActive()) timer_->stop();
         delete timer_;
-        timer_ = nullptr;
+        timer_ = Q_NULLPTR;
     }
 }
 
@@ -139,7 +139,7 @@ MdiChildWindow* MainWindow::ActiveMdiChild()
 {
     if (QMdiSubWindow *activeSubWindow = ui->mdiArea->activeSubWindow())
         return qobject_cast<MdiChildWindow *>(activeSubWindow->widget());
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 
@@ -167,7 +167,7 @@ MdiChildWindow* MainWindow::FindMdiChild(const QString &windowTitle)
         if(pChildWin->windowTitle() == windowTitle)
             return pChildWin;
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 
@@ -178,7 +178,7 @@ QMdiSubWindow* MainWindow::FindMdiSubWindow(const QString &windowTitle)
         if(pChildWin->windowTitle() == windowTitle)
             return window;
     }
-    return nullptr;
+    return Q_NULLPTR;
 }
 
 
@@ -349,7 +349,7 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
             SetActiveSubWindow(pChildWin);
             return;
         } else {
-            if(bConnectStatus_ && timer_ != nullptr)
+            if(bConnectStatus_ && timer_ != Q_NULLPTR)
                 if(timer_->isActive()) timer_->stop();
             window->close();
         }
@@ -372,7 +372,7 @@ void MainWindow::on_TagTreeView_clicked(const QModelIndex &index)
     ui->mdiArea->addSubWindow(pMdiChildWindow);
     SetActiveSubWindow(pMdiChildWindow);
 
-    if(bConnectStatus_ && timer_ != nullptr && !timer_->isActive())
+    if(bConnectStatus_ && timer_ != Q_NULLPTR && !timer_->isActive())
         timer_->start(PERIOD);
 }
 
@@ -450,10 +450,10 @@ void MainWindow::on_actionClose_triggered()
 void MainWindow::timeout()
 {
     if(!bConnectStatus_) {
-        if(timer_ != nullptr) {
+        if(timer_ != Q_NULLPTR) {
             if(timer_->isActive()) timer_->stop();
             delete timer_;
-            timer_ = nullptr;
+            timer_ = Q_NULLPTR;
         }
         return;
     }
@@ -462,7 +462,7 @@ void MainWindow::timeout()
     if(listSubWin.size() < 1) return;
     MdiChildWindow* pMdiChildWindow =  qobject_cast<MdiChildWindow *>(listSubWin.at(0)->widget());
     QString windowTitle = "";
-    if(pMdiChildWindow != nullptr) windowTitle = pMdiChildWindow->windowTitle();
+    if(pMdiChildWindow != Q_NULLPTR) windowTitle = pMdiChildWindow->windowTitle();
     if(windowTitle == "") return;
 
     QList<TagItem *> tagList = QList<TagItem *>();
@@ -587,7 +587,7 @@ void MainWindow::finished(QNetworkReply *reply)
 
                 MdiChildWindow* pMdiChildWindow = qobject_cast<MdiChildWindow *>(listSubWin.at(0)->widget());
                 QString windowTitle = "";
-                if(pMdiChildWindow != nullptr) windowTitle = pMdiChildWindow->windowTitle();
+                if(pMdiChildWindow != Q_NULLPTR) windowTitle = pMdiChildWindow->windowTitle();
                 if(windowTitle == "") return;
 
                 QList<TagItem *> tagList = QList<TagItem *>();

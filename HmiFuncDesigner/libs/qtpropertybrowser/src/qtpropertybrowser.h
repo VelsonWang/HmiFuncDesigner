@@ -47,23 +47,23 @@
 #include <QLineEdit>
 
 #if QT_VERSION >= 0x040400
-QT_BEGIN_NAMESPACE
+    QT_BEGIN_NAMESPACE
 #endif
 
 #if defined(Q_OS_WIN)
-#  if !defined(QT_QTPROPERTYBROWSER_EXPORT) && !defined(QT_QTPROPERTYBROWSER_IMPORT)
-#    define QT_QTPROPERTYBROWSER_EXPORT
-#  elif defined(QT_QTPROPERTYBROWSER_IMPORT)
-#    if defined(QT_QTPROPERTYBROWSER_EXPORT)
-#      undef QT_QTPROPERTYBROWSER_EXPORT
-#    endif
-#    define QT_QTPROPERTYBROWSER_EXPORT __declspec(dllimport)
-#  elif defined(QT_QTPROPERTYBROWSER_EXPORT)
-#    undef QT_QTPROPERTYBROWSER_EXPORT
-#    define QT_QTPROPERTYBROWSER_EXPORT __declspec(dllexport)
-#  endif
+    #if !defined(QT_QTPROPERTYBROWSER_EXPORT) && !defined(QT_QTPROPERTYBROWSER_IMPORT)
+        #define QT_QTPROPERTYBROWSER_EXPORT
+    #elif defined(QT_QTPROPERTYBROWSER_IMPORT)
+        #if defined(QT_QTPROPERTYBROWSER_EXPORT)
+            #undef QT_QTPROPERTYBROWSER_EXPORT
+        #endif
+        #define QT_QTPROPERTYBROWSER_EXPORT __declspec(dllimport)
+    #elif defined(QT_QTPROPERTYBROWSER_EXPORT)
+        #undef QT_QTPROPERTYBROWSER_EXPORT
+        #define QT_QTPROPERTYBROWSER_EXPORT __declspec(dllexport)
+    #endif
 #else
-#  define QT_QTPROPERTYBROWSER_EXPORT
+    #define QT_QTPROPERTYBROWSER_EXPORT
 #endif
 
 typedef QLineEdit::EchoMode EchoMode;
@@ -117,7 +117,7 @@ class QT_QTPROPERTYBROWSER_EXPORT QtAbstractPropertyManager : public QObject
     Q_OBJECT
 public:
 
-    explicit QtAbstractPropertyManager(QObject *parent = Q_NULLPTR);
+    explicit QtAbstractPropertyManager(QObject *parent = NULL);
     ~QtAbstractPropertyManager();
 
     QSet<QtProperty *> properties() const;
@@ -127,7 +127,7 @@ public:
 Q_SIGNALS:
 
     void propertyInserted(QtProperty *property,
-                QtProperty *parent, QtProperty *after);
+                          QtProperty *parent, QtProperty *after);
     void propertyChanged(QtProperty *property);
     void propertyRemoved(QtProperty *property, QtProperty *parent);
     void propertyDestroyed(QtProperty *property);
@@ -153,7 +153,7 @@ class QT_QTPROPERTYBROWSER_EXPORT QtAbstractEditorFactoryBase : public QObject
 public:
     virtual QWidget *createEditor(QtProperty *property, QWidget *parent) = 0;
 protected:
-    explicit QtAbstractEditorFactoryBase(QObject *parent = Q_NULLPTR)
+    explicit QtAbstractEditorFactoryBase(QObject *parent = NULL)
         : QObject(parent) {}
 
     virtual void breakConnection(QtAbstractPropertyManager *manager) = 0;
@@ -177,23 +177,25 @@ public:
                 return createEditor(manager, property, parent);
             }
         }
-        return Q_NULLPTR;
+        return NULL;
     }
     void addPropertyManager(PropertyManager *manager)
     {
-        if (m_managers.contains(manager))
+        if (m_managers.contains(manager)) {
             return;
+        }
         m_managers.insert(manager);
         connectPropertyManager(manager);
         connect(manager, SIGNAL(destroyed(QObject *)),
-                    this, SLOT(managerDestroyed(QObject *)));
+                this, SLOT(managerDestroyed(QObject *)));
     }
     void removePropertyManager(PropertyManager *manager)
     {
-        if (!m_managers.contains(manager))
+        if (!m_managers.contains(manager)) {
             return;
+        }
         disconnect(manager, SIGNAL(destroyed(QObject *)),
-                    this, SLOT(managerDestroyed(QObject *)));
+                   this, SLOT(managerDestroyed(QObject *)));
         disconnectPropertyManager(manager);
         m_managers.remove(manager);
     }
@@ -216,7 +218,7 @@ public:
 protected:
     virtual void connectPropertyManager(PropertyManager *manager) = 0;
     virtual QWidget *createEditor(PropertyManager *manager, QtProperty *property,
-                QWidget *parent) = 0;
+                                  QWidget *parent) = 0;
     virtual void disconnectPropertyManager(PropertyManager *manager) = 0;
     void managerDestroyed(QObject *manager)
     {
@@ -248,6 +250,7 @@ private:
 
 class QtAbstractPropertyBrowser;
 class QtBrowserItemPrivate;
+class QtAbstractPropertyBrowserPrivate;
 
 class QT_QTPROPERTYBROWSER_EXPORT QtBrowserItem
 {
@@ -263,14 +266,13 @@ private:
     friend class QtAbstractPropertyBrowserPrivate;
 };
 
-class QtAbstractPropertyBrowserPrivate;
 
 class QT_QTPROPERTYBROWSER_EXPORT QtAbstractPropertyBrowser : public QWidget
 {
     Q_OBJECT
 public:
 
-    explicit QtAbstractPropertyBrowser(QWidget *parent = Q_NULLPTR);
+    explicit QtAbstractPropertyBrowser(QWidget *parent = NULL);
     ~QtAbstractPropertyBrowser();
 
     QList<QtProperty *> properties() const;
@@ -281,12 +283,14 @@ public:
 
     template <class PropertyManager>
     void setFactoryForManager(PropertyManager *manager,
-                    QtAbstractEditorFactory<PropertyManager> *factory) {
+                              QtAbstractEditorFactory<PropertyManager> *factory)
+    {
         QtAbstractPropertyManager *abstractManager = manager;
         QtAbstractEditorFactoryBase *abstractFactory = factory;
 
-        if (addFactory(abstractManager, abstractFactory))
+        if (addFactory(abstractManager, abstractFactory)) {
             factory->addPropertyManager(manager);
+        }
     }
 
     void unsetFactoryForManager(QtAbstractPropertyManager *manager);
@@ -314,22 +318,22 @@ protected:
 private:
 
     bool addFactory(QtAbstractPropertyManager *abstractManager,
-                QtAbstractEditorFactoryBase *abstractFactory);
+                    QtAbstractEditorFactoryBase *abstractFactory);
 
     QtAbstractPropertyBrowserPrivate *d_ptr;
     Q_DECLARE_PRIVATE(QtAbstractPropertyBrowser)
     Q_DISABLE_COPY(QtAbstractPropertyBrowser)
     Q_PRIVATE_SLOT(d_func(), void slotPropertyInserted(QtProperty *,
-                            QtProperty *, QtProperty *))
+                   QtProperty *, QtProperty *))
     Q_PRIVATE_SLOT(d_func(), void slotPropertyRemoved(QtProperty *,
-                            QtProperty *))
+                   QtProperty *))
     Q_PRIVATE_SLOT(d_func(), void slotPropertyDestroyed(QtProperty *))
     Q_PRIVATE_SLOT(d_func(), void slotPropertyDataChanged(QtProperty *))
 
 };
 
 #if QT_VERSION >= 0x040400
-QT_END_NAMESPACE
+    QT_END_NAMESPACE
 #endif
 
 #endif // QTPROPERTYBROWSER_H

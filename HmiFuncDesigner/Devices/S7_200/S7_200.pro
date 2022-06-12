@@ -1,5 +1,5 @@
 
-include(../../HmiFuncDesignerDevicePlugin.pri)
+include(../../ConfigurationDevicePlugin.pri)
 
 SOURCES += S7_200.cpp
 

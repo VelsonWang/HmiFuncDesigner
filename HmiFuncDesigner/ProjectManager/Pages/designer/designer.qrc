@@ -1,0 +1,26 @@
+<RCC>
+    <qresource prefix="/">
+		<file>files/config.xml</file>
+        <file>files/default_form.xml</file>
+        <file>files/pages.xml</file>
+        <file>files/language_1.xml</file>
+        <file>files/language_2.xml</file>
+        <file>files/users.xml</file>
+        <file>files/data.xml</file>
+		<file>images/plus.png</file>
+		<file>images/minus.png</file>
+        <file>images/design.png</file>
+        <file>images/bottom.png</file>
+        <file>images/button_close.png</file>
+        <file>images/h-center.png</file>
+        <file>images/left.png</file>
+        <file>images/right.png</file>
+        <file>images/top.png</file>
+        <file>images/v-center.png</file>
+        <file>images/same-width.png</file>
+        <file>images/same-height.png</file>
+        <file>images/same-rect.png</file>
+        <file>images/removesubmitfield.png</file>
+		<file>images/check.png</file>
+    </qresource>
+</RCC>
