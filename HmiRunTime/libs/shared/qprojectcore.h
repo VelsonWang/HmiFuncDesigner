@@ -62,7 +62,6 @@ public:
     QString getProjectNameWithOutSuffix(const QString &projectName);
 
     QPageManager* getPageManager();
-    QAbstractHost* getProjectHost();
 
     void initScriptEngine();
 
@@ -90,7 +89,6 @@ public:
     TFileHeader m_headerObj;
 
 protected:
-    QProjectHost* m_pProjectHostObj;
     bool m_bOpen;
     QPageManager* m_pPageMgrObj;
 

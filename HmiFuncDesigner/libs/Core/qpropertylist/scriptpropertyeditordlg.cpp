@@ -1,7 +1,7 @@
 ﻿#include "scriptpropertyeditordlg.h"
 #include "ui_scriptpropertyeditordlg.h"
 #include "../../shared/confighelper.h"
-#include "insertfunctiondlg.h"
+#include "function/insertfunctiondlg.h"
 #include "inserttagdlg.h"
 #include "Qsci/qsciapis.h"
 #include "Qsci/qscilexercpp.h"

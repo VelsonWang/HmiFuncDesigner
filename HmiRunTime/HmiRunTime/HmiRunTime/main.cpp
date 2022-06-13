@@ -18,7 +18,6 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QScriptEngine>
-#include "qsoftcore.h"
 #include "qprojectcore.h"
 #include "qrunningmanager.h"
 #include "../../libs/shared/qbaseinit.h"

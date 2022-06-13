@@ -5,10 +5,7 @@ CONFIG += ordered
 SUBDIRS   = \
     Utils \
     edncrypt \
-    shared \
-    gradienteditor \
-    core \
-    running
+    shared
 
 for(l, SUBDIRS) {
     QTC_LIB_DEPENDS =

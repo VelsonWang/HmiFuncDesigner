@@ -34,7 +34,77 @@ QSwitchButton::QSwitchButton(QWidget *parent) : QWidget(parent)
 
 void QSwitchButton::fromObject(XMLObject* xml)
 {
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+    if(xml != NULL) {
+        if(xml->getTagName() == "Object") {
+            QList<XMLObject*> properties = xml->getChildren();
+            foreach(XMLObject* pObj, properties) {
+                if(pObj->getTagName() == PROPERTY_TITLE) {
+                    QString propertyName = pObj->getProperty("name");
+                    if(propertyName == "tag") {
+                        this->setProperty("tag", pObj->getProperty("value"));
+                    } else if(propertyName == "objectName") {
+                        this->setProperty("objectName", pObj->getProperty("value"));
+                    } else if(propertyName == "geometry") {
+                        int x, y, width, height;
+                        QList<XMLObject*> tmpProps = pObj->getChildren();
+                        foreach(XMLObject* propObj, tmpProps) {
+                            QString propertyName = propObj->getProperty("name");
+                            if(propertyName == "x") {
+                                x = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "y") {
+                                y = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Width") {
+                                width = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Height") {
+                                height = propObj->getProperty("value").toInt();
+                            }
+                        }
+                        this->setProperty("geometry", QRect(x, y, width, height));
+                    } else if(propertyName == "onFuncs") {
+                        this->setProperty("onFuncs", pObj->getProperty("value"));
+                    } else if(propertyName == "offFuncs") {
+                        this->setProperty("offFuncs", pObj->getProperty("value"));
+                    } else if(propertyName == "stateOnInitial") {
+                        this->setProperty("stateOnInitial", pObj->getProperty("value"));
+                    } else if(propertyName == "showContent") {
+                        this->setProperty("showContent", pObj->getProperty("value"));
+                    } else if(propertyName == "resetPictureFile") {
+                        this->setProperty("resetPictureFile", pObj->getProperty("value"));
+                    } else if(propertyName == "setPictureFile") {
+                        this->setProperty("setPictureFile", pObj->getProperty("value"));
+                    } else if(propertyName == "showNoScale") {
+                        this->setProperty("showNoScale", pObj->getProperty("value"));
+                    } else if(propertyName == "resetText") {
+                        this->setProperty("resetText", pObj->getProperty("value"));
+                    } else if(propertyName == "setText") {
+                        this->setProperty("setText", pObj->getProperty("value"));
+                    } else if(propertyName == "font") {
+                        this->setProperty("font", pObj->getProperty("value"));
+                    } else if(propertyName == "textColor") {
+                        this->setProperty("textColor", pObj->getProperty("value"));
+                    } else if(propertyName == "szHAlign") {
+                        this->setProperty("szHAlign", pObj->getProperty("value"));
+                    } else if(propertyName == "szVAlign") {
+                        this->setProperty("szVAlign", pObj->getProperty("value"));
+                    } else if(propertyName == "resetBackgroundColor") {
+                        this->setProperty("resetBackgroundColor", pObj->getProperty("value"));
+                    } else if(propertyName == "setBackgroundColor") {
+                        this->setProperty("setBackgroundColor", pObj->getProperty("value"));
+                    } else if(propertyName == "borderWidth") {
+                        this->setProperty("borderWidth", pObj->getProperty("value"));
+                    } else if(propertyName == "borderColor") {
+                        this->setProperty("borderColor", pObj->getProperty("value"));
+                    } else if(propertyName == "transparent") {
+                        this->setProperty("transparent", pObj->getProperty("value"));
+                    } else if(propertyName == "enableOnInitial") {
+                        this->setProperty("enableOnInitial", pObj->getProperty("value"));
+                    } else if(propertyName == "showOnInitial") {
+                        this->setProperty("showOnInitial", pObj->getProperty("value"));
+                    }
+                }
+            }
+        }
+    }
 }
 
 void QSwitchButton::setPropertyInner()
@@ -409,15 +479,28 @@ void QSwitchButton::setStateOnInitial(bool value)
     }
 }
 
-QStringList QSwitchButton::getFuncs() const
+QStringList QSwitchButton::getOnFuncs() const
 {
-    return funcs;
+    return onFuncs;
 }
 
-void QSwitchButton::setFuncs(const QStringList &value)
+void QSwitchButton::setOnFuncs(const QStringList &value)
 {
-    if(value != funcs) {
-        funcs = value;
+    if(value != onFuncs) {
+        onFuncs = value;
+        this->update();
+    }
+}
+
+QStringList QSwitchButton::getOffFuncs() const
+{
+    return offFuncs;
+}
+
+void QSwitchButton::setOffFuncs(const QStringList &value)
+{
+    if(value != offFuncs) {
+        offFuncs = value;
         this->update();
     }
 }

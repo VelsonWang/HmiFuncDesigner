@@ -1,8 +1,6 @@
 #include "qprojectcore.h"
 #include "xmlobject.h"
 #include "qpagemanager.h"
-#include "host/qprojecthost.h"
-#include "property/qabstractproperty.h"
 #include "qcommonstruct.h"
 #include "Helper.h"
 #include "DataAES.h"
@@ -15,14 +13,12 @@
 
 QProjectCore::QProjectCore(QObject *parent)
     : QObject(parent),
-      m_pProjectHostObj(new QProjectHost),
       m_bOpen(false),
       m_pPageMgrObj(new QPageManager)
 {
     m_version = "V1.0.0";
     m_path = "";
     m_name = "";
-    m_pProjectHostObj->setPageManager(m_pPageMgrObj);
 }
 
 
@@ -36,10 +32,6 @@ void QProjectCore::close()
 {
     if(m_bOpen) {
         notifyClosed();
-        if(m_pProjectHostObj != NULL) {
-            delete m_pProjectHostObj;
-            m_pProjectHostObj = NULL;
-        }
         m_path = "";
         m_pPageMgrObj->clear();
         m_bOpen = false;
@@ -49,11 +41,6 @@ void QProjectCore::close()
 QPageManager* QProjectCore::getPageManager()
 {
     return m_pPageMgrObj;
-}
-
-QAbstractHost* QProjectCore::getProjectHost()
-{
-    return m_pProjectHostObj;
 }
 
 bool QProjectCore::isOpened()

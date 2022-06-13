@@ -30,7 +30,63 @@ QValueStick::QValueStick(QWidget *parent) : QWidget(parent)
 
 void QValueStick::fromObject(XMLObject* xml)
 {
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+    if(xml != NULL) {
+        if(xml->getTagName() == "Object") {
+            QList<XMLObject*> properties = xml->getChildren();
+            foreach(XMLObject* pObj, properties) {
+                if(pObj->getTagName() == PROPERTY_TITLE) {
+                    QString propertyName = pObj->getProperty("name");
+                    if(propertyName == "tag") {
+                        this->setProperty("tag", pObj->getProperty("value"));
+                    } else if(propertyName == "objectName") {
+                        this->setProperty("objectName", pObj->getProperty("value"));
+                    } else if(propertyName == "geometry") {
+                        int x, y, width, height;
+                        QList<XMLObject*> tmpProps = pObj->getChildren();
+                        foreach(XMLObject* propObj, tmpProps) {
+                            QString propertyName = propObj->getProperty("name");
+                            if(propertyName == "x") {
+                                x = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "y") {
+                                y = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Width") {
+                                width = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Height") {
+                                height = propObj->getProperty("value").toInt();
+                            }
+                        }
+                        this->setProperty("geometry", QRect(x, y, width, height));
+                    } else if(propertyName == "maxValue") {
+                        this->setProperty("maxValue", pObj->getProperty("value"));
+                    } else if(propertyName == "minValue") {
+                        this->setProperty("minValue", pObj->getProperty("value"));
+                    } else if(propertyName == "scaleNum") {
+                        this->setProperty("scaleNum", pObj->getProperty("value"));
+                    } else if(propertyName == "textColor") {
+                        this->setProperty("textColor", pObj->getProperty("value"));
+                    } else if(propertyName == "backgroundColor") {
+                        this->setProperty("backgroundColor", pObj->getProperty("value"));
+                    } else if(propertyName == "foregroundColor") {
+                        this->setProperty("foregroundColor", pObj->getProperty("value"));
+                    } else if(propertyName == "scaleColor") {
+                        this->setProperty("scaleColor", pObj->getProperty("value"));
+                    } else if(propertyName == "scaleDir") {
+                        this->setProperty("scaleDir", pObj->getProperty("value"));
+                    } else if(propertyName == "scalePos") {
+                        this->setProperty("scalePos", pObj->getProperty("value"));
+                    } else if(propertyName == "font") {
+                        this->setProperty("font", pObj->getProperty("value"));
+                    } else if(propertyName == "showRuler") {
+                        this->setProperty("showRuler", pObj->getProperty("value"));
+                    } else if(propertyName == "showScale") {
+                        this->setProperty("showScale", pObj->getProperty("value"));
+                    } else if(propertyName == "showOnInitial") {
+                        this->setProperty("showOnInitial", pObj->getProperty("value"));
+                    }
+                }
+            }
+        }
+    }
 }
 
 void QValueStick::setPropertyInner()
