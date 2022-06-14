@@ -54,12 +54,8 @@ INCLUDEPATH += \
     $$LIBRARY_SRC_PATH/HmiRunTime/Public \
     $$LIBRARY_SRC_PATH/HmiRunTime/Vendors/IVendorPlugin \
     $$LIBRARY_SRC_PATH/libs/edncrypt \
-    $$LIBRARY_SRC_PATH/libs/core \
     $$LIBRARY_SRC_PATH/libs/Utils \
-    $$LIBRARY_SRC_PATH/libs/gradienteditor \
-    $$LIBRARY_SRC_PATH/libs/qtsingleapplication \
-    $$LIBRARY_SRC_PATH/libs/running \
-    $$LIBRARY_SRC_PATH/libs/shared
+    $$LIBRARY_SRC_PATH/libs/qtsingleapplication
 
 LIB_SUFFIX=""
 CONFIG(debug, debug|release) { #debug
@@ -68,13 +64,6 @@ CONFIG(debug, debug|release) { #debug
     }
 }
 
-#LIBS += -L$$LINK_LIBRARY_PATH -ledncrypt$${LIB_SUFFIX}
-#LIBS += -L$$LINK_LIBRARY_PATH -lDrawUtils$${LIB_SUFFIX}
-#LIBS += -L$$LINK_LIBRARY_PATH -lProjectDataUtils$${LIB_SUFFIX}
-
-LIBS += -L$$LINK_LIBRARY_PATH -lcore
-LIBS += -L$$LINK_LIBRARY_PATH -lshared
-LIBS += -L$$LINK_LIBRARY_PATH -lrunning
 LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
 
 win32 {
@@ -85,6 +74,7 @@ win32 {
 
 include(../../HttpServer/HttpServer.pri)
 #include(../../SOAP/server/SOAPServer.pri)
+include(shared/shared.pri)
 
 SOURCES += \
     Function.cpp \

@@ -85,6 +85,10 @@ QString GetCfgString(QString sFileName,
 
 void SelfLogOutputHandler(QtMsgType type, const QMessageLogContext &context, const QString &text)
 {
+    //加锁,防止多线程中qdebug太频繁导致崩溃
+    static QMutex mutex;
+    QMutexLocker locker(&mutex);
+
     Q_UNUSED(context)
     switch(type) {
         case QtDebugMsg:

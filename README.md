@@ -15,7 +15,7 @@
 
 ### 2. 软件环境 Software development environment
 
-​    1.**Qt5.10.1 + MinGW530_32** 
+​    1.**Qt5.14.2+mingw73_32** 
 
 ​    2.**软件安装时必须包含Qt Script 模块**
 

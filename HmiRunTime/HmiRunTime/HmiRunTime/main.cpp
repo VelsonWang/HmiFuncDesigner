@@ -20,7 +20,7 @@
 #include <QScriptEngine>
 #include "qprojectcore.h"
 #include "qrunningmanager.h"
-#include "../../libs/shared/qbaseinit.h"
+#include "shared/qbaseinit.h"
 #include "realtimedb.h"
 #include "httpserver.h"
 #include "TimerTask.h"
