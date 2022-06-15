@@ -84,7 +84,6 @@ bool QRunningManager::load(QString proj)
         return false;
     }
 
-    m_pProjCoreObj->initScriptEngine();
     //    connect(m_pProjCoreObj->getProjectHost(), SIGNAL(notifyShowWidget(QWidget*)),
     //            this, SLOT(onShowWidget(QWidget*)));
     //    connect(m_pProjCoreObj->getProjectHost(), SIGNAL(notifyShowDialog(QAbstractHost*)),
@@ -100,6 +99,7 @@ void QRunningManager::release()
         m_pProjCoreObj = NULL;
     }
     m_pLastWidgetObj = NULL;
+    m_stackShowWidget.clear();
 }
 
 void QRunningManager::onShowWidget(QWidget *widget)
@@ -121,6 +121,9 @@ void QRunningManager::onShowWidget(QWidget *widget)
     m_pLastWidgetObj = widget;
     widget->show();
     widget->raise();
+    if(m_stackShowWidget.size() > 256) {
+        m_stackShowWidget.pop_back();
+    }
 }
 
 void QRunningManager::onShowDialog(QWidget* widget)
@@ -157,11 +160,13 @@ void QRunningManager::start()
     m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
     if(szStartPage == "None") {
         if(manager->pageCount() > 0) {
+            m_stackShowWidget.push(manager->getPage(0));
             onShowWidget(manager->getPage(0));
         }
     } else {
         QWidget* pWidgetObj = manager->getPage(szStartPage);
         if(pWidgetObj) {
+            m_stackShowWidget.push(pWidgetObj);
             onShowWidget(pWidgetObj);
         }
     }
@@ -183,4 +188,58 @@ void QRunningManager::stop()
     emit notifyStop();
     release();
     m_pMainWindowObj->setVisible(false);
+}
+
+void QRunningManager::showGraphPage(const QString &pageId)
+{
+    int id = pageId.toInt();
+    QPageManager *manager = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = manager->getPage(id);
+    if(pWidgetObj) {
+        m_stackShowWidget.push(pWidgetObj);
+        onShowWidget(pWidgetObj);
+    } else {
+        qDebug() << "can't find page with id: " << pageId;
+    }
+}
+
+void QRunningManager::showLastGraphPage()
+{
+    if(m_stackShowWidget.size() > 0) {
+        QWidget *pWidgetObj = m_stackShowWidget.pop();
+        onShowWidget(pWidgetObj);
+    } else {
+        qDebug() << "m_stackShowWidget is empty!";
+    }
+
+}
+
+
+extern "C" {
+
+void rtSwitchGraphPage(char *pageId)
+{
+    QRunningManager::instance()->showGraphPage(pageId);
+}
+
+void rtReturnGraphPage()
+{
+    QRunningManager::instance()->showLastGraphPage();
+}
+
+#if 0 //待实现的函数
+struct LibraryFunction HmiFunctions[] =
+{
+    { HMI_ShowControlElement, "void ShowControlElement(char *);" },
+    { HMI_HideControlElement, "void HideControlElement(char *);" },
+    { HMI_EnableControlElement, "void EnableControlElement(char *);" },
+    { HMI_DisableControlElement, "void DisableControlElement(char *);" },
+    { HMI_MoveControlElement, "void MoveControlElement(char *,int,int);" },
+    { HMI_BlinkControlElement, "void BlinkControlElement(char *);" },
+    { HMI_StopBlinkControlElement, "void StopBlinkControlElement(char *);" },
+};
+#endif
+
+
+
 }

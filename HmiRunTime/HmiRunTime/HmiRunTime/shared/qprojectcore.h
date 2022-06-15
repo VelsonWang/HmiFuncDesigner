@@ -63,12 +63,6 @@ public:
 
     QPageManager* getPageManager();
 
-    void initScriptEngine();
-
-protected:
-    void initScriptEngine(QAbstractHost* host);
-    QScriptValue getScriptObject(QAbstractHost* host, QScriptEngine *engine);
-
 signals:
     void notifyOpened();
     void notifyClosed();

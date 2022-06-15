@@ -12,6 +12,10 @@
 #include <QJsonObject>
 #include <limits>
 #include <cstdint>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
 
 RunTimeTag::RunTimeTag(QObject *parent) : QObject(parent), id(0)
 {
@@ -197,6 +201,146 @@ QString RunTimeTag::toString()
             break;
     };
     return ret;
+}
+
+
+// 字符串转指定类型值
+void rtTagStringToValue(TTagDataType iDataType, quint8* pBuf, char* pData)
+{
+    if(iDataType == TYPE_BOOL) {
+        quint8 iValue = atoi(pData);
+        memcpy(pBuf, (void *)&iValue, 1);
+    }
+    else if(iDataType == TYPE_INT8) {
+        qint8 iValue = atoi(pData);
+        memcpy(pBuf, (void *)&iValue, 1);
+    }
+    else if(iDataType == TYPE_UINT8) {
+        quint8 iValue = atoi(pData);
+        memcpy(pBuf, (void *)&iValue, 1);
+    }
+    else if(iDataType == TYPE_BCD8) {
+        quint8 iValue = (quint8)strtoul(pData, NULL, 16);
+        memcpy(pBuf, (void *)&iValue, 1);
+    }
+    else if(iDataType == TYPE_INT16) {
+        qint16 iValue = atoi(pData);
+        memcpy(pBuf, (void *)&iValue, 2);
+    }
+    else if(iDataType == TYPE_UINT16) {
+        quint16 iValue = atoi(pData);
+        memcpy(pBuf, (void *)&iValue, 2);
+    }
+    else if(iDataType == TYPE_BCD16) {
+        quint16 iValue = (quint16)strtoul(pData, NULL, 16);
+        memcpy(pBuf, (void *)&iValue, 2);
+    }
+    else if(iDataType == TYPE_INT32) {
+        qint32 iValue = (qint32)strtol(pData, NULL, 10);
+        memcpy(pBuf, (void *)&iValue, 4);
+    }
+    else if(iDataType == TYPE_UINT32) {
+        quint32 iValue = (quint32)strtoul(pData, NULL, 10);
+        memcpy(pBuf, (void *)&iValue, 4);
+    }
+    else if(iDataType == TYPE_BCD32) {
+        quint32 iValue = (quint32)strtoul(pData, NULL, 16);
+        memcpy(pBuf, (void *)&iValue, 4);
+    }
+    else if(iDataType == TYPE_FLOAT32) {
+        float fValue = atof(pData);
+        memcpy(pBuf, (void *)&fValue, 4);
+    }
+    else if(iDataType == TYPE_FLOAT64) {
+        double dValue = strtod(pData, NULL);
+        memcpy(pBuf, (void *)&dValue, 8);
+    }
+    else {
+    }
+}
+
+
+// 指定类型值转字符串
+char* rtTagValueToString(TTagDataType iDataType, quint8* pBuf)
+{
+    char buf[256] = {0};
+
+    if(iDataType == TYPE_BOOL) {
+        quint8 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 1);
+        sprintf((char *)buf, "%u", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_INT8) {
+        qint8 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 1);
+        sprintf((char *)buf, "%d", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_UINT8) {
+        quint8 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 1);
+        sprintf((char *)buf, "%u", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_BCD8) {
+        quint8 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 1);
+        sprintf((char *)buf, "%-2X", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_INT16) {
+        qint16 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 2);
+        sprintf((char *)buf, "%d", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_UINT16) {
+        quint16 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 2);
+        sprintf((char *)buf, "%u", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_BCD16) {
+        quint16 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 2);
+        sprintf((char *)buf, "%-4X", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_INT32) {
+        qint32 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 4);
+        sprintf((char *)buf, "%d", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_UINT32) {
+        quint32 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 4);
+        sprintf((char *)buf, "%u", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_BCD32) {
+        quint32 iValue = 0;
+        memcpy((void *)&iValue, pBuf, 4);
+        sprintf((char *)buf, "%-8X", iValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_FLOAT32) {
+        float fValue = 0;
+        memcpy((void *)&fValue, pBuf, 4);
+        sprintf((char *)buf, "%f", fValue);
+        return strdup((const char *)buf);
+    }
+    else if(iDataType == TYPE_FLOAT64) {
+        double dValue = 0;
+        memcpy((void *)&dValue, pBuf, 8);
+        gcvt(dValue, 32, buf);
+        return strdup((const char *)buf);
+    }
+    else {
+    }
+
+    return NULL;
 }
 
 QString RunTimeTag::minString()
@@ -417,7 +561,6 @@ quint64 RealTimeDB::tagId(const QString &name)
     return 0;
 }
 
-
 void RealTimeDB::debug()
 {
     qDebug() << "RealTimeDB:----------------------------------------";
@@ -430,4 +573,62 @@ void RealTimeDB::debug()
         }
     }
     qDebug() << "---------------------------------------------------";
+}
+
+extern "C" {
+
+void rtTagAddValue(char *id, char *val)
+{
+    quint32 tagID = (quint32)strtoul(id, NULL, 10);
+    double dValue = strtod(val, NULL);
+    RunTimeTag* pTagObj = RealTimeDB::instance()->tag(tagID);
+    if(pTagObj) {
+        double dTagVal = pTagObj->toString().toDouble();
+        dTagVal += dValue;
+        pTagObj->fromString(QString::number(dTagVal));
+    }
+}
+
+void rtTagSubValue(char *id, char *val)
+{
+    quint32 tagID = (quint32)strtoul(id, NULL, 10);
+    double dValue = strtod(val, NULL);
+    RunTimeTag* pTagObj = RealTimeDB::instance()->tag(tagID);
+    if(pTagObj) {
+        double dTagVal = pTagObj->toString().toDouble();
+        dTagVal -= dValue;
+        pTagObj->fromString(QString::number(dTagVal));
+    }
+}
+
+void rtTagCopyValue(char *srcId, char *desId)
+{
+    quint32 srcTagID = (quint32)strtoul(srcId, NULL, 10);
+    quint32 desTagID = (quint32)strtoul(desId, NULL, 10);
+    RunTimeTag* pSrcTagObj = RealTimeDB::instance()->tag(srcTagID);
+    RunTimeTag* pDesTagObj = RealTimeDB::instance()->tag(desTagID);
+    if(pSrcTagObj && pDesTagObj) {
+        pDesTagObj->fromString(pSrcTagObj->toString());
+    }
+}
+
+void rtTagSetValue(char *id, char *val)
+{
+    quint32 tagID = (quint32)strtoul(id, NULL, 10);
+    RunTimeTag* pTagObj = RealTimeDB::instance()->tag(tagID);
+    if(pTagObj) {
+        pTagObj->fromString(val);
+    }
+}
+
+void rtTagStateChange(char *id)
+{
+    quint32 tagID = (quint32)strtoul(id, NULL, 10);
+    RunTimeTag* pTagObj = RealTimeDB::instance()->tag(tagID);
+    if(pTagObj) {
+        double dTagVal = pTagObj->toString().toDouble();
+        pTagObj->fromString((dTagVal > 0) ? "0" : "1");
+    }
+}
+
 }

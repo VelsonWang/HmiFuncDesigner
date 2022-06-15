@@ -1,4 +1,5 @@
 ﻿#include "parsescript.h"
+#include <QDebug>
 
 extern "C"
 {
@@ -12,6 +13,7 @@ int ParseScript::run_c_main(int argc, char **argv)
 
 int ParseScript::run_c(const QString &script)
 {
+    qDebug() << "ParseScript::run_c() script: " << script;
     return picoc((char *)script.toStdString().c_str());
 }
 

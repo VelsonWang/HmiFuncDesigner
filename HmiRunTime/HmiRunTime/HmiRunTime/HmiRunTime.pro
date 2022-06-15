@@ -2,7 +2,6 @@ QT += core
 QT += gui
 QT += widgets
 QT += network
-QT += script
 QT += sql
 QT += xml
 
@@ -41,7 +40,6 @@ INCLUDEPATH += \
     qextserial \
     Public \
     Event \
-    Script \
     Log \
     Socket \
     Service \

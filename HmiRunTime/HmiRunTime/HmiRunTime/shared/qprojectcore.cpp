@@ -8,7 +8,6 @@
 #include <QFile>
 #include <QDir>
 #include <QUuid>
-#include <QScriptEngine>
 
 
 QProjectCore::QProjectCore(QObject *parent)
@@ -47,69 +46,6 @@ bool QProjectCore::isOpened()
 {
     return m_bOpen;
 }
-
-void QProjectCore::initScriptEngine()
-{
-    //    initScriptEngine(m_pProjectHostObj);
-    //    foreach(QAbstractHost* h, m_pPageMgrObj->getPages()) {
-    //        initScriptEngine(h);
-    //    }
-}
-
-void QProjectCore::initScriptEngine(QAbstractHost *host)
-{
-    /*
-    QScriptEngine *engine = host->getScriptEngine();
-    QScriptValue global = engine->globalObject();
-    QScriptValue temp = getScriptObject(m_pProjectHostObj, engine);
-
-    global.setProperty("global", temp);
-
-    bool keyboard = host->property("title").toString() == "keyboard";
-    bool project = host->property("title").toString() == "Project";
-
-    if(!keyboard || project) {
-        foreach(QAbstractHost* h, m_pPageMgrObj->getPages()) {
-            if(project || h->property("title").toString() == "keyboard") {
-                temp = getScriptObject(host, engine);
-                global.setProperty(h->getPropertyValue("objectName").toString(), temp);
-            }
-        }
-    }
-
-    temp = getScriptObject(host, engine);
-    global.setProperty("self", temp);
-    if(!keyboard || project) {
-        if(host->getParent() != NULL) {
-            temp = getScriptObject(host->getParent(), engine);
-            global.setProperty("parent", temp);
-        }
-    } else {
-        temp = getScriptObject(host, engine);
-        global.setProperty(host->getPropertyValue("objectName").toString(), temp);
-    }
-
-    engine->setGlobalObject(global);
-
-    foreach(QAbstractHost* h, host->getChildren()) {
-        initScriptEngine(h);
-    }
-    */
-}
-
-QScriptValue QProjectCore::getScriptObject(QAbstractHost *host, QScriptEngine *engine)
-{
-    /*
-    QScriptValue value = engine->newQObject(host);
-
-    foreach(QAbstractHost* h, host->getChildren()) {
-        QScriptValue temp = getScriptObject(h, engine);
-        value.setProperty(h->getPropertyValue("objectName").toString(), temp);
-    }
-    return value;
-    */
-}
-
 
 bool QProjectCore::openFromXml(const QString &szProjFile)
 {
@@ -273,4 +209,3 @@ QString QProjectCore::getProjectNameWithOutSuffix(const QString &projectName)
     QFileInfo projFileInfo(projectName);
     return projFileInfo.baseName();
 }
-

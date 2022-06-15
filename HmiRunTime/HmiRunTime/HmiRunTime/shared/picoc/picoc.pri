@@ -10,8 +10,6 @@ INCLUDEPATH += $$PWD/src
 #define  WIN_HOST
 
 
-SOURCES += $$PWD/platform/library_hmi.c
-
 win32 {
     DEFINES += WIN_HOST
     SOURCES += $$PWD/platform/platform_win.c
@@ -25,6 +23,8 @@ unix {
 macx {
 
 }
+
+SOURCES += $$PWD/platform/library_hmi.c
 
 # Input
 HEADERS += \

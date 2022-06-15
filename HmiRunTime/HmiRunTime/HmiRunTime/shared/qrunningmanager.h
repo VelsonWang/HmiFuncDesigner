@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QMainWindow>
 #include <QTimer>
+#include <QStack>
 
 class QProjectCore;
 class QBaseDialogWidget;
@@ -13,8 +14,13 @@ class SHAREDLIB_EXPORT QRunningManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit QRunningManager(QObject *parent = 0);
-    ~QRunningManager();
+    static QRunningManager *instance() {
+        static QRunningManager obj;
+        return &obj;
+    }
+
+    void showGraphPage(const QString &pageId);
+    void showLastGraphPage();
 
     bool load(QString proj);
     void release();
@@ -37,6 +43,10 @@ public slots:
     void onShowWidget(QWidget* widget);
     void onShowDialog(QWidget* widget);
 
+private:
+    explicit QRunningManager(QObject *parent = 0);
+    ~QRunningManager();
+
 protected:
     QProjectCore *m_pProjCoreObj;
     QMainWindow *m_pMainWindowObj;
@@ -45,6 +55,7 @@ protected:
 
 private:
     QTimer m_timer;
+    QStack<QWidget *> m_stackShowWidget;
 };
 
 #endif // QRUNNINGMANAGER_H
