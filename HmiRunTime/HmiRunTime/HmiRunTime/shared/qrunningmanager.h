@@ -2,6 +2,7 @@
 #define QRUNNINGMANAGER_H
 
 #include "sharedlibglobal.h"
+#include "qblinkwidgettimer.h"
 #include <QObject>
 #include <QMainWindow>
 #include <QTimer>
@@ -21,6 +22,13 @@ public:
 
     void showGraphPage(const QString &pageId);
     void showLastGraphPage();
+    void showControlElement(const QString &eleId);
+    void hideControlElement(const QString &eleId);
+    void enableControlElement(const QString &eleId);
+    void disableControlElement(const QString &eleId);
+    void moveControlElement(const QString &eleId, int x, int y);
+    void blinkControlElement(const QString &eleId);
+    void stopBlinkControlElement(const QString &eleId);
 
     bool load(QString proj);
     void release();
@@ -56,6 +64,7 @@ protected:
 private:
     QTimer m_timer;
     QStack<QWidget *> m_stackShowWidget;
+    QBlinkWidgetTimer m_blinkTimer;
 };
 
 #endif // QRUNNINGMANAGER_H

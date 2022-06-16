@@ -27,9 +27,6 @@ CONFIG += C++11
 
 QMAKE_CXXFLAGS += -std=c++11
 
-# 开启SOAP服务
-#DEFINES += USE_SOAP_SERVICE
-
 #去除UNICODE字符编码
 DEFINES -= UNICODE
 
@@ -70,8 +67,6 @@ win32 {
 
 }
 
-include(../../HttpServer/HttpServer.pri)
-#include(../../SOAP/server/SOAPServer.pri)
 include(shared/shared.pri)
 
 SOURCES += \

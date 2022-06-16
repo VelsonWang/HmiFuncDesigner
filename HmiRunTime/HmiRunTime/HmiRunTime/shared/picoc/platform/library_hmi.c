@@ -15,8 +15,13 @@ extern void rtTagSetValue(char *id, char *val);
 extern void rtTagStateChange(char *id);
 extern void rtSwitchGraphPage(char *pageId);
 extern void rtReturnGraphPage();
-
-
+extern void rtShowControlElement(char *eleId);
+extern void rtHideControlElement(char *eleId);
+extern void rtEnableControlElement(char *eleId);
+extern void rtDisableControlElement(char *eleId);
+extern void rtMoveControlElement(char *eleId, int x, int y);
+extern void rtBlinkControlElement(char *eleId);
+extern void rtStopBlinkControlElement(char *eleId);
 
 
 /**
@@ -130,6 +135,9 @@ void HMI_SetDateTime(struct ParseState *Parser, struct Value *ReturnValue, struc
  */
 void HMI_WaitForMillisec(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
     int msecs = Param[0]->Val->Integer;
 #ifdef WIN_HOST
     Sleep(msecs);
@@ -156,6 +164,9 @@ void HMI_WaitForMillisec(struct ParseState *Parser, struct Value *ReturnValue, s
  */
 void HMI_Sleep(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
     int secs = Param[0]->Val->Integer;
 #ifdef WIN_HOST
     Sleep(secs * 1000);
@@ -228,8 +239,10 @@ void HMI_StateChange(struct ParseState *Parser, struct Value *ReturnValue, struc
  */
 void HMI_ShowControlElement(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    //printf("test(%d)\n", Param[0]->Val->Integer);
-    //Param[0]->Val->Integer = 1234;
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
+    rtShowControlElement(Param[0]->Val->Pointer);
 }
 
 /**
@@ -242,8 +255,10 @@ void HMI_ShowControlElement(struct ParseState *Parser, struct Value *ReturnValue
  */
 void HMI_HideControlElement(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    //printf("test(%d)\n", Param[0]->Val->Integer);
-    //Param[0]->Val->Integer = 1234;
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
+    rtHideControlElement(Param[0]->Val->Pointer);
 }
 
 /**
@@ -256,8 +271,10 @@ void HMI_HideControlElement(struct ParseState *Parser, struct Value *ReturnValue
  */
 void HMI_EnableControlElement(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    //printf("test(%d)\n", Param[0]->Val->Integer);
-    //Param[0]->Val->Integer = 1234;
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
+    rtEnableControlElement(Param[0]->Val->Pointer);
 }
 
 /**
@@ -270,8 +287,10 @@ void HMI_EnableControlElement(struct ParseState *Parser, struct Value *ReturnVal
  */
 void HMI_DisableControlElement(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    //printf("test(%d)\n", Param[0]->Val->Integer);
-    //Param[0]->Val->Integer = 1234;
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
+    rtDisableControlElement(Param[0]->Val->Pointer);
 }
 
 /**
@@ -284,8 +303,10 @@ void HMI_DisableControlElement(struct ParseState *Parser, struct Value *ReturnVa
  */
 void HMI_MoveControlElement(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    //printf("test(%d)\n", Param[0]->Val->Integer);
-    //Param[0]->Val->Integer = 1234;
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
+    rtMoveControlElement(Param[0]->Val->Pointer, Param[1]->Val->Integer, Param[2]->Val->Integer);
 }
 
 /**
@@ -298,8 +319,10 @@ void HMI_MoveControlElement(struct ParseState *Parser, struct Value *ReturnValue
  */
 void HMI_BlinkControlElement(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    //printf("test(%d)\n", Param[0]->Val->Integer);
-    //Param[0]->Val->Integer = 1234;
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
+    rtBlinkControlElement(Param[0]->Val->Pointer);
 }
 
 /**
@@ -312,10 +335,10 @@ void HMI_BlinkControlElement(struct ParseState *Parser, struct Value *ReturnValu
  */
 void HMI_StopBlinkControlElement(struct ParseState *Parser, struct Value *ReturnValue, struct Value **Param, int NumArgs)
 {
-    //printf("test(%d)\n", Param[0]->Val->Integer);
-    //Param[0]->Val->Integer = 1234;
-
-    //ReturnValue->Val->Integer = Parser->Line;
+    (void)Parser;
+    (void)ReturnValue;
+    (void)NumArgs;
+    rtStopBlinkControlElement(Param[0]->Val->Pointer);
 }
 
 

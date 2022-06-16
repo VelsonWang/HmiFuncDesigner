@@ -24,10 +24,12 @@ public:
     QWidget* getPage(const QString& id);
     QList<QWidget*> getPagesByTitle(const QString& title);
     int pageCount();
+    QWidget* getWidget(const QString& id);
 
 protected:
     QList<QWidget *> m_pages;
     QMap<QString, QWidget *> m_idToPage;
+
 };
 
 #endif // QPAGEMANAGER_H

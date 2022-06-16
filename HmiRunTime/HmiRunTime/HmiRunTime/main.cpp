@@ -1,11 +1,5 @@
 ﻿#include "HmiRunTime.h"
-//#include "public.h"
 #include "VersionInfo.h"
-//#include "Global.h"
-//#include "ConfigUtils.h"
-//#include "edncrypt.h"
-//#include "MainWindow.h"
-//#include "MemoryMessageService.h"
 #include "ulog.h"
 #include <QApplication>
 #include <QStorageInfo>
@@ -21,12 +15,7 @@
 #include "qrunningmanager.h"
 #include "shared/qbaseinit.h"
 #include "realtimedb.h"
-#include "httpserver.h"
 #include "TimerTask.h"
-
-#ifdef USE_SOAP_SERVICE
-    #include "gSOAPServer.h"
-#endif
 
 /**
  * @brief getProjectName
@@ -74,10 +63,7 @@ int main(int argc, char *argv[])
     // 日志记录初始化
     LogInit();
     qDebug() << "start hmiruntime.";
-    //////////////////////////////////////////////////////////////////////////////
-    ///  启动http服务
-    HttpServer httpServer;
-    httpServer.init(60000);
+
     QString strInput = "";
     QString configPath = "";
     QString szRunProjPath = QCoreApplication::applicationDirPath() + "/RunProject";

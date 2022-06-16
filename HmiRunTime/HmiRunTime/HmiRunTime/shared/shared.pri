@@ -31,6 +31,7 @@ HEADERS += \
     $$PWD/qprojectcore.h \
     $$PWD/qbaseinit.h \
     $$PWD/qpagemanager.h \
+    $$PWD/qblinkwidgettimer.h \
     $$PWD/qabstractupdateplugin.h \
     $$PWD/qstylesheetinfo.h
 
@@ -56,6 +57,7 @@ SOURCES += \
     $$PWD/qprojectcore.cpp \
     $$PWD/qbaseinit.cpp \
     $$PWD/qpagemanager.cpp \
+    $$PWD/qblinkwidgettimer.cpp \
     $$PWD/qabstractupdateplugin.cpp \
     $$PWD/qstylesheetinfo.cpp
 

@@ -148,8 +148,8 @@ bool QRunningManager::eventFilter(QObject *o, QEvent *e)
 void QRunningManager::start()
 {
     QString szStartPage = m_pProjCoreObj->m_projInfoMgr.getStartPage();
-    QPageManager *manager = m_pProjCoreObj->getPageManager();
-    QList<QWidget*> list = manager->getPages();
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QList<QWidget*> list = pageMgr->getPages();
     foreach(QWidget* pObj, list) {
         pObj->setVisible(false);
     }
@@ -159,12 +159,12 @@ void QRunningManager::start()
     QDesktopWidget *pDeskObj = qApp->desktop();
     m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
     if(szStartPage == "None") {
-        if(manager->pageCount() > 0) {
-            m_stackShowWidget.push(manager->getPage(0));
-            onShowWidget(manager->getPage(0));
+        if(pageMgr->pageCount() > 0) {
+            m_stackShowWidget.push(pageMgr->getPage(0));
+            onShowWidget(pageMgr->getPage(0));
         }
     } else {
-        QWidget* pWidgetObj = manager->getPage(szStartPage);
+        QWidget* pWidgetObj = pageMgr->getPage(szStartPage);
         if(pWidgetObj) {
             m_stackShowWidget.push(pWidgetObj);
             onShowWidget(pWidgetObj);
@@ -193,8 +193,8 @@ void QRunningManager::stop()
 void QRunningManager::showGraphPage(const QString &pageId)
 {
     int id = pageId.toInt();
-    QPageManager *manager = m_pProjCoreObj->getPageManager();
-    QWidget* pWidgetObj = manager->getPage(id);
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getPage(id);
     if(pWidgetObj) {
         m_stackShowWidget.push(pWidgetObj);
         onShowWidget(pWidgetObj);
@@ -214,6 +214,83 @@ void QRunningManager::showLastGraphPage()
 
 }
 
+void QRunningManager::showControlElement(const QString &eleId)
+{
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getWidget(eleId);
+    if(pWidgetObj) {
+        pWidgetObj->show();
+    } else {
+        qDebug() << "can't find control element with id: " << eleId;
+    }
+}
+
+void QRunningManager::hideControlElement(const QString &eleId)
+{
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getWidget(eleId);
+    if(pWidgetObj) {
+        pWidgetObj->hide();
+    } else {
+        qDebug() << "can't find control element with id: " << eleId;
+    }
+}
+
+void QRunningManager::enableControlElement(const QString &eleId)
+{
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getWidget(eleId);
+    if(pWidgetObj) {
+        pWidgetObj->setEnabled(true);
+    } else {
+        qDebug() << "can't find control element with id: " << eleId;
+    }
+}
+
+void QRunningManager::disableControlElement(const QString &eleId)
+{
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getWidget(eleId);
+    if(pWidgetObj) {
+        pWidgetObj->setEnabled(false);
+    } else {
+        qDebug() << "can't find control element with id: " << eleId;
+    }
+}
+
+void QRunningManager::moveControlElement(const QString &eleId, int x, int y)
+{
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getWidget(eleId);
+    if(pWidgetObj) {
+        QPoint pos = pWidgetObj->pos();
+        pWidgetObj->move(pos.x() + x, pos.y() + y);
+    } else {
+        qDebug() << "can't find control element with id: " << eleId;
+    }
+}
+
+void QRunningManager::blinkControlElement(const QString &eleId)
+{
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getWidget(eleId);
+    if(pWidgetObj) {
+        m_blinkTimer.addWidget(pWidgetObj);
+    } else {
+        qDebug() << "can't find control element with id: " << eleId;
+    }
+}
+void QRunningManager::stopBlinkControlElement(const QString &eleId)
+{
+    QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
+    QWidget* pWidgetObj = pageMgr->getWidget(eleId);
+    if(pWidgetObj) {
+        m_blinkTimer.removeWidget(pWidgetObj);
+    } else {
+        qDebug() << "can't find control element with id: " << eleId;
+    }
+}
+
 
 extern "C" {
 
@@ -227,19 +304,39 @@ void rtReturnGraphPage()
     QRunningManager::instance()->showLastGraphPage();
 }
 
-#if 0 //待实现的函数
-struct LibraryFunction HmiFunctions[] =
+void rtShowControlElement(char *eleId)
 {
-    { HMI_ShowControlElement, "void ShowControlElement(char *);" },
-    { HMI_HideControlElement, "void HideControlElement(char *);" },
-    { HMI_EnableControlElement, "void EnableControlElement(char *);" },
-    { HMI_DisableControlElement, "void DisableControlElement(char *);" },
-    { HMI_MoveControlElement, "void MoveControlElement(char *,int,int);" },
-    { HMI_BlinkControlElement, "void BlinkControlElement(char *);" },
-    { HMI_StopBlinkControlElement, "void StopBlinkControlElement(char *);" },
-};
-#endif
+    QRunningManager::instance()->showControlElement(eleId);
+}
 
+void rtHideControlElement(char *eleId)
+{
+    QRunningManager::instance()->hideControlElement(eleId);
+}
 
+void rtEnableControlElement(char *eleId)
+{
+    QRunningManager::instance()->enableControlElement(eleId);
+}
+
+void rtDisableControlElement(char *eleId)
+{
+    QRunningManager::instance()->disableControlElement(eleId);
+}
+
+void rtMoveControlElement(char *eleId, int x, int y)
+{
+    QRunningManager::instance()->moveControlElement(eleId, x, y);
+}
+
+void rtBlinkControlElement(char *eleId)
+{
+    QRunningManager::instance()->blinkControlElement(eleId);
+}
+
+void rtStopBlinkControlElement(char *eleId)
+{
+    QRunningManager::instance()->stopBlinkControlElement(eleId);
+}
 
 }
