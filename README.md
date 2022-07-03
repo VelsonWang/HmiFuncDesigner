@@ -115,8 +115,8 @@
 
 **QQ交流群:568268522**
 
-#### 如果觉得代码写的还可以的话，请赏一个Star吧！
+#### 如果觉得代码写的还可以的话，请随手点一个Star吧或者请作者喝茶、和咖啡提神Coding！
 
 #### **您的支持是我继续前行的动力！！！**
 
-![JasonWang_qrcode](md/JasonWang_qrcode.png)
+![JasonWang_qrcode](md/JasonWang_qrcode.jpg)
