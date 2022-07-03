@@ -11,6 +11,7 @@
 #include <iostream>
 #include <QMainWindow>
 #include <QMessageBox>
+#include <QScopedPointer>
 #include "qprojectcore.h"
 #include "qrunningmanager.h"
 #include "shared/qbaseinit.h"
@@ -90,7 +91,7 @@ int main(int argc, char *argv[])
 
         ///////////////////////////////////////////////////////////////////////////
         /// 启动定时任务
-        TimerTask *pTimerTask = new TimerTask();
+        QScopedPointer<TimerTask> timerTask(TimerTask());
 
         if(QRunningManager::instance()->load(szProjFile)) {
             HmiRunTime runTime(QRunningManager::instance()->projCore());
@@ -100,11 +101,7 @@ int main(int argc, char *argv[])
             QRunningManager::instance()->start();
         }
 
-        int ret = app.exec();
-
-        delete pTimerTask;
-
-        return ret;
+        return app.exec();
     }
     return -1;
 }

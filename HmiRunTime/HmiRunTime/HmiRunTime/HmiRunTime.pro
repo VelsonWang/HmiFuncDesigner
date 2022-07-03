@@ -70,7 +70,6 @@ win32 {
 include(shared/shared.pri)
 
 SOURCES += \
-    Function.cpp \
     Public/Global.cpp \
     qextserial/qextserialport.cpp \
     Event/Event.cpp \
@@ -93,7 +92,6 @@ HEADERS  += \
     Public/PublicFunction.h \
     Public/public.h \
     Socket/xsocket.hpp \
-    Function.h \
     qextserial/qextserialport_global.h \
     qextserial/qextserialport.h \
     Event/Event.h \

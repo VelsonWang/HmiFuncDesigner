@@ -102,25 +102,26 @@ void QRunningManager::release()
     m_stackShowWidget.clear();
 }
 
-void QRunningManager::onShowWidget(QWidget *widget)
+void QRunningManager::onShowWidget(QWidget *pWidgetObj)
 {
-    if(widget == NULL) {
+    if(pWidgetObj == NULL) {
         return;
-    }
-    if(widget->parent() != m_pMainWindowObj) {
-        int width = qMax(widget->width(), m_pMainWindowObj->width());
-        int height = qMax(widget->height(), m_pMainWindowObj->height());
-        m_pMainWindowObj->setFixedSize(QSize(width, height));
-        widget->setParent(m_pMainWindowObj);
-        QDesktopWidget *pDeskObj = qApp->desktop();
-        m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
     }
     if(m_pLastWidgetObj != NULL) {
         m_pLastWidgetObj->setVisible(false);
     }
-    m_pLastWidgetObj = widget;
-    widget->show();
-    widget->raise();
+    if(pWidgetObj->parent() != m_pMainWindowObj) {
+        int width = qMax(pWidgetObj->width(), m_pMainWindowObj->width());
+        int height = qMax(pWidgetObj->height(), m_pMainWindowObj->height());
+        m_pMainWindowObj->setFixedSize(QSize(width, height));
+        pWidgetObj->setParent(m_pMainWindowObj);
+        QDesktopWidget *pDeskObj = qApp->desktop();
+        m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
+    }
+    m_pLastWidgetObj = pWidgetObj;
+    pWidgetObj->show();
+    qApp->setActiveWindow(pWidgetObj);
+    pWidgetObj->raise();
     if(m_stackShowWidget.size() > 256) {
         m_stackShowWidget.pop_back();
     }
@@ -160,13 +161,11 @@ void QRunningManager::start()
     m_pMainWindowObj->move((pDeskObj->width() - width) / 2, (pDeskObj->height() - height) / 2);
     if(szStartPage == "None") {
         if(pageMgr->pageCount() > 0) {
-            m_stackShowWidget.push(pageMgr->getPage(0));
             onShowWidget(pageMgr->getPage(0));
         }
     } else {
         QWidget* pWidgetObj = pageMgr->getPage(szStartPage);
         if(pWidgetObj) {
-            m_stackShowWidget.push(pWidgetObj);
             onShowWidget(pWidgetObj);
         }
     }
@@ -195,7 +194,7 @@ void QRunningManager::showGraphPage(const QString &pageId)
     QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
     QWidget* pWidgetObj = pageMgr->getPage(pageId);
     if(pWidgetObj) {
-        m_stackShowWidget.push(pWidgetObj);
+        m_stackShowWidget.push(m_pLastWidgetObj);
         onShowWidget(pWidgetObj);
     } else {
         qDebug() << "can't find page with id: " << pageId;
@@ -204,13 +203,23 @@ void QRunningManager::showGraphPage(const QString &pageId)
 
 void QRunningManager::showLastGraphPage()
 {
+    qDebug() << "--aa--" << m_stackShowWidget.size();
     if(m_stackShowWidget.size() > 0) {
         QWidget *pWidgetObj = m_stackShowWidget.pop();
-        onShowWidget(pWidgetObj);
+//        while(pWidgetObj != NULL && m_pCurWidgetObj == pWidgetObj) {
+//            if(m_stackShowWidget.size() > 0) {
+//                pWidgetObj = m_stackShowWidget.pop();
+//            } else {
+//                pWidgetObj = NULL;
+//            }
+//        }
+//        if(pWidgetObj) {
+            onShowWidget(pWidgetObj);
+        //}
     } else {
         qDebug() << "m_stackShowWidget is empty!";
     }
-
+    qDebug() << "--bb--" << m_stackShowWidget.size();
 }
 
 void QRunningManager::showControlElement(const QString &eleId)
