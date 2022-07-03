@@ -13,9 +13,7 @@
 
 ​    1.**Qt5.14.2+mingw73_32** 
 
-​    2.**软件安装时必须包含Qt Script 模块**
-
-​    3.**如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
+​    2.**如果需要在Visual Studio下编译并不产生乱码，请参考文档 (doc/Visual Studio utf8-NOBOM.docx)**
 
 ### 3. HmiFuncDesigner软件编译 How the HmiFuncDesigner compiles
 
