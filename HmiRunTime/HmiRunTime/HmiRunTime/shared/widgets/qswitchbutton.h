@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QPaintEvent>
+#include "realtimedb.h"
 #include "iloader.h"
 
 class QSwitchButton : public QWidget, public ILoader
@@ -102,6 +103,7 @@ public:
 private:
     void setPropertyInner();
     void drawSwitchButton(QPainter *painter);
+    void execFunc(bool bVal);
 
 protected:
     void paintEvent(QPaintEvent *event) override;
@@ -161,6 +163,9 @@ private:
     QImage resetImageObj;
     QImage setImageObj;
     bool selected;
+    // 上一次读取的变量值
+    bool bLastTagVal = false;
+    RunTimeTag *m_tag = NULL;
 };
 
 #endif // QSWITCHBUTTON_H

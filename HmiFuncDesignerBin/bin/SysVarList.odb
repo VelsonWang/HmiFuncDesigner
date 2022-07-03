@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <tags application_version="V1.0.0">
-    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="1" name="year" remark="年" unit="" writeable="0"/>
-    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="2" name="month" remark="月" unit="" writeable="0"/>
-    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="3" name="day" remark="日" unit="" writeable="0"/>
-    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="4" name="hour" remark="时" unit="" writeable="0"/>
-    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="5" name="minute" remark="分" unit="" writeable="0"/>
-    <tag offset="0" offset2="0" addr="AutoAlloc" addr2="" type="uint16" dev="SYSTEM" group="" id="6" name="second" remark="秒" unit="" writeable="0"/>
+    <tag addr="AutoAlloc" addr2="" dev="SYSTEM" group="" id="1" name="year" offset="0" offset2="0" remark="年" type="uint16" unit="" writeable="0"/>
+    <tag addr="AutoAlloc" addr2="" dev="SYSTEM" group="" id="2" name="month" offset="0" offset2="0" remark="月" type="uint16" unit="" writeable="0"/>
+    <tag addr="AutoAlloc" addr2="" dev="SYSTEM" group="" id="3" name="day" offset="0" offset2="0" remark="日" type="uint16" unit="" writeable="0"/>
+    <tag addr="AutoAlloc" addr2="" dev="SYSTEM" group="" id="4" name="hour" offset="0" offset2="0" remark="时" type="uint16" unit="" writeable="0"/>
+    <tag addr="AutoAlloc" addr2="" dev="SYSTEM" group="" id="5" name="minute" offset="0" offset2="0" remark="分" type="uint16" unit="" writeable="0"/>
+    <tag addr="AutoAlloc" addr2="" dev="SYSTEM" group="" id="6" name="second" offset="0" offset2="0" remark="秒" type="uint16" unit="" writeable="0"/>
 </tags>

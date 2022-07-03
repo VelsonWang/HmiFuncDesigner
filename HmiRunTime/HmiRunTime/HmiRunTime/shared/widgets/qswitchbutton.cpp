@@ -61,9 +61,9 @@ void QSwitchButton::fromObject(XMLObject* xml)
                         }
                         this->setProperty("geometry", QRect(x, y, width, height));
                     } else if(propertyName == "onFuncs") {
-                        this->setProperty("onFuncs", pObj->getProperty("value"));
+                        this->setProperty("onFuncs", praseFunctions(pObj->getProperty("value")));
                     } else if(propertyName == "offFuncs") {
-                        this->setProperty("offFuncs", pObj->getProperty("value"));
+                        this->setProperty("offFuncs", praseFunctions(pObj->getProperty("value")));
                     } else if(propertyName == "stateOnInitial") {
                         this->setProperty("stateOnInitial", pObj->getProperty("value"));
                     } else if(propertyName == "showContent") {
@@ -114,6 +114,10 @@ void QSwitchButton::setPropertyInner()
 
 void QSwitchButton::drawSwitchButton(QPainter *painter)
 {
+    if(!m_tag) {
+        m_tag = RealTimeDB::instance()->tag(tagId(tagSelected));
+    }
+
     painter->setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
     QRect rect = QRect(0, 0, width(), height());
 
@@ -138,13 +142,25 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
 
             QString szElementText = QString();
             QColor backgroundColor = QColor();
-
             if(stateOnInitial) {
                 szElementText = setText;
                 backgroundColor = setBackgroundColor;
             } else {
                 szElementText = resetText;
                 backgroundColor = resetBackgroundColor;
+            }
+
+            bool bVal = false;
+            if(m_tag) {
+                bVal = m_tag->toBool();
+                execFunc(bVal);
+                if(bVal) {
+                    szElementText = setText;
+                    backgroundColor = setBackgroundColor;
+                } else {
+                    szElementText = resetText;
+                    backgroundColor = resetBackgroundColor;
+                }
             }
 
             PubTool::FillFullRect(painter, rect, backgroundColor);
@@ -181,6 +197,16 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
                     scaleImage = setImageObj;
                 } else {
                     scaleImage = resetImageObj;
+                }
+                bool bVal = false;
+                if(m_tag) {
+                    bVal = m_tag->toBool();
+                    execFunc(bVal);
+                    if(bVal) {
+                        scaleImage = setImageObj;
+                    } else {
+                        scaleImage = resetImageObj;
+                    }
                 }
                 if(showNoScale) {
                     QRect drawRect = QRect((width() - scaleImage.width()) / 2, (height() - scaleImage.height()) / 2, scaleImage.width(), scaleImage.height());
@@ -527,6 +553,23 @@ void QSwitchButton::setTagSelected(const QString &value)
 {
     if(value != tagSelected) {
         tagSelected = value;
+        m_tag = RealTimeDB::instance()->tag(tagId(tagSelected));
         this->update();
+    }
+}
+
+void QSwitchButton::execFunc(bool bVal)
+{
+    if(bLastTagVal != bVal) {
+        if(!bLastTagVal && bVal) {
+            // 处理"切换到开事件"功能
+            execFunction(onFuncs);
+        } else if(bLastTagVal && !bVal) {
+            // 处理"切换到关事件"功能
+            execFunction(offFuncs);
+        } else {
+
+        }
+        bLastTagVal = bVal;
     }
 }

@@ -203,6 +203,66 @@ QString RunTimeTag::toString()
     return ret;
 }
 
+bool RunTimeTag::toBool()
+{
+    bool ret = false;
+    switch (dataType) {
+        case TYPE_BOOL:
+            ret = bytesToBool(dataFromVendor);
+            break;
+        case TYPE_INT8:
+            ret = (bytesToInt8(dataFromVendor) != 0);
+            break;
+        case TYPE_UINT8:
+            ret = (bytesToUint8(dataFromVendor) != 0);
+            break;
+        case TYPE_INT16:
+            ret = (bytesToInt16(dataFromVendor) != 0);
+            break;
+        case TYPE_UINT16:
+            ret = (bytesToUint16(dataFromVendor) != 0);
+            break;
+        case TYPE_INT32:
+            ret = (bytesToInt32(dataFromVendor) != 0);
+            break;
+        case TYPE_UINT32:
+            ret = (bytesToUint32(dataFromVendor) != 0);
+            break;
+        case TYPE_INT64:
+            ret = (bytesToInt64(dataFromVendor) != 0);
+            break;
+        case TYPE_UINT64:
+            ret = (bytesToUint64(dataFromVendor) != 0);
+            break;
+        case TYPE_FLOAT32:
+            ret = (bytesToFloat32(dataFromVendor) != 0);
+            break;
+        case TYPE_FLOAT64:
+            ret = (bytesToFloat64(dataFromVendor) != 0);
+            break;
+        case TYPE_BCD8:
+            ret = (bytesToBcd8(dataFromVendor) != 0);
+            break;
+        case TYPE_BCD16:
+            ret = (bytesToBcd16(dataFromVendor) != 0);
+            break;
+        case TYPE_BCD32:
+            ret = (bytesToBcd32(dataFromVendor) != 0);
+            break;
+        case TYPE_ASCII2CHAR:
+            ret = !QString(dataFromVendor).isEmpty();
+            break;
+        case TYPE_STRING:
+            ret = !QString(dataFromVendor).isEmpty();
+            break;
+        case TYPE_BYTES:
+            ret = !QString(dataFromVendor).isEmpty();
+            break;
+        default:
+            break;
+    };
+    return ret;
+}
 
 // 字符串转指定类型值
 void rtTagStringToValue(TTagDataType iDataType, quint8* pBuf, char* pData)

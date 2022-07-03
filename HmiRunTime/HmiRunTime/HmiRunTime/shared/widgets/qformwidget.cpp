@@ -36,11 +36,51 @@ void QFormWidget::fromObject(XMLObject* xml)
                         this->setProperty("geometry", QRect(x, y, width, height));
                     } else if(propertyName == "background") {
                         //this->setProperty("background", pObj->getProperty("value"));
-                    } else if(propertyName == "function") {
-                        //this->setProperty("function", pObj->getProperty("value"));
+                    } else if(propertyName == "openFuncs") {
+                        this->setProperty("openFuncs", praseFunctions(pObj->getProperty("value")));
+                    } else if(propertyName == "closeFuncs") {
+                        this->setProperty("closeFuncs", praseFunctions(pObj->getProperty("value")));
                     }
                 }
             }
         }
     }
+}
+
+QStringList QFormWidget::getOpenFuncs() const
+{
+    return openFuncs;
+}
+
+void QFormWidget::setOpenFuncs(const QStringList &value)
+{
+    if(value != openFuncs) {
+        openFuncs = value;
+        this->update();
+    }
+}
+
+QStringList QFormWidget::getCloseFuncs() const
+{
+    return closeFuncs;
+}
+
+void QFormWidget::setCloseFuncs(const QStringList &value)
+{
+    if(value != closeFuncs) {
+        closeFuncs = value;
+        this->update();
+    }
+}
+
+void QFormWidget::showEvent(QShowEvent *event)
+{
+    (void)event;
+    execFunction(openFuncs);
+}
+
+void QFormWidget::hideEvent(QHideEvent *event)
+{
+    (void)event;
+    execFunction(closeFuncs);
 }

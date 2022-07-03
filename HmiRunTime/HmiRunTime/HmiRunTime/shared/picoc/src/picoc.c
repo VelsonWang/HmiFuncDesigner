@@ -163,6 +163,7 @@ int picoc(char *SourceStr)
     char *pos;
 
     PicocInitialise(HEAP_SIZE);
+    PicocIncludeAllSystemHeaders();
 
     if(SourceStr)
     {
@@ -186,10 +187,9 @@ int picoc(char *SourceStr)
     }
     */
 
-    if(SourceStr)
+    if(SourceStr) {
         PicocParse("nofile", SourceStr, strlen(SourceStr), TRUE, TRUE, FALSE);
-
-    PicocParseInteractive();
+    }
     PicocCleanup();
 
     return PicocExitValue;

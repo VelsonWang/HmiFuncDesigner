@@ -1,7 +1,9 @@
 #ifndef ILOADER_H
 #define ILOADER_H
 
+#include <QString>
 #include <QDebug>
+#include "../picoc/parsescript.h"
 
 class XMLObject;
 
@@ -19,5 +21,29 @@ class ILoader
 public:
     virtual void fromObject(XMLObject* xml) = 0;
 };
+
+inline QStringList praseFunctions(const QString &scriptText)
+{
+    QStringList listRetFuncs;
+    QStringList listFuncs = scriptText.split("|");
+    foreach (QString func, listFuncs) {
+        QStringList listTmpFuncs = func.split(":");
+        if(listTmpFuncs.count() == 2) {
+            listRetFuncs.append(listTmpFuncs.at(0));
+        }
+    }
+    return listRetFuncs;
+}
+
+inline int execFunction(const QStringList &funcs)
+{
+    if(funcs.count() == 0) {
+        return -1;
+    }
+    foreach (QString func, funcs) {
+        ParseScript::instance()->run_c(func);
+    }
+    return 1;
+}
 
 #endif // ILOADER_H

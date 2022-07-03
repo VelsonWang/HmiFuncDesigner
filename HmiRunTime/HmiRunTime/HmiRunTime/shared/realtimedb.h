@@ -23,6 +23,7 @@ public:
     QString toString();
     QString minString();
     QString maxString();
+    bool toBool();
 
     inline void updateVendorData(const QByteArray &dat)
     {

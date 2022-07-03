@@ -192,9 +192,8 @@ void QRunningManager::stop()
 
 void QRunningManager::showGraphPage(const QString &pageId)
 {
-    int id = pageId.toInt();
     QPageManager *pageMgr = m_pProjCoreObj->getPageManager();
-    QWidget* pWidgetObj = pageMgr->getPage(id);
+    QWidget* pWidgetObj = pageMgr->getPage(pageId);
     if(pWidgetObj) {
         m_stackShowWidget.push(pWidgetObj);
         onShowWidget(pWidgetObj);

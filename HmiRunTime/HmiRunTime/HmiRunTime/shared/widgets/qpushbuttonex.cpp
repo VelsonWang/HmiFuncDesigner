@@ -22,7 +22,8 @@ QPushButtonEx::QPushButtonEx(QWidget *parent) : QPushButton(parent)
     showOnInitial = true;
     transparent = false;
     script = "";
-    funcs.clear();
+    clickedDownFuncs.clear();
+    clickedUpFuncs.clear();
     enableOnInitial = true;
     showOnInitial = true;
     transparent = false;
@@ -60,8 +61,10 @@ void QPushButtonEx::fromObject(XMLObject* xml)
                             }
                         }
                         this->setProperty("geometry", QRect(x, y, width, height));
-                    } else if(propertyName == "funcs") {
-                        this->setProperty("funcs", pObj->getProperty("value"));
+                    } else if(propertyName == "clickedDownFuncs") {
+                        this->setProperty("clickedDownFuncs", praseFunctions(pObj->getProperty("value")));
+                    } else if(propertyName == "clickedUpFuncs") {
+                        this->setProperty("clickedUpFuncs", praseFunctions(pObj->getProperty("value")));
                     } else if(propertyName == "script") {
                         this->setProperty("script", pObj->getProperty("value"));
                     } else if(propertyName == "showContent") {
@@ -200,6 +203,7 @@ void QPushButtonEx::mousePressEvent(QMouseEvent *event)
     if(!enableOnInitial) {
         return;
     }
+    execFunction(clickedDownFuncs);
     selected = true;
     this->update();
 }
@@ -210,6 +214,7 @@ void QPushButtonEx::mouseReleaseEvent(QMouseEvent *event)
     if(!enableOnInitial) {
         return;
     }
+    execFunction(clickedUpFuncs);
     selected = false;
     this->update();
 }
@@ -389,15 +394,28 @@ void QPushButtonEx::setText(const QString &value)
     }
 }
 
-QStringList QPushButtonEx::getFuncs() const
+QStringList QPushButtonEx::getClickedDownFuncs() const
 {
-    return funcs;
+    return clickedDownFuncs;
 }
 
-void QPushButtonEx::setFuncs(const QStringList &value)
+void QPushButtonEx::setClickedDownFuncs(const QStringList &value)
 {
-    if(value != funcs) {
-        funcs = value;
+    if(value != clickedDownFuncs) {
+        clickedDownFuncs = value;
+        this->update();
+    }
+}
+
+QStringList QPushButtonEx::getClickedUpFuncs() const
+{
+    return clickedUpFuncs;
+}
+
+void QPushButtonEx::setClickedUpFuncs(const QStringList &value)
+{
+    if(value != clickedUpFuncs) {
+        clickedUpFuncs = value;
         this->update();
     }
 }

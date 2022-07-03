@@ -11,7 +11,7 @@ private:
     ~ParseScript() {}
 
 public:
-    ParseScript *instance()
+    static ParseScript *instance()
     {
         static ParseScript instance;
         return &instance;
