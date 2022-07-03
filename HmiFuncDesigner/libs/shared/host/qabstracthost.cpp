@@ -12,7 +12,6 @@
 #include <QPaintEvent>
 #include <QContextMenuEvent>
 #include <QTimer>
-#include <QUuid>
 #include <QMetaMethod>
 #include <QScriptEngine>
 

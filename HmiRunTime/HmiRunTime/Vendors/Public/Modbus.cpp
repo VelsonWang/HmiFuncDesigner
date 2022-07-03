@@ -1,6 +1,6 @@
 ﻿#include "Modbus.h"
-#include "../../../libs/shared/realtimedb.h"
-#include "../../../libs/shared/publicfunction.h"
+#include "../../HmiRunTime/shared/realtimedb.h"
+#include "../../HmiRunTime/shared/publicfunction.h"
 #include "../../HmiRunTime/Vendor.h"
 
 Modbus::Modbus(QObject *parent)

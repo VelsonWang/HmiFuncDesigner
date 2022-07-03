@@ -99,21 +99,9 @@ osx {
 }
 
 INCLUDEPATH += \
-    $$IDE_SOURCE_TREE/HmiRunTimeData \
-    $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Public \
-    $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Port \
-    $$IDE_SOURCE_TREE/HmiRunTimeData/HmiRunTimeData/Tag \
-    $$IDE_SOURCE_TREE/HmiRunTimeData/Vendors/Public \
-    $$IDE_SOURCE_TREE/HmiRunTimeData/Vendors/IVendorPlugin \
     $$IDE_SOURCE_TREE/libs/Utils \
     $$IDE_SOURCE_TREE/libs/edncrypt \
-    $$IDE_SOURCE_TREE/libs/qtsingleapplication \
-    $$IDE_SOURCE_TREE/libs/qtpropertybrowser/src \
-    $$IDE_SOURCE_TREE/libs/core \
-    $$IDE_SOURCE_TREE/libs/shared \
-    $$IDE_SOURCE_TREE/libs/shared/projdata \
-    $$IDE_SOURCE_TREE/libs/gradienteditor \
-    $$IDE_SOURCE_TREE/libs/running
+    $$IDE_SOURCE_TREE/libs/qtsingleapplication
 
 
 QTC_PLUGIN_DIRS_FROM_ENVIRONMENT = $$(QTC_PLUGIN_DIRS)
@@ -208,7 +196,6 @@ for(ever) {
     }
     QTC_LIB_DEPENDS = $$unique(QTC_LIB_DEPENDS)
     QTC_LIB_DEPENDS -= $$unique(done_libs)
-
 }
 
 

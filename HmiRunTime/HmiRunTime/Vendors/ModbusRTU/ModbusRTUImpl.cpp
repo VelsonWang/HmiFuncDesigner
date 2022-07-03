@@ -1,6 +1,6 @@
 ﻿#include "ModbusRTUImpl.h"
 #include "../Public/DataPack.h"
-#include "../../../libs/shared/publicfunction.h"
+#include "../../HmiRunTime/shared/publicfunction.h"
 #include "../../HmiRunTime/Vendor.h"
 #include <QDebug>
 

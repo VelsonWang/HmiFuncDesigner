@@ -10,7 +10,6 @@
 #include "../../../libs/core/undocommand/qpropertychangedundocommand.h"
 #include "../../../libs/shared/property/qabstractproperty.h"
 #include <QVBoxLayout>
-#include <QUuid>
 
 QNewPageDialog::QNewPageDialog(QUndoStack *stack, QWidget *parent):
     QDialog(parent),
@@ -64,9 +63,9 @@ void QNewPageDialog::ok(QAbstractHost *host)
     QList<QAbstractHost*> list;
     list.append(host);
     while(list.size() > 0) {
-        QAbstractHost* h = list.takeFirst();
-        h->setID(QUuid::createUuid().toString());
-        list += h->getChildren();
+        QAbstractHost* pHostObj = list.takeFirst();
+        pHostObj->setID(QString::number(pHostObj->allocID()));
+        list += pHostObj->getChildren();
     }
     host->setDefault();
     int index = core->getPageManager()->getPages().size();

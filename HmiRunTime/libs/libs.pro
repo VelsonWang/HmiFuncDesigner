@@ -4,8 +4,7 @@ TEMPLATE  = subdirs
 CONFIG += ordered
 SUBDIRS   = \
     Utils \
-    edncrypt \
-    shared
+    edncrypt
 
 for(l, SUBDIRS) {
     QTC_LIB_DEPENDS =

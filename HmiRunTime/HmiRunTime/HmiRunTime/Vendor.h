@@ -10,9 +10,9 @@
 #include <QList>
 #include <QMap>
 #include "../Vendors/IVendorPlugin/IVendorPlugin.h"
-#include "realtimedb.h"
+#include "shared/realtimedb.h"
 #include "Port/IPort.h"
-#include "public.h"
+#include "shared/public.h"
 
 
 class IVendorPlugin;

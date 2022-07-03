@@ -13,7 +13,6 @@
 #include <QLayout>
 #include <QPainter>
 #include <QStringList>
-#include <QUuid>
 #include <QDebug>
 
 QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
