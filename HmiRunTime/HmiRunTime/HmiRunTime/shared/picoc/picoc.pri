@@ -16,6 +16,8 @@ win32 {
 }
 
 unix {
+    INCLUDEPATH += /usr/include
+    LIBS += -lreadline
     DEFINES += UNIX_HOST
     SOURCES += $$PWD/platform/platform_unix.c
 }

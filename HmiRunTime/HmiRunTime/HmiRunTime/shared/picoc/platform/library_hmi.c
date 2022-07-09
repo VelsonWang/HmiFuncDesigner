@@ -5,6 +5,7 @@
 #ifdef UNIX_HOST
     #include <sys/time.h>
     #include <time.h>
+    #include <unistd.h>
 #endif
 
 
@@ -143,14 +144,7 @@ void HMI_WaitForMillisec(struct ParseState *Parser, struct Value *ReturnValue, s
     Sleep(msecs);
 #endif
 #ifdef UNIX_HOST
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    struct timespec ti;
-
-    ti.tv_nsec = (tv.tv_usec + (msecs % 1000) * 1000) * 1000;
-    ti.tv_sec = tv.tv_sec + (msecs / 1000) + (ti.tv_nsec / 1000000000);
-    ti.tv_nsec %= 1000000000;
-    thread_sleep(&ti);
+    usleep(1000 * msecs);
 #endif
 }
 
@@ -172,12 +166,7 @@ void HMI_Sleep(struct ParseState *Parser, struct Value *ReturnValue, struct Valu
     Sleep(secs * 1000);
 #endif
 #ifdef UNIX_HOST
-    struct timeval tv;
-    gettimeofday(&tv, 0);
-    struct timespec ti;
-    ti.tv_sec = tv.tv_sec + secs;
-    ti.tv_nsec = (tv.tv_usec * 1000);
-    thread_sleep(&ti);
+    sleep(secs);
 #endif
 }
 
