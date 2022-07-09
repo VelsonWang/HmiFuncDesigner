@@ -2,6 +2,10 @@
 #include "../src/interpreter.h"
 
 #ifdef USE_READLINE
+//
+// need library libreadline-dev
+// ubuntu compile code --> exec command: sudo apt-get install libreadline-dev
+//
 #include <readline/readline.h>
 #include <readline/history.h>
 #endif

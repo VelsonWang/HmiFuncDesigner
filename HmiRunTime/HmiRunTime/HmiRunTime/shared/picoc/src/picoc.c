@@ -161,8 +161,8 @@ int picoc(char *SourceStr)
 int picoc(char *SourceStr)
 {
     char *pos;
-
-    PicocInitialise(HEAP_SIZE);
+    int StackSize = getenv("STACKSIZE") ? atoi(getenv("STACKSIZE")) : PICOC_STACK_SIZE;
+    PicocInitialise(StackSize);
     PicocIncludeAllSystemHeaders();
 
     if(SourceStr)

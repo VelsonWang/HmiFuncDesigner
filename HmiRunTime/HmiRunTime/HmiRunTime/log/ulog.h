@@ -38,21 +38,12 @@ public:
 private:
     QString GetSystemInfo();
     void DelLogFile(int keepdays = 30);
-    void WriteLogToFile();
-
-private slots:
-    void OnPeriodWriteLog();
-
-public:
-    static int m_iTriggerCount; // 触发立即写日志文件的日志条数
 
 private:
     QString m_szLogDir;
     QDateTime m_curTime;
     ELogLevel m_logLevel;
     QFile m_file;
-    QTimer m_writeLogTmr;
-    QStringList m_szLogs;
 };
 
 
