@@ -296,6 +296,11 @@ bool QProjectCore::saveToXml(const QString &szProjFile)
     // 标签变量组
     m_tagMgr.saveToXml(pTagsObj);
 
+    XMLObject *pBlockReadTagsObj = new XMLObject(pProjObj);
+    pBlockReadTagsObj->setTagName("block_tags");
+    // 块读标签变量组
+    m_tagMgr.saveBlockReadTagToXml(pBlockReadTagsObj);
+
     // 脚本
     m_script.saveToXml(pProjObj);
     // 图片资源管理

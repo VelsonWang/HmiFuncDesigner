@@ -1,5 +1,7 @@
 #include "tag.h"
 #include "limits.h"
+#include <QDebug>
+
 
 Tag::Tag() : m_id(0)
 {
@@ -62,6 +64,7 @@ bool Tag::openFromXml(XMLObject *pXmlObj)
         return false;
     }
     m_id = pTagObj->getProperty("id").toInt();
+    m_blockReadId = pTagObj->getProperty("blockReadId").toInt();
     m_name = pTagObj->getProperty("name");
     m_unit = pTagObj->getProperty("unit");
     m_addrType = pTagObj->getProperty("addr");
@@ -87,6 +90,7 @@ bool Tag::saveToXmlInner(XMLObject *pXmlObj)
 {
     pXmlObj->setTagName("tag");
     pXmlObj->setProperty("id", QString::number(m_id));
+    pXmlObj->setProperty("blockReadId", QString::number(m_blockReadId));
     pXmlObj->setProperty("name", m_name);
     pXmlObj->setProperty("unit", m_unit);
     pXmlObj->setProperty("addr", m_addrType);
@@ -121,6 +125,7 @@ QJsonObject Tag::toJsonObject()
 {
     QJsonObject jsonTagObj;
     jsonTagObj.insert("id", QJsonValue(m_id));
+    jsonTagObj.insert("blockReadId", QJsonValue(m_blockReadId));
     jsonTagObj.insert("name", QJsonValue(m_name));
     jsonTagObj.insert("unit", QJsonValue(m_unit));
     jsonTagObj.insert("addr", QJsonValue(m_addrType));
@@ -139,6 +144,7 @@ void Tag::fromJsonObject(QJsonObject jsonObj)
 {
     if(!jsonObj.isEmpty()) {
         m_id = jsonObj["id"].toInt();
+        m_blockReadId = jsonObj["blockReadId"].toInt();
         m_name = jsonObj["name"].toString();
         m_unit = jsonObj["unit"].toString();
         m_addrType = jsonObj["addr"].toString();
@@ -152,8 +158,6 @@ void Tag::fromJsonObject(QJsonObject jsonObj)
         m_devType = jsonObj["dev"].toString();
     }
 }
-
-int TagManager::m_startNewID = 0;
 
 TagManager::TagManager()
 {
@@ -175,9 +179,6 @@ bool TagManager::openFromXml(XMLObject *pXmlObj)
     foreach(XMLObject* pTagObj, listTagsObj) {
         Tag *pObj = new Tag();
         pObj->openFromXml(pTagObj);
-        if(m_startNewID < pObj->m_id) {
-            m_startNewID = pObj->m_id;
-        }
         m_vecTags.append(pObj);
     }
     return true;
@@ -193,6 +194,20 @@ bool TagManager::saveToXml(XMLObject *pXmlObj)
     return true;
 }
 
+bool TagManager::saveBlockReadTagToXml(XMLObject *pXmlObj)
+{
+    QList<QString> devs = m_mapDevBlockReadTags.keys();
+    foreach (QString dev, devs) {
+        XMLObject *pDevObj = new XMLObject(pXmlObj);
+        pDevObj->setTagName(dev);
+        QVector<Tag *> &vecTags = m_mapDevBlockReadTags[dev];
+        for(int i = 0; i < vecTags.count(); i++) {
+            Tag *pObj = vecTags.at(i);
+            pObj->saveToXml(pDevObj);
+        }
+    }
+    return true;
+}
 
 /**
  * @brief TagManager::allocID
@@ -203,19 +218,20 @@ int TagManager::allocID()
 {
     int notUseID = 1;
     while(notUseID < INT_MAX) {
+        bool found = false;
         for(int i = 0; i < m_vecTags.count(); i++) {
             Tag *pObj = m_vecTags.at(i);
             if(pObj->m_id == notUseID) {
+                found = true;
                 notUseID++;
                 break;
-            } else {
-                return notUseID;
             }
         }
+        if(!found) {
+            return notUseID;
+        }
     }
-
-    ++m_startNewID;
-    return m_startNewID;
+    return 0;
 }
 
 Tag *TagManager::getTag(int id)
@@ -223,6 +239,17 @@ Tag *TagManager::getTag(int id)
     for(int i = 0; i < m_vecTags.count(); i++) {
         Tag *pObj = m_vecTags.at(i);
         if(pObj->m_id == id) {
+            return pObj;
+        }
+    }
+    return NULL;
+}
+
+Tag *TagManager::getBlockReadTag(int id)
+{
+    for(int i = 0; i < m_vecTags.count(); i++) {
+        Tag *pObj = m_vecTags.at(i);
+        if(pObj->m_blockReadId == id) {
             return pObj;
         }
     }
@@ -238,4 +265,10 @@ void TagManager::getAllTagName(QStringList &szList)
     }
 }
 
-
+void TagManager::debugInfo()
+{
+    for(int i = 0; i < m_vecTags.count(); i++) {
+        Tag *pObj = m_vecTags[i];
+        qDebug() << pObj->toXmlNodeString();
+    }
+}

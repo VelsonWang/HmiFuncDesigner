@@ -3,6 +3,7 @@
 
 #include <QString>
 #include <QVector>
+#include <QMap>
 #include <QMetaType>
 #include <QJsonObject>
 #include <QJsonValue>
@@ -32,6 +33,7 @@ public:
     ////////////////////<基本信息>//////////////////////////
 
     int m_id = 0; // 变量ID
+    int m_blockReadId = -1; // 块读变量ID
     QString m_name = ""; // 变量名称
     QString m_unit = ""; // 变量单位
     QString m_addrType = ""; // 地址类型
@@ -57,17 +59,18 @@ public:
 
     bool openFromXml(XMLObject *pXmlObj);
     bool saveToXml(XMLObject *pXmlObj);
-
+    bool saveBlockReadTagToXml(XMLObject *pXmlObj);
     //分配一个 ID
     int allocID();
-
     Tag *getTag(int id);
-
+    Tag *getBlockReadTag(int id);
     void getAllTagName(QStringList &szList);
+    void debugInfo();
 
 public:
     QVector<Tag *> m_vecTags;
-    static int m_startNewID;
+    // key-device name, value-tags
+    QMap<QString, QVector<Tag *> > m_mapDevBlockReadTags;
 };
 Q_DECLARE_METATYPE(TagManager)
 
