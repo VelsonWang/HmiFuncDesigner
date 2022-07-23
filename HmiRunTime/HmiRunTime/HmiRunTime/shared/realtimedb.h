@@ -25,15 +25,26 @@ public:
     QString maxString();
     bool toBool();
 
-    inline void updateVendorData(const QByteArray &dat)
+    inline void updateVendorData(quint8 *dat, int len)
     {
-        this->dataFromVendor.replace(0, dat.length(), dat);
+        for(int i=0; i<len; i++) {
+            this->dataFromVendor[i] = dat[i];
+        }
+    }
+
+    inline void updateToVendorData(quint8 *dat, int len)
+    {
+        for(int i=0; i<len; i++) {
+            this->dataToVendor[i] = dat[i];
+        }
+        this->dataToVendor[this->bufLength] = 1;
     }
 
 public:
     ////////////////////<基本信息>//////////////////////////
 
     int id = 0; // 变量ID
+    int blockReadID = 0; // 块读变量ID
     QString name = ""; // 变量名称
     QString unit = ""; // 变量单位
     QString addrType = ""; // 地址类型
@@ -47,8 +58,8 @@ public:
     QString devType = ""; // 变量设备类型-设备协议名称, 内存变量-MEMORY, 系统变量-SYSTEM
 
     int bufLength = 0; // 变量数据缓存区大小
-    QByteArray dataFromVendor; // 变量读取值缓存区 VIP: 注意线程安全问题
-    QByteArray dataToVendor; // 变量写入值缓存区 VIP: 注意线程安全问题
+    quint8 *dataFromVendor; // 变量读取值缓存区
+    quint8 *dataToVendor; // 变量写入值缓存区
 };
 
 // 处理编辑端生成的id字符
@@ -74,9 +85,9 @@ class SHAREDLIB_EXPORT RealTimeDB : public QObject
 public:
     static RealTimeDB *instance();
 
-    void setTagData(quint64 id, QByteArray val, bool syncToVendor = false);
+    void setTagData(quint64 id, quint8 *pDat, int len, bool syncToVendor = false);
     void setTagData(quint64 id, const QString &dat, bool syncToVendor = false);
-    QByteArray tagData(quint64 id);
+    quint8* tagData(quint64 id);
 
     RunTimeTag* tag(quint64 id);
 

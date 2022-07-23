@@ -387,7 +387,7 @@ bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &pro
             }
         }
     }
-
+#if 0
     {
         qDebug() << "dev: " << dev;
         QList<QString> memInfo = mapInfos.keys();
@@ -399,7 +399,7 @@ bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &pro
             }
         }
     }
-
+#endif
     ///////////////////////////////////////////////////////////////////////////
     /// 生成打包变量
     ///
@@ -458,12 +458,12 @@ bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &pro
             }
         }
     }
-
+#if 0
     qDebug() << "0x number: " << var0xCnt << ", min addr: " << min0xAddr << ", max addr: " << max0xAddr;
     qDebug() << "1x number: " << var1xCnt << ", min addr: " << min1xAddr << ", max addr: " << max1xAddr;
     qDebug() << "3x number: " << var3xCnt << ", min addr: " << min3xAddr << ", max addr: " << max3xAddr;
     qDebug() << "4x number: " << var4xCnt << ", min addr: " << min4xAddr << ", max addr: " << max4xAddr;
-
+#endif
     QMap<QString, QVector<TTagInfo *>> mapBlockInfos;
     QVector<TTagInfo *> vecInfo0x;
     mapBlockInfos["0x"] = vecInfo0x;
@@ -486,7 +486,7 @@ bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &pro
             num++;
         }
 
-        qDebug() << "0x pack variable number: " << num;
+        //qDebug() << "0x pack variable number: " << num;
 
         for(int j=0; j<num; j++) {
             TTagInfo *pInfoObj = new TTagInfo;
@@ -506,7 +506,7 @@ bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &pro
             num++;
         }
 
-        qDebug() << "1x pack variable number: " << num;
+        //qDebug() << "1x pack variable number: " << num;
 
         for(int j=0; j<num; j++) {
             TTagInfo *pInfoObj = new TTagInfo;
@@ -526,7 +526,7 @@ bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &pro
             num++;
         }
 
-        qDebug() << "3x pack variable number: " << num;
+        //qDebug() << "3x pack variable number: " << num;
 
         for(int j=0; j<num; j++) {
             TTagInfo *pInfoObj = new TTagInfo;
@@ -546,7 +546,7 @@ bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &pro
             num++;
         }
 
-        qDebug() << "4x pack variable number: " << num;
+        //qDebug() << "4x pack variable number: " << num;
 
         for(int j=0; j<num; j++) {
             TTagInfo *pInfoObj = new TTagInfo;

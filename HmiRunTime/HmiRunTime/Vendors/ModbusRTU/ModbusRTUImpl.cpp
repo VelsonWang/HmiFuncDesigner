@@ -116,7 +116,7 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_INT16:
                 case TYPE_UINT16: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 2);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor.data(), 2);
+                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 2);
                     mesPi += 2;
                 }
                 break;
@@ -124,19 +124,19 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_UINT32:
                 case TYPE_FLOAT32: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 4);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor.data(), 4);
+                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 4);
                     mesPi += 4;
                 }
                 break;
                 case TYPE_FLOAT64: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 8);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor.data(), 8);
+                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 8);
                     mesPi += 8;
                 }
                 break;
                 case TYPE_ASCII2CHAR: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 2);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor.data(), 2);
+                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 2);
                     mesPi += 2;
                 }
                 break;
@@ -149,14 +149,14 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_BOOL:
                 case TYPE_INT8:
                 case TYPE_UINT8: {
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor.data(), 1);
+                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 1);
                     mesPi += 1;
                 }
                 break;
                 case TYPE_INT16:
                 case TYPE_UINT16: {
                     RecoverSelfData(pTag->dataToVendor, 2);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor.data(), 2);
+                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 2);
                     mesPi += 2;
                 }
                 break;
@@ -164,7 +164,7 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_UINT32:
                 case TYPE_FLOAT32: {
                     RecoverSelfData(pTag->dataToVendor, 4);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor.data(), 4);
+                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 4);
                     mesPi += 4;
                 }
                 break;
@@ -377,23 +377,23 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
     // 返回数据的处理
     if(pTag->dataType == TYPE_BOOL) {
         retSize = 1;
-        pTag->updateVendorData(uint8ToBytes(pVendorObj->readBuf[3] & 0x01));
+        uint8ToBytes(pVendorObj->readBuf[3]&0x01, pTag->dataFromVendor);
         wDataLen = retSize;
     } else if(pTag->dataType == TYPE_INT16 || pTag->dataType == TYPE_UINT16) {
-        pTag->updateVendorData(QByteArray((const char *)(const char *)&pVendorObj->readBuf[3], 2));
+        pTag->updateVendorData(&pVendorObj->readBuf[3], 2);
         if(cm == CM_3x || cm == CM_4x) {
             modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataFromVendor, 2);
         }
         wDataLen = 2;
     } else if(pTag->dataType == TYPE_UINT32 || pTag->dataType == TYPE_INT32 ||
               pTag->dataType == TYPE_FLOAT32) {
-        pTag->updateVendorData(QByteArray((const char *)(const char *)&pVendorObj->readBuf[3], 4));
+        pTag->updateVendorData(&pVendorObj->readBuf[3], 4);
         if(cm == CM_3x || cm == CM_4x) {
             modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataFromVendor, 4);
         }
         wDataLen = 4;
     } else if(pTag->dataType == TYPE_FLOAT64) {
-        pTag->updateVendorData(QByteArray((const char *)&pVendorObj->readBuf[3], 8));
+        pTag->updateVendorData(&pVendorObj->readBuf[3], 8);
         if(cm == CM_3x || cm == CM_4x) {
             modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataFromVendor, 8);
         }
@@ -406,7 +406,7 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
             for(i = 0; i < retSize; i++) {
                 *(tempBuffer_ + (j--)) = pVendorObj->readBuf[3 + i];
             }
-            pTag->updateVendorData(QByteArray((const char *)tempBuffer_, retSize));
+            pTag->updateVendorData(tempBuffer_, retSize);
         } else {
             j = retSize / 2 - 1;
             for(i = 0; i < retSize; i++, j--) {
@@ -421,7 +421,7 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
                     *(tempBuffer_ + 2 * j + 1) = pVendorObj->readBuf[3 + i];
                 }
             }
-            pTag->updateVendorData(QByteArray((const char *)tempBuffer_, retSize));
+            pTag->updateVendorData(tempBuffer_, retSize);
         }
         wDataLen = retSize;
     } else if(pTag->dataType == TYPE_BYTES) {
@@ -440,7 +440,7 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
                 *(tempBuffer_ + 2 * j) = pVendorObj->readBuf[3 + i];
             }
         }
-        pTag->updateVendorData(QByteArray((const char *)tempBuffer_, retSize));
+        pTag->updateVendorData(tempBuffer_, retSize);
         wDataLen = retSize;
     }
 

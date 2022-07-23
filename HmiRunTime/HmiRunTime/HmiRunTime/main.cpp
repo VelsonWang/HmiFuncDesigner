@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // 日志记录初始化
-    LogInit();
+//    LogInit();
     qDebug() << "start hmiruntime.";
 
     QString strInput = "";
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
 
         ///////////////////////////////////////////////////////////////////////////
         /// 启动定时任务
-        QScopedPointer<TimerTask> timerTask(TimerTask());
+        TimerTask tmrTask;
 
         if(QRunningManager::instance()->load(szProjFile)) {
             HmiRunTime runTime(QRunningManager::instance()->projCore());
@@ -100,7 +100,6 @@ int main(int argc, char *argv[])
             g_pHmiRunTime = &runTime;
             QRunningManager::instance()->start();
         }
-
         return app.exec();
     }
     return -1;

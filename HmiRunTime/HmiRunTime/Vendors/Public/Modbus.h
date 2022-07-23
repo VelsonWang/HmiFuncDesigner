@@ -69,12 +69,9 @@ public:
         return 0;
     }
 
-    // 加入块读变量至待读变量标签列表
-    void insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead);
-
     // 依据规则修改缓冲区内数据
     void modbusChangeData(bool bAddr8, bool bAddr16, bool bAddr32,
-                          bool bAddr64, QByteArray &data, quint32 iLen);
+                          bool bAddr64, quint8 *data, quint32 iLen);
     // 设备地址
     int devAddr(void *pObj);
     // 内存地址起始位是否为0

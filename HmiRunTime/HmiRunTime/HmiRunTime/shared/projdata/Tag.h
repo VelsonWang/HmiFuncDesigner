@@ -42,6 +42,7 @@ public:
     QString m_szRemark = ""; // 变量描述
     QString m_szOwnGroup = ""; // 变量所属组
     QString m_szDevType = ""; // 变量设备类型-设备协议名称, 内存变量-MEMORY, 系统变量-SYSTEM
+    int m_iBlockReadID = 0; // 块读变量ID
 
 private:
     bool saveToXmlInner(XMLObject *pXmlObj);
@@ -55,16 +56,15 @@ public:
     ~TagManager();
 
     bool openFromXml(XMLObject *pXmlObj);
+    bool openBlockReadFromXml(XMLObject *pXmlObj);
     bool saveToXml(XMLObject *pXmlObj);
-
-    //分配一个 ID
-    int allocID();
 
     Tag *getTag(int id);
 
 public:
     QVector<Tag *> m_vecTags;
-    static int m_iStartNewID;
+    // key-device name, value-tags
+    QMap<QString, QVector<Tag *> > m_mapDevBlockReadTags;
 };
 Q_DECLARE_METATYPE(TagManager)
 

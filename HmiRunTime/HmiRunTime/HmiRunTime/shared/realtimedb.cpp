@@ -7,9 +7,7 @@
 #include "publicfunction.h"
 #include <QDebug>
 #include <QFile>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
+#include <QHash>
 #include <limits>
 #include <cstdint>
 #include <stdlib.h>
@@ -79,65 +77,114 @@ void RunTimeTag::copyFromTag(RunTimeTag obj)
 bool RunTimeTag::fromString(const QString &dat, bool syncToVendor)
 {
     bool ret = true;
-    QByteArray val;
     switch (dataType) {
-        case TYPE_BOOL:
-            val = boolToBytes(dat.toUInt());
-            break;
-        case TYPE_INT8:
-            val = int8ToBytes(dat.toInt());
-            break;
-        case TYPE_UINT8:
-            val = uint8ToBytes(dat.toUInt());
-            break;
-        case TYPE_INT16:
-            val = int16ToBytes(dat.toInt());
-            break;
-        case TYPE_UINT16:
-            val = uint16ToBytes(dat.toUInt());
-            break;
-        case TYPE_INT32:
-            val = int32ToBytes(dat.toLong());
-            break;
-        case TYPE_UINT32:
-            val = uint32ToBytes(dat.toULong());
-            break;
-        case TYPE_INT64:
-            val = int64ToBytes(dat.toLongLong());
-            break;
-        case TYPE_UINT64:
-            val = uint64ToBytes(dat.toULongLong());
-            break;
-        case TYPE_FLOAT32:
-            val = float32ToBytes(dat.toFloat());
-            break;
-        case TYPE_FLOAT64:
-            val = float64ToBytes(dat.toDouble());
-            break;
-        case TYPE_BCD8:
-            val = bcd8ToBytes(dat.toUInt());
-            break;
-        case TYPE_BCD16:
-            val = bcd16ToBytes(dat.toUInt());
-            break;
-        case TYPE_BCD32:
-            val = bcd32ToBytes(dat.toULong());
-            break;
-        case TYPE_ASCII2CHAR:
-            val = dat.toLatin1();
-            break;
-        case TYPE_STRING:
-            val = dat.toLatin1();
-            break;
-        case TYPE_BYTES:
-            val = dat.toLatin1();
-            break;
-        default:
-            break;
+    case TYPE_BOOL:
+        boolToBytes(dat.toUInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            boolToBytes(dat.toUInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_INT8:
+        int8ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            int8ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_UINT8:
+        uint8ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            uint8ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_INT16:
+        int16ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            int16ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_UINT16:
+        uint16ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            uint16ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_INT32:
+        int32ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            int32ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_UINT32:
+        uint32ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            uint32ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_INT64:
+        int64ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            int64ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_UINT64:
+        uint64ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            uint64ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_FLOAT32:
+        float32ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            float32ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_FLOAT64:
+        float64ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            float64ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_BCD8:
+        bcd8ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            bcd8ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_BCD16:
+        bcd16ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            bcd16ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_BCD32:
+        bcd32ToBytes(dat.toInt(), this->dataFromVendor);
+        if(syncToVendor) {
+            bcd32ToBytes(dat.toInt(), this->dataToVendor);
+        }
+        break;
+    case TYPE_ASCII2CHAR:
+        updateVendorData((quint8 *)dat.toLatin1().data(), dat.toLatin1().length());
+        if(syncToVendor) {
+            updateToVendorData((quint8 *)dat.toLatin1().data(), dat.toLatin1().length());
+        }
+        break;
+    case TYPE_STRING:
+        updateVendorData((quint8 *)dat.toLatin1().data(), dat.toLatin1().length());
+        if(syncToVendor) {
+            updateToVendorData((quint8 *)dat.toLatin1().data(), dat.toLatin1().length());
+        }
+        break;
+    case TYPE_BYTES:
+        updateVendorData((quint8 *)dat.toLatin1().data(), dat.toLatin1().length());
+        if(syncToVendor) {
+            updateToVendorData((quint8 *)dat.toLatin1().data(), dat.toLatin1().length());
+        }
+        break;
+    default:
+        break;
     };
-    dataFromVendor.replace(0, val.length(), val);
     if(syncToVendor) {
-        dataToVendor.replace(0, val.length(), val);
+        this->dataToVendor[this->bufLength] = 1;
     }
     return ret;
 }
@@ -146,59 +193,59 @@ QString RunTimeTag::toString()
 {
     QString ret = "";
     switch (dataType) {
-        case TYPE_BOOL:
-            bytesToBool(dataFromVendor) ? ret = "true" : "false";
-            break;
-        case TYPE_INT8:
-            ret = QString::number(bytesToInt8(dataFromVendor));
-            break;
-        case TYPE_UINT8:
-            ret = QString::number(bytesToUint8(dataFromVendor));
-            break;
-        case TYPE_INT16:
-            ret = QString::number(bytesToInt16(dataFromVendor));
-            break;
-        case TYPE_UINT16:
-            ret = QString::number(bytesToUint16(dataFromVendor));
-            break;
-        case TYPE_INT32:
-            ret = QString::number(bytesToInt32(dataFromVendor));
-            break;
-        case TYPE_UINT32:
-            ret = QString::number(bytesToUint32(dataFromVendor));
-            break;
-        case TYPE_INT64:
-            ret = QString::number(bytesToInt64(dataFromVendor));
-            break;
-        case TYPE_UINT64:
-            ret = QString::number(bytesToUint64(dataFromVendor));
-            break;
-        case TYPE_FLOAT32:
-            ret = QString::number(bytesToFloat32(dataFromVendor));
-            break;
-        case TYPE_FLOAT64:
-            ret = QString::number(bytesToFloat64(dataFromVendor));
-            break;
-        case TYPE_BCD8:
-            ret = QString::number(bytesToBcd8(dataFromVendor));
-            break;
-        case TYPE_BCD16:
-            ret = QString::number(bytesToBcd16(dataFromVendor));
-            break;
-        case TYPE_BCD32:
-            ret = QString::number(bytesToBcd32(dataFromVendor));
-            break;
-        case TYPE_ASCII2CHAR:
-            ret = QString(dataFromVendor);
-            break;
-        case TYPE_STRING:
-            ret = QString(dataFromVendor);
-            break;
-        case TYPE_BYTES:
-            ret = QString(dataFromVendor);
-            break;
-        default:
-            break;
+    case TYPE_BOOL:
+        bytesToBool(dataFromVendor) ? ret = "true" : "false";
+        break;
+    case TYPE_INT8:
+        ret = QString::number(bytesToInt8(dataFromVendor));
+        break;
+    case TYPE_UINT8:
+        ret = QString::number(bytesToUint8(dataFromVendor));
+        break;
+    case TYPE_INT16:
+        ret = QString::number(bytesToInt16(dataFromVendor));
+        break;
+    case TYPE_UINT16:
+        ret = QString::number(bytesToUint16(dataFromVendor));
+        break;
+    case TYPE_INT32:
+        ret = QString::number(bytesToInt32(dataFromVendor));
+        break;
+    case TYPE_UINT32:
+        ret = QString::number(bytesToUint32(dataFromVendor));
+        break;
+    case TYPE_INT64:
+        ret = QString::number(bytesToInt64(dataFromVendor));
+        break;
+    case TYPE_UINT64:
+        ret = QString::number(bytesToUint64(dataFromVendor));
+        break;
+    case TYPE_FLOAT32:
+        ret = QString::number(bytesToFloat32(dataFromVendor));
+        break;
+    case TYPE_FLOAT64:
+        ret = QString::number(bytesToFloat64(dataFromVendor));
+        break;
+    case TYPE_BCD8:
+        ret = QString::number(bytesToBcd8(dataFromVendor));
+        break;
+    case TYPE_BCD16:
+        ret = QString::number(bytesToBcd16(dataFromVendor));
+        break;
+    case TYPE_BCD32:
+        ret = QString::number(bytesToBcd32(dataFromVendor));
+        break;
+    case TYPE_ASCII2CHAR:
+        ret = QString((char *)dataFromVendor);
+        break;
+    case TYPE_STRING:
+        ret = QString((char *)dataFromVendor);
+        break;
+    case TYPE_BYTES:
+        ret = QString((char *)dataFromVendor);
+        break;
+    default:
+        break;
     };
     return ret;
 }
@@ -207,59 +254,59 @@ bool RunTimeTag::toBool()
 {
     bool ret = false;
     switch (dataType) {
-        case TYPE_BOOL:
-            ret = bytesToBool(dataFromVendor);
-            break;
-        case TYPE_INT8:
-            ret = (bytesToInt8(dataFromVendor) != 0);
-            break;
-        case TYPE_UINT8:
-            ret = (bytesToUint8(dataFromVendor) != 0);
-            break;
-        case TYPE_INT16:
-            ret = (bytesToInt16(dataFromVendor) != 0);
-            break;
-        case TYPE_UINT16:
-            ret = (bytesToUint16(dataFromVendor) != 0);
-            break;
-        case TYPE_INT32:
-            ret = (bytesToInt32(dataFromVendor) != 0);
-            break;
-        case TYPE_UINT32:
-            ret = (bytesToUint32(dataFromVendor) != 0);
-            break;
-        case TYPE_INT64:
-            ret = (bytesToInt64(dataFromVendor) != 0);
-            break;
-        case TYPE_UINT64:
-            ret = (bytesToUint64(dataFromVendor) != 0);
-            break;
-        case TYPE_FLOAT32:
-            ret = (bytesToFloat32(dataFromVendor) != 0);
-            break;
-        case TYPE_FLOAT64:
-            ret = (bytesToFloat64(dataFromVendor) != 0);
-            break;
-        case TYPE_BCD8:
-            ret = (bytesToBcd8(dataFromVendor) != 0);
-            break;
-        case TYPE_BCD16:
-            ret = (bytesToBcd16(dataFromVendor) != 0);
-            break;
-        case TYPE_BCD32:
-            ret = (bytesToBcd32(dataFromVendor) != 0);
-            break;
-        case TYPE_ASCII2CHAR:
-            ret = !QString(dataFromVendor).isEmpty();
-            break;
-        case TYPE_STRING:
-            ret = !QString(dataFromVendor).isEmpty();
-            break;
-        case TYPE_BYTES:
-            ret = !QString(dataFromVendor).isEmpty();
-            break;
-        default:
-            break;
+    case TYPE_BOOL:
+        ret = bytesToBool(dataFromVendor);
+        break;
+    case TYPE_INT8:
+        ret = (bytesToInt8(dataFromVendor) != 0);
+        break;
+    case TYPE_UINT8:
+        ret = (bytesToUint8(dataFromVendor) != 0);
+        break;
+    case TYPE_INT16:
+        ret = (bytesToInt16(dataFromVendor) != 0);
+        break;
+    case TYPE_UINT16:
+        ret = (bytesToUint16(dataFromVendor) != 0);
+        break;
+    case TYPE_INT32:
+        ret = (bytesToInt32(dataFromVendor) != 0);
+        break;
+    case TYPE_UINT32:
+        ret = (bytesToUint32(dataFromVendor) != 0);
+        break;
+    case TYPE_INT64:
+        ret = (bytesToInt64(dataFromVendor) != 0);
+        break;
+    case TYPE_UINT64:
+        ret = (bytesToUint64(dataFromVendor) != 0);
+        break;
+    case TYPE_FLOAT32:
+        ret = (bytesToFloat32(dataFromVendor) != 0);
+        break;
+    case TYPE_FLOAT64:
+        ret = (bytesToFloat64(dataFromVendor) != 0);
+        break;
+    case TYPE_BCD8:
+        ret = (bytesToBcd8(dataFromVendor) != 0);
+        break;
+    case TYPE_BCD16:
+        ret = (bytesToBcd16(dataFromVendor) != 0);
+        break;
+    case TYPE_BCD32:
+        ret = (bytesToBcd32(dataFromVendor) != 0);
+        break;
+    case TYPE_ASCII2CHAR:
+        ret = !QString((char *)dataFromVendor).isEmpty();
+        break;
+    case TYPE_STRING:
+        ret = !QString((char *)dataFromVendor).isEmpty();
+        break;
+    case TYPE_BYTES:
+        ret = !QString((char *)dataFromVendor).isEmpty();
+        break;
+    default:
+        break;
     };
     return ret;
 }
@@ -407,59 +454,59 @@ QString RunTimeTag::minString()
 {
     QString ret = "";
     switch (dataType) {
-        case TYPE_BOOL:
-            ret = "0";
-            break;
-        case TYPE_INT8:
-            ret = QString::number(std::numeric_limits<int8_t>::min());
-            break;
-        case TYPE_UINT8:
-            ret = QString::number(std::numeric_limits<uint8_t>::min());
-            break;
-        case TYPE_INT16:
-            ret = QString::number(std::numeric_limits<int16_t>::min());
-            break;
-        case TYPE_UINT16:
-            ret = QString::number(std::numeric_limits<uint16_t>::min());
-            break;
-        case TYPE_INT32:
-            ret = QString::number(std::numeric_limits<int32_t>::min());
-            break;
-        case TYPE_UINT32:
-            ret = QString::number(std::numeric_limits<uint32_t>::min());
-            break;
-        case TYPE_INT64:
-            ret = QString::number(std::numeric_limits<int64_t>::min());
-            break;
-        case TYPE_UINT64:
-            ret = QString::number(std::numeric_limits<uint64_t>::min());
-            break;
-        case TYPE_FLOAT32:
-            ret = QString::number(std::numeric_limits<float>::min());
-            break;
-        case TYPE_FLOAT64:
-            ret = QString::number(std::numeric_limits<double>::min());
-            break;
-        case TYPE_BCD8:
-            ret = QString("0");
-            break;
-        case TYPE_BCD16:
-            ret = QString("0");
-            break;
-        case TYPE_BCD32:
-            ret = QString("0");
-            break;
-        case TYPE_ASCII2CHAR:
-            ret = QString("0");
-            break;
-        case TYPE_STRING:
-            ret = QString("0");
-            break;
-        case TYPE_BYTES:
-            ret = QString("0");
-            break;
-        default:
-            break;
+    case TYPE_BOOL:
+        ret = "0";
+        break;
+    case TYPE_INT8:
+        ret = QString::number(std::numeric_limits<int8_t>::min());
+        break;
+    case TYPE_UINT8:
+        ret = QString::number(std::numeric_limits<uint8_t>::min());
+        break;
+    case TYPE_INT16:
+        ret = QString::number(std::numeric_limits<int16_t>::min());
+        break;
+    case TYPE_UINT16:
+        ret = QString::number(std::numeric_limits<uint16_t>::min());
+        break;
+    case TYPE_INT32:
+        ret = QString::number(std::numeric_limits<int32_t>::min());
+        break;
+    case TYPE_UINT32:
+        ret = QString::number(std::numeric_limits<uint32_t>::min());
+        break;
+    case TYPE_INT64:
+        ret = QString::number(std::numeric_limits<int64_t>::min());
+        break;
+    case TYPE_UINT64:
+        ret = QString::number(std::numeric_limits<uint64_t>::min());
+        break;
+    case TYPE_FLOAT32:
+        ret = QString::number(std::numeric_limits<float>::min());
+        break;
+    case TYPE_FLOAT64:
+        ret = QString::number(std::numeric_limits<double>::min());
+        break;
+    case TYPE_BCD8:
+        ret = QString("0");
+        break;
+    case TYPE_BCD16:
+        ret = QString("0");
+        break;
+    case TYPE_BCD32:
+        ret = QString("0");
+        break;
+    case TYPE_ASCII2CHAR:
+        ret = QString("0");
+        break;
+    case TYPE_STRING:
+        ret = QString("0");
+        break;
+    case TYPE_BYTES:
+        ret = QString("0");
+        break;
+    default:
+        break;
     };
     return ret;
 }
@@ -468,59 +515,59 @@ QString RunTimeTag::maxString()
 {
     QString ret = "";
     switch (dataType) {
-        case TYPE_BOOL:
-            ret = "1";
-            break;
-        case TYPE_INT8:
-            ret = QString::number(std::numeric_limits<int8_t>::max());
-            break;
-        case TYPE_UINT8:
-            ret = QString::number(std::numeric_limits<uint8_t>::max());
-            break;
-        case TYPE_INT16:
-            ret = QString::number(std::numeric_limits<int16_t>::max());
-            break;
-        case TYPE_UINT16:
-            ret = QString::number(std::numeric_limits<uint16_t>::max());
-            break;
-        case TYPE_INT32:
-            ret = QString::number(std::numeric_limits<int32_t>::max());
-            break;
-        case TYPE_UINT32:
-            ret = QString::number(std::numeric_limits<uint32_t>::max());
-            break;
-        case TYPE_INT64:
-            ret = QString::number(std::numeric_limits<int64_t>::max());
-            break;
-        case TYPE_UINT64:
-            ret = QString::number(std::numeric_limits<uint64_t>::max());
-            break;
-        case TYPE_FLOAT32:
-            ret = QString::number(std::numeric_limits<float>::max());
-            break;
-        case TYPE_FLOAT64:
-            ret = QString::number(std::numeric_limits<double>::max());
-            break;
-        case TYPE_BCD8:
-            ret = QString(std::numeric_limits<uint8_t>::max());
-            break;
-        case TYPE_BCD16:
-            ret = QString(std::numeric_limits<uint16_t>::max());
-            break;
-        case TYPE_BCD32:
-            ret = QString(std::numeric_limits<uint32_t>::max());
-            break;
-        case TYPE_ASCII2CHAR:
-            ret = QString(std::numeric_limits<uint16_t>::max());
-            break;
-        case TYPE_STRING:
-            ret = QString("0");
-            break;
-        case TYPE_BYTES:
-            ret = QString("0");
-            break;
-        default:
-            break;
+    case TYPE_BOOL:
+        ret = "1";
+        break;
+    case TYPE_INT8:
+        ret = QString::number(std::numeric_limits<int8_t>::max());
+        break;
+    case TYPE_UINT8:
+        ret = QString::number(std::numeric_limits<uint8_t>::max());
+        break;
+    case TYPE_INT16:
+        ret = QString::number(std::numeric_limits<int16_t>::max());
+        break;
+    case TYPE_UINT16:
+        ret = QString::number(std::numeric_limits<uint16_t>::max());
+        break;
+    case TYPE_INT32:
+        ret = QString::number(std::numeric_limits<int32_t>::max());
+        break;
+    case TYPE_UINT32:
+        ret = QString::number(std::numeric_limits<uint32_t>::max());
+        break;
+    case TYPE_INT64:
+        ret = QString::number(std::numeric_limits<int64_t>::max());
+        break;
+    case TYPE_UINT64:
+        ret = QString::number(std::numeric_limits<uint64_t>::max());
+        break;
+    case TYPE_FLOAT32:
+        ret = QString::number(std::numeric_limits<float>::max());
+        break;
+    case TYPE_FLOAT64:
+        ret = QString::number(std::numeric_limits<double>::max());
+        break;
+    case TYPE_BCD8:
+        ret = QString(std::numeric_limits<uint8_t>::max());
+        break;
+    case TYPE_BCD16:
+        ret = QString(std::numeric_limits<uint16_t>::max());
+        break;
+    case TYPE_BCD32:
+        ret = QString(std::numeric_limits<uint32_t>::max());
+        break;
+    case TYPE_ASCII2CHAR:
+        ret = QString(std::numeric_limits<uint16_t>::max());
+        break;
+    case TYPE_STRING:
+        ret = QString("0");
+        break;
+    case TYPE_BYTES:
+        ret = QString("0");
+        break;
+    default:
+        break;
     };
     return ret;
 }
@@ -530,12 +577,12 @@ QString RunTimeTag::maxString()
 /// 声明共享数据段, 解决不同动态链接库以及动态链接库和程序间指针不一致问题
 ///
 #ifdef _MSC_VER  // vc
-    #pragma data_seg("MyShared")
-    void *g_pRtdbObj = NULL;
-    #pragma data_seg()
-    #pragma comment(linker, "/SECTION:MyShared,RWS")
+#pragma data_seg("MyShared")
+void *g_pRtdbObj = NULL;
+#pragma data_seg()
+#pragma comment(linker, "/SECTION:MyShared,RWS")
 #else // gcc
-    void *g_pRtdbObj __attribute__ ((section("MyShared"))) = NULL;
+void *g_pRtdbObj __attribute__ ((section("MyShared"))) = NULL;
 #endif
 
 QMutex RealTimeDB::m_mutex;
@@ -557,19 +604,28 @@ RealTimeDB::RealTimeDB(QObject *parent) : QObject(parent)
 
 RealTimeDB::~RealTimeDB()
 {
-    qDeleteAll(rtdb);
+    QHashIterator<quint64, RunTimeTag * > iter(rtdb);
+    while (iter.hasNext()) {
+        iter.next();
+        RunTimeTag *pObj = iter.value();
+        if(pObj) {
+            delete[] pObj->dataFromVendor;
+            delete[] pObj->dataToVendor;
+            delete pObj;
+        }
+    }
     rtdb.clear();
 }
 
-void RealTimeDB::setTagData(quint64 id, QByteArray val, bool syncToVendor)
+void RealTimeDB::setTagData(quint64 id, quint8 *pDat, int len, bool syncToVendor)
 {
     QMutexLocker locker(&m_mutex);
     if(rtdb.count(id) > 0) {
         RunTimeTag* pObj = rtdb.value(id);
         if(pObj) {
-            pObj->dataFromVendor.replace(0, val.length(), val);
+            pObj->updateVendorData(pDat, len);
             if(syncToVendor) {
-                pObj->dataToVendor.replace(0, val.length(), val);
+                pObj->updateToVendorData(pDat, len);
             }
         }
     }
@@ -586,7 +642,7 @@ void RealTimeDB::setTagData(quint64 id, const QString &dat, bool syncToVendor)
     }
 }
 
-QByteArray RealTimeDB::tagData(quint64 id)
+quint8* RealTimeDB::tagData(quint64 id)
 {
     QMutexLocker locker(&m_mutex);
     if(rtdb.count(id) > 0) {
@@ -595,7 +651,7 @@ QByteArray RealTimeDB::tagData(quint64 id)
             return pObj->dataFromVendor;
         }
     }
-    return QByteArray();
+    return NULL;
 }
 
 RunTimeTag* RealTimeDB::tag(quint64 id)

@@ -5,16 +5,14 @@
 #include <QList>
 #include <QStringList>
 #include <QFile>
-#include <QJsonDocument>
-#include <QJsonArray>
-#include <QJsonObject>
 #include <QDir>
 #include <QMutex>
 #include "Vendor.h"
 #include "realtimedb.h"
 #include "PortThread.h"
-//#include "RunScript.h"
 #include "qprojectcore.h"
+
+class Tag;
 
 class HmiRunTime : public QObject
 {
@@ -28,9 +26,9 @@ public:
     void Stop();
     void AddPortName(const QString name);
     Vendor *FindVendor(const QString name);
-    QJsonObject LoadJsonObjectFromFile(SaveFormat saveFormat, QString f);
-    // 发送消息到消息服务
-    static void doMessage(QString msg);
+
+private:
+    RunTimeTag *createRunTimeTag(Tag *pTagObj);
 
 signals:
 
@@ -40,18 +38,6 @@ protected:
     bool event(QEvent *e);
 
 private:
-    // 获取工程名称
-    QString getProjectName(const QString &szProjectPath);
-
-public:
-    static QScriptEngine *scriptEngine_;
-    // 执行脚本功能
-    static void execScriptFunction(const QStringList &szFuncList, const QString &szMatchEvent);
-    // 执行脚本文本
-    static void execScriptText(const QString &szScriptText, const QString &szMatchEvent);
-
-private:
-    //static RunScript *m_pRunScript;
     QProjectCore *projCore;
 
 private:

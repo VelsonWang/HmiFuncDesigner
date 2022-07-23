@@ -238,7 +238,7 @@ bool Vendor::writeIOTag(RunTimeTag* pTag)
             }
             m_pVendorPluginObj->afterWriteIOTag(this, pTag);
         }
-        pTag->dataToVendor.clear();
+        memset((void *)pTag->dataToVendor, 0, pTag->bufLength + 1);
     }
     return true;
 }
@@ -273,7 +273,7 @@ bool Vendor::writeIOTags()
             return false;
         }
         RunTimeTag* pTag = m_readList[i];
-        if(pTag->dataToVendor.size() > 0) {
+        if(pTag->dataToVendor[pTag->bufLength] > 0) {
             if(writeIOTag(pTag)) {
                 this->m_bOffLine = false;
                 this->m_iStartOffLineTime = 0;
@@ -414,7 +414,7 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
                 }
             }
 
-            RealTimeDB::instance()->setTagData(pTag->id, pTag->dataFromVendor);
+            //RealTimeDB::instance()->setTagData(pTag->id, pTag->dataFromVendor, pTag->bufLength);
 #endif
             m_pVendorPluginObj->afterReadIOTag(this, pTag);
         }

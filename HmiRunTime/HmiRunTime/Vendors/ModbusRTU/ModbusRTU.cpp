@@ -23,7 +23,7 @@ bool ModbusRTU::initailizeDevice(void* pObj)
 {
     Vendor* pVendorObj = (Vendor*)(pObj);
     if(pVendorObj) {
-        m_modbusRTUImplObj.insertBlockReadTagToReadList(pVendorObj->m_readList);
+
     }
     return true;
 }
