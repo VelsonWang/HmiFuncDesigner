@@ -1,5 +1,6 @@
 #include "ModbusRTU.h"
 #include "../../HmiRunTime/Vendor.h"
+#include "../../HmiRunTime/shared/publicfunction.h"
 
 ModbusRTU::ModbusRTU()
 {
@@ -149,6 +150,38 @@ int ModbusRTU::readIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag)
     return m_modbusRTUImplObj.readData(pObj, pTag);
 }
 
+// 从块读变量拷贝寄存器数据至普通变量
+bool ModbusRTU::copyTagDataFromBlockReadTag(RunTimeTag* pBlockReadTag, RunTimeTag* pTag)
+{
+    int iOffset = pTag->addrOffset - pBlockReadTag->addrOffset;
+    quint8 *pDes = pTag->dataFromVendor;
+    quint8 *pSrc = pBlockReadTag->dataFromVendor;
+
+    if(pTag->dataType == TYPE_BOOL) {
+        quint32 iByte = iOffset / 8;
+        quint32 iBit = iOffset % 8;
+        pDes[0] = (pSrc[iByte] >> iBit) & 0x01;
+    } else {
+        for(int x=0; x<pTag->bufLength; x++) {
+            pDes[x] = pSrc[iOffset * 2 + x];
+        }
+    }
+#if 0
+    qDebug() << "BlockReadTag: addr " << pBlockReadTag->addrOffset << hexToString((char *)pBlockReadTag->dataFromVendor, pBlockReadTag->bufLength);
+    qDebug() << "         Tag: addr " << pTag->addrOffset << hexToString((char *)pTag->dataFromVendor, pTag->bufLength);
+#endif
+    return true;
+}
+
+// 设置块读变量缓冲区长度
+void ModbusRTU::setBlockReadTagBufferLength(RunTimeTag* pBlockReadTag)
+{
+    if(pBlockReadTag && pBlockReadTag->isBlockRead) {
+        if(pBlockReadTag->dataType != TYPE_BOOL) {
+            pBlockReadTag->bufLength *= 2;
+        }
+    }
+}
 
 /**
  * @brief ModbusRTU::afterReadIOTag

@@ -45,6 +45,7 @@ public:
     quint16 getRegNum(RunTimeTag* pTag);
     // 生成modbus报文
     virtual quint16 makeMessagePackage(quint8 */* pSendData */,
+                                       void* /* pObj */,
                                        RunTimeTag* /* pTag */,
                                        TModbus_ReadWrite /* RW_flag */,
                                        quint16 */* retVarLen */)
@@ -97,10 +98,10 @@ signals:
 public slots:
 
 public:
-    quint8 tempBuffer_[512] = {0};
+    quint8 tempBuffer[512] = {0};
 
 private:
-    IPort *iFacePort_;
+    IPort *iFacePort;
 
 };
 

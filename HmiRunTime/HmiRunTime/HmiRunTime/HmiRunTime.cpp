@@ -128,6 +128,7 @@ RunTimeTag *HmiRunTime::createRunTimeTag(Tag *pTagObj)
         pRtTagObj->dataType = TYPE_BYTES;
         int num = listBlockRead[0].toInt();
         pRtTagObj->bufLength = pRtTagObj->bufLength * num;
+        pRtTagObj->isBlockRead = true;
     }
 
     pRtTagObj->dataFromVendor = new quint8[pRtTagObj->bufLength];
@@ -207,6 +208,23 @@ bool HmiRunTime::Load()
     }
 
     /////////////////////////////////////////////
+
+    // load block read tags and create rtdb
+    foreach (QString dev, projCore->m_tagMgr.m_mapDevBlockReadTags.keys()) {
+        Vendor *pVendor = FindVendor(dev);
+        if(pVendor != NULL) {
+            foreach(Tag *pTagObj, projCore->m_tagMgr.m_mapDevBlockReadTags[dev]) {
+                RunTimeTag *pRtTagObj = createRunTimeTag(pTagObj);
+                if(pRtTagObj) {
+                    RealTimeDB::instance()->rtdb.insert(pRtTagObj->id, pRtTagObj);
+                    if(pVendor->m_pVendorPluginObj) {
+                        pVendor->m_pVendorPluginObj->setBlockReadTagBufferLength(pRtTagObj);
+                    }
+                    pVendor->addIOTagToDeviceTagList(pRtTagObj);
+                }
+            }
+        }
+    }
 
     // load tags and create rtdb
     foreach(Tag *pTagObj, projCore->m_tagMgr.m_vecTags) {

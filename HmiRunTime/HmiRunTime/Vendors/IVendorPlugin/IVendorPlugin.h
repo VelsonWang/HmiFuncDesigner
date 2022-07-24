@@ -36,9 +36,14 @@ public:
     virtual int readIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag) = 0;
     // 读变量后处理
     virtual bool afterReadIOTag(void* pObj, RunTimeTag* pTag) = 0;
+    // 从块读变量拷贝寄存器数据至普通变量
+    virtual bool copyTagDataFromBlockReadTag(RunTimeTag* pBlockReadTag, RunTimeTag* pTag) = 0;
+    // 设置块读变量缓冲区长度
+    virtual void setBlockReadTagBufferLength(RunTimeTag* pBlockReadTag) = 0;
 
     // 变量字节序转换为当前主机字节序
     virtual bool convertIOTagBytesToNativeBytes(void* pObj, RunTimeTag* pTag) = 0;
+
 };
 
 

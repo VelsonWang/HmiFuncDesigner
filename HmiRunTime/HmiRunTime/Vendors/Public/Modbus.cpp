@@ -5,7 +5,7 @@
 
 Modbus::Modbus(QObject *parent)
     : QObject(parent),
-      iFacePort_(nullptr)
+      iFacePort(nullptr)
 {
 }
 
@@ -18,14 +18,14 @@ Modbus::~Modbus()
 void Modbus::setPort(IPort *pPort)
 {
     if(pPort != nullptr) {
-        iFacePort_ = pPort;
+        iFacePort = pPort;
     }
 }
 
 
 IPort *Modbus::getPort()
 {
-    return iFacePort_;
+    return iFacePort;
 }
 
 

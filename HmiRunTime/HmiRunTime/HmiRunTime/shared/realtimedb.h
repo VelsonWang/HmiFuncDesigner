@@ -60,6 +60,8 @@ public:
     int bufLength = 0; // 变量数据缓存区大小
     quint8 *dataFromVendor; // 变量读取值缓存区
     quint8 *dataToVendor; // 变量写入值缓存区
+    bool isBlockRead = false; //块读变量标记为true
+    quint64 lastReadTime = 0; //上次从PLC设备读取寄存器数据的时间
 };
 
 // 处理编辑端生成的id字符

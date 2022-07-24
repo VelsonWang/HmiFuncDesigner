@@ -72,14 +72,14 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
     Vendor* pVendorObj = (Vendor*)(pObj);
     TModbus_CPUMEM cm = getCpuMem(pTag->addrType);
 
-    memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8 ));
+    memset(tempBuffer, 0, sizeof(tempBuffer) / sizeof(quint8 ));
 
     mesPi = 0;
 
     //设备地址
-    tempBuffer_[mesPi++] = this->devAddr(pVendorObj);
+    tempBuffer[mesPi++] = this->devAddr(pVendorObj);
     //功能代码
-    tempBuffer_[mesPi++] = getFuncode(pObj, pTag, RW_flag);
+    tempBuffer[mesPi++] = getFuncode(pObj, pTag, RW_flag);
 
     tmpDataPos = pTag->addrOffset;
     if(pVendorObj != NULL && !this->isStartAddrBit(pVendorObj)) {
@@ -89,8 +89,8 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
     }
 
     //开始地址
-    tempBuffer_[mesPi++] = tmpDataPos >> 8;
-    tempBuffer_[mesPi++] = tmpDataPos;
+    tempBuffer[mesPi++] = tmpDataPos >> 8;
+    tempBuffer[mesPi++] = tmpDataPos;
 
     //读取个数
     tmpUnit = getRegNum(pTag);
@@ -99,16 +99,16 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
     if(RW_flag == FLAG_READ) {
         //计算返回报文长度
         tmpLen = pTag->bufLength + 3; // 3 = 一个设备地址 + 一个功能码 + 一个计数
-        tempBuffer_[mesPi++] = tmpUnit >> 8;
-        tempBuffer_[mesPi++] = tmpUnit;
+        tempBuffer[mesPi++] = tmpUnit >> 8;
+        tempBuffer[mesPi++] = tmpUnit;
     } else if(RW_flag == FLAG_WRITE) {
         tmpLen = 6; // 6 = 返回从机地址1， 功能代码1， 起始地址2以及强制线圈数2
         byteCount = pTag->bufLength;
 
-        if(tempBuffer_[1] != 0x06 && tempBuffer_[1] != 0x05) { //功能码为10
-            tempBuffer_[mesPi++] = tmpUnit >> 8;
-            tempBuffer_[mesPi++] = tmpUnit;
-            tempBuffer_[mesPi++] = byteCount;
+        if(tempBuffer[1] != 0x06 && tempBuffer[1] != 0x05) { //功能码为10
+            tempBuffer[mesPi++] = tmpUnit >> 8;
+            tempBuffer[mesPi++] = tmpUnit;
+            tempBuffer[mesPi++] = byteCount;
         }
 
         if(cm == CM_3x || cm == CM_4x) {
@@ -116,7 +116,7 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_INT16:
                 case TYPE_UINT16: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 2);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 2);
+                    memcpy(&tempBuffer[mesPi], pTag->dataToVendor, 2);
                     mesPi += 2;
                 }
                 break;
@@ -124,19 +124,19 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_UINT32:
                 case TYPE_FLOAT32: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 4);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 4);
+                    memcpy(&tempBuffer[mesPi], pTag->dataToVendor, 4);
                     mesPi += 4;
                 }
                 break;
                 case TYPE_FLOAT64: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 8);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 8);
+                    memcpy(&tempBuffer[mesPi], pTag->dataToVendor, 8);
                     mesPi += 8;
                 }
                 break;
                 case TYPE_ASCII2CHAR: {
                     modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataToVendor, 2);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 2);
+                    memcpy(&tempBuffer[mesPi], pTag->dataToVendor, 2);
                     mesPi += 2;
                 }
                 break;
@@ -149,14 +149,14 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_BOOL:
                 case TYPE_INT8:
                 case TYPE_UINT8: {
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 1);
+                    memcpy(&tempBuffer[mesPi], pTag->dataToVendor, 1);
                     mesPi += 1;
                 }
                 break;
                 case TYPE_INT16:
                 case TYPE_UINT16: {
                     RecoverSelfData(pTag->dataToVendor, 2);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 2);
+                    memcpy(&tempBuffer[mesPi], pTag->dataToVendor, 2);
                     mesPi += 2;
                 }
                 break;
@@ -164,7 +164,7 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
                 case TYPE_UINT32:
                 case TYPE_FLOAT32: {
                     RecoverSelfData(pTag->dataToVendor, 4);
-                    memcpy(&tempBuffer_[mesPi], pTag->dataToVendor, 4);
+                    memcpy(&tempBuffer[mesPi], pTag->dataToVendor, 4);
                     mesPi += 4;
                 }
                 break;
@@ -175,24 +175,24 @@ quint16 ModbusRTUImpl::makeMessagePackage(quint8 *pSendData,
 
             if(pTag->bufLength <= 1) {
                 // 增加功能码为05写BOOL的操作
-                if(tempBuffer_[1] == 0x05) {
-                    if(tempBuffer_[4] == 0x01) {
-                        tempBuffer_[4] = 0xFF;
+                if(tempBuffer[1] == 0x05) {
+                    if(tempBuffer[4] == 0x01) {
+                        tempBuffer[4] = 0xFF;
                     } else {
-                        tempBuffer_[4] = 0x00;
+                        tempBuffer[4] = 0x00;
                     }
-                    tempBuffer_[5] = 0x00;
+                    tempBuffer[5] = 0x00;
                     mesPi++;
                 }
             }
         }
     }
 
-    quint16 tmpCRC16 = crc16(tempBuffer_, mesPi);
-    tempBuffer_[mesPi++] = tmpCRC16 >> 8;
-    tempBuffer_[mesPi++] = tmpCRC16;
+    quint16 tmpCRC16 = crc16(tempBuffer, mesPi);
+    tempBuffer[mesPi++] = tmpCRC16 >> 8;
+    tempBuffer[mesPi++] = tmpCRC16;
 
-    memcpy(pSendData, tempBuffer_, mesPi);
+    memcpy(pSendData, tempBuffer, mesPi);
     *retVarLen = tmpLen + 2;
 
     return mesPi;
@@ -372,7 +372,7 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
         return 0;
     }
 
-    memset(tempBuffer_, 0, sizeof(tempBuffer_) / sizeof(quint8 ));
+    memset(tempBuffer, 0, sizeof(tempBuffer) / sizeof(quint8 ));
 
     // 返回数据的处理
     if(pTag->dataType == TYPE_BOOL) {
@@ -404,24 +404,24 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
         if(getFuncode(pObj, pTag, FLAG_READ) == 0x01 || getFuncode(pObj, pTag, FLAG_READ) == 0x02) {
             j = retSize - 1;
             for(i = 0; i < retSize; i++) {
-                *(tempBuffer_ + (j--)) = pVendorObj->readBuf[3 + i];
+                *(tempBuffer + (j--)) = pVendorObj->readBuf[3 + i];
             }
-            pTag->updateVendorData(tempBuffer_, retSize);
+            pTag->updateVendorData(tempBuffer, retSize);
         } else {
             j = retSize / 2 - 1;
             for(i = 0; i < retSize; i++, j--) {
                 // 8位逆序
                 if(isAddr8(pObj)) {
-                    *(tempBuffer_ + 2 * j) = byteSwitchHigh4bitLow4bit(pVendorObj->readBuf[3 + i]);
+                    *(tempBuffer + 2 * j) = byteSwitchHigh4bitLow4bit(pVendorObj->readBuf[3 + i]);
                     i++;
-                    *(tempBuffer_ + 2 * j + 1) = byteSwitchHigh4bitLow4bit(pVendorObj->readBuf[3 + i]);
+                    *(tempBuffer + 2 * j + 1) = byteSwitchHigh4bitLow4bit(pVendorObj->readBuf[3 + i]);
                 } else {
-                    *(tempBuffer_ + 2 * j) = pVendorObj->readBuf[3 + i];
+                    *(tempBuffer + 2 * j) = pVendorObj->readBuf[3 + i];
                     i++;
-                    *(tempBuffer_ + 2 * j + 1) = pVendorObj->readBuf[3 + i];
+                    *(tempBuffer + 2 * j + 1) = pVendorObj->readBuf[3 + i];
                 }
             }
-            pTag->updateVendorData(tempBuffer_, retSize);
+            pTag->updateVendorData(tempBuffer, retSize);
         }
         wDataLen = retSize;
     } else if(pTag->dataType == TYPE_BYTES) {
@@ -430,17 +430,17 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
         if(getFuncode(pObj, pTag, FLAG_READ) == 0x01 || getFuncode(pObj, pTag, FLAG_READ) == 0x02) {
             j = 0;
             for(i = 0; i < retSize; i++) {
-                *(tempBuffer_ + (j++)) = pVendorObj->readBuf[3 + i];
+                *(tempBuffer + (j++)) = pVendorObj->readBuf[3 + i];
             }
         } else {
             j = 0;
             for(i = 0; i < retSize; i++, j++) {
-                *(tempBuffer_ + 2 * j + 1) = pVendorObj->readBuf[3 + i];
+                *(tempBuffer + 2 * j + 1) = pVendorObj->readBuf[3 + i];
                 i++;
-                *(tempBuffer_ + 2 * j) = pVendorObj->readBuf[3 + i];
+                *(tempBuffer + 2 * j) = pVendorObj->readBuf[3 + i];
             }
         }
-        pTag->updateVendorData(tempBuffer_, retSize);
+        pTag->updateVendorData(tempBuffer, retSize);
         wDataLen = retSize;
     }
 
