@@ -37,6 +37,8 @@
 #include "../../libs/shared/qprojectcore.h"
 #include "../../libs/shared/host/qabstracthost.h"
 #include "../Public/userevent.h"
+#include "devicepluginloader.h"
+#include "../../../Devices/IDevicePlugin/IDevicePlugin.h"
 #include <QDesktopWidget>
 #include <QApplication>
 #include <QFileInfo>
@@ -629,6 +631,7 @@ void MainWindow::UpdateProjectName(const QString &szName)
     */
 void MainWindow::onSaveProject()
 {
+    buildBlockReadTags();
     QSoftCore::getCore()->getProjectCore()->saveToXml(QSoftCore::getCore()->getProjectCore()->m_szProjFile);
 }
 
@@ -1112,4 +1115,96 @@ void MainWindow::onSlotTabProjectMgrCurChanged(int index)
     }
 }
 
+/**
+ * @brief MainWindow::buildBlockReadTags 生成块读变量
+ * @return
+ */
+bool MainWindow::buildBlockReadTags()
+{
+    QProjectCore* pCoreObj = QSoftCore::getCore()->getProjectCore();
+    // Step-1 设备变量分类
+    QMap<QString, QVector<Tag *> > mapDevBlockReadTags;
+    foreach (Tag *pTagObj, pCoreObj->m_tagMgr.m_vecTags) {
+        // 系统变量或内存变量
+        if(pTagObj->m_addrType == "AutoAlloc") {
+            continue;
+        }
+        QString dev = pTagObj->m_devType;
+        if(mapDevBlockReadTags.count(dev) > 0) {
+            QVector<Tag *> &vecTags = mapDevBlockReadTags[dev];
+            vecTags.append(pTagObj);
+        } else {
+            QVector<Tag *> vecTags;
+            vecTags.append(pTagObj);
+            mapDevBlockReadTags[dev] = vecTags;
+        }
+    }
 
+    foreach (QString dev, pCoreObj->m_tagMgr.m_mapDevBlockReadTags.keys()) {
+        qDeleteAll(pCoreObj->m_tagMgr.m_mapDevBlockReadTags[dev]);
+        pCoreObj->m_tagMgr.m_mapDevBlockReadTags[dev].clear();
+    }
+    pCoreObj->m_tagMgr.m_mapDevBlockReadTags.clear();
+
+    // Step-2 生成<tags>节点
+    QList<QString> devs = mapDevBlockReadTags.keys();
+    foreach (QString dev, devs) {
+        QVector<Tag *> &vecTags = mapDevBlockReadTags[dev];
+        XMLObject tagsObj;
+        tagsObj.setTagName("tags");
+        for(int i = 0; i < vecTags.count(); i++) {
+            Tag *pObj = vecTags.at(i);
+            pObj->saveToXml(&tagsObj);
+        }
+
+        QString xmlDevTags = tagsObj.write();
+        QString xmlDevBlockReadTags;
+        QVector<QPair<QString, QString>> idToBlockId;
+
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(dev);
+        if (pDevPluginObj) {
+            DeviceInfo &deviceInfo = pCoreObj->m_deviceInfo;
+            DeviceInfoObject *pObj = deviceInfo.getObjectByName(dev);
+            if(pObj == NULL) {
+                return false;
+            }
+
+            bool ret = pDevPluginObj->buildBlockReadTags(xmlDevTags, pObj->m_properties, xmlDevBlockReadTags, idToBlockId);
+            if(ret) {
+                XMLObject xmlObj;
+                QString errorInfo;
+                bool bRet = xmlObj.load(xmlDevBlockReadTags, &errorInfo);
+                if(bRet) {
+                    if(xmlObj.getChildren().size() > 0) {
+                        QList<XMLObject* > listTagsObj = xmlObj.getChildren();
+                        foreach(XMLObject* pTagObj, listTagsObj) {
+                            Tag *pObj = new Tag();
+                            pObj->openFromXml(pTagObj);
+                            if(pCoreObj->m_tagMgr.m_mapDevBlockReadTags.count(pObj->m_devType) > 0) {
+                                QVector<Tag *> &vecTags = pCoreObj->m_tagMgr.m_mapDevBlockReadTags[pObj->m_devType];
+                                vecTags.append(pObj);
+                            } else {
+                                QVector<Tag *> vecTags;
+                                vecTags.append(pObj);
+                                pCoreObj->m_tagMgr.m_mapDevBlockReadTags[pObj->m_devType] = vecTags;
+                            }
+                        }
+                    }
+                } else {
+                    qDebug() << "MainWindow::buildBlockReadTags -> parse error info: " << errorInfo;
+                }
+
+                // Step-3 变量关联块读变量
+                for (int i = 0; i < idToBlockId.size(); ++i) {
+                    int tagId = idToBlockId[i].first.toInt();
+                    Tag *pObj = pCoreObj->m_tagMgr.getTag(tagId);
+                    if(pObj) {
+                        pObj->m_blockReadId = idToBlockId[i].second.toInt();
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}

@@ -38,6 +38,10 @@ public:
     int readIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag) Q_DECL_OVERRIDE;
     // 读变量后处理
     bool afterReadIOTag(void* pObj, RunTimeTag* pTag) Q_DECL_OVERRIDE;
+    // 从块读变量拷贝寄存器数据至普通变量
+    bool copyTagDataFromBlockReadTag(RunTimeTag* pBlockReadTag, RunTimeTag* pTag) Q_DECL_OVERRIDE;
+    // 设置块读变量缓冲区长度
+    void setBlockReadTagBufferLength(RunTimeTag* pBlockReadTag)Q_DECL_OVERRIDE;
 
     // 变量字节序转换为当前主机字节序
     bool convertIOTagBytesToNativeBytes(void* pObj, RunTimeTag* pTag) Q_DECL_OVERRIDE;

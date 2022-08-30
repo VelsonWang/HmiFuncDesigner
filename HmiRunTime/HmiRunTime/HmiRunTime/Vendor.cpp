@@ -223,10 +223,10 @@ bool Vendor::writeIOTag(RunTimeTag* pTag)
                 qint32 iRetryTimes = 0;
                 do {
                     qDebug() << QString("device[%1] try to write tag[id: %2] again! %3/%4")
-                             .arg(this->getDeviceName())
-                             .arg(pTag->id)
-                             .arg(QString::number(iRetryTimes + 1))
-                             .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes));
+                                .arg(this->getDeviceName())
+                                .arg(pTag->id)
+                                .arg(QString::number(iRetryTimes + 1))
+                                .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes));
                     iRetryTimes++;
                     if(m_pVendorPluginObj->writeIOTag(this, m_pPortObj, pTag) == 1) {
                         break;
@@ -238,7 +238,7 @@ bool Vendor::writeIOTag(RunTimeTag* pTag)
             }
             m_pVendorPluginObj->afterWriteIOTag(this, pTag);
         }
-        pTag->dataToVendor.clear();
+        memset((void *)pTag->dataToVendor, 0, pTag->bufLength + 1);
     }
     return true;
 }
@@ -273,7 +273,7 @@ bool Vendor::writeIOTags()
             return false;
         }
         RunTimeTag* pTag = m_readList[i];
-        if(pTag->dataToVendor.size() > 0) {
+        if(pTag->dataToVendor[pTag->bufLength] > 0) {
             if(writeIOTag(pTag)) {
                 this->m_bOffLine = false;
                 this->m_iStartOffLineTime = 0;
@@ -281,8 +281,8 @@ bool Vendor::writeIOTags()
             } else {
                 if(!this->m_bOffLine) {
                     qDebug() << QString("device[%1] start off line! time: %2 ms")
-                             .arg(this->getDeviceName())
-                             .arg(QString::number(QDateTime::currentMSecsSinceEpoch()));
+                                .arg(this->getDeviceName())
+                                .arg(QString::number(QDateTime::currentMSecsSinceEpoch()));
                     this->m_bOffLine = true;
                     this->m_iStartOffLineTime = QDateTime::currentMSecsSinceEpoch();
                     this->m_bOnlineStatus = false;
@@ -308,102 +308,15 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
         clearReadBuffer();
         if(m_pVendorPluginObj && m_pPortObj) {
             m_pVendorPluginObj->beforeReadIOTag(this, pTag);
-#if 0
-            if(pTag->getBlockReadTagId() == "block") { // 块读取变量
-                if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) != 1) {
-                    qint32 iRetryTimes = 0;
-                    do {
-                        qDebug() << QString("device[%1] try to read tag[id: %2] again! %3/%4")
-                                 .arg(this->getDeviceName())
-                                 .arg(pTag->GetTagID())
-                                 .arg(QString::number(iRetryTimes + 1))
-                                 .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes));
-                        iRetryTimes++;
-                        if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) {
-                            break;
-                        }
-                    } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
-                    if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) {
-                        pTag->setReadBlockReadTagSuccess(false);
-                        return false;
-                    }
-                }
-                pTag->setReadBlockReadTagSuccess(true);
-            } else { // 单一变量读取操作
-                RunTimeTag* pBlockReadTag = pTag->getBlockReadTag();
-                if(pBlockReadTag != NULL) {
-                    // 块读取变量读取成功, 变量直接拷贝数据, 否则直接读取单一变量
-                    if(pBlockReadTag->isReadBlockReadTagSuccess()) {
-                        int iBlockRegAddr = pBlockReadTag->GetRegisterAddress() + pBlockReadTag->GetOffset();
-                        int iBlockDataTypeLength = pBlockReadTag->GetDataTypeLength();
-                        int iRegAddr = pTag->GetRegisterAddress() + pTag->GetOffset();
-                        int iDataTypeLength = pTag->GetDataTypeLength();
-                        TTagDataType iDataType = pTag->GetDataType();
 
-                        if(iDataType == TYPE_BOOL) {
-                            int iByteAddr = (iRegAddr - iBlockRegAddr) / 8;
-                            int iBitAddr = (iRegAddr - iBlockRegAddr) % 8;
-                            quint8 buf[1] = {0};
-                            memcpy((void *)&buf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], 1);
-                            pTag->pReadBuf[0] = (buf[0] >> iBitAddr) & 0x01;
-                        } else {
-                            int iByteAddr = (iRegAddr - iBlockRegAddr) * 2;
-                            memcpy((void *)&pTag->pReadBuf[0], (const void *)&pBlockReadTag->pReadBuf[iByteAddr], iDataTypeLength);
-                            // 根据不同协议调整字节顺序
-                            m_pVendorPluginObj->convertIOTagBytesToNativeBytes(this, pTag);
-                        }
-
-                    } else {
-                        if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) != 1) {
-                            qint32 iRetryTimes = 0;
-                            do {
-                                qDebug() << QString("device[%1] try to read tag[id: %2] again! %3/%4")
-                                         .arg(this->getDeviceName())
-                                         .arg(pTag->GetTagID())
-                                         .arg(QString::number(iRetryTimes + 1))
-                                         .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes));
-                                iRetryTimes++;
-                                if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) {
-                                    break;
-                                }
-                            } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
-                            if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) {
-                                return false;
-                            }
-                        }
-                    }
-                } else {
-                    if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) != 1) {
-                        qint32 iRetryTimes = 0;
-                        do {
-                            qDebug() << QString("device[%1] try to read tag[id: %2] again! %3/%4")
-                                     .arg(this->getDeviceName())
-                                     .arg(pTag->GetTagID())
-                                     .arg(QString::number(iRetryTimes + 1))
-                                     .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes));
-                            iRetryTimes++;
-                            if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) {
-                                break;
-                            }
-                        } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
-                        if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) {
-                            return false;
-                        }
-                    }
-                }
-                if(pDBTagObject != NULL) {
-                    pDBTagObject->SetData(pTag->pReadBuf);
-                }
-            }
-#else
             if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) != 1) {
                 qint32 iRetryTimes = 0;
                 do {
                     qDebug() << QString("device[%1] try to read tag[id: %2] again! %3/%4")
-                             .arg(this->getDeviceName())
-                             .arg(pTag->id)
-                             .arg(QString::number(iRetryTimes + 1))
-                             .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes));
+                                .arg(this->getDeviceName())
+                                .arg(pTag->id)
+                                .arg(QString::number(iRetryTimes + 1))
+                                .arg(QString::number(m_pVendorPrivateObj->m_iRetryTimes));
                     iRetryTimes++;
                     if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) {
                         break;
@@ -412,10 +325,30 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
                 if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) {
                     return false;
                 }
-            }
+            } else {
+                pTag->lastReadTime = QDateTime::currentMSecsSinceEpoch();
+                if(pTag->isBlockRead) {
+                    // 变量直接从块读变量拷贝数据
+                    for (int i = 0; i < m_readList.size(); ++i) {
+                        if(!m_bIsRunning) {
+                            return false;
+                        }
 
-            RealTimeDB::instance()->setTagData(pTag->id, pTag->dataFromVendor);
-#endif
+                        RunTimeTag* pRtTagObj = m_readList.at(i);
+                        if(pTag->id == pRtTagObj->id) {
+                            continue;
+                        }
+
+                        if(pTag->id == pRtTagObj->blockReadID) {
+                            if(m_pVendorPluginObj->copyTagDataFromBlockReadTag(pTag, pRtTagObj)) {
+                                pRtTagObj->lastReadTime = QDateTime::currentMSecsSinceEpoch();
+                            } else {
+                                qDebug() << "tag: " << pTag->id << " copy data from tag: "<< pRtTagObj->blockReadID <<" fail!";
+                            }
+                        }
+                    }
+                }
+            }
             m_pVendorPluginObj->afterReadIOTag(this, pTag);
         }
     }
@@ -453,6 +386,12 @@ bool Vendor::readIOTags()
         }
 
         RunTimeTag* pTag = m_readList.at(i);
+
+        // 变量采集周期100ms
+        if((QDateTime::currentMSecsSinceEpoch() - pTag->lastReadTime) < 100) {
+            continue;
+        }
+
         if(readIOTag(pTag)) {
             this->m_bOffLine = false;
             this->m_iStartOffLineTime = 0;
@@ -460,40 +399,20 @@ bool Vendor::readIOTags()
         } else {
             if(!this->m_bOffLine) {
                 qDebug() << QString("device[%1] start off line! time: %2 ms")
-                         .arg(this->getDeviceName())
-                         .arg(QString::number(QDateTime::currentMSecsSinceEpoch()));
+                            .arg(this->getDeviceName())
+                            .arg(QString::number(QDateTime::currentMSecsSinceEpoch()));
                 this->m_bOffLine = true;
                 this->m_iStartOffLineTime = QDateTime::currentMSecsSinceEpoch();
                 this->m_bOnlineStatus = false;
                 return false;
             }
         }
-#if 0
-        if(pTag->getBlockReadTagId() == "block" || m_readList.size() == 1) { // 块读取变量或者只有一个变量
-            if(m_pVendorPrivateObj != NULL) {
-                if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
-                    QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
-                }
-            }
-        } else {
-            IOTag* pBlockReadTag = pTag->getBlockReadTag();
-            if(pBlockReadTag != NULL) {
-                if(!pBlockReadTag->isReadBlockReadTagSuccess()) {
-                    if(m_pVendorPrivateObj != NULL) {
-                        if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
-                            QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
-                        }
-                    }
-                }
-            }
+    }
+
+    if(m_pVendorPrivateObj != NULL) {
+        if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
+            QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
         }
-#else
-        if(m_pVendorPrivateObj != NULL) {
-            if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
-                QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
-            }
-        }
-#endif
     }
 
     //RealTimeDB::instance()->debug();
@@ -609,8 +528,8 @@ bool Vendor::reconnect()
 {
     if(m_pPortObj->getPortType() == PORT_NET) {
         qDebug() << QString("try to reconnect net device[%1]! port name: %2")
-                 .arg(this->getDeviceName())
-                 .arg(this->getPortName());
+                    .arg(this->getDeviceName())
+                    .arg(this->getPortName());
         if(!m_pPortObj->reOpen()) {
             return false;
         }

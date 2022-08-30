@@ -11,32 +11,22 @@
 #include "qprojectcore.h"
 #include <QMessageBox>
 #include <QDebug>
-#include "projdata/Tag.h"
+#include "projdata/tag.h"
 
 
 
 HmiRunTime *g_pHmiRunTime = NULL;
-//RunScript *HmiRunTime::m_pRunScript = NULL;
-QScriptEngine *HmiRunTime::scriptEngine_ = NULL;
 
 HmiRunTime::HmiRunTime(QProjectCore *coreObj, QObject *parent)
     : QObject(parent),
       projCore(coreObj)
 {
-    //m_pRunScript = new RunScript("");
+
 }
 
 HmiRunTime::~HmiRunTime()
 {
-    //    if(m_pRunScript != NULL) {
-    //        delete m_pRunScript;
-    //        m_pRunScript = NULL;
-    //    }
 
-    if(scriptEngine_ != NULL) {
-        delete scriptEngine_;
-        scriptEngine_ = NULL;
-    }
 }
 
 void HmiRunTime::AddPortName(const QString name)
@@ -46,9 +36,107 @@ void HmiRunTime::AddPortName(const QString name)
             return;
         }
     }
-
-    //qDebug()<< "PortName:" << name;
     m_listPortName.append(name);
+}
+
+RunTimeTag *HmiRunTime::createRunTimeTag(Tag *pTagObj)
+{
+    RunTimeTag *pRtTagObj = new RunTimeTag(NULL);
+    pRtTagObj->id = pTagObj->m_iID;
+    pRtTagObj->blockReadID = pTagObj->m_iBlockReadID;
+    pRtTagObj->name = pTagObj->m_szName;
+    pRtTagObj->unit = pTagObj->m_szUnit;
+    pRtTagObj->addrType = pTagObj->m_szAddrType;
+    pRtTagObj->addrOffset = pTagObj->m_szAddrOffset.toInt();
+    pRtTagObj->aAddrType2 = pTagObj->m_szAddrType2;
+    pRtTagObj->addrOffset2 = pTagObj->m_szAddrOffset2.toInt();
+    QString szDataType = pTagObj->m_szDataType;
+    pRtTagObj->writeable = (TWriteAble)pTagObj->m_iWriteable;
+    pRtTagObj->remark = pTagObj->m_szRemark;
+    pRtTagObj->ownGroup = pTagObj->m_szOwnGroup;
+    pRtTagObj->devType = pTagObj->m_szDevType;
+    pRtTagObj->dataType = TYPE_VARIANT;
+    pRtTagObj->bufLength = 1;
+
+    qDebug() << "szDataType:" << szDataType;
+    QStringList listBlockRead;
+    if(pRtTagObj->blockReadID < 1) {
+        // 块读变量 寄存器个数：数据类型
+        if(szDataType.indexOf(":") > -1) {
+            listBlockRead = szDataType.split(":");
+            if(listBlockRead.count() == 2) {
+                szDataType = listBlockRead[1];
+            }
+        }
+    }
+
+    if(szDataType == "bool") {
+        pRtTagObj->dataType = TYPE_BOOL;
+        pRtTagObj->bufLength = 1;
+    } else if(szDataType == "int8") {
+        pRtTagObj->dataType = TYPE_INT8;
+        pRtTagObj->bufLength = 1;
+    } else if(szDataType == "uint8") {
+        pRtTagObj->dataType = TYPE_UINT8;
+        pRtTagObj->bufLength = 1;
+    } else if(szDataType == "int16") {
+        pRtTagObj->dataType = TYPE_INT16;
+        pRtTagObj->bufLength = 2;
+    } else if(szDataType == "uint16") {
+        pRtTagObj->dataType = TYPE_UINT16;
+        pRtTagObj->bufLength = 2;
+    } else if(szDataType == "int32") {
+        pRtTagObj->dataType = TYPE_INT32;
+        pRtTagObj->bufLength = 4;
+    } else if(szDataType == "uint32") {
+        pRtTagObj->dataType = TYPE_UINT32;
+        pRtTagObj->bufLength = 4;
+    } else if(szDataType == "int64") {
+        pRtTagObj->dataType = TYPE_INT64;
+        pRtTagObj->bufLength = 8;
+    } else if(szDataType == "uint64") {
+        pRtTagObj->dataType = TYPE_UINT64;
+        pRtTagObj->bufLength = 8;
+    } else if(szDataType == "float32") {
+        pRtTagObj->dataType = TYPE_FLOAT32;
+        pRtTagObj->bufLength = 4;
+    } else if(szDataType == "float64") {
+        pRtTagObj->dataType = TYPE_FLOAT64;
+        pRtTagObj->bufLength = 8;
+    } else if(szDataType == "bcd8") {
+        pRtTagObj->dataType = TYPE_BCD8;
+        pRtTagObj->bufLength = 1;
+    } else if(szDataType == "bcd16") {
+        pRtTagObj->dataType = TYPE_BCD16;
+        pRtTagObj->bufLength = 2;
+    } else if(szDataType == "bcd32") {
+        pRtTagObj->dataType = TYPE_BCD32;
+        pRtTagObj->bufLength = 3;
+    } else if(szDataType == "ascii2char") {
+        pRtTagObj->dataType = TYPE_ASCII2CHAR;
+        pRtTagObj->bufLength = 2;
+    } else if(szDataType == "string") {
+        pRtTagObj->dataType = TYPE_STRING;
+        pRtTagObj->bufLength = 256;
+    } else if(szDataType == "bytes") {
+        pRtTagObj->dataType = TYPE_BYTES;
+        pRtTagObj->bufLength = 256;
+    }
+
+    // 块读变量
+    if(listBlockRead.count() == 2) {
+        pRtTagObj->dataType = TYPE_BYTES;
+        int num = listBlockRead[0].toInt();
+        pRtTagObj->bufLength = pRtTagObj->bufLength * num;
+        pRtTagObj->isBlockRead = true;
+    }
+
+    pRtTagObj->dataFromVendor = new quint8[pRtTagObj->bufLength];
+    memset((void *)pRtTagObj->dataFromVendor, 0, pRtTagObj->bufLength);
+    pRtTagObj->dataToVendor = new quint8[pRtTagObj->bufLength + 1]; // 最后一个字节标记需要同步数据至PLC等设备
+    memset((void *)pRtTagObj->dataToVendor, 0, pRtTagObj->bufLength + 1);
+
+    return pRtTagObj;
 }
 
 bool HmiRunTime::Load()
@@ -121,91 +209,34 @@ bool HmiRunTime::Load()
 
     /////////////////////////////////////////////
 
-    // load tags and create rtdb
-    foreach(Tag *pTagObj, projCore->m_tagMgr.m_vecTags) {
-        RunTimeTag *pRtTagObj = new RunTimeTag(NULL);
-        pRtTagObj->id = pTagObj->m_iID;
-        pRtTagObj->name = pTagObj->m_szName;
-        pRtTagObj->unit = pTagObj->m_szUnit;
-        pRtTagObj->addrType = pTagObj->m_szAddrType;
-        pRtTagObj->addrOffset = pTagObj->m_szAddrOffset.toInt();
-        pRtTagObj->aAddrType2 = pTagObj->m_szAddrType2;
-        pRtTagObj->addrOffset2 = pTagObj->m_szAddrOffset2.toInt();
-        QString szDataType = pTagObj->m_szDataType;
-        pRtTagObj->writeable = (TWriteAble)pTagObj->m_iWriteable;
-        pRtTagObj->remark = pTagObj->m_szRemark;
-        pRtTagObj->ownGroup = pTagObj->m_szOwnGroup;
-        pRtTagObj->devType = pTagObj->m_szDevType;
-        pRtTagObj->dataType = TYPE_VARIANT;
-        pRtTagObj->bufLength = 1;
-        if(szDataType == "bool") {
-            pRtTagObj->dataType = TYPE_BOOL;
-            pRtTagObj->bufLength = 1;
-        } else if(szDataType == "int8") {
-            pRtTagObj->dataType = TYPE_INT8;
-            pRtTagObj->bufLength = 1;
-        } else if(szDataType == "uint8") {
-            pRtTagObj->dataType = TYPE_UINT8;
-            pRtTagObj->bufLength = 1;
-        } else if(szDataType == "int16") {
-            pRtTagObj->dataType = TYPE_INT16;
-            pRtTagObj->bufLength = 2;
-        } else if(szDataType == "uint16") {
-            pRtTagObj->dataType = TYPE_UINT16;
-            pRtTagObj->bufLength = 2;
-        } else if(szDataType == "int32") {
-            pRtTagObj->dataType = TYPE_INT32;
-            pRtTagObj->bufLength = 4;
-        } else if(szDataType == "uint32") {
-            pRtTagObj->dataType = TYPE_UINT32;
-            pRtTagObj->bufLength = 4;
-        } else if(szDataType == "int64") {
-            pRtTagObj->dataType = TYPE_INT64;
-            pRtTagObj->bufLength = 8;
-        } else if(szDataType == "uint64") {
-            pRtTagObj->dataType = TYPE_UINT64;
-            pRtTagObj->bufLength = 8;
-        } else if(szDataType == "float32") {
-            pRtTagObj->dataType = TYPE_FLOAT32;
-            pRtTagObj->bufLength = 4;
-        } else if(szDataType == "float64") {
-            pRtTagObj->dataType = TYPE_FLOAT64;
-            pRtTagObj->bufLength = 8;
-        } else if(szDataType == "bcd8") {
-            pRtTagObj->dataType = TYPE_BCD8;
-            pRtTagObj->bufLength = 1;
-        } else if(szDataType == "bcd16") {
-            pRtTagObj->dataType = TYPE_BCD16;
-            pRtTagObj->bufLength = 2;
-        } else if(szDataType == "bcd32") {
-            pRtTagObj->dataType = TYPE_BCD32;
-            pRtTagObj->bufLength = 3;
-        } else if(szDataType == "ascii2char") {
-            pRtTagObj->dataType = TYPE_ASCII2CHAR;
-            pRtTagObj->bufLength = 2;
-        } else if(szDataType == "string") {
-            pRtTagObj->dataType = TYPE_STRING;
-            pRtTagObj->bufLength = 256;
-        } else if(szDataType == "bytes") {
-            pRtTagObj->dataType = TYPE_BYTES;
-            pRtTagObj->bufLength = 256;
-        }
-        pRtTagObj->dataFromVendor.resize(pRtTagObj->bufLength);
-        pRtTagObj->dataToVendor.resize(pRtTagObj->bufLength);
-
-        RealTimeDB::instance()->rtdb.insert(pRtTagObj->id, pRtTagObj);
-
-        Vendor *pVendor = FindVendor(pRtTagObj->devType);
+    // load block read tags and create rtdb
+    foreach (QString dev, projCore->m_tagMgr.m_mapDevBlockReadTags.keys()) {
+        Vendor *pVendor = FindVendor(dev);
         if(pVendor != NULL) {
-            pVendor->addIOTagToDeviceTagList(pRtTagObj);
+            foreach(Tag *pTagObj, projCore->m_tagMgr.m_mapDevBlockReadTags[dev]) {
+                RunTimeTag *pRtTagObj = createRunTimeTag(pTagObj);
+                if(pRtTagObj) {
+                    RealTimeDB::instance()->rtdb.insert(pRtTagObj->id, pRtTagObj);
+                    if(pVendor->m_pVendorPluginObj) {
+                        pVendor->m_pVendorPluginObj->setBlockReadTagBufferLength(pRtTagObj);
+                    }
+                    pVendor->addIOTagToDeviceTagList(pRtTagObj);
+                }
+            }
         }
     }
 
-    //-----------------加载JavaScript------------------//
-    //    if(m_pRunScript == NULL) {
-    //        m_pRunScript = new RunScript("");
-    //    }
-    //    m_pRunScript->loadScriptObjects();
+    // load tags and create rtdb
+    foreach(Tag *pTagObj, projCore->m_tagMgr.m_vecTags) {
+        RunTimeTag *pRtTagObj = createRunTimeTag(pTagObj);
+        if(pRtTagObj) {
+            RealTimeDB::instance()->rtdb.insert(pRtTagObj->id, pRtTagObj);
+            Vendor *pVendor = FindVendor(pRtTagObj->devType);
+            if(pVendor != NULL) {
+                pVendor->addIOTagToDeviceTagList(pRtTagObj);
+            }
+        }
+    }
 
     return true;
 }
@@ -238,20 +269,6 @@ void HmiRunTime::Start()
     foreach(PortThread *pPortThread, m_listPortThread) {
         pPortThread->Start();
     }
-
-    // 运行启动运行脚本
-    //    if(m_pRunScript == NULL) {
-    //        m_pRunScript = new RunScript("");
-    //    }
-
-    //    m_pRunScript->runOnStartScripts();
-
-    //    // 运行定时运行脚本
-    //    if(m_pRunScript == NULL) {
-    //        m_pRunScript = new RunScript("");
-    //    }
-
-    //    m_pRunScript->runOnPeriodScripts();
 }
 
 void HmiRunTime::Stop()
@@ -259,8 +276,6 @@ void HmiRunTime::Stop()
     foreach(PortThread *pPortThread, m_listPortThread) {
         pPortThread->Stop();
     }
-
-    //m_pRunScript->stopRunOnPeriodScripts();
 }
 
 Vendor *HmiRunTime::FindVendor(const QString name)
@@ -275,22 +290,6 @@ Vendor *HmiRunTime::FindVendor(const QString name)
 
     return NULL;
 }
-
-
-QJsonObject HmiRunTime::LoadJsonObjectFromFile(SaveFormat saveFormat, QString f)
-{
-    QFile loadFile(f);
-
-    if(!loadFile.open(QIODevice::ReadOnly)) {
-        return QJsonObject();
-    }
-
-    QByteArray loadData = loadFile.readAll();
-    QJsonDocument loadDoc(saveFormat == Json ? QJsonDocument::fromJson(loadData) : QJsonDocument::fromBinaryData(loadData));
-    loadFile.close();
-    return loadDoc.object();
-}
-
 
 bool HmiRunTime::event(QEvent *event)
 {
@@ -315,121 +314,3 @@ bool HmiRunTime::event(QEvent *event)
 
     return QObject::event(event);
 }
-
-/**
- * @brief HmiRunTime::getProjectName
- * @details 获取工程名称
- * @param szProjectPath
- * @return
- */
-QString HmiRunTime::getProjectName(const QString &szProjectPath)
-{
-    QFileInfo srcFileInfo(szProjectPath);
-    QString szProjName = "";
-
-    if(srcFileInfo.isDir()) {
-        QDir sourceDir(szProjectPath);
-        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-
-        foreach(const QString &fileName, fileNames) {
-            if(fileName.endsWith("pdt")) {
-                QFileInfo info(fileName);
-                szProjName = info.baseName();
-            }
-        }
-    }
-
-    return szProjName;
-}
-
-/**
- * @brief HmiRunTime::doMessage
- * @details 处理消息
- * @param msg
- */
-void HmiRunTime::doMessage(QString msg)
-{
-    if(msg.indexOf(QString("VALUE_CHANGE")) != -1) {
-        QString tagId = msg.replace(QString("VALUE_CHANGE "), QString(""));
-
-        //        // 运行条件运行脚本
-        //        if(m_pRunScript == NULL) {
-        //            m_pRunScript = new RunScript("");
-        //        }
-
-        //        m_pRunScript->runOnConditionScripts(tagId);
-    }
-}
-
-
-/**
- * @brief HmiRunTime::execScriptFunction
- * @details 执行脚本功能
- * @param szFuncList 功能函数事件字符
- * @param szMatchEvent 匹配执行的事件
- */
-void HmiRunTime::execScriptFunction(const QStringList &szFuncList,
-                                    const QString &szMatchEvent)
-{
-    if(scriptEngine_ != NULL && szFuncList.size() > 0 && szMatchEvent != "") {
-        foreach(QString szFuncEv, szFuncList) {
-            QStringList listFuncEv = szFuncEv.split(':');
-
-            if(listFuncEv.size() == 2) {
-                QString szFunc = listFuncEv.at(0);
-                QString szEv = listFuncEv.at(1);
-
-                if(szEv == szMatchEvent) {
-                    //                    QScriptValue result = scriptEngine_->evaluate(szFunc);
-
-                    //                    if(result.isError()) {
-                    //                        QString err = QString::fromLatin1("File:%1 Function:%2 script syntax evaluate error: %3")
-                    //                                      .arg(__FILE__)
-                    //                                      .arg(__FUNCTION__)
-                    //                                      .arg(result.toString());
-                    //                        qCritical() << err;
-                    //                        return;
-                    //                    }
-                }
-            }
-        }
-    }
-}
-
-
-
-/**
- * @brief HmiRunTime::execScriptText
- * @details 执行脚本文本
- * @param szScriptText 脚本文本
- * @param szMatchEvent 匹配执行的事件
- */
-void HmiRunTime::execScriptText(const QString &szScriptText,
-                                const QString &szMatchEvent)
-{
-    if(scriptEngine_ != NULL && szScriptText != "" && szMatchEvent != "") {
-        QStringList listFuncEv = szScriptText.split("][");
-
-        if(listFuncEv.size() == 2) {
-            QString szEv = listFuncEv.at(0);
-            QString szScript = listFuncEv.at(1);
-
-            if(szEv == szMatchEvent) {
-                //                QScriptValue result = scriptEngine_->evaluate(szScript);
-
-                //                if(result.isError()) {
-                //                    QString err = QString::fromLatin1("File:%1 Function:%2 script syntax evaluate error: %3")
-                //                                  .arg(__FILE__)
-                //                                  .arg(__FUNCTION__)
-                //                                  .arg(result.toString());
-                //                    qCritical() << err;
-                //                    return;
-                //                }
-            }
-        }
-    }
-}
-
-
-
-

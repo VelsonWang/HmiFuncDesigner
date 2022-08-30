@@ -112,6 +112,8 @@ private:
     void createToolbars();
     // 拷贝系统变量
     void copySystemTags();
+    // 生成块读变量
+    bool buildBlockReadTags();
 
 private:
     QString m_szCurItem;

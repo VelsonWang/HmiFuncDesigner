@@ -5,7 +5,7 @@
 
 Modbus::Modbus(QObject *parent)
     : QObject(parent),
-      iFacePort_(nullptr)
+      iFacePort(nullptr)
 {
 }
 
@@ -18,14 +18,14 @@ Modbus::~Modbus()
 void Modbus::setPort(IPort *pPort)
 {
     if(pPort != nullptr) {
-        iFacePort_ = pPort;
+        iFacePort = pPort;
     }
 }
 
 
 IPort *Modbus::getPort()
 {
-    return iFacePort_;
+    return iFacePort;
 }
 
 
@@ -140,401 +140,6 @@ quint16 Modbus::getRegNum(RunTimeTag* pTag)
     return byRet;
 }
 
-/**
- * @brief Modbus::insertBlockReadTagToReadList
- * @details 加入块读变量至待读变量标签列表
- */
-void Modbus::insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead)
-{
-#if 0
-#define CM0X_MAX    (1024)
-#define CM1X_MAX    (1024)
-#define CM3X_MAX    (100)
-#define CM4X_MAX    (100)
-
-    QVector<RunTimeTag*> vecCm0x;
-    QVector<RunTimeTag*> vecCm1x;
-    QVector<RunTimeTag*> vecCm3x;
-    QVector<RunTimeTag*> vecCm4x;
-
-    for (int i = 0; i < listRead.size(); ++i) {
-        RunTimeTag* pTag = listRead.at(i);
-        TModbus_CPUMEM cm = getCpuMem(pTag->addrType);
-
-        switch(cm) {
-            case CM_0x:
-                vecCm0x.append(pTag);
-                break;
-            case CM_1x:
-                vecCm1x.append(pTag);
-                break;
-            case CM_3x:
-                vecCm3x.append(pTag);
-                break;
-            case CM_4x:
-                vecCm4x.append(pTag);
-                break;
-            default:
-                break;
-        }
-    }
-
-    if(vecCm0x.size() > 1) {
-        int iMin = CM0X_MAX;
-        int iMax = 0;
-        for (int i = 0; i < vecCm0x.size(); ++i) {
-            RunTimeTag* pTag = vecCm0x.at(i);
-            if(pTag->addrOffset > iMax) {
-                iMax = pTag->addrOffset;
-            }
-            if(pTag->addrOffset < iMin) {
-                iMin = pTag->addrOffset;
-            }
-        }
-
-        int iRange = (iMax - iMin) / CM0X_MAX;
-        if ((iMax - iMin) % CM0X_MAX) {
-            iRange++;
-        }
-
-        RunTimeTag* pTag = vecCm0x.at(0);
-        for(int i = 0; i < iRange; i++) {
-            int iStartAddr = iMin + i * CM0X_MAX;
-            QString szTagId = QString("block_0x_%1").arg(i, 4, 16, QChar('0'));
-            int iLen = iMax - iStartAddr + 1;
-
-            if (iLen == 0) {
-                continue;
-            } else if (iLen > CM0X_MAX) {
-                iLen = CM0X_MAX;
-            }
-            RunTimeTag *pIOTag = NULL;
-            int tMin, tMax;
-            for (int i = 0; i < vecCm0x.size(); ++i) {
-                RunTimeTag* pChangeTag = vecCm0x.at(i);
-                int iChangeTagAddr = pChangeTag->addrOffset;
-                int iChangeTagLen = pChangeTag->bufLength;
-                if (((iChangeTagAddr >= iStartAddr) && (iChangeTagAddr < iStartAddr + iLen))
-                        || ((iChangeTagAddr + iChangeTagLen >= iStartAddr) && (iChangeTagAddr + iChangeTagLen < iStartAddr + iLen))
-                   ) {
-                    if (pIOTag == NULL) {
-                        tMin = iChangeTagAddr;
-                        tMax = iChangeTagAddr + iChangeTagLen;
-                        pIOTag = new RunTimeTag();
-                        pIOTag->SetTagID(szTagId);
-                        pIOTag->SetDeviceName(pTag->GetDeviceName());
-                        pIOTag->SetPermissionType(pTag->GetPermissionType());
-                        pIOTag->SetDeviceAddress(pTag->GetDeviceAddress());
-                        pIOTag->SetRegisterArea(pTag->GetRegisterArea());
-                        pIOTag->SetDataType(TYPE_BYTES);
-                        pIOTag->SetOffset(0);
-                        pIOTag->SetMaxValue(1);
-                        pIOTag->SetMinValue(0);
-                        pIOTag->SetInitializeValue(0);
-                        pIOTag->SetScale(1);
-                        pIOTag->SetInFrameAddress(-1);
-                        pIOTag->setBlockReadTagId("block");
-                        pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(NULL);
-                        listRead.push_front(pIOTag);
-                    } else {
-                        if (iChangeTagAddr < tMin) {
-                            tMin = iChangeTagAddr;
-                        }
-                        if (iChangeTagAddr + iChangeTagLen > tMax) {
-                            tMax = iChangeTagAddr + iChangeTagLen;
-                        }
-                    }
-                    pChangeTag->setBlockReadTagId(szTagId);
-                    pChangeTag->setReadBlockReadTagSuccess(false);
-                    pChangeTag->setBlockReadTag(pIOTag);
-                }
-            }
-            if (pIOTag) {
-                iLen = tMax - tMin;
-                int bufLen = iLen / 8;
-                if (iLen % 8) {
-                    bufLen++;
-                }
-                pIOTag->SetRegisterAddress(tMin);
-                pIOTag->SetTagBufferLength(bufLen);
-            }
-        }
-    }
-
-    if(vecCm1x.size() > 1) {
-        int iMin = CM1X_MAX;
-        int iMax = 0;
-        for (int i = 0; i < vecCm1x.size(); ++i) {
-            RunTimeTag* pTag = vecCm1x.at(i);
-            int iRegAddr = pTag->GetRegisterAddress() + pTag->GetOffset();
-            if(iRegAddr > iMax) {
-                iMax = iRegAddr;
-            }
-            if(iRegAddr < iMin) {
-                iMin = iRegAddr;
-            }
-        }
-
-        int iRange = (iMax - iMin) / CM1X_MAX;
-        if ((iMax - iMin) % CM1X_MAX) {
-            iRange++;
-        }
-
-        RunTimeTag* pTag = vecCm1x.at(0);
-        for(int i = 0; i < iRange; i++) {
-            int iStartAddr = iMin + i * CM1X_MAX;
-            QString szTagId = QString("block_1x_%1").arg(i, 4, 16, QChar('0'));
-            int iLen = iMax - iStartAddr + 1;
-
-            if (iLen == 0) {
-                continue;
-            } else if (iLen > CM1X_MAX) {
-                iLen = CM1X_MAX;
-            }
-            RunTimeTag *pIOTag = NULL;
-            int tMin, tMax;
-            for (int i = 0; i < vecCm1x.size(); ++i) {
-                RunTimeTag* pChangeTag = vecCm1x.at(i);
-                int iChangeTagAddr = pChangeTag->GetRegisterAddress() + pChangeTag->GetOffset();
-                int iChangeTagLen = pChangeTag->GetDataTypeLength();
-                if (((iChangeTagAddr >= iStartAddr) && (iChangeTagAddr < iStartAddr + iLen))
-                        || ((iChangeTagAddr + iChangeTagLen >= iStartAddr) && (iChangeTagAddr + iChangeTagLen < iStartAddr + iLen))
-                   ) {
-                    if (pIOTag == NULL) {
-                        tMin = iChangeTagAddr;
-                        tMax = iChangeTagAddr + iChangeTagLen;
-                        pIOTag = new IOTag();
-                        pIOTag->SetTagID(szTagId);
-                        pIOTag->SetDeviceName(pTag->GetDeviceName());
-                        pIOTag->SetPermissionType(pTag->GetPermissionType());
-                        pIOTag->SetDeviceAddress(pTag->GetDeviceAddress());
-                        pIOTag->SetRegisterArea(pTag->GetRegisterArea());
-                        pIOTag->SetDataType(TYPE_BYTES);
-                        pIOTag->SetOffset(0);
-                        pIOTag->SetMaxValue(1);
-                        pIOTag->SetMinValue(0);
-                        pIOTag->SetInitializeValue(0);
-                        pIOTag->SetScale(1);
-                        pIOTag->SetInFrameAddress(-1);
-                        pIOTag->setBlockReadTagId("block");
-                        pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(NULL);
-                        listRead.push_front(pIOTag);
-                    } else {
-                        if (iChangeTagAddr < tMin) {
-                            tMin = iChangeTagAddr;
-                        }
-                        if (iChangeTagAddr + iChangeTagLen > tMax) {
-                            tMax = iChangeTagAddr + iChangeTagLen;
-                        }
-                    }
-                    pChangeTag->setBlockReadTagId(szTagId);
-                    pChangeTag->setReadBlockReadTagSuccess(false);
-                    pChangeTag->setBlockReadTag(pIOTag);
-                }
-            }
-            if (pIOTag) {
-                iLen = tMax - tMin;
-                int bufLen = iLen / 8;
-                if (iLen % 8) {
-                    bufLen++;
-                }
-                pIOTag->SetRegisterAddress(tMin);
-                pIOTag->SetTagBufferLength(bufLen);
-            }
-        }
-    }
-
-    if(vecCm3x.size() > 1) {
-        int iMin = CM3X_MAX;
-        int iMax = 0;
-        for (int i = 0; i < vecCm3x.size(); ++i) {
-            RunTimeTag* pTag = vecCm3x.at(i);
-            int iRegAddr = pTag->GetRegisterAddress() + pTag->GetOffset();
-            int iRegLen = pTag->GetDataTypeLength();
-            iRegLen = iRegLen / 2 + (iRegLen % 2);
-            if (iRegAddr < iMin) {
-                iMin = iRegAddr;
-            }
-            if (iRegAddr + iRegLen > iMax) {
-                iMax = iRegAddr + iRegLen;
-            }
-        }
-
-        int iRange = (iMax - iMin) / CM3X_MAX;
-        if ((iMax - iMin) % CM3X_MAX) {
-            iRange++;
-        }
-
-        RunTimeTag* pTag = vecCm3x.at(0);
-        for(int i = 0; i < iRange; i++) {
-            int iStartAddr = iMin + i * CM3X_MAX;
-            QString szTagId = QString("block_3x_%1").arg(i, 4, 16, QChar('0'));
-            int iLen = iMax - iStartAddr;
-
-            if (iLen == 0) {
-                continue;
-            } else if (iLen > CM3X_MAX) {
-                iLen = CM3X_MAX;
-            }
-            RunTimeTag *pIOTag = NULL;
-            int tMin, tMax;
-            for (int i = 0; i < vecCm3x.size(); ++i) {
-                RunTimeTag* pChangeTag = vecCm3x.at(i);
-                int iChangeTagAddr = pChangeTag->GetRegisterAddress() + pChangeTag->GetOffset();
-                int iChangeTagLen = pChangeTag->GetDataTypeLength();
-                iChangeTagLen = iChangeTagLen / 2 + iChangeTagLen % 2;
-                if (((iChangeTagAddr >= iStartAddr) && (iChangeTagAddr < iStartAddr + iLen))
-                        || ((iChangeTagAddr + iChangeTagLen >= iStartAddr) && (iChangeTagAddr + iChangeTagLen < iStartAddr + iLen))
-                   ) {
-                    if (pIOTag == NULL) {
-                        tMin = iChangeTagAddr;
-                        tMax = iChangeTagAddr + iChangeTagLen;
-                        pIOTag = new IOTag();
-                        pIOTag->SetTagID(szTagId);
-                        pIOTag->SetDeviceName(pTag->GetDeviceName());
-                        pIOTag->SetPermissionType(pTag->GetPermissionType());
-                        pIOTag->SetDeviceAddress(pTag->GetDeviceAddress());
-                        pIOTag->SetRegisterArea(pTag->GetRegisterArea());
-                        pIOTag->SetDataType(TYPE_BYTES);
-                        pIOTag->SetOffset(0);
-                        pIOTag->SetMaxValue(65536);
-                        pIOTag->SetMinValue(0);
-                        pIOTag->SetInitializeValue(0);
-                        pIOTag->SetScale(1);
-                        pIOTag->SetInFrameAddress(-1);
-                        pIOTag->setBlockReadTagId("block");
-                        pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(NULL);
-                        listRead.push_front(pIOTag);
-                    } else {
-                        if (iChangeTagAddr < tMin) {
-                            tMin = iChangeTagAddr;
-                        }
-                        if (iChangeTagAddr + iChangeTagLen > tMax) {
-                            tMax = iChangeTagAddr + iChangeTagLen;
-                        }
-                    }
-                    pChangeTag->setBlockReadTagId(szTagId);
-                    pChangeTag->setReadBlockReadTagSuccess(false);
-                    pChangeTag->setBlockReadTag(pIOTag);
-                }
-            }
-            if (pIOTag) {
-                iLen = tMax - tMin;
-                int bufLen = iLen * 2;
-                pIOTag->SetRegisterAddress(tMin);
-                pIOTag->SetTagBufferLength(bufLen);
-            }
-        }
-    }
-
-    if(vecCm4x.size() > 1) {
-        int iMin = CM4X_MAX;
-        int iMax = 0;
-        //寻找寄存器边界
-        for (int i = 0; i < vecCm4x.size(); ++i) {
-            RunTimeTag* pTag = vecCm4x.at(i);
-            int iRegAddr = pTag->GetRegisterAddress() + pTag->GetOffset();
-            int iRegLen = pTag->GetDataTypeLength();
-            iRegLen = iRegLen / 2 + (iRegLen % 2);
-            if (iRegAddr < iMin) {
-                iMin = iRegAddr;
-            }
-            if(iRegAddr + iRegLen > iMax) {
-                iMax = iRegAddr + iRegLen;
-            }
-        }
-
-        int iRange = (iMax - iMin) / CM4X_MAX;
-        if((iMax - iMin) % CM4X_MAX) {
-            iRange++;
-        }
-
-        RunTimeTag* pTag = vecCm4x.at(0);
-        for(int i = 0; i < iRange; i++) {
-            int iStartAddr = iMin + i * CM4X_MAX;
-            QString szTagId = QString("block_4x_%1").arg(i, 4, 16, QChar('0'));
-            int iLen = iMax - iStartAddr;
-
-            if (iLen == 0) {
-                continue;
-            } else if (iLen > CM4X_MAX) {
-                iLen = CM4X_MAX;
-            }
-            RunTimeTag *pIOTag = NULL;
-            int tMin, tMax;
-            for (int k = 0; k < vecCm4x.size(); ++k) {
-                RunTimeTag* pChangeTag = vecCm4x.at(k);
-                int iChangeTagAddr = pChangeTag->GetRegisterAddress() + pChangeTag->GetOffset();
-                int iChangeTagLen = pChangeTag->GetDataTypeLength();
-                iChangeTagLen = iChangeTagLen / 2 + iChangeTagLen % 2;
-                if(  ((iChangeTagAddr >= iStartAddr) && (iChangeTagAddr < iStartAddr + iLen))
-                        || ((iChangeTagAddr + iChangeTagLen >= iStartAddr) && (iChangeTagAddr + iChangeTagLen < iStartAddr + iLen))
-                  ) {
-                    if (pIOTag == NULL) {
-                        tMin = iChangeTagAddr;
-                        tMax = iChangeTagAddr + iChangeTagLen;
-                        pIOTag = new IOTag();
-                        pIOTag->SetTagID(szTagId);
-                        pIOTag->SetDeviceName(pTag->GetDeviceName());
-                        pIOTag->SetPermissionType(pTag->GetPermissionType());
-                        pIOTag->SetDeviceAddress(pTag->GetDeviceAddress());
-                        pIOTag->SetRegisterArea(pTag->GetRegisterArea());
-                        pIOTag->SetDataType(TYPE_BYTES);
-                        pIOTag->SetOffset(0);
-                        pIOTag->SetMaxValue(65536);
-                        pIOTag->SetMinValue(0);
-                        pIOTag->SetInitializeValue(0);
-                        pIOTag->SetScale(1);
-                        pIOTag->SetInFrameAddress(-1);
-                        pIOTag->setBlockReadTagId("block");
-                        pIOTag->setReadBlockReadTagSuccess(false);
-                        pIOTag->setBlockReadTag(NULL);
-                        listRead.push_front(pIOTag);
-                    } else {
-                        if (iChangeTagAddr < tMin) {
-                            tMin = iChangeTagAddr;
-                        }
-                        if (iChangeTagAddr + iChangeTagLen > tMax) {
-                            tMax = iChangeTagAddr + iChangeTagLen;
-                        }
-                    }
-                    pChangeTag->setBlockReadTagId(szTagId);
-                    pChangeTag->setReadBlockReadTagSuccess(false);
-                    pChangeTag->setBlockReadTag(pIOTag);
-                }
-            }
-            if (pIOTag) {
-                iLen = tMax - tMin;
-                int bufLen = iLen * 2;
-                pIOTag->SetRegisterAddress(tMin);
-                pIOTag->SetTagBufferLength(bufLen);
-            }
-        }
-    }
-#if 0
-    qDebug() << "------------------------------------";
-    for (int i = 0; i < listRead.size(); ++i) {
-        RunTimeTag* pTag = listRead.at(i);
-        qDebug() << pTag->GetTagID()
-                 << pTag->getBlockReadTagId()
-                 << pTag->GetRegisterArea()
-                 << pTag->GetRegisterAddress()
-                 << pTag->GetOffset()
-                 << pTag->GetDataTypeLength();
-    }
-#endif
-    vecCm0x.clear();
-    vecCm1x.clear();
-    vecCm3x.clear();
-    vecCm4x.clear();
-#endif
-}
-
-
-
 #if 0
 
     例如一个数据int32 = 0x1234 5678，启用后：
@@ -557,10 +162,10 @@ void Modbus::insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead)
 /// \param iLen 待改变的数据长度
 ///
 void Modbus::modbusChangeData(bool bAddr8, bool bAddr16, bool bAddr32,
-                              bool bAddr64, QByteArray &data, quint32 iLen)
+                              bool bAddr64, quint8 *data, quint32 iLen)
 {
     quint8 buffer[32] = {0};
-    memcpy((void *)buffer, (void *)data.data(), iLen);
+    memcpy((void *)buffer, (void *)data, iLen);
     // 8位逆序
     if(bAddr8) {
         buffer[0] = byteSwitchHigh4bitLow4bit(buffer[0]);
@@ -644,9 +249,8 @@ void Modbus::modbusChangeData(bool bAddr8, bool bAddr16, bool bAddr32,
         }
     }
 
-    data.clear();
     for(quint32 i = 0; i < iLen; i++) {
-        data.append((char) buffer[i]);
+        data[i] = buffer[i];
     }
 }
 

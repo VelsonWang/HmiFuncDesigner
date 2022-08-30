@@ -43,25 +43,38 @@ void TimerTask::timerUpdate()
 
     // 系统变量--年
     id = RealTimeDB::instance()->tagId("year");
-    RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.year()));
+    quint8 buffer[2];
+    memset((void *)buffer, 0, 2);
+    uint16ToBytes(date.year(), buffer);
+    RealTimeDB::instance()->setTagData(id, buffer, 2);
 
     // 系统变量--月
     id = RealTimeDB::instance()->tagId("month");
-    RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.month()));
+    memset((void *)buffer, 0, 2);
+    uint16ToBytes(date.month(), buffer);
+    RealTimeDB::instance()->setTagData(id, buffer, 2);
 
     // 系统变量--日
     id = RealTimeDB::instance()->tagId("day");
-    RealTimeDB::instance()->setTagData(id, uint16ToBytes(date.day()));
+    memset((void *)buffer, 0, 2);
+    uint16ToBytes(date.day(), buffer);
+    RealTimeDB::instance()->setTagData(id, buffer, 2);
 
     // 系统变量--时
     id = RealTimeDB::instance()->tagId("hour");
-    RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.hour()));
+    memset((void *)buffer, 0, 2);
+    uint16ToBytes(time.hour(), buffer);
+    RealTimeDB::instance()->setTagData(id, buffer, 2);
 
     // 系统变量--分
     id = RealTimeDB::instance()->tagId("minute");
-    RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.minute()));
+    memset((void *)buffer, 0, 2);
+    uint16ToBytes(time.minute(), buffer);
+    RealTimeDB::instance()->setTagData(id, buffer, 2);
 
     // 系统变量--秒
     id = RealTimeDB::instance()->tagId("second");
-    RealTimeDB::instance()->setTagData(id, uint16ToBytes(time.second()));
+    memset((void *)buffer, 0, 2);
+    uint16ToBytes(time.second(), buffer);
+    RealTimeDB::instance()->setTagData(id, buffer, 2);
 }

@@ -4,6 +4,12 @@
 #include <QObject>
 #include "../IDevicePlugin/IDevicePlugin.h"
 
+typedef struct tagTagInfo {
+    int id;
+    quint32 offset;
+    quint32 length;
+    bool use;
+} TTagInfo;
 
 class ModbusRTU : public QObject, IDevicePlugin
 {
@@ -24,9 +30,14 @@ public:
     void readProperties(QString &szProperties, QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
     // 设置设备属性
     void setDeviceProperty(QVector<QPair<QString, QString>>& properties) Q_DECL_OVERRIDE;
+    // 生成块读变量
+    bool buildBlockReadTags(const QString &xmlDevTags, const QString &properties, QString &xmlDevBlockReadTags, QVector<QPair<QString, QString>>& idToBlockId) Q_DECL_OVERRIDE;
 
     // 获取设备描述信息
     QString getDeviceDescInfo() Q_DECL_OVERRIDE;
+
+private:
+    void loadInfos(QXmlStreamReader *r, QMap<QString, QVector<TTagInfo>> &infos, QString &dev);
 
 private:
     QVector<QPair<QString, QString>> m_properties; // 插件私有属性
