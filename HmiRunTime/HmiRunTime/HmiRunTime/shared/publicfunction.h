@@ -187,387 +187,360 @@ inline quint8 byteSwitchHigh4bitLow4bit(quint8 dat)
     return tmp;
 }
 
-inline QByteArray boolToBytes(bool val)
+inline void boolToBytes(bool val, quint8* pDat)
 {
-    char ch = val ? 1 : 0;
-    QByteArray ba;
-    ba.append(ch);
-    return ba;
-}
-
-inline bool bytesToBool(QByteArray val)
-{
-    char ch = 0;
-    if(val.size() >= 1) {
-        ch = val.at(0);
+    if(pDat) {
+        pDat[0] = val ? 1 : 0;
     }
-    return (ch != 0);
 }
 
-inline QByteArray int8ToBytes(qint8 val)
+inline bool bytesToBool(quint8* pDat)
 {
-    QByteArray ba;
-    ba.append(val);
-    return ba;
+    if(pDat) {
+        return (pDat[0] != 0);
+    }
+    return false;
 }
 
-inline qint8 bytesToInt8(QByteArray val)
+inline void int8ToBytes(qint8 val, quint8* pDat)
 {
-    if(val.size() >= 1) {
-        return val.at(0);
+    if(pDat) {
+        pDat[0] = (quint8)val;
+    }
+}
+
+inline qint8 bytesToInt8(quint8* pDat)
+{
+    if(pDat) {
+        return (qint8)pDat[0];
     }
     return 0;
 }
 
-inline QByteArray uint8ToBytes(quint8 val)
+inline void uint8ToBytes(quint8 val, quint8* pDat)
 {
-    QByteArray ba;
-    ba.append((char)val);
-    return ba;
+    if(pDat) {
+        pDat[0] = val;
+    }
 }
 
-inline quint8 bytesToUint8(QByteArray val)
+inline quint8 bytesToUint8(quint8* pDat)
 {
-    if(val.size() >= 1) {
-        quint8 v = (quint8)val.at(0);
-        return v;
+    if(pDat) {
+        return pDat[0];
     }
     return 0;
 }
 
-inline QByteArray int16ToBytes(qint16 val)
+inline void int16ToBytes(qint16 val, quint8* pDat)
 {
     union data {
         qint16 val;
         quint8 byte[2];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+    }
 }
 
-inline qint16 bytesToInt16(QByteArray val)
+inline qint16 bytesToInt16(quint8* pDat)
 {
-    if(val.size() >= 2) {
+    if(pDat) {
         union data {
             qint16 val;
             quint8 byte[2];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
         return dat.val;
     }
     return 0;
 }
 
-inline QByteArray uint16ToBytes(quint16 val)
+inline void uint16ToBytes(quint16 val, quint8* pDat)
 {
     union data {
         quint16 val;
         quint8 byte[2];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+    }
 }
 
-inline quint16 bytesToUint16(QByteArray val)
+inline quint16 bytesToUint16(quint8* pDat)
 {
-    if(val.size() >= 2) {
+    if(pDat) {
         union data {
             quint16 val;
             quint8 byte[2];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
         return dat.val;
     }
     return 0;
 }
 
-inline QByteArray int32ToBytes(qint32 val)
+inline void int32ToBytes(qint32 val, quint8* pDat)
 {
     union data {
         qint32 val;
         quint8 byte[4];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-    ba.append((char)dat.byte[2]);
-    ba.append((char)dat.byte[3]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+        pDat[2] = dat.byte[2];
+        pDat[3] = dat.byte[3];
+    }
 }
 
-inline qint32 bytesToInt32(QByteArray val)
+inline qint32 bytesToInt32(quint8* pDat)
 {
-    if(val.size() >= 4) {
+    if(pDat) {
         union data {
             qint32 val;
             quint8 byte[4];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
-        dat.byte[2] = (quint8)val.at(2);
-        dat.byte[3] = (quint8)val.at(3);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
+        dat.byte[2] = pDat[2];
+        dat.byte[3] = pDat[3];
         return dat.val;
     }
     return 0;
 }
 
-inline QByteArray uint32ToBytes(quint32 val)
+inline void uint32ToBytes(quint32 val, quint8* pDat)
 {
     union data {
         quint32 val;
         quint8 byte[4];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-    ba.append((char)dat.byte[2]);
-    ba.append((char)dat.byte[3]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+        pDat[2] = dat.byte[2];
+        pDat[3] = dat.byte[3];
+    }
 }
 
-inline quint32 bytesToUint32(QByteArray val)
+inline quint32 bytesToUint32(quint8* pDat)
 {
-    if(val.size() >= 4) {
+    if(pDat) {
         union data {
             quint32 val;
             quint8 byte[4];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
-        dat.byte[2] = (quint8)val.at(2);
-        dat.byte[3] = (quint8)val.at(3);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
+        dat.byte[2] = pDat[2];
+        dat.byte[3] = pDat[3];
         return dat.val;
     }
     return 0;
 }
 
-inline QByteArray int64ToBytes(qint64 val)
+inline void int64ToBytes(qint64 val, quint8* pDat)
 {
     union data {
         qint64 val;
         quint8 byte[8];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-    ba.append((char)dat.byte[2]);
-    ba.append((char)dat.byte[3]);
-    ba.append((char)dat.byte[4]);
-    ba.append((char)dat.byte[5]);
-    ba.append((char)dat.byte[6]);
-    ba.append((char)dat.byte[7]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+        pDat[2] = dat.byte[2];
+        pDat[3] = dat.byte[3];
+        pDat[4] = dat.byte[4];
+        pDat[5] = dat.byte[5];
+        pDat[6] = dat.byte[6];
+        pDat[7] = dat.byte[7];
+    }
 }
 
-inline qint64 bytesToInt64(QByteArray val)
+inline qint64 bytesToInt64(quint8* pDat)
 {
-    if(val.size() >= 8) {
+    if(pDat) {
         union data {
             qint64 val;
             quint8 byte[8];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
-        dat.byte[2] = (quint8)val.at(2);
-        dat.byte[3] = (quint8)val.at(3);
-        dat.byte[4] = (quint8)val.at(4);
-        dat.byte[5] = (quint8)val.at(5);
-        dat.byte[6] = (quint8)val.at(6);
-        dat.byte[7] = (quint8)val.at(7);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
+        dat.byte[2] = pDat[2];
+        dat.byte[3] = pDat[3];
+        dat.byte[4] = pDat[4];
+        dat.byte[5] = pDat[5];
+        dat.byte[6] = pDat[6];
+        dat.byte[7] = pDat[7];
         return dat.val;
     }
     return 0;
 }
 
-inline QByteArray uint64ToBytes(quint64 val)
+inline void uint64ToBytes(quint64 val, quint8* pDat)
 {
     union data {
         quint64 val;
         quint8 byte[8];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-    ba.append((char)dat.byte[2]);
-    ba.append((char)dat.byte[3]);
-    ba.append((char)dat.byte[4]);
-    ba.append((char)dat.byte[5]);
-    ba.append((char)dat.byte[6]);
-    ba.append((char)dat.byte[7]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+        pDat[2] = dat.byte[2];
+        pDat[3] = dat.byte[3];
+        pDat[4] = dat.byte[4];
+        pDat[5] = dat.byte[5];
+        pDat[6] = dat.byte[6];
+        pDat[7] = dat.byte[7];
+    }
 }
 
-inline quint64 bytesToUint64(QByteArray val)
+inline quint64 bytesToUint64(quint8* pDat)
 {
-    if(val.size() >= 8) {
+    if(pDat) {
         union data {
             quint64 val;
             quint8 byte[8];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
-        dat.byte[2] = (quint8)val.at(2);
-        dat.byte[3] = (quint8)val.at(3);
-        dat.byte[4] = (quint8)val.at(4);
-        dat.byte[5] = (quint8)val.at(5);
-        dat.byte[6] = (quint8)val.at(6);
-        dat.byte[7] = (quint8)val.at(7);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
+        dat.byte[2] = pDat[2];
+        dat.byte[3] = pDat[3];
+        dat.byte[4] = pDat[4];
+        dat.byte[5] = pDat[5];
+        dat.byte[6] = pDat[6];
+        dat.byte[7] = pDat[7];
         return dat.val;
     }
     return 0;
 }
 
-inline QByteArray float32ToBytes(float val)
+inline void float32ToBytes(float val, quint8* pDat)
 {
     union data {
         float val;
         quint8 byte[4];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-    ba.append((char)dat.byte[2]);
-    ba.append((char)dat.byte[3]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+        pDat[2] = dat.byte[2];
+        pDat[3] = dat.byte[3];
+    }
 }
 
-inline float bytesToFloat32(QByteArray val)
+inline float bytesToFloat32(quint8* pDat)
 {
-    if(val.size() >= 4) {
+    if(pDat) {
         union data {
             float val;
             quint8 byte[4];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
-        dat.byte[2] = (quint8)val.at(2);
-        dat.byte[3] = (quint8)val.at(3);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
+        dat.byte[2] = pDat[2];
+        dat.byte[3] = pDat[3];
         return dat.val;
     }
     return 0;
 }
 
 
-inline QByteArray float64ToBytes(double val)
+inline void float64ToBytes(double val, quint8* pDat)
 {
     union data {
         double val;
         quint8 byte[8];
     };
     union data dat;
-
     dat.val = val;
-
-    QByteArray ba;
-    ba.append((char)dat.byte[0]);
-    ba.append((char)dat.byte[1]);
-    ba.append((char)dat.byte[2]);
-    ba.append((char)dat.byte[3]);
-    ba.append((char)dat.byte[4]);
-    ba.append((char)dat.byte[5]);
-    ba.append((char)dat.byte[6]);
-    ba.append((char)dat.byte[7]);
-
-    return ba;
+    if(pDat) {
+        pDat[0] = dat.byte[0];
+        pDat[1] = dat.byte[1];
+        pDat[2] = dat.byte[2];
+        pDat[3] = dat.byte[3];
+        pDat[4] = dat.byte[4];
+        pDat[5] = dat.byte[5];
+        pDat[6] = dat.byte[6];
+        pDat[7] = dat.byte[7];
+    }
 }
 
-inline double bytesToFloat64(QByteArray val)
+inline double bytesToFloat64(quint8* pDat)
 {
-    if(val.size() >= 8) {
+    if(pDat) {
         union data {
             double val;
             quint8 byte[8];
         };
         union data dat;
-        dat.byte[0] = (quint8)val.at(0);
-        dat.byte[1] = (quint8)val.at(1);
-        dat.byte[2] = (quint8)val.at(2);
-        dat.byte[3] = (quint8)val.at(3);
-        dat.byte[4] = (quint8)val.at(4);
-        dat.byte[5] = (quint8)val.at(5);
-        dat.byte[6] = (quint8)val.at(6);
-        dat.byte[7] = (quint8)val.at(7);
+        dat.byte[0] = pDat[0];
+        dat.byte[1] = pDat[1];
+        dat.byte[2] = pDat[2];
+        dat.byte[3] = pDat[3];
+        dat.byte[4] = pDat[4];
+        dat.byte[5] = pDat[5];
+        dat.byte[6] = pDat[6];
+        dat.byte[7] = pDat[7];
         return dat.val;
     }
     return 0;
 }
 
-inline QByteArray bcd8ToBytes(quint8 val)
+inline void bcd8ToBytes(quint8 val, quint8* pDat)
 {
-    return uint8ToBytes(val);
+    return uint8ToBytes(val, pDat);
 }
 
-inline quint8 bytesToBcd8(QByteArray val)
+inline quint8 bytesToBcd8(quint8* pDat)
 {
-    return bytesToUint8(val);
+    return bytesToUint8(pDat);
 }
 
-inline QByteArray bcd16ToBytes(quint16 val)
+inline void bcd16ToBytes(quint16 val, quint8* pDat)
 {
-    return uint16ToBytes(val);
+    return uint16ToBytes(val, pDat);
 }
 
-inline quint16 bytesToBcd16(QByteArray val)
+inline quint16 bytesToBcd16(quint8* pDat)
 {
-    return bytesToUint16(val);
+    return bytesToUint16(pDat);
 }
 
-inline QByteArray bcd32ToBytes(quint32 val)
+inline void bcd32ToBytes(quint32 val, quint8* pDat)
 {
-    return uint32ToBytes(val);
+    return uint32ToBytes(val, pDat);
 }
 
-inline quint32 bytesToBcd32(QByteArray val)
+inline quint32 bytesToBcd32(quint8* pDat)
 {
-    return bytesToUint32(val);
+    return bytesToUint32(pDat);
 }
 
 #endif // PUBLIC_FUNCTION_H

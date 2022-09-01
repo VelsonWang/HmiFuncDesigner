@@ -1,4 +1,5 @@
 #include "ModbusRTU.h"
+#include <QDebug>
 
 #define COIL_STATUS    tr("线圈状态")
 #define DISCRETE_STATUS    tr("离散量状态")
@@ -154,12 +155,12 @@ void ModbusRTU::readProperties(QString &szProperties, QVector<QPair<QString, QSt
         }
         if (szKeyValue.startsWith("addr32=")) {
             QString val = szKeyValue.replace("addr32=", "");
-            if(val == "") val == "false";
+            if(val == "") val = "false";
             properties.append(qMakePair(tr("32位低字节在前高字节在后"), val));
         }
         if (szKeyValue.startsWith("addr64=")) {
             QString val = szKeyValue.replace("addr64=", "");
-            if(val == "") val == "false";
+            if(val == "") val = "false";
             properties.append(qMakePair(tr("64位低字节在前高字节在后"), val));
         }
     }
@@ -295,3 +296,475 @@ QString ModbusRTU::getDeviceDescInfo() {
 }
 
 
+void ModbusRTU::loadInfos(QXmlStreamReader *r, QMap<QString, QVector<TTagInfo>> &infos, QString &dev)
+{
+    QString addr;
+    TTagInfo info;
+    if(r->name().toString() == "tag") {
+        foreach(QXmlStreamAttribute attr, r->attributes()) {
+            QString attrName = attr.name().toString();
+            if(attrName == "addr"){
+                addr = attr.value().toString();
+            } else if(attrName == "id"){
+                info.id = attr.value().toInt();
+            } else if(attrName == "dev"){
+                dev = attr.value().toString();
+            } else if(attrName == "offset"){
+                info.offset = attr.value().toInt();
+            } else if(attrName == "type"){
+                info.length = tagLength(attr.value().toString());
+            }
+        }
+
+        if(infos.count(addr) > 0) {
+            QVector<TTagInfo> &vecInfo = infos[addr];
+            vecInfo.append(info);
+        } else {
+            QVector<TTagInfo> vecInfo;
+            vecInfo.append(info);
+            infos[addr] = vecInfo;
+        }
+    }
+}
+
+/**
+ * @brief ModbusRTU::buildBlockReadTags 生成块读变量
+ * @param xmlDevTags 同一设备的所有寄存器变量
+ * @param xmlDevBlockReadTags 同一设备的所有块读变量
+ * @param idToBlockId 变量ID对应的块读变量ID
+ * @return true-成功, false-失败
+ */
+bool ModbusRTU::buildBlockReadTags(const QString &xmlDevTags, const QString &properties, QString &xmlDevBlockReadTags, QVector<QPair<QString, QString>>& idToBlockId)
+{
+#if 0
+    xmlDevTags -->
+    <tags>
+        <tag addr="4x" addr2="" dev="ModbusRTU" group="" id="7" name="4x1" offset="0" offset2="0" remark="" type="uint16" unit="" writeable="1" blockReadId="60001"/>
+        <tag addr="4x" addr2="" dev="ModbusRTU" group="" id="8" name="4x2" offset="1" offset2="0" remark="" type="uint16" unit="" writeable="1" blockReadId="60001"/>
+        <tag addr="0x" addr2="" dev="ModbusRTU" group="" id="2" name="0x00" offset="0" offset2="0" remark="" type="bool" unit="" writeable="1" blockReadId="60002"/>
+    </tags>
+
+    xmlDevBlockReadTags -->
+    <block_tags>
+        <tag addr="4x" addr2="" dev="ModbusRTU" group="" id="60001" name="4x1" offset="0" offset2="0" remark="" type="4:reg" unit="" writeable="0" blockReadId=""/>
+        <tag addr="0x" addr2="" dev="ModbusRTU" group="" id="60002" name="0x00" offset="0" offset2="0" remark="" type="1:reg" unit="" writeable="0" blockReadId=""/>
+    </block_tags>
+#endif
+
+    int bitMaxRegPacket = 0;
+    int wordMaxRegPacket = 0;
+
+    QStringList szListProperties = properties.split("|");
+    foreach(QString szKeyValue, szListProperties) {
+        if (szKeyValue.startsWith("bitMaxRegPacket=")) {
+            QString val = szKeyValue.replace("bitMaxRegPacket=", "").trimmed();
+            if(!val.isEmpty()) {
+                bitMaxRegPacket = val.toInt();
+            }
+        }
+        if (szKeyValue.startsWith("wordMaxRegPacket=")) {
+            QString val = szKeyValue.replace("wordMaxRegPacket=", "").trimmed();
+            if(!val.isEmpty()) {
+                wordMaxRegPacket = val.toInt();
+            }
+        }
+    }
+
+    // 不需要块读
+    if(bitMaxRegPacket <= 0 && wordMaxRegPacket <= 0) {
+        return false;
+    }
+
+    QString dev = "";
+    QMap<QString, QVector<TTagInfo>> mapInfos;
+
+    // 解析设备变量节点
+    QXmlStreamReader r(xmlDevTags);
+    while(!r.atEnd() && !r.hasError()) {
+        if(r.readNext() == QXmlStreamReader::StartElement) {
+            if(r.name() == "tag") {
+                loadInfos(&r, mapInfos, dev);
+            }
+        }
+    }
+#if 0
+    {
+        qDebug() << "dev: " << dev;
+        QList<QString> memInfo = mapInfos.keys();
+        qDebug() << "memInfo: " << memInfo;
+        foreach (QString info, memInfo) {
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                qDebug() << "tagInfo: " << tagInfo.id << tagInfo.offset << tagInfo.length;
+            }
+        }
+    }
+#endif
+    ///////////////////////////////////////////////////////////////////////////
+    /// 生成打包变量
+    ///
+    quint16 min0xAddr = 0xffff;
+    quint16 max0xAddr = 0;
+    quint16 var0xCnt = 0;
+
+    quint16 min1xAddr = 0xffff;
+    quint16 max1xAddr = 0;
+    quint16 var1xCnt = 0;
+
+    quint16 min3xAddr = 0xffff;
+    quint16 max3xAddr = 0;
+    quint16 var3xCnt = 0;
+
+    quint16 min4xAddr = 0xffff;
+    quint16 max4xAddr = 0;
+    quint16 var4xCnt = 0;
+
+    QList<QString> memInfo = mapInfos.keys();
+    foreach (QString info, memInfo) {
+        QVector<TTagInfo> &vecInfo = mapInfos[info];
+        foreach(TTagInfo tagInfo, vecInfo) {
+            if(info == "0x") {
+                if(min0xAddr > tagInfo.offset) {
+                    min0xAddr = tagInfo.offset;
+                }
+                if(max0xAddr <= tagInfo.offset + tagInfo.length) {
+                    max0xAddr = tagInfo.offset + tagInfo.length;
+                }
+                var0xCnt++;
+            } else if(info == "1x") {
+                if(min1xAddr > tagInfo.offset) {
+                    min1xAddr = tagInfo.offset;
+                }
+                if(max1xAddr <= tagInfo.offset + tagInfo.length) {
+                    max1xAddr = tagInfo.offset + tagInfo.length;
+                }
+                var1xCnt++;
+            } else if(info == "3x") {
+                if(min3xAddr > tagInfo.offset) {
+                    min3xAddr = tagInfo.offset;
+                }
+                if(max3xAddr <= tagInfo.offset + tagInfo.length / 2 - 1) {
+                    max3xAddr = tagInfo.offset + tagInfo.length / 2 - 1;
+                }
+                var3xCnt++;
+            } else if(info == "4x") {
+                if(min4xAddr > tagInfo.offset) {
+                    min4xAddr = tagInfo.offset;
+                }
+                if(max4xAddr <= tagInfo.offset + tagInfo.length / 2 - 1) {
+                    max4xAddr = tagInfo.offset + tagInfo.length / 2 - 1;
+                }
+                var4xCnt++;
+            }
+        }
+    }
+#if 0
+    qDebug() << "0x number: " << var0xCnt << ", min addr: " << min0xAddr << ", max addr: " << max0xAddr;
+    qDebug() << "1x number: " << var1xCnt << ", min addr: " << min1xAddr << ", max addr: " << max1xAddr;
+    qDebug() << "3x number: " << var3xCnt << ", min addr: " << min3xAddr << ", max addr: " << max3xAddr;
+    qDebug() << "4x number: " << var4xCnt << ", min addr: " << min4xAddr << ", max addr: " << max4xAddr;
+#endif
+    QMap<QString, QVector<TTagInfo *>> mapBlockInfos;
+    QVector<TTagInfo *> vecInfo0x;
+    mapBlockInfos["0x"] = vecInfo0x;
+
+    QVector<TTagInfo *> vecInfo1x;
+    mapBlockInfos["1x"] = vecInfo1x;
+
+    QVector<TTagInfo *> vecInfo3x;
+    mapBlockInfos["3x"] = vecInfo3x;
+
+    QVector<TTagInfo *> vecInfo4x;
+    mapBlockInfos["4x"] = vecInfo4x;
+
+    int iNextPackageVarID = 60001;
+
+    // 创建0x组包变量
+    if(var0xCnt > 1) {
+        int num = (max0xAddr - min0xAddr + 1) / bitMaxRegPacket;
+        if(((max0xAddr - min0xAddr + 1) % bitMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "0x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min0xAddr + j * bitMaxRegPacket;
+            pInfoObj->length = bitMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["0x"].append(pInfoObj);
+        }
+    }
+
+    // 创建1x组包变量
+    if(var1xCnt > 1) {
+        int num = (max1xAddr - min1xAddr + 1) / bitMaxRegPacket;
+        if(((max1xAddr - min1xAddr + 1) % bitMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "1x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min1xAddr + j * bitMaxRegPacket;
+            pInfoObj->length = bitMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["1x"].append(pInfoObj);
+        }
+    }
+
+    // 创建3x组包变量
+    if(var3xCnt > 1) {
+        int num = (max3xAddr - min3xAddr + 1) / wordMaxRegPacket;
+        if(((max3xAddr - min3xAddr + 1) % wordMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "3x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min3xAddr + j * wordMaxRegPacket;
+            pInfoObj->length = wordMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["3x"].append(pInfoObj);
+        }
+    }
+
+    // 创建4x组包变量
+    if(var4xCnt > 1) {
+        int num = (max4xAddr - min4xAddr + 1) / wordMaxRegPacket;
+        if(((max4xAddr - min4xAddr + 1) % wordMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "4x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min4xAddr + j * wordMaxRegPacket;
+            pInfoObj->length = wordMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["4x"].append(pInfoObj);
+        }
+    }
+    ///////////////////////////////////////////////////////////////////////////
+    /// 变量关联组包变量
+    ///
+    QXmlStreamWriter writer(&xmlDevBlockReadTags);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("block_tags"); // <block_tags>
+
+    QVector<TTagInfo *> &vecTagInfo0x = mapBlockInfos["0x"];
+    quint32 dwFindMax0xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin0xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo0x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax0xAddr = iMinAddrOffset;
+        dwFindMin0xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "0x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax0xAddr) {
+                        dwFindMax0xAddr = tagInfo.offset + tagInfo.length;
+                    }
+                    if(dwFindMin0xAddr > tagInfo.offset) {
+                        dwFindMin0xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "0x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("0x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax0xAddr - dwFindMin0xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    QVector<TTagInfo *> &vecTagInfo1x = mapBlockInfos["1x"];
+    quint32 dwFindMax1xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin1xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo1x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax1xAddr = iMinAddrOffset;
+        dwFindMin1xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "1x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax1xAddr) {
+                        dwFindMax1xAddr = tagInfo.offset + tagInfo.length;
+                    }
+                    if(dwFindMin1xAddr > tagInfo.offset) {
+                        dwFindMin1xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "1x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("1x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax1xAddr - dwFindMin1xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    QVector<TTagInfo *> &vecTagInfo3x = mapBlockInfos["3x"];
+    quint32 dwFindMax3xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin3xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo3x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax3xAddr = iMinAddrOffset;
+        dwFindMin3xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "3x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax3xAddr) {
+                        dwFindMax3xAddr = tagInfo.offset + tagInfo.length / 2;
+                    }
+                    if(dwFindMin3xAddr > tagInfo.offset) {
+                        dwFindMin3xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "3x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("3x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax3xAddr - dwFindMin3xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    QVector<TTagInfo *> &vecTagInfo4x = mapBlockInfos["4x"];
+    quint32 dwFindMax4xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin4xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo4x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax4xAddr = iMinAddrOffset;
+        dwFindMin4xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "4x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax4xAddr) {
+                        dwFindMax4xAddr = tagInfo.offset + tagInfo.length / 2;
+                    }
+                    if(dwFindMin4xAddr > tagInfo.offset) {
+                        dwFindMin4xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "4x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("4x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax4xAddr - dwFindMin4xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    writer.writeEndElement(); // <block_tags/>
+    writer.writeEndDocument();
+
+    qDeleteAll(vecTagInfo0x);
+    qDeleteAll(vecTagInfo1x);
+    qDeleteAll(vecTagInfo3x);
+    qDeleteAll(vecTagInfo4x);
+    mapBlockInfos.clear();
+
+    return true;
+}

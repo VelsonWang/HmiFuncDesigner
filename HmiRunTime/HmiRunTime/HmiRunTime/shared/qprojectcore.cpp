@@ -117,6 +117,12 @@ bool QProjectCore::openFromXml(const QString &szProjFile)
             m_tagMgr.openFromXml(pTagsObj);
         }
 
+        XMLObject *pBlockReadTagsObj = pProjObj->getCurrentChild("block_tags");
+        if(pBlockReadTagsObj != NULL) {
+            // 块读标签变量组
+            m_tagMgr.openBlockReadFromXml(pBlockReadTagsObj);
+        }
+
         // 脚本
         m_script.openFromXml(pProjObj);
         // 图片资源管理

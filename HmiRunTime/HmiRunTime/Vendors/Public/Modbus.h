@@ -45,6 +45,7 @@ public:
     quint16 getRegNum(RunTimeTag* pTag);
     // 生成modbus报文
     virtual quint16 makeMessagePackage(quint8 */* pSendData */,
+                                       void* /* pObj */,
                                        RunTimeTag* /* pTag */,
                                        TModbus_ReadWrite /* RW_flag */,
                                        quint16 */* retVarLen */)
@@ -69,12 +70,9 @@ public:
         return 0;
     }
 
-    // 加入块读变量至待读变量标签列表
-    void insertBlockReadTagToReadList(QList<RunTimeTag *> &listRead);
-
     // 依据规则修改缓冲区内数据
     void modbusChangeData(bool bAddr8, bool bAddr16, bool bAddr32,
-                          bool bAddr64, QByteArray &data, quint32 iLen);
+                          bool bAddr64, quint8 *data, quint32 iLen);
     // 设备地址
     int devAddr(void *pObj);
     // 内存地址起始位是否为0
@@ -100,10 +98,10 @@ signals:
 public slots:
 
 public:
-    quint8 tempBuffer_[512] = {0};
+    quint8 tempBuffer[512] = {0};
 
 private:
-    IPort *iFacePort_;
+    IPort *iFacePort;
 
 };
 

@@ -1,5 +1,5 @@
-#include "Tag.h"
-
+#include "tag.h"
+#include <QDebug>
 
 Tag::Tag() : m_iID(0)
 {
@@ -62,6 +62,7 @@ bool Tag::openFromXml(XMLObject *pXmlObj)
         return false;
     }
     m_iID = pTagObj->getProperty("id").toInt();
+    m_iBlockReadID = pTagObj->getProperty("blockReadId").toInt();
     m_szName = pTagObj->getProperty("name");
     m_szUnit = pTagObj->getProperty("unit");
     m_szAddrType = pTagObj->getProperty("addr");
@@ -153,9 +154,6 @@ void Tag::fromJsonObject(QJsonObject jsonObj)
     }
 }
 
-
-int TagManager::m_iStartNewID = 0;
-
 TagManager::TagManager()
 {
     m_vecTags.clear();
@@ -176,14 +174,38 @@ bool TagManager::openFromXml(XMLObject *pXmlObj)
     foreach(XMLObject* pTagObj, listTagsObj) {
         Tag *pObj = new Tag();
         pObj->openFromXml(pTagObj);
-        if(m_iStartNewID < pObj->m_iID) {
-            m_iStartNewID = pObj->m_iID;
-        }
         m_vecTags.append(pObj);
     }
     return true;
 }
 
+bool TagManager::openBlockReadFromXml(XMLObject *pXmlObj)
+{
+    foreach (QString dev, m_mapDevBlockReadTags.keys()) {
+        qDeleteAll(m_mapDevBlockReadTags[dev]);
+        m_mapDevBlockReadTags[dev].clear();
+    }
+    m_mapDevBlockReadTags.clear();
+
+    QList<XMLObject*> devObjs = pXmlObj->getChildren();
+    foreach(XMLObject* pDevObj, devObjs) {
+        QString devName = pDevObj->getTagName();
+        QVector<XMLObject* > listTagsObj = pDevObj->getCurrentChildren("tag");
+        foreach(XMLObject* pTagObj, listTagsObj) {
+            Tag *pObj = new Tag();
+            pObj->openFromXml(pTagObj);
+            if(m_mapDevBlockReadTags.count(devName) > 0) {
+                QVector<Tag *> &vecTags = m_mapDevBlockReadTags[devName];
+                vecTags.append(pObj);
+            } else {
+                QVector<Tag *> vecTags;
+                vecTags.append(pObj);
+                m_mapDevBlockReadTags[devName] = vecTags;
+            }
+        }
+    }
+    return true;
+}
 
 bool TagManager::saveToXml(XMLObject *pXmlObj)
 {
@@ -192,18 +214,6 @@ bool TagManager::saveToXml(XMLObject *pXmlObj)
         pObj->saveToXml(pXmlObj);
     }
     return true;
-}
-
-
-/**
- * @brief TagManager::allocID
- * @details 分配一个
- * @return ID
- */
-int TagManager::allocID()
-{
-    ++m_iStartNewID;
-    return m_iStartNewID;
 }
 
 Tag *TagManager::getTag(int id)
