@@ -2,7 +2,6 @@
 #include <RealTimeDB.h>
 #include <QDebug>
 
-
 PortThread::PortThread(QString name)
 {
     m_name = name;

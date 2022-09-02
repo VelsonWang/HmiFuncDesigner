@@ -810,7 +810,11 @@ void MainWindow::onSlotUpLoadProject()
     ProjectUploadDialog *pDlg = new ProjectUploadDialog(this, QSoftCore::getCore()->getProjectCore()->m_szProjFile);
     if (pDlg->exec() == QDialog::Accepted) {
         QString desDir = pDlg->getProjectPath();
+#ifdef Q_OS_WIN
         QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
+#else
+		QString program = "tar";
+#endif
         QFile programFile(program);
         if (!programFile.exists()) {
             QMessageBox::information(this, "系统提示", "命令：" + program + "不存在！");
@@ -872,7 +876,11 @@ void MainWindow::onSlotDownloadProject()
     Helper::CopyRecursively(QSoftCore::getCore()->getProjectCore()->m_szProjPath, desDir);
 
     // 打包工程到tmp目录
+#ifdef Q_OS_WIN
     QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
+#else
+    QString program = "tar";
+#endif
     QFile programFile(program);
     if(!programFile.exists()) {
         QMessageBox::information(this, "系统提示", "命令：" + program + "不存在！");

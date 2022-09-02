@@ -21,9 +21,14 @@ void getApplicationFiles()
     QFile fileCfg(iniAppLauncher);
     if(fileCfg.exists()) {
         QString szDir = ConfigUtils::getCfgStr(iniAppLauncher, "AppDir", "dir", Helper::AppDir() + "/");
-        g_szAppFileTransferTool = szDir + ConfigUtils::getCfgStr(iniAppLauncher, "AppName", "FileTransferTool", "FileTransferTool.exe");
-        g_szAppHmiRunTimeData = szDir + ConfigUtils::getCfgStr(iniAppLauncher, "AppName", "HmiRunTimeData", "HmiRunTimeData.exe");
-        g_szAppHmiRunTimeView = szDir + ConfigUtils::getCfgStr(iniAppLauncher, "AppName", "HmiRunTimeView", "HmiRunTimeView.exe");
+        g_szAppFileTransferTool = szDir + ConfigUtils::getCfgStr(iniAppLauncher, "AppName", "FileTransferTool", "FileTransferTool");
+        g_szAppHmiRunTimeData = szDir + ConfigUtils::getCfgStr(iniAppLauncher, "AppName", "HmiRunTimeData", "HmiRunTimeData");
+        g_szAppHmiRunTimeView = szDir + ConfigUtils::getCfgStr(iniAppLauncher, "AppName", "HmiRunTimeView", "HmiRunTimeView");
+#ifdef Q_OS_WIN
+		g_szAppFileTransferTool += ".exe";
+		g_szAppHmiRunTimeData += ".exe";
+		g_szAppHmiRunTimeView += ".exe";
+#endif
     }
 }
 
