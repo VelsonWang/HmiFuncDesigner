@@ -18,12 +18,16 @@ QString printSystemInfo()
     QTextStream out(&s);
 
     QSysInfo systemInfo;
+#ifdef Q_OS_WIN
     out << " Windows Version:          " << systemInfo.windowsVersion()         << endl;
+#endif
     out << " Build Cpu Architecture:   " << systemInfo.buildCpuArchitecture()   << endl;
     out << " Current Cpu Architecture: " << systemInfo.currentCpuArchitecture() << endl;
     out << " Kernel Type:              " << systemInfo.kernelType()             << endl;
     out << " Kernel Version:           " << systemInfo.kernelVersion()          << endl;
+#ifdef Q_OS_WIN
     out << " Machine Host Name:        " << systemInfo.machineHostName()        << endl;
+#endif
     out << " Product Type:             " << systemInfo.productType()            << endl;
     out << " Product Version:          " << systemInfo.productVersion()         << endl;
     out << " Byte Order:               " << systemInfo.buildAbi()               << endl;

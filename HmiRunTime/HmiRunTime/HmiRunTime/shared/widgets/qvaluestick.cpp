@@ -113,8 +113,14 @@ void QValueStick::drawScalarStick(QPainter *painter,
 
     QFontMetrics fm(font);
     int iTextHeight = fm.height();
-    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", dMinValue));
-    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", dMaxValue));
+
+    char buffer[256];
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", dMinValue);
+    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", dMaxValue);
+    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
 
     int iMinValueTextWidth = fm.boundingRect(szMinValue).width();
     int iMaxValueTextWidth = fm.boundingRect(szMaxValue).width();
@@ -218,7 +224,10 @@ void QValueStick::drawScalarStick(QPainter *painter,
                 QRect aRect = textRect;
                 double dbValue = dMinValue + k * (double)(dMaxValue - dMinValue) / (double)iScaleNum;
 
-                QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", dbValue));
+                char buffer[256];
+                memset((void *)buffer, 0, 256);
+                snprintf(buffer, 256, "%lf", dbValue);
+                QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
                 iMaxValueTextWidth = fm.boundingRect(szMaxValue).width();
 
                 if ( scaleDirect == QString("LeftToRight") || scaleDirect ==  QString("RightToLeft") ) {
@@ -305,8 +314,14 @@ void QValueStick::drawValueStick(QPainter *painter)
     QRect barRect, scalRect, textRect;
     QFontMetrics fm(font);
     int iTextHeight = fm.height();
-    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", minValue));
-    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", maxValue));
+
+    char buffer[256];
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", minValue);
+    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", maxValue);
+    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
 
     int iMinValueTextWidth = fm.boundingRect(szMinValue).width();
     int iMaxValueTextWidth = fm.boundingRect(szMaxValue).width();

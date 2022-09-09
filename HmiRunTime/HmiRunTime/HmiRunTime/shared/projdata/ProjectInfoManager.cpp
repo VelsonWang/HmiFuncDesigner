@@ -1,4 +1,5 @@
 #include "ProjectInfoManager.h"
+#include <QStringList>
 
 class ProjectInfoManager;
 

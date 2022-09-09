@@ -5,6 +5,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QString>
+#include <stdio.h>
 
 /**
  * @brief ConfigUtils::setCfgStr 写字符配置值
@@ -196,9 +197,12 @@ void ConfigUtils::setCfgDouble(QString sFileName,
                               QString sKey,
                               double dValue)
 {
+    char buffer[256];
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%9.9lf", dValue);
     QSettings settings(sFileName, QSettings::IniFormat);
     settings.beginGroup(sSecName);
-    settings.setValue(sKey, QString::asprintf("%9.9lf", dValue));
+    settings.setValue(sKey, QString(buffer));
     settings.endGroup();
 }
 
