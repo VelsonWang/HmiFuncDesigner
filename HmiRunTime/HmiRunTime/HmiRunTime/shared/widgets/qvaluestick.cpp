@@ -26,6 +26,8 @@ QValueStick::QValueStick(QWidget *parent) : QWidget(parent)
     maxValue = 100;
     minValue = 0;
     setPropertyInner();
+    tagSelected = "";
+    m_tag = NULL;
 }
 
 void QValueStick::fromObject(XMLObject* xml)
@@ -113,8 +115,14 @@ void QValueStick::drawScalarStick(QPainter *painter,
 
     QFontMetrics fm(font);
     int iTextHeight = fm.height();
-    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", dMinValue));
-    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", dMaxValue));
+
+    char buffer[256];
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", dMinValue);
+    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", dMaxValue);
+    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
 
     int iMinValueTextWidth = fm.boundingRect(szMinValue).width();
     int iMaxValueTextWidth = fm.boundingRect(szMaxValue).width();
@@ -218,7 +226,10 @@ void QValueStick::drawScalarStick(QPainter *painter,
                 QRect aRect = textRect;
                 double dbValue = dMinValue + k * (double)(dMaxValue - dMinValue) / (double)iScaleNum;
 
-                QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", dbValue));
+                char buffer[256];
+                memset((void *)buffer, 0, 256);
+                snprintf(buffer, 256, "%lf", dbValue);
+                QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
                 iMaxValueTextWidth = fm.boundingRect(szMaxValue).width();
 
                 if ( scaleDirect == QString("LeftToRight") || scaleDirect ==  QString("RightToLeft") ) {
@@ -289,6 +300,25 @@ void QValueStick::drawScalarStick(QPainter *painter,
 
 void QValueStick::drawValueStick(QPainter *painter)
 {
+    // 变量当前值
+    double dTagValue = 0.0;
+    QString szTagValue = "#";
+
+    if(m_tag) {
+        szTagValue = m_tag->toString();
+    } else {
+        m_tag = RealTimeDB::instance()->tag(tagId(tagSelected));
+        szTagValue = "#";
+    }
+
+    if (szTagValue != "#") {
+        bool ok;
+        double dVal = szTagValue.toDouble(&ok);
+        if (ok) {
+            dTagValue = dVal;
+        }
+    }
+
     QColor color3DShadow = QColor(0x0F, 0x0F, 0x0F);
     QColor color3DHiLight = QColor(0xF0, 0xF0, 0xF0);
 
@@ -305,8 +335,14 @@ void QValueStick::drawValueStick(QPainter *painter)
     QRect barRect, scalRect, textRect;
     QFontMetrics fm(font);
     int iTextHeight = fm.height();
-    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", minValue));
-    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", maxValue));
+
+    char buffer[256];
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", minValue);
+    QString szMinValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
+    memset((void *)buffer, 0, 256);
+    snprintf(buffer, 256, "%lf", maxValue);
+    QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString(buffer));
 
     int iMinValueTextWidth = fm.boundingRect(szMinValue).width();
     int iMaxValueTextWidth = fm.boundingRect(szMaxValue).width();
@@ -379,10 +415,13 @@ void QValueStick::drawValueStick(QPainter *painter)
         // 绘制各个矩形(水平显示)
         // 绘制棒条
         PubTool::Draw3DFrame(painter, barRect, color3DShadow, color3DHiLight, backgroundColor);
+        int iBarLength = barRect.right() - barRect.left();
+        int iTagVal = static_cast<int>(dTagValue * iBarLength / (maxValue - minValue));
+        int iBarVal = (iTagVal > iBarLength) ? iBarLength : iTagVal;
         if ( szScaleDir == QString("LeftToRight") ) {
-            barRect.setRight(barRect.left() + (barRect.right() - barRect.left()) / 2);
+            barRect.setRight(barRect.left() + iBarVal);
         } else {
-            barRect.setLeft(barRect.right() - (barRect.right() - barRect.left()) / 2);
+            barRect.setLeft(barRect.right() - iBarVal);
         }
 
         barRect = PubTool::DeflateRect(barRect, 1);
@@ -455,10 +494,13 @@ void QValueStick::drawValueStick(QPainter *painter)
         // 绘制各个矩形(垂直显示)
         // 绘制棒条
         PubTool::Draw3DFrame(painter, barRect, color3DShadow, color3DHiLight, backgroundColor);
+        int iBarLength = barRect.bottom() - barRect.top();
+        int iTagVal = static_cast<int>(dTagValue * iBarLength / (maxValue - minValue));
+        int iBarVal = (iTagVal > iBarLength) ? iBarLength : iTagVal;
         if ( szScaleDir == QString("TopToBottom") ) {
-            barRect.setBottom(barRect.top() + (barRect.bottom() - barRect.top()) / 2);
+            barRect.setBottom(barRect.top() + iBarVal);
         } else {
-            barRect.setTop(barRect.bottom() - (barRect.bottom() - barRect.top()) / 2);
+            barRect.setTop(barRect.bottom() - iBarVal);
         }
 
         barRect = PubTool::DeflateRect(barRect, 1);
@@ -697,9 +739,9 @@ QString QValueStick::getTagSelected() const
 
 void QValueStick::setTagSelected(const QString &value)
 {
-    if(value != tagSelected) {
+    if(tagSelected != value) {
         tagSelected = value;
-        this->update();
+        m_tag = RealTimeDB::instance()->tag(tagId(value));
     }
 }
 

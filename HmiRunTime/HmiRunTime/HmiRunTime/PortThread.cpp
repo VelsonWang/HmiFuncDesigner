@@ -78,7 +78,6 @@ void PortThread::run()
 {
     qDebug()<< "PortThread run:" << m_name;
     while(mbIsRunning) {
-        RealTimeDB::instance()->addNeedWriteTagToDeviceWriteQueue();
         foreach (Vendor *pVendor, m_VendorList) {
             if(!mbIsRunning)
                 break;
