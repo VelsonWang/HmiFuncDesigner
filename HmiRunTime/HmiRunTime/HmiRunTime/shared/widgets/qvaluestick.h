@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPaintEvent>
 #include "iloader.h"
+#include "realtimedb.h"
 
 class QValueStick : public QWidget, public ILoader
 {
@@ -90,8 +91,8 @@ private:
     QString posString(const QString& szPos) const;
 
 protected:
-    void paintEvent(QPaintEvent *event);
-    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event) override;;
+    void resizeEvent(QResizeEvent *event) override;;
 
 private:
     // 关联的变量
@@ -122,6 +123,9 @@ private:
     bool showScale;
     // 初始可见
     bool showOnInitial;
+
+private:
+    RunTimeTag *m_tag;
 };
 
 #endif // QVALUESTICK_H

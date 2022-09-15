@@ -42,8 +42,20 @@ void QLabelEx::fromObject(XMLObject* xml)
                         this->setProperty("geometry", QRect(x, y, width, height));
                     } else if(propertyName == "wordWrap") {
                         this->setProperty("wordWrap", pObj->getProperty("value"));
+                    } else if(propertyName == "frameShape") {
+                        this->setProperty("frameShape", pObj->getProperty("value").toInt());
                     } else if(propertyName == "alignment") {
-                        this->setProperty("alignment", pObj->getProperty("value"));
+                        int hAlignmen, vAlignmen;
+                        QList<XMLObject*> tmpProps = pObj->getChildren();
+                        foreach(XMLObject* propObj, tmpProps) {
+                            QString propertyName = propObj->getProperty("name");
+                            if(propertyName == "Horizontal") {
+                                hAlignmen = propObj->getProperty("value").toInt();
+                            } else if(propertyName == "Vertical") {
+                                vAlignmen = propObj->getProperty("value").toInt();
+                            }
+                        }
+                        this->setProperty("alignment", (Qt::AlignmentFlag)(hAlignmen|vAlignmen));
                     } else if(propertyName == "text_sheet") {
                         this->setProperty("text_sheet", pObj->getProperty("value"));
                     }
