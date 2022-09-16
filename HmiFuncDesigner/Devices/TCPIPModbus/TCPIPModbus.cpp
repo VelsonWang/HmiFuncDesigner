@@ -7,75 +7,8 @@
 #define HOLDING_REGISTER    tr("保持寄存器")
 
 
-TCPIPModbus::TCPIPModbus()
-{
+TCPIPModbus::TCPIPModbus() {
 
-}
-
-
-///
-/// \brief TCPIPModbus::getBitMaxRegPacket
-/// \details 位组包最大寄存器个数
-/// \return 寄存器个数
-///
-int TCPIPModbus::getBitMaxRegPacket()
-{
-    return 100;
-}
-
-
-///
-/// \brief TCPIPModbus::getWordMaxRegPacket
-/// \details 字组包最大寄存器个数
-/// \return 寄存器个数
-///
-int TCPIPModbus::getWordMaxRegPacket()
-{
-    return 20;
-}
-
-
-///
-/// \brief TCPIPModbus::getCommFailRetryCount
-/// \details 通信失败重试次数
-/// \return 次数
-///
-int TCPIPModbus::getCommFailRetryTimes()
-{
-    return 2;
-}
-
-
-///
-/// \brief TCPIPModbus::getCommTimeout
-/// \details 通信超时时间
-/// \return 时间值
-///
-int TCPIPModbus::getCommTimeout()
-{
-    return 1;
-}
-
-
-///
-/// \brief TCPIPModbus::getCommIntervalTime
-/// \details 通信间隔时间
-/// \return 时间值
-///
-int TCPIPModbus::getCommIntervalTime()
-{
-    return 200;
-}
-
-
-///
-/// \brief TCPIPModbus::getCommResumeTime
-/// \details 尝试恢复通讯间隔时间
-/// \return 时间值
-///
-int TCPIPModbus::getCommResumeTime()
-{
-    return 2;
 }
 
 ///
@@ -83,10 +16,15 @@ int TCPIPModbus::getCommResumeTime()
 /// \details 获取设备默认属性
 /// \param properties
 ///
-void TCPIPModbus::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties)
-{
+void TCPIPModbus::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& properties) {
     properties.clear();
     properties.append(qMakePair(tr("设备ID"), QString("1")));
+    properties.append(qMakePair(tr("位组包最大寄存器个数"), QString("100")));
+    properties.append(qMakePair(tr("字组包最大寄存器个数"), QString("20")));
+    properties.append(qMakePair(tr("失败重试次数"), QString("2")));
+    properties.append(qMakePair(tr("通讯超时时间(s)"), QString("1")));
+    properties.append(qMakePair(tr("通讯间隔时间(ms)"), QString("200")));
+    properties.append(qMakePair(tr("尝试恢复间隔(s)"), QString("2")));
     properties.append(qMakePair(tr("内存地址起始位为0"), QString("true")));
     properties.append(qMakePair(tr("写线圈功能码为15"), QString("false")));
     properties.append(qMakePair(tr("写寄存器功能码为16"), QString("false")));
@@ -102,10 +40,15 @@ void TCPIPModbus::getDefaultDeviceProperty(QVector<QPair<QString, QString>>& pro
 /// \details 获取设备默认属性数据类型
 /// \param properties_type
 ///
-void TCPIPModbus::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type)
-{
+void TCPIPModbus::getDefaultDevicePropertyDataType(QVector<QPair<QString, QString>>& properties_type) {
     properties_type.clear();
     properties_type.append(qMakePair(tr("设备ID"), QString("int")));
+    properties_type.append(qMakePair(tr("位组包最大寄存器个数"), QString("int")));
+    properties_type.append(qMakePair(tr("字组包最大寄存器个数"), QString("int")));
+    properties_type.append(qMakePair(tr("失败重试次数"), QString("int")));
+    properties_type.append(qMakePair(tr("通讯超时时间(s)"), QString("int")));
+    properties_type.append(qMakePair(tr("通讯间隔时间(ms)"), QString("int")));
+    properties_type.append(qMakePair(tr("尝试恢复间隔(s)"), QString("int")));
     properties_type.append(qMakePair(tr("内存地址起始位为0"), QString("bool")));
     properties_type.append(qMakePair(tr("写线圈功能码为15"), QString("bool")));
     properties_type.append(qMakePair(tr("写寄存器功能码为16"), QString("bool")));
@@ -116,59 +59,110 @@ void TCPIPModbus::getDefaultDevicePropertyDataType(QVector<QPair<QString, QStrin
 }
 
 ///
-/// \brief TCPIPModbus::writeAsXml
-/// \details 保存属性至xml节点
-/// \param xml xml节点
+/// \brief TCPIPModbus::writeProperties
+/// \details 保存属性
+/// \param szProperties 属性字符串
 /// \param properties 属性
 ///
-void TCPIPModbus::writeAsXml(QXmlStreamWriter &xml, QVector<QPair<QString, QString>>& properties)
-{
-    xml.writeStartElement("property");
-    xml.writeAttribute("id", getValue2ByValue1(tr("设备ID"), properties));
-    xml.writeAttribute("startAddrBit", getValue2ByValue1(tr("内存地址起始位为0"), properties));
-    xml.writeAttribute("writeCoilFn", getValue2ByValue1(tr("写线圈功能码为15"), properties));
-    xml.writeAttribute("writeRegFn", getValue2ByValue1(tr("写寄存器功能码为16"), properties));
-    xml.writeAttribute("addr8", getValue2ByValue1(tr("8位逆序"), properties));
-    xml.writeAttribute("addr16", getValue2ByValue1(tr("16位低字节在前高字节在后"), properties));
-    xml.writeAttribute("addr32", getValue2ByValue1(tr("32位低字节在前高字节在后"), properties));
-    xml.writeAttribute("addr64", getValue2ByValue1(tr("64位低字节在前高字节在后"), properties));
-    xml.writeEndElement();
+void TCPIPModbus::writeProperties(QString &szProperties, QVector<QPair<QString, QString>>& properties) {
+    QStringList szListProperties;
+    szListProperties << QString("%1=%2").arg("id").arg(getValue2ByValue1(tr("设备ID"), properties)); 
+    szListProperties << QString("%1=%2").arg("bitMaxRegPacket").arg(getValue2ByValue1(tr("位组包最大寄存器个数"), properties));
+    szListProperties << QString("%1=%2").arg("wordMaxRegPacket").arg(getValue2ByValue1(tr("字组包最大寄存器个数"), properties));
+    szListProperties << QString("%1=%2").arg("commFailRetryTimes").arg(getValue2ByValue1(tr("失败重试次数"), properties));
+    szListProperties << QString("%1=%2").arg("commTimeout").arg(getValue2ByValue1(tr("通讯超时时间(s)"), properties));
+    szListProperties << QString("%1=%2").arg("commIntervalTime").arg(getValue2ByValue1(tr("通讯间隔时间(ms)"), properties));
+    szListProperties << QString("%1=%2").arg("commResumeTime").arg(getValue2ByValue1(tr("尝试恢复间隔(s)"), properties));
+    szListProperties << QString("%1=%2").arg("startAddrBit").arg(getValue2ByValue1(tr("内存地址起始位为0"), properties));
+    szListProperties << QString("%1=%2").arg("writeCoilFn").arg(getValue2ByValue1(tr("写线圈功能码为15"), properties));
+    szListProperties << QString("%1=%2").arg("writeRegFn").arg(getValue2ByValue1(tr("写寄存器功能码为16"), properties));
+    szListProperties << QString("%1=%2").arg("addr8").arg(getValue2ByValue1(tr("8位逆序"), properties));
+    szListProperties << QString("%1=%2").arg("addr16").arg(getValue2ByValue1(tr("16位低字节在前高字节在后"), properties));
+    szListProperties << QString("%1=%2").arg("addr32").arg(getValue2ByValue1(tr("32位低字节在前高字节在后"), properties));
+    szListProperties << QString("%1=%2").arg("addr64").arg(getValue2ByValue1(tr("64位低字节在前高字节在后"), properties));
+    szProperties = szListProperties.join("|");
 }
 
-
 ///
-/// \brief TCPIPModbus::readFromXml
-/// \details 从xml节点加载属性
-/// \param xml xml节点
+/// \brief TCPIPModbus::readProperties
+/// \details 加载属性
+/// \param szProperties 属性字符串
 /// \param properties 属性
 ///
-void TCPIPModbus::readFromXml(QXmlStreamReader &xml, QVector<QPair<QString, QString>>& properties)
-{
+void TCPIPModbus::readProperties(QString &szProperties, QVector<QPair<QString, QString>>& properties) {
     properties.clear();
-    QXmlStreamAttributes attributes = xml.attributes();
-    if (attributes.hasAttribute("id")) {
-        properties.append(qMakePair(tr("设备ID"), attributes.value("id").toString()));
-    }
-    if (attributes.hasAttribute("startAddrBit")) {
-        properties.append(qMakePair(tr("内存地址起始位为0"), attributes.value("startAddrBit").toString()));
-    }
-    if (attributes.hasAttribute("writeCoilFn")) {
-        properties.append(qMakePair(tr("写线圈功能码为15"), attributes.value("writeCoilFn").toString()));
-    }
-    if (attributes.hasAttribute("writeRegFn")) {
-        properties.append(qMakePair(tr("写寄存器功能码为16"), attributes.value("writeRegFn").toString()));
-    }
-    if (attributes.hasAttribute("addr8")) {
-        properties.append(qMakePair(tr("8位逆序"), attributes.value("addr8").toString()));
-    }
-    if (attributes.hasAttribute("addr16")) {
-        properties.append(qMakePair(tr("16位低字节在前高字节在后"), attributes.value("addr16").toString()));
-    }
-    if (attributes.hasAttribute("addr32")) {
-        properties.append(qMakePair(tr("32位低字节在前高字节在后"), attributes.value("addr32").toString()));
-    }
-    if (attributes.hasAttribute("addr64")) {
-        properties.append(qMakePair(tr("64位低字节在前高字节在后"), attributes.value("addr64").toString()));
+    QStringList szListProperties = szProperties.split("|");
+    foreach(QString szKeyValue, szListProperties) {
+        if (szKeyValue.startsWith("id=")) {
+            QString val = szKeyValue.replace("id=", "");
+            if(val == "") val = "1";
+            properties.append(qMakePair(tr("设备ID"), val));
+        }
+        if (szKeyValue.startsWith("bitMaxRegPacket=")) {
+            QString val = szKeyValue.replace("bitMaxRegPacket=", "");
+            if(val == "") val = "100";
+            properties.append(qMakePair(tr("位组包最大寄存器个数"), val));
+        }
+        if (szKeyValue.startsWith("wordMaxRegPacket=")) {
+            QString val = szKeyValue.replace("wordMaxRegPacket=", "");
+            if(val == "") val = "20";
+            properties.append(qMakePair(tr("字组包最大寄存器个数"), val));
+        }
+        if (szKeyValue.startsWith("commFailRetryTimes=")) {
+            QString val = szKeyValue.replace("commFailRetryTimes=", "");
+            if(val == "") val = "2";
+            properties.append(qMakePair(tr("失败重试次数"), val));
+        }
+        if (szKeyValue.startsWith("commTimeout=")) {
+            QString val = szKeyValue.replace("commTimeout=", "");
+            if(val == "") val = "1";
+            properties.append(qMakePair(tr("通讯超时时间(s)"), val));
+        }
+        if (szKeyValue.startsWith("commIntervalTime=")) {
+            QString val = szKeyValue.replace("commIntervalTime=", "");
+            if(val == "") val = "200";
+            properties.append(qMakePair(tr("通讯间隔时间(ms)"), val));
+        }
+        if (szKeyValue.startsWith("commResumeTime=")) {
+            QString val = szKeyValue.replace("commResumeTime=", "");
+            if(val == "") val = "2";
+            properties.append(qMakePair(tr("尝试恢复间隔(s)"), val));
+        }
+        if (szKeyValue.startsWith("startAddrBit=")) {
+            QString val = szKeyValue.replace("startAddrBit=", "");
+            if(val == "") val = "true";
+            properties.append(qMakePair(tr("内存地址起始位为0"), val));
+        }
+        if (szKeyValue.startsWith("writeCoilFn=")) {
+            QString val = szKeyValue.replace("writeCoilFn=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("写线圈功能码为15"), val));
+        }
+        if (szKeyValue.startsWith("writeRegFn=")) {
+            QString val = szKeyValue.replace("writeRegFn=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("写寄存器功能码为16"), val));
+        }
+        if (szKeyValue.startsWith("addr8=")) {
+            QString val = szKeyValue.replace("addr8=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("8位逆序"), val));
+        }
+        if (szKeyValue.startsWith("addr16=")) {
+            QString val = szKeyValue.replace("addr16=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("16位低字节在前高字节在后"), val));
+        }
+        if (szKeyValue.startsWith("addr32=")) {
+            QString val = szKeyValue.replace("addr32=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("32位低字节在前高字节在后"), val));
+        }
+        if (szKeyValue.startsWith("addr64=")) {
+            QString val = szKeyValue.replace("addr64=", "");
+            if(val == "") val = "false";
+            properties.append(qMakePair(tr("64位低字节在前高字节在后"), val));
+        }
     }
 }
 
@@ -178,209 +172,599 @@ void TCPIPModbus::readFromXml(QXmlStreamReader &xml, QVector<QPair<QString, QStr
 /// \details 设置设备属性
 /// \param properties
 ///
-void TCPIPModbus::setDeviceProperty(QVector<QPair<QString, QString>>& properties)
-{
+void TCPIPModbus::setDeviceProperty(QVector<QPair<QString, QString>>& properties) {
     m_properties.clear();
     m_properties.append(properties);
     QString szVal = getValue2ByValue1(tr("内存地址起始位为0"), m_properties);
     m_bStartAddrBit0 = (szVal.toLower() == "true") ? true : false;
 }
 
+///
+/// \brief TCPIPModbus::getDeviceDescInfo
+/// @details 获取设备描述信息
+/// \return 设备描述信息
+///
+QString TCPIPModbus::getDeviceDescInfo() {
+#if 0
+    <?xml version="1.0"/>
+    <Device Name="TCPIPModbus" AllDataType="bool|int16|uint16|int32|uint32|float32|double|bcd16|bcd32" SupportProtocol="TCPIPModbus">
+        <RegAreas>
+            <RegArea Name="线圈状态" Alias="0x" Min="0x0000" Max="0xFFFF" DataType="bool" SubArea=""/>
+            <RegArea Name="离散量状态" Alias="1x" Min="0x0000" Max="0xFFFF" DataType="bool" SubArea=""/>
+            <RegArea Name="输入寄存器" Alias="3x" Min="0x0000" Max="0xFFFF" DataType="int16|uint16|int32|uint32|float32|double|bcd16|bcd32" SubArea=""/>
+            <RegArea Name="保持寄存器" Alias="4x" Min="0x0000" Max="0xFFFF" DataType="int16|uint16|int32|uint32|float32|double|bcd16|bcd32" SubArea=""/>
+        </RegAreas>
+    </Device>
+#endif
+    QString szDeviceDescInfo;
+    QStringList szListDataType;
+    QStringList szListSubArea;
 
-///
-/// \brief TCPIPModbus::GetDeviceSupportProtocol
-/// \details 获取设备支持的所有协议
-/// \return
-///
-QStringList TCPIPModbus::getDeviceSupportProtocol()
-{
-    QStringList list;
-    list<<"TCPIPModbus";
-    return list;
+    QXmlStreamWriter writer(&szDeviceDescInfo);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("Device"); // <Device>
+    writer.writeAttribute("Name", "TCPIPModbus");
+
+    szListDataType.clear();
+    szListDataType << tr("bool")
+                   << tr("int16")
+                   << tr("uint16")
+                   << tr("int32")
+                   << tr("uint32")
+                   << tr("float32")
+                   << tr("double")
+                   << tr("bcd16")
+                   << tr("bcd32");
+    writer.writeAttribute("AllDataType", szListDataType.join("|"));
+
+    // 设备支持的所有协议
+    QStringList szListSupportProtocol;
+    szListSupportProtocol << "TCPIPModbus";
+    writer.writeAttribute("SupportProtocol", szListSupportProtocol.join("|"));
+
+    // 设备支持的所有寄存器区
+    writer.writeStartElement("RegAreas"); // <RegAreas>
+
+    writer.writeStartElement("RegArea"); // <RegArea>
+    writer.writeAttribute("Name", COIL_STATUS);
+    writer.writeAttribute("Alias", "0x");
+    writer.writeAttribute("Min", "0x0000");
+    writer.writeAttribute("Max", "0xFFFF");
+    szListDataType.clear();
+    szListDataType << tr("bool");
+    writer.writeAttribute("DataType", szListDataType.join("|"));
+    szListSubArea.clear();
+    writer.writeAttribute("SubArea", szListSubArea.join("|"));
+    writer.writeEndElement(); // <RegArea/>
+
+    writer.writeStartElement("RegArea"); // <RegArea>
+    writer.writeAttribute("Name", DISCRETE_STATUS);
+    writer.writeAttribute("Alias", "1x");
+    writer.writeAttribute("Min", "0x0000");
+    writer.writeAttribute("Max", "0xFFFF");
+    szListDataType.clear();
+    szListDataType << tr("bool");
+    writer.writeAttribute("DataType", szListDataType.join("|"));
+    szListSubArea.clear();
+    writer.writeAttribute("SubArea", szListSubArea.join("|"));
+    writer.writeEndElement(); // <RegArea/>
+
+    writer.writeStartElement("RegArea"); // <RegArea>
+    writer.writeAttribute("Name", INPUT_REGISTER);
+    writer.writeAttribute("Alias", "3x");
+    writer.writeAttribute("Min", "0x0000");
+    writer.writeAttribute("Max", "0xFFFF");
+    szListDataType.clear();
+    szListDataType << tr("int16")
+                   << tr("uint16")
+                   << tr("int32")
+                   << tr("uint32")
+                   << tr("float32")
+                   << tr("double")
+                   << tr("bcd16")
+                   << tr("bcd32");
+    writer.writeAttribute("DataType", szListDataType.join("|"));
+    szListSubArea.clear();
+    writer.writeAttribute("SubArea", szListSubArea.join("|"));
+    writer.writeEndElement(); // <RegArea/>
+
+    writer.writeStartElement("RegArea"); // <RegArea>
+    writer.writeAttribute("Name", HOLDING_REGISTER);
+    writer.writeAttribute("Alias", "4x");
+    writer.writeAttribute("Min", "0x0000");
+    writer.writeAttribute("Max", "0xFFFF");
+    szListDataType.clear();
+    szListDataType << tr("int16")
+                   << tr("uint16")
+                   << tr("int32")
+                   << tr("uint32")
+                   << tr("float32")
+                   << tr("double")
+                   << tr("bcd16")
+                   << tr("bcd32");
+    writer.writeAttribute("DataType", szListDataType.join("|"));
+    szListSubArea.clear();
+    writer.writeAttribute("SubArea", szListSubArea.join("|"));
+
+    writer.writeEndElement(); // <RegArea/>
+    writer.writeEndElement(); // <RegAreas/>
+    writer.writeEndElement(); // <Device/>
+    writer.writeEndDocument();
+
+    return szDeviceDescInfo;
 }
 
-///
-/// \brief TCPIPModbus::getDeviceSupportRegisterArea
-/// \details 获取设备支持的所有寄存器区
-/// \return
-///
-QStringList TCPIPModbus::getDeviceSupportRegisterArea()
-{
-    QStringList list;
-    list << COIL_STATUS
-         << DISCRETE_STATUS
-         << INPUT_REGISTER
-         << HOLDING_REGISTER;
-    return list;
-}
 
-///
-/// \brief TCPIPModbus::getDeviceSupportRegisterArea
-/// \details 获取指定数据类型和读写属性设备支持的寄存器区
-/// \param szDataType 数据类型
-/// \param bWriteable 读写属性
-/// \return 寄存器区
-///
-QStringList TCPIPModbus::getDeviceSupportRegisterArea(const QString &szDataType, bool bWriteable)
+void TCPIPModbus::loadInfos(QXmlStreamReader *r, QMap<QString, QVector<TTagInfo>> &infos, QString &dev)
 {
-    Q_UNUSED(szDataType)
-    Q_UNUSED(bWriteable)
-    return QStringList();
-}
+    QString addr;
+    TTagInfo info;
+    if(r->name().toString() == "tag") {
+        foreach(QXmlStreamAttribute attr, r->attributes()) {
+            QString attrName = attr.name().toString();
+            if(attrName == "addr"){
+                addr = attr.value().toString();
+            } else if(attrName == "id"){
+                info.id = attr.value().toInt();
+            } else if(attrName == "dev"){
+                dev = attr.value().toString();
+            } else if(attrName == "offset"){
+                info.offset = attr.value().toInt();
+            } else if(attrName == "type"){
+                info.length = tagLength(attr.value().toString());
+            }
+        }
 
-///
-/// \brief TCPIPModbus::GetDeviceSupportDataType
-/// \details 获取设备支持的所有数据类型
-/// \param szAreaName 寄存器区
-/// \return
-///
-QStringList TCPIPModbus::getDeviceSupportDataType(const QString &szAreaName)
-{
-    QStringList list;
-
-    if(szAreaName == COIL_STATUS || szAreaName == DISCRETE_STATUS) {
-        list << tr("bool");
+        if(infos.count(addr) > 0) {
+            QVector<TTagInfo> &vecInfo = infos[addr];
+            vecInfo.append(info);
+        } else {
+            QVector<TTagInfo> vecInfo;
+            vecInfo.append(info);
+            infos[addr] = vecInfo;
+        }
     }
-    else if(szAreaName == HOLDING_REGISTER || szAreaName == INPUT_REGISTER ||
-            szAreaName == tr("所有") || szAreaName == "ALL") {
-        list << tr("int16")
-             << tr("uint16")
-             << tr("int32")
-             << tr("uint32")
-             << tr("float32")
-             << tr("double")
-             << tr("bcd16")
-             << tr("bcd32");
-    }
-    return list;
 }
-
 
 /**
- * @brief TCPIPModbus::getRegisterAreaLimit
- * @details 获取寄存器区地址的下限和上限
- * @param szAreaName 寄存器区名称
- * @param iLowerLimit 寄存器区地址下限
- * @param iUpperLimit 寄存器区地址上限
+ * @brief TCPIPModbus::buildBlockReadTags 生成块读变量
+ * @param xmlDevTags 同一设备的所有寄存器变量
+ * @param xmlDevBlockReadTags 同一设备的所有块读变量
+ * @param idToBlockId 变量ID对应的块读变量ID
+ * @return true-成功, false-失败
  */
-void TCPIPModbus::getRegisterAreaLimit(const QString &szAreaName,
-                                       quint32 &iLowerLimit,
-                                       quint32 &iUpperLimit)
+bool TCPIPModbus::buildBlockReadTags(const QString &xmlDevTags, const QString &properties, QString &xmlDevBlockReadTags, QVector<QPair<QString, QString>>& idToBlockId)
 {
-    iLowerLimit = 0;
-    iUpperLimit = 0;
-    if(szAreaName == COIL_STATUS) {
-        iLowerLimit = 0x0000;
-        iUpperLimit = 0xFFFF;
-    } else if(szAreaName == DISCRETE_STATUS) {
-        iLowerLimit = 0x0000;
-        iUpperLimit = 0xFFFF;
-    } else if(szAreaName == INPUT_REGISTER) {
-        iLowerLimit = 0x0000;
-        iUpperLimit = 0xFFFF;
-    } else if(szAreaName == HOLDING_REGISTER) {
-        iLowerLimit = 0x0000;
-        iUpperLimit = 0xFFFF;
+#if 0
+    xmlDevTags -->
+    <tags>
+        <tag addr="4x" addr2="" dev="TCPIPModbus" group="" id="7" name="4x1" offset="0" offset2="0" remark="" type="uint16" unit="" writeable="1" blockReadId="60001"/>
+        <tag addr="4x" addr2="" dev="TCPIPModbus" group="" id="8" name="4x2" offset="1" offset2="0" remark="" type="uint16" unit="" writeable="1" blockReadId="60001"/>
+        <tag addr="0x" addr2="" dev="TCPIPModbus" group="" id="2" name="0x00" offset="0" offset2="0" remark="" type="bool" unit="" writeable="1" blockReadId="60002"/>
+    </tags>
+
+    xmlDevBlockReadTags -->
+    <block_tags>
+        <tag addr="4x" addr2="" dev="TCPIPModbus" group="" id="60001" name="4x1" offset="0" offset2="0" remark="" type="4:reg" unit="" writeable="0" blockReadId=""/>
+        <tag addr="0x" addr2="" dev="TCPIPModbus" group="" id="60002" name="0x00" offset="0" offset2="0" remark="" type="1:reg" unit="" writeable="0" blockReadId=""/>
+    </block_tags>
+#endif
+
+    int bitMaxRegPacket = 0;
+    int wordMaxRegPacket = 0;
+
+    QStringList szListProperties = properties.split("|");
+    foreach(QString szKeyValue, szListProperties) {
+        if (szKeyValue.startsWith("bitMaxRegPacket=")) {
+            QString val = szKeyValue.replace("bitMaxRegPacket=", "").trimmed();
+            if(!val.isEmpty()) {
+                bitMaxRegPacket = val.toInt();
+            }
+        }
+        if (szKeyValue.startsWith("wordMaxRegPacket=")) {
+            QString val = szKeyValue.replace("wordMaxRegPacket=", "").trimmed();
+            if(!val.isEmpty()) {
+                wordMaxRegPacket = val.toInt();
+            }
+        }
     }
-    if(!m_bStartAddrBit0) iLowerLimit++;
-}
 
-///
-/// \brief TCPIPModbus::getAddressTypeAlias
-/// \details 获取地址类型别名
-/// \param szAreaName 寄存器区名称
-/// \param szDataType 数据类型
-/// \param szAddrOffset 地址偏移量
-/// \return 地址类型别名
-///
-QString TCPIPModbus::getAddressTypeAlias(const QString &szDataType,
-                                         const QString &szAreaName,
-                                         const QString &szAddrOffset,
-                                         const QString &szAreaName2,
-                                         const QString &szAddrOffset2)
-{
-    Q_UNUSED(szDataType)
-    Q_UNUSED(szAreaName2)
-    Q_UNUSED(szAddrOffset2)
-    QString szAddrTypeAlias = "";
-    if(szAreaName == COIL_STATUS) {
-        szAddrTypeAlias = "0x";
-    } else if(szAreaName == DISCRETE_STATUS) {
-        szAddrTypeAlias = "1x";
-    } else if(szAreaName == INPUT_REGISTER) {
-        szAddrTypeAlias = "3x";
-    } else if(szAreaName == HOLDING_REGISTER) {
-        szAddrTypeAlias = "4x";
+    // 不需要块读
+    if(bitMaxRegPacket <= 0 && wordMaxRegPacket <= 0) {
+        return false;
     }
-    szAddrTypeAlias += QString("%1").arg(szAddrOffset, 5, QChar('0'));
-    return szAddrTypeAlias;
-}
 
+    QString dev = "";
+    QMap<QString, QVector<TTagInfo>> mapInfos;
 
-///
-/// \brief TCPIPModbus::getAddressTypeAlias
-/// \details 获取地址类型别名
-/// \param szAreaName 寄存器区名称
-/// \return 地址类型别名
-///
-QString TCPIPModbus::getAddressTypeAlias(const QString &szAreaName)
-{
-    QString szAddrTypeAlias = "";
-    if(szAreaName == COIL_STATUS) {
-        szAddrTypeAlias = "0x";
-    } else if(szAreaName == DISCRETE_STATUS) {
-        szAddrTypeAlias = "1x";
-    } else if(szAreaName == INPUT_REGISTER) {
-        szAddrTypeAlias = "3x";
-    } else if(szAreaName == HOLDING_REGISTER) {
-        szAddrTypeAlias = "4x";
+    // 解析设备变量节点
+    QXmlStreamReader r(xmlDevTags);
+    while(!r.atEnd() && !r.hasError()) {
+        if(r.readNext() == QXmlStreamReader::StartElement) {
+            if(r.name() == "tag") {
+                loadInfos(&r, mapInfos, dev);
+            }
+        }
     }
-    return szAddrTypeAlias;
-}
-
-
-///
-/// \brief TCPIPModbus::getAddressType
-/// \details 获取指定地址类型别名的地址类型
-/// \param szAddressTypeAlias 地址类型别名
-/// \return 寄存器区名称
-///
-QString TCPIPModbus::getAddressType(const QString &szAddressTypeAlias)
-{
-    QString szAddrType = "";
-    if(szAddressTypeAlias.toLower() == "0x") {
-        szAddrType = COIL_STATUS;
-    } else if(szAddressTypeAlias.toLower() == "1x") {
-        szAddrType = DISCRETE_STATUS;
-    } else if(szAddressTypeAlias.toLower() == "3x") {
-        szAddrType = INPUT_REGISTER;
-    } else if(szAddressTypeAlias.toLower() == "4x") {
-        szAddrType = HOLDING_REGISTER;
+#if 0
+    {
+        qDebug() << "dev: " << dev;
+        QList<QString> memInfo = mapInfos.keys();
+        qDebug() << "memInfo: " << memInfo;
+        foreach (QString info, memInfo) {
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                qDebug() << "tagInfo: " << tagInfo.id << tagInfo.offset << tagInfo.length;
+            }
+        }
     }
-    return szAddrType;
+#endif
+    ///////////////////////////////////////////////////////////////////////////
+    /// 生成打包变量
+    ///
+    quint16 min0xAddr = 0xffff;
+    quint16 max0xAddr = 0;
+    quint16 var0xCnt = 0;
+
+    quint16 min1xAddr = 0xffff;
+    quint16 max1xAddr = 0;
+    quint16 var1xCnt = 0;
+
+    quint16 min3xAddr = 0xffff;
+    quint16 max3xAddr = 0;
+    quint16 var3xCnt = 0;
+
+    quint16 min4xAddr = 0xffff;
+    quint16 max4xAddr = 0;
+    quint16 var4xCnt = 0;
+
+    QList<QString> memInfo = mapInfos.keys();
+    foreach (QString info, memInfo) {
+        QVector<TTagInfo> &vecInfo = mapInfos[info];
+        foreach(TTagInfo tagInfo, vecInfo) {
+            if(info == "0x") {
+                if(min0xAddr > tagInfo.offset) {
+                    min0xAddr = tagInfo.offset;
+                }
+                if(max0xAddr <= tagInfo.offset + tagInfo.length) {
+                    max0xAddr = tagInfo.offset + tagInfo.length;
+                }
+                var0xCnt++;
+            } else if(info == "1x") {
+                if(min1xAddr > tagInfo.offset) {
+                    min1xAddr = tagInfo.offset;
+                }
+                if(max1xAddr <= tagInfo.offset + tagInfo.length) {
+                    max1xAddr = tagInfo.offset + tagInfo.length;
+                }
+                var1xCnt++;
+            } else if(info == "3x") {
+                if(min3xAddr > tagInfo.offset) {
+                    min3xAddr = tagInfo.offset;
+                }
+                if(max3xAddr <= tagInfo.offset + tagInfo.length / 2 - 1) {
+                    max3xAddr = tagInfo.offset + tagInfo.length / 2 - 1;
+                }
+                var3xCnt++;
+            } else if(info == "4x") {
+                if(min4xAddr > tagInfo.offset) {
+                    min4xAddr = tagInfo.offset;
+                }
+                if(max4xAddr <= tagInfo.offset + tagInfo.length / 2 - 1) {
+                    max4xAddr = tagInfo.offset + tagInfo.length / 2 - 1;
+                }
+                var4xCnt++;
+            }
+        }
+    }
+#if 0
+    qDebug() << "0x number: " << var0xCnt << ", min addr: " << min0xAddr << ", max addr: " << max0xAddr;
+    qDebug() << "1x number: " << var1xCnt << ", min addr: " << min1xAddr << ", max addr: " << max1xAddr;
+    qDebug() << "3x number: " << var3xCnt << ", min addr: " << min3xAddr << ", max addr: " << max3xAddr;
+    qDebug() << "4x number: " << var4xCnt << ", min addr: " << min4xAddr << ", max addr: " << max4xAddr;
+#endif
+    QMap<QString, QVector<TTagInfo *>> mapBlockInfos;
+    QVector<TTagInfo *> vecInfo0x;
+    mapBlockInfos["0x"] = vecInfo0x;
+
+    QVector<TTagInfo *> vecInfo1x;
+    mapBlockInfos["1x"] = vecInfo1x;
+
+    QVector<TTagInfo *> vecInfo3x;
+    mapBlockInfos["3x"] = vecInfo3x;
+
+    QVector<TTagInfo *> vecInfo4x;
+    mapBlockInfos["4x"] = vecInfo4x;
+
+    int iNextPackageVarID = 60001;
+
+    // 创建0x组包变量
+    if(var0xCnt > 1) {
+        int num = (max0xAddr - min0xAddr + 1) / bitMaxRegPacket;
+        if(((max0xAddr - min0xAddr + 1) % bitMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "0x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min0xAddr + j * bitMaxRegPacket;
+            pInfoObj->length = bitMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["0x"].append(pInfoObj);
+        }
+    }
+
+    // 创建1x组包变量
+    if(var1xCnt > 1) {
+        int num = (max1xAddr - min1xAddr + 1) / bitMaxRegPacket;
+        if(((max1xAddr - min1xAddr + 1) % bitMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "1x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min1xAddr + j * bitMaxRegPacket;
+            pInfoObj->length = bitMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["1x"].append(pInfoObj);
+        }
+    }
+
+    // 创建3x组包变量
+    if(var3xCnt > 1) {
+        int num = (max3xAddr - min3xAddr + 1) / wordMaxRegPacket;
+        if(((max3xAddr - min3xAddr + 1) % wordMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "3x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min3xAddr + j * wordMaxRegPacket;
+            pInfoObj->length = wordMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["3x"].append(pInfoObj);
+        }
+    }
+
+    // 创建4x组包变量
+    if(var4xCnt > 1) {
+        int num = (max4xAddr - min4xAddr + 1) / wordMaxRegPacket;
+        if(((max4xAddr - min4xAddr + 1) % wordMaxRegPacket) > 0) {
+            num++;
+        }
+
+        //qDebug() << "4x pack variable number: " << num;
+
+        for(int j=0; j<num; j++) {
+            TTagInfo *pInfoObj = new TTagInfo;
+            pInfoObj->id = iNextPackageVarID;
+            pInfoObj->offset = min4xAddr + j * wordMaxRegPacket;
+            pInfoObj->length = wordMaxRegPacket;
+            pInfoObj->use = false;
+            iNextPackageVarID++;
+            mapBlockInfos["4x"].append(pInfoObj);
+        }
+    }
+    ///////////////////////////////////////////////////////////////////////////
+    /// 变量关联组包变量
+    ///
+    QXmlStreamWriter writer(&xmlDevBlockReadTags);
+    writer.setAutoFormatting(true);
+    writer.writeStartDocument();
+    writer.writeStartElement("block_tags"); // <block_tags>
+
+    QVector<TTagInfo *> &vecTagInfo0x = mapBlockInfos["0x"];
+    quint32 dwFindMax0xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin0xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo0x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax0xAddr = iMinAddrOffset;
+        dwFindMin0xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "0x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax0xAddr) {
+                        dwFindMax0xAddr = tagInfo.offset + tagInfo.length;
+                    }
+                    if(dwFindMin0xAddr > tagInfo.offset) {
+                        dwFindMin0xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "0x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("0x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax0xAddr - dwFindMin0xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    QVector<TTagInfo *> &vecTagInfo1x = mapBlockInfos["1x"];
+    quint32 dwFindMax1xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin1xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo1x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax1xAddr = iMinAddrOffset;
+        dwFindMin1xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "1x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax1xAddr) {
+                        dwFindMax1xAddr = tagInfo.offset + tagInfo.length;
+                    }
+                    if(dwFindMin1xAddr > tagInfo.offset) {
+                        dwFindMin1xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "1x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("1x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax1xAddr - dwFindMin1xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    QVector<TTagInfo *> &vecTagInfo3x = mapBlockInfos["3x"];
+    quint32 dwFindMax3xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin3xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo3x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax3xAddr = iMinAddrOffset;
+        dwFindMin3xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "3x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax3xAddr) {
+                        dwFindMax3xAddr = tagInfo.offset + tagInfo.length / 2;
+                    }
+                    if(dwFindMin3xAddr > tagInfo.offset) {
+                        dwFindMin3xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "3x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("3x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax3xAddr - dwFindMin3xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    QVector<TTagInfo *> &vecTagInfo4x = mapBlockInfos["4x"];
+    quint32 dwFindMax4xAddr = 0; // 包内的最大地址
+    quint32 dwFindMin4xAddr = 0xffff; // 包内的最小地址
+    foreach(TTagInfo *pObj, vecTagInfo4x) {
+        quint32 iMinAddrOffset = pObj->offset;
+        quint32 iMaxAddrOffset = pObj->length;
+        dwFindMax4xAddr = iMinAddrOffset;
+        dwFindMin4xAddr = iMaxAddrOffset;
+        QList<QString> memInfo = mapInfos.keys();
+        foreach (QString info, memInfo) {
+            if(info != "4x") {
+                continue;
+            }
+            QVector<TTagInfo> &vecInfo = mapInfos[info];
+            foreach(TTagInfo tagInfo, vecInfo) {
+                if(tagInfo.offset >= iMinAddrOffset && (tagInfo.offset + tagInfo.length) <= iMaxAddrOffset) {
+                    pObj->use = true;
+                    QPair<QString, QString> idPair;
+                    idPair.first = QString::number(tagInfo.id);
+                    idPair.second = QString::number(pObj->id);
+                    idToBlockId.append(idPair);
+                    if((tagInfo.offset + tagInfo.length) > dwFindMax4xAddr) {
+                        dwFindMax4xAddr = tagInfo.offset + tagInfo.length / 2;
+                    }
+                    if(dwFindMin4xAddr > tagInfo.offset) {
+                        dwFindMin4xAddr = tagInfo.offset;
+                    }
+                }
+            }
+        }
+        writer.writeStartElement("tag"); // <tag>
+        writer.writeAttribute("addr", "4x");
+        writer.writeAttribute("addr2", "");
+        writer.writeAttribute("dev", dev);
+        writer.writeAttribute("group", "");
+        writer.writeAttribute("id", QString::number(pObj->id));
+        writer.writeAttribute("name", QString("4x_%1").arg(QString::number(pObj->id)));
+        writer.writeAttribute("offset", QString::number(pObj->offset));
+        writer.writeAttribute("offset2", "");
+        writer.writeAttribute("remark", "");
+        writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax4xAddr - dwFindMin4xAddr)));
+        writer.writeAttribute("unit", "");
+        writer.writeAttribute("writeable", "0");
+        writer.writeAttribute("blockReadId", "");
+        writer.writeEndElement(); // <tag/>
+    }
+
+    writer.writeEndElement(); // <block_tags/>
+    writer.writeEndDocument();
+
+    qDeleteAll(vecTagInfo0x);
+    qDeleteAll(vecTagInfo1x);
+    qDeleteAll(vecTagInfo3x);
+    qDeleteAll(vecTagInfo4x);
+    mapBlockInfos.clear();
+
+    return true;
 }
-
-
-///
-/// \brief TCPIPModbus::getAutoAddrMapItemList
-/// \details 获取寄存器地址映射列表
-/// \param listAutoAddrMapItem
-///
-void TCPIPModbus::getAutoAddrMapItemList(QList<PAutoAddrMapItem> &listAutoAddrMapItem)
-{
-    Q_UNUSED(listAutoAddrMapItem)
-}
-
-
-///
-/// \brief TCPIPModbus::getDeviceSupportRegisterAreaSubArea
-/// \details 获取设备支持的地址类型所有子寄存器区名称
-/// \param szAreaName 寄存器区名称
-/// \return 地址类型所有子寄存器区名称
-///
-QStringList TCPIPModbus::getDeviceSupportRegisterAreaSubArea(const QString &szAreaName)
-{
-    Q_UNUSED(szAreaName)
-    return QStringList();
-}
-
