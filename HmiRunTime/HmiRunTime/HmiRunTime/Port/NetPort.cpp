@@ -1,4 +1,4 @@
-﻿#include <QTime>
+﻿#include <QElapsedTimer>
 #include "NetPort.h"
 #include "publicfunction.h"
 #include <QThread>
@@ -75,25 +75,20 @@ int NetPort::read(unsigned char *buf, int len, int ms)
     if (!client) {
         reOpen();
     }
-    long start;
-
-    QTime time;
-    time.start();
-    start = time.elapsed();
+    QElapsedTimer elapsedTimer;
     QByteArray byteArray;
 
     int iNeed = len;
     int iAvailable;
+    elapsedTimer.start();
     while (iNeed > 0) {
         iAvailable = client->bytesAvailable();
         if(iAvailable) {
             iAvailable = (iAvailable > iNeed) ? iNeed : iAvailable;
-            //qDebug() << "read Begin";
             byteArray.append(client->read(iAvailable));
-            //qDebug() << "read End";
             iNeed -= iAvailable;
         }
-        if ((time.elapsed() - start) > ms) {
+        if (elapsedTimer.elapsed() > ms) {
             if (byteArray.size() < len) {
                 len = byteArray.size();
             }

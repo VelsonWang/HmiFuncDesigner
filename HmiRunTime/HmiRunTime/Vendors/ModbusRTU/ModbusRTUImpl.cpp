@@ -315,7 +315,6 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
     (void)pObj;
     quint16 retSize = 0, msgLen = 0, revLen = 0;
     qint16 i = 0, j = 0;
-    quint32 wDataLen = 0;
 
     TModbus_CPUMEM cm = getCpuMem(pTag->addrType);
 
@@ -378,29 +377,24 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
     if(pTag->dataType == TYPE_BOOL) {
         retSize = 1;
         uint8ToBytes(pVendorObj->readBuf[3]&0x01, pTag->dataFromVendor);
-        wDataLen = retSize;
     } else if(pTag->dataType == TYPE_INT16 || pTag->dataType == TYPE_UINT16) {
         pTag->updateVendorData(&pVendorObj->readBuf[3], 2);
         if(cm == CM_3x || cm == CM_4x) {
             modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataFromVendor, 2);
         }
-        wDataLen = 2;
     } else if(pTag->dataType == TYPE_UINT32 || pTag->dataType == TYPE_INT32 ||
               pTag->dataType == TYPE_FLOAT32) {
         pTag->updateVendorData(&pVendorObj->readBuf[3], 4);
         if(cm == CM_3x || cm == CM_4x) {
             modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataFromVendor, 4);
         }
-        wDataLen = 4;
     } else if(pTag->dataType == TYPE_FLOAT64) {
         pTag->updateVendorData(&pVendorObj->readBuf[3], 8);
         if(cm == CM_3x || cm == CM_4x) {
             modbusChangeData(isAddr8(pObj), !isAddr16(pObj), isAddr32(pObj), isAddr64(pObj), pTag->dataFromVendor, 8);
         }
-        wDataLen = 8;
     } else if(pTag->dataType == TYPE_UINT8 || pTag->dataType == TYPE_INT8) {
         retSize = pVendorObj->readBuf[2];
-
         if(getFuncode(pObj, pTag, FLAG_READ) == 0x01 || getFuncode(pObj, pTag, FLAG_READ) == 0x02) {
             j = retSize - 1;
             for(i = 0; i < retSize; i++) {
@@ -423,7 +417,6 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
             }
             pTag->updateVendorData(tempBuffer, retSize);
         }
-        wDataLen = retSize;
     } else if(pTag->dataType == TYPE_BYTES) {
         retSize = pVendorObj->readBuf[2];
 
@@ -441,7 +434,6 @@ int ModbusRTUImpl::readData(void* pObj, RunTimeTag* pTag)
             }
         }
         pTag->updateVendorData(tempBuffer, retSize);
-        wDataLen = retSize;
     }
 
     return 1;

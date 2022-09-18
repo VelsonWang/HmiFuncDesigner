@@ -6,7 +6,8 @@
 
 QIndicationLamp::QIndicationLamp(QWidget *parent) : QLabel(parent)
 {
-    m_szTag = "";
+    m_tagId = "";
+    m_tag = NULL;
     m_bStateOnInitial = false;
     m_szResetImageFile = "";
     m_szSetImageFile = "";
@@ -66,12 +67,15 @@ void QIndicationLamp::fromObject(XMLObject* xml)
 
 QString QIndicationLamp::getTag()
 {
-    return m_szTag;
+    return m_tagId;
 }
 
 void QIndicationLamp::setTag(const QString szTag)
 {
-    m_szTag = szTag;
+    if(m_tagId != szTag) {
+        m_tagId = szTag;
+        m_tag = RealTimeDB::instance()->tag(tagId(m_tagId));
+    }
 }
 
 bool QIndicationLamp::getStateOnInitial()
@@ -154,12 +158,22 @@ void QIndicationLamp::setPropertyInner()
 {
     setScaledContents(!m_bNoScale);
     if(!m_bNoScale) {
-        if(!m_bStateOnInitial && (m_szResetImageFile != "")) {
-            setPixmap(QPixmap::fromImage(m_resetImageObj));
+        if(m_tag == NULL) {
+            if(!m_bStateOnInitial && (m_szResetImageFile != "")) {
+                setPixmap(QPixmap::fromImage(m_resetImageObj));
+            }
+            if(m_bStateOnInitial && (m_szSetImageFile != "")) {
+                setPixmap(QPixmap::fromImage(m_setImageObj));
+            }
+        } else {
+            if(!m_tag->toBool() && (m_szResetImageFile != "")) {
+                setPixmap(QPixmap::fromImage(m_resetImageObj));
+            }
+            if(m_tag->toBool() && (m_szSetImageFile != "")) {
+                setPixmap(QPixmap::fromImage(m_setImageObj));
+            }
         }
-        if(m_bStateOnInitial && (m_szSetImageFile != "")) {
-            setPixmap(QPixmap::fromImage(m_setImageObj));
-        }
+
     }
     if(m_iBoardWidth > 0) {
         QString szStyleSheet = "";
@@ -178,7 +192,12 @@ void QIndicationLamp::paintEvent(QPaintEvent *event)
 {
     QPainter painter(this);
     painter.setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
-    QString szFileIndicationLamp = m_bStateOnInitial ? m_szSetImageFile : m_szResetImageFile;
+    QString szFileIndicationLamp = m_szResetImageFile;
+    if(m_tag) {
+        szFileIndicationLamp = m_tag->toBool() ? m_szSetImageFile : m_szResetImageFile;
+    } else {
+        m_tag = RealTimeDB::instance()->tag(tagId(m_tagId));
+    }
 
     if(szFileIndicationLamp == "") {
         QRect rect = QRect(0, 0, width(), height());
@@ -188,7 +207,7 @@ void QIndicationLamp::paintEvent(QPaintEvent *event)
         QRadialGradient radialGradient(fHalfWidth, fHalfHeight, fRadius, fHalfWidth, fHalfHeight);
         // 创建了一个QRadialGradient对象实例，参数分别为中心坐标，半径长度和焦点坐标,
         // 如果需要对称那么中心坐标和焦点坐标要一致
-        if(m_bStateOnInitial) {
+        if(m_tag && m_tag->toBool()) {
             radialGradient.setColorAt(0, Qt::yellow);
             radialGradient.setColorAt(0.8, Qt::blue); // 设置50%处的半径为蓝色
         } else {

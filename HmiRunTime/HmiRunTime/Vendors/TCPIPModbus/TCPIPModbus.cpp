@@ -1,6 +1,6 @@
 #include "TCPIPModbus.h"
-#include "../../HmiRunTimeData/Vendor.h"
-
+#include "../../HmiRunTime/Vendor.h"
+#include "../../HmiRunTime/shared/publicfunction.h"
 
 TCPIPModbus::TCPIPModbus()
 {
@@ -24,7 +24,7 @@ bool TCPIPModbus::initailizeDevice(void* pObj)
 {
     Vendor* pVendorObj = (Vendor*)(pObj);
     if(pVendorObj) {
-        m_TCPIPModbusImplObj.insertBlockReadTagToReadList(pVendorObj->m_readList);
+
     }
     return true;
 }
@@ -76,7 +76,7 @@ bool TCPIPModbus::unInitailizeDevice(void* pObj)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::beforeWriteIOTag(void* pObj, IOTag* pTag)
+bool TCPIPModbus::beforeWriteIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -92,10 +92,12 @@ bool TCPIPModbus::beforeWriteIOTag(void* pObj, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int TCPIPModbus::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
+int TCPIPModbus::writeIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag)
 {
     m_TCPIPModbusImplObj.setPort(pPort);
-    if(!m_TCPIPModbusImplObj.isCanWrite(pObj, pTag)) return 1;
+    if(!m_TCPIPModbusImplObj.isCanWrite(pObj, pTag)) {
+        return 1;
+    }
     return m_TCPIPModbusImplObj.writeData(pObj, pTag);
 }
 
@@ -107,7 +109,7 @@ int TCPIPModbus::writeIOTag(void* pObj, IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::afterWriteIOTag(void* pObj, IOTag* pTag)
+bool TCPIPModbus::afterWriteIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -123,7 +125,7 @@ bool TCPIPModbus::afterWriteIOTag(void* pObj, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::beforeReadIOTag(void* pObj, IOTag* pTag)
+bool TCPIPModbus::beforeReadIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -139,13 +141,47 @@ bool TCPIPModbus::beforeReadIOTag(void* pObj, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return 0-失败, 1-成功
  */
-int TCPIPModbus::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
+int TCPIPModbus::readIOTag(void* pObj, IPort *pPort, RunTimeTag* pTag)
 {
     m_TCPIPModbusImplObj.setPort(pPort);
-    if(!m_TCPIPModbusImplObj.isCanRead(pObj, pTag)) return 1;
+    if(!m_TCPIPModbusImplObj.isCanRead(pObj, pTag)) {
+        return 1;
+    }
     return m_TCPIPModbusImplObj.readData(pObj, pTag);
 }
 
+// 从块读变量拷贝寄存器数据至普通变量
+bool TCPIPModbus::copyTagDataFromBlockReadTag(RunTimeTag* pBlockReadTag, RunTimeTag* pTag)
+{
+    int iOffset = pTag->addrOffset - pBlockReadTag->addrOffset;
+    quint8 *pDes = pTag->dataFromVendor;
+    quint8 *pSrc = pBlockReadTag->dataFromVendor;
+
+    if(pTag->dataType == TYPE_BOOL) {
+        quint32 iByte = iOffset / 8;
+        quint32 iBit = iOffset % 8;
+        pDes[0] = (pSrc[iByte] >> iBit) & 0x01;
+    } else {
+        for(int x=0; x<pTag->bufLength; x++) {
+            pDes[x] = pSrc[iOffset * 2 + x];
+        }
+    }
+#if 0
+    qDebug() << "BlockReadTag: addr " << pBlockReadTag->addrOffset << hexToString((char *)pBlockReadTag->dataFromVendor, pBlockReadTag->bufLength);
+    qDebug() << "         Tag: addr " << pTag->addrOffset << hexToString((char *)pTag->dataFromVendor, pTag->bufLength);
+#endif
+    return true;
+}
+
+// 设置块读变量缓冲区长度
+void TCPIPModbus::setBlockReadTagBufferLength(RunTimeTag* pBlockReadTag)
+{
+    if(pBlockReadTag && pBlockReadTag->isBlockRead) {
+        if(pBlockReadTag->dataType != TYPE_BOOL) {
+            pBlockReadTag->bufLength *= 2;
+        }
+    }
+}
 
 /**
  * @brief TCPIPModbus::afterReadIOTag
@@ -154,7 +190,7 @@ int TCPIPModbus::readIOTag(void* pObj, IPort *pPort, IOTag* pTag)
  * @param pTag 变量描述对象
  * @return false-失败, true-成功
  */
-bool TCPIPModbus::afterReadIOTag(void* pObj, IOTag* pTag)
+bool TCPIPModbus::afterReadIOTag(void* pObj, RunTimeTag* pTag)
 {
     (void)pObj;
     (void)pTag;
@@ -169,10 +205,11 @@ bool TCPIPModbus::afterReadIOTag(void* pObj, IOTag* pTag)
 /// \param pTag 变量描述对象
 /// \return true-成功, false-失败
 ///
-bool TCPIPModbus::convertIOTagBytesToNativeBytes(void* pObj, IOTag* pTag)
+bool TCPIPModbus::convertIOTagBytesToNativeBytes(void* pObj, RunTimeTag* pTag)
 {
     return m_TCPIPModbusImplObj.convertIOTagBytesToNativeBytes(pObj, pTag);
 }
+
 
 
 
