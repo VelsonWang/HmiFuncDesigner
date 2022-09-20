@@ -1,14 +1,13 @@
 #include "qlineeditex.h"
-#include "keyboard/inputmethodnumber.h"
 #include "../xmlobject.h"
 #include <QFocusEvent>
-#include <QDebug>
 
 QLineEditEx::QLineEditEx(QWidget *parent) : QLineEdit(parent)
 {
     m_tagId = "";
     m_tag = NULL;
     m_editing = false;
+    this->setFocusPolicy(Qt::ClickFocus);
 }
 
 void QLineEditEx::fromObject(XMLObject* xml)
@@ -93,8 +92,6 @@ void QLineEditEx::mousePressEvent(QMouseEvent *)
         m_tag = RealTimeDB::instance()->tag(tagId(m_tagId));
     }
     if(tag() != "") {
-        connect(InputMethodNumber::instance(), SIGNAL(enterPressed()), this, SLOT(enterPressed()));
-        InputMethodNumber::instance()->setFocusWidget(this);
         this->setText(m_tag->toString());
         this->setFocus();
     }
@@ -106,12 +103,32 @@ void QLineEditEx::enterPressed()
     if(tag() != "") {
         m_tag->fromString(this->text(), true);
     }
-    disconnect(InputMethodNumber::instance(), SIGNAL(enterPressed()), this, SLOT(enterPressed()));
 }
 
 
+void QLineEditEx::keyPressEvent(QKeyEvent *event)
+{
+    if(event->key() == Qt::Key_Enter) {
+        enterPressed();
+    }
+    QLineEdit::keyPressEvent(event);
+}
+
+void QLineEditEx::keyReleaseEvent(QKeyEvent *event)
+{
+    QLineEdit::keyReleaseEvent(event);
+}
 
 
+void QLineEditEx::showEvent(QShowEvent *)
+{
+    this->clearFocus();
+}
+
+void QLineEditEx::hideEvent(QHideEvent *)
+{
+
+}
 
 
 

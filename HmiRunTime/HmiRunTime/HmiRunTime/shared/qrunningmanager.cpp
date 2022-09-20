@@ -14,7 +14,7 @@
 QRunningManager::QRunningManager(QObject *parent) :
     QObject(parent),
     m_pProjCoreObj(new QProjectCore),
-    m_pMainWindowObj(new QMainWindow((QWidget*)parent)),
+    m_pMainWindowObj(new MainWindow((QWidget*)parent)),
     m_pDlgBaseWidgetObj(new QBaseDialogWidget(m_pMainWindowObj)),
     m_pLastWidgetObj(NULL)
 {
