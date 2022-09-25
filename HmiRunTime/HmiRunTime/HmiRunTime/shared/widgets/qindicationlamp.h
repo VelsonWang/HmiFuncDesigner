@@ -3,12 +3,13 @@
 
 #include <QLabel>
 #include <QPaintEvent>
+#include "realtimedb.h"
 #include "iloader.h"
 
 class QIndicationLamp : public QLabel, public ILoader
 {
     Q_OBJECT
-    Q_PROPERTY(QString Tag READ getTag WRITE setTag)
+    Q_PROPERTY(QString tag READ getTag WRITE setTag)
     Q_PROPERTY(bool StateOnInitial READ getStateOnInitial WRITE setStateOnInitial)
     Q_PROPERTY(QString ResetImageFile READ getResetImageFile WRITE setResetImageFile)
     Q_PROPERTY(QString SetImageFile READ getSetImageFile WRITE setSetImageFile)
@@ -60,6 +61,8 @@ private:
     bool m_bNoScale;
     int m_iBoardWidth;
     QColor m_boardColorObj;
+    QString m_tagId;
+    RunTimeTag *m_tag;
 };
 
 #endif // QINDICATIONLAMP_H

@@ -4,7 +4,7 @@
 #include "sharedlibglobal.h"
 #include "qblinkwidgettimer.h"
 #include <QObject>
-#include <QMainWindow>
+#include "mainwindow.h"
 #include <QTimer>
 #include <QStack>
 
@@ -57,7 +57,7 @@ private:
 
 protected:
     QProjectCore *m_pProjCoreObj;
-    QMainWindow *m_pMainWindowObj;
+    MainWindow *m_pMainWindowObj;
     QBaseDialogWidget *m_pDlgBaseWidgetObj;
     QWidget *m_pLastWidgetObj;
 

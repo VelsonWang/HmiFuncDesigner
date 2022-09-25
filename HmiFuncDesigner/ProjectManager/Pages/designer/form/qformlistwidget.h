@@ -47,6 +47,9 @@ signals:
     void select(QAbstractHost* host);
 
 protected:
+    void contextMenuEvent(QContextMenuEvent * event);
+
+protected:
     QList<QAction*> m_form_action_list;
     QList<QDesignerFormHost*> m_forms;
     QMap<QAbstractHost*, QDesignerFormHost*> m_host_to_form;

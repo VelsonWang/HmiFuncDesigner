@@ -1,8 +1,8 @@
 TEMPLATE = subdirs
 
 SUBDIRS += \
-    ModbusRTU #\
+    ModbusRTU \
+    TCPIPModbus #\
 #    ModbusASCII \
-#    TCPIPModbus \
 #    FX2N \
 #    S7_200

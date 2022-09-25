@@ -14,7 +14,6 @@ HEADERS += \
     $$PWD/realtimedb.h \
     $$PWD/sharedlibglobal.h \
     $$PWD/widgets/iloader.h \
-    $$PWD/widgets/keyboard/inputmethodnumber.h \
     $$PWD/widgets/qformwidget.h \
     $$PWD/widgets/qimagebox.h \
     $$PWD/widgets/qindicationlamp.h \
@@ -33,7 +32,9 @@ HEADERS += \
     $$PWD/qpagemanager.h \
     $$PWD/qblinkwidgettimer.h \
     $$PWD/qabstractupdateplugin.h \
-    $$PWD/qstylesheetinfo.h
+    $$PWD/qstylesheetinfo.h \
+    $$PWD/mainwindow.h \
+    $$PWD/keyboardnumber.h
 
 SOURCES += \
     $$PWD/confighelper.cpp \
@@ -41,7 +42,6 @@ SOURCES += \
     $$PWD/qwidgetfactory.cpp \
     $$PWD/realtimedb.cpp \
     $$PWD/widgets/iloader.cpp \
-    $$PWD/widgets/keyboard/inputmethodnumber.cpp \
     $$PWD/widgets/qformwidget.cpp \
     $$PWD/widgets/qimagebox.cpp \
     $$PWD/widgets/qindicationlamp.cpp \
@@ -59,10 +59,12 @@ SOURCES += \
     $$PWD/qpagemanager.cpp \
     $$PWD/qblinkwidgettimer.cpp \
     $$PWD/qabstractupdateplugin.cpp \
-    $$PWD/qstylesheetinfo.cpp
+    $$PWD/qstylesheetinfo.cpp \
+    $$PWD/mainwindow.cpp \
+    $$PWD/keyboardnumber.cpp
 
 FORMS += \
-    $$PWD/widgets/keyboard/inputmethodnumber.ui
+    $$PWD/keyboardnumber.ui
 
 
 SOURCES += \
