@@ -370,14 +370,14 @@ void QProjectCore::getAllTagName(QStringList &varList, const QString &type)
 
         //-------------中间变量------------------//
         if(szType == "ALL" || szType == "TMP") {
-            if(pTagObj->m_devType != "MEMORY") {
+            if(pTagObj->m_devType == "MEMORY") {
                 varList << (QObject::tr("内存变量_") + pTagObj->m_name + "[" + QString::number(pTagObj->m_id) + "]");
             }
         }
 
         //-------------系统变量------------------//
         if(szType == "ALL" || szType == "SYS") {
-            if(pTagObj->m_devType != "SYSTEM") {
+            if(pTagObj->m_devType == "SYSTEM") {
                 varList << (QObject::tr("系统变量_") + pTagObj->m_name + "[" + QString::number(pTagObj->m_id) + "]");
             }
         }

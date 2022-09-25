@@ -28,7 +28,9 @@ QString QLineEditHost::getShowIcon()
 
 void QLineEditHost::createObject()
 {
-    m_object = new QLineEdit();
+    QWidget *pWidgetObj = new QLineEdit();
+    pWidgetObj->setContextMenuPolicy(Qt::NoContextMenu);
+    m_object = pWidgetObj;
     m_object->setObjectName("lineedit");
 }
 
