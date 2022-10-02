@@ -856,65 +856,15 @@ void MainWindow::onSlotUpLoadProject()
     */
 void MainWindow::onSlotDownloadProject()
 {
-    if(QSoftCore::getCore()->getProjectCore()->m_szProjFile.isEmpty()) {
+    QString projFile = QSoftCore::getCore()->getProjectCore()->m_szProjFile.trimmed();
+    if(projFile.isEmpty()) {
+        QMessageBox::warning(this, tr("提示"), tr("未打开工程文件或未新建工程文件！"));
         return;
     }
 
-    // 创建tmp目录
-    QString tmpDir = QCoreApplication::applicationDirPath() + "/tmp";
-    QDir dir(tmpDir);
-    if(!dir.exists()) {
-        dir.mkpath(tmpDir);
+    ProjectDownloadDialog dlg(this, projFile);
+    if (dlg.exec() == QDialog::Accepted) {
     }
-
-    // 拷贝工程到tmp目录
-    QString desDir = QCoreApplication::applicationDirPath() + "/tmp/RunProject";
-    Helper::CopyRecursively(QSoftCore::getCore()->getProjectCore()->m_szProjPath, desDir);
-
-    // 打包工程到tmp目录
-    QString program = QCoreApplication::applicationDirPath() + "/tar/tar.exe";
-    QFile programFile(program);
-    if(!programFile.exists()) {
-        QMessageBox::information(this, "系统提示", "命令：" + program + "不存在！");
-        return;
-    }
-
-    QProcess *tarProc = new QProcess;
-    // 设置进程工作目录
-    tarProc->setWorkingDirectory(QCoreApplication::applicationDirPath() + "/tar");
-    QStringList arguments;
-    arguments << "-cvf"
-              << "../tmp/RunProject.tar"
-              << "-C"
-              << "../tmp"
-              << "RunProject";
-    tarProc->start(program, arguments);
-    if (tarProc->waitForStarted()) {
-        if (tarProc->waitForFinished(-1)) {
-            // 压缩完成准备传输文件
-
-        }
-        if (tarProc->exitStatus() == QProcess::NormalExit) {
-
-        } else {  // QProcess::CrashExit
-
-        }
-    } else {
-        QMessageBox::information(this, "系统提示", "压缩工程失败！");
-    }
-
-    QDir dirRunProj(desDir);
-    if (dirRunProj.exists()) {
-        Helper::DeleteDir(desDir);
-    }
-
-    delete tarProc;
-
-    ProjectDownloadDialog *pDlg = new ProjectDownloadDialog(this, QSoftCore::getCore()->getProjectCore()->m_szProjFile);
-    pDlg->setProjFileName(QCoreApplication::applicationDirPath() + "/tmp/RunProject.tar");
-    if (pDlg->exec() == QDialog::Accepted) {
-    }
-    delete pDlg;
 }
 
 

@@ -110,7 +110,6 @@ osx {
 
     INSTALL_LIBRARY_PATH = $$IDE_BIN_PATH
     INSTALL_DEVICE_PLUGIN_PATH  = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/deviceplugins
-    INSTALL_DRAWAPPLICATION_PLUGIN_PATH  = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/DrawApplicationPlugins
 
     INSTALL_PLUGIN_PATH  = $$INSTALL_LIBRARY_PATH/plugins
     win32: \

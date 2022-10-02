@@ -17,32 +17,7 @@
 #include "shared/qbaseinit.h"
 #include "realtimedb.h"
 #include "TimerTask.h"
-
-/**
- * @brief getProjectName
- * @details 获取工程名称
- * @param szProjectPath
- * @return
- */
-QString getProjectName(const QString &szProjectPath)
-{
-    QFileInfo srcFileInfo(szProjectPath);
-    QString szProjName = "";
-
-    if(srcFileInfo.isDir()) {
-        QDir sourceDir(szProjectPath);
-        QStringList fileNames = sourceDir.entryList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System);
-
-        foreach(const QString &fileName, fileNames) {
-            if(fileName.endsWith(".pdt")) {
-                QFileInfo info(fileName);
-                szProjName = info.baseName();
-            }
-        }
-    }
-
-    return szProjName;
-}
+#include "tcpserver.h"
 
 /**
  * @brief LogInit
@@ -79,12 +54,17 @@ int main(int argc, char *argv[])
         dir.mkpath(szRunProjPath);
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+    /// 工程文件传输服务
+    ///
+    TcpServer server;
+    server.listen(QHostAddress::Any, 6000);
+
     // find project infomation file
     QString szProjName = getProjectName(szRunProjPath);
 
     if(szProjName == "") {
         qCritical() << "project config file not found!";
-        return -1;
     } else {
         qRegisterWidgets();
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
@@ -94,13 +74,11 @@ int main(int argc, char *argv[])
         TimerTask tmrTask;
 
         if(QRunningManager::instance()->load(szProjFile)) {
-            HmiRunTime runTime(QRunningManager::instance()->projCore());
-            runTime.Load();
-            runTime.Start();
-            g_pHmiRunTime = &runTime;
+            HmiRunTime::instance()->setProjectCore(QRunningManager::instance()->projCore());
+            HmiRunTime::instance()->Load();
+            HmiRunTime::instance()->Start();
             QRunningManager::instance()->start();
         }
-        return app.exec();
     }
-    return -1;
+    return app.exec();
 }

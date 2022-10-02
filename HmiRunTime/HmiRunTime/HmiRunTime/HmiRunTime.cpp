@@ -15,11 +15,9 @@
 
 
 
-HmiRunTime *g_pHmiRunTime = NULL;
-
-HmiRunTime::HmiRunTime(QProjectCore *coreObj, QObject *parent)
+HmiRunTime::HmiRunTime(QObject *parent)
     : QObject(parent),
-      projCore(coreObj)
+      projCore(NULL)
 {
 
 }

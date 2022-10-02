@@ -70,7 +70,7 @@ void PortThread::Stop()
     {
         this->msleep(5);
     }
-    this->wait();
+    this->exit();
 }
 
 

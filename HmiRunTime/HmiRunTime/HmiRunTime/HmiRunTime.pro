@@ -68,6 +68,8 @@ win32 {
 }
 
 include(shared/shared.pri)
+include(FileTransferTool/FileTransferTool.pri)
+
 
 SOURCES += \
     Public/Global.cpp \
