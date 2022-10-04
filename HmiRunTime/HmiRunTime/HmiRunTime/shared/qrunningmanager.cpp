@@ -11,26 +11,14 @@
 #include <QFileInfo>
 #include <QMessageBox>
 
-QRunningManager::QRunningManager(QObject *parent) :
-    QObject(parent),
-    m_pProjCoreObj(new QProjectCore),
-    m_pMainWindowObj(new MainWindow((QWidget*)parent)),
-    m_pDlgBaseWidgetObj(new QBaseDialogWidget(m_pMainWindowObj)),
-    m_pLastWidgetObj(NULL)
+QRunningManager::QRunningManager(QObject *parent) : QObject(parent)
 {
-    m_pDlgBaseWidgetObj->setVisible(false);
-    m_pMainWindowObj->installEventFilter(this);
-    connect(&m_timer, SIGNAL(timeout()), m_pMainWindowObj, SLOT(update()));
+    create();
 }
 
 QRunningManager::~QRunningManager()
 {
     release();
-    if(m_pMainWindowObj) {
-        m_pMainWindowObj->removeEventFilter(this);
-        delete m_pMainWindowObj;
-        m_pMainWindowObj = NULL;
-    }
 }
 
 
@@ -92,14 +80,36 @@ bool QRunningManager::load(QString proj)
     return true;
 }
 
+void QRunningManager::create()
+{
+    m_pProjCoreObj = new QProjectCore;
+    m_pMainWindowObj = new MainWindow;
+    m_pMainWindowObj->installEventFilter(this);
+    m_pDlgBaseWidgetObj = new QBaseDialogWidget(m_pMainWindowObj);
+    m_pDlgBaseWidgetObj->setVisible(false);
+    m_pLastWidgetObj = NULL;
+    connect(&m_timer, SIGNAL(timeout()), m_pMainWindowObj, SLOT(update()));
+}
+
 void QRunningManager::release()
 {
+    m_timer.stop();
+    m_pLastWidgetObj = NULL;
+    m_stackShowWidget.clear();
+    disconnect(&m_timer, SIGNAL(timeout()), m_pMainWindowObj, SLOT(update()));
     if(m_pProjCoreObj) {
         delete m_pProjCoreObj;
         m_pProjCoreObj = NULL;
     }
-    m_pLastWidgetObj = NULL;
-    m_stackShowWidget.clear();
+    if(m_pDlgBaseWidgetObj) {
+        delete m_pDlgBaseWidgetObj;
+        m_pDlgBaseWidgetObj = NULL;
+    }
+    if(m_pMainWindowObj) {
+        m_pMainWindowObj->removeEventFilter(this);
+        delete m_pMainWindowObj;
+        m_pMainWindowObj = NULL;
+    }
 }
 
 void QRunningManager::onShowWidget(QWidget *pWidgetObj)
@@ -153,6 +163,7 @@ void QRunningManager::start()
     QList<QWidget*> list = pageMgr->getPages();
     foreach(QWidget* pObj, list) {
         pObj->setVisible(false);
+        pObj->setParent(m_pMainWindowObj);
     }
     int width = m_pProjCoreObj->m_projInfoMgr.getGraphPageWidth();
     int height = m_pProjCoreObj->m_projInfoMgr.getGraphPageHeight();
@@ -185,8 +196,10 @@ void QRunningManager::start()
 void QRunningManager::stop()
 {
     emit notifyStop();
-    release();
-    m_pMainWindowObj->setVisible(false);
+    if(m_pMainWindowObj) {
+        m_pMainWindowObj->setVisible(false);
+    }
+    release(); 
 }
 
 void QRunningManager::showGraphPage(const QString &pageId)
@@ -203,23 +216,12 @@ void QRunningManager::showGraphPage(const QString &pageId)
 
 void QRunningManager::showLastGraphPage()
 {
-    qDebug() << "--aa--" << m_stackShowWidget.size();
     if(m_stackShowWidget.size() > 0) {
         QWidget *pWidgetObj = m_stackShowWidget.pop();
-//        while(pWidgetObj != NULL && m_pCurWidgetObj == pWidgetObj) {
-//            if(m_stackShowWidget.size() > 0) {
-//                pWidgetObj = m_stackShowWidget.pop();
-//            } else {
-//                pWidgetObj = NULL;
-//            }
-//        }
-//        if(pWidgetObj) {
-            onShowWidget(pWidgetObj);
-        //}
+        onShowWidget(pWidgetObj);
     } else {
         qDebug() << "m_stackShowWidget is empty!";
     }
-    qDebug() << "--bb--" << m_stackShowWidget.size();
 }
 
 void QRunningManager::showControlElement(const QString &eleId)

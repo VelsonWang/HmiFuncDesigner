@@ -74,7 +74,9 @@ void QIndicationLamp::setTag(const QString szTag)
 {
     if(m_tagId != szTag) {
         m_tagId = szTag;
-        m_tag = RealTimeDB::instance()->tag(tagId(m_tagId));
+        if(m_tagId != "") {
+            m_tag = RealTimeDB::instance()->tag(tagId(m_tagId));
+        }
     }
 }
 
@@ -196,7 +198,9 @@ void QIndicationLamp::paintEvent(QPaintEvent *event)
     if(m_tag) {
         szFileIndicationLamp = m_tag->toBool() ? m_szSetImageFile : m_szResetImageFile;
     } else {
-        m_tag = RealTimeDB::instance()->tag(tagId(m_tagId));
+        if(m_tagId != "") {
+            m_tag = RealTimeDB::instance()->tag(tagId(m_tagId));
+        }
     }
 
     if(szFileIndicationLamp == "") {

@@ -1,5 +1,5 @@
 ﻿#include "PortThread.h"
-#include <RealTimeDB.h>
+#include "realtimedb.h"
 #include <QDebug>
 
 
@@ -70,7 +70,7 @@ void PortThread::Stop()
     {
         this->msleep(5);
     }
-    this->exit();
+    this->wait();
 }
 
 

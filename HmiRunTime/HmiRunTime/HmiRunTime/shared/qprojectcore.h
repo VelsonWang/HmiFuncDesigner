@@ -84,7 +84,7 @@ public:
 
 protected:
     bool m_bOpen;
-    QPageManager* m_pPageMgrObj;
+    QPageManager* m_pPageMgrObj = NULL;
 
 };
 

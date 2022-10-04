@@ -117,7 +117,6 @@ Vendor::Vendor(QProjectCore *coreObj)
 Vendor::~Vendor()
 {
     stop();
-    qDeleteAll(m_readList);
     m_readList.clear();
     if(m_pPortObj != NULL) {
         delete m_pPortObj;
@@ -215,7 +214,7 @@ RunTimeTag* Vendor::findIOTagByID(int id)
  */
 bool Vendor::writeIOTag(RunTimeTag* pTag)
 {
-    if(pTag && pTag->writeable == CAN_WRITE) {
+    if(m_bIsRunning && pTag && pTag->writeable == CAN_WRITE) {
         clearWriteBuffer();
         if(m_pVendorPluginObj && m_pPortObj) {
             m_pVendorPluginObj->beforeWriteIOTag(this, pTag);
@@ -231,7 +230,7 @@ bool Vendor::writeIOTag(RunTimeTag* pTag)
                     if(m_pVendorPluginObj->writeIOTag(this, m_pPortObj, pTag) == 1) {
                         break;
                     }
-                } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
+                } while(m_bIsRunning && iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
                 if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) {
                     return false;
                 }
@@ -251,7 +250,7 @@ bool Vendor::writeIOTag(RunTimeTag* pTag)
  */
 bool Vendor::writeIOTags()
 {
-    if(this->m_bOffLine) {
+    if(m_bIsRunning && this->m_bOffLine) {
         if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
             if(!this->reconnect()) {
                 this->m_bOffLine = true;
@@ -304,7 +303,7 @@ bool Vendor::writeIOTags()
  */
 bool Vendor::readIOTag(RunTimeTag* pTag)
 {
-    if(pTag) {
+    if(m_bIsRunning && pTag) {
         clearReadBuffer();
         if(m_pVendorPluginObj && m_pPortObj) {
             m_pVendorPluginObj->beforeReadIOTag(this, pTag);
@@ -321,7 +320,7 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
                     if(m_pVendorPluginObj->readIOTag(this, m_pPortObj, pTag) == 1) {
                         break;
                     }
-                } while(iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
+                } while(m_bIsRunning && iRetryTimes < m_pVendorPrivateObj->m_iRetryTimes);
                 if(iRetryTimes >= m_pVendorPrivateObj->m_iRetryTimes) {
                     return false;
                 }
@@ -363,7 +362,7 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
  */
 bool Vendor::readIOTags()
 {
-    if(this->m_bOffLine) {
+    if(m_bIsRunning && this->m_bOffLine) {
         if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
             if(!this->reconnect()) {
                 this->m_bOffLine = true;
@@ -410,7 +409,7 @@ bool Vendor::readIOTags()
     }
 
     if(m_pVendorPrivateObj != NULL) {
-        if(m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
+        if(m_bIsRunning && m_pVendorPrivateObj->m_iFrameTimePeriod > 0) {
             QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
         }
     }

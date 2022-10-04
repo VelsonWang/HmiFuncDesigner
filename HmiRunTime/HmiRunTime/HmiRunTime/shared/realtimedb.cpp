@@ -17,10 +17,32 @@
 
 RunTimeTag::RunTimeTag(QObject *parent) : QObject(parent), id(0)
 {
+    id = 0;
+    blockReadID = 0;
+    name = "";
+    unit = "";
+    addrType = "";
+    addrOffset = 0;
+    aAddrType2 = "";
+    addrOffset2 = 0;
+    dataType = TYPE_VARIANT;
+    writeable = CAN_WRITE;
+    remark = "";
+    ownGroup = "";
+    devType = "";
+    bufLength = 0;
+    dataFromVendor = NULL;
+    dataToVendor = NULL;
+    isBlockRead = false;
+    lastReadTime = 0;
 }
 
 RunTimeTag::~RunTimeTag()
 {
+    delete[] dataFromVendor;
+    dataFromVendor = NULL;
+    delete[] dataToVendor;
+    dataToVendor = NULL;
 }
 
 
@@ -604,13 +626,16 @@ RealTimeDB::RealTimeDB(QObject *parent) : QObject(parent)
 
 RealTimeDB::~RealTimeDB()
 {
+    releaseTags();
+}
+
+void RealTimeDB::releaseTags()
+{
     QHashIterator<quint64, RunTimeTag * > iter(rtdb);
     while (iter.hasNext()) {
         iter.next();
         RunTimeTag *pObj = iter.value();
         if(pObj) {
-            delete[] pObj->dataFromVendor;
-            delete[] pObj->dataToVendor;
             delete pObj;
         }
     }

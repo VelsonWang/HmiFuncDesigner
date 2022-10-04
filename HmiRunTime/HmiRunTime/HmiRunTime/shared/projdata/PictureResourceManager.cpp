@@ -52,6 +52,12 @@ PictureResourceManager::PictureResourceManager()
 
 }
 
+PictureResourceManager::~PictureResourceManager()
+{
+    qDeleteAll(m_pictures);
+    m_pictures.clear();
+}
+
 bool PictureResourceManager::openFromXml(XMLObject *pXmlObj)
 {
     qDeleteAll(m_pictures);

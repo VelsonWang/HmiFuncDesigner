@@ -31,6 +31,7 @@ public:
     void stopBlinkControlElement(const QString &eleId);
 
     bool load(QString proj);
+    void create();
     void release();
     void start();
     void stop();

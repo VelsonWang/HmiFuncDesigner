@@ -11,7 +11,7 @@
 #include "qprojectcore.h"
 #include <QMessageBox>
 #include <QDebug>
-#include "projdata/tag.h"
+#include "projdata/Tag.h"
 
 
 
@@ -223,6 +223,11 @@ bool HmiRunTime::Load()
             }
         }
     }
+    foreach (QString dev, projCore->m_tagMgr.m_mapDevBlockReadTags.keys()) {
+        qDeleteAll(projCore->m_tagMgr.m_mapDevBlockReadTags[dev]);
+        projCore->m_tagMgr.m_mapDevBlockReadTags[dev].clear();
+    }
+    projCore->m_tagMgr.m_mapDevBlockReadTags.clear();
 
     // load tags and create rtdb
     foreach(Tag *pTagObj, projCore->m_tagMgr.m_vecTags) {
@@ -235,6 +240,8 @@ bool HmiRunTime::Load()
             }
         }
     }
+    qDeleteAll(projCore->m_tagMgr.m_vecTags);
+    projCore->m_tagMgr.m_vecTags.clear();
 
     return true;
 }
@@ -244,9 +251,9 @@ bool HmiRunTime::Unload()
 {
     qDeleteAll(m_vendors);
     m_vendors.clear();
-    RealTimeDB::instance()->rtdb.clear();
     qDeleteAll(m_listPortThread);
     m_listPortThread.clear();
+    RealTimeDB::instance()->releaseTags();
     return true;
 }
 

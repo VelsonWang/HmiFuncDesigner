@@ -24,7 +24,10 @@ QProjectCore::QProjectCore(QObject *parent)
 QProjectCore::~QProjectCore()
 {
     close();
-    delete m_pPageMgrObj;
+    if(m_pPageMgrObj) {
+        delete m_pPageMgrObj;
+        m_pPageMgrObj = NULL;
+    }
 }
 
 void QProjectCore::close()

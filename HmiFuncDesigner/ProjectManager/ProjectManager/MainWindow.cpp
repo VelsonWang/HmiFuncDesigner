@@ -260,6 +260,7 @@ void MainWindow::createActions()
     pActObj = new QAction(QIcon(":/images/offline.png"), tr("模拟仿真"));
     if(pActObj) {
         pActObj->setEnabled(false);
+        pActObj->setVisible(false);
         connect(pActObj, SIGNAL(triggered()), SLOT(onSlotSimulate()));
         QSoftCore::getCore()->insertAction("Tools.Simulate", pActObj);
     }
@@ -268,6 +269,7 @@ void MainWindow::createActions()
     pActObj = new QAction(QIcon(":/images/online.png"), tr("运行"));
     if(pActObj) {
         pActObj->setEnabled(true);
+        pActObj->setVisible(false);
         connect(pActObj, SIGNAL(triggered()), SLOT(onSlotRunProject()));
         QSoftCore::getCore()->insertAction("Tools.Run", pActObj);
     }
@@ -276,6 +278,7 @@ void MainWindow::createActions()
     pActObj = new QAction(QIcon(":/images/offline.png"), tr("停止"));
     if(pActObj) {
         pActObj->setEnabled(false);
+        pActObj->setVisible(false);
         connect(pActObj, SIGNAL(triggered()), SLOT(onSlotStopRunProject()));
         QSoftCore::getCore()->insertAction("Tools.StopRun", pActObj);
     }

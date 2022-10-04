@@ -29,6 +29,7 @@ class SHAREDLIB_EXPORT PictureResourceManager
 {
 public:
     PictureResourceManager();
+    ~PictureResourceManager();
 
     bool openFromXml(XMLObject *pXmlObj);
     bool saveToXml(XMLObject *pXmlObj);

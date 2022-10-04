@@ -55,8 +55,7 @@ SOURCES += main.cpp\
     widget/QQuickInputLineEdit.cpp \
 #    ../Public/PubTool.cpp \
     ../Public/Element.cpp \
-    ../Public/ElementGroup.cpp \
-    PluginManager.cpp
+    ../Public/ElementGroup.cpp
 
 HEADERS  += MainWindow.h \
     ../Public/userevent.h \
@@ -76,8 +75,7 @@ HEADERS  += MainWindow.h \
 #    ../Public/PubTool.h \
     ../IDrawApplicationPlugin/IDrawApplicationPlugin.h \
     ../Public/Element.h \
-    ../Public/ElementGroup.h \
-    PluginManager.h
+    ../Public/ElementGroup.h
 
 
 FORMS    += \

@@ -1,4 +1,4 @@
-#include "UserAuthority.h"
+#include "userauthority.h"
 
 UserAuthority::UserAuthority()
 {

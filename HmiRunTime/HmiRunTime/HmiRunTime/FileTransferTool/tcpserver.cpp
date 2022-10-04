@@ -66,25 +66,10 @@ void TcpServer::clear()
 
 void TcpServer::reStartRuntime()
 {
-#if 0
-    QString szRunProjPath = QCoreApplication::applicationDirPath() + "/RunProject";
-
-    // find project infomation file
-    QString szProjName = getProjectName(szRunProjPath);
-
-    if(szProjName == "") {
-        qCritical() << "project config file not found!";
-    } else {
-        QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
-
-        if(QRunningManager::instance()->load(szProjFile)) {
-            HmiRunTime::instance()->setProjectCore(QRunningManager::instance()->projCore());
-            HmiRunTime::instance()->Stop();
-            HmiRunTime::instance()->Unload();
-            HmiRunTime::instance()->Load();
-            HmiRunTime::instance()->Start();
-            QRunningManager::instance()->start();
-        }
-    }
+    QString exe = QCoreApplication::applicationDirPath() + "/HmiRunTime";
+#ifdef Q_OS_WIN
+    exe += ".exe";
 #endif
+    QProcess::startDetached(exe);
+    qApp->exit();
 }

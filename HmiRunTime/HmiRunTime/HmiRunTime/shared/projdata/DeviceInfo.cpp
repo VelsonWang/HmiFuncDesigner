@@ -1,4 +1,4 @@
-#include "DeviceInfo.h"
+#include "deviceinfo.h"
 #include "ulog.h"
 
 int DeviceInfo::m_nextDeviceID = 0;

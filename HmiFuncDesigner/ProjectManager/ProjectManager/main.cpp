@@ -2,7 +2,6 @@
 #include "VersionInfo.h"
 #include "qtsingleapplication.h"
 #include "ConfigUtils.h"
-#include "PluginManager.h"
 #include "../../libs/shared/pluginloader.h"
 #include "../../libs/shared/qbaseinit.h"
 #include "../../libs/core/qbaseinit.h"
@@ -44,17 +43,10 @@ int main(int argc, char *argv[])
     qRegisterBaseHost();
 
     PluginLoader::loadPlugin(app.applicationDirPath() + "/plugins.xml");
-    // 加载元素插件
-    PluginManager::getInstance()->loadPlugin();
 
     MainWindow win;
     app.setActivationWindow(&win);
     win.show();
 
-    int ret = app.exec();
-
-    // 释放插件
-    PluginManager::getInstance()->releasePlugin();
-
-    return ret;
+    return app.exec();
 }
