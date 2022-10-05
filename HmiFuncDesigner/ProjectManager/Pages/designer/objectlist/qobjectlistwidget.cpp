@@ -3,6 +3,7 @@
 #include "../../../libs/core/styledbar.h"
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QDebug>
 
 QObjectListWidget::QObjectListWidget(QWidget *parent)
     : QWidget(parent),
@@ -39,4 +40,10 @@ void QObjectListWidget::set_select(QAbstractHost *host)
 void QObjectListWidget::setUndoStack(QUndoStack *stack)
 {
     m_object_list->setUndoStack(stack);
+}
+
+void QObjectListWidget::remove(QList<QAbstractHost*> hosts)
+{
+    //qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+    m_object_list->remove(hosts);
 }

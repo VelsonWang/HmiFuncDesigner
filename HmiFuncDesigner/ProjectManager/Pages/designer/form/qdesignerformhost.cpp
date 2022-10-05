@@ -13,6 +13,8 @@
 #include <QLayout>
 #include <QPainter>
 #include <QStringList>
+#include <QApplication>
+#include <QClipboard>
 #include <QDebug>
 
 QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
@@ -77,33 +79,33 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
     QAbstractHost *h = host_from_object(o);
     if(h != NULL) {
         switch(e->type()) {
-            case QEvent::Paint:
-                return handlePaintEvent(h, (QPaintEvent*)e);
-            case QEvent::MouseButtonPress:
-                return handleMousePressEvent(h, (QMouseEvent*)e);
-            case QEvent::MouseButtonRelease:
-                return handleMouseReleaseEvent(h, (QMouseEvent*)e);
-            case QEvent::MouseMove:
-                return handleMouseMoveEvent(h, (QMouseEvent*)e);
-            case QEvent::MouseButtonDblClick:
-                return handle_mouse_db_clicked_event(h, (QMouseEvent*)e);
-            case QEvent::DragEnter:
-                return handle_drag_enter_event(h, (QDragEnterEvent*)e);
-            case QEvent::DragLeave:
-                return handle_drag_leave_event(h, (QDragLeaveEvent*)e);
-            case QEvent::Drop:
-                return handle_drop_event(h, (QDropEvent*)e);
-            case QEvent::Resize:
-            case QEvent::ParentChange:
-            case QEvent::Move:
-                if(h != m_root_host) {
-                    m_selection->updateGeometry((QWidget*)h->getObject());
-                } else {
-                    m_widget_host->updateFormGeometry();
-                }
-                break;
-            default:
-                break;
+        case QEvent::Paint:
+            return handlePaintEvent(h, (QPaintEvent*)e);
+        case QEvent::MouseButtonPress:
+            return handleMousePressEvent(h, (QMouseEvent*)e);
+        case QEvent::MouseButtonRelease:
+            return handleMouseReleaseEvent(h, (QMouseEvent*)e);
+        case QEvent::MouseMove:
+            return handleMouseMoveEvent(h, (QMouseEvent*)e);
+        case QEvent::MouseButtonDblClick:
+            return handle_mouse_db_clicked_event(h, (QMouseEvent*)e);
+        case QEvent::DragEnter:
+            return handle_drag_enter_event(h, (QDragEnterEvent*)e);
+        case QEvent::DragLeave:
+            return handle_drag_leave_event(h, (QDragLeaveEvent*)e);
+        case QEvent::Drop:
+            return handle_drop_event(h, (QDropEvent*)e);
+        case QEvent::Resize:
+        case QEvent::ParentChange:
+        case QEvent::Move:
+            if(h != m_root_host) {
+                m_selection->updateGeometry((QWidget*)h->getObject());
+            } else {
+                m_widget_host->updateFormGeometry();
+            }
+            break;
+        default:
+            break;
         }
     }
     return false;
@@ -185,6 +187,7 @@ bool QDesignerFormHost::handleMousePressEvent(QAbstractHost *host, QMouseEvent *
     } else {
         m_move_point = e->pos();
         QWidget* wid = (QWidget*)host->getObject();
+
         if(m_selection->selectedWidgets().size() != 0) {
             if(m_selection->isWidgetSelected(wid)) {
                 if((e->modifiers() & Qt::ControlModifier) != 0) {
@@ -217,13 +220,106 @@ bool QDesignerFormHost::handleMousePressEvent(QAbstractHost *host, QMouseEvent *
                     }
                 }
             }
-
         } else {
             select_widget(wid);
         }
         m_click = true;
+
+        if(e->button() == Qt::RightButton) {
+            if(!m_menu) {
+                m_menu = new QMenu();
+                // 复制
+                m_actCopy = new QAction(tr("复制"), this);
+                m_actCopy->setProperty("atcion", "copy");
+                m_actCopy->setStatusTip(tr("复制当前选中的控件"));
+                connect(m_actCopy, SIGNAL(triggered()), this, SLOT(slotMenuAction()));
+
+                // 粘贴
+                m_actPaste = new QAction(tr("粘贴"), this);
+                m_actPaste->setProperty("atcion", "paste");
+                m_actPaste->setStatusTip(tr("粘贴已经复制控件"));
+                connect(m_actPaste, SIGNAL(triggered()), this, SLOT(slotMenuAction()));
+
+                // 删除
+                m_actDelete = new QAction(tr("删除"), this);
+                m_actDelete->setProperty("atcion", "delete");
+                m_actDelete->setStatusTip(tr("删除当前选中的控件"));
+                connect(m_actDelete, SIGNAL(triggered()), this, SLOT(slotMenuAction()));
+
+                m_menu->addAction(m_actCopy);
+                m_menu->addAction(m_actPaste);
+                m_menu->addAction(m_actDelete);
+            }
+        }
+    }
+
+    if(m_menu && !m_menu->isEmpty() && e->button() == Qt::RightButton) {
+        m_actCopy->setVisible(m_selection->selectedWidgets().size() > 0);
+        m_actPaste->setVisible(!QApplication::clipboard()->text().trimmed().isEmpty());
+        m_actPaste->setProperty("pos", e->pos());
+        m_actDelete->setVisible(m_selection->selectedWidgets().size() > 0);
+        m_menu->move(e->globalPos());
+        m_menu->exec();
     }
     return true;
+}
+
+void QDesignerFormHost::slotMenuAction()
+{
+    QAction *pActObj = qobject_cast<QAction *>(sender());
+    if(pActObj) {
+        QString doWhat = pActObj->property("atcion").toString();
+        //qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << doWhat;
+        if(doWhat == "copy") {
+            XMLObject xmlObj;
+            xmlObj.setTagName("hosts");
+            foreach(QWidget *widgetObj, m_selection->selectedWidgets()) {
+                QAbstractHost *host = m_widget_to_host.value(widgetObj);
+                XMLObject *pChildObj = new XMLObject(&xmlObj);
+                host->toObject(pChildObj);
+            }
+            QApplication::clipboard()->setText(xmlObj.write());
+        } else if(doWhat == "paste") {
+            QPoint pos = pActObj->property("pos").toPoint();
+            QString copyDat = QApplication::clipboard()->text();
+            XMLObject xmlObj;
+            if(!xmlObj.load(copyDat, NULL)) {
+                qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "parser from clipboard fial!";
+                return;
+            }
+
+            QList<XMLObject*> xmlHosts = xmlObj.getChildren();
+            QUndoCommand *cmd = new QUndoCommand;
+            foreach(XMLObject* xmlHost, xmlHosts) {
+                QAbstractHost* pHostObj = QHostFactory::createHost(xmlHost);
+                if(pHostObj != NULL) {
+                    pHostObj->fromObject(xmlHost);
+                    pHostObj->setID(QString::number(pHostObj->allocID()));
+                    QRect re = pHostObj->getPropertyValue("geometry").toRect();
+                    re.moveTo(pos);
+                    pos.setY(pos.y() + re.height() + 10);
+                    pHostObj->setPropertyValue("geometry", re);
+                    QList<QAbstractHost*> list;
+                    QList<int> index;
+                    list.append(pHostObj);
+                    index.append(m_root_host->getChildCount());
+                    new QAddHostUndoCommand(m_root_host, list, index, AHT_ADD, cmd);
+                }
+            }
+            if(cmd->childCount() > 0) {
+                m_undo_stack->push(cmd);
+            } else {
+                delete cmd;
+            }
+        } else if(doWhat == "delete") {
+            QList<QAbstractHost*> hosts;
+            foreach(QWidget *widgetObj, m_selection->selectedWidgets()) {
+                QAbstractHost *host = m_widget_to_host.value(widgetObj);
+                hosts.append(host);
+            }
+            emit remove(hosts);
+        }
+    }
 }
 
 bool QDesignerFormHost::handleMouseReleaseEvent(QAbstractHost *host, QMouseEvent *e)

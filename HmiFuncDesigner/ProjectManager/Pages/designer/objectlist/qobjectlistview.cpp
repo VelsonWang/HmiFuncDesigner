@@ -16,6 +16,7 @@
 #include <QPalette>
 #include <QHeaderView>
 #include <QMouseEvent>
+#include <QDebug>
 
 class QObjectDelegate: public QItemDelegate
 {
@@ -271,6 +272,42 @@ void QObjectListView::set_select(QAbstractHost *host)
     }
     connect(this, SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
             this, SLOT(select_changed(QTreeWidgetItem*, QTreeWidgetItem*)));
+}
+
+void QObjectListView::remove(QList<QAbstractHost*> hosts)
+{
+    //qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
+    foreach(QAbstractHost* pHostObj, hosts) {
+        QAbstractHost* par = pHostObj->getParent();
+        if(par != NULL) {
+            QList<QAbstractHost*> list;
+            list.append(pHostObj);
+            QList<int> indexs;
+            indexs.append(par->getChildren().indexOf(pHostObj));
+            QAddHostUndoCommand *cmd = new QAddHostUndoCommand(par, list, indexs, AHT_REMOVE);
+            m_undo_stack->push(cmd);
+        } else {
+            QPageManager* manager = QSoftCore::getCore()->getProjectCore()->getPageManager();
+            QUndoCommand *cmd = new QUndoCommand;
+            new QPageAddUndoCommand(pHostObj, manager->getPages().indexOf(pHostObj), PAT_REMOVE, cmd);
+            QAbstractProperty* pro = QSoftCore::getCore()->getProjectCore()->getProjectHost()->getProperty("start_page");
+            if(pro != NULL) {
+                if(pro->getValue().toString() == pHostObj->getID()) {
+                    QList<QAbstractHost*> list = QSoftCore::getCore()->getProjectCore()->getPageManager()->getPagesByTitle("form");
+                    list.removeAll(pHostObj);
+                    QString str;
+                    if(list.size() > 0) {
+                        str = list.first()->getID();
+                    } else {
+                        str = "";
+                    }
+                    new QPropertyChangedUndoCommand(QSoftCore::getCore()->getProjectCore()->getProjectHost()->getID(),
+                                                    "start_page", pro->getValue(), str, cmd);
+                }
+            }
+            m_undo_stack->push(cmd);
+        }
+    }
 }
 
 void QObjectListView::insert_host_slot(const QList<QAbstractHost *> &list,

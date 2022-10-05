@@ -56,7 +56,7 @@ void QTempWidget::set_current(tagTemplateInfo *info)
 
     QWidget* wid = (QWidget*)pHostObj->getObject();
 
-    QPixmap widgetPixmap = QPixmap::grabWidget(wid);
+    QPixmap widgetPixmap = wid->grab();
     QSize sz = widgetPixmap.size();
     if(sz.width() > 400) {
         sz.setWidth(400);

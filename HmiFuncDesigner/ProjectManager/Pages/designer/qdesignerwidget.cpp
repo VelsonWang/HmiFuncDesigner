@@ -57,6 +57,8 @@ QDesignerWidget::QDesignerWidget(QWidget *parent)
             m_propertyView, SLOT(selectWidget(QAbstractHost*)));
     connect(m_formWidgetView, SIGNAL(select(QAbstractHost*)),
             m_objectListWidget, SLOT(set_select(QAbstractHost*)));
+    connect(m_formWidgetView, SIGNAL(remove(QList<QAbstractHost*>)),
+            m_objectListWidget, SLOT(remove(QList<QAbstractHost*>)));
     connect(m_propertyView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
             m_formWidgetView, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)));
     connect(m_objectListWidget, SIGNAL(select(QAbstractHost*)),

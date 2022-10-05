@@ -17,9 +17,11 @@ public:
 
 public slots:
     void set_select(QAbstractHost* host);
+    void remove(QList<QAbstractHost*> hosts);
 
 signals:
     void select(QAbstractHost* host);
+
 
 protected:
     StyledBar *m_styledBar;

@@ -1,6 +1,5 @@
 #include "qlistviewwidget.h"
 #include "ui_qlistviewwidget.h"
-
 #include "../../../libs/core/qtoolbarbutton.h"
 
 QListViewWidget::QListViewWidget(QWidget *parent) :
@@ -9,13 +8,11 @@ QListViewWidget::QListViewWidget(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QAction *ac;
-
-    ac=new QAction(QIcon(":/images/removesubmitfield.png"),"",this);
+    QAction *ac = new QAction(QIcon(":/images/removesubmitfield.png"),"",this);
     ac->setToolTip("Remove");
-    m_remove_button=new QToolBarButton(ac,this);
+    m_remove_button = new QToolBarButton(ac,this);
     ui->horizontalLayout->addWidget(m_remove_button);
-    connect(ac,SIGNAL(triggered()),this,SIGNAL(remove()));
+    connect(ac, SIGNAL(triggered()), this, SIGNAL(remove()));
 
     m_remove_button->setVisible(false);
 }

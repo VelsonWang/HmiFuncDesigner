@@ -21,15 +21,16 @@ public:
     void setUndoStack(QUndoStack* stack);
 
 protected slots:
-    void    project_opened();
-    void    project_closed();
-    void    add_page();
+    void project_opened();
+    void project_closed();
+    void add_page();
 
 public slots:
-    void    set_select(QAbstractHost* host);
+    void set_select(QAbstractHost* host);
 
 signals:
     void select(QAbstractHost* host);
+    void remove(QList<QAbstractHost*> hosts);
     void notifyPropertyEdit(QAbstractProperty* pro, const QVariant& value);
 
 protected:

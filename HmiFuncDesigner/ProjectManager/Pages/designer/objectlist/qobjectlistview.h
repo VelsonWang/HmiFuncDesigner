@@ -15,6 +15,7 @@ public:
 
 public slots:
     void set_select(QAbstractHost* host);
+    void remove(QList<QAbstractHost*> hosts);
 
 protected:
     void init();
@@ -32,20 +33,20 @@ signals:
 protected slots:
     void onProjectOpened();
     void onProjectClosed();
-    void    item_clicked(QTreeWidgetItem *item);
-    void    select_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous );
+    void item_clicked(QTreeWidgetItem *item);
+    void select_changed(QTreeWidgetItem * current, QTreeWidgetItem * previous );
 
-    void    insert_host_slot(const QList<QAbstractHost*> &list, const QList<int> &indexs);
-    void    remove_host_slot(const QList<QAbstractHost*> &list);
+    void insert_host_slot(const QList<QAbstractHost*> &list, const QList<int> &indexs);
+    void remove_host_slot(const QList<QAbstractHost*> &list);
 
-    void    insert_page_slot(QAbstractHost* page);
-    void    remove_page_slot(QAbstractHost *page);
+    void insert_page_slot(QAbstractHost* page);
+    void remove_page_slot(QAbstractHost *page);
 
-    void    host_parent_changed();
+    void host_parent_changed();
 
-    void    button_remove();
+    void button_remove();
 
-    void    host_name_changed(QAbstractHost* host);
+    void host_name_changed(QAbstractHost* host);
 
 protected:
     friend class QObjectDelegate;
