@@ -127,6 +127,7 @@ RunTimeTag *HmiRunTime::createRunTimeTag(Tag *pTagObj)
         int num = listBlockRead[0].toInt();
         pRtTagObj->bufLength = pRtTagObj->bufLength * num;
         pRtTagObj->isBlockRead = true;
+        qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "num: " << num << ", bufLength: " << pRtTagObj->bufLength;
     }
 
     pRtTagObj->dataFromVendor = new quint8[pRtTagObj->bufLength];

@@ -116,6 +116,8 @@ void QLineEditEx::keyPressEvent(QKeyEvent *event)
 {
     if(event->key() == Qt::Key_Enter) {
         enterPressed();
+    } else if(event->key() == Qt::Key_Escape) {
+        m_editing = false;
     }
     QLineEdit::keyPressEvent(event);
 }
