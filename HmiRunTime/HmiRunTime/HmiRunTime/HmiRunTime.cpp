@@ -11,15 +11,13 @@
 #include "qprojectcore.h"
 #include <QMessageBox>
 #include <QDebug>
-#include "projdata/tag.h"
+#include "projdata/Tag.h"
 
 
 
-HmiRunTime *g_pHmiRunTime = NULL;
-
-HmiRunTime::HmiRunTime(QProjectCore *coreObj, QObject *parent)
+HmiRunTime::HmiRunTime(QObject *parent)
     : QObject(parent),
-      projCore(coreObj)
+      projCore(NULL)
 {
 
 }
@@ -129,6 +127,7 @@ RunTimeTag *HmiRunTime::createRunTimeTag(Tag *pTagObj)
         int num = listBlockRead[0].toInt();
         pRtTagObj->bufLength = pRtTagObj->bufLength * num;
         pRtTagObj->isBlockRead = true;
+        qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "num: " << num << ", bufLength: " << pRtTagObj->bufLength;
     }
 
     pRtTagObj->dataFromVendor = new quint8[pRtTagObj->bufLength];
@@ -225,6 +224,11 @@ bool HmiRunTime::Load()
             }
         }
     }
+    foreach (QString dev, projCore->m_tagMgr.m_mapDevBlockReadTags.keys()) {
+        qDeleteAll(projCore->m_tagMgr.m_mapDevBlockReadTags[dev]);
+        projCore->m_tagMgr.m_mapDevBlockReadTags[dev].clear();
+    }
+    projCore->m_tagMgr.m_mapDevBlockReadTags.clear();
 
     // load tags and create rtdb
     foreach(Tag *pTagObj, projCore->m_tagMgr.m_vecTags) {
@@ -237,6 +241,8 @@ bool HmiRunTime::Load()
             }
         }
     }
+    qDeleteAll(projCore->m_tagMgr.m_vecTags);
+    projCore->m_tagMgr.m_vecTags.clear();
 
     return true;
 }
@@ -246,9 +252,9 @@ bool HmiRunTime::Unload()
 {
     qDeleteAll(m_vendors);
     m_vendors.clear();
-    RealTimeDB::instance()->rtdb.clear();
     qDeleteAll(m_listPortThread);
     m_listPortThread.clear();
+    RealTimeDB::instance()->releaseTags();
     return true;
 }
 

@@ -1,11 +1,16 @@
 ﻿#include "tcpserver.h"
 #include "threadhandle.h"
 #include "MessageTransfer.h"
+#include <QProcess>
+#include <QApplication>
+#include "HmiRunTime.h"
+#include "qprojectcore.h"
+#include "qrunningmanager.h"
 
 TcpServer::TcpServer(QObject *parent, int numConnections) :
     QTcpServer(parent)
 {
-     tcpClient = new  QHash<int,TcpSocket *>;
+     tcpClient = new QHash<int, TcpSocket *>;
      setMaxPendingConnections(numConnections);
 }
 
@@ -61,6 +66,10 @@ void TcpServer::clear()
 
 void TcpServer::reStartRuntime()
 {
-    MessageTransfer client;
-    client.sendMessage("download_project", 1000);
+    QString exe = QCoreApplication::applicationDirPath() + "/HmiRunTime";
+#ifdef Q_OS_WIN
+    exe += ".exe";
+#endif
+    QProcess::startDetached(exe);
+    qApp->exit();
 }

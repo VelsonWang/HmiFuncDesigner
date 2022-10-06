@@ -16,7 +16,7 @@ class ProjectUploadDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit ProjectUploadDialog(QWidget *parent = 0, QString projName = "");
+    explicit ProjectUploadDialog(QWidget *parent = 0, QString proj = "");
     ~ProjectUploadDialog();
     QString getProjectPath();
 
@@ -25,10 +25,10 @@ private:
     void saveToFile(QString filename, QByteArray fileBuf);
 
 private:
-    int port;
+    int port = 6000;
     QHostAddress *serverIP;
     QTcpSocket *tcpSocket;
-    bool status;
+    bool status = false;
     QString configProjPath;
 
 signals:
@@ -48,12 +48,9 @@ private:
     char *pFileBuf;
     QString fileName;
     quint32 fileSize;
-
-    int transferState_;
-    TDataPackage dataPackage_;
-    QByteArray fileBuf_;
-    int fileSize_;
-
+    int transferState;
+    TDataPackage dataPackage;
+    QByteArray fileBuf;
 };
 
 #endif // PROJECTUPLOADDIALOG_H

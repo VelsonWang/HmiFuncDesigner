@@ -34,7 +34,7 @@ HEADERS += \
     $$PWD/qabstractupdateplugin.h \
     $$PWD/qstylesheetinfo.h \
     $$PWD/mainwindow.h \
-    $$PWD/keyboardnumber.h
+    $$PWD/keyboard.h
 
 SOURCES += \
     $$PWD/confighelper.cpp \
@@ -61,11 +61,10 @@ SOURCES += \
     $$PWD/qabstractupdateplugin.cpp \
     $$PWD/qstylesheetinfo.cpp \
     $$PWD/mainwindow.cpp \
-    $$PWD/keyboardnumber.cpp
+    $$PWD/keyboard.cpp
 
 FORMS += \
-    $$PWD/keyboardnumber.ui
-
+    $$PWD/keyboard.ui
 
 SOURCES += \
     $$PWD/projdata/dataaes.cpp \

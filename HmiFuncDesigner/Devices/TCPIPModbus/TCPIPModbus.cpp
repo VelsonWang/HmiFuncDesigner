@@ -606,7 +606,6 @@ bool TCPIPModbus::buildBlockReadTags(const QString &xmlDevTags, const QString &p
         writer.writeAttribute("offset", QString::number(pObj->offset));
         writer.writeAttribute("offset2", "");
         writer.writeAttribute("remark", "");
-        writer.writeAttribute("group", "");
         writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax0xAddr - dwFindMin0xAddr)));
         writer.writeAttribute("unit", "");
         writer.writeAttribute("writeable", "0");
@@ -654,7 +653,6 @@ bool TCPIPModbus::buildBlockReadTags(const QString &xmlDevTags, const QString &p
         writer.writeAttribute("offset", QString::number(pObj->offset));
         writer.writeAttribute("offset2", "");
         writer.writeAttribute("remark", "");
-        writer.writeAttribute("group", "");
         writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax1xAddr - dwFindMin1xAddr)));
         writer.writeAttribute("unit", "");
         writer.writeAttribute("writeable", "0");
@@ -702,7 +700,6 @@ bool TCPIPModbus::buildBlockReadTags(const QString &xmlDevTags, const QString &p
         writer.writeAttribute("offset", QString::number(pObj->offset));
         writer.writeAttribute("offset2", "");
         writer.writeAttribute("remark", "");
-        writer.writeAttribute("group", "");
         writer.writeAttribute("type", QString("%1:reg").arg(QString::number(dwFindMax3xAddr - dwFindMin3xAddr)));
         writer.writeAttribute("unit", "");
         writer.writeAttribute("writeable", "0");

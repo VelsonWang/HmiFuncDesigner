@@ -27,9 +27,7 @@ public:
     virtual ~QDesignerDnDItem();
     virtual QAbstractHost *host() const;
     virtual QPoint hotSpot() const;
-
     virtual DropType type() const;
-
     virtual QString name() const;
 
 protected:

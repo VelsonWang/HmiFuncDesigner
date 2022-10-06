@@ -25,7 +25,7 @@ public slots:
     void disConTcp(int i);
 
 protected slots:
-    void readData();//接收数据
+    void slotReadData();
 
 private:
     qintptr socketID;
@@ -33,14 +33,13 @@ private:
 
 private:
     void saveToFile(QByteArray fileBuf);
-    void unTarProject();
     void transferFilePackage();
 
 private:
-    int transferState_;
-    TDataPackage dataPackage_;
-    QByteArray fileBuf_;
-    int fileSize_;
+    int transferState = 0;
+    TDataPackage dataPackage;
+    QByteArray fileBuf;
+    quint32 fileSize = 0;
 };
 
 #endif // TCPSOCKET_H

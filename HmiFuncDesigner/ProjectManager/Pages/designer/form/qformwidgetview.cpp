@@ -125,6 +125,8 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
 
     connect(m_formWidget, SIGNAL(select(QAbstractHost*)),
             this, SIGNAL(select(QAbstractHost*)));
+    connect(m_formWidget, SIGNAL(remove(QList<QAbstractHost*>)),
+            this, SIGNAL(remove(QList<QAbstractHost*>)));
     connect(this, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
             m_formWidget, SLOT(property_edit_slot(QAbstractProperty*, QVariant)));
     connect(QSoftCore::getCore()->getProjectCore(), SIGNAL(notifyOpened()),

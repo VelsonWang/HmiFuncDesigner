@@ -6,6 +6,8 @@
 #include <QPaintEvent>
 #include <QRubberBand>
 #include <QUndoStack>
+#include <QMenu>
+#include <QAction>
 
 class QAbstractHost;
 class WidgetHost;
@@ -22,7 +24,7 @@ public:
     void show();
     void hide();
     QAbstractHost *get_select_widget();
-    QAbstractHost  *get_root_host();
+    QAbstractHost *get_root_host();
     void set_select_widget(QAbstractHost* host);
     void property_edited(QAbstractProperty* pro, const QVariant& value);
     void setUndoStack(QUndoStack* stack);
@@ -65,6 +67,10 @@ protected:
 
 signals:
     void select(QAbstractHost* host);
+    void remove(QList<QAbstractHost*> hosts);
+
+private slots:
+    void slotMenuAction();
 
 protected:
     QAbstractHost *m_root_host;
@@ -76,6 +82,11 @@ protected:
     Selection *m_selection;
     bool m_click;
     QUndoStack *m_undo_stack;
+
+    QMenu *m_menu = NULL;
+    QAction *m_actCopy = NULL; //复制
+    QAction *m_actPaste = NULL; //粘贴
+    QAction *m_actDelete = NULL; //删除
 };
 
 #endif // QDESIGNERFORMHOST_H

@@ -1,16 +1,14 @@
 #include "mainwindow.h"
-#include "keyboardnumber.h"
+#include "keyboard.h"
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent)
 {
-    KeyBoardNumber::instance()->installInputMethod();
-
+    KeyBoard::instance()->installInputMethod();
 }
 
 MainWindow::~MainWindow()
 {
-    KeyBoardNumber::instance()->unInstallInputMethod();
-
+    KeyBoard::instance()->unInstallInputMethod();
 }
 
 void MainWindow::showEvent(QShowEvent *)

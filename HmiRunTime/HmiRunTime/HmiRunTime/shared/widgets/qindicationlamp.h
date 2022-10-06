@@ -52,7 +52,6 @@ protected:
     void resizeEvent(QResizeEvent *event) override;
 
 private:
-    QString m_szTag;
     bool m_bStateOnInitial;
     QString m_szResetImageFile;
     QString m_szSetImageFile;

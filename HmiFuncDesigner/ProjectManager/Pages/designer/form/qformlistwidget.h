@@ -45,9 +45,7 @@ private slots:
 
 signals:
     void select(QAbstractHost* host);
-
-protected:
-    void contextMenuEvent(QContextMenuEvent * event);
+    void remove(QList<QAbstractHost*> hosts);
 
 protected:
     QList<QAction*> m_form_action_list;

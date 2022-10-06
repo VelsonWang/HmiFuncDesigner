@@ -177,8 +177,16 @@ bool ModbusRTU::copyTagDataFromBlockReadTag(RunTimeTag* pBlockReadTag, RunTimeTa
 void ModbusRTU::setBlockReadTagBufferLength(RunTimeTag* pBlockReadTag)
 {
     if(pBlockReadTag && pBlockReadTag->isBlockRead) {
-        if(pBlockReadTag->dataType != TYPE_BOOL) {
+        if(pBlockReadTag->addrType.toLower() == "3x" || pBlockReadTag->addrType.toLower() == "4x") {
             pBlockReadTag->bufLength *= 2;
+        }
+        else if(pBlockReadTag->addrType.toLower() == "0x" || pBlockReadTag->addrType.toLower() == "1x") {
+            quint8 bytes = pBlockReadTag->bufLength / 8;
+            quint8 bits = pBlockReadTag->bufLength % 8;
+            pBlockReadTag->bufLength = bytes;
+            if(bits) {
+                pBlockReadTag->bufLength += 1;
+            }
         }
     }
 }

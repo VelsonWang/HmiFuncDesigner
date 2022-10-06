@@ -90,12 +90,10 @@ public:
     void setTagData(quint64 id, quint8 *pDat, int len, bool syncToVendor = false);
     void setTagData(quint64 id, const QString &dat, bool syncToVendor = false);
     quint8* tagData(quint64 id);
-
     RunTimeTag* tag(quint64 id);
-
     quint64 tagId(const QString &name);
-
     void debug();
+    void releaseTags();
 
 private:
     explicit RealTimeDB(QObject *parent = nullptr);

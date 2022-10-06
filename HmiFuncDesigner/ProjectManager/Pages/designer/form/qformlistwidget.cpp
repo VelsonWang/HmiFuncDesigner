@@ -82,6 +82,7 @@ void QFormListWidget::insert_form(QAbstractHost *host, int index)
     QDesignerFormHost *form = new QDesignerFormHost(host, this);
     connect(form, SIGNAL(select(QAbstractHost*)), this, SIGNAL(select(QAbstractHost*)));
     connect(form, SIGNAL(select(QAbstractHost*)), this, SLOT(onSelect(QAbstractHost*)));
+    connect(form, SIGNAL(remove(QList<QAbstractHost*>)), this, SIGNAL(remove(QList<QAbstractHost*>)));
     form->set_select_widget(host);
     form->setUndoStack(m_undo_stack);
     m_forms.insert(index, form);
@@ -287,43 +288,4 @@ void QFormListWidget::onSelect(QAbstractHost* host)
             }
         }
     }
-}
-
-///
-/// \brief QFormListWidget::contextMenuEvent
-/// @details 右键菜单
-///
-void QFormListWidget::contextMenuEvent(QContextMenuEvent * event)
-{
-    Q_UNUSED(event)
-
-    qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
-
-    QMenu *pMenu = new QMenu(this);
-
-    // 复制
-    QAction *pActCopyWidget = new QAction(tr("复制"), this);
-    pActCopyWidget->setStatusTip(tr("复制当前选中的控件"));
-    //connect(pActCopyWidget, SIGNAL(triggered()), this, SLOT(onAddTag()));
-
-    // 粘贴
-    QAction *pActPasteWidget = new QAction(tr("粘贴"), this);
-    pActPasteWidget->setStatusTip(tr("粘贴已经复制控件"));
-    //connect(pActPasteWidget, SIGNAL(triggered()), this, SLOT(onPasteTag()));
-
-    // 删除
-    QAction *pActDeleteWidget = new QAction(tr("删除"), this);
-    pActDeleteWidget->setStatusTip(tr("删除当前选中的控件"));
-    //connect(pActDeleteWidget, SIGNAL(triggered()), this, SLOT(onDeleteTag()));
-
-    pMenu->addAction(pActCopyWidget);
-    pMenu->addAction(pActPasteWidget);
-    pMenu->addAction(pActDeleteWidget);
-
-    if(!pMenu->isEmpty()) {
-        pMenu->move(cursor().pos());
-        pMenu->exec();
-        pMenu->clear();
-    }
-    delete pMenu;
 }
