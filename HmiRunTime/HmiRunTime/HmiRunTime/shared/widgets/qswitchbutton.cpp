@@ -256,6 +256,7 @@ void QSwitchButton::mousePressEvent(QMouseEvent *event)
     if(!enableOnInitial) {
         return;
     }
+
     selected = true;
     this->update();
 }
@@ -266,6 +267,13 @@ void QSwitchButton::mouseReleaseEvent(QMouseEvent *event)
     if(!enableOnInitial) {
         return;
     }
+    QStringList funcs;
+    if(m_tag->toBool()) {
+        funcs << QString("SetTagValue(\"%1\",\"0\");").arg(m_tag->id);
+    } else {
+        funcs << QString("SetTagValue(\"%1\",\"1\");").arg(m_tag->id);
+    }
+    execFunction(funcs);
     selected = false;
     this->update();
 }

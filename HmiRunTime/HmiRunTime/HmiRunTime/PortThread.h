@@ -28,6 +28,7 @@ public:
     // 停止
     void Stop();
 	__ThreadState state;
+
 protected:
     void run();
 

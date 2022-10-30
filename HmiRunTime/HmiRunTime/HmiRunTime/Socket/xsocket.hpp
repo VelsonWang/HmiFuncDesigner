@@ -255,7 +255,7 @@ struct socket {
 	}
 
 	int init( af fam, sock socktype )	{
-		fd = ::socket( (int)fam, (int)socktype, 0);
+        fd = ::socket( (int)fam, (int)socktype, IPPROTO_TCP);
 		addrfam = fam;
 #ifdef XS_NONBLOCKING
 		setnonblocking( true );
@@ -456,6 +456,22 @@ struct socket {
 			return true;
 		return false;
 	}
+
+    int socketFd() {
+        return fd;
+    }
+
+
+    int available()
+    {
+        int result = 0;
+    #ifndef _WIN32
+        ioctl(fd, FIONREAD, &result);
+    #else
+        ioctlsocket(fd, FIONREAD, reinterpret_cast<u_long*>(&result));
+    #endif
+        return result;
+    }
 
   private:
 

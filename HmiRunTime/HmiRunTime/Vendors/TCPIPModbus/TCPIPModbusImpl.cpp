@@ -207,7 +207,7 @@ int TCPIPModbusImpl::writeData(void* pObj, RunTimeTag* pTag)
     memset(pVendorObj->readBuf, 0, sizeof(pVendorObj->readBuf) / sizeof(quint8));
 
     msgLen = makeMessagePackage(pVendorObj->writeBuf, pObj, pTag, FLAG_WRITE, &revLen);
-    qDebug() << "Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, msgLen);
+    qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, msgLen);
 
     if(getPort() != NULL) {
         getPort()->write(pVendorObj->writeBuf, msgLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
@@ -216,7 +216,7 @@ int TCPIPModbusImpl::writeData(void* pObj, RunTimeTag* pTag)
     int resultlen = 0;
     if(getPort() != NULL) {
         resultlen = getPort()->read(pVendorObj->readBuf, revLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
-        qDebug() << "Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, revLen);
+        qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, revLen);
     }
 
     if(resultlen == revLen && pVendorObj->readBuf[0] == pVendorObj->writeBuf[0] &&
@@ -263,8 +263,7 @@ int TCPIPModbusImpl::readData(void* pObj, RunTimeTag* pTag)
 
     msgLen = makeMessagePackage(pVendorObj->writeBuf, pObj, pTag, FLAG_READ, &revLen);
 
-    qDebug() << "Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, msgLen);
-
+    qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, msgLen);
     if(getPort() != NULL) {
         getPort()->write(pVendorObj->writeBuf, msgLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
     }
@@ -278,12 +277,15 @@ int TCPIPModbusImpl::readData(void* pObj, RunTimeTag* pTag)
              pVendorObj->readBuf[0] == pVendorObj->writeBuf[0] &&
              pVendorObj->readBuf[1] == pVendorObj->writeBuf[1] &&
              pVendorObj->readBuf[7] == pVendorObj->writeBuf[7])) {
+            qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << getPort();
+            qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, 9);
+            qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, 9);
             return -2;
         }
 
         if(getPort() != NULL) {
             resultlen = getPort()->read(&pVendorObj->readBuf[9], pVendorObj->readBuf[8], pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
-            qDebug() << "Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, pVendorObj->readBuf[8] + 9);
+            qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, pVendorObj->readBuf[8] + 9);
         }
 
         if(resultlen != pVendorObj->readBuf[8])
@@ -297,7 +299,7 @@ int TCPIPModbusImpl::readData(void* pObj, RunTimeTag* pTag)
     } else {
         if(getPort() != NULL) {
             resultlen = getPort()->read(pVendorObj->readBuf, revLen, pVendorObj->m_pVendorPrivateObj->m_iCommTimeout);
-            qDebug() << "Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, revLen);
+            qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, revLen);
         }
 
         if(!(resultlen == revLen &&

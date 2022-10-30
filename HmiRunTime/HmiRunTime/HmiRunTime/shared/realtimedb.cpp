@@ -726,7 +726,7 @@ void rtTagAddValue(char *id, char *val)
     if(pTagObj) {
         double dTagVal = pTagObj->toString().toDouble();
         dTagVal += dValue;
-        pTagObj->fromString(QString::number(dTagVal));
+        pTagObj->fromString(QString::number(dTagVal), true);
     }
 }
 
@@ -738,7 +738,7 @@ void rtTagSubValue(char *id, char *val)
     if(pTagObj) {
         double dTagVal = pTagObj->toString().toDouble();
         dTagVal -= dValue;
-        pTagObj->fromString(QString::number(dTagVal));
+        pTagObj->fromString(QString::number(dTagVal), true);
     }
 }
 
@@ -749,7 +749,7 @@ void rtTagCopyValue(char *srcId, char *desId)
     RunTimeTag* pSrcTagObj = RealTimeDB::instance()->tag(srcTagID);
     RunTimeTag* pDesTagObj = RealTimeDB::instance()->tag(desTagID);
     if(pSrcTagObj && pDesTagObj) {
-        pDesTagObj->fromString(pSrcTagObj->toString());
+        pDesTagObj->fromString(pSrcTagObj->toString(), true);
     }
 }
 
@@ -758,7 +758,7 @@ void rtTagSetValue(char *id, char *val)
     quint32 tagID = (quint32)strtoul(id, NULL, 10);
     RunTimeTag* pTagObj = RealTimeDB::instance()->tag(tagID);
     if(pTagObj) {
-        pTagObj->fromString(val);
+        pTagObj->fromString(val, true);
     }
 }
 
@@ -768,7 +768,7 @@ void rtTagStateChange(char *id)
     RunTimeTag* pTagObj = RealTimeDB::instance()->tag(tagID);
     if(pTagObj) {
         double dTagVal = pTagObj->toString().toDouble();
-        pTagObj->fromString((dTagVal > 0) ? "0" : "1");
+        pTagObj->fromString((dTagVal > 0) ? "0" : "1", true);
     }
 }
 

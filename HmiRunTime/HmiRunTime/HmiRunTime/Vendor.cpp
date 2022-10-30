@@ -41,7 +41,7 @@ bool ComDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 {
     DeviceInfoObject *pObj = coreObj->m_deviceInfo.getObjectByName(devName);
 
-    m_sDeviceName = pObj->m_deviceName;
+    m_sDeviceName = pObj->m_name;
     m_iFrameLen = pObj->m_frameLen;
     m_sProtocol = pObj->m_protocol;
     m_sLink = pObj->m_link;
@@ -77,7 +77,7 @@ bool NetDevicePrivate::LoadData(const QString &devName, QProjectCore *coreObj)
 {
     DeviceInfoObject *pObj = coreObj->m_deviceInfo.getObjectByName(devName);
 
-    m_sDeviceName = pObj->m_deviceName;
+    m_sDeviceName = pObj->m_name;
     m_iFrameLen = pObj->m_frameLen;
     m_sProtocol = pObj->m_protocol;
     m_sLink = pObj->m_link;
@@ -251,7 +251,7 @@ bool Vendor::writeIOTag(RunTimeTag* pTag)
 bool Vendor::writeIOTags()
 {
     if(m_bIsRunning && this->m_bOffLine) {
-        if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
+        if(this->m_iStartOffLineTime > 0 && (QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
             if(!this->reconnect()) {
                 this->m_bOffLine = true;
                 this->m_bOnlineStatus = false;
@@ -290,7 +290,6 @@ bool Vendor::writeIOTags()
             }
         }
     }
-
     return true;
 }
 
@@ -363,7 +362,7 @@ bool Vendor::readIOTag(RunTimeTag* pTag)
 bool Vendor::readIOTags()
 {
     if(m_bIsRunning && this->m_bOffLine) {
-        if((QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
+        if(this->m_iStartOffLineTime > 0 && (QDateTime::currentMSecsSinceEpoch() - this->m_iStartOffLineTime) > m_pVendorPrivateObj->m_iCommResumeTime) {
             if(!this->reconnect()) {
                 this->m_bOffLine = true;
                 this->m_bOnlineStatus = false;
@@ -413,7 +412,6 @@ bool Vendor::readIOTags()
             QThread::msleep(static_cast<unsigned long>(m_pVendorPrivateObj->m_iFrameTimePeriod));
         }
     }
-
     //RealTimeDB::instance()->debug();
     return true;
 }

@@ -38,16 +38,6 @@ void PortThread::Start()
         return;
     }
     mbIsRunning = true;
-    foreach (Vendor *pVendor, m_VendorList) {
-        if(pVendor != NULL) {
-            if(!pVendor->isRunning()) {
-                pVendor->open();
-                pVendor->initialize();
-                pVendor->start();
-            }
-        }
-    }
-   	state = __Thread_Runing; 
     this->start();
 }
 
@@ -77,6 +67,18 @@ void PortThread::Stop()
 void PortThread::run()
 {
     qDebug()<< "PortThread run:" << m_name;
+
+    foreach (Vendor *pVendor, m_VendorList) {
+        if(pVendor != NULL) {
+            if(!pVendor->isRunning()) {
+                pVendor->open();
+                pVendor->initialize();
+                pVendor->start();
+            }
+        }
+    }
+    state = __Thread_Runing;
+
     while(mbIsRunning) {
         foreach (Vendor *pVendor, m_VendorList) {
             if(!mbIsRunning)
@@ -87,6 +89,7 @@ void PortThread::run()
         }
         this->msleep(5);
     }
+    qDebug()<< "PortThread run end.";
     state = __Thread_Stop;
 }
 

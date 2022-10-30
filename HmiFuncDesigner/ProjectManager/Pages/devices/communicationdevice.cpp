@@ -263,13 +263,15 @@ void CommunicationDevice::onSlotModifyDevice()
             NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
             pNewComDeviceDlg->load(pObj->m_name);
             pNewComDeviceDlg->exec();
-            pObj->m_deviceName = pNewComDeviceDlg->GetDeviceName();
+            pObj->m_name = pNewComDeviceDlg->GetDeviceName();
+            pObj->m_deviceName = pNewComDeviceDlg->pluginName();
             pNewComDeviceDlg->save(pObj->m_name);
         } else if(pObj->m_deviceType == "NET") {
             NewNetDeviceDialog *pNewDeviceDlg = new NewNetDeviceDialog(this);
             pNewDeviceDlg->load(pObj->m_name);
             pNewDeviceDlg->exec();
-            pObj->m_deviceName = pNewDeviceDlg->GetDeviceName();
+            pObj->m_name = pNewDeviceDlg->GetDeviceName();
+            pObj->m_deviceName = pNewDeviceDlg->pluginName();
             pNewDeviceDlg->save(pObj->m_name);
         }
     }
@@ -326,13 +328,15 @@ void CommunicationDevice::onSlotListViewProjectDoubleClicked(const QModelIndex &
                 NewComDeviceDialog *pNewComDeviceDlg = new NewComDeviceDialog(this);
                 pNewComDeviceDlg->load(pObj->m_name);
                 pNewComDeviceDlg->exec();
-                pObj->m_deviceName = pNewComDeviceDlg->GetDeviceName();
+                pObj->m_name = pNewComDeviceDlg->GetDeviceName();
+                pObj->m_deviceName = pNewComDeviceDlg->pluginName();
                 pNewComDeviceDlg->save(pObj->m_name);
             } else if(pObj->m_deviceType == "NET") {
                 NewNetDeviceDialog *pNewDeviceDlg = new NewNetDeviceDialog(this);
                 pNewDeviceDlg->load(pObj->m_name);
                 pNewDeviceDlg->exec();
-                pObj->m_deviceName = pNewDeviceDlg->GetDeviceName();
+                pObj->m_name = pNewDeviceDlg->GetDeviceName();
+                pObj->m_deviceName = pNewDeviceDlg->pluginName();
                 pNewDeviceDlg->save(pObj->m_name);
             }
         }

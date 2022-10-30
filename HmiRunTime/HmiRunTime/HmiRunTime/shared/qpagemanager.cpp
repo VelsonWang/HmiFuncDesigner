@@ -49,8 +49,23 @@ QWidget* QPageManager::getPage(int index)
     }
 }
 
+/**
+ * @brief QPageManager::getPage
+ * @param id 画面id:画面名称
+ * @return
+ */
 QWidget* QPageManager::getPage(const QString &id)
 {
+    if(id.indexOf(":") > 0) {
+        QStringList ids = id.split(":");
+        if(ids.size() == 2) {
+            if(m_idToPage.count(ids.at(0)) > 0) {
+                QWidget *pPageObj = m_idToPage.value(ids.at(0));
+                return pPageObj;
+            }
+        }
+        return NULL;
+    }
     return m_idToPage.value(id);
 }
 
@@ -64,8 +79,8 @@ QWidget* QPageManager::getWidget(const QString& id)
     if(id.indexOf(".") > 0) {
         QStringList ids = id.split(".");
         if(ids.size() == 2) {
-            if(m_idToPage.count(id) > 0) {
-                QWidget *pPageObj = m_idToPage.value(id);
+            if(m_idToPage.count(ids.at(1)) > 0) {
+                QWidget *pPageObj = m_idToPage.value(ids.at(1));
                 if(pPageObj) {
                     QWidgetList list = pPageObj->findChildren<QWidget*>();
                     for(int i=0; i<list.count(); ++i) {

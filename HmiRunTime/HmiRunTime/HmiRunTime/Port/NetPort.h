@@ -8,19 +8,18 @@
 #include <QHostAddress>
 #include <QDataStream>
 #include "IPort.h"
-//#include "xsocket.hpp"
-#include <QtNetwork>
+#include "xsocket.hpp"
+
 
 class NetPort : public QObject, public IPort
 {
     Q_OBJECT
 
 public:
-    NetPort(QString sIp, int tPort);
+    NetPort();
     ~NetPort();
 
 public:
-	QTcpSocket* getSocket();
     bool open(QString port, QStringList args) Q_DECL_OVERRIDE;
     bool reOpen() Q_DECL_OVERRIDE;
     int read(unsigned char *buf, int len, int ms) Q_DECL_OVERRIDE;
@@ -29,9 +28,10 @@ public:
     TPortType getPortType() Q_DECL_OVERRIDE;
 
 private:
-	QTcpSocket *client;
-    int port_;
-    QString ip_;
+    net::socket sock;
+    net::endpoint endpoint;
+    int port;
+    QString ip;
 };
 
 #endif // NetPort_H
