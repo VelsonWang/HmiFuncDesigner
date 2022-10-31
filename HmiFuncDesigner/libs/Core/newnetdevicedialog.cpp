@@ -141,6 +141,10 @@ QString NewNetDeviceDialog::GetDeviceName() const
     return ui->editDeviceName->text();
 }
 
+QString NewNetDeviceDialog::pluginName() const
+{
+    return m_szPluginName;
+}
 
 void NewNetDeviceDialog::load(const QString &szName)
 {

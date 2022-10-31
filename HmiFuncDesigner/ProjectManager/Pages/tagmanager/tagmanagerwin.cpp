@@ -332,7 +332,9 @@ void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj)
         rowDat << tr("自动分配"); // 地址类型
     } else {
         QString szAddrType = "";
-        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_devType);
+        DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->m_deviceInfo;
+        DeviceInfoObject *pDevObj = deviceInfo.getObjectByName(pObj->m_devType);
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pDevObj->m_deviceName);
         if (pDevPluginObj) {
             QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
             XMLObject xmlObj;
@@ -341,12 +343,26 @@ void QTableWidgetEx::setRowData(QStringList &rowDat, Tag *pObj)
                 if(pRegAreasObj) {
                     QVector<XMLObject* > pRegAreaObjs = pRegAreasObj->getCurrentChildren("RegArea");
                     foreach(XMLObject* pXmlObj, pRegAreaObjs) {
-                        if(pXmlObj->getProperty("Name") == pObj->m_addrType || pXmlObj->getProperty("Alias") == pObj->m_addrType) {
-                            QString szAddrTypeAlias = pObj->m_addrType;
+//                        qDebug() << "Name:" << pXmlObj->getProperty("Name")
+//                                 << "Alias:" << pXmlObj->getProperty("Alias")
+//                                 << "m_addrType:" << pObj->m_addrType;
+                        QString alias = pXmlObj->getProperty("Alias");
+                        QString alias2 = pXmlObj->getProperty("Alias2");
+                        if(pXmlObj->getProperty("Name") == pObj->m_addrType || alias == pObj->m_addrType) {
+                            QString szAddrTypeAlias = "";
+                            if(!alias.trimmed().isEmpty()) {
+                                szAddrTypeAlias = alias;
+                            } else {
+                                szAddrTypeAlias = pObj->m_addrType;
+                            }
                             szAddrTypeAlias += pObj->m_addrOffset;
                             if(pObj->m_addrType2 != "") {
                                 szAddrTypeAlias += ".";
-                                szAddrTypeAlias += pObj->m_addrType2;
+                                if(!alias2.trimmed().isEmpty()) {
+                                    szAddrTypeAlias = alias2;
+                                } else {
+                                    szAddrTypeAlias += pObj->m_addrType2;
+                                }
                                 szAddrTypeAlias += pObj->m_addrOffset2;
                             }
                             szAddrType = szAddrTypeAlias; // 地址类型
@@ -423,7 +439,9 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
             } else {
                 QStringList szListAddrType;
                 QStringList szListDataType;
-                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
+                DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->m_deviceInfo;
+                DeviceInfoObject *pDevObj = deviceInfo.getObjectByName(pTagObj->m_devType);
+                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pDevObj->m_deviceName);
                 if (pDevPluginObj) {
                     QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                     XMLObject xmlObj;
@@ -468,7 +486,9 @@ void QTableWidgetEx::onDoubleClicked(const QModelIndex &index)
                         pTagObj->m_addrType = "AutoAlloc";
                     }
                 } else {
-                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
+                    DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->m_deviceInfo;
+                    DeviceInfoObject *pDevObj = deviceInfo.getObjectByName(pTagObj->m_devType);
+                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pDevObj->m_deviceName);
                     if (pDevPluginObj) {
                         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                         XMLObject xmlObj;
@@ -629,7 +649,7 @@ void QTableWidgetEx::onAddTag()
         DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
         QStringList szListAddrType;
         QStringList szListDataType;
-        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_name);
+        IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_deviceName);
         if (pDevPluginObj) {
             QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
             XMLObject xmlObj;
@@ -660,6 +680,11 @@ void QTableWidgetEx::onAddTag()
         mapDevToAddrType.insert(pObj->m_name, szListAddrType);
     }
 
+//    qDebug() << "mapDevToAddrType: " << mapDevToAddrType;
+//    qDebug() << "mapAddrTypeToAddrTypeAlias: " << mapAddrTypeToAddrTypeAlias;
+//    qDebug() << "mapAddrTypeToSubAddrType: " << mapAddrTypeToSubAddrType;
+//    qDebug() << "mapAddrTypeToDataType: " << mapAddrTypeToDataType;
+
     dlg.setAddrTypeAndDataType(mapDevToAddrType, mapAddrTypeToAddrTypeAlias, mapAddrTypeToSubAddrType, mapAddrTypeToDataType);
     QJsonObject jsonTagObj;
     dlg.setTagObj(jsonTagObj);
@@ -674,7 +699,9 @@ void QTableWidgetEx::onAddTag()
                 pTagObj->m_addrType = "AutoAlloc";
             }
         } else {
-            IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
+            DeviceInfo &deviceInfo = QSoftCore::getCore()->getProjectCore()->m_deviceInfo;
+            DeviceInfoObject *pDevObj = deviceInfo.getObjectByName(pTagObj->m_devType);
+            IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pDevObj->m_deviceName);
             if (pDevPluginObj) {
                 QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                 XMLObject xmlObj;
@@ -851,7 +878,7 @@ void QTableWidgetEx::onEditTag()
                 DeviceInfoObject *pObj = deviceInfo.m_listDeviceInfoObject.at(i);
                 QStringList szListAddrType;
                 QStringList szListDataType;
-                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_name);
+                IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pObj->m_deviceName);
                 if (pDevPluginObj) {
                     QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                     XMLObject xmlObj;
@@ -893,7 +920,8 @@ void QTableWidgetEx::onEditTag()
                         pTagObj->m_addrType = "AutoAlloc";
                     }
                 } else {
-                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pTagObj->m_devType);
+                    DeviceInfoObject *pDevObj = deviceInfo.getObjectByName(pTagObj->m_devType);
+                    IDevicePlugin *pDevPluginObj = DevicePluginLoader::getInstance()->getPluginObject(pDevObj->m_deviceName);
                     if (pDevPluginObj) {
                         QString szDeviceDescInfo = pDevPluginObj->getDeviceDescInfo();
                         XMLObject xmlObj;

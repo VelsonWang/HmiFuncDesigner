@@ -52,7 +52,13 @@ RunTimeTag *HmiRunTime::createRunTimeTag(Tag *pTagObj)
     pRtTagObj->writeable = (TWriteAble)pTagObj->m_iWriteable;
     pRtTagObj->remark = pTagObj->m_szRemark;
     pRtTagObj->ownGroup = pTagObj->m_szOwnGroup;
-    pRtTagObj->devType = pTagObj->m_szDevType;
+
+    DeviceInfo &deviceInfo = projCore->m_deviceInfo;
+    DeviceInfoObject *pDevObj = deviceInfo.getObjectByName(pTagObj->m_szDevType);
+    if(pDevObj) {
+        pRtTagObj->devType = pDevObj->m_name;
+    }
+
     pRtTagObj->dataType = TYPE_VARIANT;
     pRtTagObj->bufLength = 1;
 
@@ -147,14 +153,16 @@ bool HmiRunTime::Load()
 
     for(int i = 0; i < deviceInfo.m_deviceInfoObject.count(); i++) {
         DeviceInfoObject *pObj = deviceInfo.m_deviceInfoObject.at(i);
-        QString sProtocol = pObj->m_protocol;
-        QString sPortType = pObj->m_deviceType;
-        QString sDeviceName = pObj->m_deviceName;
-        qDebug() << "Protocol: " << sProtocol
-                 << " PortType:" << sPortType
-                 << " DeviceName:" << sDeviceName;
+        QString szProtocol = pObj->m_protocol;
+        QString szPortType = pObj->m_deviceType;
+        QString szDeviceName = pObj->m_name;
+        QString szVendorName = pObj->m_deviceName;
+        qDebug() << "Protocol: " << szProtocol
+                 << ", PortType:" << szPortType
+                 << ", DeviceName:" << szDeviceName
+                 << ", VendorName:" << szVendorName;
         Vendor *pVendorObj = new Vendor(projCore);
-        IVendorPlugin *pVendorPluginObj = VendorPluginManager::getInstance()->getPlugin(sProtocol);
+        IVendorPlugin *pVendorPluginObj = VendorPluginManager::getInstance()->getPlugin(szProtocol);
 
         if(pVendorPluginObj != NULL) {
             pVendorObj->m_pVendorPluginObj = pVendorPluginObj;
@@ -162,12 +170,12 @@ bool HmiRunTime::Load()
 
         m_vendors.append(pVendorObj);
 
-        if(sPortType == "COM") {
+        if(szPortType == "COM") {
             ComPort* pComPortObj = new ComPort();
             pVendorObj->m_pPortObj = pComPortObj;
             ComDevicePrivate *pComDevicePrivateObj = new ComDevicePrivate();
 
-            if(pComDevicePrivateObj->LoadData(sDeviceName, projCore)) {
+            if(pComDevicePrivateObj->LoadData(szDeviceName, projCore)) {
                 QStringList comArgs;
                 comArgs << QString().number(pComDevicePrivateObj->m_iBaudrate);
                 comArgs << QString().number(pComDevicePrivateObj->m_iDatabit);
@@ -180,14 +188,14 @@ bool HmiRunTime::Load()
             }
 
             pVendorObj->m_pVendorPrivateObj = pComDevicePrivateObj;
-        } else if(sPortType == "NET") {
+        } else if(szPortType == "NET") {
             NetDevicePrivate* pNetDevicePrivateObj = new NetDevicePrivate();
 
-            if(pNetDevicePrivateObj->LoadData(sDeviceName, projCore)) {
+            if(pNetDevicePrivateObj->LoadData(szDeviceName, projCore)) {
                 QStringList netArgs;
                 netArgs << pNetDevicePrivateObj->m_sIpAddress;
                 netArgs << QString().number(pNetDevicePrivateObj->m_iPort);
-                NetPort* pNetPortObj = new NetPort(pNetDevicePrivateObj->m_sIpAddress, pNetDevicePrivateObj->m_iPort);
+                NetPort* pNetPortObj = new NetPort();
                 pVendorObj->m_pPortObj = pNetPortObj;
 
                 if(!pNetPortObj->open("Net", netArgs)) {
@@ -288,7 +296,6 @@ Vendor *HmiRunTime::FindVendor(const QString name)
 {
     for(int i = 0; i < m_vendors.size(); ++i) {
         Vendor *pObj = m_vendors.at(i);
-
         if(pObj->getDeviceName() == name) {
             return pObj;
         }

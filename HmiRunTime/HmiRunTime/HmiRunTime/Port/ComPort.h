@@ -25,8 +25,8 @@ public:
     TPortType getPortType() Q_DECL_OVERRIDE;
 
 private:
-    QextSerialPort *serialPortPtr_;
-    QByteArray buf_;
+    QextSerialPort *serialPortPtr;
+    QByteArray buf;
 
 };
 

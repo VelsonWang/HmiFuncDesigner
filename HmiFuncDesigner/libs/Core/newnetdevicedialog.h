@@ -26,6 +26,7 @@ public:
 
 public:
     QString GetDeviceName() const;
+    QString pluginName() const;
     // 更新PropertyEditor数据
     void updatePropertyEditor();
 

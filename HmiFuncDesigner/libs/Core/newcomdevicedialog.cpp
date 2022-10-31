@@ -166,6 +166,11 @@ QString NewComDeviceDialog::GetDeviceName() const
     return ui->editDeviceName->text();
 }
 
+QString NewComDeviceDialog::pluginName() const
+{
+    return m_szPluginName;
+}
+
 void NewComDeviceDialog::load(const QString &szName)
 {
     if(szName == "") {

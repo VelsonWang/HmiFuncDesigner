@@ -2,60 +2,36 @@
 #include "NetPort.h"
 #include "publicfunction.h"
 #include <QThread>
+#include <QElapsedTimer>
 
-NetPort::NetPort(QString sIp, int tPort)
+NetPort::NetPort()
 {
-    client = NULL;
-    port_ = tPort;
-    ip_ = sIp;
-    if(sIp.toLower() == "localhost") {
-        ip_ = "127.0.0.1";
-    }
+    //init only required for windows, no-op on *nix
+    net::init();
 }
 
 
 NetPort::~NetPort()
 {
-    if(client) {
-        client->close();
-        delete client;
-        client = NULL;
-    }
+    net::uninit();
 }
 
-QTcpSocket* NetPort::getSocket()
-{
-    if(client) {
-        client->close();
-        delete client;
-        client = NULL;
-    }
-    if(!client) {
-        client = new QTcpSocket();
-        client->setReadBufferSize(10000);
-    }
-    return client;
-}
 
 /**
  * @brief NetPort::open
- * @param port
+ * @param type
  * @param args
  * @return true-成功, false-失败
  */
-bool NetPort::open(QString port, QStringList args)
+bool NetPort::open(QString type, QStringList args)
 {
-    if(port == "" || args.length() != 2) {
+    if(type == "" || args.length() != 2)
         return false;
-    }
-    ip_ = args.at(0);
-    if(args.at(0).toLower() == "localhost") {
-        ip_ = "127.0.0.1";
-    }
-    port_ = args.at(1).toInt();
-    // 本函数在主线程调用！！！
-    // 为避免跨线程调用QTcpSocket，在这里先不创建对象, 对象的创建放在线程中
-    return true;
+
+    ip = args.at(0);
+    port = args.at(1).toInt();
+
+    return reOpen();
 }
 
 /**
@@ -64,49 +40,61 @@ bool NetPort::open(QString port, QStringList args)
  */
 bool NetPort::reOpen()
 {
-    getSocket();
-    client->close();
-    client->connectToHost(QHostAddress(ip_), port_);
-    return client->waitForConnected(1000);
+    if(sock.good()) {
+        sock.close();
+        sock.shutdown(net::shut::rdwr);
+    }
+    //inetV4 socket
+    sock.init(net::af::inet, net::sock::stream);
+
+    //make sure socket creation and binding did not fail
+    if( !sock.good() )	{
+        std::cerr << "error creating socket" << std::endl;
+        return false;
+    }
+    sock.set_ipv4_options();
+
+    endpoint.set(ip.toStdString(), port, net::af::inet);
+
+    //int ret = sock.connect(endpoint, 3000);
+    int ret = sock.connect(endpoint);
+    if(ret == 0) {
+        while(sock.available()) {
+            char buf;
+            sock.recv((char *)&buf, (std::size_t)1);
+        }
+    }
+
+    return (ret == 0);
 }
 
 int NetPort::read(unsigned char *buf, int len, int ms)
 {
-    if (!client) {
-        reOpen();
-    }
-    QElapsedTimer elapsedTimer;
+    QElapsedTimer timer;
+    timer.start();
+
     QByteArray byteArray;
-
-    int iNeed = len;
-    int iAvailable;
-    elapsedTimer.start();
-    while (iNeed > 0) {
-        iAvailable = client->bytesAvailable();
-        if(iAvailable) {
-            iAvailable = (iAvailable > iNeed) ? iNeed : iAvailable;
-            byteArray.append(client->read(iAvailable));
-            iNeed -= iAvailable;
-        }
-        if (elapsedTimer.elapsed() > ms) {
-            if (byteArray.size() < len) {
-                len = byteArray.size();
+    while(byteArray.size() < len && !timer.hasExpired(ms)) {
+        if(sock.available()) {
+            char tmp;
+            int ret = (int)sock.recv((char *)&tmp, (std::size_t)1);
+            if(ret > 0) {
+                byteArray.append(tmp);
             }
-            break;
+        } else {
+            QThread::msleep(1);
         }
-        QThread::msleep(1);
+    }
+    if(timer.hasExpired(ms)) {
+        sock.flush();
     }
 
-    for (int i = 0; i < len; i++) {
+    for(int i=0; i<byteArray.size(); i++) {
         buf[i] = byteArray[i];
     }
 
 #if 0
-    if(len) {
-        qDebug() << "read: " << hexToString(byteArray.data(), len);
-    } else {
-        qDebug() << "read: 0 byes";
-    }
+    qDebug()<< "read: " << hexToString(byteArray.data(), len);
 #endif
 
     return len;
@@ -114,30 +102,19 @@ int NetPort::read(unsigned char *buf, int len, int ms)
 
 int NetPort::write(unsigned char *buf, int len, int ms)
 {
-    if(!client) {
-        reOpen();
-    }
 #if 0
-    qDebug() << "write: " << hexToString((char *)buf, len);
+    qDebug()<< "write: " << hexToString((char *)buf, len);
 #endif
     Q_UNUSED(ms)
-    int iAvailable = client->bytesAvailable();
-    if(iAvailable) {
-        client->readAll();
-    }
-    len = client->write((const char*)buf, len);
-    if(client->waitForReadyRead(ms)) {
-        return len;
-    }
-    return 0;
+    std::size_t sendLen = sock.send((const char* )buf, (std::size_t)len);
+    sock.flush();
+    return (int)sendLen;
 }
 
 
 bool NetPort::close()
 {
-    if (client) {
-        client->close();
-    }
+    sock.close();
     return true;
 }
 

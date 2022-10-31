@@ -171,7 +171,7 @@ void TagEditDialog::on_btnOk_clicked()
     }
 
     m_jsonTagObj["name"] = ui->editTagName->text();
-    m_jsonTagObj["addr"] = ui->cboAddrType->currentText();
+    m_jsonTagObj["addr"] = m_mapAddrTypeToAddrTypeAlias.value(ui->cboAddrType->currentText());
     m_jsonTagObj["offset"] = ui->editAddrOffset->text();
     m_jsonTagObj["addr2"] = ui->cboAddrType2->currentText();
     m_jsonTagObj["offset2"] = ui->editAddrOffset2->text();
