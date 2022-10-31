@@ -52,13 +52,13 @@ bool NetPort::reOpen()
         std::cerr << "error creating socket" << std::endl;
         return false;
     }
+    sock.set_ipv4_options();
 
     endpoint.set(ip.toStdString(), port, net::af::inet);
 
+    //int ret = sock.connect(endpoint, 3000);
     int ret = sock.connect(endpoint);
     if(ret == 0) {
-        //sock.settimeout(1, 0);
-        //sock.setnonblocking(true);
         while(sock.available()) {
             char buf;
             sock.recv((char *)&buf, (std::size_t)1);
@@ -85,6 +85,9 @@ int NetPort::read(unsigned char *buf, int len, int ms)
             QThread::msleep(1);
         }
     }
+    if(timer.hasExpired(ms)) {
+        sock.flush();
+    }
 
     for(int i=0; i<byteArray.size(); i++) {
         buf[i] = byteArray[i];
@@ -104,6 +107,7 @@ int NetPort::write(unsigned char *buf, int len, int ms)
 #endif
     Q_UNUSED(ms)
     std::size_t sendLen = sock.send((const char* )buf, (std::size_t)len);
+    sock.flush();
     return (int)sendLen;
 }
 

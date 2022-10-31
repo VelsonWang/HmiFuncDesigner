@@ -59,19 +59,22 @@ static bool _wsaInitDone = false;
 #include <thread>
 #include <chrono>
 
-namespace net {
+namespace net
+{
 
-inline void init() {
+inline void init()
+{
 //no-op on *nix
 #ifdef _WIN32
-	if( !_wsaInitDone ) {
-		WSAStartup(MAKEWORD(2,2), &_wsaData);
-		_wsaInitDone = true;
-	}
+    if( !_wsaInitDone ) {
+        WSAStartup(MAKEWORD(2,2), &_wsaData);
+        _wsaInitDone = true;
+    }
 #endif
 }
 
-inline void uninit() {
+inline void uninit()
+{
 //no-op on *nix
 #ifdef _WIN32
     if( _wsaInitDone ) {
@@ -80,21 +83,21 @@ inline void uninit() {
 #endif
 }
 
-enum class af	{
-	inet = AF_INET,
-	inet6 = AF_INET6,
-	unspec = AF_UNSPEC
+enum class af {
+    inet = AF_INET,
+    inet6 = AF_INET6,
+    unspec = AF_UNSPEC
 };
 
-enum class sock	{
-	stream = SOCK_STREAM,
-	dgram = SOCK_DGRAM
+enum class sock {
+    stream = SOCK_STREAM,
+    dgram = SOCK_DGRAM
 };
 
-enum class shut	{
-	rd = SHUT_RD,
-	wr = SHUT_WR,
-	rdwr = SHUT_RDWR
+enum class shut {
+    rd = SHUT_RD,
+    wr = SHUT_WR,
+    rdwr = SHUT_RDWR
 };
 
 struct endpoint;
@@ -107,123 +110,144 @@ typedef std::vector<endpoint> endpoint_buffer;
  */
 
 struct endpoint {
-	endpoint()	{
-		memset( &addr, 0, sizeof( sockaddr_storage ) );
-		addrlen = sizeof( sockaddr_storage );
-	}
+    endpoint()
+    {
+        memset( &addr, 0, sizeof( sockaddr_storage ) );
+        addrlen = sizeof( sockaddr_storage );
+    }
 
-	endpoint( int port )				{
-		set( "0", port );
-	}
-	endpoint( std::string ip, int port )		{
-		set( ip, port );
-	}
-	endpoint( std::string ip, int port, af fam )	{
-		set( ip, port, fam );
-	}
+    endpoint( int port )
+    {
+        set( "0", port );
+    }
+    endpoint( std::string ip, int port )
+    {
+        set( ip, port );
+    }
+    endpoint( std::string ip, int port, af fam )
+    {
+        set( ip, port, fam );
+    }
 
-	bool operator== ( const endpoint& e )	{
-		if( memcmp( &addr, e.data(), e.size() ) == 0 )
-			return true;
-		return false;
-	}
+    bool operator== ( const endpoint& e )
+    {
+        if( memcmp( &addr, e.data(), e.size() ) == 0 ) {
+            return true;
+        }
+        return false;
+    }
 
-	bool operator!= ( const endpoint& e )	{
-		return !operator==( e );
-	}
+    bool operator!= ( const endpoint& e )
+    {
+        return !operator==( e );
+    }
 
-	//returns a vector of all possible endpoints for host:port for the specified sock_type and address family
-	static endpoint_buffer resolve( const char* host, const char* service, af f )	{
+    //returns a vector of all possible endpoints for host:port for the specified sock_type and address family
+    static endpoint_buffer resolve( const char* host, const char* service, af f )
+    {
 
-		//set up our addrinfo hints for the getaddrinfo call
-		addrinfo hints;
-		memset( &hints, 0, sizeof( addrinfo ) );
-		hints.ai_family = (int)f;
-		hints.ai_socktype = 0;
+        //set up our addrinfo hints for the getaddrinfo call
+        addrinfo hints;
+        memset( &hints, 0, sizeof( addrinfo ) );
+        hints.ai_family = (int)f;
+        hints.ai_socktype = 0;
 
-		//if host is nullptr, we need to set AI_PASSIVE, meaning its meant for binding
-		if( host == nullptr )
-			hints.ai_flags = AI_PASSIVE;
+        //if host is nullptr, we need to set AI_PASSIVE, meaning its meant for binding
+        if( host == nullptr ) {
+            hints.ai_flags = AI_PASSIVE;
+        }
 
-		addrinfo *res, *rp;
+        addrinfo *res, *rp;
 
-		int i = getaddrinfo( host, service, &hints, &res );
-		if( i != 0 )	{
-			std::cout << gai_strerror( i ) << std::endl;
-			return endpoint_buffer();
-		}
+        int i = getaddrinfo( host, service, &hints, &res );
+        if( i != 0 )	{
+            std::cout << gai_strerror( i ) << std::endl;
+            return endpoint_buffer();
+        }
 
-		endpoint_buffer buffer;
+        endpoint_buffer buffer;
 
-		for( rp = res; rp != nullptr; rp = rp->ai_next )	{
-			endpoint ep;
-			memcpy( &ep.addr, rp->ai_addr, rp->ai_addrlen );
-			ep.initialize( rp->ai_addrlen, (af)rp->ai_family );
+        for( rp = res; rp != nullptr; rp = rp->ai_next )	{
+            endpoint ep;
+            memcpy( &ep.addr, rp->ai_addr, rp->ai_addrlen );
+            ep.initialize( rp->ai_addrlen, (af)rp->ai_family );
 
-			if( std::find( buffer.begin(), buffer.end(), ep ) == buffer.end() )
-				buffer.push_back( ep );
-		}
+            if( std::find( buffer.begin(), buffer.end(), ep ) == buffer.end() ) {
+                buffer.push_back( ep );
+            }
+        }
 
-		freeaddrinfo( res );
+        freeaddrinfo( res );
 
-		return buffer;
-	}
+        return buffer;
+    }
 
-	void set( std::string ip, int port, af f=af::unspec )	{
-		const char *host = ip.c_str();
-		if( ip == "0" )
-			host = nullptr;
-		endpoint_buffer epList = endpoint::resolve( host, std::to_string(port).c_str(), f );
-		*this = epList[0];
-	}
+    void set( std::string ip, int port, af f=af::unspec )
+    {
+        const char *host = ip.c_str();
+        if( ip == "0" ) {
+            host = nullptr;
+        }
+        endpoint_buffer epList = endpoint::resolve( host, std::to_string(port).c_str(), f );
+        *this = epList[0];
+    }
 
-	//must be called after you manually write into addr
-	void initialize( socklen_t alen, af fam )	{
-		addrlen = alen;
-		addrfam = fam;
-	}
+    //must be called after you manually write into addr
+    void initialize( socklen_t alen, af fam )
+    {
+        addrlen = alen;
+        addrfam = fam;
+    }
 
-	std::string get_host( int flags=0 ) const	{
-		char hostbuf[INET6_ADDRSTRLEN];
-		getnameinfo( data(), size(), &hostbuf[0], INET6_ADDRSTRLEN, nullptr, 0, flags );
-		return &hostbuf[0];
-	}
+    std::string get_host( int flags=0 ) const
+    {
+        char hostbuf[INET6_ADDRSTRLEN];
+        getnameinfo( data(), size(), &hostbuf[0], INET6_ADDRSTRLEN, nullptr, 0, flags );
+        return &hostbuf[0];
+    }
 
-	std::string get_ip() const	{
-		return get_host( NI_NUMERICHOST );
-	}
+    std::string get_ip() const
+    {
+        return get_host( NI_NUMERICHOST );
+    }
 
-	std::string get_service( int flags=0 ) const	{
-		char servbuf[INET6_ADDRSTRLEN];
-		getnameinfo( data(), size(), nullptr, 0, &servbuf[0], INET6_ADDRSTRLEN, flags );
-		return &servbuf[0];
-	}
+    std::string get_service( int flags=0 ) const
+    {
+        char servbuf[INET6_ADDRSTRLEN];
+        getnameinfo( data(), size(), nullptr, 0, &servbuf[0], INET6_ADDRSTRLEN, flags );
+        return &servbuf[0];
+    }
 
-	int get_port() const	{
-		return std::atoi( get_service( NI_NUMERICSERV ).c_str() );
-	}
+    int get_port() const
+    {
+        return std::atoi( get_service( NI_NUMERICSERV ).c_str() );
+    }
 
-	af get_af() const	{
-		return addrfam;
-	}
+    af get_af() const
+    {
+        return addrfam;
+    }
 
-	sockaddr* data() const	{
-		return (sockaddr*)&addr;
-	}
+    sockaddr* data() const
+    {
+        return (sockaddr*)&addr;
+    }
 
-	int size() const	{
-		return addrlen;
-	}
+    int size() const
+    {
+        return addrlen;
+    }
 
-	std::string to_string() const	{
-		std::stringstream ss;
-		ss << get_ip() << ":" << get_port();
-		return ss.str();
-	}
+    std::string to_string() const
+    {
+        std::stringstream ss;
+        ss << get_ip() << ":" << get_port();
+        return ss.str();
+    }
 
-	sockaddr_storage addr;
-	socklen_t addrlen;
-	af addrfam;
+    sockaddr_storage addr;
+    socklen_t addrlen;
+    af addrfam;
 };
 
 
@@ -233,60 +257,72 @@ struct endpoint {
  */
 
 struct socket {
-	socket()	{
-		fd = -1;
-	}
+    socket()
+    {
+        fd = -1;
+    }
 
-	socket( af fam, sock socktype )	{
-		init( fam, socktype );
-	}
+    socket( af fam, sock socktype )
+    {
+        init( fam, socktype );
+    }
 
-	socket( af fam, sock socktype, int port ) : socket( fam, socktype )	{
-		int r = bind( port );
-		if( r == -1 )	{
-			close();
-			fd = -1;
-		}
-	}
+    socket( af fam, sock socktype, int port ) : socket( fam, socktype )
+    {
+        int r = bind( port );
+        if( r == -1 )	{
+            close();
+            fd = -1;
+        }
+    }
 
-	socket& operator =( int newfd )	{
-		fd = newfd;
-		return *this;
-	}
+    socket& operator =( int newfd )
+    {
+        fd = newfd;
+        return *this;
+    }
 
-	int init( af fam, sock socktype )	{
+    int init( af fam, sock socktype )
+    {
         fd = ::socket( (int)fam, (int)socktype, IPPROTO_TCP);
-		addrfam = fam;
+        addrfam = fam;
 #ifdef XS_NONBLOCKING
-		setnonblocking( true );
+        setnonblocking( true );
 #endif
-		return fd;
-	}
+        return fd;
+    }
 
-	int accept( endpoint* ep )	{
-		socklen_t al = ep->size();
-		int i = ::accept( fd, ep->data(), &al );
-		ep->initialize( al, addrfam );
-		return i;
-	}
+    int accept( endpoint* ep )
+    {
+        socklen_t al = ep->size();
+        int i = ::accept( fd, ep->data(), &al );
+        ep->initialize( al, addrfam );
+        return i;
+    }
 
-	int listen( int n )	{
-		return ::listen( fd, n );
-	}
+    int listen( int n )
+    {
+        return ::listen( fd, n );
+    }
 
-	int bind( const endpoint ep )	{
-		return ::bind( fd, ep.data(), ep.size() );
-	}
+    int bind( const endpoint ep )
+    {
+        return ::bind( fd, ep.data(), ep.size() );
+    }
 
-	int bind( const std::string addr, int port )	{
-		return bind( endpoint( addr, port, addrfam ) );
-	}
+    int bind( const std::string addr, int port )
+    {
+        return bind( endpoint( addr, port, addrfam ) );
+    }
 
-	int bind( int port )	{
-		return bind( "0", port );
-	}
+    int bind( int port )
+    {
+        return bind( "0", port );
+    }
 
-	int connect( const endpoint ep )	{
+
+    int connect( const endpoint ep )
+    {
 #ifndef _WIN32
         for (;;) {
             int ret = ::connect( fd, ep.data(), ep.size() );
@@ -342,151 +378,333 @@ struct socket {
         }
         return 0;
 #endif
-	}
+    }
 
-	std::size_t sendto( const char* data, std::size_t len, endpoint ep )	{
-		return ::sendto( fd, data, len, 0, ep.data(), ep.size() );
-	}
 
-	std::size_t sendto( const std::vector<char>& data, endpoint ep )	{
-		return sendto( data.data(), data.size(), ep );
-	}
+    int connect(const endpoint ep, int timeoutMs)
+    {
+        int rc = ::connect(fd, ep.data(), ep.size());
 
-	std::size_t sendto( const std::string* data, endpoint ep )	{
-		return sendto( data->c_str(), data->size(), ep );
-	}
+#ifdef _WIN32
+        int wsaError = 0;
+        if (rc == -1) {
+            wsaError = WSAGetLastError();
+        }
 
-	std::size_t recvfrom( char* buf, std::size_t len, endpoint* ep )	{
-		socklen_t al = ep->size();
-		int i = ::recvfrom( fd, buf, len, 0, ep->data(), &al );
-		ep->initialize( al, addrfam );
-		return i;
-	}
-
-	std::size_t recvfrom( std::vector<char>& buf, endpoint* ep )	{
-		return recvfrom( buf.data(), buf.size(), ep );
-	}
-
-	std::size_t recvfrom( std::string* buf, std::size_t len, endpoint* ep )	{
-		std::vector<char> buffer( len );
-		int r = recvfrom( buffer, ep );
-		if( r > 0 )
-			*buf = std::string( buffer.data(), r );
-		return r;
-	}
-
-	std::size_t send( const char* data, std::size_t len )	{
-		return ::send( fd, data, len, 0 );
-	}
-
-	std::size_t send( const std::vector<char>& data )	{
-		return send( data.data(), data.size() );
-	}
-
-	std::size_t send( const std::string* data )	{
-		return send( (char*)data->c_str(), data->size() );
-	}
-
-	std::size_t recv( char* buf, std::size_t len )	{
-		return ::recv( fd, buf, len, 0 );
-	}
-
-	std::size_t recv( std::vector<char>& buf )	{
-		return recv( buf.data(), buf.size() );
-	}
-
-	std::size_t recv( std::string* buf, std::size_t len )	{
-		std::vector<char> buffer( len );
-		int r = recv( buffer );
-		if( r > 0 )
-			*buf = std::string( buffer.data(), r );
-		return r;
-	}
-
-	int close()	{
-#ifndef _WIN32
-		return ::close( fd );
+        if (wsaError == WSAEWOULDBLOCK || wsaError == WSAEINPROGRESS) {
 #else
-		return ::closesocket( fd );
+        if (rc == -1 && errno == EINPROGRESS) {
 #endif
-	}
+            fd_set wset;
+            int optval;
+            socklen_t optlen = sizeof(optval);
+            struct timeval tv;
+            tv.tv_sec = timeoutMs / 1000;
+            tv.tv_usec = (timeoutMs % 1000) * 1000;
 
-	int shutdown( shut how )	{
-		return ::shutdown( fd, (int)how );
-	}
-
-	int setnonblocking( bool block )	{
+            /* Wait to be available in writing */
+            FD_ZERO(&wset);
+            FD_SET(fd, &wset);
+            rc = ::select(fd + 1, NULL, &wset, NULL, &tv);
+            if (rc <= 0) {
+                /* Timeout or fail */
+                return -1;
+            }
 #ifndef _WIN32
-		return fcntl( fd, F_SETFL, O_NONBLOCK, block );
+            /* The connection is established if SO_ERROR and optval are set to 0 */
+            rc = getsockopt(fd, SOL_SOCKET, SO_ERROR, (void *)&optval, &optlen);
 #else
-		DWORD nb = (int)block;
-		return ioctlsocket( fd,  FIONBIO,  &nb );
+            rc = getsockopt(fd, SOL_SOCKET, SO_ERROR, (char *)&optval, &optlen);
 #endif
-	}
+            if (rc == 0 && optval == 0) {
+                return 0;
+            } else {
+                errno = ECONNREFUSED;
+                return -1;
+            }
+        }
+        return rc;
+    }
 
-	// TODO: implement the timeout for windows
-	int settimeout( int sec, int us )	{
+    int flush()
+    {
+        int rc;
+        int rc_sum = 0;
+
+        do {
+#define TCP_MAX_ADU_LENGTH  260
+            /* Extract the garbage from the socket */
+            char devnull[TCP_MAX_ADU_LENGTH];
 #ifndef _WIN32
-		timeval tv;
-		tv.tv_sec = sec;
-		tv.tv_usec = us;
-		int i = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
-		return i;
+            rc = ::recv(fd, devnull, TCP_MAX_ADU_LENGTH, MSG_DONTWAIT);
+#else
+            /* On Win32, it's a bit more complicated to not wait */
+            fd_set rset;
+            struct timeval tv;
+
+            tv.tv_sec = 0;
+            tv.tv_usec = 0;
+            FD_ZERO(&rset);
+            FD_SET(fd, &rset);
+            rc = ::select(fd+1, &rset, NULL, NULL, &tv);
+            if (rc == -1) {
+                return -1;
+            }
+
+            if (rc == 1) {
+                /* There is data to flush */
+                rc = ::recv(fd, devnull, TCP_MAX_ADU_LENGTH, 0);
+            }
+#endif
+            if (rc > 0) {
+                rc_sum += rc;
+            }
+        } while (rc == TCP_MAX_ADU_LENGTH);
+
+        return rc_sum;
+    }
+
+
+    int select(fd_set *rset, struct timeval *tv)
+    {
+        int s_rc;
+        while ((s_rc = ::select(fd+1, rset, NULL, NULL, tv)) == -1) {
+            if (errno == EINTR) {
+                printf("A non blocked signal was caught\n");
+                /* Necessary after an error */
+                FD_ZERO(rset);
+                FD_SET(fd, rset);
+            } else {
+                return -1;
+            }
+        }
+
+        if (s_rc == 0) {
+            errno = ETIMEDOUT;
+            return -1;
+        }
+
+        return s_rc;
+    }
+
+    std::size_t sendto( const char* data, std::size_t len, endpoint ep )
+    {
+        return ::sendto( fd, data, len, 0, ep.data(), ep.size() );
+    }
+
+    std::size_t sendto( const std::vector<char>& data, endpoint ep )
+    {
+        return sendto( data.data(), data.size(), ep );
+    }
+
+    std::size_t sendto( const std::string* data, endpoint ep )
+    {
+        return sendto( data->c_str(), data->size(), ep );
+    }
+
+    std::size_t recvfrom( char* buf, std::size_t len, endpoint* ep )
+    {
+        socklen_t al = ep->size();
+        int i = ::recvfrom( fd, buf, len, 0, ep->data(), &al );
+        ep->initialize( al, addrfam );
+        return i;
+    }
+
+    std::size_t recvfrom( std::vector<char>& buf, endpoint* ep )
+    {
+        return recvfrom( buf.data(), buf.size(), ep );
+    }
+
+    std::size_t recvfrom( std::string* buf, std::size_t len, endpoint* ep )
+    {
+        std::vector<char> buffer( len );
+        int r = recvfrom( buffer, ep );
+        if( r > 0 ) {
+            *buf = std::string( buffer.data(), r );
+        }
+        return r;
+    }
+
+    std::size_t send( const char* data, std::size_t len )
+    {
+        return ::send( fd, data, len, 0 );
+    }
+
+    std::size_t send( const std::vector<char>& data )
+    {
+        return send( data.data(), data.size() );
+    }
+
+    std::size_t send( const std::string* data )
+    {
+        return send( (char*)data->c_str(), data->size() );
+    }
+
+    std::size_t recv( char* buf, std::size_t len )
+    {
+        return ::recv( fd, buf, len, 0 );
+    }
+
+    std::size_t recv( std::vector<char>& buf )
+    {
+        return recv( buf.data(), buf.size() );
+    }
+
+    std::size_t recv( std::string* buf, std::size_t len )
+    {
+        std::vector<char> buffer( len );
+        int r = recv( buffer );
+        if( r > 0 ) {
+            *buf = std::string( buffer.data(), r );
+        }
+        return r;
+    }
+
+    int close()
+    {
+#ifndef _WIN32
+        return ::close( fd );
+#else
+        return ::closesocket( fd );
+#endif
+    }
+
+    int shutdown( shut how )
+    {
+        return ::shutdown( fd, (int)how );
+    }
+
+    int setnonblocking( bool block )
+    {
+#ifndef _WIN32
+        return fcntl( fd, F_SETFL, O_NONBLOCK, block );
+#else
+        DWORD nb = (int)block;
+        return ioctlsocket( fd,  FIONBIO,  &nb );
+#endif
+    }
+
+    // TODO: implement the timeout for windows
+    int settimeout( int sec, int us )
+    {
+#ifndef _WIN32
+        timeval tv;
+        tv.tv_sec = sec;
+        tv.tv_usec = us;
+        int i = setsockopt(fd, SOL_SOCKET, SO_RCVTIMEO, &tv, sizeof(tv));
+        return i;
 #else
         (void)sec;
         (void)us;
-		return -1;
+        return -1;
 #endif
-	}
-
-	endpoint getlocaladdr()	const {
-		return getname(fd, getsockname, addrfam );
-	}
-
-	endpoint getremoteaddr() const	{
-		return getname(fd, getpeername, addrfam );
-	}
-
-	int geterror() const	{
-		return errno;
-	}
-
-	bool good() const	{
-		if( fd != -1 )
-			return true;
-		return false;
-	}
-
-    int socketFd() {
-        return fd;
     }
 
+    endpoint getlocaladdr()	const
+    {
+        return getname(fd, getsockname, addrfam );
+    }
+
+    endpoint getremoteaddr() const
+    {
+        return getname(fd, getpeername, addrfam );
+    }
+
+    int geterror() const
+    {
+        return errno;
+    }
+
+    bool good() const
+    {
+        if( fd != -1 ) {
+            return true;
+        }
+        return false;
+    }
+
+    int socketFd()
+    {
+        return fd;
+    }
 
     int available()
     {
         int result = 0;
-    #ifndef _WIN32
+#ifndef _WIN32
         ioctl(fd, FIONREAD, &result);
-    #else
+#else
         ioctlsocket(fd, FIONREAD, reinterpret_cast<u_long*>(&result));
-    #endif
+#endif
         return result;
     }
 
-  private:
 
-	// getname calls getsockname/getpeername and returns it as an endpoint type
-	template< typename t >
-	inline endpoint getname(int fd, t target, af fam) const {
-		endpoint ep;
-		socklen_t al = ep.size();
-		target(fd, ep.data(), &al);
-		ep.initialize( al, fam );
-		return ep;
-	}
+    int set_ipv4_options()
+    {
+        int rc;
+        int option;
 
-	int fd;
-	af addrfam;
+#ifndef WIN32
+        /* Set the TCP no delay flag */
+        /* SOL_TCP = IPPROTO_TCP */
+        option = 1;
+        rc = setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (const void *)&option, sizeof(int));
+#else
+        option = 1;
+        rc = setsockopt(fd, IPPROTO_TCP, TCP_NODELAY, (const char *)&option, sizeof(int));
+#endif
+        if (rc == -1) {
+            return -1;
+        }
+
+        /* If the OS does not offer SOCK_NONBLOCK, fall back to setting FIONBIO to
+         * make sockets non-blocking */
+        /* Do not care about the return value, this is optional */
+#if !defined(SOCK_NONBLOCK) && defined(FIONBIO)
+#ifdef _WIN32
+        {
+            /* Setting FIONBIO expects an unsigned long according to MSDN */
+            u_long loption = 1;
+            ioctlsocket(fd, FIONBIO, &loption);
+        }
+#else
+        option = 1;
+        ioctl(fd, FIONBIO, &option);
+#endif
+#endif
+
+#ifndef WIN32
+        /**
+         * Cygwin defines IPTOS_LOWDELAY but can't handle that flag so it's
+         * necessary to workaround that problem.
+         **/
+        /* Set the IP low delay option */
+        option = IPTOS_LOWDELAY;
+        rc = setsockopt(fd, IPPROTO_IP, IP_TOS, (const void *)&option, sizeof(int));
+        if (rc == -1) {
+            return -1;
+        }
+#endif
+
+        return 0;
+    }
+
+private:
+
+    // getname calls getsockname/getpeername and returns it as an endpoint type
+    template< typename t >
+    inline endpoint getname(int fd, t target, af fam) const
+    {
+        endpoint ep;
+        socklen_t al = ep.size();
+        target(fd, ep.data(), &al);
+        ep.initialize( al, fam );
+        return ep;
+    }
+
+    int fd;
+    af addrfam;
 };
 
 } //namespace net

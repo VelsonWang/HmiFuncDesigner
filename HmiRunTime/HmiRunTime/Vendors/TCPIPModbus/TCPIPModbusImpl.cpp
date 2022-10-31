@@ -277,9 +277,6 @@ int TCPIPModbusImpl::readData(void* pObj, RunTimeTag* pTag)
              pVendorObj->readBuf[0] == pVendorObj->writeBuf[0] &&
              pVendorObj->readBuf[1] == pVendorObj->writeBuf[1] &&
              pVendorObj->readBuf[7] == pVendorObj->writeBuf[7])) {
-            qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << getPort();
-            qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Tx: " << hexToString((char *)pVendorObj->writeBuf, 9);
-            qDebug() << pVendorObj->m_pVendorPrivateObj->m_sDeviceName << ", Modbus Rx: " << hexToString((char *)pVendorObj->readBuf, 9);
             return -2;
         }
 
