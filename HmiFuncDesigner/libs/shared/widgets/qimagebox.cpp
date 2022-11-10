@@ -2,7 +2,6 @@
 #include "../qprojectcore.h"
 #include <QFileInfo>
 #include <QPainter>
-#include <QPixmap>
 
 QImageBox::QImageBox(QWidget *parent) : QLabel(parent)
 {
@@ -12,7 +11,7 @@ QImageBox::QImageBox(QWidget *parent) : QLabel(parent)
     m_boardColorObj = Qt::black;
 
     this->setAlignment(Qt::AlignCenter);
-    setPropertyInner();
+    this->update();
 }
 
 QString QImageBox::getImageFile()
@@ -26,7 +25,7 @@ void QImageBox::setImageFile(const QString szName)
     if(szListInfo.size() == 2) {
         QFileInfo info(szListInfo.at(0));
         m_imageObj = PictureResourceManager::base64ToImage(szListInfo.at(1).toLocal8Bit(), info.suffix());
-        setPropertyInner();
+        this->update();
     }
     m_szImageFile = szName;
 }
@@ -39,7 +38,7 @@ bool QImageBox::isNoScale()
 void QImageBox::setNoScale(bool bNoScale)
 {
     m_bNoScale = bNoScale;
-    setPropertyInner();
+    this->update();
 }
 
 int QImageBox::getBoardWidth()
@@ -50,7 +49,7 @@ int QImageBox::getBoardWidth()
 void QImageBox::setBoardWidth(int iWidth)
 {
     m_iBoardWidth = iWidth;
-    setPropertyInner();
+    this->update();
 }
 
 QColor QImageBox::getBoardColor()
@@ -61,31 +60,31 @@ QColor QImageBox::getBoardColor()
 void QImageBox::setBoardColor(QColor color)
 {
     m_boardColorObj = color;
-    setPropertyInner();
-}
-
-void QImageBox::setPropertyInner()
-{
-    setScaledContents(!m_bNoScale);
-    if(!m_bNoScale && (m_szImageFile != "")) {
-        setPixmap(QPixmap::fromImage(m_imageObj));
-    }
-
-    if(m_iBoardWidth > 0) {
-        QString szStyleSheet = "";
-        szStyleSheet += QString("border-width: %1px; border-style: solid;").arg(QString::number(m_iBoardWidth));
-        szStyleSheet += QString("border-color: rgb(%1, %2, %3);")
-                        .arg(QString::number(m_boardColorObj.red()))
-                        .arg(QString::number(m_boardColorObj.green()))
-                        .arg(QString::number(m_boardColorObj.blue()));
-        this->setStyleSheet(szStyleSheet);
-    } else {
-        this->setStyleSheet("");
-    }
+    this->update();
 }
 
 void QImageBox::resizeEvent(QResizeEvent *event)
 {
-    setPropertyInner();
     QLabel::resizeEvent(event);
+}
+
+void QImageBox::paintEvent(QPaintEvent *event)
+{
+    QPainter painter(this);
+    painter.setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+    painter.setPen(QPen(m_boardColorObj, m_iBoardWidth, Qt::SolidLine));
+    QRect rect(0, 0, this->width()-1, this->height()-1);
+    painter.drawRect(rect);
+    if(!m_imageObj.isNull()) {
+        if(m_bNoScale) {
+            QRect imgRect((this->width()-m_imageObj.width())/2,
+                          (this->height()-m_imageObj.height())/2,
+                          m_imageObj.width(),
+                          m_imageObj.height());
+            painter.drawImage(imgRect, m_imageObj);
+        } else {
+            painter.drawImage(rect, m_imageObj.scaled(this->width()-1, this->height()-1));
+        }
+    }
+    QLabel::paintEvent(event);
 }
