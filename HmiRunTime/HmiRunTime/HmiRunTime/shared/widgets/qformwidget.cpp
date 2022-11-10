@@ -1,11 +1,13 @@
 #include "qformwidget.h"
 #include "../xmlobject.h"
+#include <QPainter>
 
 #define FORM_TITLE "form"
 
 QFormWidget::QFormWidget(QWidget *parent) : QWidget(parent)
 {
     setProperty("title", FORM_TITLE);
+    backgroundColor = QColor();
 }
 
 void QFormWidget::fromObject(XMLObject* xml)
@@ -35,7 +37,7 @@ void QFormWidget::fromObject(XMLObject* xml)
                         }
                         this->setProperty("geometry", QRect(x, y, width, height));
                     } else if(propertyName == "background") {
-                        //this->setProperty("background", pObj->getProperty("value"));
+                        this->setProperty("background", pObj->getProperty("value"));
                     } else if(propertyName == "openFuncs") {
                         this->setProperty("openFuncs", praseFunctions(pObj->getProperty("value")));
                     } else if(propertyName == "closeFuncs") {
@@ -83,4 +85,26 @@ void QFormWidget::hideEvent(QHideEvent *event)
 {
     (void)event;
     execFunction(closeFuncs);
+}
+
+QColor QFormWidget::getBackgroundColor()
+{
+    return backgroundColor;
+}
+
+void QFormWidget::setBackgroundColor(QColor color)
+{
+    backgroundColor = color;
+    this->update();
+}
+
+void QFormWidget::paintEvent(QPaintEvent *event)
+{
+    if(backgroundColor.isValid()) {
+        QPainter painter(this);
+        painter.setRenderHints(QPainter::HighQualityAntialiasing | QPainter::TextAntialiasing);
+        QRect rect(0, 0, this->width(), this->height());
+        painter.fillRect(rect, backgroundColor);
+    }
+    QWidget::paintEvent(event);
 }

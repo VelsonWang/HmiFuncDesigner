@@ -23,11 +23,11 @@ void QFormHost::initProperty()
 {
     QAbstractWidgetHost::initProperty();
 
-    QAbstractProperty* pObj = QPropertyFactory::create_property("StyleSheet");
+    QAbstractProperty* pObj = QPropertyFactory::create_property("Color");
     if(pObj != NULL) {
         pObj->setObjectProperty("name", "background");
-        pObj->setAttribute("show_name", tr("背景颜色")); // tr("Background")
-        pObj->setAttribute("group", "Style Sheet");
+        pObj->setAttribute("show_name", tr("背景颜色"));
+        pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
     }
 

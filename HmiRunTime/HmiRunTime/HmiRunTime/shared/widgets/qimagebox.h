@@ -31,11 +31,9 @@ public:
 public:
     void fromObject(XMLObject* xml) override;
 
-private:
-    void setPropertyInner();
-
 protected:
     void resizeEvent(QResizeEvent *event) override;
+    void paintEvent(QPaintEvent *event) override;
 
 private:
     QString m_szImageFile;

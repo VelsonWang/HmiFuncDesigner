@@ -27,11 +27,9 @@ public:
     QColor getBoardColor();
     void setBoardColor(QColor color);
 
-private:
-    void setPropertyInner();
-
 protected:
     void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event);
 
 private:
     QString m_szImageFile;
