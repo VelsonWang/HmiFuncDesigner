@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     // 日志记录初始化
-//    LogInit();
+    LogInit();
     qDebug() << "start hmiruntime.";
 
     QString strInput = "";

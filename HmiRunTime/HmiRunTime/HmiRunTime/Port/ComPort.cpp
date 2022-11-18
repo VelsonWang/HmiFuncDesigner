@@ -4,6 +4,7 @@
 #include "ComPort.h"
 #include "publicfunction.h"
 #include "SerialPortReMapping.h"
+#include <QElapsedTimer>
 
 #define TIME_OUT 10
 
@@ -110,18 +111,15 @@ bool ComPort::reOpen()
 
 int ComPort::read(unsigned char *buffer, int len, int ms)
 {
-    long start;
-
-    QTime time;
-    time.start();
-    start = time.elapsed();
+    QElapsedTimer timer;
+    timer.start();
 
     while(buf.size() < len) {
         if(serialPortPtr->bytesAvailable()) {
             buf.append(serialPortPtr->readAll());
         }
 
-        if((time.elapsed() - start) > ms) {
+        if(timer.hasExpired(ms)) {
             if(len > buf.size()) {
                 len = buf.size();
             }
@@ -131,10 +129,10 @@ int ComPort::read(unsigned char *buffer, int len, int ms)
     }
 
     for(int i = 0; i < len; i++) {
-        buf[i] = buf[i];
+        buffer[i] = buf[i];
     }
 #if 0
-    qDebug() << "read: " << hexToString(buf_.data(), len);
+    qDebug() << "read: " << hexToString(buf.data(), len);
 #endif
     buf.remove(0, len);
 
