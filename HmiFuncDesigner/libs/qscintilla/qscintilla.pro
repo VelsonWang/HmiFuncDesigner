@@ -20,11 +20,16 @@ CONFIG(debug, debug|release) {
     TARGET = qscintilla2_qt$${QT_MAJOR_VERSION}
 }
 
-
 QTSCINTILLA_LIBDIR = $$IDE_LIBRARY_PATH
 #$$OUT_PWD/../../../lib
 #message(pwd: $$OUT_PWD)
 DESTDIR = $$QTSCINTILLA_LIBDIR
+
+
+unix {
+    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$clean_path($$DESTDIR)"\'"
+}
+
 
 INSTALL_LIBRARY_PATH = $$IDE_BIN_PATH
 #$$OUT_PWD/../../exec/bin

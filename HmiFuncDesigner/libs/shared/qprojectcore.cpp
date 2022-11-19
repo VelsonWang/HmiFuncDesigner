@@ -5,8 +5,8 @@
 #include "host/qformhost.h"
 #include "property/qabstractproperty.h"
 #include "qcommonstruct.h"
-#include "Helper.h"
-#include "DataAES.h"
+#include "helper.h"
+#include "dataaes.h"
 #include <QFileInfo>
 #include <QFile>
 #include <QDir>

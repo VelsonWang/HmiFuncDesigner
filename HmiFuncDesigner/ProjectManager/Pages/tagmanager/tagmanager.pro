@@ -23,7 +23,7 @@ CONFIG(debug, debug|release) { #debug
 
 LIBS += -L$$clean_path($$LIB_DIR) -lshared
 LIBS += -L$$clean_path($$LIB_DIR) -lcore
-LIBS += -L$$clean_path($$LIB_DIR) -lCsv$${LIB_SUFFIX}
+LIBS += -L$$clean_path($$LIB_DIR) -lcsv$${LIB_SUFFIX}
 
 INCLUDEPATH += \
     $$TOP_SRC_DIR/HmiFuncDesigner/libs/core \

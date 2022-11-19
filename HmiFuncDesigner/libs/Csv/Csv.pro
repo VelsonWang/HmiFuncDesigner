@@ -12,6 +12,10 @@ include(../../HmiFuncDesignerLibrary.pri)
     #        -Wdisabled-optimization -Wcast-align -Wcast-qual
 }
 
+unix {
+    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$clean_path($$DESTDIR)"\'"
+}
+
 DEFINES += QTCSV_LIBRARY
 
 SOURCES += \

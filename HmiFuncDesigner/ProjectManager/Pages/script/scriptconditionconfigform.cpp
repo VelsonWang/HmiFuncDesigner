@@ -1,6 +1,6 @@
-#include "ScriptConditionConfigForm.h"
-#include "ui_ScriptConditionConfigForm.h"
-#include "ScriptRunConditionEditorDlg.h"
+#include "scriptconditionconfigform.h"
+#include "ui_scriptconditionconfigform.h"
+#include "scriptrunconditioneditordlg.h"
 #include <QMessageBox>
 
 

@@ -3,9 +3,9 @@ include(../HmiFuncDesigner.pri)
 TEMPLATE  = subdirs
 CONFIG += ordered
 SUBDIRS   = \
-    Utils \
+    utils \
     edncrypt \
-    Csv \
+    csv \
     qtpropertybrowser \
     qscintilla \
 #    Lua \

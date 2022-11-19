@@ -1,7 +1,7 @@
 ﻿#include "MainWindow.h"
 #include "VersionInfo.h"
 #include "qtsingleapplication.h"
-#include "ConfigUtils.h"
+#include "configutils.h"
 #include "../../libs/shared/pluginloader.h"
 #include "../../libs/shared/qbaseinit.h"
 #include "../../libs/core/qbaseinit.h"

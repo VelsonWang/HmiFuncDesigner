@@ -1,6 +1,6 @@
 QT += core gui widgets
 
-TARGET = gradientEditor
+TARGET = gradienteditor
 TEMPLATE = lib
 
 BUILD_DIR = $$clean_path($$OUT_PWD)
@@ -15,6 +15,10 @@ DEFINES += GRADIENTEDITOR_LIBRARY
 DEFINES += QT_DEPRECATED_WARNINGS
 
 INCLUDEPATH += $$PWD
+
+unix {
+    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$clean_path($$DESTDIR)"\'"
+}
 
 SOURCES += \
     qtgradienteditor.cpp \

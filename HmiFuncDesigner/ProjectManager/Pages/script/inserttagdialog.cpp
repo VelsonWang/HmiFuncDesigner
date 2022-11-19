@@ -1,5 +1,5 @@
-#include "InsertTagDialog.h"
-#include "ui_InsertTagDialog.h"
+#include "inserttagdialog.h"
+#include "ui_inserttagdialog.h"
 #include "qsoftcore.h"
 #include "qprojectcore.h"
 
