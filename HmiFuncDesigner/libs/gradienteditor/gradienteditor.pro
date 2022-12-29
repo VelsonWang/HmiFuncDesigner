@@ -9,16 +9,15 @@ DESTDIR = $$BUILD_DIR/../../../lib
 win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../HmiFuncDesignerBin/bin
 }
+unix {
+    DESTDIR = $$BUILD_DIR/../../../HmiFuncDesignerBin/bin
+}
 
 DEFINES += GRADIENTEDITOR_LIBRARY
 
 DEFINES += QT_DEPRECATED_WARNINGS
 
 INCLUDEPATH += $$PWD
-
-unix {
-    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$clean_path($$DESTDIR)"\'"
-}
 
 SOURCES += \
     qtgradienteditor.cpp \

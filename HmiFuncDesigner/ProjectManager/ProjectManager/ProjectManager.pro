@@ -41,12 +41,6 @@ LIBS += -L$$LINK_LIBRARY_PATH -lcore
 LIBS += -L$$LINK_LIBRARY_PATH -lshared
 LIBS += -L$$LINK_LIBRARY_PATH -lgradienteditor
 
-unix {
-    # suppress the default RPATH if you wish
-    # QMAKE_LFLAGS_RPATH=
-    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$LINK_LIBRARY_PATH"\'"
-}
-
 SOURCES += main.cpp\
     ../Public/userevent.cpp \
     MainWindow.cpp \

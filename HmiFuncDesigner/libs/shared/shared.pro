@@ -10,10 +10,6 @@ win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../HmiFuncDesignerBin/bin
 }
 
-unix {
-    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$clean_path($$DESTDIR)"\'"
-}
-
 DEFINES += SHARED_LIBRARY
 
 DEFINES += QT_DEPRECATED_WARNINGS

@@ -13,6 +13,9 @@ DESTDIR = $$BUILD_DIR/../../../lib
 win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../HmiFuncDesignerBin/bin
 }
+unix {
+    DESTDIR = $$BUILD_DIR/../../../HmiFuncDesignerBin/bin
+}
 
 DEFINES += CORE_LIBRARY
 
@@ -35,10 +38,6 @@ LIB_FILE_PATH = $$clean_path($$DESTDIR)
 LIBS += -L$$LIB_FILE_PATH -lshared
 LIBS += -L$$LIB_FILE_PATH -lgradienteditor
 LIBS += -L$$LIB_FILE_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
-
-unix {
-    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$LIB_FILE_PATH"\'"
-}
 
 HEADERS += \
     devicelistdialog.h \

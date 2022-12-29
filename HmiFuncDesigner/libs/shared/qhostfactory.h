@@ -17,10 +17,10 @@ typedef QString (*GET_SHOW_GROUP)();
 
 struct tagHostInfo {
     const QMetaObject *m_host_object;
-    QString         m_name;
     GET_SHOW_ICON getShowIcon;
     GET_SHOW_NAME getShowName;
     GET_SHOW_GROUP getShowGroup;
+    QString m_name;
 };
 
 class SHAREDLIB_EXPORT QHostFactory
@@ -29,7 +29,7 @@ protected:
     QHostFactory();
 
 public:
-    static void registerHost(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject* host);
+    static void registerHost(const QString &name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject* host);
     static QAbstractHost* createHost(const QString& name);
     static QMap<QString, tagHostInfo*> getHostInfo();
     static QAbstractHost* createHost(XMLObject* xml);
