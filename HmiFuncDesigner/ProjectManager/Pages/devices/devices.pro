@@ -13,6 +13,10 @@ DESTDIR = $$clean_path($$LIB_DIR/pages)
 win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../../HmiFuncDesignerBin/bin/pages
 }
+unix {
+    DESTDIR = $$BUILD_DIR/../../../../HmiFuncDesignerBin/bin/pages
+    LIB_DIR = $$clean_path($$BUILD_DIR/../../../../HmiFuncDesignerBin/bin)
+}
 
 LIBS += -L$$clean_path($$LIB_DIR) -lshared
 LIBS += -L$$clean_path($$LIB_DIR) -lcore

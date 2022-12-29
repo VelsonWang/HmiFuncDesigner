@@ -162,7 +162,7 @@ int picoc(char *SourceStr)
 {
     char *pos;
 
-    PicocInitialise(HEAP_SIZE);
+    PicocInitialise(PICOC_STACK_SIZE);
 
     if(SourceStr)
     {

@@ -1,6 +1,6 @@
 #include "qtablewidgetex.h"
-#include "Tag.h"
-#include "TagEditDialog.h"
+#include "tag.h"
+#include "tageditdialog.h"
 #include <QHeaderView>
 #include <QMenu>
 #include <QAction>

@@ -8,15 +8,14 @@ CONFIG  += plugin
 BUILD_DIR = $$clean_path($$OUT_PWD)
 LIB_DIR = $$clean_path($$BUILD_DIR/../../../../lib)
 TOP_SRC_DIR = $$clean_path($$BUILD_DIR/../../../..)
-#message(BUILD_DIR:$$clean_path($$BUILD_DIR))
-#message(LIB_DIR:$$clean_path($$LIB_DIR))
-#message(TOP_SRC_DIR:$$clean_path($$TOP_SRC_DIR))
 
 DESTDIR = $$clean_path($$LIB_DIR/pages)
-#message(DESTDIR:$$clean_path($$DESTDIR))
 win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../../HmiFuncDesignerBin/bin/pages
-    #message(DLLDESTDIR:$$clean_path($$DLLDESTDIR))
+}
+unix {
+    DESTDIR = $$BUILD_DIR/../../../../HmiFuncDesignerBin/bin/pages
+    LIB_DIR = $$clean_path($$BUILD_DIR/../../../../HmiFuncDesignerBin/bin)
 }
 
 LIBS += -L$$clean_path($$LIB_DIR) -lshared

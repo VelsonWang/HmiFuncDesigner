@@ -20,8 +20,8 @@
 #include <QJsonObject>
 #include <QJsonValue>
 #include "AboutDialog.h"
-#include "ConfigUtils.h"
-#include "Helper.h"
+#include "configutils.h"
+#include "helper.h"
 #include "ProjectDownloadDialog.h"
 #include "ProjectUploadDialog.h"
 #include "MainWindow.h"
@@ -657,7 +657,7 @@ void MainWindow::onSetOpenProjPassword()
             crypt.addData(szPwd.toStdString().c_str(), szPwd.toStdString().length());
             QByteArray baPwd = crypt.result();
             QSoftCore::getCore()->getProjectCore()->m_headerObj.byOpenVerifyPassword = baPwd.length();
-            memcpy_s(QSoftCore::getCore()->getProjectCore()->m_headerObj.szPassword, 32, baPwd.data(), baPwd.length());
+            memcpy(QSoftCore::getCore()->getProjectCore()->m_headerObj.szPassword, baPwd.data(), baPwd.length());
         }
     }
 }

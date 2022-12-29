@@ -20,6 +20,7 @@ INCLUDEPATH += $$PWD/../../libs/core
 INCLUDEPATH += $$PWD/../../libs/shared
 INCLUDEPATH += $$PWD/../../libs/shared/projdata
 INCLUDEPATH += $$PWD/../../libs/gradienteditor
+INCLUDEPATH += $$PWD/../../libs/utils
 
 include($$PWD/../../common/qtsingleapplication/qtsingleapplication.pri)
 #include($$PWD/../../common/register/register.pri)
@@ -33,12 +34,12 @@ CONFIG(debug, debug|release) { #debug
     }
 }
 
-LIBS += -L$$LINK_LIBRARY_PATH -lCsv$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lcsv$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
-LIBS += -L$$LINK_LIBRARY_PATH -lUtils$${LIB_SUFFIX}
+LIBS += -L$$LINK_LIBRARY_PATH -lutils$${LIB_SUFFIX}
 LIBS += -L$$LINK_LIBRARY_PATH -lcore
 LIBS += -L$$LINK_LIBRARY_PATH -lshared
-LIBS += -L$$LINK_LIBRARY_PATH -lgradientEditor
+LIBS += -L$$LINK_LIBRARY_PATH -lgradienteditor
 
 SOURCES += main.cpp\
     ../Public/userevent.cpp \

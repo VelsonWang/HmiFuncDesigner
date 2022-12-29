@@ -1,6 +1,6 @@
 QT += core gui widgets
 
-TARGET = gradientEditor
+TARGET = gradienteditor
 TEMPLATE = lib
 
 BUILD_DIR = $$clean_path($$OUT_PWD)
@@ -8,6 +8,9 @@ BUILD_DIR = $$clean_path($$OUT_PWD)
 DESTDIR = $$BUILD_DIR/../../../lib
 win32 {
     DLLDESTDIR = $$BUILD_DIR/../../../HmiFuncDesignerBin/bin
+}
+unix {
+    DESTDIR = $$BUILD_DIR/../../../HmiFuncDesignerBin/bin
 }
 
 DEFINES += GRADIENTEDITOR_LIBRARY

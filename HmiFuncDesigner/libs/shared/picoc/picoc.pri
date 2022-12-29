@@ -21,7 +21,7 @@ win32 {
 
 unix {
     DEFINES += UNIX_HOST
-
+    LIBS += -lreadline
     SOURCES += $$PWD/platform/library_unix.c \
                $$PWD/platform/platform_unix.c
 }

@@ -95,8 +95,15 @@ osx {
     # target output path if not set manually
     isEmpty(IDE_OUTPUT_PATH): IDE_OUTPUT_PATH = $$IDE_BUILD_TREE
     #message("IDE_OUTPUT_PATH is: $$IDE_OUTPUT_PATH")
-    IDE_LIBRARY_PATH = $$IDE_OUTPUT_PATH/../lib
-    IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH/plugins
+
+    win32 {
+        IDE_LIBRARY_PATH = $$IDE_OUTPUT_PATH/../lib
+        IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH/plugins
+    }
+    unix {
+        IDE_LIBRARY_PATH = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
+        IDE_PLUGIN_PATH  = $$IDE_LIBRARY_PATH/plugins
+    }
     IDE_DATA_PATH    = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin
     IDE_DOC_PATH     = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/doc
     IDE_BIN_PATH     = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/bin
@@ -106,7 +113,6 @@ osx {
 
     LINK_LIBRARY_PATH = $$IDE_LIBRARY_PATH
     LINK_PLUGIN_PATH  = $$LINK_LIBRARY_PATH/plugins
-    LINK_DRAWAPPLICATION_PLUGIN_PATH  = $$LINK_LIBRARY_PATH/DrawAppPlugins
 
     INSTALL_LIBRARY_PATH = $$IDE_BIN_PATH
     INSTALL_DEVICE_PLUGIN_PATH  = $$IDE_OUTPUT_PATH/../HmiFuncDesignerBin/deviceplugins

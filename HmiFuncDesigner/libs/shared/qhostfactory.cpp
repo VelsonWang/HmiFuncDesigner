@@ -12,7 +12,7 @@ QHostFactory::QHostFactory()
 {
 }
 
-void QHostFactory::registerHost(const QString name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *host)
+void QHostFactory::registerHost(const QString &name, GET_SHOW_ICON icon, GET_SHOW_NAME get_name, GET_SHOW_GROUP get_group, const QMetaObject *host)
 {
     tagHostInfo *info = m_meta_map.value(name);
     if(info == NULL) {

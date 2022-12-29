@@ -20,7 +20,6 @@ CONFIG(debug, debug|release) {
     TARGET = qscintilla2_qt$${QT_MAJOR_VERSION}
 }
 
-
 QTSCINTILLA_LIBDIR = $$IDE_LIBRARY_PATH
 #$$OUT_PWD/../../../lib
 #message(pwd: $$OUT_PWD)
