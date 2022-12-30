@@ -26,7 +26,9 @@ IDevicePlugin * DevicePluginLoader::getPluginObject(const QString &szPluginName)
 {
     QString pluginName = szPluginName;
 #ifdef BUILD_DEBUG
+#ifdef Q_OS_WIN
     pluginName += "d";
+#endif
 #endif
     QDir pluginsDir(QApplication::applicationDirPath());
     pluginsDir.cdUp();
