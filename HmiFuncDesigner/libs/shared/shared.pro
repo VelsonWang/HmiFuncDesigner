@@ -31,6 +31,8 @@ HEADERS += \
     host/qindicationlamphost.h \
     host/qjarshapehost.h \
     host/qswitchbuttonhost.h \
+    host/qtankhost.h \
+    host/qthermometerhost.h \
     host/qvaluestickhost.h \
     property/qcolorproperty.h \
     property/qfileproperty.h \
@@ -41,6 +43,8 @@ HEADERS += \
     property/qtagtextlistproperty.h \
     pubtool.h \
     sharedlibglobal.h \
+    widgets/qtank.h \
+    widgets/qthermometer.h \
     widgets/qimagebox.h \
     widgets/qindicationlamp.h \
     widgets/qjarshape.h \
@@ -118,6 +122,8 @@ SOURCES += \
     host/qindicationlamphost.cpp \
     host/qjarshapehost.cpp \
     host/qswitchbuttonhost.cpp \
+    host/qtankhost.cpp \
+    host/qthermometerhost.cpp \
     host/qvaluestickhost.cpp \
     property/qcolorproperty.cpp \
     property/qfileproperty.cpp \
@@ -127,6 +133,8 @@ SOURCES += \
     property/qtagproperty.cpp \
     property/qtagtextlistproperty.cpp \
     pubtool.cpp \
+    widgets/qtank.cpp \
+    widgets/qthermometer.cpp \
     widgets/qimagebox.cpp \
     widgets/qindicationlamp.cpp \
     widgets/qjarshape.cpp \
