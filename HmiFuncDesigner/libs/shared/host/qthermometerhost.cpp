@@ -47,7 +47,7 @@ void QThermometerHost::initProperty()
 
     pObj = QPropertyFactory::create_property("Float");
     if(pObj != NULL) {
-        pObj->setObjectProperty("name", "minvalue");
+        pObj->setObjectProperty("name", "min");
         pObj->setAttribute("show_name", tr("最小值"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
@@ -55,7 +55,7 @@ void QThermometerHost::initProperty()
 
     pObj = QPropertyFactory::create_property("Float");
     if(pObj != NULL) {
-        pObj->setObjectProperty("name", "maxValue");
+        pObj->setObjectProperty("name", "max");
         pObj->setAttribute("show_name", tr("最大值"));
         pObj->setAttribute("group", "Attributes");
         insertProperty(pObj);
@@ -90,7 +90,7 @@ void QThermometerHost::initProperty()
         pObj->setObjectProperty("name", "borderStyle");
         pObj->setAttribute("show_name", tr("边框样式"));
         pObj->setAttribute("group", "Attributes");
-        //pObj->setAttribute(ATTR_CAN_SAME, true);
+        pObj->setAttribute(ATTR_CAN_SAME, true);
         ComboItems items;
         QStringList itemValues;
         itemValues << tr("扁平|0") << tr("边框|1") << tr("凸起|2") << tr("凹陷|3");

@@ -1,12 +1,15 @@
-#ifndef QTANK_H
-#define QTANK_H
+#ifndef QTHERMOMETER_H
+#define QTHERMOMETER_H
 
-#include <qwidget.h>
-#include <qpainter.h>
+#include <QWidget>
+#include <QPaintEvent>
+#include "iloader.h"
+#include "realtimedb.h"
 
-class QTank : public QWidget
+class QThermometer : public QWidget, public ILoader
 {
     Q_OBJECT
+    Q_ENUMS(BorderStyle)
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
     Q_PROPERTY(double min READ getMinValue WRITE setMinValue)
     Q_PROPERTY(double max READ getMaxValue WRITE setMaxValue)
@@ -14,8 +17,6 @@ class QTank : public QWidget
     Q_PROPERTY(int numTicks READ getNumTicks WRITE setNumTicks)
     Q_PROPERTY(double threshold READ getThreshold WRITE setThreshold)
     Q_PROPERTY(BorderStyle borderStyle READ getBorderStyle WRITE setBorderStyle)
-    Q_ENUMS(BorderStyle)
-    Q_PROPERTY(QColor tankColor READ getColor WRITE setColor)
 
 public:
     enum BorderStyle {
@@ -25,8 +26,7 @@ public:
         Sunken
     };
 
-    QTank(QWidget *parent = 0);
-    ~QTank();
+    Q_INVOKABLE QThermometer(QWidget *parent = 0);
 
     QString getTagSelected() const;
     void setTagSelected(const QString &value);
@@ -35,24 +35,21 @@ public:
     double getMaxValue() const;
     int getPrecision() const;
     int getNumTicks() const;
-    QColor getColor () const;
     double getThreshold() const;
     BorderStyle getBorderStyle() const;
     QSize sizeHint() const override;
-    QSize minimumSizeHint()const override;
+    QSize minimumSizeHint( ) const override;
+
+public slots:
+    void setMinValue(double newMinValue);
+    void setMaxValue(double newMaxValue) ;
+    void setPrecision(int newPrecision);
+    void setNumTicks(int newNumTicks) ;
+    void setThreshold(double newThreshold);
+    void setBorderStyle(BorderStyle newBorderStyle) ;
 
 public:
-    void setMinValue(double newMinValue);
-    void setMaxValue(double newMaxValue);
-    void setPrecision(int newPrecision);
-    void setNumTicks(int newNumTicks);
-    void setThreshold(double newThreshold);
-    void setBorderStyle(BorderStyle newBorderStyle);
-    void setColor(QColor newColor);
-
-signals:
-    void OutOfRange(double value);
-    void ThresholdEvent(double value);
+    void fromObject(XMLObject* xml) override;
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -65,10 +62,9 @@ private:
     int precision;
     int numTicks;
     BorderStyle borderStyle;
-    QColor indicatorColor;
-    // 默认变量值
-    double value;
-};
 
+private:
+    RunTimeTag *m_tag;
+};
 
 #endif

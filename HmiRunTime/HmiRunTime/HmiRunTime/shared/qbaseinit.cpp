@@ -9,7 +9,8 @@
 #include "widgets/qpushbuttonex.h"
 #include "widgets/qswitchbutton.h"
 #include "widgets/qvaluestick.h"
-
+#include "widgets/qtank.h"
+#include "widgets/qthermometer.h"
 //#include "property/qintproperty.h"
 //#include "property/qstringproperty.h"
 //#include "property/qsizeproperty.h"
@@ -71,6 +72,8 @@ void qRegisterWidgets()
     qRegisterWidget("display_widgets.qjarshape", QJarShape);
     qRegisterWidget("display_widgets.qvaluestick", QValueStick);
     //    qRegisterWidget("display_widgets.lcdnumber", QLCDNumberHost);
+    qRegisterWidget("displaywidgets.qthermometer", QThermometer);
+    qRegisterWidget("displaywidgets.qtank", QTank);
     qRegisterWidget("buttons.pushbutton", QPushButtonEx);
     qRegisterWidget("buttons.switchbutton", QSwitchButton);
     //    qRegisterWidget("buttons.checkbox", QCheckBoxHost);

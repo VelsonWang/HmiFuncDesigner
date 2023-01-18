@@ -23,6 +23,8 @@ HEADERS += \
     $$PWD/widgets/qpushbuttonex.h \
     $$PWD/widgets/qswitchbutton.h \
     $$PWD/widgets/qvaluestick.h \
+    $$PWD/widgets/qtank.h \
+    $$PWD/widgets/qthermometer.h \
     $$PWD/xmlobject.h \
     $$PWD/qcommonstruct.h \
     $$PWD/qabstractplugin.h \
@@ -51,6 +53,8 @@ SOURCES += \
     $$PWD/widgets/qpushbuttonex.cpp \
     $$PWD/widgets/qswitchbutton.cpp \
     $$PWD/widgets/qvaluestick.cpp \
+    $$PWD/widgets/qtank.cpp \
+    $$PWD/widgets/qthermometer.cpp \
     $$PWD/xmlobject.cpp \
     $$PWD/qabstractplugin.cpp \
     $$PWD/pluginloader.cpp \

@@ -1,5 +1,6 @@
 #include "qjarshape.h"
 #include "../qprojectcore.h"
+#include "../pubtool.h"
 #include <QFileInfo>
 #include <QPainter>
 #include <QPixmap>
@@ -18,7 +19,8 @@ QJarShape::QJarShape(QWidget *parent) : QWidget(parent)
     maxValue = 100;
     upperLimitValue = 75;
     lowerLimitValue = 15;
-    setPropertyInner();
+    tagSelected = "";
+    m_tag = NULL;
 }
 
 void QJarShape::fromObject(XMLObject* xml)
@@ -79,13 +81,6 @@ void QJarShape::fromObject(XMLObject* xml)
     }
 }
 
-void QJarShape::setPropertyInner()
-{
-
-}
-
-
-
 void QJarShape::drawJarShape(QPainter *painter)
 {
 #define TOP_BOTTOM_INTERVAL   4
@@ -102,6 +97,24 @@ void QJarShape::drawJarShape(QPainter *painter)
     int iRadius, i, x1, y1, x2, y2;
     QPen newPen;
     bool bFirstInto1 = false, bFirstInto2 = false;
+    // 变量当前值
+    double dTagValue = 0.0;
+    QString szTagValue = "#";
+
+    if(m_tag) {
+        szTagValue = m_tag->toString();
+    } else {
+        m_tag = RealTimeDB::instance()->tag(tagId(tagSelected));
+        szTagValue = "#";
+    }
+
+    if (szTagValue != "#") {
+        bool ok;
+        double dVal = szTagValue.toDouble(&ok);
+        if (ok) {
+            dTagValue = dVal;
+        }
+    }
 
     QFontMetrics fm(font);
     //iTextWidth = fm.boundingRect(jarShape_).width();
@@ -167,6 +180,16 @@ void QJarShape::drawJarShape(QPainter *painter)
 
     fTmp = scalerRect.bottom() - scalerRect.top();
     fTmp = (float)((double)(scaleNum * fTmp) / (double)maxValue);
+
+    if(dTagValue > maxValue) {
+        dTagValue = maxValue;
+    }
+
+    if(dTagValue < 0) {
+        dTagValue = 0;
+    }
+
+    dTagValue = fTmp * (dTagValue / (double)scaleNum);
 
     while(1) {
         iFlags = Qt::AlignRight | Qt::AlignVCenter;
@@ -253,7 +276,8 @@ void QJarShape::drawJarShape(QPainter *painter)
     bFirstInto1 = true;
     bFirstInto2 = true;
 
-    for(i = 0; ; i++) {
+    iTmp3 = static_cast<int>(dTagValue);
+    for(i = 0; i < iTmp3; i++) {
         // lower
         if(i < iLowPosition) {
             if( i < iRadius) {
@@ -432,7 +456,6 @@ void QJarShape::paintEvent(QPaintEvent *event)
 
 void QJarShape::resizeEvent(QResizeEvent *event)
 {
-    setPropertyInner();
     QWidget::resizeEvent(event);
 }
 
@@ -588,6 +611,7 @@ void QJarShape::setTagSelected(const QString &value)
 {
     if(value != tagSelected) {
         tagSelected = value;
+        m_tag = RealTimeDB::instance()->tag(tagId(value));
         this->update();
     }
 }

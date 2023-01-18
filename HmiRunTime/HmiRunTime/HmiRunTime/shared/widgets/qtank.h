@@ -1,10 +1,12 @@
 #ifndef QTANK_H
 #define QTANK_H
 
-#include <qwidget.h>
-#include <qpainter.h>
+#include <QWidget>
+#include <QPaintEvent>
+#include "iloader.h"
+#include "realtimedb.h"
 
-class QTank : public QWidget
+class QTank : public QWidget, public ILoader
 {
     Q_OBJECT
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
@@ -25,7 +27,7 @@ public:
         Sunken
     };
 
-    QTank(QWidget *parent = 0);
+    Q_INVOKABLE QTank(QWidget *parent = 0);
     ~QTank();
 
     QString getTagSelected() const;
@@ -50,9 +52,8 @@ public:
     void setBorderStyle(BorderStyle newBorderStyle);
     void setColor(QColor newColor);
 
-signals:
-    void OutOfRange(double value);
-    void ThresholdEvent(double value);
+public:
+    void fromObject(XMLObject* xml) override;
 
 protected:
     void paintEvent(QPaintEvent *) override;
@@ -66,8 +67,9 @@ private:
     int numTicks;
     BorderStyle borderStyle;
     QColor indicatorColor;
-    // 默认变量值
-    double value;
+
+private:
+    RunTimeTag *m_tag;
 };
 
 

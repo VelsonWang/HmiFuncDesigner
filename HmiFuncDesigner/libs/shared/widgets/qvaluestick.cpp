@@ -12,8 +12,8 @@
 
 QValueStick::QValueStick(QWidget *parent) : QWidget(parent)
 {
-    scaleDir = tr("从左到右");
-    scalePos = tr("左上方");
+    scaleDir = LeftToRight;
+    scalePos = LeftTop;
     font = QFont("Arial Black", 10);
     backgroundColor = QColor(0xf0, 0xf0, 0xf0);
     foregroundColor = QColor(0xff, 0x00, 0x00);
@@ -42,8 +42,8 @@ void QValueStick::drawScalarStick(QPainter *painter,
                                   QColor fillColor,
                                   bool scaleVisible,
                                   QColor scaleColor,
-                                  QString scaleDirect,
-                                  QString scalePosition)
+                                  ScaleDir scaleDirect,
+                                  ScalePos scalePosition)
 {
     if(!scaleVisible) {
         return;
@@ -67,7 +67,7 @@ void QValueStick::drawScalarStick(QPainter *painter,
     if(textRect.top() != textRect.bottom()) {
         QRect aRect;
         aRect = textRect;
-        if ( scaleDirect == QString("LeftToRight") ) {
+        if (scaleDirect == LeftToRight) {
             aRect.setRight(aRect.left() + iMinValueTextWidth - 1);
             iFlags = Qt::AlignLeft | Qt::AlignVCenter;
             painter->drawText(aRect, iFlags, szMinValue);
@@ -77,7 +77,7 @@ void QValueStick::drawScalarStick(QPainter *painter,
             iFlags = Qt::AlignRight | Qt::AlignVCenter;
             painter->drawText(aRect, iFlags, szMaxValue);
             rightRect = aRect;
-        } else if ( scaleDirect == QString("RightToLeft")) {
+        } else if (scaleDirect == RightToLeft) {
             aRect.setRight(aRect.left() + iMaxValueTextWidth - 1);
             iFlags = Qt::AlignLeft | Qt::AlignVCenter;
             painter->drawText(aRect, iFlags, szMaxValue);
@@ -87,9 +87,9 @@ void QValueStick::drawScalarStick(QPainter *painter,
             iFlags = Qt::AlignRight | Qt::AlignVCenter;
             painter->drawText(aRect, iFlags, szMinValue);
             rightRect = aRect;
-        } else if ( scaleDirect == QString("BottomToTop") ) {
+        } else if (scaleDirect == BottomToTop) {
             iFlags = Qt::AlignLeft | Qt::AlignVCenter;
-            if(scalePosition == QString("LeftTop")) {
+            if(scalePosition == LeftTop) {
                 iFlags = Qt::AlignRight | Qt::AlignVCenter;
             }
             aRect.setBottom(aRect.top() + iTextHeight - 1);
@@ -99,9 +99,9 @@ void QValueStick::drawScalarStick(QPainter *painter,
             aRect.setTop(aRect.bottom() - iTextHeight + 1);
             painter->drawText(aRect, iFlags, szMinValue);
             downRect = aRect;
-        } else if ( scaleDirect ==  QString("TopToBottom") ) {
+        } else if (scaleDirect == TopToBottom) {
             iFlags = Qt::AlignLeft | Qt::AlignVCenter;
-            if(scalePosition == QString("LeftTop")) {
+            if(scalePosition == LeftTop) {
                 iFlags = Qt::AlignRight | Qt::AlignVCenter;
             }
             aRect.setBottom(aRect.top() + iTextHeight - 1);
@@ -129,22 +129,22 @@ void QValueStick::drawScalarStick(QPainter *painter,
         int xPos = 0, yPos = 0;
         for(int k = 0; k <= iScaleNum; k++) {
             float fK = static_cast<float>(k);
-            if ( scaleDirect == QString("LeftToRight") ) {
+            if (scaleDirect == LeftToRight) {
                 xPos = scaleRect.right();
                 if(k < iScaleNum) {
                     xPos = scaleRect.left() + static_cast<int>(fK * fScaleW);
                 }
-            } else if ( scaleDirect ==  QString("RightToLeft") ) {
+            } else if (scaleDirect == RightToLeft) {
                 xPos = scaleRect.left();
                 if(k < iScaleNum) {
                     xPos = scaleRect.right() - static_cast<int>(fK * fScaleW);
                 }
-            } else if ( scaleDirect ==  QString("BottomToTop") ) {
+            } else if (scaleDirect == BottomToTop) {
                 yPos = scaleRect.top();
                 if(k < iScaleNum) {
                     yPos = scaleRect.bottom() - static_cast<int>(fK * fScaleH);
                 }
-            } else if ( scaleDirect ==  QString("TopToBottom") ) {
+            } else if (scaleDirect == TopToBottom) {
                 yPos = scaleRect.bottom();
                 if(k < iScaleNum) {
                     yPos = scaleRect.top() + static_cast<int>(fK * fScaleH);
@@ -159,7 +159,7 @@ void QValueStick::drawScalarStick(QPainter *painter,
                 QString szMaxValue = PubTool::DeleteEndZeroOfDecimal(QString::asprintf("%lf", dbValue));
                 iMaxValueTextWidth = fm.boundingRect(szMaxValue).width();
 
-                if ( scaleDirect == QString("LeftToRight") || scaleDirect ==  QString("RightToLeft") ) {
+                if ( scaleDirect == LeftToRight || scaleDirect == RightToLeft) {
                     aRect.setLeft(xPos - iMaxValueTextWidth / 2);
                     aRect.setRight(xPos + iMaxValueTextWidth / 2);
 
@@ -172,11 +172,11 @@ void QValueStick::drawScalarStick(QPainter *painter,
                     aRect.setTop(yPos - iTextHeight / 2);
                     aRect.setBottom(yPos + iTextHeight / 2);
                     iFlags = Qt::AlignLeft | Qt::AlignVCenter;
-                    if(scalePosition == QString("LeftTop")) {
+                    if(scalePosition == LeftTop) {
                         iFlags = Qt::AlignRight | Qt::AlignVCenter;
                     }
 
-                    if ( aRect.top() <= upRect.bottom() || aRect.bottom() >= downRect.top() ) {
+                    if (aRect.top() <= upRect.bottom() || aRect.bottom() >= downRect.top()) {
                         bContiueDrawValueText = false;
                         continue;
                     }
@@ -188,16 +188,16 @@ void QValueStick::drawScalarStick(QPainter *painter,
                 bRealDrawValueText = true;
             }
 
-            if ( scalePosition == QString("LeftTop") ) {
+            if (scalePosition == LeftTop) {
                 QPen pen = QPen(QBrush(scaleColor), 1, Qt::SolidLine);
                 painter->setPen(pen);
-                if ( scaleDirect == QString("LeftToRight") || scaleDirect == QString("RightToLeft") ) {
+                if (scaleDirect == LeftToRight || scaleDirect == RightToLeft) {
                     painter->drawLine(xPos, scaleRect.bottom(), xPos, scaleRect.bottom() - SCALE_LENTH + 1);
                 } else {
                     painter->drawLine(scaleRect.right(), yPos, scaleRect.right() - SCALE_LENTH + 1, yPos);
                 }
             } else {
-                if(scaleDirect == QString("LeftToRight") || scaleDirect == QString("RightToLeft")) {
+                if(scaleDirect == LeftToRight || scaleDirect == RightToLeft) {
                     painter->drawLine(xPos, scaleRect.top(), xPos, scaleRect.top() + SCALE_LENTH - 1);
                 } else {
                     painter->drawLine(scaleRect.left(), yPos, scaleRect.left() + SCALE_LENTH - 1, yPos);
@@ -210,7 +210,7 @@ void QValueStick::drawScalarStick(QPainter *painter,
         if ( !bContiueDrawValueText && bRealDrawValueText ) {
             QRect aRect;
             memcpy(&aRect, &textRect, sizeof(QRect));
-            if((scaleDirect == QString("LeftToRight")) || (scaleDirect == QString("RightToLeft"))) {
+            if((scaleDirect == LeftToRight) || (scaleDirect == RightToLeft)) {
                 aRect.setLeft(leftRect.right() + 1);
                 aRect.setRight(rightRect.left() - 1);
             } else {
@@ -259,18 +259,15 @@ void QValueStick::drawValueStick(QPainter *painter)
     QBrush brush(backgroundColor);
     painter->fillRect(elementRect, brush);
 
-    QString szScaleDir = dirString(scaleDir);
-    QString szScalePos = posString(scalePos);
-
-    if ( szScaleDir == QString("LeftToRight") || szScaleDir == QString("RightToLeft") ) {
+    if (scaleDir == LeftToRight || scaleDir == RightToLeft) {
         /////////////////////////////绘制水平的标尺///////////////////////////////
         bool bTextVisible = (iContWidth > (iMinValueTextWidth + iMaxValueTextWidth));
 
         // 计算矩形区域(水平显示)
-        if ( showScale && (showRuler && bTextVisible) ) {
+        if (showScale && (showRuler && bTextVisible)) {
             // 标尺和文本都可见
             if ( iContHeight >= (iTextHeight + BIT_SCALE_LENTH + MIN_BAR_LENTH) ) {
-                if(szScalePos == QString("LeftTop")) {
+                if(scalePos == LeftTop) {
                     textRect.setBottom(textRect.top() + iTextHeight - 1);
                     scalRect.setTop(textRect.bottom() + 1);
                     scalRect.setBottom(scalRect.top() + BIT_SCALE_LENTH - 1);
@@ -283,7 +280,7 @@ void QValueStick::drawValueStick(QPainter *painter)
                 }
             } else if ( iContHeight >= (BIT_SCALE_LENTH + MIN_BAR_LENTH) ) {
                 textRect.setTop(textRect.bottom());
-                if(szScalePos == QString("LeftTop")) {
+                if(scalePos == LeftTop) {
                     scalRect.setBottom(scalRect.top() + BIT_SCALE_LENTH - 1);
                     barRect.setTop(scalRect.bottom() + 1);
                 } else {
@@ -298,7 +295,7 @@ void QValueStick::drawValueStick(QPainter *painter)
             // 只标尺可见
             textRect.setTop(textRect.bottom());
             if ( iContHeight >= (BIT_SCALE_LENTH + MIN_BAR_LENTH) ) {
-                if(szScalePos == QString("LeftTop")) {
+                if(scalePos == LeftTop) {
                     scalRect.setBottom(scalRect.top() + BIT_SCALE_LENTH - 1);
                     barRect.setTop(scalRect.bottom() + 1);
                 } else {
@@ -317,7 +314,7 @@ void QValueStick::drawValueStick(QPainter *painter)
         // 绘制各个矩形(水平显示)
         // 绘制棒条
         PubTool::Draw3DFrame(painter, barRect, color3DShadow, color3DHiLight, backgroundColor);
-        if ( szScaleDir == QString("LeftToRight") ) {
+        if (scaleDir == LeftToRight) {
             barRect.setRight(barRect.left() + (barRect.right() - barRect.left()) / 2);
         } else {
             barRect.setLeft(barRect.right() - (barRect.right() - barRect.left()) / 2);
@@ -329,7 +326,7 @@ void QValueStick::drawValueStick(QPainter *painter)
         // 绘制标尺
         drawScalarStick(painter, elementRect, textRect, scalRect, minValue, maxValue,
                         scaleNum, backgroundColor, showScale,
-                        scaleColor, szScaleDir, szScalePos);
+                        scaleColor, scaleDir, scalePos);
 
     } else {
         /////////////////////////////绘制垂直的标尺//////////////////////////////
@@ -346,8 +343,8 @@ void QValueStick::drawValueStick(QPainter *painter)
                 iTextRectWidth = iTempMaxWidthLen - 2;
             }
 
-            if ( iContWidth >= (iTextRectWidth + BIT_SCALE_LENTH + MIN_BAR_LENTH) ) {
-                if( szScalePos == QString("LeftTop") ) {
+            if (iContWidth >= (iTextRectWidth + BIT_SCALE_LENTH + MIN_BAR_LENTH)) {
+                if(scalePos == LeftTop) {
                     textRect.setRight(textRect.left() + iTextRectWidth - 1);
                     scalRect.setLeft(textRect.right() + 1);
                     scalRect.setRight(scalRect.left() + BIT_SCALE_LENTH - 1);
@@ -360,7 +357,7 @@ void QValueStick::drawValueStick(QPainter *painter)
                 }
             } else if ( iContWidth >= (BIT_SCALE_LENTH + MIN_BAR_LENTH) ) {
                 textRect.setLeft(textRect.right());
-                if(szScalePos == QString("LeftTop")) {
+                if(scalePos == LeftTop) {
                     scalRect.setRight(scalRect.left() + BIT_SCALE_LENTH - 1);
                     barRect.setLeft(scalRect.right() + 1);
                 } else {
@@ -375,7 +372,7 @@ void QValueStick::drawValueStick(QPainter *painter)
             // 只标尺可见
             textRect.setLeft(textRect.right());
             if(iContHeight >= (BIT_SCALE_LENTH + MIN_BAR_LENTH)) {
-                if(szScalePos == QString("LeftTop")) {
+                if(scalePos == LeftTop) {
                     scalRect.setRight(scalRect.left() + BIT_SCALE_LENTH - 1);
                     barRect.setLeft(scalRect.right() + 1);
                 } else {
@@ -393,7 +390,7 @@ void QValueStick::drawValueStick(QPainter *painter)
         // 绘制各个矩形(垂直显示)
         // 绘制棒条
         PubTool::Draw3DFrame(painter, barRect, color3DShadow, color3DHiLight, backgroundColor);
-        if ( szScaleDir == QString("TopToBottom") ) {
+        if (scaleDir == TopToBottom) {
             barRect.setBottom(barRect.top() + (barRect.bottom() - barRect.top()) / 2);
         } else {
             barRect.setTop(barRect.bottom() - (barRect.bottom() - barRect.top()) / 2);
@@ -405,43 +402,8 @@ void QValueStick::drawValueStick(QPainter *painter)
         //绘制标尺
         drawScalarStick(painter, elementRect, textRect, scalRect, minValue, maxValue,
                         scaleNum, backgroundColor, showScale,
-                        scaleColor, szScaleDir, szScalePos);
+                        scaleColor, scaleDir, scalePos);
     }
-}
-
-/**
- * @brief QValueStick::dirString
- * @details 无论属性是哪种语言都转为英文保证数据每种语言都能正确打开
- * @param szDir 标尺方向
- * @return 标尺方向描述
- */
-QString QValueStick::dirString(const QString& szDir) const
-{
-    if(szDir == tr("从左到右")) {
-        return QString("LeftToRight");
-    } else if(szDir == tr("从右到左")) {
-        return QString("RightToLeft");
-    } else if(szDir == tr("从上到下")) {
-        return QString("TopToBottom");
-    } else if(szDir == tr("从下到上")) {
-        return QString("BottomToTop");
-    }
-    return szDir;
-}
-
-/**
- * @brief QValueStick::posString
- * @param szDir 标尺位置
- * @return 标尺位置描述
- */
-QString QValueStick::posString(const QString& szPos) const
-{
-    if(szPos == tr("右下方")) {
-        return QString("RightBottom");
-    } else if(szPos == tr("左上方")) {
-        return QString("LeftTop");
-    }
-    return szPos;
 }
 
 void QValueStick::paintEvent(QPaintEvent *event)
@@ -524,12 +486,12 @@ void QValueStick::setFont(const QFont &value)
     }
 }
 
-QString QValueStick::getScalePos() const
+QValueStick::ScalePos QValueStick::getScalePos() const
 {
     return scalePos;
 }
 
-void QValueStick::setScalePos(const QString &value)
+void QValueStick::setScalePos(ScalePos value)
 {
     if(value != scalePos) {
         scalePos = value;
@@ -537,12 +499,12 @@ void QValueStick::setScalePos(const QString &value)
     }
 }
 
-QString QValueStick::getScaleDir() const
+QValueStick::ScaleDir QValueStick::getScaleDir() const
 {
     return scaleDir;
 }
 
-void QValueStick::setScaleDir(const QString &value)
+void QValueStick::setScaleDir(ScaleDir value)
 {
     if(value != scaleDir) {
         scaleDir = value;
