@@ -11,6 +11,7 @@
 #include "widgets/qvaluestick.h"
 #include "widgets/qtank.h"
 #include "widgets/qthermometer.h"
+#include "widgets/qprogressbarex.h"
 //#include "property/qintproperty.h"
 //#include "property/qstringproperty.h"
 //#include "property/qsizeproperty.h"
@@ -58,7 +59,6 @@
 //#include "host/qdatetimeedithost.h"
 //#include "host/qtimeedithost.h"
 //#include "host/qscrollbarhost.h"
-//#include "host/qprogressbarhost.h"
 //#include "host/qcomboboxhost.h"
 
 
@@ -74,6 +74,7 @@ void qRegisterWidgets()
     //    qRegisterWidget("display_widgets.lcdnumber", QLCDNumberHost);
     qRegisterWidget("displaywidgets.qthermometer", QThermometer);
     qRegisterWidget("displaywidgets.qtank", QTank);
+    qRegisterWidget("displaywidgets.progressbar", QProgressBarEx);
     qRegisterWidget("buttons.pushbutton", QPushButtonEx);
     qRegisterWidget("buttons.switchbutton", QSwitchButton);
     //    qRegisterWidget("buttons.checkbox", QCheckBoxHost);
@@ -88,7 +89,7 @@ void qRegisterWidgets()
     //    qRegisterWidget("inputwidgets.timeedit", QTimeEditHost);
     //    qRegisterWidget("inputwidgets.scrollbar", QScrollBarHost);
     //    qRegisterWidget("inputwidgets.combobox", QComboBoxHost);
-    //    qRegisterWidget("displaywidgets.progressbar", QProgressBarHost);
+
 }
 
 

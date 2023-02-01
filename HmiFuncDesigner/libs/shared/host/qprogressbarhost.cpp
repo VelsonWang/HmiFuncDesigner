@@ -1,5 +1,5 @@
 #include "qprogressbarhost.h"
-
+#include "../widgets/qprogressbarex.h"
 #include "../property/qabstractproperty.h"
 #include "../qpropertyfactory.h"
 #include "../qcommonstruct.h"
@@ -30,7 +30,7 @@ QString QProgressBarHost::getShowIcon()
 
 void QProgressBarHost::createObject()
 {
-    m_object = new QProgressBar();
+    m_object = new QProgressBarEx();
     m_object->setObjectName("progressbar");
 }
 
@@ -38,124 +38,80 @@ void QProgressBarHost::initProperty()
 {
     QWidgetHost::initProperty();
 
-    QAbstractProperty* pro;
-
-    pro = QPropertyFactory::create_property("Number");
-    if(pro != NULL) {
-        pro->setObjectProperty("name", "value");
-        pro->setAttribute("show_name", tr("Value"));
-        pro->setAttribute("group", "Attributes");
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        insertProperty(pro, 1);
+    QAbstractProperty* pObj = QPropertyFactory::create_property("Tag");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "tag");
+        pObj->setAttribute("show_name", tr("选择变量"));
+        pObj->setAttribute("group", "HMI");
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        insertProperty(pObj);
     }
 
-    pro = QPropertyFactory::create_property("Number");
-    if(pro != NULL) {
-        pro->setObjectProperty("name", "maximum");
-        pro->setAttribute("show_name", tr("Maximum"));
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        pro->setAttribute("group", "Attributes");
-        insertProperty(pro);
+    pObj = QPropertyFactory::create_property("Number");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "maximum");
+        pObj->setAttribute("show_name", tr("最大值"));
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        pObj->setAttribute("group", "Attributes");
+        insertProperty(pObj);
     }
 
-    pro = QPropertyFactory::create_property("Number");
-    if(pro != NULL) {
-        pro->setObjectProperty("name", "minimum");
-        pro->setAttribute("show_name", tr("Minimum"));
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        pro->setAttribute("group", "Attributes");
-        insertProperty(pro);
+    pObj = QPropertyFactory::create_property("Number");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "minimum");
+        pObj->setAttribute("show_name", tr("最小值"));
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        pObj->setAttribute("group", "Attributes");
+        insertProperty(pObj);
     }
 
-    pro = QPropertyFactory::create_property("Enum");
-    if(pro != NULL) {
-        pro->setObjectProperty("name", "alignment");
-        pro->setAttribute("show_name", tr("Alignment"));
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        pro->setAttribute("group", "Attributes");
+    pObj = QPropertyFactory::create_property("Enum");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "alignment");
+        pObj->setAttribute("show_name", tr("文本对齐"));
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        pObj->setAttribute("group", "Attributes");
         ComboItems items;
         tagComboItem item;
 
-        item.m_text = tr("AlignLeft");
+        item.m_text = tr("靠左");
         item.m_value = Qt::AlignLeft;
         items.append(item);
 
-        item.m_text = tr("AlignHCenter");
+        item.m_text = tr("居中");
         item.m_value = Qt::AlignHCenter;
         items.append(item);
 
-        QVariant v;
-        v.setValue<ComboItems>(items);
-        pro->setAttribute("items", v);
-        pro->setValue(Qt::AlignLeft);
-        insertProperty(pro);
-    }
-
-    pro = QPropertyFactory::create_property("Enum");
-    if(pro != NULL) {
-        pro->setObjectProperty("name", "orientation");
-        pro->setAttribute("show_name", tr("Orientation"));
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        pro->setAttribute("group", "Attributes");
-        ComboItems items;
-        tagComboItem item;
-
-        item.m_text = tr("Horizontal");
-        item.m_value = Qt::Horizontal;
-        items.append(item);
-
-        item.m_text = tr("Vertical");
-        item.m_value = Qt::Vertical;
+        item.m_text = tr("靠右");
+        item.m_value = Qt::AlignRight;
         items.append(item);
 
         QVariant v;
         v.setValue<ComboItems>(items);
-        pro->setAttribute("items", v);
-        insertProperty(pro);
+        pObj->setAttribute("items", v);
+        pObj->setValue(Qt::AlignLeft);
+        insertProperty(pObj);
     }
 
-    pro = QPropertyFactory::create_property("ByteArray");
-    if(pro != NULL) {
-        pro->setObjectProperty("name", "format");
-        pro->setAttribute("show_name", tr("Format"));
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        pro->setAttribute("group", "Attributes");
-        insertProperty(pro);
+    pObj = QPropertyFactory::create_property("Bool");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "invertedAppearance");
+        pObj->setAttribute("show_name", tr("反向显示")); //InvertedAppearance
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        pObj->setAttribute("group", "Attributes");
+        insertProperty(pObj);
     }
 
-    pro = QPropertyFactory::create_property("Bool");
-    if(pro != NULL) {
-        pro->setObjectProperty("name", "invertedAppearance");
-        pro->setAttribute("show_name", tr("InvertedAppearance"));
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        pro->setAttribute("group", "Attributes");
-        insertProperty(pro);
+    pObj = QPropertyFactory::create_property("Bool");
+    if(pObj != NULL) {
+        pObj->setObjectProperty("name", "textVisible");
+        pObj->setAttribute("show_name", tr("文本可见")); //TextVisible
+        pObj->setAttribute(ATTR_CAN_SAME, true);
+        pObj->setAttribute("group", "Attributes");
+        insertProperty(pObj);
     }
 
-
-    pro = QPropertyFactory::create_property("Bool");
-    if(pro != NULL) {
-        pro->setAttribute("name", "textVisible");
-        pro->setAttribute("show_name", tr("TextVisible"));
-        pro->setAttribute(ATTR_CAN_SAME, true);
-        pro->setAttribute("group", "Attributes");
-        insertProperty(pro);
-    }
-
-
-    pro = QPropertyFactory::create_property("Script");
-    if(pro != NULL) {
-        pro->setAttribute("name", "valueChanged");
-        pro->setAttribute("show_name", tr("ValueChanged"));
-        pro->setAttribute("group", "Events");
-        m_object->setProperty("valueChanged", "");
-        insertProperty(pro);
-    }
     setPropertyValue("geometry", QRect(0, 0, 100, 20));
-
-
-    QProgressBar* gre = (QProgressBar*)m_object;
-    connect(gre, SIGNAL(valueChanged(int)), this, SLOT(valueChanged(int)));
 }
 
 void QProgressBarHost::setValue(int value)
@@ -216,14 +172,4 @@ void QProgressBarHost::setTextVisible(bool textVisible)
 bool QProgressBarHost::textVisible()
 {
     return getPropertyValue("textVisible").toBool();
-}
-
-void QProgressBarHost::valueChanged(int value)
-{
-    QString code = getPropertyValue("valueChanged").toString();
-    if(code != "") {
-        QMap<QString, QString> param;
-        param.insert("_value", QString::number(value));
-        exec(code, param);
-    }
 }

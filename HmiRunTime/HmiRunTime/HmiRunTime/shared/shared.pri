@@ -25,6 +25,7 @@ HEADERS += \
     $$PWD/widgets/qvaluestick.h \
     $$PWD/widgets/qtank.h \
     $$PWD/widgets/qthermometer.h \
+    $$PWD/widgets/qprogressbarex.h \
     $$PWD/xmlobject.h \
     $$PWD/qcommonstruct.h \
     $$PWD/qabstractplugin.h \
@@ -55,6 +56,7 @@ SOURCES += \
     $$PWD/widgets/qvaluestick.cpp \
     $$PWD/widgets/qtank.cpp \
     $$PWD/widgets/qthermometer.cpp \
+    $$PWD/widgets/qprogressbarex.cpp \
     $$PWD/xmlobject.cpp \
     $$PWD/qabstractplugin.cpp \
     $$PWD/pluginloader.cpp \
