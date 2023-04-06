@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QPaintEvent>
 #include "iloader.h"
+#include "realtimedb.h"
 
 class QJarShape : public QWidget, public ILoader
 {
@@ -64,7 +65,6 @@ public:
     void fromObject(XMLObject* xml) override;
 
 private:
-    void setPropertyInner();
     void drawJarShape(QPainter *painter);
 
 protected:
@@ -96,6 +96,9 @@ private:
     int scaleNum;
     // 初始可见
     bool showOnInitial;
+
+private:
+    RunTimeTag *m_tag;
 };
 
 #endif // QJARSHAPE_H

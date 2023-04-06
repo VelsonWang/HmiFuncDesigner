@@ -32,9 +32,6 @@ public slots:
     void setTextVisible(bool textVisible);
     bool textVisible();
 
-protected slots:
-    void valueChanged(int value);
-
 protected:
     void initProperty() override;
 

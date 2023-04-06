@@ -48,6 +48,8 @@
 #include "host/qscrollbarhost.h"
 #include "host/qprogressbarhost.h"
 #include "host/qcomboboxhost.h"
+#include "host/qthermometerhost.h"
+#include "host/qtankhost.h"
 #include "qhostfactory.h"
 
 
@@ -89,6 +91,9 @@ void qRegisterBaseHost()
     qRegisterHost("display_widgets.indicationlamp", QIndicationLampHost);
     qRegisterHost("display_widgets.qjarshape", QJarShapeHost);
     qRegisterHost("display_widgets.qvaluestick", QValueStickHost);
+    qRegisterHost("displaywidgets.qthermometer", QThermometerHost);
+    qRegisterHost("displaywidgets.qtank", QTankHost);
+    qRegisterHost("displaywidgets.progressbar", QProgressBarHost);
     //    qRegisterHost("display_widgets.lcdnumber", QLCDNumberHost);
     qRegisterHost("buttons.pushbutton", QPushButtonHost);
     qRegisterHost("buttons.switchbutton", QSwitchButtonHost);
@@ -104,6 +109,7 @@ void qRegisterBaseHost()
     //    qRegisterHost("inputwidgets.timeedit", QTimeEditHost);
     //    qRegisterHost("inputwidgets.scrollbar", QScrollBarHost);
     //    qRegisterHost("inputwidgets.combobox", QComboBoxHost);
-    //   qRegisterHost("displaywidgets.progressbar", QProgressBarHost);
+
+
 }
 

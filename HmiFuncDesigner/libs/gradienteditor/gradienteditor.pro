@@ -19,6 +19,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 INCLUDEPATH += $$PWD
 
+unix {
+    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$clean_path($$DESTDIR)"\'"
+}
+
 SOURCES += \
     qtgradienteditor.cpp \
     qtgradientstopscontroller.cpp \

@@ -7,19 +7,20 @@
 class QSwitchButton : public QWidget
 {
     Q_OBJECT
+    Q_ENUMS(ShowContent HAlign VAlign)
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
     Q_PROPERTY(QStringList onFuncs READ getOnFuncs WRITE setOnFuncs)
     Q_PROPERTY(QStringList offFuncs READ getOffFuncs WRITE setOffFuncs)
     Q_PROPERTY(bool stateOnInitial READ getStateOnInitial WRITE setStateOnInitial)
-    Q_PROPERTY(QString showContent READ getShowContent WRITE setShowContent)
+    Q_PROPERTY(ShowContent showContent READ getShowContent WRITE setShowContent)
     Q_PROPERTY(QString resetPictureFile READ getResetPictureFile WRITE setResetPictureFile)
     Q_PROPERTY(QString setPictureFile READ getSetPictureFile WRITE setSetPictureFile)
     Q_PROPERTY(bool showNoScale READ getShowNoScale WRITE setShowNoScale)
     Q_PROPERTY(QString resetText READ getResetText WRITE setResetText)
     Q_PROPERTY(QString setText READ getSetText WRITE setSetText)
     Q_PROPERTY(QColor textColor READ getTextColor WRITE setTextColor)
-    Q_PROPERTY(QString szHAlign READ getSzHAlign WRITE setSzHAlign)
-    Q_PROPERTY(QString szVAlign READ getSzVAlign WRITE setSzVAlign)
+    Q_PROPERTY(HAlign szHAlign READ getSzHAlign WRITE setSzHAlign)
+    Q_PROPERTY(VAlign szVAlign READ getSzVAlign WRITE setSzVAlign)
     Q_PROPERTY(QColor resetBackgroundColor READ getResetBackgroundColor WRITE setResetBackgroundColor)
     Q_PROPERTY(QColor setBackgroundColor READ getSetBackgroundColor WRITE setSetBackgroundColor)
     Q_PROPERTY(int borderWidth READ getBorderWidth WRITE setBorderWidth)
@@ -31,6 +32,23 @@ class QSwitchButton : public QWidget
 
 public:
     explicit QSwitchButton(QWidget *parent = nullptr);
+
+    enum ShowContent {
+        Text,
+        Image,
+    };
+
+    enum HAlign {
+        Left,
+        HCenter,
+        Right,
+    };
+
+    enum VAlign {
+        Top,
+        VCenter,
+        Bottom,
+    };
 
     QString getTagSelected() const;
     void setTagSelected(const QString &value);
@@ -44,8 +62,8 @@ public:
     bool getStateOnInitial() const;
     void setStateOnInitial(bool value);
 
-    QString getShowContent() const;
-    void setShowContent(const QString &value);
+    ShowContent getShowContent() const;
+    void setShowContent(ShowContent value);
 
     QString getResetPictureFile() const;
     void setResetPictureFile(const QString &value);
@@ -62,11 +80,11 @@ public:
     QString getSetText() const;
     void setSetText(const QString &value);
 
-    QString getSzHAlign() const;
-    void setSzHAlign(const QString &value);
+    HAlign getSzHAlign() const;
+    void setSzHAlign(HAlign value);
 
-    QString getSzVAlign() const;
-    void setSzVAlign(const QString &value);
+    VAlign getSzVAlign() const;
+    void setSzVAlign(VAlign value);
 
     QColor getResetBackgroundColor() const;
     void setResetBackgroundColor(const QColor &value);
@@ -113,7 +131,7 @@ private:
     // 初始状态
     bool stateOnInitial;
     // 显示内容
-    QString showContent;
+    ShowContent showContent;
     // false-显示图片，true-显示文本
     bool showContentText;
     // 复位图片
@@ -130,9 +148,9 @@ private:
     // 文本颜色
     QColor textColor;
     // 水平对齐
-    QString szHAlign;
+    HAlign szHAlign;
     // 垂直对齐
-    QString szVAlign;
+    VAlign szVAlign;
     // 复位按钮背景颜色
     QColor resetBackgroundColor;
     // 置位按钮背景颜色

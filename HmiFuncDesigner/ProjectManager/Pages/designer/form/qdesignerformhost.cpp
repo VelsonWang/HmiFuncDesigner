@@ -79,33 +79,33 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
     QAbstractHost *h = host_from_object(o);
     if(h != NULL) {
         switch(e->type()) {
-        case QEvent::Paint:
-            return handlePaintEvent(h, (QPaintEvent*)e);
-        case QEvent::MouseButtonPress:
-            return handleMousePressEvent(h, (QMouseEvent*)e);
-        case QEvent::MouseButtonRelease:
-            return handleMouseReleaseEvent(h, (QMouseEvent*)e);
-        case QEvent::MouseMove:
-            return handleMouseMoveEvent(h, (QMouseEvent*)e);
-        case QEvent::MouseButtonDblClick:
-            return handle_mouse_db_clicked_event(h, (QMouseEvent*)e);
-        case QEvent::DragEnter:
-            return handle_drag_enter_event(h, (QDragEnterEvent*)e);
-        case QEvent::DragLeave:
-            return handle_drag_leave_event(h, (QDragLeaveEvent*)e);
-        case QEvent::Drop:
-            return handle_drop_event(h, (QDropEvent*)e);
-        case QEvent::Resize:
-        case QEvent::ParentChange:
-        case QEvent::Move:
-            if(h != m_root_host) {
-                m_selection->updateGeometry((QWidget*)h->getObject());
-            } else {
-                m_widget_host->updateFormGeometry();
-            }
-            break;
-        default:
-            break;
+            case QEvent::Paint:
+                return handlePaintEvent(h, (QPaintEvent*)e);
+            case QEvent::MouseButtonPress:
+                return handleMousePressEvent(h, (QMouseEvent*)e);
+            case QEvent::MouseButtonRelease:
+                return handleMouseReleaseEvent(h, (QMouseEvent*)e);
+            case QEvent::MouseMove:
+                return handleMouseMoveEvent(h, (QMouseEvent*)e);
+            case QEvent::MouseButtonDblClick:
+                return handle_mouse_db_clicked_event(h, (QMouseEvent*)e);
+            case QEvent::DragEnter:
+                return handle_drag_enter_event(h, (QDragEnterEvent*)e);
+            case QEvent::DragLeave:
+                return handle_drag_leave_event(h, (QDragLeaveEvent*)e);
+            case QEvent::Drop:
+                return handle_drop_event(h, (QDropEvent*)e);
+            case QEvent::Resize:
+            case QEvent::ParentChange:
+            case QEvent::Move:
+                if(h != m_root_host) {
+                    m_selection->updateGeometry((QWidget*)h->getObject());
+                } else {
+                    m_widget_host->updateFormGeometry();
+                }
+                break;
+            default:
+                break;
         }
     }
     return false;
@@ -793,7 +793,6 @@ void QDesignerFormHost::widget_size_changed(QWidget* wid, const QRect &old, cons
         if(h != NULL) {
             QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(h->getID(), "geometry", old, now);
             m_undo_stack->push(cmd);
-            qDebug() << "+++++++++++++++" <<  old << now;
         }
     }
 }

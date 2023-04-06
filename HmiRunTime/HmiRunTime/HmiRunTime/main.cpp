@@ -63,16 +63,15 @@ int main(int argc, char *argv[])
     // find project infomation file
     QString szProjName = getProjectName(szRunProjPath);
 
+    ///////////////////////////////////////////////////////////////////////////
+    /// 启动定时任务
+    TimerTask tmrTask;
+
     if(szProjName == "") {
         qCritical() << "project config file not found!";
     } else {
         qRegisterWidgets();
         QString szProjFile = szRunProjPath + "/" + szProjName + ".pdt";
-
-        ///////////////////////////////////////////////////////////////////////////
-        /// 启动定时任务
-        TimerTask tmrTask;
-
         if(QRunningManager::instance()->load(szProjFile)) {
             HmiRunTime::instance()->setProjectCore(QRunningManager::instance()->projCore());
             HmiRunTime::instance()->Load();
