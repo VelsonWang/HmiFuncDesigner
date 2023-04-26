@@ -25,6 +25,10 @@ QTSCINTILLA_LIBDIR = $$IDE_LIBRARY_PATH
 #message(pwd: $$OUT_PWD)
 DESTDIR = $$QTSCINTILLA_LIBDIR
 
+unix {
+    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$clean_path($$DESTDIR)"\'"
+}
+
 INSTALL_LIBRARY_PATH = $$IDE_BIN_PATH
 #$$OUT_PWD/../../exec/bin
 

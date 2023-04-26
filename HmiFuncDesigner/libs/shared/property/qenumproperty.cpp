@@ -30,4 +30,9 @@ QString QEnumProperty::getValueText()
     return "";
 }
 
-
+void QEnumProperty::makeValue()
+{
+    if(m_propertys.keys().contains("value")) {
+        m_value = m_propertys.value("value").toInt();
+    }
+}

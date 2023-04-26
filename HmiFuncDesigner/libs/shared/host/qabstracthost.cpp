@@ -217,6 +217,9 @@ void QAbstractHost::setDefault()
         pro->setDefault();
         if(m_object != NULL) {
             m_object->setProperty(pro->getObjectProperty("name").toByteArray(), pro->getValue());
+            if(pro->getObjectProperty("name").toString() == "borderStyle") {
+                m_object->setProperty("borderStyle", pro->getValue());
+            }
         }
         makeStyleSheet();
     }

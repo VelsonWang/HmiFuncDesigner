@@ -39,6 +39,10 @@ LIBS += -L$$LIB_FILE_PATH -lshared
 LIBS += -L$$LIB_FILE_PATH -lgradienteditor
 LIBS += -L$$LIB_FILE_PATH -lqscintilla2_qt$${QT_MAJOR_VERSION}$${LIB_SUFFIX}
 
+unix {
+    QMAKE_LFLAGS += "-Wl,-rpath,\'"$$LIB_FILE_PATH"\'"
+}
+
 HEADERS += \
     devicelistdialog.h \
     devicepluginloader.h \

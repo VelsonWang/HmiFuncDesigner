@@ -50,5 +50,8 @@
 		<file>images/jarshape.png</file>
 		<file>images/valuestick.png</file>
 		<file>images/switchbutton.png</file>
+		<file>images/thermometericon.png</file>
+		<file>images/tank.png</file>
+		<file>images/meter.png</file>
     </qresource>
 </RCC>

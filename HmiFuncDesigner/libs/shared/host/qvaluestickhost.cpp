@@ -107,19 +107,30 @@ void QValueStickHost::initProperty()
         pObj->setAttribute("show_name", tr("标尺方向"));
         pObj->setAttribute("group", "Attributes");
         pObj->setAttribute(ATTR_CAN_SAME, true);
+
         ComboItems items;
-        QStringList scaleDirList;
-        scaleDirList << tr("从左到右") << tr("从右到左") << tr("从上到下") << tr("从下到上");
-        foreach(QString szEv, scaleDirList) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
+        tagComboItem item;
+
+        item.m_text = tr("从左到右");
+        item.m_value = QValueStick::LeftToRight;
+        items.append(item);
+
+        item.m_text = tr("从右到左");
+        item.m_value = QValueStick::RightToLeft;
+        items.append(item);
+
+        item.m_text = tr("从上到下");
+        item.m_value = QValueStick::TopToBottom;
+        items.append(item);
+
+        item.m_text = tr("从下到上");
+        item.m_value = QValueStick::BottomToTop;
+        items.append(item);
+
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->setValue(tr("从左到右"));
+        pObj->setValue(QValueStick::LeftToRight);
         insertProperty(pObj);
     }
 
@@ -129,19 +140,22 @@ void QValueStickHost::initProperty()
         pObj->setAttribute("show_name", tr("标尺位置"));
         pObj->setAttribute("group", "Attributes");
         pObj->setAttribute(ATTR_CAN_SAME, true);
+
         ComboItems items;
-        QStringList scalePosList;
-        scalePosList << tr("右下方") << tr("左上方");
-        foreach(QString szEv, scalePosList) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
+        tagComboItem item;
+
+        item.m_text = tr("右下方");
+        item.m_value = QValueStick::RightBottom;
+        items.append(item);
+
+        item.m_text = tr("左上方");
+        item.m_value = QValueStick::LeftTop;
+        items.append(item);
+
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->setValue(tr("左上方"));
+        pObj->setValue(QValueStick::LeftTop);
         insertProperty(pObj);
     }
 

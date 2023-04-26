@@ -74,19 +74,22 @@ void QPushButtonHost::initProperty()
         pObj->setAttribute("show_name", tr("显示内容"));
         pObj->setAttribute("group", "Attributes");
         pObj->setAttribute(ATTR_CAN_SAME, true);
+
         ComboItems items;
-        QStringList contents;
-        contents << tr("文本") << tr("图片");
-        foreach(QString szEv, contents) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
+        tagComboItem item;
+
+        item.m_text = tr("文本");
+        item.m_value = QPushButtonEx::Text;
+        items.append(item);
+
+        item.m_text = tr("图片");
+        item.m_value = QPushButtonEx::Image;
+        items.append(item);
+
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->setValue(tr("文本"));
+        pObj->setValue(QPushButtonEx::Text);
         insertProperty(pObj);
     }
 
@@ -104,19 +107,26 @@ void QPushButtonHost::initProperty()
         pObj->setAttribute("show_name", tr("水平对齐"));
         pObj->setAttribute("group", "Attributes");
         pObj->setAttribute(ATTR_CAN_SAME, true);
+
         ComboItems items;
-        QStringList alignList;
-        alignList << tr("左对齐") << tr("居中对齐") << tr("右对齐");
-        foreach(QString szEv, alignList) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
+        tagComboItem item;
+
+        item.m_text = tr("左对齐");
+        item.m_value = QPushButtonEx::Left;
+        items.append(item);
+
+        item.m_text = tr("居中对齐");
+        item.m_value = QPushButtonEx::HCenter;
+        items.append(item);
+
+        item.m_text = tr("右对齐");
+        item.m_value = QPushButtonEx::Right;
+        items.append(item);
+
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->setValue(tr("居中对齐"));
+        pObj->setValue(QPushButtonEx::HCenter);
         insertProperty(pObj);
     }
 
@@ -126,19 +136,26 @@ void QPushButtonHost::initProperty()
         pObj->setAttribute("show_name", tr("垂直对齐"));
         pObj->setAttribute("group", "Attributes");
         pObj->setAttribute(ATTR_CAN_SAME, true);
+
         ComboItems items;
-        QStringList alignList;
-        alignList << tr("上对齐") << tr("居中对齐") << tr("下对齐");
-        foreach(QString szEv, alignList) {
-            tagComboItem item;
-            item.m_text = szEv;
-            item.m_value = szEv;
-            items.append(item);
-        }
+        tagComboItem item;
+
+        item.m_text = tr("上对齐");
+        item.m_value = QPushButtonEx::Top;
+        items.append(item);
+
+        item.m_text = tr("居中对齐");
+        item.m_value = QPushButtonEx::VCenter;
+        items.append(item);
+
+        item.m_text = tr("下对齐");
+        item.m_value = QPushButtonEx::Bottom;
+        items.append(item);
+
         QVariant v;
         v.setValue<ComboItems>(items);
         pObj->setAttribute("items", v);
-        pObj->setValue(tr("居中对齐"));
+        pObj->setValue(QPushButtonEx::VCenter);
         insertProperty(pObj);
     }
 

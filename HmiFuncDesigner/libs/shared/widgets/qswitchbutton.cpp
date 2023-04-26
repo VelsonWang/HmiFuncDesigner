@@ -8,10 +8,10 @@
 
 QSwitchButton::QSwitchButton(QWidget *parent) : QWidget(parent)
 {
-    showContent = tr("文本");
+    showContent = Text;
     showContentText = true;
-    szHAlign = tr("居中对齐");
-    szVAlign = tr("居中对齐");
+    szHAlign = HCenter;
+    szVAlign = VCenter;
     font = QFont("宋体", 12);
     resetBackgroundColor = QColor(240, 240, 240);
     setBackgroundColor = QColor(240, 240, 240);
@@ -78,20 +78,20 @@ void QSwitchButton::drawSwitchButton(QPainter *painter)
             painter->setFont(font);
 
             int hFlags = Qt::AlignLeft;
-            if(szHAlign == tr("左对齐")) {
+            if(szHAlign == Left) {
                 hFlags = Qt::AlignLeft;
-            } else if(szHAlign == tr("居中对齐")) {
+            } else if(szHAlign == HCenter) {
                 hFlags = Qt::AlignHCenter;
-            } else if(szHAlign == tr("右对齐")) {
+            } else if(szHAlign == Right) {
                 hFlags = Qt::AlignRight;
             }
 
             int vFlags = Qt::AlignVCenter;
-            if(szVAlign == tr("上对齐")) {
+            if(szVAlign == Top) {
                 vFlags = Qt::AlignTop;
-            } else if(szVAlign == tr("居中对齐")) {
+            } else if(szVAlign == VCenter) {
                 vFlags = Qt::AlignVCenter;
-            } else if(szVAlign == tr("下对齐")) {
+            } else if(szVAlign == Bottom) {
                 vFlags = Qt::AlignBottom;
             }
 
@@ -237,12 +237,12 @@ void QSwitchButton::setResetBackgroundColor(const QColor &value)
     }
 }
 
-QString QSwitchButton::getSzVAlign() const
+QSwitchButton::VAlign QSwitchButton::getSzVAlign() const
 {
     return szVAlign;
 }
 
-void QSwitchButton::setSzVAlign(const QString &value)
+void QSwitchButton::setSzVAlign(VAlign value)
 {
     if(value != szVAlign) {
         szVAlign = value;
@@ -250,12 +250,12 @@ void QSwitchButton::setSzVAlign(const QString &value)
     }
 }
 
-QString QSwitchButton::getSzHAlign() const
+QSwitchButton::HAlign QSwitchButton::getSzHAlign() const
 {
     return szHAlign;
 }
 
-void QSwitchButton::setSzHAlign(const QString &value)
+void QSwitchButton::setSzHAlign(HAlign value)
 {
     if(value != szHAlign) {
         szHAlign = value;
@@ -338,17 +338,17 @@ void QSwitchButton::setResetPictureFile(const QString &value)
     }
 }
 
-QString QSwitchButton::getShowContent() const
+QSwitchButton::ShowContent QSwitchButton::getShowContent() const
 {
     return showContent;
 }
 
-void QSwitchButton::setShowContent(const QString &value)
+void QSwitchButton::setShowContent(ShowContent value)
 {
     if(value != showContent) {
         showContent = value;
         showContentText = true;
-        if(showContent == tr("图片")) {
+        if(showContent == Image) {
             showContentText = false;
         }
         this->update();

@@ -10,6 +10,7 @@ public:
     Q_INVOKABLE QEnumProperty(QAbstractProperty* parent = 0);
     QIcon getValueIcon();
     QString getValueText();
+    void makeValue();
 };
 
 #endif // QENUMPROPERTY_H

@@ -8,10 +8,10 @@
 
 QPushButtonEx::QPushButtonEx(QWidget *parent) : QPushButton(parent)
 {
-    showContent = tr("文本");
+    showContent = Text;
     showContentText = true;
-    hAlign = tr("居中对齐");
-    vAlign = tr("居中对齐");
+    hAlign = HCenter;
+    vAlign = VCenter;
     font = QFont("宋体", 12);
     backgroundColor = QColor(240, 240, 240);
     borderWidth = 4;
@@ -65,20 +65,20 @@ void QPushButtonEx::drawPushButton(QPainter *painter)
             painter->setFont(font);
 
             int hFlags = Qt::AlignLeft;
-            if(hAlign == tr("左对齐")) {
+            if(hAlign == Left) {
                 hFlags = Qt::AlignLeft;
-            } else if(hAlign == tr("居中对齐")) {
+            } else if(hAlign == HCenter) {
                 hFlags = Qt::AlignHCenter;
-            } else if(hAlign == tr("右对齐")) {
+            } else if(hAlign == Right) {
                 hFlags = Qt::AlignRight;
             }
 
             int vFlags = Qt::AlignVCenter;
-            if(vAlign == tr("上对齐")) {
+            if(vAlign == Top) {
                 vFlags = Qt::AlignTop;
-            } else if(vAlign == tr("居中对齐")) {
+            } else if(vAlign == VCenter) {
                 vFlags = Qt::AlignVCenter;
-            } else if(vAlign == tr("下对齐")) {
+            } else if(vAlign == Bottom) {
                 vFlags = Qt::AlignBottom;
             }
 
@@ -150,12 +150,12 @@ void QPushButtonEx::setBackgroundColor(const QColor &value)
     }
 }
 
-QString QPushButtonEx::getVAlign() const
+QPushButtonEx::VAlign QPushButtonEx::getVAlign() const
 {
     return vAlign;
 }
 
-void QPushButtonEx::setVAlign(const QString &value)
+void QPushButtonEx::setVAlign(VAlign value)
 {
     if(value != vAlign) {
         vAlign = value;
@@ -163,12 +163,12 @@ void QPushButtonEx::setVAlign(const QString &value)
     }
 }
 
-QString QPushButtonEx::getHAlign() const
+QPushButtonEx::HAlign QPushButtonEx::getHAlign() const
 {
     return hAlign;
 }
 
-void QPushButtonEx::setHAlign(const QString &value)
+void QPushButtonEx::setHAlign(HAlign value)
 {
     if(value != hAlign) {
         hAlign = value;
@@ -194,17 +194,17 @@ void QPushButtonEx::setFilePicture(const QString &value)
     }
 }
 
-QString QPushButtonEx::getShowContent() const
+QPushButtonEx::ShowContent QPushButtonEx::getShowContent() const
 {
     return showContent;
 }
 
-void QPushButtonEx::setShowContent(const QString &value)
+void QPushButtonEx::setShowContent(ShowContent value)
 {
     if(value != showContent) {
         showContent = value;
         showContentText = true;
-        if(showContent == tr("图片")) {
+        if(showContent == Image) {
             showContentText = false;
         }
         this->update();

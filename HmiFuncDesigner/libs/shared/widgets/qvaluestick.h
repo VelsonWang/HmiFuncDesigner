@@ -7,6 +7,7 @@
 class QValueStick : public QWidget
 {
     Q_OBJECT
+    Q_ENUMS(ScaleDir ScalePos)
     Q_PROPERTY(QString tag READ getTagSelected WRITE setTagSelected)
     Q_PROPERTY(double maxValue READ getMaxValue WRITE setMaxValue)
     Q_PROPERTY(double minValue READ getMinValue WRITE setMinValue)
@@ -15,8 +16,8 @@ class QValueStick : public QWidget
     Q_PROPERTY(QColor backgroundColor READ getBackgroundColor WRITE setBackgroundColor)
     Q_PROPERTY(QColor foregroundColor READ getForegroundColor WRITE setForegroundColor)
     Q_PROPERTY(QColor scaleColor READ getScaleColor WRITE setScaleColor)
-    Q_PROPERTY(QString scaleDir READ getScaleDir WRITE setScaleDir)
-    Q_PROPERTY(QString scalePos READ getScalePos WRITE setScalePos)
+    Q_PROPERTY(ScaleDir scaleDir READ getScaleDir WRITE setScaleDir)
+    Q_PROPERTY(ScalePos scalePos READ getScalePos WRITE setScalePos)
     Q_PROPERTY(QFont font READ getFont WRITE setFont)
     Q_PROPERTY(bool showRuler READ getShowRuler WRITE setShowRuler)
     Q_PROPERTY(bool showScale READ getShowScale WRITE setShowScale)
@@ -24,6 +25,18 @@ class QValueStick : public QWidget
 
 public:
     explicit QValueStick(QWidget *parent = nullptr);
+
+    enum ScaleDir {
+        LeftToRight,
+        RightToLeft,
+        TopToBottom,
+        BottomToTop,
+    };
+
+    enum ScalePos {
+        RightBottom,
+        LeftTop,
+    };
 
     QString getTagSelected() const;
     void setTagSelected(const QString &value);
@@ -46,11 +59,11 @@ public:
     QColor getScaleColor() const;
     void setScaleColor(const QColor &value);
 
-    QString getScaleDir() const;
-    void setScaleDir(const QString &value);
+    ScaleDir getScaleDir() const;
+    void setScaleDir(ScaleDir value);
 
-    QString getScalePos() const;
-    void setScalePos(const QString &value);
+    ScalePos getScalePos() const;
+    void setScalePos(ScalePos value);
 
     QFont getFont() const;
     void setFont(const QFont &value);
@@ -79,11 +92,9 @@ private:
                          QColor fillColor,
                          bool scaleVisible,
                          QColor scaleColor,
-                         QString scaleDirect,
-                         QString scalePosition);
+                         ScaleDir scaleDirect,
+                         ScalePos scalePosition);
     void drawValueStick(QPainter *painter);
-    QString dirString(const QString& szDir) const;
-    QString posString(const QString& szPos) const;
 
 protected:
     void paintEvent(QPaintEvent *event);
@@ -107,9 +118,9 @@ private:
     // 标尺颜色
     QColor scaleColor;
     // 标尺方向
-    QString scaleDir;
+    ScaleDir scaleDir;
     // 标尺位置
-    QString scalePos;
+    ScalePos scalePos;
     // 字体
     QFont font;
     // 显示标尺

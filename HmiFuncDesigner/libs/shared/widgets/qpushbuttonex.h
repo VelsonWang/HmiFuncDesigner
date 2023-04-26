@@ -7,15 +7,16 @@
 class QPushButtonEx : public QPushButton
 {
     Q_OBJECT
+    Q_ENUMS(ShowContent HAlign VAlign)
     Q_PROPERTY(QStringList clickedDownFuncs READ getClickedDownFuncs WRITE setClickedDownFuncs)
     Q_PROPERTY(QStringList clickedUpFuncs READ getClickedUpFuncs WRITE setClickedUpFuncs)
     Q_PROPERTY(QString script READ getScript WRITE setScript)
-    Q_PROPERTY(QString showContent READ getShowContent WRITE setShowContent)
+    Q_PROPERTY(ShowContent showContent READ getShowContent WRITE setShowContent)
     Q_PROPERTY(QString picture READ getFilePicture WRITE setFilePicture)
     Q_PROPERTY(QString text READ getText WRITE setText)
     Q_PROPERTY(QColor textColor READ getTextColor WRITE setTextColor)
-    Q_PROPERTY(QString hAlign READ getHAlign WRITE setHAlign)
-    Q_PROPERTY(QString vAlign READ getVAlign WRITE setVAlign)
+    Q_PROPERTY(HAlign hAlign READ getHAlign WRITE setHAlign)
+    Q_PROPERTY(VAlign vAlign READ getVAlign WRITE setVAlign)
     Q_PROPERTY(QColor backgroundColor READ getBackgroundColor WRITE setBackgroundColor)
     Q_PROPERTY(bool transparent READ getTransparent WRITE setTransparent)
     Q_PROPERTY(int borderWidth READ getBorderWidth WRITE setBorderWidth)
@@ -27,6 +28,23 @@ class QPushButtonEx : public QPushButton
 public:
     explicit QPushButtonEx(QWidget *parent = nullptr);
 
+    enum ShowContent {
+        Text,
+        Image,
+    };
+
+    enum HAlign {
+        Left,
+        HCenter,
+        Right,
+    };
+
+    enum VAlign {
+        Top,
+        VCenter,
+        Bottom,
+    };
+
     QStringList getClickedDownFuncs() const;
     void setClickedDownFuncs(const QStringList &value);
 
@@ -36,17 +54,17 @@ public:
     QString getScript() const;
     void setScript(const QString &value);
 
-    QString getShowContent() const;
-    void setShowContent(const QString &value);
+    ShowContent getShowContent() const;
+    void setShowContent(ShowContent value);
 
     QString getFilePicture() const;
     void setFilePicture(const QString &value);
 
-    QString getHAlign() const;
-    void setHAlign(const QString &value);
+    HAlign getHAlign() const;
+    void setHAlign(HAlign value);
 
-    QString getVAlign() const;
-    void setVAlign(const QString &value);
+    VAlign getVAlign() const;
+    void setVAlign(VAlign value);
 
     QColor getBackgroundColor() const;
     void setBackgroundColor(const QColor &value);
@@ -91,7 +109,7 @@ private:
     // JavaScript脚本
     QString script;
     // 显示内容
-    QString showContent;
+    ShowContent showContent;
     // 显示内容
     bool showContentText;
     // 图片名
@@ -101,9 +119,9 @@ private:
     // 文本颜色
     QColor textColor;
     // 水平对齐
-    QString hAlign;
+    HAlign hAlign;
     // 垂直对齐
-    QString vAlign;
+    VAlign vAlign;
     // 按钮背景颜色
     QColor backgroundColor;
     // 透明背景颜色
