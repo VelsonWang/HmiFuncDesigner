@@ -87,6 +87,8 @@ protected:
     QAction *m_actCopy = NULL; //复制
     QAction *m_actPaste = NULL; //粘贴
     QAction *m_actDelete = NULL; //删除
+    QAction *m_actRaise = NULL; // 上一层
+    QAction *m_actLower = NULL; // 下一层
 };
 
 #endif // QDESIGNERFORMHOST_H

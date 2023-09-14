@@ -246,9 +246,24 @@ bool QDesignerFormHost::handleMousePressEvent(QAbstractHost *host, QMouseEvent *
                 m_actDelete->setStatusTip(tr("删除当前选中的控件"));
                 connect(m_actDelete, SIGNAL(triggered()), this, SLOT(slotMenuAction()));
 
+                // 上一层
+                m_actRaise = new QAction(tr("上一层"), this);
+                m_actRaise->setProperty("atcion", "raise");
+                m_actRaise->setStatusTip(tr("控件上移一层"));
+                connect(m_actRaise, SIGNAL(triggered()), this, SLOT(slotMenuAction()));
+
+                // 下一层
+                m_actLower = new QAction(tr("下一层"), this);
+                m_actLower->setProperty("atcion", "lower");
+                m_actLower->setStatusTip(tr("控件下移一层"));
+                connect(m_actLower, SIGNAL(triggered()), this, SLOT(slotMenuAction()));
+
                 m_menu->addAction(m_actCopy);
                 m_menu->addAction(m_actPaste);
                 m_menu->addAction(m_actDelete);
+                m_menu->addSeparator();
+                m_menu->addAction(m_actRaise);
+                m_menu->addAction(m_actLower);
             }
         }
     }
@@ -318,6 +333,14 @@ void QDesignerFormHost::slotMenuAction()
                 hosts.append(host);
             }
             emit remove(hosts);
+        } else if(doWhat == "raise") { //控件上移一层
+            foreach(QWidget *widgetObj, m_selection->selectedWidgets()) {
+                widgetObj->raise();
+            }
+        } else if(doWhat == "lower") { //控件下移一层
+            foreach(QWidget *widgetObj, m_selection->selectedWidgets()) {
+                widgetObj->lower();
+            }
         }
     }
 }
