@@ -107,6 +107,77 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
             default:
                 break;
         }
+    } else {
+        if(e->type() == QEvent::KeyPress) {
+            QKeyEvent *keyEvent = static_cast<QKeyEvent *>(e);
+            if(keyEvent->modifiers() == Qt::ControlModifier) {
+                if(keyEvent->key() == Qt::Key_C) { // ctrl + c
+                    if(m_selection->selectedWidgets().size() > 0) {
+                        XMLObject xmlObj;
+                        xmlObj.setTagName("hosts");
+                        QPoint pt;
+                        foreach(QWidget *widgetObj, m_selection->selectedWidgets()) {
+                            QAbstractHost *host = m_widget_to_host.value(widgetObj);
+                            XMLObject *pChildObj = new XMLObject(&xmlObj);
+                            host->toObject(pChildObj);
+                            int x = (widgetObj->x() + widgetObj->width()) / 2;
+                            if(pt.x() < x) {
+                                pt.setX(x);
+                            }
+                            int y = (widgetObj->y() + widgetObj->height()) / 2;
+                            if(pt.y() < y) {
+                                pt.setY(y);
+                            }
+                        }
+                        QApplication::clipboard()->setText(xmlObj.write());
+                        qApp->setProperty("pos", pt);
+                    }
+                } else if (keyEvent->key() == Qt::Key_V) {
+                    QPoint pos = qApp->property("pos").toPoint();
+                    QString copyDat = QApplication::clipboard()->text();
+                    XMLObject xmlObj;
+                    if(!xmlObj.load(copyDat, NULL)) {
+                        qDebug() << __FILE__ << __LINE__ << __FUNCTION__ << "parser from clipboard fial!";
+                        return false;
+                    }
+
+                    QList<XMLObject*> xmlHosts = xmlObj.getChildren();
+                    QUndoCommand *cmd = new QUndoCommand;
+                    foreach(XMLObject* xmlHost, xmlHosts) {
+                        QAbstractHost* pHostObj = QHostFactory::createHost(xmlHost);
+                        if(pHostObj != NULL) {
+                            pHostObj->fromObject(xmlHost);
+                            pHostObj->setID(QString::number(pHostObj->allocID()));
+                            QRect re = pHostObj->getPropertyValue("geometry").toRect();
+                            re.moveTo(pos);
+                            pos.setY(pos.y() + re.height() + 10);
+                            pHostObj->setPropertyValue("geometry", re);
+                            QList<QAbstractHost*> list;
+                            QList<int> index;
+                            list.append(pHostObj);
+                            index.append(m_root_host->getChildCount());
+                            new QAddHostUndoCommand(m_root_host, list, index, AHT_ADD, cmd);
+                        }
+                    }
+                    if(cmd->childCount() > 0) {
+                        m_undo_stack->push(cmd);
+                    } else {
+                        delete cmd;
+                    }
+                }
+            }
+            if (keyEvent->key() == Qt::Key_Delete) {
+                QList<QAbstractHost*> hosts;
+                foreach(QWidget *widgetObj, m_selection->selectedWidgets()) {
+                    QAbstractHost *host = m_widget_to_host.value(widgetObj);
+                    hosts.append(host);
+                }
+                if(hosts.size() > 0) {
+                    emit remove(hosts);
+                }
+            }
+            return QObject::eventFilter(o, e);
+        }
     }
     return false;
 }
@@ -332,7 +403,9 @@ void QDesignerFormHost::slotMenuAction()
                 QAbstractHost *host = m_widget_to_host.value(widgetObj);
                 hosts.append(host);
             }
-            emit remove(hosts);
+            if(hosts.size() > 0) {
+                emit remove(hosts);
+            }
         } else if(doWhat == "raise") { //控件上移一层
             foreach(QWidget *widgetObj, m_selection->selectedWidgets()) {
                 widgetObj->raise();

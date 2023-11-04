@@ -80,6 +80,7 @@ void QFormListWidget::insert_form(QAbstractHost *host, int index)
         index = m_forms.size();
     }
     QDesignerFormHost *form = new QDesignerFormHost(host, this);
+    this->installEventFilter(form);
     connect(form, SIGNAL(select(QAbstractHost*)), this, SIGNAL(select(QAbstractHost*)));
     connect(form, SIGNAL(select(QAbstractHost*)), this, SLOT(onSelect(QAbstractHost*)));
     connect(form, SIGNAL(remove(QList<QAbstractHost*>)), this, SIGNAL(remove(QList<QAbstractHost*>)));
