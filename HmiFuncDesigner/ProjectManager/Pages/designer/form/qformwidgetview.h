@@ -6,7 +6,6 @@
 #include <QUndoStack>
 
 class QFormListWidget;
-
 class StyledBar;
 class QFormHost;
 class QAbstractHost;
@@ -19,6 +18,7 @@ public:
     explicit QFormWidgetView(QWidget *parent = 0);
     ~QFormWidgetView();
     void setUndoStack(QUndoStack* stack);
+    void onZoom();
 
 protected slots:
     void project_opened();

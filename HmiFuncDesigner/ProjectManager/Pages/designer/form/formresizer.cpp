@@ -1,7 +1,5 @@
 #include "formresizer.h"
-
 #include "sizehandlerect.h"
-
 #include <QFrame>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -41,7 +39,7 @@ FormResizer::~FormResizer()
 
 void FormResizer::updateGeometry()
 {
-    const QRect &geom = m_frame->geometry();
+    const QRect &rect = m_frame->geometry();
 
     const int w = 6;
     const int h = 6;
@@ -49,28 +47,28 @@ void FormResizer::updateGeometry()
     for(int i = 0; i < 8; i++) {
         switch(m_handles[i]->dir()) {
             case SizeHandleRect::LeftTop:
-                m_handles[i]->move(geom.x() - w / 2, geom.y() - h / 2);
+                m_handles[i]->move(rect.x() - w / 2, rect.y() - h / 2);
                 break;
             case SizeHandleRect::Top:
-                m_handles[i]->move(geom.x() + geom.width() / 2 - w / 2, geom.y() - h / 2);
+                m_handles[i]->move(rect.x() + rect.width() / 2 - w / 2, rect.y() - h / 2);
                 break;
             case SizeHandleRect::RightTop:
-                m_handles[i]->move(geom.x() + geom.width() - w / 2, geom.y() - h / 2);
+                m_handles[i]->move(rect.x() + rect.width() - w / 2, rect.y() - h / 2);
                 break;
             case SizeHandleRect::Right:
-                m_handles[i]->move(geom.x() + geom.width() - w / 2, geom.y() + geom.height() / 2 - h / 2);
+                m_handles[i]->move(rect.x() + rect.width() - w / 2, rect.y() + rect.height() / 2 - h / 2);
                 break;
             case SizeHandleRect::RightBottom:
-                m_handles[i]->move(geom.x() + geom.width() - w / 2, geom.y() + geom.height() - h / 2);
+                m_handles[i]->move(rect.x() + rect.width() - w / 2, rect.y() + rect.height() - h / 2);
                 break;
             case SizeHandleRect::Bottom:
-                m_handles[i]->move(geom.x() + geom.width() / 2 - w / 2, geom.y() + geom.height() - h / 2);
+                m_handles[i]->move(rect.x() + rect.width() / 2 - w / 2, rect.y() + rect.height() - h / 2);
                 break;
             case SizeHandleRect::LeftBottom:
-                m_handles[i]->move(geom.x() - w / 2, geom.y() + geom.height() - h / 2);
+                m_handles[i]->move(rect.x() - w / 2, rect.y() + rect.height() - h / 2);
                 break;
             case SizeHandleRect::Left:
-                m_handles[i]->move(geom.x() - w / 2, geom.y() + geom.height() / 2 - h / 2);
+                m_handles[i]->move(rect.x() - w / 2, rect.y() + rect.height() / 2 - h / 2);
                 break;
         }
     }

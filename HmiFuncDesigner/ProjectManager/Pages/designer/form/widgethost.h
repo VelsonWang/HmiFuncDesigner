@@ -5,28 +5,29 @@
 
 class FormResizer;
 
-class WidgetHost: public QScrollArea
+class WidgetHost : public QScrollArea
 {
     Q_OBJECT
 public:
     explicit WidgetHost(QWidget *parent = 0);
     virtual ~WidgetHost();
 
-    void    showHandle();
-    void    hideHandle();
+    void showHandle();
+    void hideHandle();
 
-    bool    isHandleVisible();
+    bool isHandleVisible();
 
-    void    setFormWidget(QWidget* widget);
+    void setFormWidget(QWidget* widget);
     QWidget *formWidget();
 
-    void    updateFormGeometry();
-protected:
+    void updateFormGeometry();
+
 signals:
-    void    size_changed(const QRect &,const QRect &);
+    void size_changed(const QRect &,const QRect &);
+
 protected:
-    FormResizer     *m_formResizer;
-    QWidget         *m_formwidget;
+    FormResizer *m_formResizer;
+    QWidget *m_formWidget;
 };
 
 #endif // WIDGETHOST_H

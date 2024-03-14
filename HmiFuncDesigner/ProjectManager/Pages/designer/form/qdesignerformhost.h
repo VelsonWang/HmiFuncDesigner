@@ -25,31 +25,34 @@ public:
     void hide();
     QAbstractHost *get_select_widget();
     QAbstractHost *get_root_host();
-    void set_select_widget(QAbstractHost* host);
-    void property_edited(QAbstractProperty* pro, const QVariant& value);
+    void selectHostWidget(QAbstractHost* host);
+    void propertyEdited(QAbstractProperty* pro, const QVariant& value);
     void setUndoStack(QUndoStack* stack);
+    void onZoom();
 
-    void same_left();
-    void same_top();
-    void same_right();
-    void same_bottom();
-    void same_width();
-    void same_height();
-    void same_geometry();
-    void same_v_centre();
-    void same_h_centre();
+    void sameLeft();
+    void sameTop();
+    void sameRight();
+    void sameBottom();
+    void sameWidth();
+    void sameHeight();
+    void sameGeometry();
+    void sameVCenter();
+    void sameHCenter();
+    void horizontalUniformDistribution();
+    void verticalUniformDistribution();
 
 protected:
     bool eventFilter(QObject *, QEvent *);
-    void install_all_event(QAbstractHost* host);
-    void remove_all_event(QAbstractHost* host);
+    void installAllEvent(QAbstractHost* host);
+    void removeAllEvent(QAbstractHost* host);
 
 protected:
     bool handlePaintEvent(QAbstractHost *host, QPaintEvent *e);
     bool handleMousePressEvent(QAbstractHost *host, QMouseEvent *e);
     bool handleMouseReleaseEvent(QAbstractHost *host, QMouseEvent *e);
     bool handleMouseMoveEvent(QAbstractHost *host, QMouseEvent *e);
-    bool handle_mouse_db_clicked_event(QAbstractHost *host, QMouseEvent *e);
+    bool handleMouseDoubleClickedEvent(QAbstractHost *host, QMouseEvent *e);
     bool handle_drop_event(QAbstractHost* host, QDropEvent *e);
     bool handle_drag_enter_event(QAbstractHost *host, QDragEnterEvent *e);
     bool handle_drag_leave_event(QAbstractHost *host, QDragLeaveEvent *e);

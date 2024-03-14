@@ -8,8 +8,7 @@ class WidgetHandle: public QWidget
 {
     Q_OBJECT
 public:
-    enum Type
-    {
+    enum Type {
         LeftTop,
         Top,
         RightTop,
@@ -23,9 +22,9 @@ public:
     };
     WidgetHandle(QWidget* parent,Type t);
 
-    void    setWidget(QWidget *w);
-    void    setCurrent(bool b);
-protected:
+    void setWidget(QWidget *w);
+    void setCurrent(bool b);
+
 protected:
     void paintEvent(QPaintEvent *);
     void mousePressEvent(QMouseEvent *e);
@@ -33,18 +32,20 @@ protected:
     void mouseReleaseEvent(QMouseEvent *e);
 
 protected:
-    void    updateCursor();
-    void    trySetGeometry(QWidget *w, int x, int y, int width, int height);
-    void    tryResize(QWidget *w, int width, int height);
+    void updateCursor();
+    void trySetGeometry(QWidget *w, int x, int y, int width, int height);
+    void tryResize(QWidget *w, int width, int height);
+
 signals:
     void sizeChanged(int x,int y,int width,int height);
-    void    mouse_button_release(const QRect& old,const QRect & now);
+    void mouse_button_release(const QRect& old,const QRect & now);
+
 protected:
-    Type        m_type;
-    QWidget *   m_widget;
-    bool        m_current;
-    QPoint      m_origPressPos;
-    QRect       m_geom, m_origGeom;
+    Type m_type;
+    QWidget *m_widget;
+    bool m_current;
+    QPoint m_origPressPos;
+    QRect m_geom, m_origGeom;
 };
 
 class WidgetSelection: public QObject
@@ -67,17 +68,19 @@ protected:
     bool eventFilter(QObject *object, QEvent *event);
 
 protected slots:
-    void    changedsize(int x,int y,int width,int height);
-    void    mouse_button_release(const QRect& old,const QRect & now);
+    void changedsize(int x,int y,int width,int height);
+    void mouse_button_release(const QRect& old,const QRect & now);
+
 signals:
     void sizeChanged(QWidget* wid,const QRect& old,const QRect & now);
+
 protected:
     WidgetHandle *m_handles[WidgetHandle::TypeCount];
-    QWidget     *m_widget;
-    QWidget     *m_formWindow;
+    QWidget *m_widget;
+    QWidget *m_formWindow;
 };
 
-class Selection :   public QObject
+class Selection : public QObject
 {
     Q_OBJECT
 public:
@@ -86,7 +89,7 @@ public:
 
     void clear();
 
-    void  clearSelectionPool();
+    void clearSelectionPool();
 
     void repaintSelection(QWidget *w);
     void repaintSelection();
@@ -106,20 +109,19 @@ public:
     void hide(QWidget *w);
     void show(QWidget *w);
 
-
     void setCurrent(QWidget *w);
+
 signals:
     void sizeChanged(QWidget* wid,const QRect& old,const QRect & now);
 
 private:
-
     typedef QList<WidgetSelection *> SelectionPool;
     SelectionPool m_selectionPool;
 
     typedef QHash<QWidget *, WidgetSelection *> SelectionHash;
     SelectionHash m_usedSelections;
-    WidgetSelection *       m_current;
-    QWidget*                m_formwindow;
+    WidgetSelection *m_current;
+    QWidget *m_formWindow;
 };
 
 #endif // QSELECTWIDGET_H

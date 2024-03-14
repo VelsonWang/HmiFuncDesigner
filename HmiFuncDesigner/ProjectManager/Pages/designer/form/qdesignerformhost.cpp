@@ -16,7 +16,16 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QDebug>
+#include <cmath>
 
+static QRect scaleRect(const QRect &rect, float ratio)
+{
+    int x = rect.x() * ratio;
+    int y = rect.y() * ratio;
+    int width = rect.width() * ratio;
+    int height = rect.height() * ratio;
+    return QRect(x, y, width, height);
+}
 QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
     QObject(parent),
     m_root_host(host),
@@ -30,7 +39,7 @@ QDesignerFormHost::QDesignerFormHost(QAbstractHost *host, QWidget *parent):
     connect(m_root_host, SIGNAL(notifyInsertChildren(QList<QAbstractHost*>, QList<int>)),
             this, SLOT(insert_host_slot(QList<QAbstractHost*>, QList<int>)));
     m_widget_to_host.insert(m_root_host->getObject(), m_root_host);
-    install_all_event(m_root_host);
+    installAllEvent(m_root_host);
 
     QList<QAbstractHost*> children = m_root_host->getChildren();
 
@@ -88,7 +97,7 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
             case QEvent::MouseMove:
                 return handleMouseMoveEvent(h, (QMouseEvent*)e);
             case QEvent::MouseButtonDblClick:
-                return handle_mouse_db_clicked_event(h, (QMouseEvent*)e);
+                return handleMouseDoubleClickedEvent(h, (QMouseEvent*)e);
             case QEvent::DragEnter:
                 return handle_drag_enter_event(h, (QDragEnterEvent*)e);
             case QEvent::DragLeave:
@@ -120,11 +129,12 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
                             QAbstractHost *host = m_widget_to_host.value(widgetObj);
                             XMLObject *pChildObj = new XMLObject(&xmlObj);
                             host->toObject(pChildObj);
-                            int x = (widgetObj->x() + widgetObj->width()) / 2;
+                            QRect re = host->getPropertyValue("geometry").toRect();
+                            int x = re.x() + re.width() / 2;
                             if(pt.x() < x) {
                                 pt.setX(x);
                             }
-                            int y = (widgetObj->y() + widgetObj->height()) / 2;
+                            int y = re.y() + re.height() / 2;
                             if(pt.y() < y) {
                                 pt.setY(y);
                             }
@@ -147,6 +157,7 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
                         QAbstractHost* pHostObj = QHostFactory::createHost(xmlHost);
                         if(pHostObj != NULL) {
                             pHostObj->fromObject(xmlHost);
+                            pHostObj->setDefault();
                             pHostObj->setID(QString::number(pHostObj->allocID()));
                             QRect re = pHostObj->getPropertyValue("geometry").toRect();
                             re.moveTo(pos);
@@ -174,6 +185,68 @@ bool QDesignerFormHost::eventFilter(QObject *o, QEvent *e)
                 }
                 if(hosts.size() > 0) {
                     emit remove(hosts);
+                }
+            } else if(keyEvent->key() == Qt::Key_Left) { //左移
+                if(m_selection->selectedWidgets().size() > 0) {
+                    QUndoCommand *cmd = new QUndoCommand;
+                    foreach(QWidget* widgetObj, m_selection->selectedWidgets()) {
+                        QAbstractHost *hostObj = m_widget_to_host.value(widgetObj);
+                        QRect rect = hostObj->getPropertyValue("geometry").toRect();
+                        QRect oldRect = rect;
+                        rect.moveLeft(rect.left() - 5);
+                        new QPropertyChangedUndoCommand(hostObj->getID(), "geometry", oldRect, rect, cmd);
+                    }
+                    if(cmd->childCount() > 0) {
+                        m_undo_stack->push(cmd);
+                    } else {
+                        delete cmd;
+                    }
+                }
+            } else if(keyEvent->key() == Qt::Key_Right) { //右移
+                if(m_selection->selectedWidgets().size() > 0) {
+                    QUndoCommand *cmd = new QUndoCommand;
+                    foreach(QWidget* widgetObj, m_selection->selectedWidgets()) {
+                        QAbstractHost *hostObj = m_widget_to_host.value(widgetObj);
+                        QRect rect = hostObj->getPropertyValue("geometry").toRect();
+                        QRect oldRect = rect;
+                        rect.moveLeft(rect.left() + 5);
+                        new QPropertyChangedUndoCommand(hostObj->getID(), "geometry", oldRect, rect, cmd);
+                    }
+                    if(cmd->childCount() > 0) {
+                        m_undo_stack->push(cmd);
+                    } else {
+                        delete cmd;
+                    }
+                }
+            } else if(keyEvent->key() == Qt::Key_Up) { //上移
+                if(m_selection->selectedWidgets().size() > 0) {
+                    QUndoCommand *cmd = new QUndoCommand;
+                    foreach(QWidget* widgetObj, m_selection->selectedWidgets()) {
+                        QAbstractHost *hostObj = m_widget_to_host.value(widgetObj);
+                        QRect rect = hostObj->getPropertyValue("geometry").toRect();
+                        QRect oldRect = rect;
+                        rect.moveTop(rect.top() - 5);
+                        new QPropertyChangedUndoCommand(hostObj->getID(), "geometry", oldRect, rect, cmd);
+                    }
+                    if(cmd->childCount() > 0) {
+                        m_undo_stack->push(cmd);
+                    } else {
+                        delete cmd;
+                    }
+                }
+            } else if(keyEvent->key() == Qt::Key_Down) { //下移
+                QUndoCommand *cmd = new QUndoCommand;
+                foreach(QWidget* widgetObj, m_selection->selectedWidgets()) {
+                    QAbstractHost *hostObj = m_widget_to_host.value(widgetObj);
+                    QRect rect = hostObj->getPropertyValue("geometry").toRect();
+                    QRect oldRect = rect;
+                    rect.moveTop(rect.top() + 5);
+                    new QPropertyChangedUndoCommand(hostObj->getID(), "geometry", oldRect, rect, cmd);
+                }
+                if(cmd->childCount() > 0) {
+                    m_undo_stack->push(cmd);
+                } else {
+                    delete cmd;
                 }
             }
             return QObject::eventFilter(o, e);
@@ -250,7 +323,7 @@ bool QDesignerFormHost::handlePaintEvent(QAbstractHost *host, QPaintEvent *e)
 
 bool QDesignerFormHost::handleMousePressEvent(QAbstractHost *host, QMouseEvent *e)
 {
-    if(m_root_host == host) {
+    if(m_root_host == host && e->button() == Qt::LeftButton) { //鼠标左键按下选择控件
         m_clickPoint = e->pos();
         m_rubber->setGeometry(QRect(m_clickPoint, QSize()));
         m_rubber->show();
@@ -342,7 +415,7 @@ bool QDesignerFormHost::handleMousePressEvent(QAbstractHost *host, QMouseEvent *
     if(m_menu && !m_menu->isEmpty() && e->button() == Qt::RightButton) {
         m_actCopy->setVisible(m_selection->selectedWidgets().size() > 0);
         m_actPaste->setVisible(!QApplication::clipboard()->text().trimmed().isEmpty());
-        m_actPaste->setProperty("pos", e->pos());
+        m_actPaste->setProperty("pos", QPoint(e->pos().x()*1.0/QAbstractHost::m_zoomRatio, e->pos().y()*1.0/QAbstractHost::m_zoomRatio));
         m_actDelete->setVisible(m_selection->selectedWidgets().size() > 0);
         m_menu->move(e->globalPos());
         m_menu->exec();
@@ -380,6 +453,7 @@ void QDesignerFormHost::slotMenuAction()
                 QAbstractHost* pHostObj = QHostFactory::createHost(xmlHost);
                 if(pHostObj != NULL) {
                     pHostObj->fromObject(xmlHost);
+                    pHostObj->setDefault();
                     pHostObj->setID(QString::number(pHostObj->allocID()));
                     QRect re = pHostObj->getPropertyValue("geometry").toRect();
                     re.moveTo(pos);
@@ -437,7 +511,7 @@ bool QDesignerFormHost::handleMouseReleaseEvent(QAbstractHost *host, QMouseEvent
                 continue;
             }
             QWidget* wid = (QWidget*)obj;
-            if(!(re & wid->geometry()).isNull()) {
+            if(!(re & scaleRect(h->getPropertyValue("geometry").toRect(), QAbstractHost::m_zoomRatio)).isNull()) {
                 m_selection->addWidget(wid);
             }
         }
@@ -484,9 +558,10 @@ bool QDesignerFormHost::handleMouseMoveEvent(QAbstractHost *host, QMouseEvent *e
     return true;
 }
 
-bool QDesignerFormHost::handle_mouse_db_clicked_event(QAbstractHost *host, QMouseEvent *)
+bool QDesignerFormHost::handleMouseDoubleClickedEvent(QAbstractHost *host, QMouseEvent *e)
 {
     if(host != m_root_host) {
+        host->handleDoubleClickedEvent(e);
     }
     return true;
 }
@@ -546,7 +621,9 @@ bool QDesignerFormHost::handle_drop_event(QAbstractHost *host, QDropEvent *e)
             QAbstractHost *h = item->host();
             QRect re = h->getPropertyValue("geometry").toRect();
             QRect new_re = re;
-            new_re.moveTo(e->pos() - item->hotSpot());
+            QPoint tmpPt = e->pos() - item->hotSpot();
+            QPoint pt(1.0 * tmpPt.x() / QAbstractHost::m_zoomRatio, 1.0 * tmpPt.y() / QAbstractHost::m_zoomRatio);
+            new_re.moveTo(pt);
             new QPropertyChangedUndoCommand(h->getID(), "geometry", re, new_re, cmd);
             if(h->getParent() != host) {
                 new QHostParentChangedUndoCommand(h, h->getParent(),
@@ -606,7 +683,7 @@ QAbstractHost* QDesignerFormHost::get_root_host()
     return m_root_host;
 }
 
-void QDesignerFormHost::set_select_widget(QAbstractHost *host)
+void QDesignerFormHost::selectHostWidget(QAbstractHost *host)
 {
     select_widget(NULL);
     if(m_root_host != host) {
@@ -614,7 +691,7 @@ void QDesignerFormHost::set_select_widget(QAbstractHost *host)
     }
 }
 
-void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &value)
+void QDesignerFormHost::propertyEdited(QAbstractProperty *pro, const QVariant &value)
 {
     if(pro == NULL) {
         return;
@@ -637,8 +714,7 @@ void QDesignerFormHost::property_edited(QAbstractProperty *pro, const QVariant &
         foreach(QWidget* wid, m_selection->selectedWidgets()) {
             QAbstractHost* temp = m_widget_to_host.value(wid);
             list.removeAll(temp);
-            QAbstractProperty *p1;
-            p1 = temp->getProperty(name);
+            QAbstractProperty *p1 = temp->getProperty(name);
             if(p1 != NULL && p1->getObjectProperty("type").toString() == pro->getObjectProperty("type").toString()) {
                 list.append(temp);
             }
@@ -664,20 +740,30 @@ void QDesignerFormHost::setUndoStack(QUndoStack *stack)
     m_undo_stack = stack;
 }
 
-void QDesignerFormHost::same_left()
+void QDesignerFormHost::sameLeft()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    //查找最左的坐标值
+    qint32 minLeft = 0x7fffffff;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        if(re.x() < minLeft) {
+            minLeft = re.x();
+        }
+    }
+
     QUndoCommand *cmd = new QUndoCommand;
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.moveTo(base_rect.left(), re.top());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.moveTo(minLeft, re.top());
+        if(re != old) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -687,20 +773,30 @@ void QDesignerFormHost::same_left()
     }
 }
 
-void QDesignerFormHost::same_top()
+void QDesignerFormHost::sameTop()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    //查找最上的坐标值
+    qint32 minTop = 0x7fffffff;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        if(re.y() < minTop) {
+            minTop = re.y();
+        }
+    }
+
     QUndoCommand *cmd = new QUndoCommand;
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.moveTo(re.left(), base_rect.top());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.moveTo(re.left(), minTop);
+        if(re != old) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -710,20 +806,30 @@ void QDesignerFormHost::same_top()
     }
 }
 
-void QDesignerFormHost::same_right()
+void QDesignerFormHost::sameRight()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    //查找最右的坐标值
+    qint32 maxRight = 0x00;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        if((re.x() + re.width()) > maxRight) {
+            maxRight = re.x() + re.width();
+        }
+    }
+
     QUndoCommand *cmd = new QUndoCommand;
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.moveTo(base_rect.left() + base_rect.width() - re.width(), re.top());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.moveTo(maxRight - re.width(), re.top());
+        if(re != old) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -733,20 +839,30 @@ void QDesignerFormHost::same_right()
     }
 }
 
-void QDesignerFormHost::same_bottom()
+void QDesignerFormHost::sameBottom()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    //查找最下的坐标值
+    qint32 maxBottom = 0x00;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        if((re.y() + re.height()) > maxBottom) {
+            maxBottom = re.y() + re.height();
+        }
+    }
+
     QUndoCommand *cmd = new QUndoCommand;
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.moveTo(re.left(), base_rect.top() + base_rect.height() - re.height());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.moveTo(re.left(), maxBottom - re.height());
+        if(re != old) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -756,20 +872,25 @@ void QDesignerFormHost::same_bottom()
     }
 }
 
-void QDesignerFormHost::same_width()
+void QDesignerFormHost::sameWidth()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    QAbstractHost *baseHostObj = m_widget_to_host.value(m_selection->current());
+    QRect baseRect;
+    if(baseHostObj) {
+        baseRect = baseHostObj->getPropertyValue("geometry").toRect();
+    }
     QUndoCommand *cmd = new QUndoCommand;
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.setWidth(base_rect.width());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.setWidth(baseRect.width());
+        if(re != old && !baseRect.isNull()) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -779,21 +900,25 @@ void QDesignerFormHost::same_width()
     }
 }
 
-void QDesignerFormHost::same_height()
+void QDesignerFormHost::sameHeight()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    QAbstractHost *baseHostObj = m_widget_to_host.value(m_selection->current());
+    QRect baseRect;
+    if(baseHostObj) {
+        baseRect = baseHostObj->getPropertyValue("geometry").toRect();
+    }
     QUndoCommand *cmd = new QUndoCommand;
-
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.setHeight(base_rect.height());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.setHeight(baseRect.height());
+        if(re != old && !baseRect.isNull()) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -803,22 +928,26 @@ void QDesignerFormHost::same_height()
     }
 }
 
-void QDesignerFormHost::same_geometry()
+void QDesignerFormHost::sameGeometry()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    QAbstractHost *baseHostObj = m_widget_to_host.value(m_selection->current());
+    QRect baseRect;
+    if(baseHostObj) {
+        baseRect = baseHostObj->getPropertyValue("geometry").toRect();
+    }
     QUndoCommand *cmd = new QUndoCommand;
-
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.setWidth(base_rect.width());
-        re.setHeight(base_rect.height());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.setWidth(baseRect.width());
+        re.setHeight(baseRect.height());
+        if(re != old && !baseRect.isNull()) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -828,20 +957,25 @@ void QDesignerFormHost::same_geometry()
     }
 }
 
-void QDesignerFormHost::same_v_centre()
+void QDesignerFormHost::sameVCenter()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    QAbstractHost *baseHostObj = m_widget_to_host.value(m_selection->current());
+    QRect baseRect;
+    if(baseHostObj) {
+        baseRect = baseHostObj->getPropertyValue("geometry").toRect();
+    }
     QUndoCommand *cmd = new QUndoCommand;
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.moveTo(base_rect.left() + (base_rect.width() - re.width()) / 2, re.top());
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.moveTo(baseRect.left() + (baseRect.width() - re.width()) / 2, re.top());
+        if(re != old && !baseRect.isNull()) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
@@ -851,33 +985,152 @@ void QDesignerFormHost::same_v_centre()
     }
 }
 
-void QDesignerFormHost::same_h_centre()
+void QDesignerFormHost::sameHCenter()
 {
     if(m_selection->selectedWidgets().size() <= 1) {
         return;
     }
 
-    QRect base_rect = m_selection->current()->geometry();
+    QAbstractHost *baseHostObj = m_widget_to_host.value(m_selection->current());
+    QRect baseRect;
+    if(baseHostObj) {
+        baseRect = baseHostObj->getPropertyValue("geometry").toRect();
+    }
     QUndoCommand *cmd = new QUndoCommand;
     foreach(QWidget* wid, m_selection->selectedWidgets()) {
         QAbstractHost *h = m_widget_to_host.value(wid);
-        QRect re = wid->geometry();
-        re.moveTo(re.left(), base_rect.top() + (base_rect.height() - re.height()) / 2);
-        if(re != wid->geometry()) {
-            new QPropertyChangedUndoCommand(h->getID(), "geometry", wid->geometry(), re, cmd);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        QRect old = re;
+        re.moveTo(re.left(), baseRect.top() + (baseRect.height() - re.height()) / 2);
+        if(re != old && !baseRect.isNull()) {
+            new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
         }
     }
     if(cmd->childCount() > 0) {
         m_undo_stack->push(cmd);
     } else {
         delete cmd;
+    }
+}
+
+bool rectXLessThan(QAbstractHost *h1, QAbstractHost *h2)
+{
+    return h1->getPropertyValue("geometry").toRect().x() < h2->getPropertyValue("geometry").toRect().x();
+}
+
+void QDesignerFormHost::horizontalUniformDistribution()
+{
+    int selectCnt = m_selection->selectedWidgets().size();
+    if(selectCnt < 3) {
+        return;
+    }
+
+    QList<QAbstractHost *> hostList;
+    qint32 minLeft = 0x7fffffff;
+    qint32 maxRight = 0x00;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        if(re.x() < minLeft) {
+            minLeft = re.x();
+        }
+        if((re.x() + re.width()) > maxRight) {
+            maxRight = re.x() + re.width();
+        }
+        hostList.append(h);
+    }
+
+    //计算控件间的间隔距离
+    int totalWidth = maxRight - minLeft;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        totalWidth -= re.width();
+    }
+    int space = 1.0 * totalWidth / (selectCnt - 1);
+    qSort(hostList.begin(), hostList.end(), rectXLessThan);
+    if(space > 0) {
+        QUndoCommand *cmd = new QUndoCommand;
+        foreach(QAbstractHost *h, hostList) {
+            QRect re = h->getPropertyValue("geometry").toRect();
+            QRect old = re;
+            re.moveLeft(minLeft);
+            if(re != old) {
+                new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
+            }
+            minLeft += re.width() + space;
+        }
+        if(cmd->childCount() > 0) {
+            m_undo_stack->push(cmd);
+        } else {
+            delete cmd;
+        }
+    }
+}
+
+bool rectYLessThan(QAbstractHost *h1, QAbstractHost *h2)
+{
+    return h1->getPropertyValue("geometry").toRect().y() < h2->getPropertyValue("geometry").toRect().y();
+}
+
+void QDesignerFormHost::verticalUniformDistribution()
+{
+    int selectCnt = m_selection->selectedWidgets().size();
+    if(selectCnt < 3) {
+        return;
+    }
+
+    QList<QAbstractHost *> hostList;
+    qint32 minTop = 0x7fffffff;
+    qint32 maxBottom = 0x00;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        if(re.y() < minTop) {
+            minTop = re.y();
+        }
+        if((re.y() + re.height()) > maxBottom) {
+            maxBottom = re.y() + re.height();
+        }
+        hostList.append(h);
+    }
+
+    //计算控件间的间隔距离
+    int totalHeight = maxBottom - minTop;
+    foreach(QWidget* wid, m_selection->selectedWidgets()) {
+        QAbstractHost *h = m_widget_to_host.value(wid);
+        QRect re = h->getPropertyValue("geometry").toRect();
+        totalHeight -= re.height();
+    }
+    int space = 1.0 * totalHeight / (selectCnt - 1);
+    qSort(hostList.begin(), hostList.end(), rectYLessThan);
+
+    if(space > 0) {
+        QUndoCommand *cmd = new QUndoCommand;
+        foreach(QAbstractHost *h, hostList) {
+            QRect re = h->getPropertyValue("geometry").toRect();
+            QRect old = re;
+            re.moveTop(minTop);
+            if(re != old) {
+                new QPropertyChangedUndoCommand(h->getID(), "geometry", old, re, cmd);
+            }
+            minTop += re.height() + space;
+        }
+        if(cmd->childCount() > 0) {
+            m_undo_stack->push(cmd);
+        } else {
+            delete cmd;
+        }
     }
 }
 
 void QDesignerFormHost::form_size_changed(const QRect &old, const QRect &now)
 {
     if(old != now) {
-        QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(m_root_host->getID(), "geometry", old, now);
+        QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(m_root_host->getID(),
+                                                                           "geometry",
+                                                                           scaleRect(old, 1.0/QAbstractHost::m_zoomRatio),
+                                                                           scaleRect(now, 1.0/QAbstractHost::m_zoomRatio));
         m_undo_stack->push(cmd);
     }
 }
@@ -887,7 +1140,10 @@ void QDesignerFormHost::widget_size_changed(QWidget* wid, const QRect &old, cons
     if(old != now) {
         QAbstractHost *h = m_widget_to_host.value(wid);
         if(h != NULL) {
-            QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(h->getID(), "geometry", old, now);
+            QPropertyChangedUndoCommand *cmd = new QPropertyChangedUndoCommand(h->getID(),
+                                                                               "geometry",
+                                                                               scaleRect(old, 1.0/QAbstractHost::m_zoomRatio),
+                                                                               scaleRect(now, 1.0/QAbstractHost::m_zoomRatio));
             m_undo_stack->push(cmd);
         }
     }
@@ -900,7 +1156,7 @@ void QDesignerFormHost::insert_host_slot(QList<QAbstractHost *> hosts, QList<int
     QList<QAbstractHost*> c;
     for(int i = 0; i < count; i++) {
         QAbstractHost* h = hosts.at(i);
-        install_all_event(h);
+        installAllEvent(h);
         connect(h, SIGNAL(notifyInsertChildren(QList<QAbstractHost*>, QList<int>)),
                 this, SLOT(insert_host_slot(QList<QAbstractHost*>, QList<int>)));
         connect(h, SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
@@ -932,7 +1188,7 @@ void QDesignerFormHost::remove_host_slot(QList<QAbstractHost *> hosts)
     select_widget(NULL);
     foreach(QAbstractHost* h, hosts) {
         QList<QAbstractHost*> children = h->getChildren();
-        remove_all_event(h);
+        removeAllEvent(h);
         disconnect(h, SIGNAL(notifyInsertChildren(QList<QAbstractHost*>, QList<int>)),
                    this, SLOT(insert_host_slot(QList<QAbstractHost*>, QList<int>)));
         disconnect(h, SIGNAL(notifyRemoveChildren(QList<QAbstractHost*>)),
@@ -950,7 +1206,7 @@ void QDesignerFormHost::remove_host_slot(QList<QAbstractHost *> hosts)
     }
 }
 
-void QDesignerFormHost::install_all_event(QAbstractHost *host)
+void QDesignerFormHost::installAllEvent(QAbstractHost *host)
 {
     QObjectList list;
     list.append(host->getObject());
@@ -965,7 +1221,7 @@ void QDesignerFormHost::install_all_event(QAbstractHost *host)
     }
 }
 
-void QDesignerFormHost::remove_all_event(QAbstractHost *host)
+void QDesignerFormHost::removeAllEvent(QAbstractHost *host)
 {
     QObjectList list;
     list.append(host->getObject());
@@ -976,5 +1232,53 @@ void QDesignerFormHost::remove_all_event(QAbstractHost *host)
         }
         obj->removeEventFilter(this);
         list += obj->children();
+    }
+}
+
+void QDesignerFormHost::onZoom()
+{
+    QWidget *widgetObj = (QWidget*)m_root_host->getObject();
+    if(widgetObj) {
+        QVariant v = m_root_host->getPropertyValue("geometry");
+        QRect rect = v.toRect();
+        int x = floor(rect.x() * QAbstractHost::m_zoomRatio);
+        int y = floor(rect.y() * QAbstractHost::m_zoomRatio);
+        int width = floor(rect.width() * QAbstractHost::m_zoomRatio);
+        int height = floor(rect.height() * QAbstractHost::m_zoomRatio);
+        QRect newRect(x, y, width, height);
+        widgetObj->setProperty("geometry", newRect);
+
+        v = m_root_host->getPropertyValue("font");
+        QFont font = qvariant_cast<QFont>(v);
+        if(font.family() != qApp->font().family()) {
+            font.family() = qApp->font().family();
+        }
+        font.setPointSize(floor(font.pointSize() * QAbstractHost::m_zoomRatio));
+        widgetObj->setProperty("font", font);
+    }
+
+    QList<QAbstractHost*> children = m_root_host->getChildren();
+    while(children.size() > 0) {
+        QAbstractHost *pHostObj = children.takeFirst();
+        children += pHostObj->getChildren();
+        widgetObj = (QWidget*)pHostObj->getObject();
+        if(widgetObj) {
+            QVariant v = pHostObj->getPropertyValue("geometry");
+            QRect rect = v.toRect();
+            int x = floor(rect.x() * QAbstractHost::m_zoomRatio);
+            int y = floor(rect.y() * QAbstractHost::m_zoomRatio);
+            int width = floor(rect.width() * QAbstractHost::m_zoomRatio);
+            int height = floor(rect.height() * QAbstractHost::m_zoomRatio);
+            QRect newRect(x, y, width, height);
+            widgetObj->setProperty("geometry", newRect);
+
+            v = pHostObj->getPropertyValue("font");
+            QFont font = qvariant_cast<QFont>(v);
+            if(font.family() != qApp->font().family()) {
+                font.family() = qApp->font().family();
+            }
+            font.setPointSize(floor(font.pointSize() * QAbstractHost::m_zoomRatio));
+            widgetObj->setProperty("font", font);
+        }
     }
 }

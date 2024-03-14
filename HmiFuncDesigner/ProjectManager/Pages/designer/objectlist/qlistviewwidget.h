@@ -16,16 +16,19 @@ class QListViewWidget : public QWidget
 public:
     explicit QListViewWidget(QWidget *parent = 0);
     ~QListViewWidget();
-    void    set_text(const QString &text);
-    void    set_icon(const QString &icon);
+    void set_text(const QString &text);
+    void set_icon(const QString &icon);
+
 protected:
-    void    enterEvent(QEvent *);
-    void    leaveEvent(QEvent *);
+    void enterEvent(QEvent *);
+    void leaveEvent(QEvent *);
+
 signals:
-    void    remove();
+    void remove();
+
 private:
     Ui::QListViewWidget *ui;
-    QToolBarButton      *m_remove_button;
+    QToolBarButton *m_removeButton;
 };
 
 #endif // QLISTVIEWWIDGET_H

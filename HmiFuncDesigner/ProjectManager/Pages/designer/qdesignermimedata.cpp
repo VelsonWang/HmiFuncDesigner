@@ -21,7 +21,7 @@ QDesignerDnDItem::QDesignerDnDItem(DropType type) :
 {
 }
 
-void QDesignerDnDItem::init( QAbstractHost *host, const QPoint &global_mouse_pos)
+void QDesignerDnDItem::init(QAbstractHost *host, const QPoint &global_mouse_pos)
 {
     Q_ASSERT(host != 0);
     m_host = host;

@@ -85,6 +85,12 @@ bool QDesignerWidget::event(QEvent *ev)
         return true;
     } else if(ev->type() == UserEvent::EVT_USER_HIDE_UPDATE) {
         return true;
+    } else if(ev->type() == UserEvent::EVT_USER_ZOOM_RATIO) {
+        UserEvent *pEvObj = dynamic_cast<UserEvent *>(ev);
+        if(pEvObj) {
+            m_formWidgetView->onZoom();
+        }
+        return true;
     }
     return QWidget::event(ev);
 }

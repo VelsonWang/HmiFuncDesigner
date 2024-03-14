@@ -17,28 +17,33 @@ public:
     explicit QFormListWidget(QWidget *parent = 0);
     ~QFormListWidget();
 
-    void insert_form(QAbstractHost *host,int index=-1);
-    void remove_form(QAbstractHost* host);
-    void show_form(QAbstractHost* host);
+    void insertForm(QAbstractHost *host,int index=-1);
+    void removeForm(QAbstractHost* host);
+    void showForm(QAbstractHost* host);
     void setUndoStack(QUndoStack* stack);
     void clear();
-    void set_select(QAbstractHost* host);
+    void selectHost(QAbstractHost* host);
+    void onZoom();
 
 public slots:
-    void property_edit_slot(QAbstractProperty* pro, const QVariant& value);
-    void same_left();
-    void same_top();
-    void same_right();
-    void same_bottom();
-    void same_width();
-    void same_height();
-    void same_geometry();
-    void same_v_centre();
-    void same_h_centre();
+    void slotPropertyEdit(QAbstractProperty* pro, const QVariant& value);
+    void sameLeft();
+    void sameTop();
+    void sameRight();
+    void sameBottom();
+    void sameWidth();
+    void sameHeight();
+    void sameGeometry();
+    void sameVCenter();
+    void sameHCenter();
+    void horizontalUniformDistribution();
+    void verticalUniformDistribution();
+    void redo();
+    void undo();
 
 protected slots:
-    void insert_page_slot(QAbstractHost *host);
-    void remove_page_slot(QAbstractHost *host);
+    void slotInsertPage(QAbstractHost *host);
+    void slotRemovePage(QAbstractHost *host);
 
 private slots:
     void onSelect(QAbstractHost* host);

@@ -12,27 +12,27 @@ class FormResizer : public QWidget
 public:
     explicit FormResizer(QWidget *parent = 0);
     ~FormResizer();
-    void    updateGeometry();
-    void    updateFormGeometry();
-    void    update();
-    void    setWidget(QWidget* wid);
+    void updateGeometry();
+    void updateFormGeometry();
+    void update();
+    void setWidget(QWidget* wid);
 
-    void    showHandle();
-    void    hideHandle();
+    void showHandle();
+    void hideHandle();
 
-    bool    isHandleVisible();
-
+    bool isHandleVisible();
 
 protected:
-    void    resizeEvent(QResizeEvent *);
+    void resizeEvent(QResizeEvent *);
+
 signals:
-    void    size_changed(const QRect &,const QRect &);
+    void size_changed(const QRect &,const QRect &);
+
 protected:
     SizeHandleRect  *m_handles[8];
-    QWidget         *m_widget;
-    QFrame          *m_frame;
-
-    bool            m_handleVisible;
+    QWidget *m_widget;
+    QFrame *m_frame;
+    bool m_handleVisible;
 };
 
 #endif // FORMRESIZER_H
