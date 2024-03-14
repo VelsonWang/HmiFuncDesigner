@@ -1,16 +1,14 @@
 #include "widgethost.h"
-
 #include "formresizer.h"
-
 #include <QPainter>
 
-WidgetHost::WidgetHost(QWidget *parent):
+WidgetHost::WidgetHost(QWidget *parent) :
     QScrollArea(parent),
     m_formResizer(new FormResizer(this))
 {
     setWidget(m_formResizer);
     setFrameStyle(QFrame::NoFrame);
-    connect(m_formResizer,SIGNAL(size_changed(QRect,QRect)),this,SIGNAL(size_changed(QRect,QRect)));
+    connect(m_formResizer, SIGNAL(size_changed(QRect, QRect)), this, SIGNAL(size_changed(QRect, QRect)));
 }
 
 WidgetHost::~WidgetHost()
@@ -35,13 +33,13 @@ bool WidgetHost::isHandleVisible()
 void WidgetHost::setFormWidget(QWidget *widget)
 {
     this->setFocusProxy(widget);
-    m_formwidget=widget;
+    m_formWidget = widget;
     m_formResizer->setWidget(widget);
 }
 
 QWidget *WidgetHost::formWidget()
 {
-    return m_formwidget;
+    return m_formWidget;
 }
 
 void WidgetHost::updateFormGeometry()

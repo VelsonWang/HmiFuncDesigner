@@ -45,5 +45,7 @@ void QObjectListWidget::setUndoStack(QUndoStack *stack)
 void QObjectListWidget::remove(QList<QAbstractHost*> hosts)
 {
     //qDebug() << __FILE__ << __LINE__ << __FUNCTION__;
-    m_object_list->remove(hosts);
+    if(hosts.size() > 0) {
+        m_object_list->remove(hosts);
+    }
 }

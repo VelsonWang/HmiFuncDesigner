@@ -22,5 +22,7 @@
         <file>images/same-rect.png</file>
         <file>images/removesubmitfield.png</file>
 		<file>images/check.png</file>
+		<file>images/redo.png</file>
+		<file>images/undo.png</file>
     </qresource>
 </RCC>

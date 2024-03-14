@@ -14,8 +14,11 @@
 #include <QTimer>
 #include <QMetaMethod>
 #include <QScriptEngine>
+#include <QApplication>
+#include <cmath>
 
 quint64 QAbstractHost::m_nextAllocID = 1;
+float QAbstractHost::m_zoomRatio = 1.0;
 
 QAbstractHost::QAbstractHost(QAbstractHost *parent) :
     QObject(parent),
@@ -180,9 +183,29 @@ void QAbstractHost::setPropertyValue(const QString &name, const QVariant &value)
         while(p->getParent() != NULL) {
             p = p->getParent();
         }
-        m_object->setProperty(p->getObjectProperty("name").toByteArray(), p->getValue());
-        if(pro->getAttribute("group") == "Style Sheet") {
-            makeStyleSheet();
+
+        QString targetPropertyName = p->getObjectProperty("name").toString().toLower();
+        //字体和控件大小缩放处理
+        if(targetPropertyName == "geometry") {
+            QRect rect = p->getValue().toRect();
+            int x = floor(rect.x() * QAbstractHost::m_zoomRatio);
+            int y = floor(rect.y() * QAbstractHost::m_zoomRatio);
+            int width = floor(rect.width() * QAbstractHost::m_zoomRatio);
+            int height = floor(rect.height() * QAbstractHost::m_zoomRatio);
+            QRect newRect(x, y, width, height);
+            m_object->setProperty(p->getObjectProperty("name").toByteArray(), newRect);
+        } else if(targetPropertyName == "font") {
+            QFont font = qvariant_cast<QFont>(p->getValue());
+            if(font.family() != qApp->font().family()) {
+                font.family() = qApp->font().family();
+            }
+            font.setPointSize(floor(font.pointSize() * QAbstractHost::m_zoomRatio));
+            m_object->setProperty(p->getObjectProperty("name").toByteArray(), font);
+        } else {
+            m_object->setProperty(p->getObjectProperty("name").toByteArray(), p->getValue());
+        	if(pro->getAttribute("group") == "Style Sheet") {
+            	makeStyleSheet();
+        	}
         }
     }
 }
@@ -290,6 +313,7 @@ void QAbstractHost::initProperty()
         pro->setAttribute("show_name", tr("名称")); // tr("Name")
         pro->setAttribute("group", "Attributes");
         pro->setAttribute(ATTR_NEEDSAVE, true);
+        pro->setAttribute(ATTR_EDITABLE, false);
         insertProperty(pro);
     }
 }
@@ -427,10 +451,29 @@ void QAbstractHost::init()
     if(m_object != NULL) {
         m_object->installEventFilter(this);
         foreach(QAbstractProperty* pro, m_propertys) {
-            pro->setValue(m_object->property(pro->getObjectProperty("name").toByteArray()));
+            QVariant v = m_object->property(pro->getObjectProperty("name").toByteArray());
+            QString propertyName = pro->getObjectProperty("name").toString().toLower();
+            //字体和控件大小缩放处理
+            if(propertyName == "geometry") {
+                QRect rect = v.toRect();
+                int x = ceil(rect.x() / QAbstractHost::m_zoomRatio);
+                int y = ceil(rect.y() / QAbstractHost::m_zoomRatio);
+                int width = ceil(rect.width() / QAbstractHost::m_zoomRatio);
+                int height = ceil(rect.height() / QAbstractHost::m_zoomRatio);
+                QRect newRect(x, y, width, height);
+                pro->setValue(newRect);
+            } else if(propertyName == "font") {
+                QFont font = qvariant_cast<QFont>(v);
+                if(font.family() != qApp->font().family()) {
+                    font.family() = qApp->font().family();
+                }
+                font.setPointSize(ceil(font.pointSize() / QAbstractHost::m_zoomRatio));
+                pro->setValue(font);
+            } else {
+                pro->setValue(v);
+            }
         }
     }
-
 }
 
 bool QAbstractHost::eventFilter(QObject *o, QEvent *e)
@@ -539,7 +582,26 @@ void QAbstractHost::onPropertyRefresh()
     foreach(QAbstractProperty* pro, m_propertys) {
         QVariant v = m_object->property(pro->getObjectProperty("name").toByteArray());
         if(v != pro->getValue()) {
-            pro->setValue(v);
+            QString propertyName = pro->getObjectProperty("name").toString().toLower();
+            //字体和控件大小缩放处理
+            if(propertyName == "geometry") {
+                QRect rect = v.toRect();
+                int x = ceil(rect.x() / QAbstractHost::m_zoomRatio);
+                int y = ceil(rect.y() / QAbstractHost::m_zoomRatio);
+                int width = ceil(rect.width() / QAbstractHost::m_zoomRatio);
+                int height = ceil(rect.height() / QAbstractHost::m_zoomRatio);
+                QRect newRect(x, y, width, height);
+                pro->setValue(newRect);
+            } else if(propertyName == "font") {
+                QFont font = qvariant_cast<QFont>(v);
+                if(font.family() != qApp->font().family()) {
+                    font.family() = qApp->font().family();
+                }
+                font.setPointSize(ceil(font.pointSize() / QAbstractHost::m_zoomRatio));
+                pro->setValue(font);
+            } else {
+                pro->setValue(v);
+            }
         }
     }
 }

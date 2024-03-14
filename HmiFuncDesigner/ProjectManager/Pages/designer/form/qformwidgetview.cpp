@@ -47,42 +47,42 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     pActObj = core->getAction("FormManager.Same.Left");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_left()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameLeft()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.V-Center");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_v_centre()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameVCenter()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Right");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_right()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameRight()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Top");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_top()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameTop()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.H-Center");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_h_centre()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameHCenter()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Bottom");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_bottom()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameBottom()));
         pActObj->setEnabled(false);
     }
 
@@ -93,21 +93,53 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     pActObj = core->getAction("FormManager.Same.Width");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_width()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameWidth()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Height");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_height()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameHeight()));
         pActObj->setEnabled(false);
     }
 
     pActObj = core->getAction("FormManager.Same.Gemotry");
     if(pActObj != NULL) {
         list.append(pActObj);
-        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(same_geometry()));
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(sameGeometry()));
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = core->getAction("FormManager.Horizontal.UniformDistribution");
+    if(pActObj != NULL) {
+        list.append(pActObj);
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(horizontalUniformDistribution()));
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = core->getAction("FormManager.Vertical.UniformDistribution");
+    if(pActObj != NULL) {
+        list.append(pActObj);
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(verticalUniformDistribution()));
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = new QAction(this);
+    pActObj->setSeparator(true);
+    list.append(pActObj);
+
+    pActObj = core->getAction("Undo.Redo");
+    if(pActObj != NULL) {
+        list.append(pActObj);
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(redo()));
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = core->getAction("Undo.Undo");
+    if(pActObj != NULL) {
+        list.append(pActObj);
+        connect(pActObj, SIGNAL(triggered()), m_formWidget, SLOT(undo()));
         pActObj->setEnabled(false);
     }
 
@@ -128,7 +160,7 @@ QFormWidgetView::QFormWidgetView(QWidget *parent) :
     connect(m_formWidget, SIGNAL(remove(QList<QAbstractHost*>)),
             this, SIGNAL(remove(QList<QAbstractHost*>)));
     connect(this, SIGNAL(notifyPropertyEdit(QAbstractProperty*, QVariant)),
-            m_formWidget, SLOT(property_edit_slot(QAbstractProperty*, QVariant)));
+            m_formWidget, SLOT(slotPropertyEdit(QAbstractProperty*, QVariant)));
     connect(QSoftCore::getCore()->getProjectCore(), SIGNAL(notifyOpened()),
             this, SLOT(project_opened()));
     connect(QSoftCore::getCore()->getProjectCore(), SIGNAL(notifyClosed()),
@@ -146,10 +178,10 @@ void QFormWidgetView::project_opened()
 
     foreach(QAbstractHost* h, pages) {
         h->getObject()->setProperty("no-ManhattanStyle", true);
-        m_formWidget->insert_form(h);
+        m_formWidget->insertForm(h);
     }
     if(pages.size() > 0) {
-        m_formWidget->show_form(pages.first());
+        m_formWidget->showForm(pages.first());
     }
 
     QSoftCore *core = QSoftCore::getCore();
@@ -191,7 +223,6 @@ void QFormWidgetView::project_opened()
         pActObj->setEnabled(true);
     }
 
-
     pActObj = core->getAction("FormManager.Same.Bottom");
     if(pActObj != NULL) {
         pActObj->setEnabled(true);
@@ -208,6 +239,26 @@ void QFormWidgetView::project_opened()
     }
 
     pActObj = core->getAction("FormManager.Same.Gemotry");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = core->getAction("FormManager.Horizontal.UniformDistribution");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = core->getAction("FormManager.Vertical.UniformDistribution");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = core->getAction("Undo.Redo");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(true);
+    }
+
+    pActObj = core->getAction("Undo.Undo");
     if(pActObj != NULL) {
         pActObj->setEnabled(true);
     }
@@ -277,6 +328,26 @@ void QFormWidgetView::project_closed()
     if(pActObj != NULL) {
         pActObj->setEnabled(false);
     }
+
+    pActObj = core->getAction("FormManager.Horizontal.UniformDistribution");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = core->getAction("FormManager.Vertical.UniformDistribution");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = core->getAction("Undo.Redo");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(false);
+    }
+
+    pActObj = core->getAction("Undo.Undo");
+    if(pActObj != NULL) {
+        pActObj->setEnabled(false);
+    }
 }
 
 void QFormWidgetView::add_page()
@@ -293,5 +364,10 @@ void QFormWidgetView::setUndoStack(QUndoStack *stack)
 
 void QFormWidgetView::set_select(QAbstractHost *host)
 {
-    m_formWidget->set_select(host);
+    m_formWidget->selectHost(host);
+}
+
+void QFormWidgetView::onZoom()
+{
+    m_formWidget->onZoom();
 }

@@ -90,7 +90,7 @@ protected:
 
     void exec(const QString &code, const QMap<QString, QString> &param);
 
-protected:
+public:
     virtual bool handlePaintEvent(QPaintEvent* event);
     virtual bool handleFocusInEvent(QFocusEvent *event);
     virtual bool handleFocusOutEvent(QFocusEvent *event);
@@ -99,7 +99,6 @@ protected:
     virtual bool handleMouseMoveEvent(QMouseEvent* event);
     virtual bool handleDoubleClickedEvent(QMouseEvent* event);
     virtual bool handleContextMenuEvent(QContextMenuEvent *event);
-
 
 protected slots:
     void onPropertyRefresh();
@@ -132,6 +131,7 @@ protected:
 
 public:
     static quint64 m_nextAllocID;
+    static float m_zoomRatio;
 };
 
 #endif // QABSTRACTHOST_H

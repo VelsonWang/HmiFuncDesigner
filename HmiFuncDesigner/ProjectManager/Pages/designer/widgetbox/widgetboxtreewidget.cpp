@@ -15,6 +15,7 @@ public :
     QWidgetDelegate(WidgetBoxTreeWidget* view): m_view(view) {}
     void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const;
     QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const;
+
 protected:
     WidgetBoxTreeWidget *m_view;
 };
@@ -101,7 +102,7 @@ void WidgetBoxTreeWidget::addWidget(tagHostInfo *info)
     }
     QTreeWidgetItem *p = m_name_to_group.value(group);
     QTreeWidgetItem *item;
-    if(p == NULL) {
+    if(!p) {
         p = new QTreeWidgetItem(this);
         p->setText(0, group);
         p->setFlags(Qt::ItemIsEnabled);
@@ -119,7 +120,6 @@ void WidgetBoxTreeWidget::addWidget(tagHostInfo *info)
 
 void WidgetBoxTreeWidget::mousePressEvent(QMouseEvent *event)
 {
-
     QTreeWidgetItem *item = itemAt(event->pos());
 
     if(item) {
@@ -132,7 +132,7 @@ void WidgetBoxTreeWidget::mousePressEvent(QMouseEvent *event)
                 return;
             }
             tagHostInfo *info = m_item_to_info.value(item);
-            if(info != NULL) {
+            if(info) {
                 handleMousePress(info);
             }
         }
@@ -147,7 +147,7 @@ void WidgetBoxTreeWidget::handleMousePress(tagHostInfo *info)
     item_list.append(new WidgetBoxDnDItem(info->m_name, QCursor::pos()));
 
     foreach(QDesignerDnDItemInterface *item, item_list) {
-        if(item->host() == NULL) {
+        if(!item->host()) {
             return;
         }
     }

@@ -34,11 +34,11 @@ protected:
     void init(QAbstractHost *host,const QPoint &global_mouse_pos);
 
 protected:
-    const DropType  m_type;
-    const QPoint    m_globalStartPos;
-    QAbstractHost * m_host;
-    QPoint          m_hot_spot;
-    QString         m_name;
+    const DropType m_type;
+    const QPoint m_globalStartPos;
+    QAbstractHost *m_host;
+    QPoint m_hot_spot;
+    QString m_name;
 
     Q_DISABLE_COPY(QDesignerDnDItem)
 };

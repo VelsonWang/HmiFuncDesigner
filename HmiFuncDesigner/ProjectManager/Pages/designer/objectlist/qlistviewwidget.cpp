@@ -10,11 +10,11 @@ QListViewWidget::QListViewWidget(QWidget *parent) :
 
     QAction *ac = new QAction(QIcon(":/images/removesubmitfield.png"),"",this);
     ac->setToolTip("Remove");
-    m_remove_button = new QToolBarButton(ac,this);
-    ui->horizontalLayout->addWidget(m_remove_button);
+    m_removeButton = new QToolBarButton(ac, this);
+    ui->horizontalLayout->addWidget(m_removeButton);
     connect(ac, SIGNAL(triggered()), this, SIGNAL(remove()));
 
-    m_remove_button->setVisible(false);
+    m_removeButton->setVisible(false);
 }
 
 QListViewWidget::~QListViewWidget()
@@ -34,10 +34,10 @@ void QListViewWidget::set_icon(const QString &icon)
 
 void QListViewWidget::enterEvent(QEvent *)
 {
-    m_remove_button->setVisible(true);
+    m_removeButton->setVisible(true);
 }
 
 void QListViewWidget::leaveEvent(QEvent *)
 {
-    m_remove_button->setVisible(false);
+    m_removeButton->setVisible(false);
 }

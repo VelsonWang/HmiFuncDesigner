@@ -1,12 +1,9 @@
 #include "qselectwidget.h"
-
-
 #include <QPainter>
-
 #include <QMouseEvent>
 
 
-WidgetHandle::WidgetHandle(QWidget *parent, Type t):
+WidgetHandle::WidgetHandle(QWidget *parent, Type t) :
     QWidget(parent),
     m_type(t),
     m_current(false)
@@ -14,10 +11,8 @@ WidgetHandle::WidgetHandle(QWidget *parent, Type t):
     setAttribute(Qt::WA_NoChildEventsForParent);
     setMouseTracking(false);
     setAutoFillBackground(true);
-
     setBackgroundRole(QPalette::Text);
     setFixedSize(6, 6);
-
     updateCursor();
 }
 
@@ -99,26 +94,20 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
     QWidget *container = m_widget->parentWidget();
 
     const QPoint rp = container->mapFromGlobal(e->globalPos());
-    const QPoint d = rp - m_origPressPos;
+    const QPoint deltaPt = rp - m_origPressPos;
 
     const QRect pr = container->rect();
 
     switch (m_type) {
-
         case LeftTop: {
             if (rp.x() > pr.width() - 2 * width() || rp.y() > pr.height() - 2 * height()) {
                 return;
             }
-
-            int w = m_origGeom.width() - d.x();
-            m_geom.setWidth(w);
-
-            int h = m_origGeom.height() - d.y();
-            m_geom.setHeight(h);
-
+            int w = m_origGeom.width() - deltaPt.x();
+            int h = m_origGeom.height() - deltaPt.y();
+            m_geom = m_origGeom.adjusted(deltaPt.x(), deltaPt.y(), 0, 0);
             const int dx = m_widget->width() - w;
             const int dy = m_widget->height() - h;
-
             trySetGeometry(m_widget, m_widget->x() + dx, m_widget->y() + dy, w, h);
         }
         break;
@@ -127,9 +116,8 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
                 return;
             }
 
-            int h = m_origGeom.height() - d.y();
-            m_geom.setHeight(h);
-
+            int h = m_origGeom.height() - deltaPt.y();
+            m_geom = m_origGeom.adjusted(0, deltaPt.y(), 0, 0);
             const int dy = m_widget->height() - h;
             trySetGeometry(m_widget, m_widget->x(), m_widget->y() + dy, m_widget->width(), h);
         }
@@ -138,15 +126,10 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
             if (rp.x() < 2 * width() || rp.y() > pr.height() - 2 * height()) {
                 return;
             }
-
-            int h = m_origGeom.height() - d.y();
-            m_geom.setHeight(h);
-
+            int h = m_origGeom.height() - deltaPt.y();
             const int dy = m_widget->height() - h;
-
-            int w = m_origGeom.width() + d.x();
-            m_geom.setWidth(w);
-
+            int w = m_origGeom.width() + deltaPt.x();
+            m_geom = m_origGeom.adjusted(0, deltaPt.y(), deltaPt.x(), 0);
             trySetGeometry(m_widget, m_widget->x(), m_widget->y() + dy, w, h);
         }
         break;
@@ -154,10 +137,8 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
             if (rp.x() < 2 * width()) {
                 return;
             }
-
-            int w = m_origGeom.width() + d.x();
-            m_geom.setWidth(w);
-
+            int w = m_origGeom.width() + deltaPt.x();
+            m_geom = m_origGeom.adjusted(0, 0, deltaPt.x(), 0);
             tryResize(m_widget, w, m_widget->height());
         }
         break;
@@ -165,13 +146,9 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
             if (rp.x() < 2 * width() || rp.y() < 2 * height()) {
                 return;
             }
-
-            int w = m_origGeom.width() + d.x();
-            m_geom.setWidth(w);
-
-            int h = m_origGeom.height() + d.y();
-            m_geom.setHeight(h);
-
+            int w = m_origGeom.width() + deltaPt.x();
+            int h = m_origGeom.height() + deltaPt.y();
+            m_geom = m_origGeom.adjusted(0, 0, deltaPt.x(), deltaPt.y());
             tryResize(m_widget, w, h);
         }
         break;
@@ -179,9 +156,8 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
             if (rp.y() < 2 * height()) {
                 return;
             }
-
-            int h = m_origGeom.height() + d.y();
-            m_geom.setHeight(h);
+            int h = m_origGeom.height() + deltaPt.y();
+            m_geom = m_origGeom.adjusted(0, 0, 0, deltaPt.y());
             tryResize(m_widget, m_widget->width(), h);
         }
         break;
@@ -189,15 +165,10 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
             if (rp.x() > pr.width() - 2 * width() || rp.y() < 2 * height()) {
                 return;
             }
-
-            int w = m_origGeom.width() - d.x();
-            m_geom.setWidth(w);
-
-            int h = m_origGeom.height() + d.y();
-            m_geom.setHeight(h);
-
+            int w = m_origGeom.width() - deltaPt.x();
+            int h = m_origGeom.height() + deltaPt.y();
+            m_geom = m_origGeom.adjusted(deltaPt.x(), 0, 0, deltaPt.y());
             int dx = m_widget->width() - w;
-
             trySetGeometry(m_widget, m_widget->x() + dx, m_widget->y(), w, h);
         }
         break;
@@ -205,12 +176,9 @@ void WidgetHandle::mouseMoveEvent(QMouseEvent *e)
             if (rp.x() > pr.width() - 2 * width()) {
                 return;
             }
-
-            int w = m_origGeom.width() - d.x();
-            m_geom.setWidth(w);
-
+            int w = m_origGeom.width() - deltaPt.x();
+            m_geom = m_origGeom.adjusted(deltaPt.x(), 0, 0, 0);
             const int dx = m_widget->width() - w;
-
             trySetGeometry(m_widget, m_widget->x() + dx, m_widget->y(), w, m_widget->height());
         }
         break;
@@ -231,15 +199,13 @@ void WidgetHandle::mouseReleaseEvent(QMouseEvent *e)
 
 void WidgetHandle::trySetGeometry(QWidget *w, int x, int y, int width, int height)
 {
-
     int minw = w->minimumSize().width();
     minw = qMax(minw, 20);
 
     int minh = w->minimumSize().height();
     minh = qMax(minh, 20);
 
-    if (qMax(minw, width) > w->maximumWidth() ||
-            qMax(minh, height) > w->maximumHeight()) {
+    if (qMax(minw, width) > w->maximumWidth() || qMax(minh, height) > w->maximumHeight()) {
         return;
     }
 
@@ -265,7 +231,7 @@ void WidgetHandle::tryResize(QWidget *w, int width, int height)
     emit sizeChanged(w->x(), w->y(), qMax(minw, width), qMax(minh, height));
 }
 
-WidgetSelection::WidgetSelection(QWidget *parent)   :
+WidgetSelection::WidgetSelection(QWidget *parent) :
     m_widget(0),
     m_formWindow(parent)
 {
@@ -455,7 +421,7 @@ void WidgetSelection::mouse_button_release(const QRect &old, const QRect &now)
 
 Selection::Selection(QWidget *formwindow):
     m_current(NULL),
-    m_formwindow(formwindow)
+    m_formWindow(formwindow)
 {
 }
 
@@ -498,7 +464,7 @@ WidgetSelection *Selection::addWidget(QWidget *w)
     }
 
     if (rc == 0) {
-        rc = new WidgetSelection(m_formwindow);
+        rc = new WidgetSelection(m_formWindow);
         connect(rc, SIGNAL(sizeChanged(QWidget*, QRect, QRect)), this, SIGNAL(sizeChanged(QWidget*, QRect, QRect)));
         m_selectionPool.push_back(rc);
 
